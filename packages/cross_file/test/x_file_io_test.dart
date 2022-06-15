@@ -9,7 +9,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 
 final String pathPrefix =
     Directory.current.path.endsWith('test') ? './assets/' : './test/assets/';

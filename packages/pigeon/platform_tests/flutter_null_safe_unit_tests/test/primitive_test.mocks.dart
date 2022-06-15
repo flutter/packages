@@ -16,9 +16,6 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: prefer_const_constructors
 
 // ignore_for_file: avoid_redundant_argument_values
-// ignore_for_file: always_specify_types
-// ignore_for_file: implicit_dynamic_type
-// ignore_for_file: subtype_of_disallowed_type
 
 class _FakeInt32List extends _i1.Fake implements _i2.Int32List {}
 

@@ -1,0 +1,12 @@
+# Configuration for https://pub.dev/packages/build_config
+# In general, this file is NOT needed when using go_router_builder
+# It is included in this case to suppress lints that are enforced in the source
+# repository but not this builder.
+targets:
+  $default:
+    builders:
+      source_gen|combining_builder:
+        options:
+          ignore_for_file:
+          - always_specify_types
+          - public_member_api_docs

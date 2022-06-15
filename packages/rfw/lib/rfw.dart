@@ -9,7 +9,7 @@
 /// There are many ways to use a package such as this one. In general, the
 /// approach looks something like this:
 ///
-/// ![The Remote Flutter Widgets comes from the server over the network and into the Runtime. The Runtime also receives the Data model, which is populated both from Client data and from Server data obtained over the network. The Runtime creates Flutter Widgets, which send state updates back to the Runtime, and send user input to the Client logic, which either directly changes the Client data, or sends messages over the network to the Server logic, which then updates the Server data.](https://raw.githubusercontent.com/flutter/packages/master/packages/rfw/images/overview1.png)
+/// ![The Remote Flutter Widgets comes from the server over the network and into the Runtime. The Runtime also receives the Data model, which is populated both from Client data and from Server data obtained over the network. The Runtime creates Flutter Widgets, which send state updates back to the Runtime, and send user input to the Client logic, which either directly changes the Client data, or sends messages over the network to the Server logic, which then updates the Server data.](https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/images/overview1.png)
 ///
 /// The network aspects of this design are out of scope for this package. Remote
 /// widget libraries and data should be cached locally, to avoid network issues
@@ -19,7 +19,7 @@
 /// (e.g. [https://pub.dev/packages/hetu_script](hetu_script)) to run
 /// remotely-fetched logic locally:
 ///
-/// ![The Remote Flutter Widgets once again come from the server and follow the same path via the network to the Runtime. The Runtime combines this with the Data model to generate the Flutter Widgets, which send state updates directly back to the Runtime and user input to the Hard-coded client logic. That logic updates the Client data which updates the Data model, but also sends messages to the Scripting engine which is also on the Client. The Scripting engine is configured from Scripts obtained over the network, and generates Script data that also populates the Data model.](https://raw.githubusercontent.com/flutter/packages/master/packages/rfw/images/overview2.png)
+/// ![The Remote Flutter Widgets once again come from the server and follow the same path via the network to the Runtime. The Runtime combines this with the Data model to generate the Flutter Widgets, which send state updates directly back to the Runtime and user input to the Hard-coded client logic. That logic updates the Client data which updates the Data model, but also sends messages to the Scripting engine which is also on the Client. The Scripting engine is configured from Scripts obtained over the network, and generates Script data that also populates the Data model.](https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/images/overview2.png)
 ///
 ///
 /// ## Using the [RemoteWidget] widget

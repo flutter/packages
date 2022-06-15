@@ -117,6 +117,62 @@ void main() {
             'pigeonResult.enum1 = [GetNullableObject(dict, @"enum1") integerValue];'));
   });
 
+  test('primitive enum host', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'bar',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type:
+                      const TypeDeclaration(baseName: 'Foo', isNullable: false))
+            ])
+      ])
+    ], classes: <Class>[], enums: <Enum>[
+      Enum(name: 'Foo', members: <String>['one', 'two'])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    const ObjcOptions options = ObjcOptions(header: 'foo.h', prefix: 'AC');
+    {
+      generateObjcHeader(options, root, sink);
+      final String code = sink.toString();
+      expect(code, contains('typedef NS_ENUM(NSUInteger, ACFoo)'));
+      expect(code, contains(':(ACFoo)foo error:'));
+    }
+    {
+      generateObjcSource(options, root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              'ACFoo arg_foo = [GetNullableObjectAtIndex(args, 0) integerValue];'));
+    }
+  });
+
+  test('validate nullable primitive enum', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'bar',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type:
+                      const TypeDeclaration(baseName: 'Foo', isNullable: true))
+            ])
+      ])
+    ], classes: <Class>[], enums: <Enum>[
+      Enum(name: 'Foo', members: <String>['one', 'two'])
+    ]);
+    const ObjcOptions options = ObjcOptions(header: 'foo.h');
+    final List<Error> errors = validateObjc(options, root);
+    expect(errors.length, 1);
+    expect(errors[0].message, contains('Nullable enum'));
+  });
+
   test('gen one class header with enum', () {
     final Root root = Root(
       apis: <Api>[],
@@ -359,7 +415,7 @@ void main() {
     expect(
         code,
         contains(
-            'pigeonResult.nested = [Input fromMap:GetNullableObject(dict, @"nested")];'));
+            'pigeonResult.nested = [Input nullableFromMap:GetNullableObject(dict, @"nested")];'));
     expect(code, matches('[self.nested toMap].*@"nested"'));
   });
 
@@ -1507,7 +1563,7 @@ void main() {
       expect(
           code,
           contains(
-              '[channel sendMessage:@[(arg_x == nil) ? [NSNull null] : arg_x, (arg_y == nil) ? [NSNull null] : arg_y] reply:'));
+              '[channel sendMessage:@[arg_x ?: [NSNull null], arg_y ?: [NSNull null]] reply:'));
     }
   });
 

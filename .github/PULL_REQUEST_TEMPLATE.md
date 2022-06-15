@@ -21,9 +21,9 @@
 If you need help, consider asking for advice on the #hackers-new channel on [Discord].
 
 <!-- Links -->
-[Contributor Guide]: https://github.com/flutter/packages/blob/master/CONTRIBUTING.md
+[Contributor Guide]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
 [Tree Hygiene]: https://github.com/flutter/flutter/wiki/Tree-hygiene
-[relevant style guides]: https://github.com/flutter/packages/blob/master/CONTRIBUTING.md#style
+[relevant style guides]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md#style
 [CLA]: https://cla.developers.google.com/
 [flutter/tests]: https://github.com/flutter/tests
 [breaking change policy]: https://github.com/flutter/flutter/wiki/Tree-hygiene#handling-breaking-changes

@@ -15,37 +15,30 @@ const String lastUpdate = '2021-08-30';
 Future<void> main(List<String> arguments) async {
   // This script is mentioned in the README.md file.
 
-  if (Platform.environment['CHANNEL'] == 'stable') {
-    // For now these are disabled because this package has never been supported
-    // on the stable channel and requires newer language features that have not
-    // yet shipped to a stable build. It will be possible to test this with the
-    // first stable to ship after October 2021.
-    print(
-      'Skipping tests on stable channel.\n'
-      'These tests can be unskipped once we ship a stable after October 2021.',
-    );
-    exit(0);
-  }
-
   final Directory coverageDirectory = Directory('coverage');
 
   if (coverageDirectory.existsSync()) {
     coverageDirectory.deleteSync(recursive: true);
   }
 
-  // We run with --update-goldens because the goal here is not to verify the tests
-  // pass but to verify the coverage, and the goldens are not always going to pass
-  // when run on different platforms (e.g. on Cirrus we run this on a mac but the
-  // goldens expect a linux box).
   final ProcessResult result = Process.runSync(
     'flutter',
-    <String>['test', '--coverage', '--update-goldens'],
+    <String>['test', '--coverage'],
   );
   if (result.exitCode != 0) {
     print(result.stdout);
     print(result.stderr);
     print('Tests failed.');
+    // leave coverage directory around to aid debugging
     exit(1);
+  }
+
+  if (Platform.environment['CHANNEL'] != 'master') {
+    print(
+      'Tests passed. (Coverage verification skipped; not on master channel.)',
+    );
+    coverageDirectory.deleteSync(recursive: true);
+    exit(0);
   }
 
   final List<lcov.Record> records = await lcov.Parser.parse(

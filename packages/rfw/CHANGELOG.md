@@ -1,7 +1,17 @@
-## NEXT
+## 1.0.5
 
-* Transition internal testing from a command line lcov tool to a
+* Fixes URL in document.
+
+## 1.0.4
+
+* Migrates from `ui.hash*` to `Object.hash*`.
+
+## 1.0.3
+
+* Transitions internal testing from a command line lcov tool to a
   Dart tool. No effect on consumers.
+* Removes unsupported platforms from the wasm example.
+* Updates for non-nullable bindings.
 
 ## 1.0.2
 

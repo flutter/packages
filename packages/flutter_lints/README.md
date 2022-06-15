@@ -58,7 +58,21 @@ linter:
 # https://dart.dev/guides/language/analysis-options
 ```
 
+## Adding new lints
+
+Please file a [lint proposal] issue to suggest that an existing lint rule should
+be added to this package. The benefits and risks of adding a lint should be
+discussed on that issue with all stakeholders involved. The suggestions will be
+reviewed periodically (typically once a year). Following a review, the package
+will be updated with all lints that made the cut.
+
+Adding a lint to the package may create new warnings for existing users and is
+therefore considered to be a breaking change, which will require a major version
+bump. To keep churn low, lints are not added one-by-one, but in one batch
+following a review of all accumulated suggestions since the previous review.
+
 [Flutter]: https://flutter.dev
 [dart analyzer]: https://dart.dev/guides/language/analysis-options
 [Dart-enabled IDEs]: https://dart.dev/tools#ides-and-editors
 [package:lints]: https://pub.dev/packages/lints
+[lint proposal]: https://github.com/dart-lang/lints/issues/new?&labels=type-lint&template=lint-propoposal.md

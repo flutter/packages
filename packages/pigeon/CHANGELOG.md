@@ -1,6 +1,72 @@
+## 3.3.0
+
+* Adds experimental support for Kotlin generation.
+
+## 3.1.5
+
+* Fixes potential crash bug when using a nullable nested type that has nonnull
+  fields in ObjC.
+
+## 3.1.4
+
+* [c++] Adds support for non-nullable fields, and fixes some issues with
+  nullable fields. The types of some getters and setter have changed, so this
+  may require updates to existing code.
+
+## 3.1.3
+
+* Adds support for enums in arguments to methods for HostApis.
+
+## 3.1.2
+
+* [c++] Fixes minor style issues in generated code. This includes the naming of
+  generated methods and arguments, so will require updates to existing code.
+
+## 3.1.1
+
+* Updates for non-nullable bindings.
+
+## 3.1.0
+
+* [c++] Adds C++ code generator.
+
+## 3.0.4
+
+* [objc] Simplified some code output, including avoiding Xcode warnings about
+  using `NSNumber*` directly as boolean value.
+* [tests] Moved test script to enable CI.
+
+## 3.0.3
+
+* Adds ability for generators to do AST validation.  This can help generators
+  without complete implementations to report gaps in coverage.
+
+## 3.0.2
+
+* Fixes non-nullable classes and enums as fields.
+* Fixes nullable collections as return types.
+
+## 3.0.1
+
+* Enables NNBD for the Pigeon tool itself.
+* [tests] Updates legacy Dart commands.
+
+## 3.0.0
+
+* **BREAKING CHANGE**: Removes the `--dart_null_safety` flag. Generated Dart
+  now always uses nullability annotations, and thus requires Dart 2.12 or later.
+
+## 2.0.4
+
+* Fixes bug where Dart `FlutterApi`s would assert that a nullable argument was nonnull.
+
+## 2.0.3
+
+* Makes the generated Java Builder class final.
+
 ## 2.0.2
 
-* Adds support to Kotlin generation.
+* Fixes Java crash for nullable nested type.
 
 ## 2.0.1
 

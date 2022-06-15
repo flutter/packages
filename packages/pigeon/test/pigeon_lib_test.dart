@@ -2,11 +2,33 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
+
+class _ValidatorGenerator implements Generator {
+  _ValidatorGenerator(this.sink);
+  bool didCallValidate = false;
+
+  final IOSink? sink;
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {}
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => sink;
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) {
+    didCallValidate = true;
+    return <Error>[
+      Error(message: '_ValidatorGenerator'),
+    ];
+  }
+}
 
 void main() {
   /// Creates a temporary file named [filename] then calls [callback] with a
@@ -68,6 +90,18 @@ void main() {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--objc_source_out', 'foo.m']);
     expect(opts.objcSourceOut, equals('foo.m'));
+  });
+
+  test('parse args - experimental_cpp_header_out', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--experimental_cpp_header_out', 'foo.h']);
+    expect(opts.cppHeaderOut, equals('foo.h'));
+  });
+
+  test('parse args - experimental_cpp_source_out', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--experimental_cpp_source_out', 'foo.cpp']);
+    expect(opts.cppSourceOut, equals('foo.cpp'));
   });
 
   test('parse args - one_language', () {
@@ -329,12 +363,6 @@ abstract class NestorApi {
     expect(classNames.contains('OnlyVisibleFromNesting'), true);
   });
 
-  test('null safety flag', () {
-    final PigeonOptions results =
-        Pigeon.parseArgs(<String>['--dart_null_safety']);
-    expect(results.dartOptions?.isNullSafe, isTrue);
-  });
-
   test('copyright flag', () {
     final PigeonOptions results =
         Pigeon.parseArgs(<String>['--copyright_header', 'foobar.txt']);
@@ -381,6 +409,26 @@ abstract class NestorApi {
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
+  test('C++ header generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options = PigeonOptions(
+        cppHeaderOut: 'Foo.h', copyrightHeader: './copyright_header.txt');
+    const CppHeaderGenerator cppHeaderGenerator = CppHeaderGenerator();
+    final StringBuffer buffer = StringBuffer();
+    cppHeaderGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('C++ source generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options =
+        PigeonOptions(copyrightHeader: './copyright_header.txt');
+    const CppSourceGenerator cppSourceGenerator = CppSourceGenerator();
+    final StringBuffer buffer = StringBuffer();
+    cppSourceGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
   test('nested enum', () {
     const String code = '''
 enum NestedEnum { one, two }
@@ -423,7 +471,7 @@ class Bar {
 @HostApi()
 abstract class NotificationsHostApi {
   void doit(Foo foo);
-}  
+}
 ''';
     final ParseResults results = _parseSource(code);
     expect(results.errors.length, 0);
@@ -462,7 +510,7 @@ abstract class Api {
   test('test field initialization', () {
     const String code = '''
 class Foo {
-  int? x = 123;  
+  int? x = 123;
 }
 
 @HostApi()
@@ -651,7 +699,23 @@ abstract class Api {
     expect(parseResult.errors[0].lineNumber, 2);
   });
 
-  test('enums argument', () {
+  test('enums argument host', () {
+    const String code = '''
+enum Foo {
+  one,
+  two,
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(0));
+  });
+
+  test('enums argument flutter', () {
     // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
     const String code = '''
 
@@ -660,7 +724,7 @@ enum Foo {
   two,
 }
 
-@HostApi()
+@FlutterApi()
 abstract class Api {
   void doit(Foo foo);
 }
@@ -1084,5 +1148,32 @@ abstract class Api {
     expect(results.errors.length, 1);
     expect(results.errors[0].message,
         contains('Unsupported TaskQueue specification'));
+  });
+
+  test('generator validation', () async {
+    final Completer<void> completer = Completer<void>();
+    _withTempFile('foo.dart', (File input) async {
+      final _ValidatorGenerator generator = _ValidatorGenerator(stdout);
+      final int result = await Pigeon.run(<String>['--input', input.path],
+          generators: <Generator>[generator]);
+      expect(generator.didCallValidate, isTrue);
+      expect(result, isNot(0));
+      completer.complete();
+    });
+    await completer.future;
+  });
+
+  test('generator validation skipped', () async {
+    final Completer<void> completer = Completer<void>();
+    _withTempFile('foo.dart', (File input) async {
+      final _ValidatorGenerator generator = _ValidatorGenerator(null);
+      final int result = await Pigeon.run(
+          <String>['--input', input.path, '--dart_out', 'foo.dart'],
+          generators: <Generator>[generator]);
+      expect(generator.didCallValidate, isFalse);
+      expect(result, equals(0));
+      completer.complete();
+    });
+    await completer.future;
   });
 }

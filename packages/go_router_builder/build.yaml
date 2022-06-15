@@ -1,0 +1,9 @@
+# Read about `build.yaml` at https://pub.dev/packages/build_config
+builders:
+  go_router_builder:
+    import: "package:go_router_builder/go_router_builder.dart"
+    builder_factories: ["goRouterBuilder"]
+    build_extensions: {".dart": ["go_router.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

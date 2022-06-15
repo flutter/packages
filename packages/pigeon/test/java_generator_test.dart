@@ -32,6 +32,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
     expect(code, contains('public static class Foobar'));
+    expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
   });
 
@@ -470,7 +471,8 @@ void main() {
     expect(code, contains('public static class Outer'));
     expect(code, contains('public static class Nested'));
     expect(code, contains('private @Nullable Nested nested;'));
-    expect(code, contains('Nested.fromMap((Map)nested)'));
+    expect(code,
+        contains('(nested == null) ? null : Nested.fromMap((Map)nested)'));
     expect(code,
         contains('put("nested", (nested == null) ? null : nested.toMap());'));
   });
@@ -620,6 +622,33 @@ void main() {
         code,
         contains(
             'pigeonResult.setEnum1(enum1 == null ? null : Enum1.values()[(int)enum1])'));
+  });
+
+  test('primitive enum host', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'bar',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type:
+                      const TypeDeclaration(baseName: 'Foo', isNullable: true))
+            ])
+      ])
+    ], classes: <Class>[], enums: <Enum>[
+      Enum(name: 'Foo', members: <String>['one', 'two'])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public enum Foo'));
+    expect(
+        code,
+        contains(
+            'Foo fooArg = args.get(0) == null ? null : Foo.values()[(int)args.get(0)];'));
   });
 
   Iterable<String> _makeIterable(String string) sync* {

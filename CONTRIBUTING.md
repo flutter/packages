@@ -1,6 +1,6 @@
 # Contributing to Flutter Packages
 
-[![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages/master)
+[![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages/main)
 
 _See also: [Flutter's code of conduct](https://github.com/flutter/flutter/blob/master/CODE_OF_CONDUCT.md)_
 

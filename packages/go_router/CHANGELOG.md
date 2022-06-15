@@ -1,3 +1,26 @@
+## 3.1.1
+
+- Uses first match if there are more than one route to match. [ [#99833](https://github.com/flutter/flutter/issues/99833)
+
+## 3.1.0
+
+- Added `GoRouteData` and `TypedGoRoute` to support `package:go_router_builder`.
+
+## 3.0.7
+
+- Refactors runtime checks to assertions.
+
+## 3.0.6
+
+- Exports inherited_go_router.dart file.
+
+## 3.0.5
+
+- Add `dispatchNotification` method to `DummyBuildContext` in tests. (This
+  should be revisited when Flutter `2.11.0` becomes stable.)
+- Improves code coverage.
+- `GoRoute` now warns about requiring either `pageBuilder`, `builder` or `redirect` at instantiation.
+
 ## 3.0.4
 
 - Updates code for stricter analysis options.

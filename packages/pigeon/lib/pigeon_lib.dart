@@ -19,6 +19,7 @@ import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
+import 'package:pigeon/cpp_generator.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
 
@@ -160,6 +161,9 @@ class PigeonOptions {
       this.javaOptions,
       this.kotlinOut,
       this.kotlinOptions,
+      this.cppHeaderOut,
+      this.cppSourceOut,
+      this.cppOptions,
       this.dartOptions,
       this.copyrightHeader,
       this.oneLanguage,
@@ -195,6 +199,15 @@ class PigeonOptions {
 
   /// Options that control how Kotlin will be generated.
   final KotlinOptions? kotlinOptions;
+
+  /// Path to the ".h" C++ file that will be generated.
+  final String? cppHeaderOut;
+
+  /// Path to the ".cpp" C++ file that will be generated.
+  final String? cppSourceOut;
+
+  /// Options that control how C++ will be generated.
+  final CppOptions? cppOptions;
 
   /// Options that control how Dart will be generated.
   final DartOptions? dartOptions;
@@ -232,6 +245,12 @@ class PigeonOptions {
           ? KotlinOptions.fromMap(
               (map['kotlinOptions'] as Map<String, Object>?)!)
           : null,
+      cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
+      cppSourceOut: map['experimental_cppSourceOut'] as String?,
+      cppOptions: map.containsKey('experimental_cppOptions')
+          ? CppOptions.fromMap(
+              (map['experimental_cppOptions'] as Map<String, Object>?)!)
+          : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
           : null,
@@ -256,6 +275,9 @@ class PigeonOptions {
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
       if (kotlinOut != null) 'kotlinOut': kotlinOut!,
       if (kotlinOptions != null) 'kotlinOptions': kotlinOptions!.toMap(),
+      if (cppHeaderOut != null) 'experimental_cppHeaderOut': cppHeaderOut!,
+      if (cppSourceOut != null) 'experimental_cppSourceOut': cppSourceOut!,
+      if (cppOptions != null) 'experimental_cppOptions': cppOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
@@ -330,6 +352,10 @@ abstract class Generator {
   /// Write the generated code described in [root] to [sink] using the
   /// [options].
   void generate(StringSink sink, PigeonOptions options, Root root);
+
+  /// Generates errors that would only be appropriate for this [Generator]. For
+  /// example, maybe a certain feature isn't implemented in a [Generator] yet.
+  List<Error> validate(PigeonOptions options, Root root);
 }
 
 DartOptions _dartOptionsWithCopyrightHeader(
@@ -352,6 +378,9 @@ class AstGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.astOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Dart source code.
@@ -368,6 +397,9 @@ class DartGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.dartOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Dart test source code.
@@ -399,6 +431,9 @@ class DartTestGenerator implements Generator {
       return null;
     }
   }
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Objective-C header code.
@@ -419,6 +454,10 @@ class ObjcHeaderGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.objcHeaderOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) =>
+      validateObjc(options.objcOptions!, root);
 }
 
 /// A [Generator] that generates Objective-C source code.
@@ -439,6 +478,9 @@ class ObjcSourceGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.objcSourceOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Java source code.
@@ -460,6 +502,57 @@ class JavaGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+}
+
+/// A [Generator] that generates C++ header code.
+class CppHeaderGenerator implements Generator {
+  /// Constructor for [CppHeaderGenerator].
+  const CppHeaderGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
+    final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateCppHeader(path.basenameWithoutExtension(options.cppHeaderOut!),
+        cppOptionsWithHeader, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      _openSink(options.cppHeaderOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) =>
+      validateCpp(options.cppOptions!, root);
+}
+
+/// A [Generator] that generates C++ source code.
+class CppSourceGenerator implements Generator {
+  /// Constructor for [CppSourceGenerator].
+  const CppSourceGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
+    final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateCppSource(cppOptionsWithHeader, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      _openSink(options.cppSourceOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Kotlin source code.
@@ -537,12 +630,13 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      if (method.arguments.isNotEmpty &&
+      if (api.location == ApiLocation.flutter &&
+          method.arguments.isNotEmpty &&
           method.arguments.any((NamedType element) =>
               customEnums.contains(element.type.baseName))) {
         result.add(Error(
           message:
-              'Enums aren\'t yet supported for primitive arguments: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
+              'Enums aren\'t yet supported for primitive arguments in FlutterApis: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -1080,9 +1174,12 @@ options:
     ..addOption('kotlin_out', help: 'Path to generated Kotlin file (.kt).')
     ..addOption('kotlin_package',
         help: 'The package that generated Kotlin code will be in.')
-    ..addFlag('dart_null_safety',
-        help: 'Makes generated Dart code have null safety annotations',
-        defaultsTo: true)
+    ..addOption('experimental_cpp_header_out',
+        help: 'Path to generated C++ header file (.h). (experimental)')
+    ..addOption('experimental_cpp_source_out',
+        help: 'Path to generated C++ classes file (.cpp). (experimental)')
+    ..addOption('cpp_namespace',
+        help: 'The namespace that generated C++ code will be in.')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -1125,8 +1222,10 @@ options:
       kotlinOptions: KotlinOptions(
         package: results['kotlin_package'],
       ),
-      dartOptions: DartOptions(
-        isNullSafe: results['dart_null_safety'],
+      cppHeaderOut: results['experimental_cpp_header_out'],
+      cppSourceOut: results['experimental_cpp_source_out'],
+      cppOptions: CppOptions(
+        namespace: results['cpp_namespace'],
       ),
       copyrightHeader: results['copyright_header'],
       oneLanguage: results['one_language'],
@@ -1171,6 +1270,8 @@ options:
           const DartGenerator(),
           const JavaGenerator(),
           const KotlinGenerator(),
+          const CppHeaderGenerator(),
+          const CppSourceGenerator(),
           const DartTestGenerator(),
           const ObjcHeaderGenerator(),
           const ObjcSourceGenerator(),
@@ -1186,16 +1287,25 @@ options:
     final ParseResults parseResults =
         pigeon.parseFile(options.input!, sdkPath: sdkPath);
 
-    if (parseResults.errors.isNotEmpty) {
-      final List<Error> errors = <Error>[];
-      for (final Error err in parseResults.errors) {
-        errors.add(Error(
-            message: err.message,
-            filename: options.input,
-            lineNumber: err.lineNumber));
-      }
+    final List<Error> errors = <Error>[];
+    errors.addAll(parseResults.errors);
 
-      printErrors(errors);
+    for (final Generator generator in safeGenerators) {
+      final IOSink? sink = generator.shouldGenerate(options);
+      if (sink != null) {
+        final List<Error> generatorErrors =
+            generator.validate(options, parseResults.root);
+        errors.addAll(generatorErrors);
+      }
+    }
+
+    if (errors.isNotEmpty) {
+      printErrors(errors
+          .map((Error err) => Error(
+              message: err.message,
+              filename: options.input,
+              lineNumber: err.lineNumber))
+          .toList());
       return 1;
     }
 
@@ -1213,6 +1323,12 @@ options:
       options = options.merge(PigeonOptions(
           objcOptions: options.objcOptions!.merge(
               ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
+    }
+
+    if (options.cppHeaderOut != null) {
+      options = options.merge(PigeonOptions(
+          cppOptions: options.cppOptions!.merge(
+              CppOptions(header: path.basename(options.cppHeaderOut!)))));
     }
 
     for (final Generator generator in safeGenerators) {

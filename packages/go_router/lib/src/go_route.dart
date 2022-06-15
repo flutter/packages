@@ -18,45 +18,41 @@ class GoRoute {
     required this.path,
     this.name,
     this.pageBuilder,
-    this.builder = _builder,
+    this.builder = _invalidBuilder,
     this.routes = const <GoRoute>[],
-    this.redirect = _redirect,
-  }) {
-    if (path.isEmpty) {
-      throw Exception('GoRoute path cannot be empty');
-    }
-
-    if (name != null && name!.isEmpty) {
-      throw Exception('GoRoute name cannot be empty');
-    }
-
+    this.redirect = _noRedirection,
+  })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
+        assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
+        assert(
+            pageBuilder != null ||
+                builder != _invalidBuilder ||
+                redirect != _noRedirection,
+            'GoRoute builder parameter not set\nSee gorouter.dev/redirection#considerations for details') {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, _pathParams);
 
-    // check path params
-    final Map<String, List<String>> groupedParams =
-        _pathParams.groupListsBy<String>((String p) => p);
-    final Map<String, List<String>> dupParams =
-        Map<String, List<String>>.fromEntries(
-      groupedParams.entries
-          .where((MapEntry<String, List<String>> e) => e.value.length > 1),
-    );
-    if (dupParams.isNotEmpty) {
-      throw Exception(
-        'duplicate path params: ${dupParams.keys.join(', ')}',
+    assert(() {
+      // check path params
+      final Map<String, List<String>> groupedParams =
+          _pathParams.groupListsBy<String>((String p) => p);
+      final Map<String, List<String>> dupParams =
+          Map<String, List<String>>.fromEntries(
+        groupedParams.entries
+            .where((MapEntry<String, List<String>> e) => e.value.length > 1),
       );
-    }
+      assert(dupParams.isEmpty,
+          'duplicate path params: ${dupParams.keys.join(', ')}');
 
-    // check sub-routes
-    for (final GoRoute route in routes) {
-      // check paths
-      if (route.path != '/' &&
-          (route.path.startsWith('/') || route.path.endsWith('/'))) {
-        throw Exception(
-          'sub-route path may not start or end with /: ${route.path}',
-        );
+      // check sub-routes
+      for (final GoRoute route in routes) {
+        // check paths
+        assert(
+            route.path == '/' ||
+                (!route.path.startsWith('/') && !route.path.endsWith('/')),
+            'sub-route path may not start or end with /: ${route.path}');
       }
-    }
+      return true;
+    }());
   }
 
   final List<String> _pathParams = <String>[];
@@ -166,6 +162,30 @@ class GoRoute {
   ///   ],
   /// );
   ///
+  /// If there are multiple routes that match the location, the first match is used.
+  /// To make predefined routes to take precedence over dynamic routes eg. '/:id'
+  /// consider adding the dynamic route at the end of the routes
+  /// For example:
+  /// ```
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       path: '/',
+  ///       redirect: (_) => '/family/${Families.data[0].id}',
+  ///     ),
+  ///     GoRoute(
+  ///       path: '/family',
+  ///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
+  ///     ),
+  ///     GoRoute(
+  ///       path: '/:username',
+  ///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
+  /// In the above example, if /family route is matched, it will be used.
+  /// else /:username route will be used.
   final List<GoRoute> routes;
 
   /// An optional redirect function for this route.
@@ -199,11 +219,11 @@ class GoRoute {
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(_pathParams, match);
 
-  static String? _redirect(GoRouterState state) => null;
+  static String? _noRedirection(GoRouterState state) => null;
 
-  static Widget _builder(BuildContext context, GoRouterState state) =>
-      throw Exception(
-        'GoRoute builder parameter not set\n'
-        'See gorouter.dev/redirection#considerations for details',
-      );
+  static Widget _invalidBuilder(
+    BuildContext context,
+    GoRouterState state,
+  ) =>
+      const SizedBox.shrink();
 }

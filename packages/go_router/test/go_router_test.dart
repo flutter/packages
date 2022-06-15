@@ -8,10 +8,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_route_match.dart';
+import 'package:go_router/src/go_router_delegate.dart';
+import 'package:go_router/src/go_router_error_page.dart';
+import 'package:go_router/src/typedefs.dart';
 import 'package:logging/logging.dart';
 
 const bool enableLogs = true;
@@ -37,7 +39,7 @@ void main() {
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
-    test('match too many routes', () {
+    test('If there is more than one route to match, use the first match', () {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/', builder: _dummy),
         GoRoute(path: '/', builder: _dummy),
@@ -48,13 +50,13 @@ void main() {
       final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.fullpath, '/');
-      expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
+      expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
     test('empty path', () {
       expect(() {
         GoRoute(path: '');
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('leading / on sub-route', () {
@@ -69,7 +71,7 @@ void main() {
             ),
           ],
         );
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('trailing / on sub-route', () {
@@ -84,7 +86,7 @@ void main() {
             ),
           ],
         );
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('lack of leading / on top-level route', () {
@@ -93,7 +95,7 @@ void main() {
           GoRoute(path: 'foo', builder: _dummy),
         ];
         _router(routes);
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('match no routes', () {
@@ -273,23 +275,32 @@ void main() {
       }
     });
 
-    test('match too many sub-routes', () {
+    test('return first matching route if too many subroutes', () {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: _dummy,
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'foo/bar',
-              builder: _dummy,
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen(''),
+            ),
+            GoRoute(
+              path: 'bar',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page1Screen(),
             ),
             GoRoute(
               path: 'foo',
-              builder: _dummy,
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page2Screen(),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'bar',
-                  builder: _dummy,
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
                 ),
               ],
             ),
@@ -298,10 +309,20 @@ void main() {
       ];
 
       final GoRouter router = _router(routes);
+      router.go('/bar');
+      List<GoRouteMatch> matches = router.routerDelegate.matches;
+      expect(matches, hasLength(2));
+      expect(router.screenFor(matches[1]).runtimeType, Page1Screen);
+
       router.go('/foo/bar');
-      final List<GoRouteMatch> matches = router.routerDelegate.matches;
-      expect(matches, hasLength(1));
-      expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
+      matches = router.routerDelegate.matches;
+      expect(matches, hasLength(2));
+      expect(router.screenFor(matches[1]).runtimeType, FamilyScreen);
+
+      router.go('/foo');
+      matches = router.routerDelegate.matches;
+      expect(matches, hasLength(2));
+      expect(router.screenFor(matches[1]).runtimeType, Page2Screen);
     });
 
     test('router state', () {
@@ -422,17 +443,19 @@ void main() {
       expect(router.screenFor(matches.first).runtimeType, FamilyScreen);
     });
 
-    test('match too many routes, ignoring case', () {
+    test('If there is more than one route to match, use the first match.', () {
       final List<GoRoute> routes = <GoRoute>[
+        GoRoute(path: '/', builder: _dummy),
         GoRoute(path: '/page1', builder: _dummy),
-        GoRoute(path: '/PaGe1', builder: _dummy),
+        GoRoute(path: '/page1', builder: _dummy),
+        GoRoute(path: '/:ok', builder: _dummy),
       ];
 
       final GoRouter router = _router(routes);
-      router.go('/PAGE1');
+      router.go('/user');
       final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
-      expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
+      expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
   });
 
@@ -458,13 +481,13 @@ void main() {
 
       expect(() {
         _router(routes);
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('empty name', () {
       expect(() {
         GoRoute(name: '', path: '/');
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('match no routes', () {
@@ -474,7 +497,7 @@ void main() {
         ];
         final GoRouter router = _router(routes);
         router.goNamed('work');
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('match 2nd top level route', () {
@@ -610,7 +633,7 @@ void main() {
       expect(() {
         final GoRouter router = _router(routes);
         router.goNamed('person', params: <String, String>{'fid': 'f2'});
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('match case insensitive w/ params', () {
@@ -659,7 +682,7 @@ void main() {
       expect(() {
         final GoRouter router = _router(routes);
         router.goNamed('family');
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('too many params', () {
@@ -675,7 +698,7 @@ void main() {
         final GoRouter router = _router(routes);
         router.goNamed('family',
             params: <String, String>{'fid': 'f2', 'pid': 'p1'});
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('sparsely named routes', () {
@@ -1496,8 +1519,8 @@ void main() {
     group('stream', () {
       test('no stream emits', () async {
         // Act
-        final MockGoRouterRefreshStream notifyListener =
-            MockGoRouterRefreshStream(
+        final GoRouterRefreshStreamSpy notifyListener =
+            GoRouterRefreshStreamSpy(
           streamController.stream,
         );
 
@@ -1513,8 +1536,8 @@ void main() {
         final List<int> toEmit = <int>[1, 2, 3];
 
         // Act
-        final MockGoRouterRefreshStream notifyListener =
-            MockGoRouterRefreshStream(
+        final GoRouterRefreshStreamSpy notifyListener =
+            GoRouterRefreshStreamSpy(
           streamController.stream,
         );
 
@@ -1528,10 +1551,340 @@ void main() {
       });
     });
   });
+
+  group('GoRouterHelper extensions', () {
+    final GlobalKey<_DummyStatefulWidgetState> key =
+        GlobalKey<_DummyStatefulWidgetState>();
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        name: 'home',
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyStatefulWidget(key: key),
+      ),
+      GoRoute(
+        path: '/page1',
+        name: 'page1',
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
+      ),
+    ];
+
+    const String name = 'page1';
+    final Map<String, String> params = <String, String>{
+      'a-param-key': 'a-param-value',
+    };
+    final Map<String, String> queryParams = <String, String>{
+      'a-query-key': 'a-query-value',
+    };
+    const String location = '/page1';
+    const String extra = 'Hello';
+
+    testWidgets('calls [namedLocation] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterNamedLocationSpy router =
+          GoRouterNamedLocationSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.namedLocation(
+        name,
+        params: params,
+        queryParams: queryParams,
+      );
+      expect(router.name, name);
+      expect(router.params, params);
+      expect(router.queryParams, queryParams);
+    });
+
+    testWidgets('calls [go] on closest GoRouter', (WidgetTester tester) async {
+      final GoRouterGoSpy router = GoRouterGoSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.go(
+        location,
+        extra: extra,
+      );
+      expect(router.myLocation, location);
+      expect(router.extra, extra);
+    });
+
+    testWidgets('calls [goNamed] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterGoNamedSpy router = GoRouterGoNamedSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.goNamed(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
+      expect(router.name, name);
+      expect(router.params, params);
+      expect(router.queryParams, queryParams);
+      expect(router.extra, extra);
+    });
+
+    testWidgets('calls [push] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.push(
+        location,
+        extra: extra,
+      );
+      expect(router.myLocation, location);
+      expect(router.extra, extra);
+    });
+
+    testWidgets('calls [pushNamed] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.pushNamed(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
+      expect(router.name, name);
+      expect(router.params, params);
+      expect(router.queryParams, queryParams);
+      expect(router.extra, extra);
+    });
+
+    testWidgets('calls [pop] on closest GoRouter', (WidgetTester tester) async {
+      final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.pop();
+      expect(router.popped, true);
+    });
+  });
+
+  test('pop triggers pop on routerDelegate', () {
+    final GoRouter router = createGoRouter()..push('/error');
+    router.routerDelegate.addListener(expectAsync0(() {}));
+    router.pop();
+  });
+
+  test('refresh triggers refresh on routerDelegate', () {
+    final GoRouter router = createGoRouter();
+    router.routerDelegate.addListener(expectAsync0(() {}));
+    router.refresh();
+  });
+
+  test('didPush notifies listeners', () {
+    createGoRouter()
+      ..addListener(expectAsync0(() {}))
+      ..didPush(
+        MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
+        MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
+      );
+  });
+
+  test('didPop notifies listeners', () {
+    createGoRouter()
+      ..addListener(expectAsync0(() {}))
+      ..didPop(
+        MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
+        MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
+      );
+  });
+
+  test('didRemove notifies listeners', () {
+    createGoRouter()
+      ..addListener(expectAsync0(() {}))
+      ..didRemove(
+        MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
+        MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
+      );
+  });
+
+  test('didReplace notifies listeners', () {
+    createGoRouter()
+      ..addListener(expectAsync0(() {}))
+      ..didReplace(
+        newRoute: MaterialPageRoute<void>(
+          builder: (_) => const Text('Current route'),
+        ),
+        oldRoute: MaterialPageRoute<void>(
+          builder: (_) => const Text('Previous route'),
+        ),
+      );
+  });
+
+  test('uses navigatorBuilder when provided', () {
+    final Func3<Widget, BuildContext, GoRouterState, Widget> navigationBuilder =
+        expectAsync3(fakeNavigationBuilder);
+    final GoRouter router = createGoRouter(navigatorBuilder: navigationBuilder);
+    final GoRouterDelegate delegate = router.routerDelegate;
+    delegate.builderWithNav(
+      DummyBuildContext(),
+      GoRouterState(delegate, location: '/foo', subloc: '/bar', name: 'baz'),
+      const Navigator(),
+    );
+  });
 }
 
-class MockGoRouterRefreshStream extends GoRouterRefreshStream {
-  MockGoRouterRefreshStream(
+GoRouter createGoRouter({
+  GoRouterNavigatorBuilder? navigatorBuilder,
+}) =>
+    GoRouter(
+      initialLocation: '/',
+      routes: <GoRoute>[
+        GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
+        GoRoute(
+          path: '/error',
+          builder: (_, __) => const GoRouterErrorScreen(null),
+        ),
+      ],
+      navigatorBuilder: navigatorBuilder,
+    );
+
+Widget fakeNavigationBuilder(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
+) =>
+    child;
+
+class GoRouterNamedLocationSpy extends GoRouter {
+  GoRouterNamedLocationSpy({required List<GoRoute> routes})
+      : super(routes: routes);
+
+  String? name;
+  Map<String, String>? params;
+  Map<String, String>? queryParams;
+
+  @override
+  String namedLocation(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+  }) {
+    this.name = name;
+    this.params = params;
+    this.queryParams = queryParams;
+    return '';
+  }
+}
+
+class GoRouterGoSpy extends GoRouter {
+  GoRouterGoSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  String? myLocation;
+  Object? extra;
+
+  @override
+  void go(String location, {Object? extra}) {
+    myLocation = location;
+    this.extra = extra;
+  }
+}
+
+class GoRouterGoNamedSpy extends GoRouter {
+  GoRouterGoNamedSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  String? name;
+  Map<String, String>? params;
+  Map<String, String>? queryParams;
+  Object? extra;
+
+  @override
+  void goNamed(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) {
+    this.name = name;
+    this.params = params;
+    this.queryParams = queryParams;
+    this.extra = extra;
+  }
+}
+
+class GoRouterPushSpy extends GoRouter {
+  GoRouterPushSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  String? myLocation;
+  Object? extra;
+
+  @override
+  void push(String location, {Object? extra}) {
+    myLocation = location;
+    this.extra = extra;
+  }
+}
+
+class GoRouterPushNamedSpy extends GoRouter {
+  GoRouterPushNamedSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  String? name;
+  Map<String, String>? params;
+  Map<String, String>? queryParams;
+  Object? extra;
+
+  @override
+  void pushNamed(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) {
+    this.name = name;
+    this.params = params;
+    this.queryParams = queryParams;
+    this.extra = extra;
+  }
+}
+
+class GoRouterPopSpy extends GoRouter {
+  GoRouterPopSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  bool popped = false;
+
+  @override
+  void pop() {
+    popped = true;
+  }
+}
+
+class GoRouterRefreshStreamSpy extends GoRouterRefreshStream {
+  GoRouterRefreshStreamSpy(
     Stream<dynamic> stream,
   )   : notifyCount = 0,
         super(stream);
@@ -1650,6 +2003,13 @@ class DummyBuildContext implements BuildContext {
     throw UnimplementedError();
   }
 
+  // @override
+  // TODO(dit): Remove ignore below when flutter 2.11.0-0.0.pre.724 becomes stable
+  // ignore:annotate_overrides
+  void dispatchNotification(Notification notification) {
+    throw UnimplementedError();
+  }
+
   @override
   T? findAncestorRenderObjectOfType<T extends RenderObject>() {
     throw UnimplementedError();
@@ -1695,4 +2055,16 @@ class DummyBuildContext implements BuildContext {
 
   @override
   Widget get widget => throw UnimplementedError();
+}
+
+class DummyStatefulWidget extends StatefulWidget {
+  const DummyStatefulWidget({Key? key}) : super(key: key);
+
+  @override
+  State<DummyStatefulWidget> createState() => _DummyStatefulWidgetState();
+}
+
+class _DummyStatefulWidgetState extends State<DummyStatefulWidget> {
+  @override
+  Widget build(BuildContext context) => Container();
 }

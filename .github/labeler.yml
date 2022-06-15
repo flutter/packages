@@ -1,5 +1,5 @@
-'p: animation':
-  - packages/animation/**/*
+'p: animations':
+  - packages/animations/**/*
 
 'p: cross_file':
   - packages/cross_file/**/*
@@ -13,6 +13,9 @@
 'p: flutter_image':
   - packages/flutter_image/**/*
 
+'p: flutter_lints':
+  - packages/flutter_lints/**/*
+
 'p: flutter_markdown':
   - packages/flutter_markdown/**/*
 
@@ -21,6 +24,12 @@
 
 'p: fuchsia_ctl':
   - packages/fuchsia_ctl/**/*
+
+'p: go_router':
+  - packages/go_router/**/*
+
+'p: go_router_builder':
+  - packages/go_router_builder/**/*
 
 'p: imitation_game':
   - packages/imitation_game/**/*
@@ -40,14 +49,14 @@
 'p: pointer_interceptor':
   - packages/pointer_interceptor/**/*
 
+'p: rfw':
+  - packages/rfw/**/*
+
 'p: web_benchmarks':
   - packages/web_benchmarks/**/*
 
 'p: xdg_directories':
   - packages/xdg_directories/**/*
-
-'p: bsdiff':
-  - third_party/packages/bsdiff/**/*
 
 'p: cupertino_icons':
   - third_party/packages/cupertino_icons/**/*
