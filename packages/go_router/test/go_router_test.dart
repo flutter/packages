@@ -159,7 +159,7 @@ void main() {
       expect(matches, hasLength(1));
       expect(matches.first.subloc, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
-    }, skip: true);
+    });
 
     testWidgets('match top level route when location has trailing /',
         (WidgetTester tester) async {
