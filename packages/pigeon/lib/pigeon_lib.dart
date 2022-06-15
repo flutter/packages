@@ -1210,9 +1210,11 @@ options:
         help: 'The package that generated Java code will be in.')
     ..addOption('experimental_swift_out',
         help: 'Path to generated Swift file (.swift).')
-    ..addOption('kotlin_out', help: 'Path to generated Kotlin file (.kt).')
-    ..addOption('kotlin_package',
-        help: 'The package that generated Kotlin code will be in.')
+    ..addOption('experimental_kotlin_out',
+        help: 'Path to generated Kotlin file (.kt). (experimental)')
+    ..addOption('experimental_kotlin_package',
+        help:
+            'The package that generated Kotlin code will be in. (experimental)')
     ..addOption('experimental_cpp_header_out',
         help: 'Path to generated C++ header file (.h). (experimental)')
     ..addOption('experimental_cpp_source_out',
@@ -1258,9 +1260,9 @@ options:
         package: results['java_package'],
       ),
       swiftOut: results['experimental_swift_out'],
-      kotlinOut: results['kotlin_out'],
+      kotlinOut: results['experimental_kotlin_out'],
       kotlinOptions: KotlinOptions(
-        package: results['kotlin_package'],
+        package: results['experimental_kotlin_package'],
       ),
       cppHeaderOut: results['experimental_cpp_header_out'],
       cppSourceOut: results['experimental_cpp_source_out'],
