@@ -610,6 +610,9 @@ class KotlinGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.kotlinOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 dart_ast.Annotation? _findMetadata(
