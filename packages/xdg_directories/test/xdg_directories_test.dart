@@ -15,12 +15,21 @@ void main() {
   final Map<String, String> fakeEnv = <String, String>{};
   late Directory tmpDir;
 
-  String testPath(String subdir) => path.join(tmpDir.path, subdir);
+  String testRootPath() {
+    final String basePath = tmpDir.path;
+    return Platform.isWindows
+        // Strip the drive specifier when running tests on Windows since
+        // environment variables use : as a path list separator.
+        ? basePath.substring(basePath.indexOf(':') + 1)
+        : basePath;
+  }
+
+  String testPath(String subdir) => path.join(testRootPath(), subdir);
 
   setUp(() {
     tmpDir = Directory.systemTemp.createTempSync('xdg_test');
     fakeEnv.clear();
-    fakeEnv['HOME'] = tmpDir.path;
+    fakeEnv['HOME'] = testRootPath();
     fakeEnv['XDG_CACHE_HOME'] = testPath('.test_cache');
     fakeEnv['XDG_CONFIG_DIRS'] = testPath('etc/test_xdg');
     fakeEnv['XDG_CONFIG_HOME'] = testPath('.test_config');
@@ -59,7 +68,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
 
   test('Default fallback values work', () {
     fakeEnv.clear();
-    fakeEnv['HOME'] = tmpDir.path;
+    fakeEnv['HOME'] = testRootPath();
     expect(xdg.cacheHome.path, equals(testPath('.cache')));
     expect(xdg.configHome.path, equals(testPath('.config')));
     expect(xdg.dataHome.path, equals(testPath('.local/share')));
