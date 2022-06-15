@@ -1,3 +1,11 @@
+## 1.0.5
+
+* Fixes URL in document.
+
+## 1.0.4
+
+* Migrates from `ui.hash*` to `Object.hash*`.
+
 ## 1.0.3
 
 * Transitions internal testing from a command line lcov tool to a

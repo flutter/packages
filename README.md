@@ -1,6 +1,6 @@
 # Flutter Packages
 
-[![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages/master)
+[![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages/main)
 [![Release Status](https://github.com/flutter/packages/actions/workflows/release.yml/badge.svg)](https://github.com/flutter/packages/actions/workflows/release.yml)
 
 This repo is a companion repo to the main [flutter repo](
@@ -25,7 +25,7 @@ is ready you can [publish](https://flutter.io/developing-packages/#publish)
 to the [pub repository](https://pub.dartlang.org/).
 
 If you wish to contribute a change to any of the existing packages in this repo,
-please review our [contribution guide](https://github.com/flutter/packages/blob/master/CONTRIBUTING.md),
+please review our [contribution guide](https://github.com/flutter/packages/blob/main/CONTRIBUTING.md),
 and send a [pull request](https://github.com/flutter/packages/pulls).
 
 ## Packages

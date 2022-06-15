@@ -1,3 +1,12 @@
+## NEXT
+
+* Ignores lint warnings from new changes in Flutter master.
+* Suppresses deprecation warnings for changes to Flutter master.
+
+## 0.3.3+1
+
+* Migrates from `ui.hash*` to `Object.hash*`.
+
 ## 0.3.3
 
 * Avoids dynamic calls in equality checks.
