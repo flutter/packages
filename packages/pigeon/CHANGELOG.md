@@ -2,6 +2,10 @@
 
 * Adds experimental support for Kotlin generation.
 
+## 3.2.0
+
+* Adds experimental support for Swift generation.
+
 ## 3.1.5
 
 * Fixes potential crash bug when using a nullable nested type that has nonnull
@@ -33,7 +37,7 @@
 ## 3.0.4
 
 * [objc] Simplified some code output, including avoiding Xcode warnings about
-  using `NSNumber*` directly as boolean value.
+  using `NSNumber*` directly as boolean value.  
 * [tests] Moved test script to enable CI.
 
 ## 3.0.3

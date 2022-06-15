@@ -4,11 +4,11 @@
 
 import 'package:pigeon/pigeon.dart';
 
-class Result {
+class VoidArgFlutterResult {
   int? code;
 }
 
 @FlutterApi()
-abstract class Api {
-  Result getCode();
+abstract class VoidArgApi {
+  VoidArgFlutterResult getCode();
 }

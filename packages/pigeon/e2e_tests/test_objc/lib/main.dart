@@ -5,16 +5,16 @@
 import 'package:flutter/material.dart';
 import 'dartle.dart';
 
-class _MyFlutterSearchApi extends FlutterSearchApi {
+class _MyFlutterSearchApi extends MessageFlutterSearchApi {
   @override
-  SearchReply search(SearchRequest input) {
-    return SearchReply()..result = 'Hello ${input.query}, from Flutter';
+  MessageSearchReply search(MessageSearchRequest input) {
+    return MessageSearchReply()..result = 'Hello ${input.query}, from Flutter';
   }
 }
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterSearchApi.setup(_MyFlutterSearchApi());
+  MessageFlutterSearchApi.setup(_MyFlutterSearchApi());
   runApp(const MyApp());
 }
 
@@ -45,12 +45,13 @@ class _MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<_MyHomePage> {
   String _message = '';
-  RequestState _state = RequestState.pending;
+  MessageRequestState _state = MessageRequestState.pending;
 
   Future<void> _incrementCounter() async {
-    final SearchRequest request = SearchRequest()..query = 'Aaron';
-    final Api api = Api();
-    final SearchReply reply = await api.search(request);
+    final MessageSearchRequest request = MessageSearchRequest()
+      ..query = 'Aaron';
+    final MessageApi api = MessageApi();
+    final MessageSearchReply reply = await api.search(request);
     setState(() {
       _message = reply.result;
       _state = reply.state;

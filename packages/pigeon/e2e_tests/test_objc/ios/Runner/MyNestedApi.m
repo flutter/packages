@@ -5,10 +5,10 @@
 #import "MyNestedApi.h"
 
 @implementation MyNestedApi
-- (ACSearchReply *)searchNested:(ACNested *)input error:(FlutterError **)error {
-  ACSearchReply *reply = [[ACSearchReply alloc] init];
+- (ACMessageSearchReply *)searchNested:(ACMessageNested *)input error:(FlutterError **)error {
+  ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.result = [NSString stringWithFormat:@"Hello %@!", input.request.query];
-  reply.state = ACRequestStateSuccess;
+  reply.state = ACMessageRequestStateSuccess;
   return reply;
 }
 @end
