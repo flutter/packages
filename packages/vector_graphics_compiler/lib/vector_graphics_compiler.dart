@@ -21,7 +21,7 @@ export 'src/geometry/vertices.dart';
 export 'src/paint.dart';
 export 'src/svg/theme.dart';
 export 'src/vector_instructions.dart';
-export 'src/svg/tesselator.dart' show initializeLibTesselator;
+export 'src/svg/tessellator.dart' show initializeLibTesselator;
 export 'src/initialize_tessellator.dart'
     show initializeTessellatorFromFlutterCache;
 
