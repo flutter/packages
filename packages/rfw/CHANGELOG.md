@@ -1,3 +1,7 @@
+## 1.0.6
+
+* Updates goldens for flutter roll.
+
 ## 1.0.5
 
 * Fixes URL in document.
