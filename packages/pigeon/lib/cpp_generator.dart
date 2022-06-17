@@ -591,17 +591,28 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                   ifCondition = 'output.has_value()';
                   errorGetter = 'value';
                 } else {
+                  final HostDatatype hostType = getHostDatatype(
+                      returnType,
+                      root.classes,
+                      root.enums,
+                      (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+                  const String extractedValue = 'std::move(output).TakeValue()';
+                  final String wrapperType = hostType.isBuiltin
+                      ? 'flutter::EncodableValue'
+                      : 'flutter::CustomEncodableValue';
                   if (returnType.isNullable) {
+                    // The value is a std::optional, so needs an extra layer of
+                    // handling.
                     elseBody = '''
-$prefix\tauto output_optional = std::move(output).TakeValue();
+$prefix\tauto output_optional = $extractedValue;
 $prefix\tif (output_optional) {
-$prefix\t\twrapped.emplace($resultKey, std::move(output_optional).value());
+$prefix\t\twrapped.emplace($resultKey, $wrapperType(std::move(output_optional).value()));
 $prefix\t} else {
 $prefix\t\twrapped.emplace($resultKey, $nullValue);
 $prefix\t}${indent.newline}''';
                   } else {
                     elseBody =
-                        '$prefix\twrapped.emplace($resultKey, flutter::CustomEncodableValue(std::move(output).TakeValue()));${indent.newline}';
+                        '$prefix\twrapped.emplace($resultKey, $wrapperType($extractedValue));${indent.newline}';
                   }
                   ifCondition = 'output.hasError()';
                   errorGetter = 'error';
