@@ -352,7 +352,6 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.containers.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
     );
     expect(find.byType(DecoratedBox), findsNWidgets(6));
     expect(
@@ -428,7 +427,6 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.text.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
     );
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
@@ -451,7 +449,6 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.gridview.fixed.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
     );
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
@@ -474,7 +471,6 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.gridview.max.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
     );
 
     int sawGridDelegateDecoder = 0;
@@ -504,7 +500,6 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.gridview.custom.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
     );
   }, skip: !runGoldens);
 }

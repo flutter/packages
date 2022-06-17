@@ -1,6 +1,6 @@
 ## NEXT
 
-* Disable golden testing due to https://github.com/flutter/flutter/issues/106205
+* Update golden test files.
 
 ## 1.0.5
 
