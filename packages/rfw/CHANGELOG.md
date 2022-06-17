@@ -1,6 +1,6 @@
 ## 1.0.6
 
-* Updates goldens for flutter roll.
+* Updates golden tests to account for subpixel differences in Flutter roll.
 
 ## 1.0.5
 
