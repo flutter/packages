@@ -140,7 +140,9 @@ extension $_extensionName on $_className {
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
 
   void go(BuildContext context) => context.go(location, extra: this);
-}
+
+  void push(BuildContext context) => context.push(location, extra: this);
+} 
 ''';
 
   /// Returns this [RouteConfig] and all child [RouteConfig] instances.

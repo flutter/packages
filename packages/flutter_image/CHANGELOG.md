@@ -1,6 +1,21 @@
 ## NEXT
 
-- Updates package description.
+* Ignores lint warnings from new changes in Flutter master.
+* Suppresses more deprecation warnings for changes to Flutter master.
+* Removes duplicate test from test script.
+
+## 4.1.3
+
+* Suppresses deprecation warnings.
+
+## 4.1.2
+
+* Migrates from `ui.hash*` to `Object.hash*`.
+
+## 4.1.1
+
+* Updates package description.
+* Updates for non-nullable bindings.
 
 ## 4.1.0
 

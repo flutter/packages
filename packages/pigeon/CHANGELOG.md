@@ -1,5 +1,35 @@
-## NEXT
+## 3.1.5
 
+* Fixes potential crash bug when using a nullable nested type that has nonnull
+  fields in ObjC.
+
+## 3.1.4
+
+* [c++] Adds support for non-nullable fields, and fixes some issues with
+  nullable fields. The types of some getters and setter have changed, so this
+  may require updates to existing code.
+
+## 3.1.3
+
+* Adds support for enums in arguments to methods for HostApis.
+
+## 3.1.2
+
+* [c++] Fixes minor style issues in generated code. This includes the naming of
+  generated methods and arguments, so will require updates to existing code.
+
+## 3.1.1
+
+* Updates for non-nullable bindings.
+
+## 3.1.0
+
+* [c++] Adds C++ code generator.
+
+## 3.0.4
+
+* [objc] Simplified some code output, including avoiding Xcode warnings about
+  using `NSNumber*` directly as boolean value.
 * [tests] Moved test script to enable CI.
 
 ## 3.0.3
@@ -34,7 +64,7 @@
 
 * Fixes Java crash for nullable nested type.
 
-* ## 2.0.1
+## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.
 

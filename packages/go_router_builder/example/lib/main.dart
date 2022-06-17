@@ -26,6 +26,7 @@ class App extends StatelessWidget {
         child: MaterialApp.router(
           routeInformationParser: _router.routeInformationParser,
           routerDelegate: _router.routerDelegate,
+          routeInformationProvider: _router.routeInformationProvider,
           title: title,
           debugShowCheckedModeBanner: false,
         ),
@@ -155,12 +156,17 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(App.title),
+        centerTitle: true,
         actions: <Widget>[
+          ElevatedButton(
+            onPressed: () => const PersonRoute('f1', 1).push(context),
+            child: const Text('Push a route'),
+          ),
           IconButton(
             onPressed: info.logout,
             tooltip: 'Logout: ${info.userName}',
             icon: const Icon(Icons.logout),
-          )
+          ),
         ],
       ),
       body: ListView(

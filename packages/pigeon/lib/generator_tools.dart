@@ -5,10 +5,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
+
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '3.0.3';
+const String pigeonVersion = '3.1.5';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -89,11 +90,12 @@ class Indent {
     String? end,
     Function func, {
     bool addTrailingNewline = true,
+    int nestCount = 1,
   }) {
     if (begin != null) {
       _sink.write(begin + newline);
     }
-    nest(1, func);
+    nest(nestCount, func);
     if (end != null) {
       _sink.write(str() + end);
       if (addTrailingNewline) {
@@ -157,6 +159,7 @@ class HostDatatype {
   HostDatatype({
     required this.datatype,
     required this.isBuiltin,
+    required this.isNullable,
   });
 
   /// The [String] that can be printed into host code to represent the type.
@@ -164,6 +167,9 @@ class HostDatatype {
 
   /// `true` if the host datatype is something builtin.
   final bool isBuiltin;
+
+  /// `true` if the type corresponds to a nullable Dart datatype.
+  final bool isNullable;
 }
 
 /// Calculates the [HostDatatype] for the provided [NamedType].  It will check
@@ -180,18 +186,25 @@ HostDatatype getHostDatatype(NamedType field, List<Class> classes,
       final String customName = customResolver != null
           ? customResolver(field.type.baseName)
           : field.type.baseName;
-      return HostDatatype(datatype: customName, isBuiltin: false);
+      return HostDatatype(
+          datatype: customName,
+          isBuiltin: false,
+          isNullable: field.type.isNullable);
     } else if (enums.map((Enum x) => x.name).contains(field.type.baseName)) {
       final String customName = customResolver != null
           ? customResolver(field.type.baseName)
           : field.type.baseName;
-      return HostDatatype(datatype: customName, isBuiltin: false);
+      return HostDatatype(
+          datatype: customName,
+          isBuiltin: false,
+          isNullable: field.type.isNullable);
     } else {
       throw Exception(
           'unrecognized datatype for field:"${field.name}" of type:"${field.type.baseName}"');
     }
   } else {
-    return HostDatatype(datatype: datatype, isBuiltin: true);
+    return HostDatatype(
+        datatype: datatype, isBuiltin: true, isNullable: field.type.isNullable);
   }
 }
 
@@ -398,3 +411,7 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
     enumeration += 1;
   }
 }
+
+/// Returns true if the [TypeDeclaration] represents an enum.
+bool isEnum(Root root, TypeDeclaration type) =>
+    root.enums.map((Enum e) => e.name).contains(type.baseName);

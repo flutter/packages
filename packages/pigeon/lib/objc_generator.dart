@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/functional.dart';
-import 'package:pigeon/pigeon_lib.dart';
+import 'package:pigeon/pigeon_lib.dart' show TaskQueueType, Error;
 
 import 'ast.dart';
 import 'generator_tools.dart';
@@ -367,6 +367,7 @@ String _makeObjcSignature({
   required String returnType,
   required String lastArgType,
   required String lastArgName,
+  required bool Function(TypeDeclaration) isEnum,
   String Function(int, NamedType)? argNameFunc,
 }) {
   argNameFunc = argNameFunc ?? (int _, NamedType e) => e.name;
@@ -376,9 +377,13 @@ String _makeObjcSignature({
       _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
-      final String nullable = arg.type.isNullable ? 'nullable ' : '';
-      final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-      return '$nullable${argType.ptr.trim()}';
+      if (isEnum(arg.type)) {
+        return _className(options.prefix, arg.type.baseName);
+      } else {
+        final String nullable = arg.type.isNullable ? 'nullable ' : '';
+        final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
+        return '$nullable${argType.ptr.trim()}';
+      }
     }),
     lastArgType,
   );
@@ -401,7 +406,8 @@ String _makeObjcSignature({
 /// @end
 ///
 /// extern void FooSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Foo> *_Nullable api);
-void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
+void _writeHostApiDeclaration(
+    Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@protocol $apiName');
   for (final Method func in api.methods) {
@@ -438,7 +444,8 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
             options: options,
             returnType: returnType,
             lastArgName: lastArgName,
-            lastArgType: lastArgType) +
+            lastArgType: lastArgType,
+            isEnum: (TypeDeclaration t) => isEnum(root, t)) +
         ';');
   }
   indent.writeln('@end');
@@ -456,7 +463,8 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
 /// - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 /// - (void)add:(NSInteger)x to:(NSInteger)y completion:(void(^)(NSError *, NSInteger result)completion;
 /// @end
-void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
+void _writeFlutterApiDeclaration(
+    Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@interface $apiName : NSObject');
   indent.writeln(
@@ -471,6 +479,7 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
           returnType: 'void',
           lastArgName: 'completion',
           lastArgType: callbackType,
+          isEnum: (TypeDeclaration t) => isEnum(root, t),
         ) +
         ';');
   }
@@ -543,9 +552,9 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
         'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void);');
     indent.addln('');
     if (api.location == ApiLocation.host) {
-      _writeHostApiDeclaration(indent, api, options);
+      _writeHostApiDeclaration(indent, api, options, root);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApiDeclaration(indent, api, options);
+      _writeFlutterApiDeclaration(indent, api, options, root);
     }
   }
 
@@ -559,7 +568,7 @@ String _dictGetter(
     if (prefix != null) {
       className = '$prefix$className';
     }
-    return '[$className fromMap:GetNullableObject($dict, @"${field.name}")]';
+    return '[$className nullableFromMap:GetNullableObject($dict, @"${field.name}")]';
   } else {
     return 'GetNullableObject($dict, @"${field.name}")';
   }
@@ -572,7 +581,7 @@ String _dictValue(
   } else if (enumNames.contains(field.type.baseName)) {
     return '@(self.${field.name})';
   } else {
-    return '(self.${field.name} ? self.${field.name} : [NSNull null])';
+    return '(self.${field.name} ?: [NSNull null])';
   }
 }
 
@@ -585,7 +594,8 @@ String _getSafeArgName(int count, NamedType arg) =>
 
 /// Writes the definition code for a host [Api].
 /// See also: [_writeHostApiDeclaration]
-void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
+void _writeHostApiSource(
+    Indent indent, ObjcOptions options, Api api, Root root) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
 
@@ -612,8 +622,13 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.writeln('NSArray *args = $variable;');
       map3(wholeNumbers.take(func.arguments.length), argNames, func.arguments,
           (int count, String argName, NamedType arg) {
-        final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-        return '${argType.ptr}$argName = GetNullableObjectAtIndex(args, $count);';
+        if (isEnum(root, arg.type)) {
+          return '${_className(options.prefix, arg.type.baseName)} $argName = [GetNullableObjectAtIndex(args, $count) integerValue];';
+        } else {
+          final _ObjcPtr argType =
+              _objcTypeForDartType(options.prefix, arg.type);
+          return '${argType.ptr}$argName = GetNullableObjectAtIndex(args, $count);';
+        }
       }).forEach(indent.writeln);
     }
 
@@ -726,7 +741,8 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
 
 /// Writes the definition code for a flutter [Api].
 /// See also: [_writeFlutterApiDeclaration]
-void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
+void _writeFlutterApiSource(
+    Indent indent, ObjcOptions options, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
   final String apiName = _className(options.prefix, api.name);
 
@@ -761,8 +777,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';
     } else {
-      String makeVarOrNSNullExpression(String x) =>
-          '($x == nil) ? [NSNull null] : $x';
+      String makeVarOrNSNullExpression(String x) => '$x ?: [NSNull null]';
       sendArgument = '@[${argNames.map(makeVarOrNSNullExpression).join(', ')}]';
     }
     indent.write(_makeObjcSignature(
@@ -772,6 +787,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       lastArgName: 'completion',
       lastArgType: callbackType,
       argNameFunc: argNameFunc,
+      isEnum: (TypeDeclaration t) => isEnum(root, t),
     ));
     indent.scoped(' {', '}', () {
       indent.writeln('FlutterBasicMessageChannel *channel =');
@@ -838,13 +854,13 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 \tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
 \tif (error) {
 \t\terrorDict = @{
-\t\t\t\t@"${Keys.errorCode}": (error.code ? error.code : [NSNull null]),
-\t\t\t\t@"${Keys.errorMessage}": (error.message ? error.message : [NSNull null]),
-\t\t\t\t@"${Keys.errorDetails}": (error.details ? error.details : [NSNull null]),
+\t\t\t\t@"${Keys.errorCode}": (error.code ?: [NSNull null]),
+\t\t\t\t@"${Keys.errorMessage}": (error.message ?: [NSNull null]),
+\t\t\t\t@"${Keys.errorDetails}": (error.details ?: [NSNull null]),
 \t\t\t\t};
 \t}
 \treturn @{
-\t\t\t@"${Keys.result}": (result ? result : [NSNull null]),
+\t\t\t@"${Keys.result}": (result ?: [NSNull null]),
 \t\t\t@"${Keys.error}": errorDict,
 \t\t\t};
 }''');
@@ -864,6 +880,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
     indent.writeln('+ ($className *)fromMap:(NSDictionary *)dict;');
+    indent.writeln(
+        '+ (nullable $className *)nullableFromMap:(NSDictionary *)dict;');
     indent.writeln('- (NSDictionary *)toMap;');
     indent.writeln('@end');
   }
@@ -903,17 +921,20 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
         }
         indent.writeln('return $resultName;');
       });
+      indent.writeln(
+          '+ (nullable $className *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [$className fromMap:dict] : nil; }');
     }
 
     void writeToMap() {
       indent.write('- (NSDictionary *)toMap ');
       indent.scoped('{', '}', () {
-        indent.write('return [NSDictionary dictionaryWithObjectsAndKeys:');
-        for (final NamedType field in klass.fields) {
-          indent.add(_dictValue(classNames, enumNames, field) +
-              ', @"${field.name}", ');
-        }
-        indent.addln('nil];');
+        indent.write('return');
+        indent.scoped(' @{', '};', () {
+          for (final NamedType field in klass.fields) {
+            indent.writeln(
+                '@"${field.name}" : ${_dictValue(classNames, enumNames, field)},');
+          }
+        });
       });
     }
 
@@ -929,9 +950,9 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     _writeCodec(indent, codecName, options, api, root);
     indent.addln('');
     if (api.location == ApiLocation.host) {
-      _writeHostApiSource(indent, options, api);
+      _writeHostApiSource(indent, options, api, root);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApiSource(indent, options, api);
+      _writeFlutterApiSource(indent, options, api, root);
     }
   }
 
@@ -949,4 +970,24 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     indent.writeln('');
   }
   root.apis.forEach(writeApi);
+}
+
+/// Looks through the AST for features that aren't supported by the ObjC
+/// generator.
+List<Error> validateObjc(ObjcOptions options, Root root) {
+  final List<Error> errors = <Error>[];
+  for (final Api api in root.apis) {
+    for (final Method method in api.methods) {
+      for (final NamedType arg in method.arguments) {
+        if (isEnum(root, arg.type) && arg.type.isNullable) {
+          // TODO(gaaclarke): Add line number.
+          errors.add(Error(
+              message:
+                  'Nullable enum types aren\'t support in ObjC arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name}).'));
+        }
+      }
+    }
+  }
+
+  return errors;
 }

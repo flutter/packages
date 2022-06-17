@@ -8,8 +8,11 @@
 import 'package:pigeon/pigeon.dart';
 
 class NullFieldsSearchRequest {
-  NullFieldsSearchRequest(this.query);
+  NullFieldsSearchRequest(this.query, this.identifier);
   String? query;
+  // The following non-null field was added to reproduce
+  // https://github.com/flutter/flutter/issues/104871
+  int identifier;
 }
 
 enum NullFieldsSearchReplyType {

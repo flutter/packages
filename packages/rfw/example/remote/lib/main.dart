@@ -11,7 +11,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:rfw/rfw.dart';
 
-const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/master/packages/rfw/example/remote/remote_widget_libraries';
+const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/remote/remote_widget_libraries';
 
 void main() {
   runApp(const MaterialApp(home: Example()));

@@ -1,10 +1,21 @@
-gcp_credentials: ENCRYPTED[!2c88dee9c9d9805b214c9f7ad8f3bc8fae936cdb0f881d562101151c408c7e024a41222677d5831df90c60d2dd6cd80a!]
+gcp_credentials: ENCRYPTED[!ebad0a1f4f7a446b77944c33651460a7ab010b4617273cb016cf354eb8fc22aa92e37a3c58bfa4a0c40a799351e027a6!]
 
-# Don't re-run tests for tags when releasing a package.
-# Don't run on 'master' since it's a mirror of 'main'.
-only_if: $CIRRUS_TAG == '' && $CIRRUS_BRANCH != 'master'
+# Run on PRs and main branch post submit only. Don't run tests when tagging.
+only_if: $CIRRUS_TAG == '' && ($CIRRUS_PR != '' || $CIRRUS_BRANCH == 'main')
 env:
   CHANNEL: "master" # Default to master when not explicitly set by a task.
+
+install_chrome_linux_template: &INSTALL_CHROME_LINUX
+  env:
+    CHROME_NO_SANDBOX: true
+    CHROME_DOWNLOAD_DIR: /tmp/chromium
+    CHROME_EXECUTABLE: $CHROME_DOWNLOAD_DIR/chrome-linux/chrome
+    CHROMEDRIVER_EXECUTABLE: $CHROME_DOWNLOAD_DIR/chromedriver/chromedriver
+    PATH: $PATH:$CHROME_DOWNLOAD_DIR/chrome-linux
+  install_chromium_script:
+    # Install a pinned version of Chromium and its corresponding ChromeDriver.
+    # Setting CHROME_EXECUTABLE above causes this version to be used for tests.
+    - ./script/install_chromium.sh "$CHROME_DIR"
 
 tool_setup_template: &TOOL_SETUP_TEMPLATE
   tool_setup_script:
@@ -83,7 +94,7 @@ task:
       depends_on: format+analyze
       env:
         matrix:
-          CHANNEL: "2.5.3"
+          CHANNEL: "2.10.5"
           CHANNEL: "2.8.1"
       analyze_script:
         # Exclude:
@@ -128,6 +139,7 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+      << : *INSTALL_CHROME_LINUX
       local_tests_script:
         # pigeon tests currently don't support Linux:
         #   https://github.com/flutter/flutter/issues/100386
@@ -158,16 +170,9 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
-        CHROME_NO_SANDBOX: true
-        CHROME_DIR: /tmp/web_chromium/
-        CHROME_EXECUTABLE: $CHROME_DIR/chrome-linux/chrome
-      install_script:
-        # Install a pinned version of Chromium and its corresponding ChromeDriver.
-        # Setting CHROME_EXECUTABLE above causes this version to be used for tests.
-        - ./script/install_chromium.sh "$CHROME_DIR"
+      << : *INSTALL_CHROME_LINUX
       chromedriver_background_script:
-        - cd "$CHROME_DIR"
-        - ./chromedriver/chromedriver --port=4444
+        - $CHROMEDRIVER_EXECUTABLE --port=4444
       build_script:
         - ./script/tool_runner.sh build-examples --web
       drive_script:
@@ -177,11 +182,8 @@ task:
         matrix:
           CHROMIUM_BUILD: "768968" # Chromium 84.0.4147.0
           CHROMIUM_BUILD: "950363" # Chromium 98.0.4758.0
-        CHROME_NO_SANDBOX: true
-      install_chromium_script:
-        - ./script/install_chromium_for_benchmarks.sh
+      << : *INSTALL_CHROME_LINUX
       script:
-        - export CHROME_EXECUTABLE=$(pwd)/.chromium/chrome-linux/chrome
         - cd packages/web_benchmarks/testing/test_app
         - flutter packages get
         - cd ../..
@@ -226,10 +228,12 @@ task:
       local_tests_script:
         # flutter_image
         #   https://github.com/flutter/flutter/issues/100387
+        # cross_file
+        #   Custom tests need Chrome. (They run in linux-custom_package_tests)
         - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test
+        -   ./script/tool_runner.sh custom-test --exclude=cross_file
         - else
-        -   ./script/tool_runner.sh custom-test --exclude=flutter_image
+        -   ./script/tool_runner.sh custom-test --exclude=cross_file,flutter_image
         - fi
     ### macOS desktop tasks ###
     - name: macos-platform_tests

@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 # To set FETCH_HEAD for "git merge-base" to work
-git fetch origin master
+git fetch origin main
 
 # Pinned version of the plugin tools, to avoid breakage in this repository
 # when pushing updates from flutter/plugins.
