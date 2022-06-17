@@ -87,6 +87,7 @@ class GoRouteInformationParser
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
   }) {
+    name = name.toLowerCase();
     assert(() {
       log.info('getting location for name: '
           '"$name"'
