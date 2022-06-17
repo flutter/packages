@@ -1,3 +1,7 @@
+## 4.0.1
+
+- Fix: `unknown route name: *` exception.
+
 ## 4.0.0
 
 - Refactors go_router and introduces `GoRouteInformationProvider`. [Migration Doc](https://flutter.dev/go/go-router-v4-breaking-changes)
