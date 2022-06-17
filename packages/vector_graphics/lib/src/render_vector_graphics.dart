@@ -222,7 +222,7 @@ class RenderVectorGraphic extends RenderBox {
       return;
     }
     data.count -= 1;
-    if (data.count <= 0) {
+    if (data.count == 0 && _liveRasterCache.containsKey(data.key)) {
       _liveRasterCache.remove(data.key);
       data.image.dispose();
     }

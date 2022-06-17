@@ -205,7 +205,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       return;
     }
     data.count -= 1;
-    if (data.count <= 0) {
+    if (data.count == 0 && _livePictureCache.containsKey(data.key)) {
       _livePictureCache.remove(data.key);
       data.pictureInfo.picture.dispose();
     }
