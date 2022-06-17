@@ -1,4 +1,4 @@
-## Next
+## NEXT
 
 * Disable golden testing due to https://github.com/flutter/flutter/issues/106205
 
