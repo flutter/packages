@@ -742,25 +742,25 @@ void main() {
           name: 'doSomething',
           arguments: <NamedType>[
             NamedType(
-                name: 'boolArg',
+                name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: true,
                 )),
             NamedType(
-                name: 'intArg',
+                name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: true,
                 )),
             NamedType(
-                name: 'stringArg',
+                name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 )),
             NamedType(
-                name: 'listArg',
+                name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
@@ -769,7 +769,7 @@ void main() {
                   isNullable: true,
                 )),
             NamedType(
-                name: 'mapArg',
+                name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
@@ -779,7 +779,7 @@ void main() {
                   isNullable: true,
                 )),
             NamedType(
-                name: 'objectArg',
+                name: 'anObject',
                 type: const TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
@@ -806,12 +806,52 @@ void main() {
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(const bool* bool_arg, '
-              'const int64_t* int_arg, '
-              'const std::string* string_arg, '
-              'const flutter::EncodableList* list_arg, '
-              'const flutter::EncodableMap* map_arg, '
-              'const ParameterObject* object_arg)'));
+          contains('DoSomething(const bool* a_bool, '
+              'const int64_t* an_int, '
+              'const std::string* a_string, '
+              'const flutter::EncodableList* a_list, '
+              'const flutter::EncodableMap* a_map, '
+              'const ParameterObject* an_object)'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppSource(const CppOptions(), root, sink);
+      final String code = sink.toString();
+      // Most types should just use get_if, since the parameter is a pointer,
+      // and get_if will automatically handle null values (since a null
+      // EncodableValue will not match the queried type, so get_if will return
+      // nullptr).
+      expect(
+          code,
+          contains(
+              'const auto* a_bool_arg = std::get_if<bool>(&encodable_a_bool_arg);'));
+      expect(
+          code,
+          contains(
+              'const auto* a_string_arg = std::get_if<std::string>(&encodable_a_string_arg);'));
+      expect(
+          code,
+          contains(
+              'const auto* a_list_arg = std::get_if<flutter::EncodableList>(&encodable_a_list_arg);'));
+      expect(
+          code,
+          contains(
+              'const auto* a_map_arg = std::get_if<flutter::EncodableMap>(&encodable_a_map_arg);'));
+      // Ints are complicated since there are two possible pointer types, but
+      // the paramter always needs an int64_t*.
+      expect(
+          code,
+          contains(
+              'const int64_t an_int_arg_value = encodable_an_int_arg.IsNull() ? 0 : encodable_an_int_arg.LongValue();'));
+      expect(
+          code,
+          contains(
+              'const auto* an_int_arg = encodable_an_int_arg.IsNull() ? nullptr : &an_int_arg_value;'));
+      // Custom class types require an extra layer of extraction.
+      expect(
+          code,
+          contains(
+              'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<flutter::CustomEncodableValue>(encodable_an_object_arg)));'));
     }
   });
 
@@ -822,25 +862,25 @@ void main() {
           name: 'doSomething',
           arguments: <NamedType>[
             NamedType(
-                name: 'boolArg',
+                name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
             NamedType(
-                name: 'intArg',
+                name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
             NamedType(
-                name: 'stringArg',
+                name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
             NamedType(
-                name: 'listArg',
+                name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
@@ -849,7 +889,7 @@ void main() {
                   isNullable: false,
                 )),
             NamedType(
-                name: 'mapArg',
+                name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
@@ -859,7 +899,7 @@ void main() {
                   isNullable: false,
                 )),
             NamedType(
-                name: 'objectArg',
+                name: 'anObject',
                 type: const TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
@@ -886,12 +926,47 @@ void main() {
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(bool bool_arg, '
-              'int64_t int_arg, '
-              'const std::string& string_arg, '
-              'const flutter::EncodableList& list_arg, '
-              'const flutter::EncodableMap& map_arg, '
-              'const ParameterObject& object_arg)'));
+          contains('DoSomething(bool a_bool, '
+              'int64_t an_int, '
+              'const std::string& a_string, '
+              'const flutter::EncodableList& a_list, '
+              'const flutter::EncodableMap& a_map, '
+              'const ParameterObject& an_object)'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppSource(const CppOptions(), root, sink);
+      final String code = sink.toString();
+      // Most types should extract references. Since the type is non-nullable,
+      // there's only one possible type.
+      expect(
+          code,
+          contains(
+              'const auto& a_bool_arg = std::get<bool>(encodable_a_bool_arg);'));
+      expect(
+          code,
+          contains(
+              'const auto& a_string_arg = std::get<std::string>(encodable_a_string_arg);'));
+      expect(
+          code,
+          contains(
+              'const auto& a_list_arg = std::get<flutter::EncodableList>(encodable_a_list_arg);'));
+      expect(
+          code,
+          contains(
+              'const auto& a_map_arg = std::get<flutter::EncodableMap>(encodable_a_map_arg);'));
+      // Ints use a copy since there are two possible reference types, but
+      // the paramter always needs an int64_t.
+      expect(
+          code,
+          contains(
+            'const int64_t an_int_arg = encodable_an_int_arg.LongValue();',
+          ));
+      // Custom class types require an extra layer of extraction.
+      expect(
+          code,
+          contains(
+              'const auto& an_object_arg = std::any_cast<const ParameterObject&>(std::get<flutter::CustomEncodableValue>(encodable_an_object_arg));'));
     }
   });
 
