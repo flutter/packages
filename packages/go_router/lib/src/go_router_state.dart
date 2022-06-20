@@ -56,6 +56,59 @@ class GoRouterState {
   /// An extra object to pass along with the navigation.
   final Object? extra;
 
+  /// Handle extra object passed along with the navigation.
+  /// And if extra is a Map<String, dynamic> check if [key] exists in the map and return the value.
+  /// And if extra is a List<dynamic> check if has a [T] exists in the list and return first occurrence.
+  /// And if extra is a T return the T.
+  ///
+  /// If no value is found, return [defaultValue].
+  ///
+  /// Example:
+  /// ```dart
+  /// final extra = {
+  ///  'account': Account(
+  ///     id: '1',
+  ///     name: 'Jack Smith',
+  ///     email: 'jack.smith@email.com'),
+  ///  'someOtherObject': someOtherObject,
+  ///  };
+  ///
+  /// context.push(HomeScreen.route, extra: extra);
+  ///
+  ///final goRoute = GoRoute(
+  ///   path: '/home',
+  ///   builder: (BuildContext context, GoRouteState state) => BlocProvider<HomeCubit>(
+  ///     create: (context) => Di.instance.get<HomeCubit>(),
+  ///       child: HomeScreen(account: state.parseExtra<Account>('account'),
+  ///       someOtherObject: state.parseExtra<SomeOtherObject>('someOtherObject'),
+  ///     ),
+  ///   ),
+  /// );
+  /// ```
+  T? parseExtra<T>([String? key, T? defaultValue]) {
+    if (extra == null) {
+      return defaultValue;
+    }
+    if (extra is T) {
+      return extra as T;
+    }
+    if (key != null &&
+        extra is Map<String, dynamic> &&
+        (extra! as Map<String, dynamic>).containsKey(key) &&
+        (extra! as Map<String, dynamic>)[key] is T) {
+      return (extra! as Map<String, dynamic>)[key] as T;
+    }
+
+    if (extra is Iterable<dynamic>) {
+      for (final Object item in extra! as Iterable<dynamic>) {
+        if (item is T) {
+          return item as T;
+        }
+      }
+    }
+    return defaultValue;
+  }
+
   /// The error associated with this sub-route.
   final Exception? error;
 
