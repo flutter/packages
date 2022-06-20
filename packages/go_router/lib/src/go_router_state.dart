@@ -57,6 +57,7 @@ class GoRouterState {
   final Object? extra;
 
   /// Handle extra object passed along with the navigation.
+  ///
   /// And if extra is a Map<String, dynamic> check if [key] exists in the map and return the value.
   /// And if extra is a List<dynamic> check if has a [T] exists in the list and return first occurrence.
   /// And if extra is a T return the T.
