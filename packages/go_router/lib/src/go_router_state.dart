@@ -76,7 +76,7 @@ class GoRouterState {
   ///
   /// context.push(HomeScreen.route, extra: extra);
   ///
-  ///final goRoute = GoRoute(
+  /// final goRoute = GoRoute(
   ///   path: '/home',
   ///   builder: (BuildContext context, GoRouteState state) => BlocProvider<HomeCubit>(
   ///     create: (context) => Di.instance.get<HomeCubit>(),
