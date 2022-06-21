@@ -1,3 +1,7 @@
+## 4.0.1
+
+- Fix a bug where calling setLogging(false) does not clear listeners
+
 ## 4.0.0
 
 - Refactors go_router and introduces `GoRouteInformationProvider`. [Migration Doc](https://flutter.dev/go/go-router-v4-breaking-changes)
