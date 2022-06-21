@@ -1934,7 +1934,7 @@ Future<GoRouter> _router(
     redirectLimit: redirectLimit,
     errorBuilder: (BuildContext context, GoRouterState state) =>
         ErrorScreen(state.error!),
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false,
   );
   await tester.pumpWidget(
     MaterialApp.router(
