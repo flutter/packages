@@ -1684,7 +1684,6 @@ void main() {
     });
 
     testWidgets('calls [pop] on closest GoRouter', (WidgetTester tester) async {
-      print('run 2.2');
       final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
