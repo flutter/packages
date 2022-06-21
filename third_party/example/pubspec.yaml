@@ -11,6 +11,9 @@ dependencies:
   flutter_svg:
     path: ../
 
+dev_dependencies:
+  flutter_lints: ^2.0.1
+
 # The following section is specific to Flutter.
 flutter:
   uses-material-design: true
