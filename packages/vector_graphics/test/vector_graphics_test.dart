@@ -376,6 +376,36 @@ void main() {
     await tester.pumpWidget(const Placeholder());
     completer.complete(buffer.done());
   });
+
+  testWidgets('Loads a picture with loadPicture', (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+    final Completer<PictureInfo> completer = Completer<PictureInfo>();
+    await tester.pumpWidget(
+      Localizations(
+        delegates: const <LocalizationsDelegate<Object>>[
+          DefaultWidgetsLocalizations.delegate
+        ],
+        locale: const Locale('fr', 'CH'),
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: Builder(builder: (BuildContext context) {
+              vg
+                  .loadPicture(const AssetBytesLoader('foo.svg'), context)
+                  .then(completer.complete);
+              return const Center();
+            }),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(await completer.future, isA<PictureInfo>());
+    expect(debugLastLocale, const Locale('fr', 'CH'));
+    expect(debugLastTextDirection, TextDirection.rtl);
+  });
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {
