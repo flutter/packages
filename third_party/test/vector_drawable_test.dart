@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/src/svg/parser_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -115,4 +116,40 @@ void main() {
 
     recorder.endRecording();
   });
+
+  test('draws even if color is null', () async {
+    final DrawableShape shape = DrawableShape(
+      'test',
+      Path()..addRect(const Rect.fromLTRB(0, 0, 50, 50)),
+      const DrawableStyle(
+        fill: DrawablePaint(PaintingStyle.fill),
+        stroke: DrawablePaint(PaintingStyle.stroke),
+      ),
+    );
+
+    final PathRecordingCanvas canvas = PathRecordingCanvas();
+    shape.draw(canvas, Rect.largest);
+
+    expect(canvas.paths.length, 2);
+    expect(canvas.paints.length, 2);
+    expect(canvas.paints.first.style, PaintingStyle.fill);
+    expect(canvas.paints.first.color, colorBlack);
+    expect(canvas.paints.last.style, PaintingStyle.stroke);
+    expect(canvas.paints.last.color, colorBlack);
+  });
+}
+
+class PathRecordingCanvas implements Canvas {
+  final List<Path> paths = <Path>[];
+  final List<Paint> paints = <Paint>[];
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    if (invocation.memberName == #drawPath) {
+      paths.add(invocation.positionalArguments.first as Path);
+      paints.add(invocation.positionalArguments.last as Paint);
+      return;
+    }
+    return super.noSuchMethod(invocation);
+  }
 }

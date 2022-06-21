@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui'
-    show BlendMode, Color, ColorFilter, Locale, Rect, TextDirection, hashValues;
+    show BlendMode, Color, ColorFilter, Locale, Rect, TextDirection;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -157,7 +157,7 @@ class PictureConfiguration {
 
   @override
   int get hashCode =>
-      hashValues(bundle, locale, viewBox, platform, colorFilter);
+      Object.hash(bundle, locale, viewBox, platform, colorFilter);
 
   @override
   String toString() {
@@ -455,7 +455,7 @@ class PictureKey<T> {
   }
 
   @override
-  int get hashCode => hashValues(keyData.hashCode, colorFilter, theme);
+  int get hashCode => Object.hash(keyData.hashCode, colorFilter, theme);
 
   @override
   String toString() =>
@@ -502,7 +502,7 @@ class AssetBundlePictureKey extends PictureKey<String> {
   }
 
   @override
-  int get hashCode => hashValues(bundle, name, colorFilter, theme);
+  int get hashCode => Object.hash(bundle, name, colorFilter, theme);
 
   @override
   String toString() =>
@@ -582,7 +582,7 @@ class NetworkPictureKeyData {
   }
 
   @override
-  int get hashCode => hashValues(url, headers);
+  int get hashCode => Object.hash(url, headers);
 }
 
 /// Fetches the given URL from the network, associating it with the given scale.

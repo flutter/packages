@@ -41,7 +41,7 @@ class SvgTheme {
   }
 
   @override
-  int get hashCode => hashValues(currentColor, fontSize, xHeight);
+  int get hashCode => Object.hash(currentColor, fontSize, xHeight);
 
   @override
   String toString() {
