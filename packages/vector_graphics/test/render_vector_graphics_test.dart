@@ -461,6 +461,17 @@ void main() {
     renderVectorGraphic.dispose();
     expect(opacity._listeners, hasLength(0));
   });
+
+  test('RasterData.dispose is safe to call multiple times', () async {
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    ui.Canvas(recorder);
+    final ui.Image image = await recorder.endRecording().toImage(1, 1);
+    final RasterData data = RasterData(image, 1, const RasterKey('test', 1, 1));
+
+    data.dispose();
+
+    expect(data.dispose, returnsNormally);
+  });
 }
 
 class FakeCanvas extends Fake implements Canvas {
