@@ -12,6 +12,8 @@ library network;
 import 'dart:async';
 import 'dart:io' as io;
 import 'dart:math' as math;
+// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
+// ignore: unnecessary_import
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -131,6 +133,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
       // https://github.com/flutter/flutter/issues/105336
       // ignore: deprecated_member_use
       NetworkImageWithRetry key,
+      // ignore: deprecated_member_use
       DecoderCallback decode) async {
     assert(key == this);
 

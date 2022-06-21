@@ -2,6 +2,10 @@
 
 * Adds experimental support for Swift generation.
 
+## 3.1.6
+
+* Supports newer versions of `analyzer`.
+
 ## 3.1.5
 
 * Fixes potential crash bug when using a nullable nested type that has nonnull

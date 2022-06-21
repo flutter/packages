@@ -15,6 +15,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
+        routeInformationProvider: _router.routeInformationProvider,
         routeInformationParser: _router.routeInformationParser,
         routerDelegate: _router.routerDelegate,
         title: 'GoRouter Example',
@@ -39,6 +40,5 @@ class Page1Screen extends StatelessWidget {...}
 class Page2Screen extends StatelessWidget {...}
 ```
 
-But go_router can do oh so much more!
-
 # See [gorouter.dev](https://gorouter.dev) for go_router docs & samples
+
