@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes unit tests on Windows.
+
 ## 0.2.0+1
 
 * Marks the package as Linux-only using the new Dart `platforms` key.
