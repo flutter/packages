@@ -17,13 +17,20 @@ class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
   
   func send(onChannel channel: String, message: Data?) {}
   
-  func send(onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil) {
+  func send(
+    onChannel channel: String,
+    message: Data?,
+    binaryReply callback: FlutterBinaryReply? = nil
+  ) {
     if let result = result {
       callback?(codec.encode(result))
     }
   }
   
-  func setMessageHandlerOnChannel(_ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil) -> FlutterBinaryMessengerConnection {
+  func setMessageHandlerOnChannel(
+    _ channel: String,
+    binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
+  ) -> FlutterBinaryMessengerConnection {
     handlers[channel] = handler
     return .init(handlers.count)
   }
