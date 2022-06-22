@@ -1135,6 +1135,8 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
+    ..addFlag('java_use_generated_annotation',
+        help: 'Adds the java.annotation.Generated annotation to the output.')
     ..addOption('experimental_cpp_header_out',
         help: 'Path to generated C++ header file (.h). (experimental)')
     ..addOption('experimental_cpp_source_out',
@@ -1178,6 +1180,7 @@ options:
       javaOut: results['java_out'],
       javaOptions: JavaOptions(
         package: results['java_package'],
+        useGeneratedAnnotation: results['java_use_generated_annotation'],
       ),
       cppHeaderOut: results['experimental_cpp_header_out'],
       cppSourceOut: results['experimental_cpp_source_out'],

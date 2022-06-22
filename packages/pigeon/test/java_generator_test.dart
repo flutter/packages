@@ -1048,4 +1048,40 @@ void main() {
         contains(
             'new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.Api.doit", getCodec(), taskQueue)'));
   });
+
+  test('generated annotation', () {
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <NamedType>[],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions =
+        JavaOptions(className: 'Messages', useGeneratedAnnotation: true);
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@javax.annotation.Generated("dev.flutter.pigeon")'));
+  });
+
+  test('no generated annotation', () {
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <NamedType>[],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code,
+        isNot(contains('@javax.annotation.Generated("dev.flutter.pigeon")')));
+  });
 }
