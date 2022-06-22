@@ -1,3 +1,7 @@
+## 3.1.8
+
+* [C++] Fixes most non-class arguments and return values in host APIs.
+
 ## 3.1.7
 
 * [java] Adds option to add javax.annotation.Generated annotation.
