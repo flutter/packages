@@ -1,6 +1,9 @@
 ## 3.1.8
 
-* [C++] Fixes most non-class arguments and return values in host APIs.
+* [c++] Fixes most non-class arguments and return values in host APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
+
 
 ## 3.1.7
 
