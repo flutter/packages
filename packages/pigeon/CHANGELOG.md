@@ -1,3 +1,7 @@
+## 3.1.7
+
+* [java] Adds option to add javax.annotation.Generated annotation.
+
 ## 3.1.6
 
 * Supports newer versions of `analyzer`.
