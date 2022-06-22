@@ -168,10 +168,6 @@ template<class T> class ErrorOr {
 \tconst T& value() const { return std::get<T>(v); };
 \tconst FlutterError& error() const { return std::get<FlutterError>(v); };
 
-\t// This object can be quite large, so require move instead of copy.
-\tErrorOr(const ErrorOr<T>&) = delete;
-\tErrorOr<T>& operator=(const ErrorOr<T>&) = delete;
-
  private:
 $friendLines
 \tErrorOr() = default;
@@ -634,7 +630,7 @@ $prefix\t}${indent.newline}''';
               final String returnTypeName = _apiReturnType(returnType);
               if (method.isAsynchronous) {
                 methodArgument.add(
-                  '[&wrapped, &reply]($returnTypeName output) {${indent.newline}'
+                  '[&wrapped, &reply]($returnTypeName&& output) {${indent.newline}'
                   '${_wrapResponse('\treply(wrapped);${indent.newline}', method.returnType)}'
                   '}',
                 );
