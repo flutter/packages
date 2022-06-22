@@ -75,7 +75,13 @@ task:
           # the changes won't break analysis of other packages in the respository
           # that depend on it.
           - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-          - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
+          # This uses --run-on-dirty-packages rather than --packages-for-branch
+          # since only the packages changed by 'make-deps-path-based' need to be
+          # checked.
+          - ./script/tool_runner.sh analyze --run-on-dirty-packages --custom-analysis=script/configs/custom_analysis.yaml
+          # Restore the tree to a clean state, to avoid accidental issues if
+          # other script steps are added to this task.
+          - git checkout .
         analyze_script:
           - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
         pubspec_script: ./script/tool_runner.sh pubspec-check
@@ -103,15 +109,6 @@ task:
         matrix:
           CHANNEL: "2.10.5"
           CHANNEL: "2.8.1"
-      pathified_analyze_script:
-        # Run analysis with path-based dependencies to ensure that publishing
-        # the changes won't break analysis of other packages in the respository
-        # that depend on it.
-        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        # Exclude:
-        # - flutter_lints: does not depend on flutter, is only constrained by
-        #   Dart SDK version.
-        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml --exclude=flutter_lints
       analyze_script:
         # Exclude:
         # - flutter_lints: does not depend on flutter, is only constrained by
@@ -144,14 +141,14 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
-      pathified_script:
+      pathified_unit_test_script:
         # Run tests with path-based dependencies to ensure that publishing
         # the changes won't break tests of other packages in the respository
         # that depend on it.
         - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
         # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
         - ./script/tool_runner.sh test --exclude=flutter_image
-      script:
+      unit_test_script:
         # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
         - ./script/tool_runner.sh test --exclude=flutter_image
       depends_on:
