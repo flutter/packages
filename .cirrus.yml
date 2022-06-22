@@ -75,10 +75,10 @@ task:
           # the changes won't break analysis of other packages in the respository
           # that depend on it.
           - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-          # This uses --run-on-dirty-packages rather than --packages-for-branch
+          # This uses --run-on-changed-packages rather than --packages-for-branch
           # since only the packages changed by 'make-deps-path-based' need to be
           # checked.
-          - ./script/tool_runner.sh analyze --run-on-dirty-packages --custom-analysis=script/configs/custom_analysis.yaml
+          - ./script/tool_runner.sh analyze --run-on-changed-packages --custom-analysis=script/configs/custom_analysis.yaml
           # Restore the tree to a clean state, to avoid accidental issues if
           # other script steps are added to this task.
           - git checkout .
@@ -147,7 +147,7 @@ task:
         # that depend on it.
         - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
         # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
-        - ./script/tool_runner.sh test --run-on-dirty-packages --exclude=flutter_image
+        - ./script/tool_runner.sh test --run-on-changed-packages --exclude=flutter_image
       unit_test_script:
         # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
         - ./script/tool_runner.sh test --exclude=flutter_image
