@@ -230,4 +230,25 @@ void main() {
     expect(matches, hasLength(1));
     expect(matches.first.error, isNotNull);
   });
+
+  test('GoRouteInformationParser can match camelcase route names', () async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/test',
+        name: 'testRouteName',
+        builder: (_, __) => const Placeholder(),
+      ),
+    ];
+    final GoRouteInformationParser parser = GoRouteInformationParser(
+      routes: routes,
+      redirectLimit: 5,
+      topRedirect: (_) => null,
+    );
+    final List<GoRouteMatch> matches = await parser.parseRouteInformation(
+      RouteInformation(
+        location: parser.namedLocation('testRouteName'),
+      ),
+    );
+    expect(matches, hasLength(1));
+  });
 }
