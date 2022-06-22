@@ -14,6 +14,7 @@ class JavaOptions {
     this.className,
     this.package,
     this.copyrightHeader,
+    this.useGeneratedAnnotation,
   });
 
   /// The name of the class that will house all the generated classes.
@@ -25,6 +26,11 @@ class JavaOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
+  /// Determines if the `javax.annotation.Generated` is used in the output. This
+  /// is false by default since that dependency isn't available in plugins by
+  /// default .
+  final bool? useGeneratedAnnotation;
+
   /// Creates a [JavaOptions] from a Map representation where:
   /// `x = JavaOptions.fromMap(x.toMap())`.
   static JavaOptions fromMap(Map<String, Object> map) {
@@ -34,6 +40,7 @@ class JavaOptions {
       className: map['className'] as String?,
       package: map['package'] as String?,
       copyrightHeader: copyrightHeader?.cast<String>(),
+      useGeneratedAnnotation: map['useGeneratedAnnotation'] as bool?,
     );
   }
 
@@ -44,6 +51,8 @@ class JavaOptions {
       if (className != null) 'className': className!,
       if (package != null) 'package': package!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (useGeneratedAnnotation != null)
+        'useGeneratedAnnotation': useGeneratedAnnotation!,
     };
     return result;
   }
@@ -669,6 +678,9 @@ private static Map<String, Object> wrapError(Throwable exception) {
   indent.writeln('/** Generated class from Pigeon. */');
   indent.writeln(
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+  if (options.useGeneratedAnnotation ?? false) {
+    indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+  }
   indent.write('public class ${options.className!} ');
   indent.scoped('{', '}', () {
     for (final Enum anEnum in root.enums) {

@@ -98,6 +98,12 @@ void main() {
     expect(opts.cppHeaderOut, equals('foo.h'));
   });
 
+  test('parse args - java_use_generated_annotation', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--java_use_generated_annotation']);
+    expect(opts.javaOptions!.useGeneratedAnnotation, isTrue);
+  });
+
   test('parse args - experimental_cpp_source_out', () {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--experimental_cpp_source_out', 'foo.cpp']);
