@@ -147,7 +147,7 @@ task:
         # that depend on it.
         - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
         # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
-        - ./script/tool_runner.sh test --exclude=flutter_image
+        - ./script/tool_runner.sh test --run-on-dirty-packages --exclude=flutter_image
       unit_test_script:
         # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
         - ./script/tool_runner.sh test --exclude=flutter_image
