@@ -33,7 +33,7 @@ class EnumTests: XCTestCase {
       let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
       XCTAssertNotNil(outputMap)
       
-      let output = outputMap!["result"] as? DataWithEnum
+      let output = outputMap?["result"] as? DataWithEnum
       XCTAssertEqual(output, input)
       XCTAssertNil(outputMap?["error"])
       expectation.fulfill()

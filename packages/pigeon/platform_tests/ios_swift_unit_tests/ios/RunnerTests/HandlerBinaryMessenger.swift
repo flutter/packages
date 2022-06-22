@@ -22,17 +22,26 @@ class HandlerBinaryMessenger: NSObject, FlutterBinaryMessenger {
     // Method not implemented because this messenger is just for handling
   }
   
-  func send(onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil) {
+  func send(
+    onChannel channel: String,
+    message: Data?,
+    binaryReply callback: FlutterBinaryReply? = nil
+  ) {
+    guard let callback = callback else { return }
+    
     guard let args = self.codec.decode(message) as? [Any?] else {
-      callback?(nil)
+      callback(nil)
       return
     }
     
     let result = self.handler(args)
-    callback?(self.codec.encode(result))
+    callback(self.codec.encode(result))
   }
   
-  func setMessageHandlerOnChannel(_ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil) -> FlutterBinaryMessengerConnection {
+  func setMessageHandlerOnChannel(
+    _ channel: String,
+    binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
+  ) -> FlutterBinaryMessengerConnection {
     self.count += 1
     return FlutterBinaryMessengerConnection(self.count)
   }

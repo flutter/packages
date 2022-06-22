@@ -1211,6 +1211,8 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
+    ..addFlag('java_use_generated_annotation',
+        help: 'Adds the java.annotation.Generated annotation to the output.')
     ..addOption('experimental_swift_out',
         help: 'Path to generated Swift file (.swift).')
     ..addOption('experimental_kotlin_out',
@@ -1261,6 +1263,7 @@ options:
       javaOut: results['java_out'],
       javaOptions: JavaOptions(
         package: results['java_package'],
+        useGeneratedAnnotation: results['java_use_generated_annotation'],
       ),
       swiftOut: results['experimental_swift_out'],
       kotlinOut: results['experimental_kotlin_out'],
