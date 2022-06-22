@@ -18,7 +18,7 @@ using testing::FakeHostMessenger;
 class TestHostApi : public PrimitiveHostApi {
  public:
   TestHostApi() {}
-  virtual ~TestHostApi(){};
+  virtual ~TestHostApi() {}
 
  protected:
   ErrorOr<int64_t> AnInt(int64_t value) override { return value; }

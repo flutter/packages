@@ -53,7 +53,9 @@ FetchContent_MakeAvailable(googletest)
 # directly into the test binary rather than using the DLL.
 add_executable(${TEST_RUNNER}
   # Tests.
+  test/multiple_arity_test.cpp
   test/non_null_fields_test.cpp
+  test/nullable_returns_test.cpp
   test/null_fields_test.cpp
   test/pigeon_test.cpp
   test/primitive_test.cpp
