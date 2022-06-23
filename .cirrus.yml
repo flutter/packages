@@ -142,7 +142,6 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       unit_test_script:
-        # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
         - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
       pathified_unit_test_script:
         # Run tests with path-based dependencies to ensure that publishing
