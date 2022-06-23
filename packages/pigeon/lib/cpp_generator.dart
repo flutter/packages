@@ -142,13 +142,12 @@ void _writeErrorOr(Indent indent,
   indent.format('''
 class FlutterError {
  public:
-\tFlutterError();
 \tFlutterError(const std::string& arg_code)
-\t\t: code(arg_code) {};
+\t\t: code(arg_code) {}
 \tFlutterError(const std::string& arg_code, const std::string& arg_message)
-\t\t: code(arg_code), message(arg_message) {};
+\t\t: code(arg_code), message(arg_message) {}
 \tFlutterError(const std::string& arg_code, const std::string& arg_message, const flutter::EncodableValue& arg_details)
-\t\t: code(arg_code), message(arg_message), details(arg_details) {};
+\t\t: code(arg_code), message(arg_message), details(arg_details) {}
 \tstd::string code;
 \tstd::string message;
 \tflutter::EncodableValue details;
