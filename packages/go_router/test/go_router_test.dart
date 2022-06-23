@@ -1212,6 +1212,37 @@ void main() {
       );
       expect(router.location, '/');
     });
+
+    testWidgets(
+        'does not take precedence over platformDispatcher.defaultRouteName',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding
+          .instance.platformDispatcher.defaultRouteNameTestValue = '/dummy';
+
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'dummy',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await _router(
+        routes,
+        tester,
+        initialLocation: '/',
+      );
+      expect(router.routeInformationProvider.value.location, '/dummy');
+      TestWidgetsFlutterBinding
+          .instance.platformDispatcher.defaultRouteNameTestValue = '/';
+    });
   });
 
   group('params', () {
