@@ -1,9 +1,12 @@
-## 3.1.8
+## 3.2.1
 
 * [c++] Fixes most non-class arguments and return values in host APIs. The
   types of arguments and return values have changed, so this may require updates
   to existing code.
 
+## 3.2.0
+
+* Adds experimental support for Swift generation.
 
 ## 3.1.7
 
@@ -44,7 +47,7 @@
 ## 3.0.4
 
 * [objc] Simplified some code output, including avoiding Xcode warnings about
-  using `NSNumber*` directly as boolean value.
+  using `NSNumber*` directly as boolean value.  
 * [tests] Moved test script to enable CI.
 
 ## 3.0.3

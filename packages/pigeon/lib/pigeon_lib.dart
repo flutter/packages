@@ -22,6 +22,7 @@ import 'package:path/path.dart' as path;
 import 'package:pigeon/cpp_generator.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
+import 'package:pigeon/swift_generator.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
@@ -158,6 +159,8 @@ class PigeonOptions {
       this.objcOptions,
       this.javaOut,
       this.javaOptions,
+      this.swiftOut,
+      this.swiftOptions,
       this.cppHeaderOut,
       this.cppSourceOut,
       this.cppOptions,
@@ -190,6 +193,12 @@ class PigeonOptions {
 
   /// Options that control how Java will be generated.
   final JavaOptions? javaOptions;
+
+  /// Path to the swift file that will be generated.
+  final String? swiftOut;
+
+  /// Options that control how Swift will be generated.
+  final SwiftOptions? swiftOptions;
 
   /// Path to the ".h" C++ file that will be generated.
   final String? cppHeaderOut;
@@ -231,6 +240,10 @@ class PigeonOptions {
       javaOptions: map.containsKey('javaOptions')
           ? JavaOptions.fromMap((map['javaOptions'] as Map<String, Object>?)!)
           : null,
+      swiftOut: map['swiftOut'] as String?,
+      swiftOptions: map.containsKey('swiftOptions')
+          ? SwiftOptions.fromMap((map['swiftOptions'] as Map<String, Object>?)!)
+          : null,
       cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
       cppSourceOut: map['experimental_cppSourceOut'] as String?,
       cppOptions: map.containsKey('experimental_cppOptions')
@@ -259,6 +272,8 @@ class PigeonOptions {
       if (objcOptions != null) 'objcOptions': objcOptions!.toMap(),
       if (javaOut != null) 'javaOut': javaOut!,
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
+      if (swiftOut != null) 'swiftOut': swiftOut!,
+      if (swiftOptions != null) 'swiftOptions': swiftOptions!.toMap(),
       if (cppHeaderOut != null) 'experimental_cppHeaderOut': cppHeaderOut!,
       if (cppSourceOut != null) 'experimental_cppSourceOut': cppSourceOut!,
       if (cppOptions != null) 'experimental_cppOptions': cppOptions!.toMap(),
@@ -486,6 +501,28 @@ class JavaGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+}
+
+/// A [Generator] that generates Swift source code.
+class SwiftGenerator implements Generator {
+  /// Constructor for [SwiftGenerator].
+  const SwiftGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
+    swiftOptions = swiftOptions.merge(SwiftOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateSwift(swiftOptions, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.swiftOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -1137,6 +1174,8 @@ options:
         help: 'The package that generated Java code will be in.')
     ..addFlag('java_use_generated_annotation',
         help: 'Adds the java.annotation.Generated annotation to the output.')
+    ..addOption('experimental_swift_out',
+        help: 'Path to generated Swift file (.swift).')
     ..addOption('experimental_cpp_header_out',
         help: 'Path to generated C++ header file (.h). (experimental)')
     ..addOption('experimental_cpp_source_out',
@@ -1182,6 +1221,7 @@ options:
         package: results['java_package'],
         useGeneratedAnnotation: results['java_use_generated_annotation'],
       ),
+      swiftOut: results['experimental_swift_out'],
       cppHeaderOut: results['experimental_cpp_header_out'],
       cppSourceOut: results['experimental_cpp_source_out'],
       cppOptions: CppOptions(
@@ -1229,6 +1269,7 @@ options:
         <Generator>[
           const DartGenerator(),
           const JavaGenerator(),
+          const SwiftGenerator(),
           const CppHeaderGenerator(),
           const CppSourceGenerator(),
           const DartTestGenerator(),
