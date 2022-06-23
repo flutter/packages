@@ -130,9 +130,9 @@ TEST(PigeonTests, CallSearch) {
       .Times(1)
       .WillOnce(testing::SaveArg<1>(&handler));
   EXPECT_CALL(mock_api, Search(testing::_))
-      .WillOnce(Return(ByMove(ErrorOr<MessageSearchReply>(
-          MessageSearchReply()))));
-  Api::SetUp(&mock_messenger, &mock_api);
+      .WillOnce(
+          Return(ByMove(ErrorOr<MessageSearchReply>(MessageSearchReply()))));
+  MessageApi::SetUp(&mock_messenger, &mock_api);
   bool did_call_reply = false;
   flutter::BinaryReply reply = [&did_call_reply](const uint8_t* data,
                                                  size_t size) {
