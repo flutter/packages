@@ -161,7 +161,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       );
 
   /// Pop the top page off the GoRouter's page stack.
-  void pop() => routerDelegate.pop();
+  void pop() {
+    assert(() {
+      log.info('popping $location');
+      return true;
+    }());
+    routerDelegate.pop();
+  }
 
   /// Refresh the route.
   void refresh() {

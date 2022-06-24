@@ -1,3 +1,7 @@
+## 4.0.3
+
+- Adds missed popping log.
+
 ## 4.0.2
 
 - Fixes a bug where initialLocation took precedence over deep-links
