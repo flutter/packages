@@ -1,6 +1,10 @@
+## 4.0.2
+
+- Fixes a bug where initialLocation took precedence over deep-links
+
 ## 4.0.1
 
-- Fix a bug where calling setLogging(false) does not clear listeners
+- Fixes a bug where calling setLogging(false) does not clear listeners.
 
 ## 4.0.0
 
