@@ -46,9 +46,6 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
-    final String _effectiveInitialLocation = initialLocation ??
-        // ignore: unnecessary_non_null_assertion
-        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
     routeInformationParser = GoRouteInformationParser(
       routes: routes,
       topRedirect: redirect ?? (_) => null,
@@ -56,8 +53,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       debugRequireGoRouteInformationProvider: true,
     );
     routeInformationProvider = GoRouteInformationProvider(
-        initialRouteInformation:
-            RouteInformation(location: _effectiveInitialLocation),
+        initialRouteInformation: RouteInformation(
+            location: _effectiveInitialLocation(initialLocation)),
         refreshListenable: refreshListenable);
 
     routerDelegate = GoRouterDelegate(
@@ -167,7 +164,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   bool canPop() => routerDelegate.canPop();
 
   /// Pop the top page off the GoRouter's page stack.
-  void pop() => routerDelegate.pop();
+  void pop() {
+    assert(() {
+      log.info('popping $location');
+      return true;
+    }());
+    routerDelegate.pop();
+  }
 
   /// Refresh the route.
   void refresh() {
@@ -215,5 +218,17 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     routeInformationProvider.dispose();
     routerDelegate.dispose();
     super.dispose();
+  }
+
+  String _effectiveInitialLocation(String? initialLocation) {
+    final String platformDefault =
+        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+    if (initialLocation == null) {
+      return platformDefault;
+    } else if (platformDefault == '/') {
+      return initialLocation;
+    } else {
+      return platformDefault;
+    }
   }
 }
