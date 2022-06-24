@@ -56,6 +56,28 @@ void main() {
     });
   });
 
+  group('canPop', () {
+    testWidgets(
+      'It should return false if there is only 1 match in the stack',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = await createGoRouter(tester);
+
+        expect(goRouter.routerDelegate.matches.length, 1);
+        expect(goRouter.routerDelegate.canPop(), false);
+      },
+    );
+    testWidgets(
+      'It should return true if there is more than 1 match in the stack',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = await createGoRouter(tester)
+          ..push('/error');
+
+        expect(goRouter.routerDelegate.matches.length, 2);
+        expect(goRouter.routerDelegate.canPop(), true);
+      },
+    );
+  });
+
   testWidgets('dispose unsubscribes from refreshListenable',
       (WidgetTester tester) async {
     final FakeRefreshListenable refreshListenable = FakeRefreshListenable();
