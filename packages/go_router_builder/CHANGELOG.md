@@ -1,6 +1,6 @@
 ## 1.0.6
 
-* Use path-based deps in example.
+* Uses path-based deps in example.
 
 ## 1.0.5
 
