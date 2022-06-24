@@ -65,7 +65,7 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
     notifyListeners();
   }
 
-  /// Returns `true` if there are more than 1 pages in the stack.
+  /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() {
     return _matches.length > 1;
   }
