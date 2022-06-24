@@ -1,6 +1,22 @@
-## 4.1.0
+## 4.2.0
 
 - Add `parseExtra` method  to `GoRouterState`.
+
+## 4.1.0
+
+- Adds `bool canPop()` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
+
+## 4.0.3
+
+- Adds missed popping log.
+
+## 4.0.2
+
+- Fixes a bug where initialLocation took precedence over deep-links
+
+## 4.0.1
+
+- Fixes a bug where calling setLogging(false) does not clear listeners.
 
 ## 4.0.0
 
