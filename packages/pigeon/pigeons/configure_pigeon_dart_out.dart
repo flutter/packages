@@ -6,6 +6,6 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(dartOut: 'stdout', javaOut: 'stdout'))
 @HostApi()
-abstract class Api {
+abstract class ConfigurePigeonApi {
   void ping();
 }

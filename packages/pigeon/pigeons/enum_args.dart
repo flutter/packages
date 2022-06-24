@@ -4,17 +4,17 @@
 
 import 'package:pigeon/pigeon.dart';
 
-enum State {
+enum EnumArgsState {
   Pending,
   Success,
   Error,
 }
 
-class Data {
-  State? state;
+class EnumArgsData {
+  EnumArgsState? state;
 }
 
 @HostApi()
-abstract class EnumArg2Host {
-  void foo(State state);
+abstract class EnumArgs2Host {
+  void foo(EnumArgsState state);
 }

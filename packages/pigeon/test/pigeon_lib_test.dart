@@ -92,10 +92,22 @@ void main() {
     expect(opts.objcSourceOut, equals('foo.m'));
   });
 
+  test('parse args - swift_out', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--experimental_swift_out', 'Foo.swift']);
+    expect(opts.swiftOut, equals('Foo.swift'));
+  });
+
   test('parse args - experimental_cpp_header_out', () {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--experimental_cpp_header_out', 'foo.h']);
     expect(opts.cppHeaderOut, equals('foo.h'));
+  });
+
+  test('parse args - java_use_generated_annotation', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--java_use_generated_annotation']);
+    expect(opts.javaOptions!.useGeneratedAnnotation, isTrue);
   });
 
   test('parse args - experimental_cpp_source_out', () {
@@ -406,6 +418,16 @@ abstract class NestorApi {
     const ObjcSourceGenerator objcSourceGenerator = ObjcSourceGenerator();
     final StringBuffer buffer = StringBuffer();
     objcSourceGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('Swift generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options = PigeonOptions(
+        swiftOut: 'Foo.swift', copyrightHeader: './copyright_header.txt');
+    const SwiftGenerator swiftGenerator = SwiftGenerator();
+    final StringBuffer buffer = StringBuffer();
+    swiftGenerator.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 

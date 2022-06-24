@@ -7,7 +7,8 @@ import 'package:flutter_unit_tests/non_null_fields.gen.dart';
 
 void main() {
   test('test constructor', () {
-    final SearchRequest request = SearchRequest(query: 'what?');
+    final NonNullFieldSearchRequest request =
+        NonNullFieldSearchRequest(query: 'what?');
     expect(request.query, 'what?');
   });
 }

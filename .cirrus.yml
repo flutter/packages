@@ -70,7 +70,19 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: dart pub global run flutter_plugin_tools license-check
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
+        analyze_script:
+          - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
+        pathified_analyze_script:
+          # Run analysis with path-based dependencies to ensure that publishing
+          # the changes won't break analysis of other packages in the respository
+          # that depend on it.
+          - ./script/tool_runner.sh make-deps-path-based  --target-dependencies-with-non-breaking-updates 
+          # This uses --run-on-dirty-packages rather than --packages-for-branch
+          # since only the packages changed by 'make-deps-path-based' need to be
+          # checked.
+          - dart pub global run flutter_plugin_tools analyze --run-on-dirty-packages --custom-analysis=script/configs/custom_analysis.yaml
+          # Restore the tree to a clean state
+          - git checkout .
         pubspec_script: ./script/tool_runner.sh pubspec-check
         readme_script:
           - ./script/tool_runner.sh readme-check
@@ -128,9 +140,14 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
-      script:
-        # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
-        - ./script/tool_runner.sh test --exclude=flutter_image
+      unit_test_script:
+        - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
+      pathified_unit_test_script:
+        # Run tests with path-based dependencies to ensure that publishing
+        # the changes won't break tests of other packages in the respository
+        # that depend on it.
+        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
+        - dart pub global run flutter_plugin_tools test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
       depends_on:
         - format+analyze
     - name: linux-custom_package_tests
