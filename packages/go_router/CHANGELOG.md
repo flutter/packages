@@ -1,3 +1,7 @@
+## 4.1.0
+
+- Adds `bool canPop()` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
+
 ## 4.0.3
 
 - Adds missed popping log.
