@@ -81,8 +81,7 @@ task:
           # since only the packages changed by 'make-deps-path-based' need to be
           # checked.
           - dart pub global run flutter_plugin_tools analyze --run-on-dirty-packages --custom-analysis=script/configs/custom_analysis.yaml
-          # Restore the tree to a clean state, to avoid accidental issues if
-          # other script steps are added to this task.
+          # Restore the tree to a clean state
           - git checkout .
         pubspec_script: ./script/tool_runner.sh pubspec-check
         readme_script:
