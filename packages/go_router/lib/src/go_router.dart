@@ -163,6 +163,9 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         extra: extra,
       );
 
+  /// Returns `true` if there are more than 1 pages in the stack.
+  bool canPop() => routerDelegate.canPop();
+
   /// Pop the top page off the GoRouter's page stack.
   void pop() => routerDelegate.pop();
 
