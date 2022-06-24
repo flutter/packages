@@ -1684,7 +1684,6 @@ void main() {
     });
 
     testWidgets('calls [pop] on closest GoRouter', (WidgetTester tester) async {
-      print('run 2.2');
       final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
@@ -1934,7 +1933,7 @@ Future<GoRouter> _router(
     redirectLimit: redirectLimit,
     errorBuilder: (BuildContext context, GoRouterState state) =>
         ErrorScreen(state.error!),
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false,
   );
   await tester.pumpWidget(
     MaterialApp.router(
