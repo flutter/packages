@@ -4,11 +4,11 @@
 
 import 'package:pigeon/pigeon.dart';
 
-class Result {
+class VoidArgHostResult {
   int? code;
 }
 
 @HostApi()
-abstract class Api {
-  Result getCode();
+abstract class VoidArgHostApi {
+  VoidArgHostResult getCode();
 }

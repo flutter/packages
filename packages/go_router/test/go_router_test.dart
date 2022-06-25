@@ -1212,6 +1212,37 @@ void main() {
       );
       expect(router.location, '/');
     });
+
+    testWidgets(
+        'does not take precedence over platformDispatcher.defaultRouteName',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding
+          .instance.platformDispatcher.defaultRouteNameTestValue = '/dummy';
+
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'dummy',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await _router(
+        routes,
+        tester,
+        initialLocation: '/',
+      );
+      expect(router.routeInformationProvider.value.location, '/dummy');
+      TestWidgetsFlutterBinding
+          .instance.platformDispatcher.defaultRouteNameTestValue = '/';
+    });
   });
 
   group('params', () {
@@ -1684,7 +1715,6 @@ void main() {
     });
 
     testWidgets('calls [pop] on closest GoRouter', (WidgetTester tester) async {
-      print('run 2.2');
       final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
@@ -1934,7 +1964,7 @@ Future<GoRouter> _router(
     redirectLimit: redirectLimit,
     errorBuilder: (BuildContext context, GoRouterState state) =>
         ErrorScreen(state.error!),
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false,
   );
   await tester.pumpWidget(
     MaterialApp.router(

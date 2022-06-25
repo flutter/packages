@@ -19,21 +19,21 @@ class Mock implements TestHostApi {
   }
 
   @override
-  SearchReply search(SearchRequest arg) {
+  MessageSearchReply search(MessageSearchRequest arg) {
     log.add('search');
-    return SearchReply()..result = arg.query;
+    return MessageSearchReply()..result = arg.query;
   }
 }
 
 class MockNested implements TestNestedApi {
   bool didCall = false;
   @override
-  SearchReply search(Nested arg) {
+  MessageSearchReply search(MessageNested arg) {
     didCall = true;
     if (arg.request == null) {
-      return SearchReply();
+      return MessageSearchReply();
     } else {
-      return SearchReply()..result = arg.request?.query;
+      return MessageSearchReply()..result = arg.request?.query;
     }
   }
 }
@@ -42,25 +42,27 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('simple', () async {
-    final NestedApi api = NestedApi();
+    final MessageNestedApi api = MessageNestedApi();
     final MockNested mock = MockNested();
     TestNestedApi.setup(mock);
-    final SearchReply reply = await api.search(Nested()..request = null);
+    final MessageSearchReply reply =
+        await api.search(MessageNested()..request = null);
     expect(mock.didCall, true);
     expect(reply.result, null);
   });
 
   test('nested', () async {
-    final Api api = Api();
+    final MessageApi api = MessageApi();
     final Mock mock = Mock();
     TestHostApi.setup(mock);
-    final SearchReply reply = await api.search(SearchRequest()..query = 'foo');
+    final MessageSearchReply reply =
+        await api.search(MessageSearchRequest()..query = 'foo');
     expect(mock.log, <String>['search']);
     expect(reply.result, 'foo');
   });
 
   test('no-arg calls', () async {
-    final Api api = Api();
+    final MessageApi api = MessageApi();
     final Mock mock = Mock();
     TestHostApi.setup(mock);
     await api.initialize();
@@ -74,14 +76,14 @@ void main() {
       TestHostApi.setup(mock);
       expect(
         await const BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.Api.initialize',
+          'dev.flutter.pigeon.MessageApi.initialize',
           StandardMessageCodec(),
         ).send(<Object?>[null]),
         isEmpty,
       );
       try {
         await const BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.Api.search',
+          'dev.flutter.pigeon.MessageApi.search',
           StandardMessageCodec(),
         ).send(<Object?>[null]) as Map<Object?, Object?>?;
         expect(true, isFalse); // should not reach here
@@ -90,7 +92,7 @@ void main() {
         expect(
           error.toString(),
           contains(
-            'Argument for dev.flutter.pigeon.Api.search was null, expected non-null SearchRequest.',
+            'Argument for dev.flutter.pigeon.MessageApi.search was null, expected non-null MessageSearchRequest.',
           ),
         );
       }

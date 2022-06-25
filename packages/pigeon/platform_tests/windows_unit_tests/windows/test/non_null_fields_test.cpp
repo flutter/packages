@@ -9,7 +9,7 @@
 namespace non_null_fields_pigeontest {
 
 TEST(NonNullFields, Build) {
-  SearchRequest request;
+  NonNullFieldSearchRequest request;
   request.set_query("hello");
 
   EXPECT_EQ(request.query(), "hello");
