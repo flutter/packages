@@ -1,3 +1,19 @@
+## 4.1.0
+
+- Adds `bool canPop()` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
+
+## 4.0.3
+
+- Adds missed popping log.
+
+## 4.0.2
+
+- Fixes a bug where initialLocation took precedence over deep-links
+
+## 4.0.1
+
+- Fixes a bug where calling setLogging(false) does not clear listeners.
+
 ## 4.0.0
 
 - Refactors go_router and introduces `GoRouteInformationProvider`. [Migration Doc](https://flutter.dev/go/go-router-v4-breaking-changes)

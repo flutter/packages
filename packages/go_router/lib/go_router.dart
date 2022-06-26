@@ -70,6 +70,9 @@ extension GoRouterHelper on BuildContext {
         extra: extra,
       );
 
+  /// Returns `true` if there is more than 1 page on the stack.
+  bool canPop() => GoRouter.of(this).canPop();
+
   /// Pop the top page off the Navigator's page stack by calling
   /// [Navigator.pop].
   void pop() => GoRouter.of(this).pop();
