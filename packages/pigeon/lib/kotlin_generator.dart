@@ -200,7 +200,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                       });
                     }
                   } else if (method.returnType.isVoid) {
-                    indent.writeln('$call;');
+                    indent.writeln(call);
                     indent.writeln('wrapped["${Keys.result}"] = null');
                   } else {
                     indent.writeln('wrapped["${Keys.result}"] = $call');
@@ -211,11 +211,11 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                   indent.writeln(
                       'wrapped["${Keys.error}"] = wrapError(exception)');
                   if (method.isAsynchronous) {
-                    indent.writeln('reply.reply(wrapped);');
+                    indent.writeln('reply.reply(wrapped)');
                   }
                 });
                 if (!method.isAsynchronous) {
-                  indent.writeln('reply.reply(wrapped);');
+                  indent.writeln('reply.reply(wrapped)');
                 }
               });
             }, addTrailingNewline: false);
@@ -238,9 +238,7 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 
 /// Writes the code for a flutter [Api], [api].
 /// Example:
-/// class Foo {
-///   private let binaryMessenger: FlutterBinaryMessenger
-///   init(binaryMessenger: FlutterBinaryMessenger) {...}
+/// class Foo(private val binaryMessenger: BinaryMessenger) {
 ///   fun add(x: Int, y: Int, callback: (Int?) -> Unit) {...}
 /// }
 void _writeFlutterApi(Indent indent, Api api) {
@@ -249,7 +247,7 @@ void _writeFlutterApi(Indent indent, Api api) {
       '/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.*/');
   final String apiName = api.name;
   indent.writeln('@Suppress("UNCHECKED_CAST")');
-  indent.write('class $apiName(val binaryMessenger: BinaryMessenger) ');
+  indent.write('class $apiName(private val binaryMessenger: BinaryMessenger) ');
   indent.scoped('{', '}', () {
     indent.write('companion object ');
     indent.scoped('{', '}', () {
@@ -262,8 +260,9 @@ void _writeFlutterApi(Indent indent, Api api) {
 
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
-      final String returnType =
-          func.returnType.isVoid ? '' : _kotlinTypeForDartType(func.returnType);
+      final String returnType = func.returnType.isVoid
+          ? ''
+          : _nullsafeKotlinTypeForDartType(func.returnType);
       final String nullsafe = func.returnType.isNullable ? '?' : '';
       String sendArgument;
       if (func.arguments.isEmpty) {
@@ -271,8 +270,8 @@ void _writeFlutterApi(Indent indent, Api api) {
             'fun ${func.name}(callback: ($returnType$nullsafe) -> Unit) ');
         sendArgument = 'null';
       } else {
-        final Iterable<String> argTypes =
-            func.arguments.map((NamedType e) => _kotlinTypeForDartType(e.type));
+        final Iterable<String> argTypes = func.arguments
+            .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
         final Iterable<String> argNames =
             indexMap(func.arguments, _getSafeArgumentName);
         sendArgument = 'listOf(${argNames.join(', ')})';
@@ -330,7 +329,7 @@ String _kotlinTypeForBuiltinGenericDartType(TypeDeclaration type) {
     if (type.baseName == 'List') {
       return 'List<Any?>';
     } else if (type.baseName == 'Map') {
-      return 'HashMap<*, Any?>';
+      return 'HashMap<Any, Any?>';
     } else {
       return 'Any';
     }
@@ -411,7 +410,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
   }
 
   void writeEnum(Enum anEnum) {
-    indent.write('enum class ${anEnum.name}(var raw: Int) ');
+    indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.scoped('{', '}', () {
       // We use explicit indexing here as use of the ordinal() method is
       // discouraged. The toMap and fromMap API matches class API to allow
@@ -422,8 +421,6 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
         indent.write('${member.toUpperCase()}($index)');
         if (index != anEnum.members.length - 1) {
           indent.addln(',');
-        } else {
-          indent.addln(';');
         }
         index++;
       }
