@@ -413,17 +413,13 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
   void writeEnum(Enum anEnum) {
     indent.write('enum class ${anEnum.name}(var raw: Int) ');
     indent.scoped('{', '}', () {
-      String toPascalCase(String s) {
-        return s[0].toUpperCase() + s.substring(1);
-      }
-
       // We use explicit indexing here as use of the ordinal() method is
       // discouraged. The toMap and fromMap API matches class API to allow
       // the same code to work with enums and classes, but this
       // can also be done directly in the host and flutter APIs.
       int index = 0;
       for (final String member in anEnum.members) {
-        indent.write('${toPascalCase(member)}($index)');
+        indent.write('${member.toUpperCase()}($index)');
         if (index != anEnum.members.length - 1) {
           indent.addln(',');
         } else {
