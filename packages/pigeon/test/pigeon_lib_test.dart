@@ -101,7 +101,7 @@ void main() {
   test('parse args - kotlin_out', () {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--experimental_kotlin_out', 'Foo.kt']);
-    expect(opts.swiftOut, equals('Foo.kt'));
+    expect(opts.kotlinOut, equals('Foo.kt'));
   });
 
   test('parse args - kotlin_package', () {
