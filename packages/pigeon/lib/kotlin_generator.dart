@@ -56,17 +56,11 @@ String _getCodecName(Api api) => '${api.name}Codec';
 void _writeCodec(Indent indent, Api api, Root root) {
   final String codecName = _getCodecName(api);
   indent.writeln('@Suppress("UNCHECKED_CAST")');
-  indent.write(
-      'private class $codecName private constructor() : StandardMessageCodec() ');
+  indent.write('private object $codecName : StandardMessageCodec() ');
   indent.scoped('{', '}', () {
-    indent.write('companion object ');
-    indent.scoped('{', '}', () {
-      indent.writeln('val INSTANCE = $codecName()');
-    });
-
     if (getCodecClasses(api, root).isNotEmpty) {
       indent.write(
-          'override fun readValueOfType(type: Byte, buffer: ByteBuffer?): Any? ');
+          'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? ');
       indent.scoped('{', '}', () {
         indent.write('return when (type) ');
         indent.scoped('{', '}', () {
@@ -86,7 +80,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
       });
 
       indent.write(
-          'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) ');
+          'override fun writeValue(stream: ByteArrayOutputStream, value: Any) ');
       indent.writeScoped('{', '}', () {
         indent.write('when (value) ');
         indent.scoped('{', '}', () {
@@ -113,7 +107,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
 ///     fun setup(binaryMessenger: BinaryMessenger, api: Api) {...}
 ///   }
 /// }
-void _writeHostApi(Indent indent, Api api) {
+void _writeHostApi(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
 
   final String apiName = api.name;
@@ -126,7 +120,7 @@ void _writeHostApi(Indent indent, Api api) {
       final List<String> argSignature = <String>[];
       if (method.arguments.isNotEmpty) {
         final Iterable<String> argTypes = method.arguments
-            .map((NamedType e) => _kotlinTypeForDartType(e.type));
+            .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
         final Iterable<String> argNames =
             method.arguments.map((NamedType e) => e.name);
         argSignature
@@ -153,9 +147,8 @@ void _writeHostApi(Indent indent, Api api) {
     indent.write('companion object ');
     indent.scoped('{', '}', () {
       indent.writeln('/** The codec used by $apiName. */');
-      indent.write('val codec: MessageCodec<Any?> by lazy ');
-      indent.scoped('{', '}', () {
-        indent.writeln('${_getCodecName(api)}.INSTANCE');
+      indent.scoped('val codec: MessageCodec<Any?> by lazy {', '}', () {
+        indent.writeln(_getCodecName(api));
       });
       indent.writeln(
           '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
@@ -186,21 +179,11 @@ void _writeHostApi(Indent indent, Api api) {
                   if (method.arguments.isNotEmpty) {
                     indent.writeln('val args = message as List<Any?>');
                     enumerate(method.arguments, (int index, NamedType arg) {
-                      // The StandardMessageCodec can give us [Int, Long] for
-                      // a Dart 'int'.  To keep things simple we just use 64bit
-                      // longs in Pigeon with Kotlin.
-                      final bool isInt = arg.type.baseName == 'int';
-                      final String argType =
-                          isInt ? 'Long' : _kotlinTypeForDartType(arg.type);
-                      final String argCast = isInt ? '.longValue()' : '';
                       final String argName = _getSafeArgumentName(index, arg);
-                      indent
-                          .writeln('val $argName = args[$index] as? $argType');
-                      indent.inc();
+                      final String argIndex = 'args[$index]';
                       indent.writeln(
-                          '?: throw NullPointerException("$argName unexpectedly null.")');
-                      indent.dec();
-                      methodArgument.add('$argName$argCast');
+                          'val $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
+                      methodArgument.add(argName);
                     });
                   }
                   final String call =
@@ -265,6 +248,7 @@ void _writeFlutterApi(Indent indent, Api api) {
   indent.writeln(
       '/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.*/');
   final String apiName = api.name;
+  indent.writeln('@Suppress("UNCHECKED_CAST")');
   indent.write('class $apiName(val binaryMessenger: BinaryMessenger) ');
   indent.scoped('{', '}', () {
     indent.write('companion object ');
@@ -272,7 +256,7 @@ void _writeFlutterApi(Indent indent, Api api) {
       indent.writeln('/** The codec used by $apiName. */');
       indent.write('val codec: MessageCodec<Any?> by lazy ');
       indent.scoped('{', '}', () {
-        indent.writeln('${_getCodecName(api)}.INSTANCE');
+        indent.writeln(_getCodecName(api));
       });
     });
 
@@ -323,6 +307,18 @@ void _writeFlutterApi(Indent indent, Api api) {
   });
 }
 
+String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
+  if (isEnum(root, type)) {
+    final String forceUnwrap = type.isNullable ? '' : '!!';
+    final String nullableConditionPrefix =
+        type.isNullable ? '$value == null ? null : ' : '';
+    return '$nullableConditionPrefix${_kotlinTypeForDartType(type)}.ofRaw($value as Int)$forceUnwrap';
+  } else {
+    final String castUnwrap = type.isNullable ? '?' : '';
+    return '$value as$castUnwrap ${_kotlinTypeForDartType(type)}';
+  }
+}
+
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Kotlin code.
 String _flattenTypeArguments(List<TypeDeclaration> args) {
@@ -354,7 +350,7 @@ String? _kotlinTypeForBuiltinDartType(TypeDeclaration type) {
     'void': 'Void',
     'bool': 'Boolean',
     'String': 'String',
-    'int': 'Int',
+    'int': 'Long',
     'double': 'Double',
     'Uint8List': 'ByteArray',
     'Int32List': 'IntArray',
@@ -450,7 +446,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
   void writeDataClass(Class klass) {
     void writeField(NamedType field) {
       indent.write(
-          'var ${field.name}: ${_nullsafeKotlinTypeForDartType(field.type)}');
+          'val ${field.name}: ${_nullsafeKotlinTypeForDartType(field.type)}');
       final String defaultNil = field.type.isNullable ? ' = null' : '';
       indent.add(defaultNil);
     }
@@ -489,7 +485,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
       indent.write('companion object ');
       indent.scoped('{', '}', () {
         indent.writeln('@Suppress("UNCHECKED_CAST")');
-        indent.write('fun fromMap(map: HashMap<String, Any?>): $className? ');
+        indent.write('fun fromMap(map: HashMap<String, Any?>): $className ');
 
         indent.scoped('{', '}', () {
           for (final NamedType field in klass.fields) {
@@ -519,22 +515,14 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
             } else {
               if (!hostDatatype.isBuiltin &&
                   rootClassNameSet.contains(field.type.baseName)) {
-                indent.write(
-                    'val ${field.name} = ($mapValue as? HashMap<String, Any?>)?.let ');
-                indent.scoped('{', '}', () {
-                  indent.writeln('$fieldType.fromMap(it)');
-                }, addTrailingNewline: false);
-                indent.addln(' ?: return null');
+                indent.writeln(
+                    'val ${field.name} = $fieldType.fromMap($mapValue as HashMap<String, Any?>)');
               } else if (!hostDatatype.isBuiltin &&
                   rootEnumNameSet.contains(field.type.baseName)) {
-                indent.write('val ${field.name} = ($mapValue as? Int)?.let ');
-                indent.scoped('{', '}', () {
-                  indent.writeln('$fieldType.ofRaw(it)');
-                }, addTrailingNewline: false);
-                indent.addln(' ?: return null');
+                indent.write(
+                    'val ${field.name} = $fieldType.ofRaw($mapValue as Int)!!');
               } else {
-                indent.writeln(
-                    'val ${field.name} = ($mapValue as? $fieldType) ?: return null');
+                indent.writeln('val ${field.name} = $mapValue as $fieldType');
               }
             }
           }
@@ -552,7 +540,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
 
     indent.writeln(
         '/** Generated class from Pigeon that represents data sent in messages. */');
-    indent.write('data class ${klass.name} (');
+    indent.write('data class ${klass.name}(');
     indent.scoped('', '', () {
       for (final NamedType element in klass.fields) {
         writeField(element);
@@ -570,7 +558,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
 
   void writeApi(Api api) {
     if (api.location == ApiLocation.host) {
-      _writeHostApi(indent, api);
+      _writeHostApi(indent, api, root);
     } else if (api.location == ApiLocation.flutter) {
       _writeFlutterApi(indent, api);
     }
