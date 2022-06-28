@@ -21,7 +21,7 @@ void main() {
 /// Main widget for the tests.
 class MyApp extends StatelessWidget {
   /// Creates the main widget for the tests.
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
 }
 
 class _MyHomePage extends StatefulWidget {
-  const _MyHomePage({Key key, this.title}) : super(key: key);
+  const _MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
@@ -53,8 +53,8 @@ class _MyHomePageState extends State<_MyHomePage> {
     final MessageApi api = MessageApi();
     final MessageSearchReply reply = await api.search(request);
     setState(() {
-      _message = reply.result;
-      _state = reply.state;
+      _message = reply.result ?? '(null)';
+      _state = reply.state ?? MessageRequestState.failure;
     });
   }
 
