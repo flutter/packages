@@ -1,3 +1,7 @@
+## 3.2.2
+
+* Adds `unnecessary_import` to linter ignore list for `package:flutter/foundation.dart`.
+
 ## 3.2.1
 
 * Removes `@dart = 2.12` from generated Dart code.
