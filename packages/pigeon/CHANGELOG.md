@@ -1,3 +1,7 @@
+## 3.2.3
+
+* Adds `unnecessary_import` to linter ignore list in generated dart tests.
+
 ## 3.2.2
 
 * Adds `unnecessary_import` to linter ignore list for `package:flutter/foundation.dart`.
