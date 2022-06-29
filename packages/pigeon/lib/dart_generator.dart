@@ -603,7 +603,7 @@ void generateTestDart(
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(
-    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis',
+    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import',
   );
   indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
   indent.writeln('import \'dart:async\';');
