@@ -53,7 +53,7 @@ void main() {
     expect(matches[1].extra, extra);
     expect(matches[1].fullUriString, '/abc?def=ghi');
     expect(matches[1].subloc, '/abc');
-    expect(matches[1].route, routes[0].routes[0]);
+    expect(matches[1].route, routes[0].routes.first);
   });
 
   test('GoRouteInformationParser returns error when unknown route', () async {
