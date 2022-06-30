@@ -44,8 +44,8 @@ class GoRouteInformationParser
     }());
   }
 
-  /// List of top level routes used by the go router delegate.
-  final List<GoRoute> routes;
+  /// Iterable of top level routes used by the go router delegate.
+  final Iterable<GoRoute> routes;
 
   /// The limit for the number of consecutive redirects.
   final int redirectLimit;
@@ -64,7 +64,7 @@ class GoRouteInformationParser
 
   final Map<String, String> _nameToPath = <String, String>{};
 
-  void _cacheNameToPath(String parentFullPath, List<GoRoute> childRoutes) {
+  void _cacheNameToPath(String parentFullPath, Iterable<GoRoute> childRoutes) {
     for (final GoRoute route in childRoutes) {
       final String fullPath = concatenatePaths(parentFullPath, route.path);
 
@@ -311,7 +311,7 @@ class GoRouteInformationParser
     required String loc,
     required String restLoc,
     required String parentSubloc,
-    required List<GoRoute> routes,
+    required Iterable<GoRoute> routes,
     required String parentFullpath,
     required Map<String, String> queryParams,
     required Object? extra,
@@ -400,7 +400,7 @@ class GoRouteInformationParser
   }
 
   void _debugLogFullPathsFor(
-    List<GoRoute> routes,
+    Iterable<GoRoute> routes,
     String parentFullpath,
     int depth,
   ) {

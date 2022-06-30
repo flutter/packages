@@ -25,7 +25,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
   GoRouter({
-    required List<GoRoute> routes,
+    required Iterable<GoRoute> routes,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
     GoRouterRedirect? redirect,
