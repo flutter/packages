@@ -1,3 +1,7 @@
+## 4.1.1
+
+- Changes the type of `routes` of `GoRouter` and `GoRoute` from `List<GoRoute>` to `Iterable<GoRoute>`.
+
 ## 4.1.0
 
 - Adds `bool canPop()` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
