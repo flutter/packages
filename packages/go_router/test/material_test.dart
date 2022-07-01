@@ -5,26 +5,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/go_router_cupertino.dart';
+import 'package:go_router/src/pages/material.dart';
 
-import 'error_screen_helpers.dart';
+import 'helpers/error_screen_helpers.dart';
 
 void main() {
-  group('isCupertinoApp', () {
-    testWidgets('returns [true] when CupertinoApp is present',
-        (WidgetTester tester) async {
-      final GlobalKey<_DummyStatefulWidgetState> key =
-          GlobalKey<_DummyStatefulWidgetState>();
-      await tester.pumpWidget(
-        CupertinoApp(
-          home: DummyStatefulWidget(key: key),
-        ),
-      );
-      final bool isCupertino = isCupertinoApp(key.currentContext! as Element);
-      expect(isCupertino, true);
-    });
-
-    testWidgets('returns [false] when MaterialApp is present',
+  group('isMaterialApp', () {
+    testWidgets('returns [true] when MaterialApp is present',
         (WidgetTester tester) async {
       final GlobalKey<_DummyStatefulWidgetState> key =
           GlobalKey<_DummyStatefulWidgetState>();
@@ -33,18 +20,31 @@ void main() {
           home: DummyStatefulWidget(key: key),
         ),
       );
-      final bool isCupertino = isCupertinoApp(key.currentContext! as Element);
-      expect(isCupertino, false);
+      final bool isMaterial = isMaterialApp(key.currentContext! as Element);
+      expect(isMaterial, true);
+    });
+
+    testWidgets('returns [false] when CupertinoApp is present',
+        (WidgetTester tester) async {
+      final GlobalKey<_DummyStatefulWidgetState> key =
+          GlobalKey<_DummyStatefulWidgetState>();
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: DummyStatefulWidget(key: key),
+        ),
+      );
+      final bool isMaterial = isMaterialApp(key.currentContext! as Element);
+      expect(isMaterial, false);
     });
   });
 
-  test('pageBuilderForCupertinoApp creates a [CupertinoPage] accordingly', () {
+  test('pageBuilderForMaterialApp creates a [MaterialPage] accordingly', () {
     final UniqueKey key = UniqueKey();
     const String name = 'name';
     const String arguments = 'arguments';
     const String restorationId = 'restorationId';
     const DummyStatefulWidget child = DummyStatefulWidget();
-    final CupertinoPage<void> page = pageBuilderForCupertinoApp(
+    final MaterialPage<void> page = pageBuilderForMaterialApp(
       key: key,
       name: name,
       arguments: arguments,
@@ -58,12 +58,12 @@ void main() {
     expect(page.child, child);
   });
 
-  group('GoRouterCupertinoErrorScreen', () {
+  group('GoRouterMaterialErrorScreen', () {
     testWidgets(
       'shows "page not found" by default',
       testPageNotFound(
-        widget: const CupertinoApp(
-          home: GoRouterCupertinoErrorScreen(null),
+        widget: const MaterialApp(
+          home: MaterialErrorScreen(null),
         ),
       ),
     );
@@ -73,19 +73,18 @@ void main() {
       'shows the exception message when provided',
       testPageShowsExceptionMessage(
         exception: exception,
-        widget: CupertinoApp(
-          home: GoRouterCupertinoErrorScreen(exception),
+        widget: MaterialApp(
+          home: MaterialErrorScreen(exception),
         ),
       ),
     );
 
     testWidgets(
-      'clicking the CupertinoButton should redirect to /',
+      'clicking the TextButton should redirect to /',
       testClickingTheButtonRedirectsToRoot(
-        buttonFinder: find.byType(CupertinoButton),
-        appRouterBuilder: cupertinoAppRouterBuilder,
-        widget: const CupertinoApp(
-          home: GoRouterCupertinoErrorScreen(null),
+        buttonFinder: find.byType(TextButton),
+        widget: const MaterialApp(
+          home: MaterialErrorScreen(null),
         ),
       ),
     );

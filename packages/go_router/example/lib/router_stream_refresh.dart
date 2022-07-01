@@ -84,7 +84,8 @@ class _AppState extends State<App> {
         return null;
       },
       // changes on the listenable will cause the router to refresh it's route
-      refreshListenable: GoRouterRefreshStream(loggedInState.stream),
+      // TODO(johnpryan): Change type to Stream, remove GoRouterRefreshStream
+      refreshListenable: StreamListenable(loggedInState.stream),
     );
     super.initState();
   }

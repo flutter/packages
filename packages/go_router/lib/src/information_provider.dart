@@ -4,7 +4,6 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:go_router/src/go_route_information_parser.dart';
 
 /// The route information provider created by go_router
 class GoRouteInformationProvider extends RouteInformationProvider
@@ -32,8 +31,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
         (type == RouteInformationReportingType.none &&
             _valueInEngine.location == routeInformation.location);
     SystemNavigator.selectMultiEntryHistory();
-    // TODO(chunhtai): should report extra to the browser through state if
-    // possible.
+    // TODO(chunhtai): report extra to browser through state if possible
     SystemNavigator.routeInformationUpdated(
       location: routeInformation.location!,
       replace: replace,
@@ -48,6 +46,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
         state: _value.state,
       );
   RouteInformation _value;
+
   set value(RouteInformation other) {
     final bool shouldNotify =
         _value.location != other.location || _value.state != other.state;
@@ -111,7 +110,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
 }
 
 /// A debug class that is used for asserting the [GoRouteInformationProvider] is
-/// in use with the [GoRouteInformationParser].
+/// in use with the [RouteInformationParser].
 class DebugGoRouteInformation extends RouteInformation {
   /// Creates a [DebugGoRouteInformation]
   DebugGoRouteInformation({String? location, Object? state})
