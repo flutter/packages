@@ -12,7 +12,10 @@ import 'src/go_router.dart';
 
 export 'src/custom_transition_page.dart';
 export 'src/go_route.dart';
+export 'src/go_route_information_parser.dart';
+export 'src/go_route_information_provider.dart';
 export 'src/go_router.dart';
+export 'src/go_router_delegate.dart';
 export 'src/go_router_refresh_stream.dart';
 export 'src/go_router_state.dart';
 export 'src/inherited_go_router.dart';
