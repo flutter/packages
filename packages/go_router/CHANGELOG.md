@@ -1,3 +1,10 @@
+## 4.1.1
+
+- Exports the files in `lib/go_router.dart`
+  - `src/go_route_information_parser.dart`
+  - `src/go_route_information_provider.dart`
+  - `src/go_router_delegate.dart`
+
 ## 4.1.0
 
 - Adds `bool canPop()` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
