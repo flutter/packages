@@ -11,7 +11,6 @@ import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_route_match.dart';
-import 'package:go_router/src/go_router_delegate.dart';
 import 'package:go_router/src/go_router_error_page.dart';
 import 'package:go_router/src/typedefs.dart';
 import 'package:logging/logging.dart';
