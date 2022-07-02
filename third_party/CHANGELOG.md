@@ -1,5 +1,11 @@
 # CHANGES
 
+## 1.1.1+1
+
+- Fix regression introduced in 1.1.1
+- Update fix for fill/stroke inheritence when currentColor is specified in the
+  SVG but not in the theme.
+
 ## 1.1.1
 
 - Fix a bug introduced in 1.1.0 related to fill/stroke inheritence.

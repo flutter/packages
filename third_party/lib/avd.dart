@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:typed_data'; // ignore: unnecessary_import
 import 'dart:ui' show Picture;
 
 import 'package:flutter/foundation.dart';

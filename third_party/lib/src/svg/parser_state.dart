@@ -87,11 +87,10 @@ class _Elements {
 
     final String? id = parserState.attribute('id', def: '');
 
-    final Color? color =
-        parserState.parseColor(parserState.attribute('color', def: null)) ??
-            // Fallback to the currentColor from theme if no color is defined
-            // on the root SVG element.
-            parserState.theme.currentColor;
+    final Color? color = parserState.parseColor(
+      parserState.attribute('color', def: null),
+      currentColor: parserState.theme.currentColor,
+    );
 
     // TODO(dnfield): Support nested SVG elements. https://github.com/dnfield/flutter_svg/issues/132
     if (parserState._root != null) {
@@ -144,9 +143,10 @@ class _Elements {
       return null;
     }
     final DrawableParent parent = parserState.currentGroup!;
-    final Color? color =
-        parserState.parseColor(parserState.attribute('color', def: null)) ??
-            parent.color;
+    final Color? color = parserState.parseColor(
+            parserState.attribute('color', def: null),
+            currentColor: parent.color ?? parserState.theme.currentColor) ??
+        parent.color;
 
     final DrawableGroup group = DrawableGroup(
       parserState.attribute('id', def: ''),
@@ -164,9 +164,10 @@ class _Elements {
   static Future<void>? symbol(
       SvgParserState parserState, bool warningsAsErrors) {
     final DrawableParent parent = parserState.currentGroup!;
-    final Color? color =
-        parserState.parseColor(parserState.attribute('color', def: null)) ??
-            parent.color;
+    final Color? color = parserState.parseColor(
+            parserState.attribute('color', def: null),
+            currentColor: parent.color ?? parserState.theme.currentColor) ??
+        parent.color;
 
     final DrawableGroup group = DrawableGroup(
       parserState.attribute('id', def: ''),
@@ -240,7 +241,8 @@ class _Elements {
           def: '1',
         )!;
         final Color stopColor = parserState.parseColor(
-                getAttribute(parserState.attributes, 'stop-color')) ??
+                getAttribute(parserState.attributes, 'stop-color'),
+                currentColor: parent.color ?? parserState.theme.currentColor) ??
             parent.color ??
             colorBlack;
         colors.add(stopColor.withOpacity(parseDouble(rawOpacity)!));
@@ -1339,7 +1341,7 @@ class SvgParserState {
       );
       strokeColor = definitionPaint.color;
     } else {
-      strokeColor = parseColor(rawStroke);
+      strokeColor = parseColor(rawStroke, currentColor: currentColor);
     }
 
     final DrawablePaint paint = DrawablePaint(
@@ -1433,8 +1435,7 @@ class SvgParserState {
     Color? defaultFillColor,
     Color? currentColor,
   ) {
-    final Color? color = parseColor(rawFill) ??
-        currentColor ??
+    final Color? color = parseColor(rawFill, currentColor: currentColor) ??
         parentFillColor ??
         defaultFillColor;
 
@@ -1634,6 +1635,7 @@ class SvgParserState {
         ),
         decorationColor: parseColor(
           getAttribute(attributes, 'text-decoration-color', def: null),
+          currentColor: currentColor,
         ),
         decorationStyle: parseTextDecorationStyle(
           getAttribute(attributes, 'text-decoration-style', def: null),
@@ -1644,7 +1646,7 @@ class SvgParserState {
   }
 
   /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
-  Color? parseColor(String? colorString) {
+  Color? parseColor(String? colorString, {Color? currentColor}) {
     if (colorString == null || colorString.isEmpty) {
       return null;
     }
@@ -1655,7 +1657,7 @@ class SvgParserState {
 
     if (colorString.toLowerCase() == 'currentcolor') {
       _compatibilityTester.usesCurrentColor = true;
-      return null;
+      return currentColor ?? theme.currentColor;
     }
 
     // handle hex colors e.g. #fff or #ffffff.  This supports #RRGGBBAA

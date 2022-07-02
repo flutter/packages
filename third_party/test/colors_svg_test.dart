@@ -44,8 +44,10 @@ void main() {
         const Color(0xFF6F2173));
     expect(testSvgParserState.parseColor('hsla(0,0%,100%, 0.0)'),
         const Color(0x00FFFFFF));
-    expect(testSvgParserState.parseColor('currentColor'), null);
-    expect(testSvgParserState.parseColor('currentcolor'), null);
+    expect(testSvgParserState.parseColor('currentColor'),
+        testSvgParserState.theme.currentColor);
+    expect(testSvgParserState.parseColor('currentcolor'),
+        testSvgParserState.theme.currentColor);
     expect(
         () => testSvgParserState.parseColor('invalid name'), throwsStateError);
   });
