@@ -69,7 +69,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
             indent.write('${customClass.enumeration}.toByte() -> ');
             indent.scoped('{', '}', () {
               indent.write(
-                  'return (readValue(buffer) as? HashMap<String, Any?>)?.let ');
+                  'return (readValue(buffer) as? Map<String, Any?>)?.let ');
               indent.scoped('{', '}', () {
                 indent.writeln('${customClass.name}.fromMap(it)');
               });
@@ -104,7 +104,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
 /// interface Foo {
 ///   Int add(x: Int, y: Int);
 ///   companion object {
-///     fun setup(binaryMessenger: BinaryMessenger, api: Api) {...}
+///     fun setUp(binaryMessenger: BinaryMessenger, api: Api) {...}
 ///   }
 /// }
 void _writeHostApi(Indent indent, Api api, Root root) {
@@ -154,7 +154,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
           '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
       indent.writeln('@Suppress("UNCHECKED_CAST")');
       indent.write(
-          'fun setup(binaryMessenger: BinaryMessenger, api: $apiName?) ');
+          'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?) ');
       indent.scoped('{', '}', () {
         for (final Method method in api.methods) {
           indent.write('');
@@ -263,11 +263,9 @@ void _writeFlutterApi(Indent indent, Api api) {
       final String returnType = func.returnType.isVoid
           ? ''
           : _nullsafeKotlinTypeForDartType(func.returnType);
-      final String nullsafe = func.returnType.isNullable ? '?' : '';
       String sendArgument;
       if (func.arguments.isEmpty) {
-        indent.write(
-            'fun ${func.name}(callback: ($returnType$nullsafe) -> Unit) ');
+        indent.write('fun ${func.name}(callback: ($returnType) -> Unit) ');
         sendArgument = 'null';
       } else {
         final Iterable<String> argTypes = func.arguments
@@ -282,7 +280,7 @@ void _writeFlutterApi(Indent indent, Api api) {
               .write('fun ${func.name}($argsSignature, callback: () -> Unit) ');
         } else {
           indent.write(
-              'fun ${func.name}($argsSignature, callback: ($returnType$nullsafe) -> Unit) ');
+              'fun ${func.name}($argsSignature, callback: ($returnType) -> Unit) ');
         }
       }
       indent.scoped('{', '}', () {
@@ -314,7 +312,14 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     return '$nullableConditionPrefix${_kotlinTypeForDartType(type)}.ofRaw($value as Int)$forceUnwrap';
   } else {
     final String castUnwrap = type.isNullable ? '?' : '';
-    return '$value as$castUnwrap ${_kotlinTypeForDartType(type)}';
+
+    // The StandardMessageCodec can give us [Integer, Long] for
+    // a Dart 'int'.  To keep things simple we just use 64bit
+    // longs in Pigeon with Kotlin.
+    if (type.baseName == 'int') {
+      return '$value.let { if (it is Int) it.toLong() else it as Long }';
+    } else
+      return '$value as$castUnwrap ${_kotlinTypeForDartType(type)}';
   }
 }
 
@@ -329,7 +334,7 @@ String _kotlinTypeForBuiltinGenericDartType(TypeDeclaration type) {
     if (type.baseName == 'List') {
       return 'List<Any?>';
     } else if (type.baseName == 'Map') {
-      return 'HashMap<Any, Any?>';
+      return 'Map<Any, Any?>';
     } else {
       return 'Any';
     }
@@ -337,7 +342,7 @@ String _kotlinTypeForBuiltinGenericDartType(TypeDeclaration type) {
     if (type.baseName == 'List') {
       return 'List<${_nullsafeKotlinTypeForDartType(type.typeArguments.first)}>';
     } else if (type.baseName == 'Map') {
-      return 'HashMap<${_nullsafeKotlinTypeForDartType(type.typeArguments.first)}, ${_nullsafeKotlinTypeForDartType(type.typeArguments.last)}>';
+      return 'Map<${_nullsafeKotlinTypeForDartType(type.typeArguments.first)}, ${_nullsafeKotlinTypeForDartType(type.typeArguments.last)}>';
     } else {
       return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
     }
@@ -406,7 +411,6 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
     indent.writeln('import java.io.ByteArrayOutputStream');
     indent.writeln('import java.nio.ByteBuffer');
-    indent.writeln('import kotlin.collections.HashMap');
   }
 
   void writeEnum(Enum anEnum) {
@@ -421,6 +425,8 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
         indent.write('${member.toUpperCase()}($index)');
         if (index != anEnum.members.length - 1) {
           indent.addln(',');
+        } else {
+          indent.addln(';');
         }
         index++;
       }
@@ -445,30 +451,34 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
     }
 
     void writeToMap() {
-      indent.write('fun toMap(): HashMap<String, Any?> ');
+      indent.write('fun toMap(): Map<String, Any?> ');
       indent.scoped('{', '}', () {
-        indent.write('return hashMapOf');
-        indent.scoped('(', ')', () {
-          for (final NamedType field in klass.fields) {
-            final HostDatatype hostDatatype = _getHostDatatype(field);
-            String toWriteValue = '';
-            final String fieldName = field.name;
-            final String nullsafe = field.type.isNullable ? '?' : '';
-            if (!hostDatatype.isBuiltin &&
-                rootClassNameSet.contains(field.type.baseName)) {
-              toWriteValue = '$fieldName$nullsafe.toMap()';
-            } else if (!hostDatatype.isBuiltin &&
-                rootEnumNameSet.contains(field.type.baseName)) {
-              toWriteValue = '$fieldName$nullsafe.raw';
-            } else {
-              toWriteValue = field.name;
-            }
+        indent.writeln('val map = mutableMapOf<String, Any?>()');
 
-            final String comma = klass.fields.last == field ? '' : ',';
-
-            indent.writeln('"${field.name}" to $toWriteValue$comma');
+        for (final NamedType field in klass.fields) {
+          final HostDatatype hostDatatype = _getHostDatatype(field);
+          String toWriteValue = '';
+          final String fieldName = field.name;
+          final String prefix = field.type.isNullable ? 'it' : fieldName;
+          if (!hostDatatype.isBuiltin &&
+              rootClassNameSet.contains(field.type.baseName)) {
+            toWriteValue = '$prefix.toMap()';
+          } else if (!hostDatatype.isBuiltin &&
+              rootEnumNameSet.contains(field.type.baseName)) {
+            toWriteValue = '$prefix.raw';
+          } else {
+            toWriteValue = prefix;
           }
-        });
+
+          if (field.type.isNullable) {
+            indent.writeln(
+                '$fieldName?.let { map["${field.name}"] = $toWriteValue }');
+          } else {
+            indent.writeln('map["${field.name}"] = $toWriteValue');
+          }
+        }
+
+        indent.writeln('return map');
       });
     }
 
@@ -478,11 +488,16 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
       indent.write('companion object ');
       indent.scoped('{', '}', () {
         indent.writeln('@Suppress("UNCHECKED_CAST")');
-        indent.write('fun fromMap(map: HashMap<String, Any?>): $className ');
+        indent.write('fun fromMap(map: Map<String, Any?>): $className ');
 
         indent.scoped('{', '}', () {
           for (final NamedType field in klass.fields) {
             final HostDatatype hostDatatype = _getHostDatatype(field);
+
+            // The StandardMessageCodec can give us [Integer, Long] for
+            // a Dart 'int'.  To keep things simple we just use 64bit
+            // longs in Pigeon with Kotlin.
+            final bool isInt = field.type.baseName == 'int';
 
             final String mapValue = 'map["${field.name}"]';
             final String fieldType = _kotlinTypeForDartType(field.type);
@@ -491,7 +506,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
               if (!hostDatatype.isBuiltin &&
                   rootClassNameSet.contains(field.type.baseName)) {
                 indent.write('val ${field.name}: $fieldType? = ');
-                indent.add('($mapValue as? HashMap<String, Any?>)?.let ');
+                indent.add('($mapValue as? Map<String, Any?>)?.let ');
                 indent.scoped('{', '}', () {
                   indent.writeln('$fieldType.fromMap(it)');
                 });
@@ -502,14 +517,18 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
                 indent.scoped('{', '}', () {
                   indent.writeln('$fieldType.ofRaw(it)');
                 });
+              } else if (isInt) {
+                indent.write('val ${field.name} = $mapValue');
+                indent.addln(
+                    '.let { if (it is Int) it.toLong() else it as? Long }');
               } else {
-                indent.writeln('val ${field.name} = $mapValue as? $fieldType ');
+                indent.writeln('val ${field.name} = $mapValue as? $fieldType');
               }
             } else {
               if (!hostDatatype.isBuiltin &&
                   rootClassNameSet.contains(field.type.baseName)) {
                 indent.writeln(
-                    'val ${field.name} = $fieldType.fromMap($mapValue as HashMap<String, Any?>)');
+                    'val ${field.name} = $fieldType.fromMap($mapValue as Map<String, Any?>)');
               } else if (!hostDatatype.isBuiltin &&
                   rootEnumNameSet.contains(field.type.baseName)) {
                 indent.write(
