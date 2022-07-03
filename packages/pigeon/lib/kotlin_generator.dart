@@ -331,7 +331,7 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // a Dart 'int'.  To keep things simple we just use 64bit
     // longs in Pigeon with Kotlin.
     if (type.baseName == 'int') {
-      return '$value.let { if (it is Int) it.toLong() else it as Long }';
+      return '$value.let { if (it is Int) it.toLong() else it as$castUnwrap Long }';
     } else
       return '$value as$castUnwrap ${_kotlinTypeForDartType(type)}';
   }
