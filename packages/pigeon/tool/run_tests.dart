@@ -10,9 +10,7 @@
 import 'dart:io' show File, Process, Platform, exit, stderr, stdout;
 import 'dart:math';
 import 'package:args/args.dart';
-import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
-import 'package:pigeon/functional.dart';
 
 const String _testFlag = 'test';
 const String _listFlag = 'list';
