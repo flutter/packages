@@ -1,3 +1,6 @@
+## 3.2.4
+* Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
 ## 3.2.3
 
 * Adds `unnecessary_import` to linter ignore list in generated dart tests.
