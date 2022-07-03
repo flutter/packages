@@ -44,6 +44,45 @@ class SwiftOptions {
 /// Calculates the name of the codec that will be generated for [api].
 String _getCodecName(Api api) => '${api.name}Codec';
 
+/// Returns a new [Method] using the swift function signature from [func],
+/// ie the name of function e the strings between the semicolons.
+/// Example:
+///   f('void add(int x, int y)') -> ['add', 'x', 'y']
+Method _methodWithSwiftFunction(Method func) {
+  if (func.swiftFunction.isEmpty) {
+    return func;
+  } else {
+    final String argsCapturator =
+        repeat(r'(\w+):', func.arguments.length).join();
+    final RegExp signatureRegex = RegExp(r'(\w+) *\(' + argsCapturator + r'\)');
+    final RegExpMatch? match = signatureRegex.firstMatch(func.swiftFunction);
+    assert(match != null);
+
+    print(match!.groupCount);
+
+    final Iterable<String> customComponents = match
+        .groups(
+            List<int>.generate(func.arguments.length, (int index) => index + 2))
+        .whereType();
+
+    return Method(
+      name: match.group(1)!,
+      returnType: func.returnType,
+      arguments:
+          map2(func.arguments, customComponents, (NamedType t, String u) {
+        if (u == t.name) {
+          return t;
+        }
+
+        return NamedType(name: '$u ${t.name}', type: t.type);
+      }).toList(),
+      isAsynchronous: func.isAsynchronous,
+      offset: func.offset,
+      taskQueueType: func.taskQueueType,
+    );
+  }
+}
+
 /// Writes the codec classwill be used for encoding messages for the [api].
 /// Example:
 /// private class FooHostApiCodecReader: FlutterStandardReader {...}
@@ -602,6 +641,11 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   for (final Api api in root.apis) {
     _writeCodec(indent, api, root);
     indent.addln('');
+
+    api.methods = api.methods
+        .map((Method method) => _methodWithSwiftFunction(method))
+        .toList();
+
     writeApi(api, root);
   }
 

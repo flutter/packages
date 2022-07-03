@@ -20,6 +20,7 @@ import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 import 'package:pigeon/cpp_generator.dart';
+import 'package:pigeon/functional.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/swift_generator.dart';
@@ -93,6 +94,19 @@ class ObjCSelector {
   const ObjCSelector(this.value);
 
   /// The string representation of the selector.
+  final String value;
+}
+
+/// Metadata to annotation methods to control the function signature used for swift output.
+/// The number of components in the provided signature must match the number of
+/// arguments in the annotated method.
+/// For example:
+///   @SwiftFunction('setValue(_:for:)') double divide(int value, String key);
+class SwiftFunction {
+  /// Constructor.
+  const SwiftFunction(this.value);
+
+  /// The string representation of the function signature.
   final String value;
 }
 
@@ -665,6 +679,17 @@ List<Error> _validateAst(Root root, String source) {
           ));
         }
       }
+      if (method.swiftFunction.isNotEmpty) {
+        final RegExp signatureRegex =
+            RegExp('\\w+ *\\((\\w+:){${method.arguments.length}}\\)');
+        if (!signatureRegex.hasMatch(method.swiftFunction)) {
+          result.add(Error(
+            message:
+                'Invalid function signature, expected ${method.arguments.length} arguments.',
+            lineNumber: _calculateLineNumberNullable(source, method.offset),
+          ));
+        }
+      }
       if (method.taskQueueType != TaskQueueType.serial &&
           api.location != ApiLocation.host) {
         result.add(Error(
@@ -947,6 +972,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             .asNullable<dart_ast.SimpleStringLiteral>()
             ?.value ??
         '';
+    final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
+            ?.arguments
+            ?.arguments
+            .first
+            .asNullable<dart_ast.SimpleStringLiteral>()
+            ?.value ??
+        '';
     final dart_ast.ArgumentList? taskQueueArguments =
         _findMetadata(node.metadata, 'TaskQueue')?.arguments;
     final String? taskQueueTypeName = taskQueueArguments == null
@@ -973,6 +1005,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           arguments: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
+          swiftFunction: swiftFunction,
           offset: node.offset,
           taskQueueType: taskQueueType));
     } else if (_currentClass != null) {
