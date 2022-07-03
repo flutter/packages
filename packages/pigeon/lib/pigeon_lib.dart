@@ -20,7 +20,6 @@ import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 import 'package:pigeon/cpp_generator.dart';
-import 'package:pigeon/functional.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/swift_generator.dart';
