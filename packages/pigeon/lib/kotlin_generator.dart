@@ -6,6 +6,7 @@ import 'package:pigeon/functional.dart';
 
 import 'ast.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart' show TaskQueueType;
 
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
@@ -159,10 +160,23 @@ void _writeHostApi(Indent indent, Api api, Root root) {
         for (final Method method in api.methods) {
           indent.write('');
           indent.scoped('run {', '}', () {
+            String? taskQueue;
+            if (method.taskQueueType != TaskQueueType.serial) {
+              taskQueue = 'taskQueue';
+              indent.writeln(
+                  'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
+            }
+
             final String channelName = makeChannelName(api, method);
 
-            indent.writeln(
-                'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec)');
+            indent.write(
+                'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec');
+
+            if (taskQueue != null) {
+              indent.addln(', $taskQueue)');
+            } else {
+              indent.addln(')');
+            }
 
             indent.write('if (api != null) ');
             indent.scoped('{', '}', () {

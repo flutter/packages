@@ -90,7 +90,9 @@ Future<int> _runAndroidKotlinUnitTests() async {
   const List<String> tests = <String>[
     'all_datatypes',
     'all_void',
+    'android_unittests',
     'async_handlers',
+    'background_platform_channels',
     'enum_args',
     'enum',
     'host2flutter',

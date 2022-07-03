@@ -5,7 +5,7 @@
 import 'package:pigeon/pigeon.dart';
 
 @HostApi()
-abstract class Api2Host {
+abstract class BackgroundApi2Host {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   int add(int x, int y);
 }
