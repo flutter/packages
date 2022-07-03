@@ -2,6 +2,18 @@
 
 * Adds experimental support for Kotlin generation.
 
+## 3.2.3
+
+* Adds `unnecessary_import` to linter ignore list in generated dart tests.
+
+## 3.2.2
+
+* Adds `unnecessary_import` to linter ignore list for `package:flutter/foundation.dart`.
+
+## 3.2.1
+
+* Removes `@dart = 2.12` from generated Dart code.
+
 ## 3.2.0
 
 * Adds experimental support for Swift generation.
@@ -45,7 +57,7 @@
 ## 3.0.4
 
 * [objc] Simplified some code output, including avoiding Xcode warnings about
-  using `NSNumber*` directly as boolean value.  
+  using `NSNumber*` directly as boolean value.
 * [tests] Moved test script to enable CI.
 
 ## 3.0.3
