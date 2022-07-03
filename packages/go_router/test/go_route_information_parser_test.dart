@@ -87,8 +87,11 @@ void main() {
     );
 
     expect(parser.namedLocation('lowercase'), '/abc?');
+    expect(parser.namedLocation('lowerCase'), '/abc?');
     expect(parser.namedLocation('camelCase'), '/efg?');
+    expect(parser.namedLocation('camelcase'), '/efg?');
     expect(parser.namedLocation('snake_case'), '/hij?');
+    expect(parser.namedLocation('snake_Case'), '/hij?');
   });
 
   test('GoRouteInformationParser returns error when unknown route', () async {
