@@ -1,3 +1,7 @@
+## 4.1.1
+
+- Fixes a bug where calling extra parameter is always null in route level redirect callback
+
 ## 4.1.0
 
 - Adds `bool canPop()` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
