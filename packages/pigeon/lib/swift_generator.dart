@@ -642,9 +642,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
     _writeCodec(indent, api, root);
     indent.addln('');
 
-    api.methods = api.methods
-        .map((Method method) => _methodWithSwiftFunction(method))
-        .toList();
+    api.methods = api.methods.map(_methodWithSwiftFunction).toList();
 
     writeApi(api, root);
   }
