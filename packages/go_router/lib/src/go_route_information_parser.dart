@@ -250,6 +250,7 @@ class GoRouteInformationParser
               fullpath: top.fullpath,
               params: top.decodedParams,
               queryParams: top.queryParams,
+              extra: top.extra,
             ),
           ),
         )) {
