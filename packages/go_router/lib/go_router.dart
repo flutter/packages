@@ -70,6 +70,26 @@ extension GoRouterHelper on BuildContext {
         extra: extra,
       );
 
+  /// Replaces the current location with the given one w/ optional query
+  /// parameters, e.g. `/family/f2/person/p1?color=blue
+  void replace(String location, {Object? extra}) =>
+      GoRouter.of(this).replace(location, extra: extra);
+
+  /// Replaces the current location with the named route w/ optional parameters,
+  /// e.g. `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  void replaceNamed(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
+      GoRouter.of(this).replaceNamed(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
+
   /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() => GoRouter.of(this).canPop();
 

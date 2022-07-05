@@ -65,6 +65,12 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
     notifyListeners();
   }
 
+  /// Replaces the current location with the given one.
+  void replace(GoRouteMatch match) {
+    _matches.last = match;
+    notifyListeners();
+  }
+
   /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() {
     return _matches.length > 1;
