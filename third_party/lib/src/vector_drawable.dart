@@ -1298,12 +1298,13 @@ class DrawableShape implements DrawableStyleable {
         if (style.dashArray != null &&
             !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
           canvas.drawPath(
-              dashPath(
-                path,
-                dashArray: style.dashArray!,
-                dashOffset: style.dashOffset,
-              ),
-              style.stroke!.toFlutterPaint());
+            dashPath(
+              path,
+              dashArray: style.dashArray!,
+              dashOffset: style.dashOffset,
+            ),
+            style.stroke!.toFlutterPaint(),
+          );
         } else {
           canvas.drawPath(path, style.stroke!.toFlutterPaint());
         }

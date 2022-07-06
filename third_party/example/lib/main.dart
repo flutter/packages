@@ -113,8 +113,9 @@ class _MyHomePageState extends State<_MyHomePage> {
         SvgPicture.network(
           uriName,
           placeholderBuilder: (BuildContext context) => Container(
-              padding: const EdgeInsets.all(30.0),
-              child: const CircularProgressIndicator()),
+            padding: const EdgeInsets.all(30.0),
+            child: const CircularProgressIndicator(),
+          ),
         ),
       );
     }
@@ -137,12 +138,13 @@ class _MyHomePageState extends State<_MyHomePage> {
       ),
       body: Column(children: <Widget>[
         Slider(
-            min: 5.0,
-            max: MediaQuery.of(context).size.width - 10.0,
-            value: _dimension,
-            onChanged: (double val) {
-              setState(() => _dimension = val);
-            }),
+          min: 5.0,
+          max: MediaQuery.of(context).size.width - 10.0,
+          value: _dimension,
+          onChanged: (double val) {
+            setState(() => _dimension = val);
+          },
+        ),
         Expanded(
           child: GridView.extent(
             shrinkWrap: true,
