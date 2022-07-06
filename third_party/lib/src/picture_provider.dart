@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:typed_data';
+import 'dart:typed_data'; // ignore: unnecessary_import
 import 'dart:ui'
     show BlendMode, Color, ColorFilter, Locale, Rect, TextDirection;
 
