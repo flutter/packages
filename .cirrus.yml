@@ -104,15 +104,15 @@ task:
     # version comes out.
     - name: legacy-version-analyze
       depends_on: format+analyze
-      env:
-        matrix:
+      matrix:
+        env:
           CHANNEL: "2.10.5"
+          DART_VERSION: "2.16.2"
+        env:
           CHANNEL: "2.8.1"
+          DART_VERSION: "2.15.1"
       analyze_script:
-        # Exclude:
-        # - flutter_lints: does not depend on flutter, is only constrained by
-        #   Dart SDK version.
-        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml --exclude=flutter_lints
+        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --skip-if-not-supporting-dart-version="$DART_VERSION" --custom-analysis=script/configs/custom_analysis.yaml
     - name: publishable
       env:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
