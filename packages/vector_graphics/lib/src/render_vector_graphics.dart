@@ -11,17 +11,26 @@ import 'package:flutter/rendering.dart';
 import 'listener.dart';
 import 'debug.dart';
 
+/// The cache key for a rasterized vector graphic.
 @immutable
-class _RasterKey {
-  const _RasterKey(this.assetKey, this.width, this.height);
+class RasterKey {
+  /// Create a new [RasterKey].
+  const RasterKey(this.assetKey, this.width, this.height);
 
+  /// An object that is used to identify the raster data this key will store.
+  ///
+  /// Typically this is the value returned from [BytesLoader.cacheKey].
   final Object assetKey;
+
+  /// The height of this vector graphic raster, in physical pixels.
   final int width;
+
+  /// The width of this vector graphic raster, in physical pixels.
   final int height;
 
   @override
   bool operator ==(Object other) {
-    return other is _RasterKey &&
+    return other is RasterKey &&
         other.assetKey == assetKey &&
         other.width == width &&
         other.height == height;
@@ -31,12 +40,27 @@ class _RasterKey {
   int get hashCode => Object.hash(assetKey, width, height);
 }
 
-class _RasterData {
-  _RasterData(this.image, this.count, this.key);
+/// The cache entry for a rasterized vector graphic.
+class RasterData {
+  /// Create a new [RasterData].
+  RasterData(this._image, this.count, this.key);
 
-  final ui.Image image;
-  final _RasterKey key;
+  /// The rasterized vector graphic.
+  ui.Image get image => _image!;
+  ui.Image? _image;
+
+  /// The cache key used to identify this vector graphic.
+  final RasterKey key;
+
+  /// The number of render objects currently using this
+  /// vector graphic raster data.
   int count = 0;
+
+  /// Dispose this raster data.
+  void dispose() {
+    _image?.dispose();
+    _image = null;
+  }
 }
 
 /// For testing only, clear all pending rasters.
@@ -46,7 +70,6 @@ void debugClearRasteCaches() {
     return;
   }
   RenderVectorGraphic._liveRasterCache.clear();
-  RenderVectorGraphic._pendingRasterCache.clear();
 }
 
 /// A render object which draws a vector graphic instance as a raster.
@@ -64,10 +87,8 @@ class RenderVectorGraphic extends RenderBox {
     _updateOpacity();
   }
 
-  static final Map<_RasterKey, _RasterData> _liveRasterCache =
-      <_RasterKey, _RasterData>{};
-  static final Map<_RasterKey, Future<_RasterData>> _pendingRasterCache =
-      <_RasterKey, Future<_RasterData>>{};
+  static final Map<RasterKey, RasterData> _liveRasterCache =
+      <RasterKey, RasterData>{};
 
   /// A key that uniquely identifies the [pictureInfo] used for this vg.
   Object get assetKey => _assetKey;
@@ -174,24 +195,8 @@ class RenderVectorGraphic extends RenderBox {
     return constraints.smallest;
   }
 
-  /// Visible for testing only.
-  @visibleForTesting
-  Future<void>? get pendingRasterUpdate {
-    if (kReleaseMode) {
-      return null;
-    }
-    return _pendingRasterUpdate;
-  }
-
-  Future<void>? _pendingRasterUpdate;
-  bool _disposed = false;
-
-  static Future<_RasterData> _createRaster(
-      _RasterKey key, double scaleFactor, PictureInfo info) {
-    if (_pendingRasterCache.containsKey(key)) {
-      return _pendingRasterCache[key]!;
-    }
-
+  static RasterData _createRaster(
+      RasterKey key, double scaleFactor, PictureInfo info) {
     final int scaledWidth = key.width;
     final int scaledHeight = key.height;
     // In order to scale a picture, it must be placed in a new picture
@@ -206,67 +211,57 @@ class RenderVectorGraphic extends RenderBox {
     canvas.drawPicture(info.picture);
     final ui.Picture rasterPicture = recorder.endRecording();
 
-    final Future<_RasterData> pending =
-        rasterPicture.toImage(scaledWidth, scaledHeight).then((ui.Image image) {
-      return _RasterData(image, 0, key);
-    });
-    _pendingRasterCache[key] = pending;
-    pending.whenComplete(() {
-      _pendingRasterCache.remove(key);
-    });
-    return pending;
+    final ui.Image pending =
+        rasterPicture.toGpuImage(scaledWidth, scaledHeight);
+    return RasterData(pending, 0, key);
   }
 
-  void _maybeReleaseRaster(_RasterData? data) {
+  void _maybeReleaseRaster(RasterData? data) {
     if (data == null) {
       return;
     }
     data.count -= 1;
-    if (data.count <= 0) {
+    if (data.count == 0 && _liveRasterCache.containsKey(data.key)) {
       _liveRasterCache.remove(data.key);
-      data.image.dispose();
+      data.dispose();
     }
   }
 
   // Re-create the raster for a given vector graphic if the target size
   // is sufficiently different. Returns `null` if rasterData has been
   // updated immediately.
-  Future<void>? _maybeUpdateRaster() {
+  void _maybeUpdateRaster() {
     final int scaledWidth =
         (pictureInfo.size.width * devicePixelRatio / scale).round();
     final int scaledHeight =
         (pictureInfo.size.height * devicePixelRatio / scale).round();
-    final _RasterKey key = _RasterKey(assetKey, scaledWidth, scaledHeight);
+    final RasterKey key = RasterKey(assetKey, scaledWidth, scaledHeight);
 
     // First check if the raster is available synchronously. This also handles
     // a no-op change that would resolve to an identical picture.
     if (_liveRasterCache.containsKey(key)) {
-      final _RasterData data = _liveRasterCache[key]!;
+      final RasterData data = _liveRasterCache[key]!;
       if (data != _rasterData) {
         _maybeReleaseRaster(_rasterData);
         data.count += 1;
       }
       _rasterData = data;
-      return null; // immediate update.
+      return;
     }
-    return _createRaster(key, devicePixelRatio / scale, pictureInfo)
-        .then((_RasterData data) {
-      data.count += 1;
-      // Ensure this is only added to the live cache once.
-      if (data.count == 1) {
-        _liveRasterCache[key] = data;
-      }
-      if (_disposed) {
-        _maybeReleaseRaster(data);
-        return;
-      }
-      _maybeReleaseRaster(_rasterData);
-      _rasterData = data;
-      markNeedsPaint();
-    });
+    final RasterData data =
+        _createRaster(key, devicePixelRatio / scale, pictureInfo);
+    data.count += 1;
+
+    assert(!_liveRasterCache.containsKey(key));
+    assert(data.count == 1);
+    assert(!debugDisposed!);
+
+    _liveRasterCache[key] = data;
+    _maybeReleaseRaster(_rasterData);
+    _rasterData = data;
   }
 
-  _RasterData? _rasterData;
+  RasterData? _rasterData;
 
   @override
   void attach(covariant PipelineOwner owner) {
@@ -283,7 +278,6 @@ class RenderVectorGraphic extends RenderBox {
 
   @override
   void dispose() {
-    _disposed = true;
     _maybeReleaseRaster(_rasterData);
     _opacity?.removeListener(_updateOpacity);
     super.dispose();
@@ -302,14 +296,10 @@ class RenderVectorGraphic extends RenderBox {
       return;
     }
 
-    _pendingRasterUpdate = _maybeUpdateRaster();
-    final ui.Image? image = _rasterData?.image;
-    final int? width = _rasterData?.key.width;
-    final int? height = _rasterData?.key.height;
-
-    if (image == null || width == null || height == null) {
-      return;
-    }
+    _maybeUpdateRaster();
+    final ui.Image image = _rasterData!.image;
+    final int width = _rasterData!.key.width;
+    final int height = _rasterData!.key.height;
 
     // Use `FilterQuality.low` to scale the image, which corresponds to
     // bilinear interpolation.
@@ -330,6 +320,14 @@ class RenderVectorGraphic extends RenderBox {
       pictureInfo.size.width,
       pictureInfo.size.height,
     );
+
+    // toGpuImage is not supported on the tester, so draw the picture instead.
+    if (kDebugMode && debugRunningOnTester) {
+      context.canvas.translate(dst.left, dst.top);
+      context.canvas.drawPicture(pictureInfo.picture);
+      return;
+    }
+
     context.canvas.drawImageRect(
       image,
       src,

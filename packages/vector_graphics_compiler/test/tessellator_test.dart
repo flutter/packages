@@ -1,8 +1,12 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:test/test.dart';
 import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/src/svg/resolver.dart';
-import 'package:vector_graphics_compiler/src/svg/tesselator.dart';
+import 'package:vector_graphics_compiler/src/svg/tessellator.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'helpers.dart';
@@ -20,7 +24,7 @@ void main() {
   <rect x="0" y="0" width="10" height="10" fill="white" />
 </svg>''');
     Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
-    resolvedNode = resolvedNode.accept(Tesselator(), null);
+    resolvedNode = resolvedNode.accept(Tessellator(), null);
 
     final ResolvedVerticesNode verticesNode =
         queryChildren<ResolvedVerticesNode>(resolvedNode).single;
@@ -49,7 +53,7 @@ void main() {
   <path id="path120" d="m-54.2,176.4s11.2,7.2-3.2,38.4l6.4-2.4s-0.8,11.2-4,13.6l7.2-3.2s4.8,8,0.8,12.8c0,0,16.8,8,16,14.4,0,0,6.4-8,2.4-14.4s-11.2-2.4-10.4-20.8l-8.8,3.2s5.6-8.8,5.6-15.2l-8,2.4s15.469-26.58,4.8-28c-6-0.8-8.8-0.8-8.8-0.8z"/>
 </svg>''');
     Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
-    resolvedNode = resolvedNode.accept(Tesselator(), null);
+    resolvedNode = resolvedNode.accept(Tessellator(), null);
 
     final ResolvedVerticesNode verticesNode =
         queryChildren<ResolvedVerticesNode>(resolvedNode).single;

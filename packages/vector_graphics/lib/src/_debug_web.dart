@@ -7,3 +7,11 @@
 bool get debugSkipRaster {
   return false;
 }
+
+/// A debug only override for controlling the value of [debugRunningOnTester].
+bool? debugRunningOnTesterOverride;
+
+/// Whether this code is being executed in the flutter tester.
+bool get debugRunningOnTester {
+  return debugRunningOnTesterOverride ?? false;
+}
