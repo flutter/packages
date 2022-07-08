@@ -58,8 +58,6 @@ Method _methodWithSwiftFunction(Method func) {
     final RegExpMatch? match = signatureRegex.firstMatch(func.swiftFunction);
     assert(match != null);
 
-    print(match!.groupCount);
-
     final Iterable<String> customComponents = match
         .groups(
             List<int>.generate(func.arguments.length, (int index) => index + 2))
