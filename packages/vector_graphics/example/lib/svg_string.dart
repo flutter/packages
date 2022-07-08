@@ -58,6 +58,9 @@ class _MyAppState extends State<MyApp> {
         return compiledBytes.buffer.asByteData();
       }, text, debugLabel: 'Load Bytes')
           .then((ByteData data) {
+        if (!mounted) {
+          return;
+        }
         setState(() {
           // String is UTF-16.
           _svgLength = text.length * 2;
@@ -67,7 +70,7 @@ class _MyAppState extends State<MyApp> {
           _data = data;
         });
       }, onError: (Object error) {
-        print(error);
+        debugPrint(error.toString());
       });
     });
   }
