@@ -147,6 +147,22 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     });
   }
 
+  /// Push a URI location onto the page stack w/ optional query parameters and
+  /// a promise, e.g.
+  /// `/family/f2/person/p1?color=blue`
+  Future<T> pushAsync<T extends Object?>(String location,
+      {Object? extra}) async {
+    assert(() {
+      log.info('pushing $location');
+      return true;
+    }());
+    final List<GoRouteMatch> matches =
+        await routeInformationParser.parseRouteInformation(
+      DebugGoRouteInformation(location: location, state: extra),
+    );
+    return routerDelegate.pushAsync(matches.last);
+  }
+
   /// Push a named route onto the page stack w/ optional parameters, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
   void pushNamed(
@@ -160,16 +176,30 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         extra: extra,
       );
 
+  /// Push a named route onto the page stack w/ optional parameters and a
+  /// promise, e.g.
+  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  Future<T> pushNamedAsync<T extends Object?>(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
+      pushAsync(
+        namedLocation(name, params: params, queryParams: queryParams),
+        extra: extra,
+      );
+
   /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() => routerDelegate.canPop();
 
   /// Pop the top page off the GoRouter's page stack.
-  void pop() {
+  void pop<T extends Object?>([T? result]) {
     assert(() {
       log.info('popping $location');
       return true;
     }());
-    routerDelegate.pop();
+    routerDelegate.pop<T>(result);
   }
 
   /// Refresh the route.

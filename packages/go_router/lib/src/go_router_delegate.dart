@@ -58,6 +58,8 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
 
   final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
   List<GoRouteMatch> _matches = const <GoRouteMatch>[];
+  final Map<String, Completer<Object?>> _completers =
+      <String, Completer<Object?>>{};
 
   /// Push the given location onto the page stack
   void push(GoRouteMatch match) {
@@ -70,8 +72,24 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
     return _matches.length > 1;
   }
 
+  /// Push the given location onto the page stack with a promise
+  Future<T> pushAsync<T extends Object?>(GoRouteMatch match) {
+    final Completer<T> completer = Completer<T>();
+    _completers[match.fullpath] = completer;
+    _matches.add(match);
+    notifyListeners();
+    return completer.future;
+  }
+
   /// Pop the top page off the GoRouter's page stack.
-  void pop() {
+  void pop<T extends Object?>([T? result]) {
+    final GoRouteMatch last = _matches.last;
+    final Completer<T>? completer = _completers[last.fullpath] as Completer<T>?;
+
+    if (completer != null) {
+      completer.complete(result);
+    }
+    _completers.remove(last.fullpath);
     _matches.remove(_matches.last);
     assert(_matches.isNotEmpty,
         'have popped the last page off of the stack; there are no pages left to show');
@@ -179,7 +197,7 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
           if (!route.didPop(result)) {
             return false;
           }
-          pop();
+          pop<dynamic>(result);
           return true;
         },
       ),
