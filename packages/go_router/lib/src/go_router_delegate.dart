@@ -91,6 +91,7 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
     if (completer != null) {
       completer.complete(result);
     }
+
     _completers.remove(last.fullpath);
     _matches.remove(_matches.last);
     assert(_matches.isNotEmpty,
