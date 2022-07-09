@@ -93,5 +93,5 @@ extension GoRouterHelper on BuildContext {
 
   /// Pop the top page off the Navigator's page stack by calling
   /// [Navigator.pop].
-  void pop<T extends Object?>([T? result]) => GoRouter.of(this).pop();
+  void pop<T extends Object?>([T? result]) => GoRouter.of(this).pop<T>(result);
 }
