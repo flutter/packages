@@ -56,6 +56,10 @@ extension GoRouterHelper on BuildContext {
   void push(String location, {Object? extra}) =>
       GoRouter.of(this).push(location, extra: extra);
 
+  /// Push a location onto the page stack with a promise.
+  Future<T> pushAsync<T extends Object?>(String location, {Object? extra}) =>
+      GoRouter.of(this).pushAsync(location, extra: extra);
+
   /// Navigate to a named route onto the page stack.
   void pushNamed(
     String name, {
@@ -76,14 +80,13 @@ extension GoRouterHelper on BuildContext {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
-  }) async {
-    return GoRouter.of(this).pushNamedAsync<T>(
-      name,
-      params: params,
-      queryParams: queryParams,
-      extra: extra,
-    );
-  }
+  }) =>
+      GoRouter.of(this).pushNamedAsync<T>(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
 
   /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() => GoRouter.of(this).canPop();
