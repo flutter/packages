@@ -58,6 +58,8 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
 
   final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
   List<GoRouteMatch> _matches = const <GoRouteMatch>[];
+
+  /// Map of the completers for each route.
   final Map<String, Completer<Object?>> _completers =
       <String, Completer<Object?>>{};
 
