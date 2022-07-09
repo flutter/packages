@@ -60,8 +60,8 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
   List<GoRouteMatch> _matches = const <GoRouteMatch>[];
 
   /// Map of the completers for each route.
-  final Map<String, Completer<Object?>> _completers =
-      <String, Completer<Object?>>{};
+  final Map<String, Completer<dynamic>> _completers =
+      <String, Completer<dynamic>>{};
 
   /// Push the given location onto the page stack
   void push(GoRouteMatch match) {
@@ -86,7 +86,7 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
   /// Pop the top page off the GoRouter's page stack.
   void pop<T extends Object?>([T? result]) {
     final GoRouteMatch last = _matches.last;
-    final Completer<T>? completer = _completers[last.fullpath] as Completer<T>?;
+    final Completer<dynamic>? completer = _completers[last.fullpath];
 
     if (completer != null) {
       completer.complete(result);
