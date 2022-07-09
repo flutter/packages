@@ -55,8 +55,7 @@ Method _methodWithSwiftFunction(Method func) {
     final String argsCapturator =
         repeat(r'(\w+):', func.arguments.length).join();
     final RegExp signatureRegex = RegExp(r'(\w+) *\(' + argsCapturator + r'\)');
-    final RegExpMatch? match = signatureRegex.firstMatch(func.swiftFunction);
-    assert(match != null);
+    final RegExpMatch match = signatureRegex.firstMatch(func.swiftFunction)!;
 
     final Iterable<String> customComponents = match
         .groups(
