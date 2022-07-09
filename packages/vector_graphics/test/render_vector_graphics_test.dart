@@ -6,7 +6,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vector_graphics/src/debug.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/src/render_vector_graphics.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
@@ -21,7 +20,6 @@ void main() {
   });
 
   setUpAll(() {
-    debugRunningOnTesterOverride = false;
     final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     const VectorGraphicsCodec().writeSize(buffer, 50, 50);
 

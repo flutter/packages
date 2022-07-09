@@ -212,7 +212,7 @@ class RenderVectorGraphic extends RenderBox {
     final ui.Picture rasterPicture = recorder.endRecording();
 
     final ui.Image pending =
-        rasterPicture.toGpuImage(scaledWidth, scaledHeight);
+        rasterPicture.toImageSync(scaledWidth, scaledHeight);
     return RasterData(pending, 0, key);
   }
 
@@ -320,13 +320,6 @@ class RenderVectorGraphic extends RenderBox {
       pictureInfo.size.width,
       pictureInfo.size.height,
     );
-
-    // toGpuImage is not supported on the tester, so draw the picture instead.
-    if (kDebugMode && debugRunningOnTester) {
-      context.canvas.translate(dst.left, dst.top);
-      context.canvas.drawPicture(pictureInfo.picture);
-      return;
-    }
 
     context.canvas.drawImageRect(
       image,
