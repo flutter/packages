@@ -75,8 +75,8 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
   }
 
   /// Push the given location onto the page stack with a promise
-  Future<T> pushAsync<T extends Object?>(GoRouteMatch match) {
-    final Completer<T> completer = Completer<T>();
+  Future<dynamic> pushAsync(GoRouteMatch match) {
+    final Completer<dynamic> completer = Completer<dynamic>();
     _completers[match.fullpath] = completer;
     _matches.add(match);
     notifyListeners();
@@ -84,7 +84,7 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
   }
 
   /// Pop the top page off the GoRouter's page stack.
-  void pop<T extends Object?>([T? result]) {
+  void pop([dynamic result]) {
     final GoRouteMatch last = _matches.last;
     final Completer<dynamic>? completer = _completers[last.fullpath];
 
@@ -199,7 +199,7 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
           if (!route.didPop(result)) {
             return false;
           }
-          pop<dynamic>(result);
+          pop(result);
           return true;
         },
       ),

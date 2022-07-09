@@ -150,8 +150,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Push a URI location onto the page stack w/ optional query parameters and
   /// a promise, e.g.
   /// `/family/f2/person/p1?color=blue`
-  Future<T> pushAsync<T extends Object?>(String location,
-      {Object? extra}) async {
+  Future<dynamic> pushAsync(String location, {Object? extra}) async {
     assert(() {
       log.info('pushing $location');
       return true;
@@ -179,7 +178,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Push a named route onto the page stack w/ optional parameters and a
   /// promise, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
-  Future<T> pushNamedAsync<T extends Object?>(
+  Future<dynamic> pushNamedAsync(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
@@ -194,12 +193,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   bool canPop() => routerDelegate.canPop();
 
   /// Pop the top page off the GoRouter's page stack.
-  void pop<T extends Object?>([T? result]) {
+  void pop([dynamic result]) {
     assert(() {
       log.info('popping $location');
       return true;
     }());
-    routerDelegate.pop<T>(result);
+    routerDelegate.pop(result);
   }
 
   /// Refresh the route.

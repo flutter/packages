@@ -57,7 +57,7 @@ extension GoRouterHelper on BuildContext {
       GoRouter.of(this).push(location, extra: extra);
 
   /// Push a location onto the page stack with a promise.
-  Future<T> pushAsync<T extends Object?>(String location, {Object? extra}) =>
+  Future<dynamic> pushAsync(String location, {Object? extra}) =>
       GoRouter.of(this).pushAsync(location, extra: extra);
 
   /// Navigate to a named route onto the page stack.
@@ -75,13 +75,13 @@ extension GoRouterHelper on BuildContext {
       );
 
   /// Navigate to a named route onto the page stack.
-  Future<T> pushNamedAsync<T extends Object?>(
+  Future<dynamic> pushNamedAsync(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
-      GoRouter.of(this).pushNamedAsync<T>(
+      GoRouter.of(this).pushNamedAsync(
         name,
         params: params,
         queryParams: queryParams,
@@ -93,5 +93,5 @@ extension GoRouterHelper on BuildContext {
 
   /// Pop the top page off the Navigator's page stack by calling
   /// [Navigator.pop].
-  void pop<T extends Object?>([T? result]) => GoRouter.of(this).pop<T>(result);
+  void pop([dynamic result]) => GoRouter.of(this).pop(result);
 }
