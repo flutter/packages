@@ -1,7 +1,3 @@
-## 4.1.1
-
-- Refactors test helpers out of a test.
-
 ## 4.1.0
 
 - Adds `bool canPop()` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
