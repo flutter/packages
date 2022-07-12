@@ -48,10 +48,10 @@ class RouteConfiguration {
 
   /// Looks up the url location by a [GoRoute]'s name
   String namedLocation(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-      }) {
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+  }) {
     assert(() {
       log.info('getting location for name: '
           '"$name"'
@@ -67,7 +67,7 @@ class RouteConfiguration {
       patternToRegExp(path, paramNames);
       for (final String paramName in paramNames) {
         assert(params.containsKey(paramName),
-        'missing param "$paramName" for $path');
+            'missing param "$paramName" for $path');
       }
 
       // Check that there are no extra params
@@ -123,8 +123,8 @@ class RouteConfiguration {
       if (route.name != null) {
         final String name = route.name!.toLowerCase();
         assert(
-        !_nameToPath.containsKey(name),
-        'duplication fullpaths for name '
+            !_nameToPath.containsKey(name),
+            'duplication fullpaths for name '
             '"$name":${_nameToPath[name]}, $fullPath');
         _nameToPath[name] = fullPath;
       }

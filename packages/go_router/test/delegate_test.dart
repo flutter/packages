@@ -37,8 +37,7 @@ void main() {
         ..push('/error');
 
       goRouter.routerDelegate.addListener(expectAsync0(() {}));
-      final RouteMatch last =
-          goRouter.routerDelegate.matches.matches.last;
+      final RouteMatch last = goRouter.routerDelegate.matches.matches.last;
       goRouter.routerDelegate.pop();
       expect(goRouter.routerDelegate.matches.matches.length, 1);
       expect(goRouter.routerDelegate.matches.matches.contains(last), false);

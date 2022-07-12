@@ -1555,8 +1555,7 @@ void main() {
     group('stream', () {
       test('no stream emits', () async {
         // Act
-        final StreamListenableSpy notifyListener =
-            StreamListenableSpy(
+        final StreamListenableSpy notifyListener = StreamListenableSpy(
           streamController.stream,
         );
 
@@ -1572,8 +1571,7 @@ void main() {
         final List<int> toEmit = <int>[1, 2, 3];
 
         // Act
-        final StreamListenableSpy notifyListener =
-            StreamListenableSpy(
+        final StreamListenableSpy notifyListener = StreamListenableSpy(
           streamController.stream,
         );
 

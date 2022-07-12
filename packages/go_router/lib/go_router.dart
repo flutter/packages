@@ -86,10 +86,10 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       // allowing the caller to wrap the navigator themselves
       builderWithNav:
           (BuildContext context, GoRouterState state, Navigator nav) =>
-          InheritedGoRouter(
-            goRouter: this,
-            child: navigatorBuilder?.call(context, state, nav) ?? nav,
-          ),
+              InheritedGoRouter(
+        goRouter: this,
+        child: navigatorBuilder?.call(context, state, nav) ?? nav,
+      ),
     );
     assert(() {
       log.info('setting initial location $initialLocation');
@@ -116,10 +116,10 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
   String namedLocation(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-      }) =>
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+  }) =>
       routeInformationParser.configuration.namedLocation(
         name,
         params: params,
@@ -141,11 +141,11 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
   /// Navigate to the named route.
   void goNamed(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-        Object? extra,
-      }) =>
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
       go(
         namedLocation(name, params: params, queryParams: queryParams),
         extra: extra,
@@ -160,7 +160,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     }());
     routeInformationParser
         .parseRouteInformation(
-        DebugGoRouteInformation(location: location, state: extra))
+            DebugGoRouteInformation(location: location, state: extra))
         .then<void>((RouteMatchList matches) {
       routerDelegate.push(matches.last);
     });
@@ -169,11 +169,11 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Push a named route onto the page stack w/ optional parameters, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
   void pushNamed(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-        Object? extra,
-      }) =>
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
       push(
         namedLocation(name, params: params, queryParams: queryParams),
         extra: extra,
@@ -207,7 +207,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Find the current GoRouter in the widget tree.
   static GoRouter of(BuildContext context) {
     final InheritedGoRouter? inherited =
-    context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
+        context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
     assert(inherited != null, 'No GoRouter found in context');
     return inherited!.goRouter;
   }
@@ -287,10 +287,10 @@ class InheritedGoRouter extends InheritedWidget {
 extension GoRouterHelper on BuildContext {
   /// Get a location from route name and parameters.
   String namedLocation(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-      }) =>
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+  }) =>
       GoRouter.of(this)
           .namedLocation(name, params: params, queryParams: queryParams);
 
@@ -300,11 +300,11 @@ extension GoRouterHelper on BuildContext {
 
   /// Navigate to a named route.
   void goNamed(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-        Object? extra,
-      }) =>
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
       GoRouter.of(this).goNamed(
         name,
         params: params,
@@ -318,11 +318,11 @@ extension GoRouterHelper on BuildContext {
 
   /// Navigate to a named route onto the page stack.
   void pushNamed(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-        Object? extra,
-      }) =>
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
       GoRouter.of(this).pushNamed(
         name,
         params: params,

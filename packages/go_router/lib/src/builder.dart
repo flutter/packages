@@ -233,16 +233,16 @@ class RouteBuilder {
           return true;
         }());
         _pageBuilderForAppType = pageBuilderForMaterialApp;
-        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
-            MaterialErrorScreen(s.error);
+        _errorBuilderForAppType =
+            (BuildContext c, GoRouterState s) => MaterialErrorScreen(s.error);
       } else if (elem != null && isCupertinoApp(elem)) {
         assert(() {
           log.info('CupertinoApp found');
           return true;
         }());
         _pageBuilderForAppType = pageBuilderForCupertinoApp;
-        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
-            CupertinoErrorScreen(s.error);
+        _errorBuilderForAppType =
+            (BuildContext c, GoRouterState s) => CupertinoErrorScreen(s.error);
       } else {
         assert(() {
           log.info('WidgetsApp found');
