@@ -4,8 +4,8 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'route.dart';
 import 'path_utils.dart';
+import 'route.dart';
 
 /// Each GoRouteMatch instance represents an instance of a GoRoute for a
 /// specific portion of a location.
