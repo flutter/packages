@@ -1,3 +1,7 @@
+## 4.1.1
+
+- Refactors internal classes and methods
+
 ## 4.1.0
 
 - Adds `bool canPop()` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
