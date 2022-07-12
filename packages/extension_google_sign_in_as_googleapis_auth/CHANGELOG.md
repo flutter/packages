@@ -1,4 +1,4 @@
-## NEXT
+## 2.0.6
 
 * Drops support for Flutter <2.8.
 
