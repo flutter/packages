@@ -18,12 +18,12 @@ import 'package:flutter/material.dart';
 /// );
 /// ```
 /// {@end-tool}
-class StreamListenable extends ChangeNotifier {
-  /// Creates a [StreamListenable].
+class GoRouterRefreshStream extends ChangeNotifier {
+  /// Creates a [GoRouterRefreshStream].
   ///
   /// Every time the [stream] receives an event the [GoRouter] will refresh its
   /// current route.
-  StreamListenable(Stream<dynamic> stream) {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListeners();
     _subscription = stream.asBroadcastStream().listen(
           (dynamic _) => notifyListeners(),

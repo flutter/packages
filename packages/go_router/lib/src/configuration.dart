@@ -12,7 +12,7 @@ export 'state.dart';
 
 /// The route configuration for GoRouter, configured by the app
 class RouteConfiguration {
-  /// Constructs a GoRouterConfiguration
+  /// Constructs a RouterConfiguration
   RouteConfiguration({
     required this.routes,
     required this.redirectLimit,
@@ -86,7 +86,7 @@ class RouteConfiguration {
 
   @override
   String toString() {
-    return 'GoRouterConfiguration: $routes';
+    return 'RouterConfiguration: $routes';
   }
 
   String _debugKnownRoutes() {

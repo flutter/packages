@@ -7,10 +7,10 @@ import 'package:flutter/foundation.dart';
 import 'path_utils.dart';
 import 'route.dart';
 
-/// Each GoRouteMatch instance represents an instance of a GoRoute for a
-/// specific portion of a location.
+/// Each RouteMatch instance represents an instance of a GoRoute for a specific
+/// portion of a location.
 class RouteMatch {
-  /// Constructor for GoRouteMatch, each instance represents an instance of a
+  /// Constructor for RouteMatch, each instance represents an instance of a
   /// GoRoute for a specific portion of a location.
   RouteMatch({
     required this.route,
@@ -106,7 +106,7 @@ class RouteMatch {
           param.key: Uri.decodeComponent(param.value)
       };
 
-  /// for use by the Router architecture as part of the GoRouteMatch
+  /// For use by the Router architecture as part of the RouteMatch
   @override
-  String toString() => 'GoRouteMatch($fullpath, $encodedParams)';
+  String toString() => 'RouteMatch($fullpath, $encodedParams)';
 }

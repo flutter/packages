@@ -23,39 +23,6 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
   // Store each redirect to detect loops
   final List<RouteMatchList> redirects = <RouteMatchList>[prevMatchList];
 
-  // Adds the redirect to the list of redirects if it is valid.
-  bool redirected(RouteMatchList newRedirect) {
-    if (newRedirect == null) {
-      return false;
-    }
-
-    // Verify that the redirect can be parsed and is not already
-    // in the list of redirects
-    assert(() {
-      if (redirects.contains(newRedirect)) {
-        throw RedirectionError(
-            'redirect loop detected',
-            <RouteMatchList>[...redirects, newRedirect],
-            prevMatchList.location);
-      }
-      if (redirects.length > configuration.redirectLimit) {
-        throw RedirectionError(
-            'too many redirects',
-            <RouteMatchList>[...redirects, newRedirect],
-            prevMatchList.location);
-      }
-      return true;
-    }());
-
-    redirects.add(newRedirect);
-
-    assert(() {
-      log.info('redirecting to $newRedirect');
-      return true;
-    }());
-    return true;
-  }
-
   // Keep looping until redirecting is done
   while (true) {
     final RouteMatchList currentMatches = redirects.last;
@@ -79,11 +46,9 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
     if (topRedirectLocation != null) {
       final RouteMatchList newMatch = matcher.findMatch(topRedirectLocation);
 
-      if (redirected(newMatch)) {
-        continue;
-      } else {
-        matches = newMatch;
-      }
+      _addRedirect(redirects, newMatch, prevMatchList.location,
+          configuration.redirectLimit);
+      continue;
     } else {
       matches = currentMatches;
     }
@@ -123,11 +88,9 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
     }
 
     final RouteMatchList newMatchList = matcher.findMatch(topRouteLocation);
-    if (redirected(newMatchList)) {
-      continue;
-    }
-
-    break;
+    _addRedirect(redirects, newMatchList, prevMatchList.location,
+        configuration.redirectLimit);
+    continue;
   }
   return matches;
 }
@@ -153,4 +116,30 @@ class RedirectionError extends Error implements UnsupportedError {
         ...matches.map(
             (RouteMatchList routeMatches) => routeMatches.location.toString()),
       ].join(' => ');
+}
+
+/// Adds the redirect to [redirects] if it is valid.
+/// Returns true if the redirect was processed.
+void _addRedirect(List<RouteMatchList> redirects, RouteMatchList newMatch,
+    Uri prevLocation, int redirectLimit) {
+  // Verify that the redirect can be parsed and is not already
+  // in the list of redirects
+  assert(() {
+    if (redirects.contains(newMatch)) {
+      throw RedirectionError('redirect loop detected',
+          <RouteMatchList>[...redirects, newMatch], prevLocation);
+    }
+    if (redirects.length > redirectLimit) {
+      throw RedirectionError('too many redirects',
+          <RouteMatchList>[...redirects, newMatch], prevLocation);
+    }
+    return true;
+  }());
+
+  redirects.add(newMatch);
+
+  assert(() {
+    log.info('redirecting to $newMatch');
+    return true;
+  }());
 }

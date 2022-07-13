@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
 import 'information_provider.dart';
+import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
 import 'redirection.dart';
@@ -21,13 +22,13 @@ class GoRouterInformationParser extends RouteInformationParser<RouteMatchList> {
         redirector = redirect;
 
   /// The route configuration for the app.
-  RouteConfiguration configuration;
+  final RouteConfiguration configuration;
 
   /// The route matcher
-  RouteMatcher matcher;
+  final RouteMatcher matcher;
 
   /// The route redirector
-  RouteRedirector redirector;
+  final RouteRedirector redirector;
 
   /// A debug property to assert [GoRouteInformationProvider] is in use along
   /// with this parser.
@@ -59,6 +60,8 @@ class GoRouterInformationParser extends RouteInformationParser<RouteMatchList> {
         initialMatches = matcher.findMatch(routeInformation.location!,
             extra: routeInformation.state);
       } on MatcherError {
+        log.info('No initial matches: ${routeInformation.location}');
+
         // If there is a matching error for the initial location, we should still
         // try to process the top-level redirects.
         initialMatches = RouteMatchList.empty();
@@ -77,9 +80,14 @@ class GoRouterInformationParser extends RouteInformationParser<RouteMatchList> {
       // synchronously and remove unwanted initial animations on deep-linking
       return SynchronousFuture<RouteMatchList>(matches);
     } on RedirectionError catch (e) {
+      log.info('Redirection error: ${e.message}');
       final Uri uri = e.location;
       return SynchronousFuture<RouteMatchList>(_errorScreen(uri, e.message));
     } on MatcherError catch (e) {
+      // The RouteRedirector uses the matcher to find the match, so a match
+      // exception can happen during redirection. For example, the redirector
+      // redirects from `/a` to `/b`, it needs to get the matches for `/b`.
+      log.info('Match error: ${e.message}');
       final Uri uri = Uri.parse(e.location);
       return SynchronousFuture<RouteMatchList>(_errorScreen(uri, e.message));
     }
