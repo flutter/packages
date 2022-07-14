@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-/// The enum for scaffold tab
+/// The enum for scaffold tab.
 enum ScaffoldTab {
   /// The books tab.
   books,

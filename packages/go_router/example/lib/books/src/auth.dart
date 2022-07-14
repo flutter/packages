@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
-/// A mock authentication service
+/// A mock authentication service.
 class BookstoreAuth extends ChangeNotifier {
   bool _signedIn = false;
 

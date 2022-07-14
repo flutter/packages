@@ -6,15 +6,15 @@ import 'configuration.dart';
 import 'match.dart';
 import 'path_utils.dart';
 
-/// Converts a location into a list of [RouteMatch] objects
+/// Converts a location into a list of [RouteMatch] objects.
 class RouteMatcher {
-  /// GoRouteMatcher constructor.
+  /// [RouteMatcher] constructor.
   RouteMatcher(this.configuration);
 
-  /// The route configuration
+  /// The route configuration.
   final RouteConfiguration configuration;
 
-  /// Finds the routes that matched the given URL
+  /// Finds the routes that matched the given URL.
   RouteMatchList findMatch(String location, {Object? extra}) {
     final String canonicalLocation = canonicalUri(location);
     final List<RouteMatch> matches =
@@ -44,31 +44,31 @@ class RouteMatcher {
 
 /// The list of [RouteMatch] objects.
 class RouteMatchList {
-  /// GoRouteMatches constructor.
+  /// RouteMatchList constructor.
   RouteMatchList(this._matches);
 
-  /// Constructs an empty matches object
+  /// Constructs an empty matches object.
   factory RouteMatchList.empty() => RouteMatchList(<RouteMatch>[]);
 
   final List<RouteMatch> _matches;
 
-  /// Returns true if there are no matches
+  /// Returns true if there are no matches.
   bool get isEmpty => _matches.isEmpty;
 
-  /// Returns true if there are matches
+  /// Returns true if there are matches.
   bool get isNotEmpty => _matches.isNotEmpty;
 
-  /// The original URL that was matched
+  /// The original URL that was matched.
   Uri get location =>
       _matches.isEmpty ? Uri() : Uri.parse(_matches.last.fullUriString);
 
-  /// Pushes a match onto the list of matches
+  /// Pushes a match onto the list of matches.
   // TODO(johnpryan): deprecate this API when new route types are added
   void push(covariant RouteMatch match) {
     _matches.add(match);
   }
 
-  /// Removes the last match
+  /// Removes the last match.
   void pop() {
     _matches.removeLast();
     assert(
@@ -77,31 +77,31 @@ class RouteMatchList {
         ' there are no pages left to show');
   }
 
-  /// Returns true if [pop] can safely be called
+  /// Returns true if [pop] can safely be called.
   bool canPop() {
     return _matches.length > 1;
   }
 
-  /// An optional object provided by the app during navigation
+  /// An optional object provided by the app during navigation.
   Object? get extra => _matches.last.extra;
 
-  /// The last matching route
+  /// The last matching route.
   RouteMatch get last => _matches.last;
 
-  /// The route matches
+  /// The route matches.
   List<RouteMatch> get matches => _matches;
 }
 
-/// An error that occurred during matching
+/// An error that occurred during matching.
 class MatcherError extends Error {
-  /// Constructs a MatcherError
+  /// Constructs a [MatcherError].
   MatcherError(String message, this.location)
       : message = message + ': $location';
 
-  /// The error message
+  /// The error message.
   final String message;
 
-  /// The location that failed to match
+  /// The location that failed to match.
   final String location;
 
   @override

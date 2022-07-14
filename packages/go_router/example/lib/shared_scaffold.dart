@@ -79,7 +79,7 @@ class SharedScaffold extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  /// The selected index
+  /// The selected index.
   final int selectedIndex;
 
   /// The body of the page.
@@ -173,7 +173,7 @@ class Page2View extends StatelessWidget {
 
 /// The error scaffold.
 class ErrorScaffold extends StatelessWidget {
-  /// Creates an [ErrorScaffold]
+  /// Creates an [ErrorScaffold].
   const ErrorScaffold({
     required this.body,
     Key? key,

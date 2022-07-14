@@ -15,9 +15,9 @@ import 'pages/material.dart';
 import 'typed_routing.dart';
 import 'typedefs.dart';
 
-/// Builds the top-level Navigator for GoRouter
+/// Builds the top-level Navigator for GoRouter.
 class RouteBuilder {
-  /// GoRouteBuilder constructor
+  /// [RouteBuilder] constructor.
   RouteBuilder({
     required this.configuration,
     required this.builderWithNav,
@@ -43,8 +43,8 @@ class RouteBuilder {
   /// its history.
   final String? restorationScopeId;
 
-  /// NavigatorObserver used to receive change notifications when
-  /// navigation changes.
+  /// NavigatorObserver used to receive change notifications when navigation
+  /// changes.
   final List<NavigatorObserver> observers;
 
   /// Builds the top-level Navigator by invoking the build method on each
@@ -142,7 +142,8 @@ class RouteBuilder {
   }
 
   /// Get the stack of sub-routes that matches the location and turn it into a
-  /// stack of pages, e.g.
+  /// stack of pages, for example:
+  ///
   /// routes: <GoRoute>[
   ///   /
   ///     family/:fid

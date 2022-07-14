@@ -96,7 +96,7 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
 
 /// A configuration error detected while processing redirects.
 class RedirectionError extends Error implements UnsupportedError {
-  /// RedirectionError constructor
+  /// RedirectionError constructor.
   RedirectionError(this.message, this.matches, this.location);
 
   /// The matches that were found while processing redirects.

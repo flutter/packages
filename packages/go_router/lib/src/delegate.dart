@@ -13,11 +13,11 @@ import 'match.dart';
 import 'matching.dart';
 import 'typedefs.dart';
 
-/// GoRouter implementation of the RouterDelegate base class.
+/// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     with PopNavigatorRouterDelegateMixin<RouteMatchList>, ChangeNotifier {
-  /// Constructor for GoRouter's implementation of the
-  /// RouterDelegate base class.
+  /// Constructor for GoRouter's implementation of the RouterDelegate base
+  /// class.
   GoRouterDelegate({
     required RouteConfiguration configuration,
     required GoRouterBuilderWithNav builderWithNav,

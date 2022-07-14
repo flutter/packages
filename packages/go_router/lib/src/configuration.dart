@@ -10,9 +10,9 @@ import 'typedefs.dart';
 export 'route.dart';
 export 'state.dart';
 
-/// The route configuration for GoRouter, configured by the app
+/// The route configuration for GoRouter configured by the app.
 class RouteConfiguration {
-  /// Constructs a RouterConfiguration
+  /// Constructs a [RouteConfiguration].
   RouteConfiguration({
     required this.routes,
     required this.redirectLimit,
@@ -33,10 +33,10 @@ class RouteConfiguration {
     }
   }
 
-  /// List of top level routes used by the go router delegate
+  /// The list of top level routes used by [GoRouterDelegate].
   final List<GoRoute> routes;
 
-  /// The limit for the number of consecutive redirects
+  /// The limit for the number of consecutive redirects.
   final int redirectLimit;
 
   /// Top level page redirect.
@@ -44,7 +44,7 @@ class RouteConfiguration {
 
   final Map<String, String> _nameToPath = <String, String>{};
 
-  /// Looks up the url location by a [GoRoute]'s name
+  /// Looks up the url location by a [GoRoute]'s name.
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
@@ -134,12 +134,12 @@ class RouteConfiguration {
   }
 }
 
-/// Thrown when the [RouteConfiguration] is invalid
+/// Thrown when the [RouteConfiguration] is invalid.
 class RouteConfigurationError extends Error {
-  /// RouteConfigurationError constructor
+  /// [RouteConfigurationError] constructor.
   RouteConfigurationError(this.message);
 
-  /// The error message
+  /// The error message.
   final String message;
 
   @override

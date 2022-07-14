@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 /// A declarative router for Flutter based on Navigation 2 supporting
-/// deep linking, data-driven routes and more
+/// deep linking, data-driven routes and more.
 library go_router;
 
 export 'src/configuration.dart' show GoRouterState, GoRoute;

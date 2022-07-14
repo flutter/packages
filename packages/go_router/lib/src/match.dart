@@ -10,8 +10,8 @@ import 'route.dart';
 /// Each RouteMatch instance represents an instance of a GoRoute for a specific
 /// portion of a location.
 class RouteMatch {
-  /// Constructor for RouteMatch, each instance represents an instance of a
-  /// GoRoute for a specific portion of a location.
+  /// Constructor for [RouteMatch], each instance represents an instance of a
+  /// [GoRoute] for a specific portion of a location.
   RouteMatch({
     required this.route,
     required this.subloc,

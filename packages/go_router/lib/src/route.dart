@@ -11,8 +11,8 @@ import 'typedefs.dart';
 
 /// A declarative mapping between a route path and a page builder.
 class GoRoute {
-  /// Default constructor used to create mapping between a
-  /// route path and a page builder.
+  /// Default constructor used to create mapping between a route path and a page
+  /// builder.
   GoRoute({
     required this.path,
     this.name,
