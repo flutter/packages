@@ -9,9 +9,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logging/logging.dart';
 import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
+import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
 
@@ -32,7 +32,7 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      final List<GoRouteMatch> matches = router.routerDelegate.matches;
+      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(matches.first.fullpath, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -1367,7 +1367,7 @@ void main() {
             ),
           ],
           errorBuilder: (BuildContext context, GoRouterState state) =>
-              ErrorScreen(state.error!),
+              TestErrorScreen(state.error!),
           initialLocation: '/0/1/2/0/1',
         );
         expect(false, true);
@@ -1795,7 +1795,7 @@ void main() {
         GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
         GoRoute(
           path: '/error',
-          builder: (_, __) => const ErrorScreen(null),
+          builder: (_, __) => TestErrorScreen(TestFailure('exception')),
         ),
       ],
       navigatorBuilder: navigatorBuilder,
