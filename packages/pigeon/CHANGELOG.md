@@ -1,3 +1,7 @@
+## 3.2.4
+
+* [java] Correctly handles int results that are sent as java Integer.
+
 ## 3.2.3
 
 * Adds `unnecessary_import` to linter ignore list in generated dart tests.
