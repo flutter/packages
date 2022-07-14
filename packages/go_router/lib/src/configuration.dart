@@ -21,7 +21,7 @@ class RouteConfiguration {
     _cacheNameToPath('', routes);
 
     assert(() {
-      _debugKnownRoutes();
+      log.info(_debugKnownRoutes());
       return true;
     }());
 
@@ -106,10 +106,7 @@ class RouteConfiguration {
       List<GoRoute> routes, String parentFullpath, int depth, StringBuffer sb) {
     for (final GoRoute route in routes) {
       final String fullpath = concatenatePaths(parentFullpath, route.path);
-      assert(() {
-        sb.writeln('  => ${''.padLeft(depth * 2)}$fullpath');
-        return true;
-      }());
+      sb.writeln('  => ${''.padLeft(depth * 2)}$fullpath');
       _debugFullPathsFor(route.routes, fullpath, depth + 1, sb);
     }
   }
