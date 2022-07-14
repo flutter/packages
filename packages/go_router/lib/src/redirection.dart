@@ -42,16 +42,15 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
       ),
     );
 
-    // If the new location is null, keep the matches the same as before.
     if (topRedirectLocation != null) {
       final RouteMatchList newMatch = matcher.findMatch(topRedirectLocation);
-
       _addRedirect(redirects, newMatch, prevMatchList.location,
           configuration.redirectLimit);
       continue;
-    } else {
-      matches = currentMatches;
     }
+
+    // If there's no top-level redirect, keep the matches the same as before.
+    matches = currentMatches;
 
     // Merge new params to keep params from previously matched paths, e.g.
     // /users/:userId/book/:bookId provides userId and bookId to book/:bookId
