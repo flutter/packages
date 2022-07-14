@@ -955,6 +955,8 @@ void main() {
     final String code = sink.toString();
     // Java doesn't accept nullability annotations in type arguments.
     expect(code, contains('Result<Long>'));
+
+    expect(code, contains('longValue();'));
   });
 
   test('nullable argument host', () {
