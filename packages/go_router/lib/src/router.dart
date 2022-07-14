@@ -52,8 +52,6 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       redirectLimit: redirectLimit,
     );
 
-    routeConfiguration.validate();
-
     routeInformationParser = GoRouterInformationParser(
       configuration: routeConfiguration,
       debugRequireGoRouteInformationProvider: true,

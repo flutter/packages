@@ -19,10 +19,18 @@ class RouteConfiguration {
     required this.topRedirect,
   }) {
     _cacheNameToPath('', routes);
+
     assert(() {
       _debugKnownRoutes();
       return true;
     }());
+
+    for (final GoRoute route in routes) {
+      if (!route.path.startsWith('/')) {
+        throw RouteConfigurationError(
+            'top-level path must start with "/": ${route.path}');
+      }
+    }
   }
 
   /// List of top level routes used by the go router delegate
@@ -35,16 +43,6 @@ class RouteConfiguration {
   final GoRouterRedirect topRedirect;
 
   final Map<String, String> _nameToPath = <String, String>{};
-
-  /// Throws a [RouteConfigurationError] if this configuration is invalid
-  void validate() {
-    for (final GoRoute route in routes) {
-      if (!route.path.startsWith('/')) {
-        throw RouteConfigurationError(
-            'top-level path must start with "/": ${route.path}');
-      }
-    }
-  }
 
   /// Looks up the url location by a [GoRoute]'s name
   String namedLocation(
