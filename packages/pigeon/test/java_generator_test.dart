@@ -836,6 +836,32 @@ void main() {
     expect(code, contains('List<Long> output ='));
   });
 
+  test('flutter int return', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType:
+                  const TypeDeclaration(baseName: 'int', isNullable: false),
+              arguments: <NamedType>[],
+              isAsynchronous: true)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('doit(Reply<Long> callback)'));
+    expect(
+        code,
+        contains(
+            'Long output = channelReply == null ? null : ((Number)channelReply).longValue();'));
+  });
+
   test('host multiple args', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
@@ -955,8 +981,6 @@ void main() {
     final String code = sink.toString();
     // Java doesn't accept nullability annotations in type arguments.
     expect(code, contains('Result<Long>'));
-
-    expect(code, contains('longValue();'));
   });
 
   test('nullable argument host', () {

@@ -378,7 +378,7 @@ static MessageCodec<Object> getCodec() {
             indent.writeln('@SuppressWarnings("ConstantConditions")');
             if (func.returnType.baseName == 'int') {
               indent.writeln(
-                  '$returnType $output = chanelReply == null ? null : ((Number)channelReply).longValue();');
+                  '$returnType $output = channelReply == null ? null : ((Number)channelReply).longValue();');
             } else {
               indent
                   .writeln('$returnType $output = ($returnType)channelReply;');
