@@ -119,7 +119,6 @@ class RedirectionError extends Error implements UnsupportedError {
 }
 
 /// Adds the redirect to [redirects] if it is valid.
-/// Returns true if the redirect was processed.
 void _addRedirect(List<RouteMatchList> redirects, RouteMatchList newMatch,
     Uri prevLocation, int redirectLimit) {
   // Verify that the redirect can be parsed and is not already
