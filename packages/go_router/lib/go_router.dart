@@ -10,10 +10,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'src/configuration.dart';
+import 'src/delegate.dart';
+import 'src/information_provider.dart';
 import 'src/logging.dart';
 import 'src/matching.dart';
+import 'src/parser.dart';
 import 'src/platform.dart';
-import 'src/routing.dart';
 import 'src/typedefs.dart';
 
 export 'src/configuration.dart' show GoRouterState, GoRoute;
