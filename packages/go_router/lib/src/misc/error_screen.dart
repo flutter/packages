@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
-import '../../go_router.dart';
+
+import 'extensions.dart';
 
 /// Default error page implementation for WidgetsApp.
 class ErrorScreen extends StatelessWidget {

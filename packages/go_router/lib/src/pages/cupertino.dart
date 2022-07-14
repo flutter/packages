@@ -5,7 +5,7 @@
 // ignore_for_file: diagnostic_describe_all_properties
 
 import 'package:flutter/cupertino.dart';
-import '../../go_router.dart';
+import '../misc/extensions.dart';
 
 /// Checks for CupertinoApp in the widget tree.
 bool isCupertinoApp(Element elem) =>
