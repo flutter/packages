@@ -36,6 +36,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         );
 
   /// Builds the top-level Navigator given a configuration and location.
+  @visibleForTesting
   final RouteBuilder builder;
 
   /// Set to true to disable creating history entries on the web.
