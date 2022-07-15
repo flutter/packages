@@ -11,7 +11,6 @@ import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
-import 'package:go_router/src/misc/error_screen.dart';
 
 Future<GoRouter> createGoRouter(
   WidgetTester tester, {
@@ -23,7 +22,7 @@ Future<GoRouter> createGoRouter(
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
       GoRoute(
         path: '/error',
-        builder: (_, __) => const ErrorScreen(null),
+        builder: (_, __) => TestErrorScreen(TestFailure('Exception')),
       ),
     ],
     navigatorBuilder: navigatorBuilder,
@@ -172,7 +171,7 @@ Future<GoRouter> createRouter(
     initialLocation: initialLocation,
     redirectLimit: redirectLimit,
     errorBuilder: (BuildContext context, GoRouterState state) =>
-        ErrorScreen(state.error!),
+        TestErrorScreen(state.error!),
     debugLogDiagnostics: false,
   );
   await tester.pumpWidget(
