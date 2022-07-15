@@ -34,9 +34,9 @@ public class PrimitiveTest {
               if (arg instanceof Long) {
                 Long longArg = (Long) arg;
                 if (longArg.intValue() == longArg.longValue()) {
-                   // Value fits in the Integer so gets sent as such
-                   // https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-java-tab#codec
-                   arg = Integer.valueOf(longArg.intValue());
+                  // Value fits in the Integer so gets sent as such
+                  // https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-java-tab#codec
+                  arg = Integer.valueOf(longArg.intValue());
                 }
               }
               ByteBuffer replyData = PrimitiveFlutterApi.getCodec().encodeMessage(arg);
@@ -69,10 +69,10 @@ public class PrimitiveTest {
     PrimitiveFlutterApi api = new PrimitiveFlutterApi(binaryMessenger);
     boolean[] didCall = {false};
     api.anInt(
-        1L<<50,
+        1L << 50,
         (Long result) -> {
           didCall[0] = true;
-          assertEquals(result.longValue(), 1L<<50);
+          assertEquals(result.longValue(), 1L << 50);
         });
     assertTrue(didCall[0]);
   }
