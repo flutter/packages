@@ -23,7 +23,7 @@ void main() {
         ],
       ),
     ];
-    final GoRouterInformationParser parser = GoRouterInformationParser(
+    final GoRouteInformationParser parser = GoRouteInformationParser(
       configuration: RouteConfiguration(
         routes: routes,
         redirectLimit: 100,
@@ -74,7 +74,7 @@ void main() {
         ],
       ),
     ];
-    final GoRouterInformationParser parser = GoRouterInformationParser(
+    final GoRouteInformationParser parser = GoRouteInformationParser(
       configuration: RouteConfiguration(
         routes: routes,
         redirectLimit: 100,
@@ -107,7 +107,7 @@ void main() {
         ],
       ),
     ];
-    final GoRouterInformationParser parser = GoRouterInformationParser(
+    final GoRouteInformationParser parser = GoRouteInformationParser(
       configuration: RouteConfiguration(
         routes: routes,
         redirectLimit: 100,
@@ -149,7 +149,7 @@ void main() {
         ],
       ),
     ];
-    final GoRouterInformationParser parser = GoRouterInformationParser(
+    final GoRouteInformationParser parser = GoRouteInformationParser(
       configuration: RouteConfiguration(
         routes: routes,
         redirectLimit: 100,
@@ -194,7 +194,7 @@ void main() {
         ],
       ),
     ];
-    final GoRouterInformationParser parser = GoRouterInformationParser(
+    final GoRouteInformationParser parser = GoRouteInformationParser(
       configuration: RouteConfiguration(
         routes: routes,
         redirectLimit: 100,
@@ -222,7 +222,7 @@ void main() {
         builder: (_, __) => const Placeholder(),
       ),
     ];
-    final GoRouterInformationParser parser = GoRouterInformationParser(
+    final GoRouteInformationParser parser = GoRouteInformationParser(
       configuration: RouteConfiguration(
         routes: routes,
         redirectLimit: 100,
@@ -245,7 +245,7 @@ void main() {
         redirect: (GoRouterState state) => state.location,
       ),
     ];
-    final GoRouterInformationParser parser = GoRouterInformationParser(
+    final GoRouteInformationParser parser = GoRouteInformationParser(
       configuration: RouteConfiguration(
         routes: routes,
         redirectLimit: 5,

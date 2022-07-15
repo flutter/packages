@@ -14,9 +14,9 @@ import 'redirection.dart';
 
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
 /// Also performs redirection using [RouteRedirector].
-class GoRouterInformationParser extends RouteInformationParser<RouteMatchList> {
-  /// Creates a [GoRouterInformationParser].
-  GoRouterInformationParser({
+class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
+  /// Creates a [GoRouteInformationParser].
+  GoRouteInformationParser({
     required this.configuration,
     this.debugRequireGoRouteInformationProvider = false,
   })  : matcher = RouteMatcher(configuration),
