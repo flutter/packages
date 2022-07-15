@@ -7,10 +7,10 @@ import '../router.dart';
 extension GoRouterHelper on BuildContext {
   /// Get a location from route name and parameters.
   String namedLocation(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-      }) =>
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+  }) =>
       GoRouter.of(this)
           .namedLocation(name, params: params, queryParams: queryParams);
 
@@ -20,11 +20,11 @@ extension GoRouterHelper on BuildContext {
 
   /// Navigate to a named route.
   void goNamed(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-        Object? extra,
-      }) =>
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
       GoRouter.of(this).goNamed(
         name,
         params: params,
@@ -38,11 +38,11 @@ extension GoRouterHelper on BuildContext {
 
   /// Navigate to a named route onto the page stack.
   void pushNamed(
-      String name, {
-        Map<String, String> params = const <String, String>{},
-        Map<String, String> queryParams = const <String, String>{},
-        Object? extra,
-      }) =>
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
       GoRouter.of(this).pushNamed(
         name,
         params: params,
