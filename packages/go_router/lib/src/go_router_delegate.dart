@@ -65,7 +65,10 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
     notifyListeners();
   }
 
-  /// Replaces the current location with the given one.
+  /// Replaces the top-most page of the page stack with the given one.
+  ///
+  /// See also:
+  /// * [push] which pushes the given location onto the page stack.
   void replace(GoRouteMatch match) {
     _matches.last = match;
     notifyListeners();

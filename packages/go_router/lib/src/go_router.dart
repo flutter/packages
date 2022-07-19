@@ -160,8 +160,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         extra: extra,
       );
 
-  /// Replaces the current location with the given one w/ optional query
-  /// parameters, e.g. `/family/f2/person/p1?color=blue
+  /// Replaces the top-most page of the page stack with the given URL location
+  /// w/ optional query parameters, e.g. `/family/f2/person/p1?color=blue`.
+  ///
+  /// See also:
+  /// * [go] which navigates to the location.
+  /// * [push] which pushes the location onto the page stack.
   void replace(String location, {Object? extra}) {
     routeInformationParser
         .parseRouteInformation(
@@ -172,8 +176,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     });
   }
 
-  /// Replaces the current location with the named route w/ optional parameters,
-  /// e.g. `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  /// Replaces the top-most page of the page stack with the named route w/
+  /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
+  /// 'p1'}`.
+  ///
+  /// See also:
+  /// * [goNamed] which navigates a named route.
+  /// * [pushNamed] which pushes a named route onto the page stack.
   void replaceNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
