@@ -15,10 +15,21 @@ final ArgParser argParser = ArgParser()
     valueHelp: 'path/to/libtessellator.dylib',
     hide: true,
   )
+  ..addOption(
+    'libpathops',
+    help: 'The path to a libpathops dynamic library',
+    valueHelp: 'path/to/libpath_ops.dylib',
+    hide: true,
+  )
   ..addFlag(
     'tessellate',
     help: 'Convert path fills into a tessellated shape. This will improve '
         'raster times at the cost of slightly larger file sizes.',
+  )
+  ..addFlag(
+    'path-ops',
+    help: 'Allows for path_ops library to be used when'
+        'calculating path intersections.',
   )
   ..addOption('input',
       abbr: 'i',
@@ -46,6 +57,16 @@ Future<void> main(List<String> args) async {
       initializeLibTesselator(results['libtessellator'] as String);
     } else {
       if (!initializeTessellatorFromFlutterCache()) {
+        exit(1);
+      }
+    }
+  }
+
+  if (results['pathops'] == true) {
+    if (results.wasParsed('libpathops')) {
+      initializeLibPathOps(results['libpathops'] as String);
+    } else {
+      if (!initializePathOpsFromFlutterCache()) {
         exit(1);
       }
     }
