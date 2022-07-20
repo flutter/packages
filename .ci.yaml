@@ -81,6 +81,11 @@ targets:
     timeout: 90
     properties:
       add_recipes_cq: "true"
+    runIf:
+      - .ci.yaml
+      - .ci/
+      - packages/fuchsia_ctl/
+      - script/
 
   - name: Linux ci_yaml packages roller
     recipe: infra/ci_yaml
