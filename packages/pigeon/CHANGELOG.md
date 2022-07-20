@@ -1,8 +1,20 @@
-## 3.2.1
+## 3.2.4
 
 * [c++] Fixes most non-class arguments and return values in host APIs. The
   types of arguments and return values have changed, so this may require updates
   to existing code.
+
+## 3.2.3
+
+* Adds `unnecessary_import` to linter ignore list in generated dart tests.
+
+## 3.2.2
+
+* Adds `unnecessary_import` to linter ignore list for `package:flutter/foundation.dart`.
+
+## 3.2.1
+
+* Removes `@dart = 2.12` from generated Dart code.
 
 ## 3.2.0
 
@@ -47,7 +59,7 @@
 ## 3.0.4
 
 * [objc] Simplified some code output, including avoiding Xcode warnings about
-  using `NSNumber*` directly as boolean value.  
+  using `NSNumber*` directly as boolean value.
 * [tests] Moved test script to enable CI.
 
 ## 3.0.3

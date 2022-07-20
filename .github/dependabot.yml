@@ -11,7 +11,7 @@ updates:
       - "stuartmorgan"
       - "ditman"
     labels:
-      - "waiting for tree to go green"
+      - "autosubmit"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
