@@ -310,8 +310,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
 
     final md.Document document = md.Document(
       blockSyntaxes: widget.blockSyntaxes,
-      inlineSyntaxes: (widget.inlineSyntaxes ?? <md.InlineSyntax>[])
-        ..add(TaskListSyntax()),
+      inlineSyntaxes: widget.inlineSyntaxes,
       extensionSet: widget.extensionSet ?? md.ExtensionSet.gitHubFlavored,
       encodeHtml: false,
     );
@@ -541,25 +540,6 @@ class Markdown extends MarkdownWidget {
       shrinkWrap: shrinkWrap,
       children: children!,
     );
-  }
-}
-
-/// Parse [task list items](https://github.github.com/gfm/#task-list-items-extension-).
-class TaskListSyntax extends md.InlineSyntax {
-  /// Cretaes a new instance.
-  TaskListSyntax() : super(_pattern);
-
-  // FIXME: Waiting for dart-lang/markdown#269 to land
-  static const String _pattern = r'^ *\[([ xX])\] +';
-
-  @override
-  bool onMatch(md.InlineParser parser, Match match) {
-    final md.Element el = md.Element.withTag('input');
-    el.attributes['type'] = 'checkbox';
-    el.attributes['disabled'] = 'true';
-    el.attributes['checked'] = '${match[1]!.trim().isNotEmpty}';
-    parser.addNode(el);
-    return true;
   }
 }
 
