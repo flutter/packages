@@ -115,8 +115,8 @@ class RouteBuilder {
       GoRouterState(
         configuration,
         location: location,
-        name: null,
         // no name available at the top level
+        name: null,
         // trim the query params off the subloc to match route.redirect
         subloc: uri.path,
         // pass along the query params 'cuz that's all we have right now
