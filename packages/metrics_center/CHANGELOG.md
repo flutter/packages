@@ -1,4 +1,4 @@
-## 1.0.5 (UNRELEASED)
+## 1.0.5
 
 - Fix JSON parsing issue when running in sound null-safety mode.
 
