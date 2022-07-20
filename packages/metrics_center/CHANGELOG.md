@@ -1,3 +1,7 @@
+## 1.0.5
+
+- Fix JSON parsing issue when running in sound null-safety mode.
+
 ## 1.0.4
 
 - Fix un-await-ed Future in `SkiaPerfDestination.update`.
