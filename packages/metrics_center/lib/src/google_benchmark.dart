@@ -66,7 +66,7 @@ void _parseAnItem(
 ) {
   final String name = item[kNameKey] as String;
   final Map<String, String> timeUnitMap = <String, String>{
-    kUnitKey: item[_kTimeUnitKey] as String
+    if (item.containsKey(_kTimeUnitKey)) kUnitKey: item[_kTimeUnitKey] as String
   };
   for (final String subResult in item.keys) {
     if (!_kNonNumericalValueSubResults.contains(subResult)) {
