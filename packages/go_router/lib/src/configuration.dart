@@ -57,8 +57,9 @@ class RouteConfiguration {
           '${queryParams.isEmpty ? '' : ', queryParams: $queryParams'}');
       return true;
     }());
-    assert(_nameToPath.containsKey(name), 'unknown route name: $name');
-    final String path = _nameToPath[name]!;
+    final String keyName = name.toLowerCase();
+    assert(_nameToPath.containsKey(keyName), 'unknown route name: $name');
+    final String path = _nameToPath[keyName]!;
     assert(() {
       // Check that all required params are present
       final List<String> paramNames = <String>[];

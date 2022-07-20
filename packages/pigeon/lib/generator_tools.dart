@@ -9,7 +9,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '3.2.3';
+const String pigeonVersion = '3.2.4';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -172,39 +172,58 @@ class HostDatatype {
   final bool isNullable;
 }
 
-/// Calculates the [HostDatatype] for the provided [NamedType].  It will check
-/// the field against [classes], the list of custom classes, to check if it is a
-/// builtin type. [builtinResolver] will return the host datatype for the Dart
-/// datatype for builtin types.  [customResolver] can modify the datatype of
-/// custom types.
-HostDatatype getHostDatatype(NamedType field, List<Class> classes,
-    List<Enum> enums, String? Function(NamedType) builtinResolver,
+/// Calculates the [HostDatatype] for the provided [NamedType].
+///
+/// It will check the field against [classes], the list of custom classes, to
+/// check if it is a builtin type. [builtinResolver] will return the host
+/// datatype for the Dart datatype for builtin types.
+///
+/// [customResolver] can modify the datatype of custom types.
+HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
+    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  final String? datatype = builtinResolver(field);
+  return _getHostDatatype(field.type, classes, enums, builtinResolver,
+      customResolver: customResolver, fieldName: field.name);
+}
+
+/// Calculates the [HostDatatype] for the provided [TypeDeclaration].
+///
+/// It will check the field against [classes], the list of custom classes, to
+/// check if it is a builtin type. [builtinResolver] will return the host
+/// datatype for the Dart datatype for builtin types.
+///
+/// [customResolver] can modify the datatype of custom types.
+HostDatatype getHostDatatype(TypeDeclaration type, List<Class> classes,
+    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+    {String Function(String)? customResolver}) {
+  return _getHostDatatype(type, classes, enums, builtinResolver,
+      customResolver: customResolver);
+}
+
+HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
+    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+    {String Function(String)? customResolver, String? fieldName}) {
+  final String? datatype = builtinResolver(type);
   if (datatype == null) {
-    if (classes.map((Class x) => x.name).contains(field.type.baseName)) {
+    if (classes.map((Class x) => x.name).contains(type.baseName)) {
       final String customName = customResolver != null
-          ? customResolver(field.type.baseName)
-          : field.type.baseName;
+          ? customResolver(type.baseName)
+          : type.baseName;
       return HostDatatype(
-          datatype: customName,
-          isBuiltin: false,
-          isNullable: field.type.isNullable);
-    } else if (enums.map((Enum x) => x.name).contains(field.type.baseName)) {
+          datatype: customName, isBuiltin: false, isNullable: type.isNullable);
+    } else if (enums.map((Enum x) => x.name).contains(type.baseName)) {
       final String customName = customResolver != null
-          ? customResolver(field.type.baseName)
-          : field.type.baseName;
+          ? customResolver(type.baseName)
+          : type.baseName;
       return HostDatatype(
-          datatype: customName,
-          isBuiltin: false,
-          isNullable: field.type.isNullable);
+          datatype: customName, isBuiltin: false, isNullable: type.isNullable);
     } else {
       throw Exception(
-          'unrecognized datatype for field:"${field.name}" of type:"${field.type.baseName}"');
+          'unrecognized datatype ${fieldName == null ? '' : 'for field:"$fieldName" '}of type:"${type.baseName}"');
     }
   } else {
     return HostDatatype(
-        datatype: datatype, isBuiltin: true, isNullable: field.type.isNullable);
+        datatype: datatype, isBuiltin: true, isNullable: type.isNullable);
   }
 }
 

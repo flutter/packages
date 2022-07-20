@@ -61,6 +61,45 @@ void main() {
     expect(matches[1].route, routes[0].routes[0]);
   });
 
+  test('GoRouteInformationParser can retrieve route by name', () async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Placeholder(),
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'abc',
+            name: 'lowercase',
+            builder: (_, __) => const Placeholder(),
+          ),
+          GoRoute(
+            path: 'efg',
+            name: 'camelCase',
+            builder: (_, __) => const Placeholder(),
+          ),
+          GoRoute(
+            path: 'hij',
+            name: 'snake_case',
+            builder: (_, __) => const Placeholder(),
+          ),
+        ],
+      ),
+    ];
+
+    final RouteConfiguration configuration = RouteConfiguration(
+      routes: routes,
+      redirectLimit: 100,
+      topRedirect: (_) => null,
+    );
+
+    expect(configuration.namedLocation('lowercase'), '/abc?');
+    expect(configuration.namedLocation('LOWERCASE'), '/abc?');
+    expect(configuration.namedLocation('camelCase'), '/efg?');
+    expect(configuration.namedLocation('camelcase'), '/efg?');
+    expect(configuration.namedLocation('snake_case'), '/hij?');
+    expect(configuration.namedLocation('SNAKE_CASE'), '/hij?');
+  });
+
   test('GoRouteInformationParser returns error when unknown route', () async {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
