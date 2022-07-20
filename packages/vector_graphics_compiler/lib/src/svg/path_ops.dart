@@ -54,9 +54,6 @@ enum PathVerb {
   /// A straight line from the current point to the specified point.
   lineTo,
 
-  _quadTo,
-  _conicTo,
-
   /// A cubic bezier curve from the current point.
   ///
   /// The next two points are used as the first control point. The next two
@@ -174,12 +171,6 @@ class Path implements PathProxy {
         case PathVerb.lineTo:
           proxy.lineTo(points[index++], points[index++]);
           break;
-        case PathVerb._quadTo:
-          assert(false);
-          break;
-        case PathVerb._conicTo:
-          assert(false);
-          break;
         case PathVerb.cubicTo:
           proxy.cubicTo(
             points[index++],
@@ -204,11 +195,20 @@ class Path implements PathProxy {
   /// [cubicTo], and [close] after [applyOp] is invoked.
   ///
   /// This list determines the meaning of the [points] array.
+
+  static const Map<int, PathVerb> pathVerbDict = <int, PathVerb>{
+    0: PathVerb.moveTo,
+    1: PathVerb.lineTo,
+    4: PathVerb.cubicTo,
+    5: PathVerb.close
+  };
+
+  /// Retrieves PathVerbs.
   Iterable<PathVerb> get verbs {
     _updatePathData();
     final int count = _pathData!.ref.verb_count;
     return List<PathVerb>.generate(count, (int index) {
-      return PathVerb.values[_pathData!.ref.verbs.elementAt(index).value];
+      return pathVerbDict[_pathData!.ref.verbs.elementAt(index).value]!;
     }, growable: false);
   }
 
