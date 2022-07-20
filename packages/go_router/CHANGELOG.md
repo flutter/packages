@@ -1,3 +1,7 @@
+## 4.2.2
+
+- Fixes a bug where the ValueKey to be the same when a page was pushed multiple times.
+
 ## 4.2.1
 
 - Refactors internal classes and methods
