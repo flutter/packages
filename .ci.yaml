@@ -83,6 +83,9 @@ targets:
       add_recipes_cq: "true"
     runIf:
       - packages/fuchsia_ctl/
+      - .ci.yaml
+      - .ci/
+      - script/
 
   - name: Linux ci_yaml packages roller
     recipe: infra/ci_yaml
