@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'go_router_test.dart';
+import 'test_helpers.dart';
 
 WidgetTesterCallback testPageNotFound({required Widget widget}) {
   return (WidgetTester tester) async {
