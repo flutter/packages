@@ -1,3 +1,9 @@
+## 3.2.4
+
+* [c++] Fixes most non-class arguments and return values in host APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
+
 ## 3.2.3
 
 * Adds `unnecessary_import` to linter ignore list in generated dart tests.

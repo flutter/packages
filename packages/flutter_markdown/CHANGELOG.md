@@ -1,8 +1,12 @@
-## 0.6.10+3
+## 0.6.10+4
 
 * Remove `TaskListSyntax` as new markdown package supports checkboxes natively.
 * Updates `list_test.dart` to expect `indicatorForCheckedCheckBox` and `indicatorForUncheckedCheckBox` codes which markdown inserts.
 * Changes `_buildCheckbox()` to inspect state of checkbox input element by existence of `'checked'` attribute.
+
+## 0.6.10+3
+
+* Fixes shrinkWrap not taken into account with single child ([flutter/flutter#105299](https://github.com/flutter/flutter/issues/105299)).
 
 ## 0.6.10+2
 

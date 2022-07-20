@@ -408,8 +408,8 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
 
   HostDatatype _getHostDatatype(NamedType field) {
-    return getHostDatatype(field, root.classes, root.enums,
-        (NamedType x) => _swiftTypeForBuiltinDartType(x.type));
+    return getFieldHostDatatype(field, root.classes, root.enums,
+        (TypeDeclaration x) => _swiftTypeForBuiltinDartType(x));
   }
 
   void writeHeader() {
