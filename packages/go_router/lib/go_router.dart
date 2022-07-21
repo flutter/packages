@@ -14,4 +14,4 @@ export 'src/pages/custom_transition_page.dart';
 export 'src/platform.dart' show UrlPathStrategy;
 export 'src/router.dart';
 export 'src/typed_routing.dart' show GoRouteData, TypedGoRoute;
-export 'src/typedefs.dart';
+export 'src/typedefs.dart' show GoRouterPageBuilder, GoRouterRedirect;
