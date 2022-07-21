@@ -43,7 +43,7 @@ class RouteBuilder {
   /// its history.
   final String? restorationScopeId;
 
-  /// NavigatorObserver used to receive change notifications when navigation
+  /// NavigatorObserver used to receive notifications when navigating in between routes.
   /// changes.
   final List<NavigatorObserver> observers;
 
