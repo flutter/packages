@@ -24,6 +24,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   GoRouter({
     required List<GoRoute> routes,
     // TODO(johnpryan): Change to a route, improve error API
+    // See https://github.com/flutter/flutter/issues/108144
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
     GoRouterRedirect? redirect,
@@ -32,10 +33,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     bool routerNeglect = false,
     String? initialLocation,
     // TODO(johnpryan): Deprecate this parameter
+    // See https://github.com/flutter/flutter/issues/108132
     UrlPathStrategy? urlPathStrategy,
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
     // TODO(johnpryan): Deprecate this parameter
+    // See https://github.com/flutter/flutter/issues/108145
     GoRouterNavigatorBuilder? navigatorBuilder,
     String? restorationScopeId,
   }) {
@@ -94,16 +97,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// The router delegate. Provide this to the MaterialApp or CupertinoApp's
   /// `.router()` constructor
-  // TODO(johnpryan): change type to RouterDelegate
   GoRouterDelegate get routerDelegate => _routerDelegate;
 
   /// The route information provider used by [GoRouter].
-  // TODO(johnpryan): change type to RouteInformationProvider
   GoRouteInformationProvider get routeInformationProvider =>
       _routeInformationProvider;
 
   /// The route information parser used by [GoRouter].
-  // TODO(johnpryan): change type to RouteInformationParser
   GoRouteInformationParser get routeInformationParser =>
       _routeInformationParser;
 
@@ -119,6 +119,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
   // TODO(johnpryan): Deprecate this API
+  // See https://github.com/flutter/flutter/issues/107729
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},

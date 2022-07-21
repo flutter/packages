@@ -8,7 +8,8 @@ import 'match.dart';
 import 'matching.dart';
 
 /// A GoRouter redirector function.
-// TODO(johnpryan): make redirector async (#105808)
+// TODO(johnpryan): make redirector async
+// See https://github.com/flutter/flutter/issues/105808
 typedef RouteRedirector = RouteMatchList Function(RouteMatchList matches,
     RouteConfiguration configuration, RouteMatcher matcher,
     {Object? extra});

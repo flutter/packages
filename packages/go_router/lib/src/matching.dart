@@ -63,7 +63,6 @@ class RouteMatchList {
       _matches.isEmpty ? Uri() : Uri.parse(_matches.last.fullUriString);
 
   /// Pushes a match onto the list of matches.
-  // TODO(johnpryan): deprecate this API when new route types are added
   void push(RouteMatch match) {
     _matches.add(match);
   }

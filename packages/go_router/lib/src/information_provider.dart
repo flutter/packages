@@ -33,6 +33,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
             _valueInEngine.location == routeInformation.location);
     SystemNavigator.selectMultiEntryHistory();
     // TODO(chunhtai): report extra to browser through state if possible
+    // See https://github.com/flutter/flutter/issues/108142
     SystemNavigator.routeInformationUpdated(
       location: routeInformation.location!,
       replace: replace,
