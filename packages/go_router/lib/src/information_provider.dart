@@ -4,6 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'parser.dart';
 
 /// The [RouteInformationProvider] created by go_router.
 class GoRouteInformationProvider extends RouteInformationProvider
@@ -110,7 +111,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
 }
 
 /// A debug class that is used for asserting the [GoRouteInformationProvider] is
-/// in use with the [RouteInformationParser].
+/// in use with the [GoRouteInformationParser].
 class DebugGoRouteInformation extends RouteInformation {
   /// Creates a [DebugGoRouteInformation].
   DebugGoRouteInformation({String? location, Object? state})
