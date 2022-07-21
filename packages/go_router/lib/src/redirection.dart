@@ -111,6 +111,7 @@ class RedirectionError extends Error implements UnsupportedError {
   @override
   String toString() =>
       super.toString() +
+      ' ' +
       <String>[
         ...matches.map(
             (RouteMatchList routeMatches) => routeMatches.location.toString()),
