@@ -51,7 +51,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
             routeInformation is DebugGoRouteInformation,
             'This GoRouteInformationParser needs to be used with '
             'GoRouteInformationProvider, did you forget to pass in '
-            'GoRouter.routeInformationProvider to the Router constructor?');
+            'GoRouter.routeInformationProvider to the Router constructor?',
+        );
       }
       return true;
     }());
