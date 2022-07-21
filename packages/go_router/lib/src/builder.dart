@@ -104,8 +104,8 @@ class RouteBuilder {
 
     // pass either the match error or the build error along to the navigator
     // builder, preferring the match error
-    if (matches.matches.length == 1 && matches.matches.first.error != null) {
-      error = matches.matches.first.error;
+    if (matches.isError) {
+      error = matches.error;
     }
 
     // wrap the returned Navigator to enable GoRouter.of(context).go()

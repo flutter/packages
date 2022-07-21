@@ -90,6 +90,12 @@ class RouteMatchList {
 
   /// The route matches.
   List<RouteMatch> get matches => _matches;
+
+  /// Returns true if the current match intends to display an error screen.
+  bool get isError => matches.length == 1 && matches.first.error != null;
+
+  /// Returns the error that this match intends to display.
+  Exception? get error => matches.first.error;
 }
 
 /// An error that occurred during matching.
