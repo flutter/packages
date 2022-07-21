@@ -48,10 +48,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     assert(() {
       if (debugRequireGoRouteInformationProvider) {
         assert(
-            routeInformation is DebugGoRouteInformation,
-            'This GoRouteInformationParser needs to be used with '
-            'GoRouteInformationProvider, did you forget to pass in '
-            'GoRouter.routeInformationProvider to the Router constructor?',
+          routeInformation is DebugGoRouteInformation,
+          'This GoRouteInformationParser needs to be used with '
+          'GoRouteInformationProvider, did you forget to pass in '
+          'GoRouter.routeInformationProvider to the Router constructor?',
         );
       }
       return true;
