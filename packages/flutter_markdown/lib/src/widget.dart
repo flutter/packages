@@ -436,12 +436,14 @@ class MarkdownBody extends MarkdownWidget {
           softLineBreak: softLineBreak,
         );
 
-  /// See [ScrollView.shrinkWrap]
+  /// If [shrinkWrap] is `true`, [MarkdownBody] will take the minimum height
+  /// that wraps its content. Otherwise, [MarkdownBody] will expand to the
+  /// maximum allowed height.
   final bool shrinkWrap;
 
   @override
   Widget build(BuildContext context, List<Widget>? children) {
-    if (children!.length == 1) {
+    if (children!.length == 1 && shrinkWrap) {
       return children.single;
     }
     return Column(

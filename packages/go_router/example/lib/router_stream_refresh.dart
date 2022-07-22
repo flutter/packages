@@ -84,6 +84,8 @@ class _AppState extends State<App> {
         return null;
       },
       // changes on the listenable will cause the router to refresh it's route
+      // TODO(johnpryan): Deprecate GoRouterRefreshStream
+      // See https://github.com/flutter/flutter/issues/108128
       refreshListenable: GoRouterRefreshStream(loggedInState.stream),
     );
     super.initState();

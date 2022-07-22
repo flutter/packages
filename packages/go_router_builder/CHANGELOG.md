@@ -1,3 +1,7 @@
+## 1.0.7
+
+* Supports newer versions of `analyzer`.
+
 ## 1.0.6
 
 * Uses path-based deps in example.
