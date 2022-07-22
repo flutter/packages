@@ -8,9 +8,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
+import 'package:go_router/src/misc/extensions.dart';
+import 'package:go_router/src/route.dart';
+import 'package:go_router/src/router.dart';
+import 'package:go_router/src/state.dart';
 import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
@@ -187,7 +190,8 @@ void main() {
     testWidgets('match top level route when location has trailing / (2)',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(path: '/profile', redirect: (_) => '/profile/foo'),
+        GoRoute(
+            path: '/profile', builder: dummy, redirect: (_) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -202,7 +206,8 @@ void main() {
     testWidgets('match top level route when location has trailing / (3)',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(path: '/profile', redirect: (_) => '/profile/foo'),
+        GoRoute(
+            path: '/profile', builder: dummy, redirect: (_) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -713,6 +718,7 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
+          builder: dummy,
           redirect: (_) => '/family/f2',
         ),
         GoRoute(
@@ -965,10 +971,12 @@ void main() {
         <GoRoute>[
           GoRoute(
             path: '/',
+            builder: dummy,
             redirect: (GoRouterState state) => '/login',
           ),
           GoRoute(
             path: '/login',
+            builder: dummy,
             redirect: (GoRouterState state) => '/',
           ),
         ],
@@ -988,6 +996,7 @@ void main() {
         <GoRoute>[
           GoRoute(
             path: '/login',
+            builder: dummy,
             redirect: (GoRouterState state) => '/',
           ),
         ],
@@ -1034,6 +1043,7 @@ void main() {
         ),
         GoRoute(
           path: '/dummy',
+          builder: dummy,
           redirect: (GoRouterState state) => '/',
         ),
       ];
@@ -1254,6 +1264,7 @@ void main() {
         ),
         GoRoute(
           path: '/dummy',
+          builder: dummy,
           redirect: (GoRouterState state) => '/',
         ),
       ];

@@ -6,10 +6,20 @@ import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
 
-/// The signature of the widget builder callback for a matched GoRoute.
-typedef GoRouterWidgetBuilder = Widget Function(
+/// Legacy type for [GoRouterWidgetBuilder]
+typedef GoRouterWidgetBuilder = StackedRouteBuilder;
+
+/// Builder for [StackedRoute]
+typedef StackedRouteBuilder = Widget Function(
   BuildContext context,
   GoRouterState state,
+);
+
+/// Builder for [ShellRoute]
+typedef ShellRouteBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
 );
 
 /// The signature of the page builder callback for a matched GoRoute.

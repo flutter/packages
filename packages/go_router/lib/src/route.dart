@@ -5,32 +5,22 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
+import 'configuration.dart';
+import 'pages/custom_transition_page.dart';
 import 'path_utils.dart';
-import 'state.dart';
 import 'typedefs.dart';
 
-/// A declarative mapping between a route path and a page builder.
-class GoRoute {
-  /// Default constructor used to create mapping between a route path and a page
-  /// builder.
-  GoRoute({
+/// The base class for all route configuration objects.
+@immutable
+abstract class RouteBase {
+  RouteBase._({
     required this.path,
     this.name,
-    this.pageBuilder,
-    this.builder = _invalidBuilder,
-    this.routes = const <GoRoute>[],
-    this.redirect = _noRedirection,
-  })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
-        assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
-        assert(
-            pageBuilder != null ||
-                builder != _invalidBuilder ||
-                redirect != _noRedirection,
-            'GoRoute builder parameter not set\n'
-            'See gorouter.dev/redirection#considerations for details') {
+    this.routes = const <RouteBase>[],
+    this.redirect = _emptyRedirect,
+  }) {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, _pathParams);
-
     assert(() {
       // check path params
       final Map<String, List<String>> groupedParams =
@@ -44,7 +34,7 @@ class GoRoute {
           'duplicate path params: ${dupParams.keys.join(', ')}');
 
       // check sub-routes
-      for (final GoRoute route in routes) {
+      for (final RouteBase route in routes) {
         // check paths
         assert(
             route.path == '/' ||
@@ -121,40 +111,12 @@ class GoRoute {
   /// to learn more about parameters.
   final String path;
 
-  /// A page builder for this route.
+  /// The list of child routes associated with this route.
   ///
-  /// Typically a MaterialPage, as in:
-  /// ```
-  /// GoRoute(
-  ///   path: '/',
-  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
-  ///     key: state.pageKey,
-  ///     child: HomePage(families: Families.data),
-  ///   ),
-  /// ),
-  /// ```
-  ///
-  /// You can also use CupertinoPage, and for a custom page builder to use
-  /// custom page transitions, you can use [CustomTransitionPage].
-  final GoRouterPageBuilder? pageBuilder;
-
-  /// A custom builder for this route.
-  ///
-  /// For example:
-  /// ```
-  /// GoRoute(
-  ///   path: '/',
-  ///   builder: (BuildContext context, GoRouterState state) => FamilyPage(
-  ///     families: Families.family(
-  ///       state.params['id'],
-  ///     ),
-  ///   ),
-  /// ),
-  /// ```
-  ///
-  final GoRouterWidgetBuilder builder;
-
-  /// A list of sub go routes for this route.
+  /// Routes are defined in a tree such that parent routes must match the
+  /// current location for their child route to be considered a match. For
+  /// example the location "/home/user/12" matches with parent route "/home" and
+  /// child route "user/:userId".
   ///
   /// To create sub-routes for a route, provide them as a [GoRoute] list
   /// with the sub routes.
@@ -233,7 +195,7 @@ class GoRoute {
   ///
   /// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
   /// for a complete runnable example.
-  final List<GoRoute> routes;
+  final List<RouteBase> routes;
 
   /// An optional redirect function for this route.
   ///
@@ -271,6 +233,88 @@ class GoRoute {
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(_pathParams, match);
 
+  static String? _emptyRedirect(GoRouterState state) => null;
+}
+
+/// Route configuration object equivalent to [StackedRoute].
+class GoRoute extends StackedRoute {
+  /// Constructs a [GoRoute] object.
+  GoRoute({
+    required super.path,
+    super.builder,
+    super.pageBuilder,
+    super.redirect,
+    super.routes,
+    super.name,
+  });
+}
+
+/// A route that is displayed visually above the matching parent route using the
+/// [Navigator].
+///
+/// The widget returned by [builder] is wrapped in [Page] and provided to the
+/// root Navigator or the Navigator belonging to the nearest [NestedStackRoute]
+/// ancestor. The page will be either a [MaterialPage] or [CupertinoPage]
+/// depending on the application type.
+///
+/// This route has the same behavior as GoRoute in go_router >=3.0.0.
+class StackedRoute extends RouteBase {
+  /// Constructs a [StackedRoute].
+  StackedRoute({
+    required String path,
+    this.builder,
+    this.pageBuilder,
+    super.name,
+    GoRouterRedirect redirect = RouteBase._emptyRedirect,
+    List<RouteBase> routes = const <RouteBase>[],
+  })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
+        assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
+        assert(!(builder == null && pageBuilder == null),
+            'builder or pageBuilder must be provided'),
+        assert(
+            pageBuilder != null ||
+                builder != _invalidBuilder ||
+                redirect != _noRedirection,
+            'GoRoute builder parameter not set\n'),
+        super._(
+          path: path,
+          routes: routes,
+          redirect: redirect,
+        );
+
+  /// The path template for this route. For example "users/:userId" or
+  /// "settings".
+  ///
+  /// Typically a MaterialPage, as in:
+  /// ```
+  /// GoRoute(
+  ///   path: '/',
+  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
+  ///     key: state.pageKey,
+  ///     child: HomePage(families: Families.data),
+  ///   ),
+  /// ),
+  /// ```
+  ///
+  /// You can also use CupertinoPage, and for a custom page builder to use
+  /// custom page transitions, you can use [CustomTransitionPage].
+  final GoRouterPageBuilder? pageBuilder;
+
+  /// A custom builder for this route.
+  ///
+  /// For example:
+  /// ```
+  /// GoRoute(
+  ///   path: '/',
+  ///   builder: (BuildContext context, GoRouterState state) => FamilyPage(
+  ///     families: Families.family(
+  ///       state.params['id'],
+  ///     ),
+  ///   ),
+  /// ),
+  /// ```
+  ///
+  final StackedRouteBuilder? builder;
   static String? _noRedirection(GoRouterState state) => null;
 
   static Widget _invalidBuilder(
@@ -278,4 +322,56 @@ class GoRoute {
     GoRouterState state,
   ) =>
       const SizedBox.shrink();
+}
+
+/// A route that displays a UI shell around the matching child route.
+///
+/// The widget built by the matching child route becomes to the child parameter
+/// of the [builder].
+class ShellRoute extends RouteBase {
+  /// Constructs a [ShellRoute].
+  ShellRoute({
+    required String path,
+    required this.builder,
+    this.defaultRoute,
+    GoRouterRedirect redirect = RouteBase._emptyRedirect,
+    List<RouteBase> routes = const <RouteBase>[],
+  }) : super._(
+          path: path,
+          routes: routes,
+          redirect: redirect,
+        );
+
+  /// The widget builder for a shell route.
+  final ShellRouteBuilder builder;
+
+  /// The relative path to the child route to navigate to when this route is
+  /// displayed. This allows the default child route to be specified without
+  /// using redirection.
+  final String? defaultRoute;
+}
+
+/// A route that displays all descendent [StackedRoute]s within its visual
+/// boundary, typically the UI shell of a [ShellRoute].
+///
+/// This route places a nested [Navigator] in the widget tree, where any
+/// descendent [StackedRoute]s are placed onto this
+/// Navigator instead of the root Navigator, which allows you to display a UI
+/// shell around a nested stack of routes if this route is a child route of
+/// [ShellRoute].
+class NestedStackRoute extends RouteBase {
+  /// Constructs a [NestedRoute].
+  NestedStackRoute({
+    required String path,
+    required this.builder,
+    GoRouterRedirect redirect = RouteBase._emptyRedirect,
+    List<RouteBase> routes = const <RouteBase>[],
+  }) : super._(
+          path: path,
+          routes: routes,
+          redirect: redirect,
+        );
+
+  /// The widget builder for a nested stack route.
+  final StackedRouteBuilder builder;
 }

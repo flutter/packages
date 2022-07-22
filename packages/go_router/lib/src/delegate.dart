@@ -22,7 +22,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required RouteConfiguration configuration,
     required GoRouterBuilderWithNav builderWithNav,
     required GoRouterPageBuilder? errorPageBuilder,
-    required GoRouterWidgetBuilder? errorBuilder,
+    required StackedRouteBuilder? errorBuilder,
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
@@ -103,13 +103,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
-  Widget build(BuildContext context) => builder.build(
-        context,
-        _matches,
-        pop,
-        navigatorKey,
-        routerNeglect,
-      );
+  Widget build(BuildContext context) {
+    return builder.build(
+      context,
+      _matches,
+      pop,
+      navigatorKey,
+      routerNeglect,
+    );
+  }
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override

@@ -11,6 +11,7 @@ import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
+import 'package:go_router/src/matching.dart';
 import 'package:go_router/src/typedefs.dart';
 
 Future<GoRouter> createGoRouter(
@@ -233,10 +234,11 @@ Widget dummy(BuildContext context, GoRouterState state) => const DummyScreen();
 
 extension Extension on GoRouter {
   Page<dynamic> _pageFor(RouteMatch match) {
-    final List<RouteMatch> matches = routerDelegate.matches.matches;
-    final int i = matches.indexOf(match);
-    final List<Page<dynamic>> pages =
-        routerDelegate.builder.getPages(DummyBuildContext(), matches).toList();
+    final RouteMatchList matchList = routerDelegate.matches;
+    final int i = matchList.matches.indexOf(match);
+    final List<Page<dynamic>> pages = routerDelegate.builder
+        .buildPages(DummyBuildContext(), matchList)
+        .toList();
     return pages[i];
   }
 
