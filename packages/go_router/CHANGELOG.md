@@ -1,6 +1,6 @@
 ## 4.2.2
 
-- Add test extra parameter
+- Fixes a bug where calling extra parameter is always null in route level redirect callback
 
 ## 4.2.1
 
