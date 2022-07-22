@@ -1,6 +1,10 @@
-## 4.1.2
+## 4.2.1
 
 - Refactors internal classes and methods
+
+## 4.2.0
+
+- Adds `void replace()` and `replaceNamed` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
 
 ## 4.1.1
 

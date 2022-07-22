@@ -78,6 +78,33 @@
             "real_coefficient": 6548,
             "big_o": "N",
             "time_unit": "ns"
+        },
+        {
+          "name": "ParagraphFixture/TextBigO_BigO",
+          "family_index": 5,
+          "per_family_instance_index": 0,
+          "run_name": "ParagraphFixture/TextBigO",
+          "run_type": "aggregate",
+          "repetitions": 1,
+          "threads": 1,
+          "aggregate_name": "BigO",
+          "aggregate_unit": "time",
+          "cpu_coefficient": 3.8,
+          "real_coefficient": 3.89,
+          "big_o": "N",
+          "time_unit": "ns"
+        },
+        {
+          "name": "ParagraphFixture/TextBigO_RMS",
+          "family_index": 5,
+          "per_family_instance_index": 0,
+          "run_name": "ParagraphFixture/TextBigO",
+          "run_type": "aggregate",
+          "repetitions": 1,
+          "threads": 1,
+          "aggregate_name": "RMS",
+          "aggregate_unit": "percentage",
+          "rms": 4.89
         }
     ]
 }
