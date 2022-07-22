@@ -160,6 +160,41 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         extra: extra,
       );
 
+  /// Replaces the top-most page of the page stack with the given URL location
+  /// w/ optional query parameters, e.g. `/family/f2/person/p1?color=blue`.
+  ///
+  /// See also:
+  /// * [go] which navigates to the location.
+  /// * [push] which pushes the location onto the page stack.
+  void replace(String location, {Object? extra}) {
+    routeInformationParser
+        .parseRouteInformation(
+      DebugGoRouteInformation(location: location, state: extra),
+    )
+        .then<void>((List<GoRouteMatch> matches) {
+      routerDelegate.replace(matches.last);
+    });
+  }
+
+  /// Replaces the top-most page of the page stack with the named route w/
+  /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
+  /// 'p1'}`.
+  ///
+  /// See also:
+  /// * [goNamed] which navigates a named route.
+  /// * [pushNamed] which pushes a named route onto the page stack.
+  void replaceNamed(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) {
+    replace(
+      namedLocation(name, params: params, queryParams: queryParams),
+      extra: extra,
+    );
+  }
+
   /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() => routerDelegate.canPop();
 

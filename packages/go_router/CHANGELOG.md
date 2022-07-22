@@ -1,3 +1,7 @@
+## 4.2.0
+
+- Adds `void replace()` and `replaceNamed` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
+
 ## 4.1.1
 
 - Fixes a bug where calling namedLocation does not support case-insensitive way.
