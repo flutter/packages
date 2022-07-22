@@ -12,7 +12,7 @@
 
 ## 4.1.1
 
-- Fixes a bug where calling extra parameter is always null in route level redirect callback
+- Fixes a bug where calling namedLocation does not support case-insensitive way.
 
 ## 4.1.0
 
