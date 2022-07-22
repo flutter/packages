@@ -1165,6 +1165,46 @@ void main() {
       expect((router.screenFor(matches.first) as ErrorScreen).ex, isNotNull);
       log.info((router.screenFor(matches.first) as ErrorScreen).ex);
     });
+
+    testWidgets('extra not null in redirect', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          name: 'home',
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+              name: 'login',
+              path: 'login',
+              builder: (BuildContext context, GoRouterState state) {
+                return const LoginScreen();
+              },
+              redirect: (GoRouterState state) {
+                expect(state.extra, isNotNull);
+                return null;
+              },
+              routes: <GoRoute>[],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await _router(
+        routes,
+        tester,
+        redirect: (GoRouterState state) {
+          if (state.location == '/login') {
+            expect(state.extra, isNotNull);
+          }
+
+          return null;
+        },
+      );
+
+      router.go('/login', extra: 1);
+      await tester.pump();
+    });
   });
 
   group('initial location', () {
