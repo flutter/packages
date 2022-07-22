@@ -4,13 +4,13 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'go_route_information_parser.dart';
+import 'configuration.dart';
 
 /// The route state during routing.
 class GoRouterState {
   /// Default constructor for creating route state during routing.
   GoRouterState(
-    this._delegate, {
+    this._configuration, {
     required this.location,
     required this.subloc,
     required this.name,
@@ -29,8 +29,9 @@ class GoRouterState {
                     : subloc),
         assert((path ?? '').isEmpty == (fullpath ?? '').isEmpty);
 
-  // TODO(chunhtai): remove this once namedLocation is removed from go_router.
-  final GoRouteInformationParser _delegate;
+  // TODO(johnpryan): remove once namedLocation is removed from go_router.
+  // See https://github.com/flutter/flutter/issues/107729
+  final RouteConfiguration _configuration;
 
   /// The full location of the route, e.g. /family/f2/person/p1
   final String location;
@@ -64,12 +65,14 @@ class GoRouterState {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
+  // TODO(johnpryan): deprecate namedLocation API
+  // See https://github.com/flutter/flutter/issues/10772
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
   }) {
-    return _delegate.namedLocation(name,
+    return _configuration.namedLocation(name,
         params: params, queryParams: queryParams);
   }
 }

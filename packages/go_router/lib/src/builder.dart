@@ -2,39 +2,30 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'custom_transition_page.dart';
-import 'go_route_information_parser.dart';
-import 'go_route_match.dart';
-import 'go_router_cupertino.dart';
-import 'go_router_error_page.dart';
-import 'go_router_material.dart';
-import 'go_router_state.dart';
+import 'configuration.dart';
 import 'logging.dart';
-import 'route_data.dart';
+import 'match.dart';
+import 'matching.dart';
+import 'misc/error_screen.dart';
+import 'pages/cupertino.dart';
+import 'pages/custom_transition_page.dart';
+import 'pages/material.dart';
+import 'typed_routing.dart';
 import 'typedefs.dart';
 
-/// GoRouter implementation of the RouterDelegate base class.
-class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
-    with PopNavigatorRouterDelegateMixin<List<GoRouteMatch>>, ChangeNotifier {
-  /// Constructor for GoRouter's implementation of the
-  /// RouterDelegate base class.
-  GoRouterDelegate(
-    this._parser, {
+/// Builds the top-level Navigator for GoRouter.
+class RouteBuilder {
+  /// [RouteBuilder] constructor.
+  RouteBuilder({
+    required this.configuration,
     required this.builderWithNav,
     required this.errorPageBuilder,
     required this.errorBuilder,
+    required this.restorationScopeId,
     required this.observers,
-    required this.routerNeglect,
-    this.restorationScopeId,
   });
-
-  // TODO(chunhtai): remove this once namedLocation is removed from go_router.
-  final GoRouteInformationParser _parser;
 
   /// Builder function for a go router with Navigator.
   final GoRouterBuilderWithNav builderWithNav;
@@ -45,86 +36,39 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
   /// Error widget builder for the go router delegate.
   final GoRouterWidgetBuilder? errorBuilder;
 
-  /// NavigatorObserver used to receive change notifications when
-  /// navigation changes.
-  final List<NavigatorObserver> observers;
-
-  /// Set to true to disable creating history entries on the web.
-  final bool routerNeglect;
+  /// The route configuration for the app.
+  final RouteConfiguration configuration;
 
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
 
-  final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
-  List<GoRouteMatch> _matches = const <GoRouteMatch>[];
+  /// NavigatorObserver used to receive notifications when navigating in between routes.
+  /// changes.
+  final List<NavigatorObserver> observers;
 
-  /// Push the given location onto the page stack
-  void push(GoRouteMatch match) {
-    _matches.add(match);
-    notifyListeners();
-  }
-
-  /// Replaces the top-most page of the page stack with the given one.
-  ///
-  /// See also:
-  /// * [push] which pushes the given location onto the page stack.
-  void replace(GoRouteMatch match) {
-    _matches.last = match;
-    notifyListeners();
-  }
-
-  /// Returns `true` if there is more than 1 page on the stack.
-  bool canPop() {
-    return _matches.length > 1;
-  }
-
-  /// Pop the top page off the GoRouter's page stack.
-  void pop() {
-    _matches.remove(_matches.last);
-    assert(_matches.isNotEmpty,
-        'have popped the last page off of the stack; there are no pages left to show');
-    notifyListeners();
-  }
-
-  /// For internal use; visible for testing only.
-  @visibleForTesting
-  List<GoRouteMatch> get matches => _matches;
-
-  /// For use by the Router architecture as part of the RouterDelegate.
-  @override
-  GlobalKey<NavigatorState> get navigatorKey => _key;
-
-  /// For use by the Router architecture as part of the RouterDelegate.
-  @override
-  List<GoRouteMatch> get currentConfiguration => _matches;
-
-  /// For use by the Router architecture as part of the RouterDelegate.
-  @override
-  Widget build(BuildContext context) => _builder(context, _matches);
-
-  /// For use by the Router architecture as part of the RouterDelegate.
-  @override
-  Future<void> setNewRoutePath(List<GoRouteMatch> configuration) {
-    _matches = configuration;
-    // Use [SynchronousFuture] so that the initial url is processed
-    // synchronously and remove unwanted initial animations on deep-linking
-    return SynchronousFuture<void>(null);
-  }
-
-  Widget _builder(BuildContext context, Iterable<GoRouteMatch> matches) {
+  /// Builds the top-level Navigator by invoking the build method on each
+  /// matching route
+  Widget build(
+    BuildContext context,
+    RouteMatchList matches,
+    VoidCallback pop,
+    Key navigatorKey,
+    bool routerNeglect,
+  ) {
     List<Page<dynamic>>? pages;
     Exception? error;
-    final String location = matches.last.fullUriString;
+    final String location = matches.location.toString();
+    final List<RouteMatch> matchesList = matches.matches;
     try {
       // build the stack of pages
       if (routerNeglect) {
         Router.neglect(
           context,
-          () => pages = getPages(context, matches.toList()).toList(),
+          () => pages = getPages(context, matchesList).toList(),
         );
       } else {
-        pages = getPages(context, matches.toList()).toList();
+        pages = getPages(context, matchesList).toList();
       }
 
       // note that we need to catch it this way to get all the info, e.g. the
@@ -144,7 +88,7 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
         _errorPageBuilder(
           context,
           GoRouterState(
-            _parser,
+            configuration,
             location: location,
             subloc: uri.path,
             name: null,
@@ -160,8 +104,8 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
 
     // pass either the match error or the build error along to the navigator
     // builder, preferring the match error
-    if (matches.length == 1 && matches.first.error != null) {
-      error = matches.first.error;
+    if (matches.isError) {
+      error = matches.error;
     }
 
     // wrap the returned Navigator to enable GoRouter.of(context).go()
@@ -169,9 +113,10 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
     return builderWithNav(
       context,
       GoRouterState(
-        _parser,
+        configuration,
         location: location,
-        name: null, // no name available at the top level
+        // no name available at the top level
+        name: null,
         // trim the query params off the subloc to match route.redirect
         subloc: uri.path,
         // pass along the query params 'cuz that's all we have right now
@@ -181,7 +126,8 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
       ),
       Navigator(
         restorationScopeId: restorationScopeId,
-        key: _key, // needed to enable Android system Back button
+        key: navigatorKey,
+        // needed to enable Android system Back button
         pages: pages!,
         observers: observers,
         onPopPage: (Route<dynamic> route, dynamic result) {
@@ -196,7 +142,8 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
   }
 
   /// Get the stack of sub-routes that matches the location and turn it into a
-  /// stack of pages, e.g.
+  /// stack of pages, for example:
+  ///
   /// routes: <GoRoute>[
   ///   /
   ///     family/:fid
@@ -218,19 +165,19 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
   @visibleForTesting
   Iterable<Page<dynamic>> getPages(
     BuildContext context,
-    List<GoRouteMatch> matches,
+    List<RouteMatch> matches,
   ) sync* {
     assert(matches.isNotEmpty);
 
     Map<String, String> params = <String, String>{};
-    for (final GoRouteMatch match in matches) {
+    for (final RouteMatch match in matches) {
       // merge new params to keep params from previously matched paths, e.g.
       // /family/:fid/person/:pid provides fid and pid to person/:pid
       params = <String, String>{...params, ...match.decodedParams};
 
       // get a page from the builder and associate it with a sub-location
       final GoRouterState state = GoRouterState(
-        _parser,
+        configuration,
         location: match.fullUriString,
         subloc: match.subloc,
         name: match.route.name,
@@ -287,16 +234,16 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
           return true;
         }());
         _pageBuilderForAppType = pageBuilderForMaterialApp;
-        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
-            GoRouterMaterialErrorScreen(s.error);
+        _errorBuilderForAppType =
+            (BuildContext c, GoRouterState s) => MaterialErrorScreen(s.error);
       } else if (elem != null && isCupertinoApp(elem)) {
         assert(() {
           log.info('CupertinoApp found');
           return true;
         }());
         _pageBuilderForAppType = pageBuilderForCupertinoApp;
-        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
-            GoRouterCupertinoErrorScreen(s.error);
+        _errorBuilderForAppType =
+            (BuildContext c, GoRouterState s) => CupertinoErrorScreen(s.error);
       } else {
         assert(() {
           log.info('WidgetsApp found');
@@ -304,7 +251,7 @@ class GoRouterDelegate extends RouterDelegate<List<GoRouteMatch>>
         }());
         _pageBuilderForAppType = pageBuilderForWidgetApp;
         _errorBuilderForAppType =
-            (BuildContext c, GoRouterState s) => GoRouterErrorScreen(s.error);
+            (BuildContext c, GoRouterState s) => ErrorScreen(s.error);
       }
     }
 

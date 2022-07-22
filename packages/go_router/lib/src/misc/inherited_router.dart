@@ -5,7 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'go_router.dart';
+import '../router.dart';
 
 /// GoRouter implementation of InheritedWidget.
 ///
