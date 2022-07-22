@@ -30,6 +30,7 @@ class GoRouterState {
         assert((path ?? '').isEmpty == (fullpath ?? '').isEmpty);
 
   // TODO(johnpryan): remove once namedLocation is removed from go_router.
+  // See https://github.com/flutter/flutter/issues/107729
   final RouteConfiguration _configuration;
 
   /// The full location of the route, e.g. /family/f2/person/p1
@@ -65,6 +66,7 @@ class GoRouterState {
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
   // TODO(johnpryan): deprecate namedLocation API
+  // See https://github.com/flutter/flutter/issues/10772
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
