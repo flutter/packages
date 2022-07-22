@@ -63,6 +63,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     notifyListeners();
   }
 
+  /// Replaces the top-most page of the page stack with the given one.
+  ///
+  /// See also:
+  /// * [push] which pushes the given location onto the page stack.
+  void replace(RouteMatch match) {
+    _matches.matches.last = match;
+    notifyListeners();
+  }
+
   /// For internal use; visible for testing only.
   @visibleForTesting
   RouteMatchList get matches => _matches;

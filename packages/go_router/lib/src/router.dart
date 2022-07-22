@@ -195,8 +195,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         .parseRouteInformation(
       DebugGoRouteInformation(location: location, state: extra),
     )
-        .then<void>((List<GoRouteMatch> matches) {
-      routerDelegate.replace(matches.last);
+        .then<void>((RouteMatchList matchList) {
+      routerDelegate.replace(matchList.matches.last);
     });
   }
 

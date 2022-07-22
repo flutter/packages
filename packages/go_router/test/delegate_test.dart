@@ -101,12 +101,12 @@ void main() {
         goRouter.push('/page-0');
 
         goRouter.routerDelegate.addListener(expectAsync0(() {}));
-        final GoRouteMatch first = goRouter.routerDelegate.matches.first;
-        final GoRouteMatch last = goRouter.routerDelegate.matches.last;
+        final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
+        final RouteMatch last = goRouter.routerDelegate.matches.last;
         goRouter.replace('/page-1');
-        expect(goRouter.routerDelegate.matches.length, 2);
+        expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
-          goRouter.routerDelegate.matches.first,
+          goRouter.routerDelegate.matches.matches.first,
           first,
           reason: 'The first match should still be in the list of matches',
         );
@@ -153,12 +153,12 @@ void main() {
         goRouter.pushNamed('page0');
 
         goRouter.routerDelegate.addListener(expectAsync0(() {}));
-        final GoRouteMatch first = goRouter.routerDelegate.matches.first;
-        final GoRouteMatch last = goRouter.routerDelegate.matches.last;
+        final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
+        final RouteMatch last = goRouter.routerDelegate.matches.last;
         goRouter.replaceNamed('page1');
-        expect(goRouter.routerDelegate.matches.length, 2);
+        expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
-          goRouter.routerDelegate.matches.first,
+          goRouter.routerDelegate.matches.matches.first,
           first,
           reason: 'The first match should still be in the list of matches',
         );
@@ -169,14 +169,14 @@ void main() {
         );
         expect(
           goRouter.routerDelegate.matches.last,
-          isA<GoRouteMatch>()
+          isA<RouteMatch>()
               .having(
-                (GoRouteMatch match) => match.fullpath,
+                (RouteMatch match) => match.fullpath,
                 'match.fullpath',
                 '/page-1',
               )
               .having(
-                (GoRouteMatch match) => match.route.name,
+                (RouteMatch match) => match.route.name,
                 'match.route.name',
                 'page1',
               ),
