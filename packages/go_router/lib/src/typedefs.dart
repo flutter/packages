@@ -6,10 +6,17 @@ import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
 
-/// The signature of the widget builder callback for a matched GoRoute.
+/// Builder for [GoRoute]
 typedef GoRouterWidgetBuilder = Widget Function(
   BuildContext context,
   GoRouterState state,
+);
+
+/// Builder for [ShellRoute]
+typedef ShellRouteBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
 );
 
 /// The signature of the page builder callback for a matched GoRoute.

@@ -7,10 +7,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
+import 'package:go_router/src/matching.dart';
 import 'package:go_router/src/typedefs.dart';
 
 Future<GoRouter> createGoRouter(
@@ -160,21 +162,22 @@ class GoRouterRefreshStreamSpy extends GoRouterRefreshStream {
 }
 
 Future<GoRouter> createRouter(
-  List<GoRoute> routes,
+  List<RouteBase> routes,
   WidgetTester tester, {
   GoRouterRedirect? redirect,
   String initialLocation = '/',
   int redirectLimit = 5,
+  GlobalKey<NavigatorState>? navigatorKey,
 }) async {
   final GoRouter goRouter = GoRouter(
-    routes: routes,
-    redirect: redirect,
-    initialLocation: initialLocation,
-    redirectLimit: redirectLimit,
-    errorBuilder: (BuildContext context, GoRouterState state) =>
-        TestErrorScreen(state.error!),
-    debugLogDiagnostics: false,
-  );
+      routes: routes,
+      redirect: redirect,
+      initialLocation: initialLocation,
+      redirectLimit: redirectLimit,
+      errorBuilder: (BuildContext context, GoRouterState state) =>
+          TestErrorScreen(state.error!),
+      debugLogDiagnostics: false,
+      navigatorKey: navigatorKey);
   await tester.pumpWidget(
     MaterialApp.router(
       routeInformationProvider: goRouter.routeInformationProvider,
@@ -233,10 +236,11 @@ Widget dummy(BuildContext context, GoRouterState state) => const DummyScreen();
 
 extension Extension on GoRouter {
   Page<dynamic> _pageFor(RouteMatch match) {
-    final List<RouteMatch> matches = routerDelegate.matches.matches;
-    final int i = matches.indexOf(match);
-    final List<Page<dynamic>> pages =
-        routerDelegate.builder.getPages(DummyBuildContext(), matches).toList();
+    final RouteMatchList matchList = routerDelegate.matches;
+    final int i = matchList.matches.indexOf(match);
+    final List<Page<dynamic>> pages = routerDelegate.builder
+        .buildPages(DummyBuildContext(), matchList)
+        .toList();
     return pages[i];
   }
 
@@ -345,4 +349,11 @@ class DummyStatefulWidget extends StatefulWidget {
 class DummyStatefulWidgetState extends State<DummyStatefulWidget> {
   @override
   Widget build(BuildContext context) => Container();
+}
+
+Future<void> simulateAndroidBackButton() async {
+  final ByteData message =
+      const JSONMethodCodec().encodeMethodCall(const MethodCall('popRoute'));
+  await ServicesBinding.instance.defaultBinaryMessenger
+      .handlePlatformMessage('flutter/navigation', message, (_) {});
 }

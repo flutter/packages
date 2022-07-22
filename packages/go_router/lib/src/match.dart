@@ -11,7 +11,7 @@ import 'route.dart';
 /// portion of a location.
 class RouteMatch {
   /// Constructor for [RouteMatch], each instance represents an instance of a
-  /// [GoRoute] for a specific portion of a location.
+  /// [RouteBase] for a specific portion of a location.
   RouteMatch({
     required this.route,
     required this.subloc,
@@ -36,7 +36,7 @@ class RouteMatch {
 
   // ignore: public_member_api_docs
   static RouteMatch? match({
-    required GoRoute route,
+    required RouteBase route,
     required String restLoc, // e.g. person/p1
     required String parentSubloc, // e.g. /family/f2
     required String fullpath, // e.g. /family/:fid/person/:pid
@@ -65,7 +65,7 @@ class RouteMatch {
   }
 
   /// The matched route.
-  final GoRoute route;
+  final RouteBase route;
 
   /// Matched sub-location.
   final String subloc; // e.g. /family/f2

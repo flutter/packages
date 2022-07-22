@@ -8,9 +8,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
+import 'package:go_router/src/misc/extensions.dart';
+import 'package:go_router/src/route.dart';
+import 'package:go_router/src/router.dart';
+import 'package:go_router/src/state.dart';
 import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
@@ -187,7 +190,8 @@ void main() {
     testWidgets('match top level route when location has trailing / (2)',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(path: '/profile', redirect: (_) => '/profile/foo'),
+        GoRoute(
+            path: '/profile', builder: dummy, redirect: (_) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -202,7 +206,8 @@ void main() {
     testWidgets('match top level route when location has trailing / (3)',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(path: '/profile', redirect: (_) => '/profile/foo'),
+        GoRoute(
+            path: '/profile', builder: dummy, redirect: (_) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -492,6 +497,39 @@ void main() {
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
+
+    testWidgets('Handles the Android back button correctly',
+        (WidgetTester tester) async {
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) {
+            return const Scaffold(
+              body: Text('Screen A'),
+            );
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'b',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen B'),
+                );
+              },
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester, initialLocation: '/b');
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsOneWidget);
+
+      await simulateAndroidBackButton();
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen B'), findsNothing);
+    });
   });
 
   group('named routes', () {
@@ -713,6 +751,7 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
+          builder: dummy,
           redirect: (_) => '/family/f2',
         ),
         GoRoute(
@@ -965,10 +1004,12 @@ void main() {
         <GoRoute>[
           GoRoute(
             path: '/',
+            builder: dummy,
             redirect: (GoRouterState state) => '/login',
           ),
           GoRoute(
             path: '/login',
+            builder: dummy,
             redirect: (GoRouterState state) => '/',
           ),
         ],
@@ -988,6 +1029,7 @@ void main() {
         <GoRoute>[
           GoRoute(
             path: '/login',
+            builder: dummy,
             redirect: (GoRouterState state) => '/',
           ),
         ],
@@ -1034,6 +1076,7 @@ void main() {
         ),
         GoRoute(
           path: '/dummy',
+          builder: dummy,
           redirect: (GoRouterState state) => '/',
         ),
       ];
@@ -1193,7 +1236,7 @@ void main() {
                 expect(state.extra, isNotNull);
                 return null;
               },
-              routes: <GoRoute>[],
+              routes: const <GoRoute>[],
             ),
           ],
         ),
@@ -1254,6 +1297,7 @@ void main() {
         ),
         GoRoute(
           path: '/dummy',
+          builder: dummy,
           redirect: (GoRouterState state) => '/',
         ),
       ];
@@ -1781,6 +1825,155 @@ void main() {
       );
       key.currentContext!.pop();
       expect(router.popped, true);
+    });
+  });
+
+  group('ShellRoute', () {
+    testWidgets('defaultRoute', (WidgetTester tester) async {
+      final List<RouteBase> routes = <RouteBase>[
+        ShellRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              body: child,
+            );
+          },
+          defaultRoute: 'b',
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'a',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen A'),
+                );
+              },
+            ),
+            GoRoute(
+              path: 'b',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen B'),
+                );
+              },
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester);
+      expect(find.text('Screen B'), findsOneWidget);
+    });
+
+    testWidgets(
+        'Pops from the correct Navigator when the Android back button is pressed',
+        (WidgetTester tester) async {
+      final List<RouteBase> routes = <RouteBase>[
+        ShellRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              body: Column(
+                children: <Widget>[
+                  const Text('Screen A'),
+                  Expanded(child: child),
+                ],
+              ),
+            );
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'b',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen B'),
+                );
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'c',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const Scaffold(
+                      body: Text('Screen C'),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester, initialLocation: '/b/c');
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen C'), findsOneWidget);
+
+      await simulateAndroidBackButton();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(find.text('Screen C'), findsNothing);
+    });
+
+    testWidgets(
+        'Pops from the correct navigator when a sub-route is placed on '
+        'the root Navigator', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> shellNavigatorKey =
+          GlobalKey<NavigatorState>();
+
+      final List<RouteBase> routes = <RouteBase>[
+        ShellRoute(
+          path: '/',
+          shellNavigatorKey: shellNavigatorKey,
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              body: Column(
+                children: <Widget>[
+                  const Text('Screen A'),
+                  Expanded(child: child),
+                ],
+              ),
+            );
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'b',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen B'),
+                );
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'c',
+                  navigatorKey: rootNavigatorKey,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const Scaffold(
+                      body: Text('Screen C'),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester,
+          initialLocation: '/b/c', navigatorKey: rootNavigatorKey);
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen C'), findsOneWidget);
+
+      await simulateAndroidBackButton();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(find.text('Screen C'), findsNothing);
     });
   });
 
