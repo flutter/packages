@@ -4,18 +4,15 @@
 
 import 'package:flutter/widgets.dart';
 
-import 'go_route.dart';
-import 'go_route_information_parser.dart';
-import 'go_route_information_provider.dart';
-import 'go_route_match.dart';
-import 'go_router_delegate.dart';
-import 'go_router_state.dart';
-import 'inherited_go_router.dart';
+import 'configuration.dart';
+import 'delegate.dart';
+import 'information_provider.dart';
 import 'logging.dart';
-import 'path_strategy_nonweb.dart'
-    if (dart.library.html) 'path_strategy_web.dart';
+import 'matching.dart';
+import 'misc/inherited_router.dart';
+import 'parser.dart';
+import 'platform.dart';
 import 'typedefs.dart';
-import 'url_path_strategy.dart';
 
 /// The top-level go router class.
 ///
@@ -26,6 +23,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// and an error page builder.
   GoRouter({
     required List<GoRoute> routes,
+    // TODO(johnpryan): Change to a route, improve error API
+    // See https://github.com/flutter/flutter/issues/108144
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
     GoRouterRedirect? redirect,
@@ -33,9 +32,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     int redirectLimit = 5,
     bool routerNeglect = false,
     String? initialLocation,
+    // TODO(johnpryan): Deprecate this parameter
+    // See https://github.com/flutter/flutter/issues/108132
     UrlPathStrategy? urlPathStrategy,
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
+    // TODO(johnpryan): Deprecate this parameter
+    // See https://github.com/flutter/flutter/issues/108145
     GoRouterNavigatorBuilder? navigatorBuilder,
     String? restorationScopeId,
   }) {
@@ -46,19 +49,24 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
-    routeInformationParser = GoRouteInformationParser(
+    _routeConfiguration = RouteConfiguration(
       routes: routes,
       topRedirect: redirect ?? (_) => null,
       redirectLimit: redirectLimit,
+    );
+
+    _routeInformationParser = GoRouteInformationParser(
+      configuration: _routeConfiguration,
       debugRequireGoRouteInformationProvider: true,
     );
-    routeInformationProvider = GoRouteInformationProvider(
+
+    _routeInformationProvider = GoRouteInformationProvider(
         initialRouteInformation: RouteInformation(
             location: _effectiveInitialLocation(initialLocation)),
         refreshListenable: refreshListenable);
 
-    routerDelegate = GoRouterDelegate(
-      routeInformationParser,
+    _routerDelegate = GoRouterDelegate(
+      configuration: _routeConfiguration,
       errorPageBuilder: errorPageBuilder,
       errorBuilder: errorBuilder,
       routerNeglect: routerNeglect,
@@ -82,26 +90,42 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     }());
   }
 
-  /// The route information parser used by the go router.
-  late final GoRouteInformationParser routeInformationParser;
+  late final RouteConfiguration _routeConfiguration;
+  late final GoRouteInformationParser _routeInformationParser;
+  late final GoRouterDelegate _routerDelegate;
+  late final GoRouteInformationProvider _routeInformationProvider;
 
-  /// The router delegate used by the go router.
-  late final GoRouterDelegate routerDelegate;
+  /// The router delegate. Provide this to the MaterialApp or CupertinoApp's
+  /// `.router()` constructor
+  GoRouterDelegate get routerDelegate => _routerDelegate;
 
-  /// The route information provider used by the go router.
-  late final GoRouteInformationProvider routeInformationProvider;
+  /// The route information provider used by [GoRouter].
+  GoRouteInformationProvider get routeInformationProvider =>
+      _routeInformationProvider;
+
+  /// The route information parser used by [GoRouter].
+  GoRouteInformationParser get routeInformationParser =>
+      _routeInformationParser;
+
+  /// The route configuration. Used for testing.
+  // TODO(johnpryan): Remove this, integration tests shouldn't need access
+  @visibleForTesting
+  RouteConfiguration get routeConfiguration => _routeConfiguration;
 
   /// Get the current location.
-  String get location => routerDelegate.currentConfiguration.last.fullUriString;
+  String get location =>
+      _routerDelegate.currentConfiguration.location.toString();
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
+  // TODO(johnpryan): Deprecate this API
+  // See https://github.com/flutter/flutter/issues/107729
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
   }) =>
-      routeInformationParser.namedLocation(
+      _routeInformationParser.configuration.namedLocation(
         name,
         params: params,
         queryParams: queryParams,
@@ -114,7 +138,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       log.info('going to $location');
       return true;
     }());
-    routeInformationProvider.value =
+    _routeInformationProvider.value =
         RouteInformation(location: location, state: extra);
   }
 
@@ -139,11 +163,11 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       log.info('pushing $location');
       return true;
     }());
-    routeInformationParser
+    _routeInformationParser
         .parseRouteInformation(
             DebugGoRouteInformation(location: location, state: extra))
-        .then<void>((List<GoRouteMatch> matches) {
-      routerDelegate.push(matches.last);
+        .then<void>((RouteMatchList matches) {
+      _routerDelegate.push(matches.last);
     });
   }
 
@@ -171,8 +195,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         .parseRouteInformation(
       DebugGoRouteInformation(location: location, state: extra),
     )
-        .then<void>((List<GoRouteMatch> matches) {
-      routerDelegate.replace(matches.last);
+        .then<void>((RouteMatchList matchList) {
+      routerDelegate.replace(matchList.matches.last);
     });
   }
 
@@ -196,7 +220,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   }
 
   /// Returns `true` if there is more than 1 page on the stack.
-  bool canPop() => routerDelegate.canPop();
+  bool canPop() => _routerDelegate.canPop();
 
   /// Pop the top page off the GoRouter's page stack.
   void pop() {
@@ -204,7 +228,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       log.info('popping $location');
       return true;
     }());
-    routerDelegate.pop();
+    _routerDelegate.pop();
   }
 
   /// Refresh the route.
@@ -213,7 +237,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       log.info('refreshing $location');
       return true;
     }());
-    routeInformationProvider.notifyListeners();
+    _routeInformationProvider.notifyListeners();
   }
 
   /// Set the app's URL path strategy (defaults to hash). call before runApp().
@@ -250,8 +274,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   @override
   void dispose() {
-    routeInformationProvider.dispose();
-    routerDelegate.dispose();
+    _routeInformationProvider.dispose();
+    _routerDelegate.dispose();
     super.dispose();
   }
 
