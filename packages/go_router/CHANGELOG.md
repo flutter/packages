@@ -1,3 +1,7 @@
+## 4.2.4
+
+- Rewrites Readme and examples.
+
 ## 4.2.3
 
 - Fixes a bug where the ValueKey to be the same when a page was pushed multiple times.

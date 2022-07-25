@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'shared/data.dart';
+import '../shared/data.dart';
 
 void main() => runApp(App());
 
@@ -18,36 +18,35 @@ class App extends StatelessWidget {
   final LoginInfo _loginInfo = LoginInfo();
 
   /// The title of the app.
-  static const String title = 'GoRouter Example: Query Parameters';
+  static const String title = 'GoRouter Example: Navigator Builder';
 
-  // add the login info into the tree as app state that can change over time
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider<LoginInfo>.value(
-        value: _loginInfo,
-        child: MaterialApp.router(
-          routeInformationProvider: _router.routeInformationProvider,
-          routeInformationParser: _router.routeInformationParser,
-          routerDelegate: _router.routerDelegate,
-          title: title,
-          debugShowCheckedModeBanner: false,
-        ),
+  Widget build(BuildContext context) => MaterialApp.router(
+        routeInformationProvider: _router.routeInformationProvider,
+        routeInformationParser: _router.routeInformationParser,
+        routerDelegate: _router.routerDelegate,
+        title: title,
       );
 
   late final GoRouter _router = GoRouter(
+    debugLogDiagnostics: true,
     routes: <GoRoute>[
       GoRoute(
+        name: 'home',
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
-            HomeScreen(families: Families.data),
+            HomeScreenNoLogout(families: Families.data),
         routes: <GoRoute>[
           GoRoute(
+            name: 'family',
             path: 'family/:fid',
-            builder: (BuildContext context, GoRouterState state) =>
-                FamilyScreen(
-              family: Families.family(state.params['fid']!),
-            ),
+            builder: (BuildContext context, GoRouterState state) {
+              final Family family = Families.family(state.params['fid']!);
+              return FamilyScreen(family: family);
+            },
             routes: <GoRoute>[
               GoRoute(
+                name: 'person',
                 path: 'person/:pid',
                 builder: (BuildContext context, GoRouterState state) {
                   final Family family = Families.family(state.params['fid']!);
@@ -60,6 +59,7 @@ class App extends StatelessWidget {
         ],
       ),
       GoRoute(
+        name: 'login',
         path: '/login',
         builder: (BuildContext context, GoRouterState state) =>
             const LoginScreen(),
@@ -70,18 +70,27 @@ class App extends StatelessWidget {
     redirect: (GoRouterState state) {
       // if the user is not logged in, they need to login
       final bool loggedIn = _loginInfo.loggedIn;
-      final bool loggingIn = state.subloc == '/login';
+      final String loginloc = state.namedLocation('login');
+      final bool loggingIn = state.subloc == loginloc;
 
       // bundle the location the user is coming from into a query parameter
-      final String fromp = state.subloc == '/' ? '' : '?from=${state.subloc}';
+      final String homeloc = state.namedLocation('home');
+      final String fromloc = state.subloc == homeloc ? '' : state.subloc;
       if (!loggedIn) {
-        return loggingIn ? null : '/login$fromp';
+        return loggingIn
+            ? null
+            : state.namedLocation(
+                'login',
+                queryParams: <String, String>{
+                  if (fromloc.isNotEmpty) 'from': fromloc
+                },
+              );
       }
 
       // if the user is logged in, send them where they were going before (or
       // home if they weren't going anywhere)
       if (loggingIn) {
-        return state.queryParams['from'] ?? '/';
+        return state.queryParams['from'] ?? homeloc;
       }
 
       // no need to redirect at all
@@ -90,46 +99,72 @@ class App extends StatelessWidget {
 
     // changes on the listenable will cause the router to refresh it's route
     refreshListenable: _loginInfo,
+
+    // add a wrapper around the navigator to:
+    // - put loginInfo into the widget tree, and to
+    // - add an overlay to show a logout option
+    navigatorBuilder:
+        (BuildContext context, GoRouterState state, Widget child) =>
+            ChangeNotifierProvider<LoginInfo>.value(
+      value: _loginInfo,
+      builder: (BuildContext context, Widget? _) {
+        debugPrint('navigatorBuilder: ${state.subloc}');
+        return _loginInfo.loggedIn ? AuthOverlay(child: child) : child;
+      },
+    ),
   );
 }
 
-/// The home screen that shows a list of families.
-class HomeScreen extends StatelessWidget {
-  /// Creates a [HomeScreen].
-  const HomeScreen({required this.families, Key? key}) : super(key: key);
+/// A simple class for placing an exit button on top of all screens.
+class AuthOverlay extends StatelessWidget {
+  /// Creates an [AuthOverlay].
+  const AuthOverlay({required this.child, Key? key}) : super(key: key);
+
+  /// The child subtree.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+        children: <Widget>[
+          child,
+          Positioned(
+            top: 90,
+            right: 4,
+            child: ElevatedButton(
+              onPressed: () {
+                context.read<LoginInfo>().logout();
+                context.goNamed('home'); // clear out the `from` query param
+              },
+              child: const Icon(Icons.logout),
+            ),
+          ),
+        ],
+      );
+}
+
+/// The home screen without a logout button.
+class HomeScreenNoLogout extends StatelessWidget {
+  /// Creates a [HomeScreenNoLogout].
+  const HomeScreenNoLogout({required this.families, Key? key})
+      : super(key: key);
 
   /// The list of families.
   final List<Family> families;
 
   @override
-  Widget build(BuildContext context) {
-    final LoginInfo info = context.read<LoginInfo>();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(App.title),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              info.logout();
-              context.go('/');
-            },
-            tooltip: 'Logout: ${info.userName}',
-            icon: const Icon(Icons.logout),
-          )
-        ],
-      ),
-      body: ListView(
-        children: <Widget>[
-          for (final Family f in families)
-            ListTile(
-              title: Text(f.name),
-              onTap: () => context.go('/family/${f.id}'),
-            )
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text(App.title)),
+        body: ListView(
+          children: <Widget>[
+            for (final Family f in families)
+              ListTile(
+                title: Text(f.name),
+                onTap: () => context
+                    .goNamed('family', params: <String, String>{'fid': f.id}),
+              )
+          ],
+        ),
+      );
 }
 
 /// The screen that shows a list of persons in a family.
