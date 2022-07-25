@@ -18,7 +18,7 @@ class GoRouterGenerator extends GeneratorForAnnotation<void> {
 
   @override
   TypeChecker get typeChecker => const TypeChecker.fromUrl(
-        'package:go_router/src/route_data.dart#TypedGoRoute',
+        'package:go_router/src/typed_routing.dart#TypedGoRoute',
       );
 
   @override
@@ -82,5 +82,5 @@ ${getters.map((String e) => "$e,").join('\n')}
 }
 
 const TypeChecker _goRouteDataChecker = TypeChecker.fromUrl(
-  'package:go_router/src/route_data.dart#GoRouteData',
+  'package:go_router/src/typed_routing.dart#GoRouteData',
 );
