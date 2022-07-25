@@ -47,9 +47,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   RouteMatchList _matches = RouteMatchList.empty();
   final Map<String, int> _pushCounts = <String, int>{};
 
-  /// Push the given location onto the page stack
+  /// Pushes the given location onto the page stack
   void push(RouteMatch match) {
-    // remap the pageKey so allow any number of the same page on the stack
+    // Remap the pageKey to allow any number of the same page on the stack
     final String fullPath = match.fullpath;
     final int count = (_pushCounts[fullPath] ?? 0) + 1;
     _pushCounts[fullPath] = count;
