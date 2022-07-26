@@ -1,6 +1,6 @@
 ## 0.6.10+4
 
-* Remove `TaskListSyntax` as new markdown package supports checkboxes natively.
+* Remove use of and @Deprecated `TaskListSyntax` as new markdown package supports checkboxes natively.
 * Updates `list_test.dart` to expect `indicatorForCheckedCheckBox` and `indicatorForUncheckedCheckBox` codes which markdown inserts.
 * Changes `_buildCheckbox()` to inspect state of checkbox input element by existence of `'checked'` attribute.
 
