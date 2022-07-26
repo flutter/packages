@@ -1,39 +1,118 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Helper Widgets for Making Adaptive Layouts in Flutter
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+This package contains some helper widgets that make the process of developing adaptive layouts easier, especially with navigational elements.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+To see examples of using these helper widgets to make a simple but common adaptive layout:
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```bash
+cd example/
+flutter run --release
 ```
+## The Main Widget Suite
+These are the set of widgets that are used on a lower level and offer more customizability at a cost of more lines of code.
+#### AdaptiveLayout:
+AdaptiveLayout is the top-level widget class that arranges the layout of the slots and their animation, similar to Scaffold. It takes in several LayoutSlots and returns an appropriate layout based on the diagram above. [IMAGE]
+#### SlotLayout:
+SlotLayout handles the adaptivity or the changes between widgets at certain Breakpoints. It also holds the logic for animating between switches. It takes SlotLayoutConfigs mapped to Breakpoints in a config and displays a widget based on that information.
+#### SlotLayoutConfig:
+SlotLayoutConfig holds the actual widget to be displayed and the entrance animation and exit animation.
+### Example Usage:
+```dart
+AdaptiveLayout(
+ primaryNavigation: SlotLayout(
+   config: {
+     Breakpoints.small: SlotLayoutConfig(key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
+     Breakpoints.medium: SlotLayoutConfig(
+       inAnimation: leftOutIn,
+       key: const Key('pnav1'),
+       builder: (_) => AdaptiveScaffold.toNavigationRail(destinations: destinations),
+     ),
+     Breakpoints.large: SlotLayoutConfig(
+       key: const Key('pnav2'),
+       inAnimation: leftOutIn,
+       builder: (_) => AdaptiveScaffold.toNavigationRail(extended: true, destinations: destinations),
+     ),
+   },
+ ),
+ body: SlotLayout(
+   config: {
+     Breakpoints.small: SlotLayoutConfig(
+       key: const Key('body'),
+       builder: (_) => ListView.builder(
+         itemCount: allItems.length,
+         itemBuilder: (context, index) => Padding(
+           padding: const EdgeInsets.all(8.0),
+           child: Container(
+             color: const Color.fromARGB(255, 255, 201, 197),
+             height: 400,
+           ),
+         ),
+       ),
+     ),
+     Breakpoints.medium: SlotLayoutConfig(
+       key: const Key('body1'),
+       builder: (_) => GridView.count(
+         crossAxisCount: 2,
+         children: allItems.map((item) => Padding(
+           padding: const EdgeInsets.all(8.0),
+           child: Container(
+             color: const Color.fromARGB(255, 255, 201, 197),
+             height: 400,
+           ),
+         )).toList(),
+       ),
+     ),
+   },
+ ),
+ bottomNavigation: SlotLayout(
+   config: {
+     Breakpoints.small: SlotLayoutConfig(
+       key: const Key('botnav'),
+       inAnimation: bottomToTop,
+       builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
+     ),
+   },
+ ),
+),
+```
+## Abstracted Widget
+#### AdaptiveScaffold:
+AdaptiveScaffold is an abstracted form built upon the aforementioned widgets. It takes a list of destinations and handles all the moving navigational pieces. It still allows for customizability in body/secondaryBody adaptivity. It is much simpler to use but is not the best if you would like high customizability.
+### Example Usage:
+```dart
+AdaptiveScaffold(
+ selectedIndex: 0,
+ destinations: const [
+   NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+   NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
+   NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
+   NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
+ ],
+ smallBody: (_) => ListView.builder(
+   itemCount: allItems.length,
+   itemBuilder: (context, index) => Padding(
+     padding: const EdgeInsets.all(8.0),
+     child: Container(
+       height: 250,
+       color: const Color.fromARGB(255, 255, 201, 197),
+     ),
+   ),
+ ),
+ body: (_) => GridView.count(
+   crossAxisCount: 2,
+   children: allItems.map((item) => Padding(
+     padding: const EdgeInsets.all(8.0),
+     child: Container(
+       color: const Color.fromARGB(255, 255, 201, 197),
+       height: 400,
+     ),
+   )).toList(),
+ ),
+),
+```
+##
+Both of the examples shown here produce the same output:
+[IMAGE]
 
 ## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+You can find more information on this package and its usage in the public [design doc](https://docs.google.com/document/d/1qhrpTWYs5f67X8v32NCCNTRMIjSrVHuaMEFAul-Q_Ms/edit?usp=sharing)
