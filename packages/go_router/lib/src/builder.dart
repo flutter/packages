@@ -12,7 +12,7 @@ import 'misc/error_screen.dart';
 import 'pages/cupertino.dart';
 import 'pages/custom_transition_page.dart';
 import 'pages/material.dart';
-import 'typed_routing.dart';
+import 'route_data.dart';
 import 'typedefs.dart';
 
 /// Builds the top-level Navigator for GoRouter.
