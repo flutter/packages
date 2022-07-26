@@ -19,8 +19,18 @@ extension GoRouterHelper on BuildContext {
           .namedLocation(name, params: params, queryParams: queryParams);
 
   /// Navigate to a location.
-  void go(String location, {Object? extra}) =>
-      GoRouter.of(this).go(location, extra: extra);
+  void go(
+    String location, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
+      GoRouter.of(this).go(
+        location,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
 
   /// Navigate to a named route.
   void goNamed(

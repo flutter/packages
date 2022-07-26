@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
+import 'package:go_router/src/path_utils.dart';
 
 import 'configuration.dart';
 import 'delegate.dart';
@@ -133,13 +134,32 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
-  void go(String location, {Object? extra}) {
+  void go(
+    String location, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) {
     assert(() {
-      log.info('going to $location');
+      log.info(
+        'going to "$location"'
+        '${params.isEmpty ? '' : ', params: $params'}'
+        '${queryParams.isEmpty ? '' : ', queryParams: $queryParams'}',
+      );
       return true;
     }());
+    late final String parsedLocation;
+    if (params.isNotEmpty || queryParams.isNotEmpty) {
+      parsedLocation = parsePathWithParameters(
+        location,
+        params: params,
+        queryParams: queryParams,
+      );
+    } else {
+      parsedLocation = location;
+    }
     _routeInformationProvider.value =
-        RouteInformation(location: location, state: extra);
+        RouteInformation(location: parsedLocation, state: extra);
   }
 
   /// Navigate to a named route w/ optional parameters, e.g.
