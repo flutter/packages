@@ -60,27 +60,11 @@ class RouteConfiguration {
     final String keyName = name.toLowerCase();
     assert(_nameToPath.containsKey(keyName), 'unknown route name: $name');
     final String path = _nameToPath[keyName]!;
-    assert(() {
-      // Check that all required params are present
-      final List<String> paramNames = <String>[];
-      patternToRegExp(path, paramNames);
-      for (final String paramName in paramNames) {
-        assert(params.containsKey(paramName),
-            'missing param "$paramName" for $path');
-      }
-
-      // Check that there are no extra params
-      for (final String key in params.keys) {
-        assert(paramNames.contains(key), 'unknown param "$key" for $path');
-      }
-      return true;
-    }());
-    final Map<String, String> encodedParams = <String, String>{
-      for (final MapEntry<String, String> param in params.entries)
-        param.key: Uri.encodeComponent(param.value)
-    };
-    final String location = patternToPath(path, encodedParams);
-    return Uri(path: location, queryParameters: queryParams).toString();
+    return parsePathWithParameters(
+      path,
+      params: params,
+      queryParams: queryParams,
+    );
   }
 
   @override

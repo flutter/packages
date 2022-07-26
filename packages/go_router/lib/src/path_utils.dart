@@ -132,3 +132,44 @@ String canonicalUri(String loc) {
 
   return canon;
 }
+
+/// Parses the given [path] with the [params] and [queryParams].
+///
+/// As an example:
+/// ```dart
+/// parsePathWithParameters(
+///   '/user/:id',
+///   params: {'id': '123'},
+///   queryParams: {'filter': 'abc'},
+/// ); // `/user/123?filter=abc`
+/// ```
+String parsePathWithParameters(
+  String path, {
+  Map<String, String> params = const <String, String>{},
+  Map<String, String> queryParams = const <String, String>{},
+}) {
+  assert(() {
+    // Check that all required params are present
+    final List<String> paramNames = <String>[];
+    patternToRegExp(path, paramNames);
+    for (final String paramName in paramNames) {
+      assert(params.containsKey(paramName),
+          'missing param "$paramName" for $path');
+    }
+
+    // Check that there are no extra params
+    for (final String key in params.keys) {
+      assert(paramNames.contains(key), 'unknown param "$key" for $path');
+    }
+    return true;
+  }());
+  final Map<String, String> encodedParams = <String, String>{
+    for (final MapEntry<String, String> param in params.entries)
+      param.key: Uri.encodeComponent(param.value)
+  };
+  final String location = patternToPath(path, encodedParams);
+  return Uri(
+    path: location,
+    queryParameters: queryParams,
+  ).toString();
+}
