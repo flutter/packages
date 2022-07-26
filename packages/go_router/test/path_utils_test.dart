@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/path_parser.dart';
+import 'package:go_router/src/path_utils.dart';
 
 void main() {
   test('patternToRegExp without path parameter', () async {
@@ -71,5 +71,37 @@ void main() {
     final String restoredUrl = patternToPath(pattern, parameterValues);
 
     expect(url, restoredUrl);
+  });
+
+  test('concatenatePaths', () {
+    void _verify(String pathA, String pathB, String expected) {
+      final String result = concatenatePaths(pathA, pathB);
+      expect(result, expected);
+    }
+
+    void _verifyThrows(String pathA, String pathB) {
+      expect(
+          () => concatenatePaths(pathA, pathB), throwsA(isA<AssertionError>()));
+    }
+
+    _verify('/a', 'b/c', '/a/b/c');
+    _verify('/', 'b', '/b');
+    _verifyThrows('/a', '/b');
+    _verifyThrows('/a', '/');
+    _verifyThrows('/', '/');
+    _verifyThrows('/', '');
+    _verifyThrows('', '');
+  });
+
+  test('canonicalUri', () {
+    void _verify(String path, String expected) =>
+        expect(canonicalUri(path), expected);
+    _verify('/a', '/a');
+    _verify('/a/', '/a');
+    _verify('/', '/');
+    _verify('/a/b/', '/a/b');
+
+    expect(() => canonicalUri('::::'), throwsA(isA<FormatException>()));
+    expect(() => canonicalUri(''), throwsA(anything));
   });
 }

@@ -142,35 +142,42 @@ void _writeErrorOr(Indent indent,
   indent.format('''
 class FlutterError {
  public:
-\tFlutterError(const std::string& arg_code)
-\t\t: code(arg_code) {}
-\tFlutterError(const std::string& arg_code, const std::string& arg_message)
-\t\t: code(arg_code), message(arg_message) {}
-\tFlutterError(const std::string& arg_code, const std::string& arg_message, const flutter::EncodableValue& arg_details)
-\t\t: code(arg_code), message(arg_message), details(arg_details) {}
-\tstd::string code;
-\tstd::string message;
-\tflutter::EncodableValue details;
+\tFlutterError(const std::string& code)
+\t\t: code_(code) {}
+\tFlutterError(const std::string& code, const std::string& message)
+\t\t: code_(code), message_(message) {}
+\tFlutterError(const std::string& code, const std::string& message, const flutter::EncodableValue& details)
+\t\t: code_(code), message_(message), details_(details) {}
+
+\tconst std::string& code() const { return code_; }
+\tconst std::string& message() const { return message_; }
+\tconst flutter::EncodableValue& details() const { return details_; }
+
+ private:
+\tstd::string code_;
+\tstd::string message_;
+\tflutter::EncodableValue details_;
 };
 
 template<class T> class ErrorOr {
-\tstd::variant<T, FlutterError> v;
  public:
-\tErrorOr(const T& rhs) { new(&v) T(rhs); }
-\tErrorOr(const T&& rhs) { v = std::move(rhs); }
+\tErrorOr(const T& rhs) { new(&v_) T(rhs); }
+\tErrorOr(const T&& rhs) { v_ = std::move(rhs); }
 \tErrorOr(const FlutterError& rhs) {
-\t\tnew(&v) FlutterError(rhs);
+\t\tnew(&v_) FlutterError(rhs);
 \t}
-\tErrorOr(const FlutterError&& rhs) { v = std::move(rhs); }
+\tErrorOr(const FlutterError&& rhs) { v_ = std::move(rhs); }
 
-\tbool hasError() const { return std::holds_alternative<FlutterError>(v); }
-\tconst T& value() const { return std::get<T>(v); };
-\tconst FlutterError& error() const { return std::get<FlutterError>(v); };
+\tbool has_error() const { return std::holds_alternative<FlutterError>(v_); }
+\tconst T& value() const { return std::get<T>(v_); };
+\tconst FlutterError& error() const { return std::get<FlutterError>(v_); };
 
  private:
 $friendLines
 \tErrorOr() = default;
-\tT TakeValue() && { return std::get<T>(std::move(v)); }
+\tT TakeValue() && { return std::get<T>(std::move(v_)); }
+
+\tstd::variant<T, FlutterError> v_;
 };
 ''');
 }
@@ -609,7 +616,7 @@ $prefix\t}${indent.newline}''';
                     elseBody =
                         '$prefix\twrapped.emplace($resultKey, $wrapperType($extractedValue));${indent.newline}';
                   }
-                  ifCondition = 'output.hasError()';
+                  ifCondition = 'output.has_error()';
                   errorGetter = 'error';
                 }
                 return '${prefix}if ($ifCondition) {${indent.newline}'
@@ -1114,9 +1121,9 @@ flutter::EncodableMap ${api.name}::WrapError(std::string_view error_message) {
 }
 flutter::EncodableMap ${api.name}::WrapError(const FlutterError& error) {
 \treturn flutter::EncodableMap({
-\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(error.message)},
-\t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue(error.code)},
-\t\t{flutter::EncodableValue("${Keys.errorDetails}"), error.details}
+\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(error.message())},
+\t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue(error.code())},
+\t\t{flutter::EncodableValue("${Keys.errorDetails}"), error.details()}
 \t});
 }''');
       indent.addln('');

@@ -133,6 +133,86 @@ void main() {
     }
   });
 
+  test('FlutterError fields are private with public accessors', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
+                name: 'someInput',
+                offset: null)
+          ],
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppHeader('', const CppOptions(), root, sink);
+      final String code = sink.toString();
+
+      expect(
+          code.split('\n'),
+          containsAllInOrder(<Matcher>[
+            contains('class FlutterError {'),
+            contains(' public:'),
+            contains('  const std::string& code() const { return code_; }'),
+            contains(
+                '  const std::string& message() const { return message_; }'),
+            contains(
+                '  const flutter::EncodableValue& details() const { return details_; }'),
+            contains(' private:'),
+            contains('  std::string code_;'),
+            contains('  std::string message_;'),
+            contains('  flutter::EncodableValue details_;'),
+          ]));
+    }
+  });
+
+  test('Error field is private with public accessors', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
+                name: 'someInput',
+                offset: null)
+          ],
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppHeader('', const CppOptions(), root, sink);
+      final String code = sink.toString();
+
+      expect(
+          code.split('\n'),
+          containsAllInOrder(<Matcher>[
+            contains('class ErrorOr {'),
+            contains(' public:'),
+            contains('  bool has_error() const {'),
+            contains('  const T& value() const {'),
+            contains('  const FlutterError& error() const {'),
+            contains(' private:'),
+            contains('  std::variant<T, FlutterError> v_;'),
+          ]));
+    }
+  });
+
   test('Spaces before {', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[

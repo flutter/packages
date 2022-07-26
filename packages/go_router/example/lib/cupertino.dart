@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 
 void main() => runApp(App());
 
-/// The main app
+/// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
   App({Key? key}) : super(key: key);

@@ -4,16 +4,15 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'go_route.dart';
-import 'go_route_information_parser.dart';
-import 'path_parser.dart';
+import 'path_utils.dart';
+import 'route.dart';
 
-/// Each GoRouteMatch instance represents an instance of a GoRoute for a
-/// specific portion of a location.
-class GoRouteMatch {
-  /// Constructor for GoRouteMatch, each instance represents an instance of a
-  /// GoRoute for a specific portion of a location.
-  GoRouteMatch({
+/// Each RouteMatch instance represents an instance of a GoRoute for a specific
+/// portion of a location.
+class RouteMatch {
+  /// Constructor for [RouteMatch], each instance represents an instance of a
+  /// [GoRoute] for a specific portion of a location.
+  RouteMatch({
     required this.route,
     required this.subloc,
     required this.fullpath,
@@ -36,7 +35,7 @@ class GoRouteMatch {
         }());
 
   // ignore: public_member_api_docs
-  static GoRouteMatch? match({
+  static RouteMatch? match({
     required GoRoute route,
     required String restLoc, // e.g. person/p1
     required String parentSubloc, // e.g. /family/f2
@@ -53,9 +52,8 @@ class GoRouteMatch {
 
     final Map<String, String> encodedParams = route.extractPathParams(match);
     final String pathLoc = patternToPath(route.path, encodedParams);
-    final String subloc =
-        GoRouteInformationParser.concatenatePaths(parentSubloc, pathLoc);
-    return GoRouteMatch(
+    final String subloc = concatenatePaths(parentSubloc, pathLoc);
+    return RouteMatch(
       route: route,
       subloc: subloc,
       fullpath: fullpath,
@@ -108,7 +106,7 @@ class GoRouteMatch {
           param.key: Uri.decodeComponent(param.value)
       };
 
-  /// for use by the Router architecture as part of the GoRouteMatch
+  /// For use by the Router architecture as part of the RouteMatch
   @override
-  String toString() => 'GoRouteMatch($fullpath, $encodedParams)';
+  String toString() => 'RouteMatch($fullpath, $encodedParams)';
 }

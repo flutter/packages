@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/go_route_information_provider.dart';
+import 'package:go_router/src/information_provider.dart';
 
 const RouteInformation initialRoute = RouteInformation(location: '/');
 const RouteInformation newRoute = RouteInformation(location: '/new');

@@ -5,15 +5,14 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
-import 'custom_transition_page.dart';
-import 'go_router_state.dart';
-import 'path_parser.dart';
+import 'path_utils.dart';
+import 'state.dart';
 import 'typedefs.dart';
 
 /// A declarative mapping between a route path and a page builder.
 class GoRoute {
-  /// Default constructor used to create mapping between a
-  /// route path and a page builder.
+  /// Default constructor used to create mapping between a route path and a page
+  /// builder.
   GoRoute({
     required this.path,
     this.name,
@@ -27,7 +26,8 @@ class GoRoute {
             pageBuilder != null ||
                 builder != _invalidBuilder ||
                 redirect != _noRedirection,
-            'GoRoute builder parameter not set\nSee gorouter.dev/redirection#considerations for details') {
+            'GoRoute builder parameter not set\n'
+            'See gorouter.dev/redirection#considerations for details') {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, _pathParams);
 

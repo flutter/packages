@@ -1,3 +1,9 @@
+## 3.2.5
+
+* [c++] Fixes style issues in `FlutterError` and `ErrorOr`. The names and
+  visibility of some members have changed, so this may require updates
+  to existing code.
+
 ## 3.2.4
 
 * [c++] Fixes most non-class arguments and return values in host APIs. The

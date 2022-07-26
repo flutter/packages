@@ -137,7 +137,7 @@ class ExampleTransitionsScreen extends StatelessWidget {
   /// The color of the container.
   final Color color;
 
-  /// The transition kind
+  /// The transition kind.
   final String kind;
 
   @override

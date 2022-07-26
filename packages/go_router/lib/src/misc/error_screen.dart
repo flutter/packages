@@ -2,15 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: diagnostic_describe_all_properties
-
 import 'package:flutter/widgets.dart';
-import '../go_router.dart';
+
+import 'extensions.dart';
 
 /// Default error page implementation for WidgetsApp.
-class GoRouterErrorScreen extends StatelessWidget {
+class ErrorScreen extends StatelessWidget {
   /// Provide an exception to this page for it to be displayed.
-  const GoRouterErrorScreen(this.error, {Key? key}) : super(key: key);
+  const ErrorScreen(this.error, {Key? key}) : super(key: key);
 
   /// The exception to be displayed.
   final Exception? error;

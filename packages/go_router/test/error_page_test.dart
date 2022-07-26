@@ -4,16 +4,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/go_router_error_page.dart';
+import 'package:go_router/src/misc/error_screen.dart';
 
-import 'error_screen_helpers.dart';
+import 'helpers/error_screen_helpers.dart';
 
 void main() {
   testWidgets(
     'shows "page not found" by default',
     testPageNotFound(
       widget: widgetsAppBuilder(
-        home: const GoRouterErrorScreen(null),
+        home: const ErrorScreen(null),
       ),
     ),
   );
@@ -24,7 +24,7 @@ void main() {
     testPageShowsExceptionMessage(
       exception: exception,
       widget: widgetsAppBuilder(
-        home: GoRouterErrorScreen(exception),
+        home: ErrorScreen(exception),
       ),
     ),
   );
@@ -35,7 +35,7 @@ void main() {
       buttonFinder:
           find.byWidgetPredicate((Widget widget) => widget is GestureDetector),
       widget: widgetsAppBuilder(
-        home: const GoRouterErrorScreen(null),
+        home: const ErrorScreen(null),
       ),
     ),
   );
