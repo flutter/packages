@@ -70,7 +70,12 @@ class GoRouterGoSpy extends GoRouter {
   Object? extra;
 
   @override
-  void go(String location, {Object? extra}) {
+  void go(
+    String location, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) {
     myLocation = location;
     this.extra = extra;
   }

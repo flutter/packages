@@ -104,4 +104,20 @@ void main() {
     expect(() => canonicalUri('::::'), throwsA(isA<FormatException>()));
     expect(() => canonicalUri(''), throwsA(anything));
   });
+
+  group('parsePathWithParameters', () {
+    test('with no parameters', () {
+      final String parsed = parsePathWithParameters('/a/b/c');
+      expect(parsed, '/a/b/c?');
+    });
+
+    test('with parameters and query parameters', () {
+      final String parsed = parsePathWithParameters(
+        '/user/:id',
+        params: const <String, String>{'id': '123'},
+        queryParams: const <String, String>{'filter': 'abc'},
+      );
+      expect(parsed, '/user/123?filter=abc');
+    });
+  });
 }
