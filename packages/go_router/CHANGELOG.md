@@ -1,3 +1,7 @@
+## 4.3.0
+
+- Adds `params` and `queryParams` parameter to the `.go()` method.
+
 ## 4.2.1
 
 - Refactors internal classes and methods
