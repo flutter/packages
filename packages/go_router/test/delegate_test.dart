@@ -69,6 +69,8 @@ void main() {
         );
 
         goRouter.push('/a');
+        await tester.pumpAndSettle();
+
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches[1].pageKey,
@@ -76,6 +78,8 @@ void main() {
         );
 
         goRouter.push('/a');
+        await tester.pumpAndSettle();
+
         expect(goRouter.routerDelegate.matches.matches.length, 3);
         expect(
           goRouter.routerDelegate.matches.matches[2].pageKey,
