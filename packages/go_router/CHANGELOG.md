@@ -1,6 +1,6 @@
 ## 4.2.2
 
-- Fixes a bug where go_router_builder wasn't detecting annotations
+- Fixes a bug where go_router_builder wasn't detecting annotations.
 
 ## 4.2.1
 
