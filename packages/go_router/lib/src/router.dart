@@ -123,7 +123,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
   }) =>
       _routeInformationParser.configuration.namedLocation(
         name,
@@ -148,7 +148,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
       go(
@@ -176,7 +176,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   void pushNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
       push(
@@ -210,7 +210,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   void replaceNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) {
     replace(
