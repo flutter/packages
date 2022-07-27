@@ -405,8 +405,8 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
 
   HostDatatype _getHostDatatype(NamedType field) {
-    return getHostDatatype(field, root.classes, root.enums,
-        (NamedType x) => _kotlinTypeForBuiltinDartType(x.type));
+    return getFieldHostDatatype(field, root.classes, root.enums,
+        (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
   }
 
   void writeHeader() {
