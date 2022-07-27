@@ -1,6 +1,6 @@
 ## 3.2.6
 
-* [java] Correctly handles int results that are sent as java Integer.
+* [java] Fixes returning int values from FlutterApi methods that fit in 32 bits.
 
 ## 3.2.5
 
