@@ -47,8 +47,10 @@ String _getCodecName(Api api) => '${api.name}Codec';
 /// Returns a new [Method] using the swift function signature from [func],
 /// ie the name of function e the strings between the semicolons.
 /// Example:
-///   f('void add(int x, int y)') -> ['add', 'x', 'y']
-Method _methodWithSwiftFunction(Method func) {
+///   _swiftMethod('@SwiftFunction('add(_:with:)') void add(int x, int y)')
+///   will return 'void add(int _ x, int with y)'
+///   which represents 'func add(_ x: Int32, with y: Int32) -> Void' in Swift.
+Method _swiftMethod(Method func) {
   if (func.swiftFunction.isEmpty) {
     return func;
   } else {
@@ -639,7 +641,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
     _writeCodec(indent, api, root);
     indent.addln('');
 
-    api.methods = api.methods.map(_methodWithSwiftFunction).toList();
+    api.methods = api.methods.map(_swiftMethod).toList();
 
     writeApi(api, root);
   }
