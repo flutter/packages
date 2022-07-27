@@ -1,16 +1,9 @@
-# example
+# Examples
+There are several examples listed in this directory:
+You can run the following commands in the example directory to see the appropriate demos:
 
-A new Flutter project.
+`flutter run` to see a more fully fledged functional usage of the AdaptiveLayout suite and some AdaptiveScaffold static methods.
 
-## Getting Started
+`flutter run lib/adaptive_layout_demo.dart` to see a simple usage of AdaptiveLayout.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+`flutter run lib/adaptive_scaffold_demo.dart` to see a simple usage of AdaptiveScaffold.
