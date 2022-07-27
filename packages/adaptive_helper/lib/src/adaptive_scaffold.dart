@@ -96,7 +96,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// [AdaptiveLayout] the breakpoint is active from the value at the index up
   /// until the value at the next index.
   ///
-  /// Defaults to [0, 480, 1024].
+  /// Defaults to small, medium, large breakpoints from breakpoints.dart.
   final List<Breakpoint> breakpoints;
 
   /// Whether or not the developer wants the smooth entering slide transition on
