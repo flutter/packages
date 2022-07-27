@@ -19,9 +19,9 @@ class SlotLayout extends StatefulWidget {
   /// be chosen from the config under the context's conditions.
   static SlotLayoutConfig? pickWidget(BuildContext context, Map<Breakpoint, SlotLayoutConfig?> config) {
     SlotLayoutConfig? chosenWidget;
-    config.forEach((Breakpoint key, SlotLayoutConfig? value) {
-      if (key.isActive(context)) {
-        chosenWidget = value;
+    config.forEach((Breakpoint breakpoint, SlotLayoutConfig? pickedWidget) {
+      if (breakpoint.isActive(context)) {
+        chosenWidget = pickedWidget;
       }
     });
     return chosenWidget;
@@ -31,51 +31,24 @@ class SlotLayout extends StatefulWidget {
   ///
   /// The int represents screen width.
   final Map<Breakpoint, SlotLayoutConfig?> config;
+
   @override
   State<SlotLayout> createState() => _SlotLayoutState();
 }
 
 class _SlotLayoutState extends State<SlotLayout> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
   SlotLayoutConfig? chosenWidget;
-  ValueNotifier<Key> changedWidget = ValueNotifier<Key>(const Key(''));
-  List<Key> animatingWidgets = <Key>[];
-
-  @override
-  void initState() {
-    changedWidget.addListener(() {
-      _controller.reset();
-      _controller.forward();
-    });
-
-    _controller = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    )..forward();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     chosenWidget = SlotLayout.pickWidget(context, widget.config);
     bool hasAnimation = false;
-    if (chosenWidget != null) {
-      changedWidget.value = chosenWidget!.key!;
-    } else {
-      changedWidget.value = const Key('');
-    }
     return AnimatedSwitcher(
         duration: const Duration(milliseconds: 1000),
         layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
           final Stack elements = Stack(
             children: <Widget>[
-              if (hasAnimation) ...previousChildren.where((Widget element) => element.key != currentChild!.key),
+              if (hasAnimation) ...previousChildren,
               if (currentChild != null) currentChild,
             ],
           );
@@ -84,12 +57,12 @@ class _SlotLayoutState extends State<SlotLayout> with SingleTickerProviderStateM
         transitionBuilder: (Widget child, Animation<double> animation) {
           final SlotLayoutConfig configChild = child as SlotLayoutConfig;
           if (child.key == chosenWidget?.key) {
-            return (configChild.inAnimation != null) ? child.inAnimation!(child, _controller) : child;
+            return (configChild.inAnimation != null) ? child.inAnimation!(child, animation) : child;
           } else {
             if (configChild.outAnimation != null) {
               hasAnimation = true;
             }
-            return (configChild.outAnimation != null) ? child.outAnimation!(child, _controller) : child;
+            return (configChild.outAnimation != null) ? child.outAnimation!(child, ReverseAnimation(animation)) : child;
           }
         },
         child: chosenWidget ?? SlotLayoutConfig.empty());

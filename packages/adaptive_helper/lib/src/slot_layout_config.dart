@@ -32,7 +32,7 @@ class SlotLayoutConfig extends StatefulWidget {
   ///
   /// While it is not enforced, the recommended usage for this property is to
   /// return a Widget of type [AnimatedWidget] or [ImplicitlyAnimatedWidget].
-  final Widget Function(Widget, AnimationController)? inAnimation;
+  final Widget Function(Widget, Animation<double>)? inAnimation;
 
   /// A function that takes an [AnimationController] and a [Widget] and returns
   /// a [Widget].
@@ -42,7 +42,7 @@ class SlotLayoutConfig extends StatefulWidget {
   ///
   /// While it is not enforced, the recommended usage for this property is to
   /// return a Widget of type [AnimatedWidget] or [ImplicitlyAnimatedWidget].
-  final Widget Function(Widget, AnimationController)? outAnimation;
+  final Widget Function(Widget, Animation<double>)? outAnimation;
 
   /// An empty [SlotLayoutConfig] to be placed in a slot to indicate it is not
   /// used.
