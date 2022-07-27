@@ -7,6 +7,8 @@
 library go_router;
 
 export 'src/configuration.dart' show GoRouterState, GoRoute;
+export 'src/delegate.dart';
+export 'src/information_provider.dart';
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
 export 'src/misc/refresh_stream.dart';
