@@ -85,7 +85,7 @@ class Page2Screen extends StatelessWidget {
       );
 }
 
-/// The screen of the error page
+/// The screen of the error page.
 class ErrorScreen extends StatelessWidget {
   /// Creates an [ErrorScreen].
   const ErrorScreen(this.error, {Key? key}) : super(key: key);

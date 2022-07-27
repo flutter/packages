@@ -1,6 +1,18 @@
-## 3.2.4
+## 3.2.6
 
 * [java] Correctly handles int results that are sent as java Integer.
+
+## 3.2.5
+
+* [c++] Fixes style issues in `FlutterError` and `ErrorOr`. The names and
+  visibility of some members have changed, so this may require updates
+  to existing code.
+
+## 3.2.4
+
+* [c++] Fixes most non-class arguments and return values in host APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
 
 ## 3.2.3
 

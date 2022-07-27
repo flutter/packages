@@ -10,8 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/go_route_match.dart';
-import 'package:go_router/src/go_router_error_page.dart';
+import 'package:go_router/src/match.dart';
 import 'package:go_router/src/typedefs.dart';
 
 Future<GoRouter> createGoRouter(
@@ -24,7 +23,7 @@ Future<GoRouter> createGoRouter(
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
       GoRoute(
         path: '/error',
-        builder: (_, __) => const GoRouterErrorScreen(null),
+        builder: (_, __) => TestErrorScreen(TestFailure('Exception')),
       ),
     ],
     navigatorBuilder: navigatorBuilder,
@@ -173,7 +172,7 @@ Future<GoRouter> createRouter(
     initialLocation: initialLocation,
     redirectLimit: redirectLimit,
     errorBuilder: (BuildContext context, GoRouterState state) =>
-        ErrorScreen(state.error!),
+        TestErrorScreen(state.error!),
     debugLogDiagnostics: false,
   );
   await tester.pumpWidget(
@@ -186,8 +185,8 @@ Future<GoRouter> createRouter(
   return goRouter;
 }
 
-class ErrorScreen extends DummyScreen {
-  const ErrorScreen(this.ex, {Key? key}) : super(key: key);
+class TestErrorScreen extends DummyScreen {
+  const TestErrorScreen(this.ex, {Key? key}) : super(key: key);
   final Exception ex;
 }
 
@@ -233,15 +232,15 @@ class DummyScreen extends StatelessWidget {
 Widget dummy(BuildContext context, GoRouterState state) => const DummyScreen();
 
 extension Extension on GoRouter {
-  Page<dynamic> _pageFor(GoRouteMatch match) {
-    final List<GoRouteMatch> matches = routerDelegate.matches;
+  Page<dynamic> _pageFor(RouteMatch match) {
+    final List<RouteMatch> matches = routerDelegate.matches.matches;
     final int i = matches.indexOf(match);
     final List<Page<dynamic>> pages =
-        routerDelegate.getPages(DummyBuildContext(), matches).toList();
+        routerDelegate.builder.getPages(DummyBuildContext(), matches).toList();
     return pages[i];
   }
 
-  Widget screenFor(GoRouteMatch match) =>
+  Widget screenFor(RouteMatch match) =>
       (_pageFor(match) as MaterialPage<void>).child;
 }
 

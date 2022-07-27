@@ -52,9 +52,14 @@ FetchContent_MakeAvailable(googletest)
 # The plugin's C API is not very useful for unit testing, so build the sources
 # directly into the test binary rather than using the DLL.
 add_executable(${TEST_RUNNER}
+  # Tests.
+  test/multiple_arity_test.cpp
   test/non_null_fields_test.cpp
+  test/nullable_returns_test.cpp
   test/null_fields_test.cpp
   test/pigeon_test.cpp
+  test/primitive_test.cpp
+  # Generated sources.
   test/all_datatypes.g.cpp
   test/all_datatypes.g.h
   test/all_void.g.cpp
@@ -87,6 +92,11 @@ add_executable(${TEST_RUNNER}
   test/voidflutter.g.h
   test/voidhost.g.cpp
   test/voidhost.g.h
+  # Test utilities.
+  test/utils/echo_messenger.cpp
+  test/utils/echo_messenger.h
+  test/utils/fake_host_messenger.cpp
+  test/utils/fake_host_messenger.h
 
   ${PLUGIN_SOURCES}
 )
