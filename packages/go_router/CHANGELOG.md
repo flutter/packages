@@ -1,9 +1,25 @@
-## 4.1.1
+## 4.2.3
 
 - Exports the files in `lib/go_router.dart`
   - `src/go_route_information_parser.dart`
   - `src/go_route_information_provider.dart`
   - `src/go_router_delegate.dart`
+
+## 4.2.2
+
+- Fixes a bug where go_router_builder wasn't detecting annotations.
+
+## 4.2.1
+
+- Refactors internal classes and methods
+
+## 4.2.0
+
+- Adds `void replace()` and `replaceNamed` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
+
+## 4.1.1
+
+- Fixes a bug where calling namedLocation does not support case-insensitive way.
 
 ## 4.1.0
 

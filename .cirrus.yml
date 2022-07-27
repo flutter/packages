@@ -30,11 +30,11 @@ macos_template: &MACOS_TEMPLATE
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
-    # Master uses a pinned, auto-rolled version to prevent out-of-band CI
-    # failures due to changes in Flutter.
-    # TODO(stuartmorgan): Investigate an autoroller for stable as well.
+    # Channels that are part of our normal test matrix use a pinned,
+    # auto-rolled version to prevent out-of-band CI failures due to changes in
+    # Flutter.
     - TARGET_TREEISH=$CHANNEL
-    - if [[ "$CHANNEL" == "master" ]]; then
+    - if [[ "$CHANNEL" == "master" || "$CHANNEL" == "stable" ]]; then
     -   TARGET_TREEISH=$(< .ci/flutter_$CHANNEL.version)
     - fi
     # Ensure that the repository has all the branches.
@@ -104,15 +104,15 @@ task:
     # version comes out.
     - name: legacy-version-analyze
       depends_on: format+analyze
-      env:
-        matrix:
+      matrix:
+        env:
           CHANNEL: "2.10.5"
+          DART_VERSION: "2.16.2"
+        env:
           CHANNEL: "2.8.1"
+          DART_VERSION: "2.15.1"
       analyze_script:
-        # Exclude:
-        # - flutter_lints: does not depend on flutter, is only constrained by
-        #   Dart SDK version.
-        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml --exclude=flutter_lints
+        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --skip-if-not-supporting-dart-version="$DART_VERSION" --custom-analysis=script/configs/custom_analysis.yaml
     - name: publishable
       env:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
