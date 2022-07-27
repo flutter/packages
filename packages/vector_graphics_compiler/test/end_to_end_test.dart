@@ -32,6 +32,11 @@ class TestBytesLoader extends BytesLoader {
 }
 
 void main() {
+  setUpAll(() {
+    if (!initializePathOpsFromFlutterCache()) {
+      fail('error in setup');
+    }
+  });
   testWidgets('Can endcode and decode simple SVGs with no errors',
       (WidgetTester tester) async {
     for (final String svg in allSvgTestStrings) {

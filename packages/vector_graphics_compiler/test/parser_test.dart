@@ -601,7 +601,12 @@ void main() {
   });
 
   test('Combines clips where possible', () async {
-    final VectorInstructions instructions = await parse(basicClip);
+    final VectorInstructions instructions =
+        await parse(basicClip, enableClippingOptimizer: false);
+    final VectorInstructions instructionsWithOptimizer = await parse(basicClip);
+
+    expect(instructionsWithOptimizer.paths, basicClipsForClippingOptimzer);
+
     expect(instructions.paths, <Path>[
       PathBuilder()
           .addOval(const Rect.fromCircle(30, 30, 20))

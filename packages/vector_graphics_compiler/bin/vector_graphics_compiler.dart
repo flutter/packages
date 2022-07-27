@@ -31,6 +31,11 @@ final ArgParser argParser = ArgParser()
     help: 'Allows for masking optimizer to be enabled or disabled',
     defaultsTo: true,
   )
+  ..addFlag(
+    'optimize-clips',
+    help: 'Allows for clipping optimizer to be enabled or disabled',
+    defaultsTo: true,
+  )
   ..addOption('input',
       abbr: 'i',
       help: 'The path to a file containing a single SVG',
@@ -42,6 +47,18 @@ final ArgParser argParser = ArgParser()
         'The path to a file where the resulting vector_graphic will be written.\n'
         'If not provided, defaults to <input-file>.vg',
   );
+
+void loadPathOpsIfNeeded(ArgResults results) {
+  if (results['optimize-masks'] == true || results['optimize-clips'] == true) {
+    if (results.wasParsed('libpathops')) {
+      initializeLibPathOps(results['libpathops'] as String);
+    } else {
+      if (!initializePathOpsFromFlutterCache()) {
+        exit(1);
+      }
+    }
+  }
+}
 
 Future<void> main(List<String> args) async {
   final ArgResults results;
@@ -63,15 +80,7 @@ Future<void> main(List<String> args) async {
     }
   }
 
-  if (results['optimize-masks'] == true) {
-    if (results.wasParsed('libpathops')) {
-      initializeLibPathOps(results['libpathops'] as String);
-    } else {
-      if (!initializePathOpsFromFlutterCache()) {
-        exit(1);
-      }
-    }
-  }
+  loadPathOpsIfNeeded(results);
 
   final String inputFilePath = results['input'] as String;
   final String xml = File(inputFilePath).readAsStringSync();
@@ -79,15 +88,21 @@ Future<void> main(List<String> args) async {
       File(results['output'] as String? ?? '$inputFilePath.vg');
 
   bool maskingOptimizerEnabled = true;
+  bool clippingOptimizerEnabled = true;
 
   if (results['optimize-masks'] == false) {
     maskingOptimizerEnabled = false;
   }
 
+  if (results['optimize-clips'] == false) {
+    clippingOptimizerEnabled = false;
+  }
+
   final Uint8List bytes = await encodeSvg(
       xml: xml,
       debugName: args[0],
-      enableMaskingOptimizer: maskingOptimizerEnabled);
+      enableMaskingOptimizer: maskingOptimizerEnabled,
+      enableClippingOptimizer: clippingOptimizerEnabled);
 
   outputFile.writeAsBytesSync(bytes);
 }

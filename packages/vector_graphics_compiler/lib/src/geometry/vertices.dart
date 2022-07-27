@@ -76,7 +76,7 @@ class IndexedVertices {
   /// The raw vertex points.
   final Float32List vertices;
 
-  /// The order to use vertices from [vertuces].
+  /// The order to use vertices from [vertices].
   ///
   /// May be null if [vertices] was not compressable.
   final Uint16List? indices;
