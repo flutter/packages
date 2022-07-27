@@ -56,10 +56,10 @@ Future<MaterialApp> scaffold({
 }
 void main() {
   testWidgets('adaptive scaffold lays out slots as expected', (WidgetTester tester) async {
-      final Finder b = find.byKey(const Key('body0'));
+      final Finder b = find.byKey(const Key('body'));
       final Finder b1 = find.byKey(const Key('body1'));
       final Finder b2 = find.byKey(const Key('body2'));
-      final Finder sb = find.byKey(const Key('secondaryBody0'));
+      final Finder sb = find.byKey(const Key('secondaryBody'));
       final Finder sb1 = find.byKey(const Key('secondaryBody1'));
       final Finder sb2 = find.byKey(const Key('secondaryBody2'));
       final Finder bnav = find.byKey(const Key('bottomNavigation'));
@@ -110,8 +110,8 @@ void main() {
       expect(tester.getBottomRight(pnav1), const Offset(192, 800));
   });
   testWidgets('adaptive scaffold animations work correctly', (WidgetTester tester) async {
-    final Finder b = find.byKey(const Key('body0'));
-    final Finder sb = find.byKey(const Key('secondaryBody0'));
+    final Finder b = find.byKey(const Key('body'));
+    final Finder sb = find.byKey(const Key('secondaryBody'));
 
     await tester.pumpWidget(await scaffold(width: 400, tester: tester));
     await tester.pumpWidget(await scaffold(width: 800, tester: tester));
@@ -141,8 +141,8 @@ void main() {
     expect(tester.getBottomRight(sb), const Offset(800, 800));
   });
   testWidgets('adaptive scaffold animations can be disabled', (WidgetTester tester) async {
-    final Finder b = find.byKey(const Key('body0'));
-    final Finder sb = find.byKey(const Key('secondaryBody0'));
+    final Finder b = find.byKey(const Key('body'));
+    final Finder sb = find.byKey(const Key('secondaryBody'));
 
     await tester.pumpWidget(await scaffold(width: 400, tester: tester, animations: false));
     await tester.pumpWidget(await scaffold(width: 800, tester: tester, animations: false));

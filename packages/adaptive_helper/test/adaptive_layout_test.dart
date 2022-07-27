@@ -104,7 +104,7 @@ Future<MediaQuery> layout({
   );
 }
 
-AnimatedWidget leftOutIn(Widget child, AnimationController animation) {
+AnimatedWidget leftOutIn(Widget child, Animation<double> animation) {
   return SlideTransition(
     key: Key('in-${child.key}'),
     position: Tween<Offset>(
@@ -115,7 +115,7 @@ AnimatedWidget leftOutIn(Widget child, AnimationController animation) {
   );
 }
 
-AnimatedWidget leftInOut(Widget child, AnimationController animation) {
+AnimatedWidget leftInOut(Widget child, Animation<double> animation) {
   return SlideTransition(
     key: Key('out-${child.key}'),
     position: Tween<Offset>(
@@ -269,8 +269,8 @@ void main() {
     await tester.pumpWidget(slot(500));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
-    expect(tester.widget<SlideTransition>(slideOut('0')).position.value, const Offset(-0.1, 0));
-    expect(tester.widget<SlideTransition>(slideIn('400')).position.value, const Offset(-0.9, 0));
+    expect(tester.widget<SlideTransition>(slideOut('0')).position.value, offsetMoreOrLessEquals(const Offset(-0.1, 0), epsilon: 0.05));
+    expect(tester.widget<SlideTransition>(slideIn('400')).position.value, offsetMoreOrLessEquals(const Offset(-0.9, 0), epsilon: 0.05));
     await tester.pumpWidget(slot(300));
     await tester.pumpAndSettle();
     expect(begin, findsOneWidget);

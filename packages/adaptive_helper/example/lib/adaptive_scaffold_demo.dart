@@ -43,6 +43,8 @@ class MyHomePage extends StatelessWidget {
             ),
           )
       ]),
+      smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+      secondaryBody: (_) => Container(color: const Color.fromARGB(255, 234, 158, 192)),
     );
   }
 }

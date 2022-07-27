@@ -73,67 +73,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
     });
   }
 
-  AnimatedWidget bottomToTop(child, animation) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(0, 1),
-        end: Offset.zero,
-      ).animate(animation),
-      child: child,
-    );
-  }
-
-  AnimatedWidget topToBottom(child, animation) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: Offset.zero,
-        end: const Offset(0, 1),
-      ).animate(animation),
-      child: child,
-    );
-  }
-
-  AnimatedWidget leftOutIn(child, animation) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(-1, 0),
-        end: Offset.zero,
-      ).animate(animation),
-      child: child,
-    );
-  }
-
-  AnimatedWidget leftInOut(child, animation) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: Offset.zero,
-        end: const Offset(-1, 0),
-      ).animate(animation),
-      child: child,
-    );
-  }
-
-  AnimatedWidget rightOutIn(Widget child, animation) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1, 0),
-        end: Offset.zero,
-      ).animate(animation),
-      child: child,
-    );
-  }
-
-  Widget stayOnScreen(Widget child, AnimationController animation) {
-    return FadeTransition(
-      opacity: Tween<double>(begin: 1.0, end: 1.0).animate(animation),
-      child: child,
-    );
-  }
-
-  Widget sizeIn(AnimationController controller, Widget child) {
-    return ScaleTransition(scale: CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic), child: child);
-  }
-
   int _selectedIndex = 0;
 
   late AnimationController _controller;
@@ -277,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
                   ),
                   Breakpoints.large: SlotLayoutConfig(
                     key: const Key('primaryNavigation1'),
-                    inAnimation: leftOutIn,
+                    inAnimation: AdaptiveScaffold.leftOutIn,
                     builder: (_) => AdaptiveScaffold.toNavigationRail(
                       leading: Padding(
                         padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
@@ -339,11 +278,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
                   ? SlotLayout(
                       config: {
                         Breakpoints.medium: SlotLayoutConfig(
-                            outAnimation: stayOnScreen,
+                            outAnimation: AdaptiveScaffold.stayOnScreen,
                             key: const Key('sb1'),
                             builder: (_) => DetailTile(item: allItems[selected ?? 0])),
                         Breakpoints.large: SlotLayoutConfig(
-                            outAnimation: stayOnScreen,
+                            outAnimation: AdaptiveScaffold.stayOnScreen,
                             key: const Key('sb1'),
                             builder: (_) => DetailTile(item: allItems[selected ?? 0])),
                       },
@@ -353,10 +292,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
                 config: {
                   Breakpoints.small: SlotLayoutConfig(
                     key: const Key('bn'),
-                    inAnimation: bottomToTop,
-                    outAnimation: topToBottom,
+                    inAnimation: AdaptiveScaffold.bottomToTop,
+                    outAnimation: AdaptiveScaffold.topToBottom,
                     builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
                   ),
+                  Breakpoints.medium: SlotLayoutConfig.empty(),
+                  Breakpoints.large: SlotLayoutConfig.empty(),
                 },
               ),
             ),

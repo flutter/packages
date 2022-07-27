@@ -188,6 +188,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> with TickerProviderStat
         })
         .whereType<Widget>()
         .toList();
+
     notifiers.forEach((String key, ValueNotifier<Key?> notifier) {
       notifier.value = chosenWidgets[key]?.key;
     });
@@ -255,9 +256,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     double animatedSize(double begin, double end) {
       if (isAnimating[_secondaryBodyID]!) {
         return internalAnimations
-            ? Tween<double>(begin: begin, end: end)
-                .animate(CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic))
-                .value
+            ? Tween<double>(begin: begin, end: end).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic)).value
             : end;
       }
       return end;
@@ -321,8 +320,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
           } else {
             beginWidth = remainingWidth * bodyRatio!;
           }
-          currentBodySize = layoutChild(
-              _bodyID, BoxConstraints.tight(Size(animatedSize(beginWidth, remainingWidth), remainingHeight)));
+          currentBodySize = layoutChild(_bodyID, BoxConstraints.tight(Size(animatedSize(beginWidth, remainingWidth), remainingHeight)));
         } else {
           double beginHeight;
           if (bodyRatio == null) {
@@ -330,8 +328,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
           } else {
             beginHeight = remainingHeight * bodyRatio!;
           }
-          currentBodySize = layoutChild(
-              _bodyID, BoxConstraints.tight(Size(remainingWidth, animatedSize(beginHeight, remainingHeight))));
+          currentBodySize = layoutChild(_bodyID, BoxConstraints.tight(Size(remainingWidth, animatedSize(beginHeight, remainingHeight))));
         }
         layoutChild(_secondaryBodyID, BoxConstraints.loose(size));
       } else {
@@ -353,27 +350,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
               finalSBodySize = halfWidth - rightMargin;
             }
 
-            currentBodySize = layoutChild(
-              _bodyID,
-              BoxConstraints.tight(
-                Size(
-                  animatedSize(
-                    remainingWidth,
-                    finalBodySize,
-                  ),
-                  remainingHeight,
-                ),
-              ),
-            );
-            layoutChild(
-              _secondaryBodyID,
-              BoxConstraints.tight(
-                Size(
-                  finalSBodySize,
-                  remainingHeight,
-                ),
-              ),
-            );
+            currentBodySize = layoutChild(_bodyID, BoxConstraints.tight(Size(animatedSize(remainingWidth, finalBodySize), remainingHeight)));
+            layoutChild(_secondaryBodyID, BoxConstraints.tight(Size(finalSBodySize, remainingHeight)));
           } else {
             // If textDirection is RTL
 
@@ -389,28 +367,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
               finalBodySize = halfWidth - rightMargin;
               finalSBodySize = halfWidth - leftMargin;
             }
-
-            currentSBodySize = layoutChild(
-              _secondaryBodyID,
-              BoxConstraints.tight(
-                Size(
-                  animatedSize(
-                    0,
-                    finalSBodySize,
-                  ),
-                  remainingHeight,
-                ),
-              ),
-            );
-            layoutChild(
-              _bodyID,
-              BoxConstraints.tight(
-                Size(
-                  finalBodySize,
-                  remainingHeight,
-                ),
-              ),
-            );
+            currentSBodySize = layoutChild(_secondaryBodyID, BoxConstraints.tight(Size(animatedSize(0, finalSBodySize), remainingHeight)));
+            layoutChild(_bodyID, BoxConstraints.tight(Size(finalBodySize, remainingHeight)));
           }
         } else {
           // If body and secondaryBody laid out vertically

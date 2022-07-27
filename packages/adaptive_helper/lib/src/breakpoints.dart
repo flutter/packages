@@ -10,6 +10,8 @@ const List<TargetPlatform> _mobile = <TargetPlatform>[TargetPlatform.iOS, Target
 
 /// Standard Breakpoints.
 class Breakpoints {
+  /// Standard breakpoint. Always active.
+  static const Breakpoint standard =  _Breakpoint(begin: -1);
   /// Small breakpoint. Open bounded.
   static const Breakpoint small =  _Breakpoint(begin: 0);
   /// Small breakpoint for non-mobile. Open bounded.
@@ -19,7 +21,7 @@ class Breakpoints {
   /// Small breakpoint for mobile. Open bounded.
   static const Breakpoint smallMobile =  _Breakpoint(begin: 0, platform: _mobile);
   /// Medium breakpoint. Close bounded.
-  static const Breakpoint medium = _Breakpoint(begin: 800, end: 1000);
+  static const Breakpoint medium = _Breakpoint(begin: 800);
   /// Medium breakpoint for non-mobile. Close bounded.
   static const Breakpoint mediumDesktop = _Breakpoint(begin: 800, end: 1000, platform: _desktop);
   /// Medium breakpoint for mobile. Close bounded.

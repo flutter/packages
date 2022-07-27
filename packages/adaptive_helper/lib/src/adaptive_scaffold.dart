@@ -130,6 +130,9 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Callback function for when the index of a [NavigationRail] changes.
   final Function(int)? onSelectedIndexChange;
 
+  /// Callback function for when the index of a [NavigationRail] changes.
+  static WidgetBuilder emptyBuilder = (_) => const SizedBox();
+
   /// Public helper method to be used for creating a [NavigationRail] from a
   /// list of [NavigationDestination]s. Takes in a [selectedIndex] property for
   /// the current selected item in the [NavigationRail] and [extended] for
@@ -193,7 +196,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from bottom offscreen up onto the screen.
-  static AnimatedWidget bottomToTop(Widget child, AnimationController animation) {
+  static AnimatedWidget bottomToTop(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(0, 1),
@@ -204,7 +207,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from on the screen down off the screen.
-  static AnimatedWidget topToBottom(Widget child, AnimationController animation) {
+  static AnimatedWidget topToBottom(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: Offset.zero,
@@ -215,7 +218,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from left off the screen into the screen.
-  static AnimatedWidget leftOutIn(Widget child, AnimationController animation) {
+  static AnimatedWidget leftOutIn(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(-1, 0),
@@ -226,7 +229,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from on screen to left off screen.
-  static AnimatedWidget leftInOut(Widget child, AnimationController animation) {
+  static AnimatedWidget leftInOut(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: Offset.zero,
@@ -237,7 +240,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from right off screen to on screen.
-  static AnimatedWidget rightOutIn(Widget child, AnimationController animation) {
+  static AnimatedWidget rightOutIn(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(1, 0),
@@ -248,7 +251,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Fade in animation.
-  static Widget fadeIn(Widget child, AnimationController animation) {
+  static Widget fadeIn(Widget child, Animation<double> animation) {
     return FadeTransition(
       opacity: CurvedAnimation(parent: animation, curve: Curves.easeInCubic),
       child: child,
@@ -256,9 +259,17 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Fade out animation.
-  static Widget fadeOut(Widget child, AnimationController animation) {
+  static Widget fadeOut(Widget child, Animation<double> animation) {
     return FadeTransition(
       opacity: CurvedAnimation(parent: ReverseAnimation(animation), curve: Curves.easeInCubic),
+      child: child,
+    );
+  }
+
+  /// Keep widget on screen while it is leaving
+  static Widget stayOnScreen(Widget child, Animation<double> animation) {
+    return FadeTransition(
+      opacity: Tween<double>(begin: 1.0, end: 1.0).animate(animation),
       child: child,
     );
   }
@@ -270,23 +281,6 @@ class AdaptiveScaffold extends StatefulWidget {
 class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
   @override
   Widget build(BuildContext context) {
-    List<WidgetBuilder?>? bodyList = <WidgetBuilder?>[
-      widget.smallBody ?? widget.body,
-      widget.body,
-      widget.largeBody ?? widget.body
-    ];
-    List<WidgetBuilder?>? secondaryBodyList = <WidgetBuilder?>[
-      widget.smallSecondaryBody ?? widget.secondaryBody,
-      widget.secondaryBody,
-      widget.largeSecondaryBody ?? widget.secondaryBody
-    ];
-    if (bodyList.every((WidgetBuilder? e) => e == null)) {
-      bodyList = null;
-    }
-    if (secondaryBodyList.every((WidgetBuilder? e) => e == null)) {
-      secondaryBodyList = null;
-    }
-
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Scaffold(
@@ -352,30 +346,61 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   },
                 )
               : null,
-          body: _createSlotFromProperties(bodyList, 'body'),
-          secondaryBody: _createSlotFromProperties(secondaryBodyList, 'secondaryBody'),
+          body: SlotLayout(
+            config: <Breakpoint, SlotLayoutConfig?>{
+              Breakpoints.standard: SlotLayoutConfig(
+                key: const Key('body'),
+                inAnimation: AdaptiveScaffold.fadeIn,
+                outAnimation: AdaptiveScaffold.fadeOut,
+                builder: widget.body,
+              ),
+              if(widget.smallBody!=null) Breakpoints.small: (widget.smallBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('body1'),
+                inAnimation: AdaptiveScaffold.fadeIn,
+                outAnimation: AdaptiveScaffold.fadeOut,
+                builder: widget.smallBody,
+              ):null,
+              if(widget.body!=null) Breakpoints.medium: (widget.body!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('body'),
+                inAnimation: AdaptiveScaffold.fadeIn,
+                outAnimation: AdaptiveScaffold.fadeOut,
+                builder: widget.body,
+              ):null,
+              if(widget.largeBody!=null) Breakpoints.large: (widget.largeBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('body2'),
+                inAnimation: AdaptiveScaffold.fadeIn,
+                outAnimation: AdaptiveScaffold.fadeOut,
+                builder: widget.largeBody,
+              ):null,
+            },
+          ),
+          secondaryBody: SlotLayout(
+            config: <Breakpoint, SlotLayoutConfig?>{
+              Breakpoints.standard: SlotLayoutConfig(
+                key: const Key('secondaryBody'),
+                outAnimation: AdaptiveScaffold.stayOnScreen,
+                builder: widget.secondaryBody,
+              ),
+              if(widget.smallSecondaryBody!=null) Breakpoints.small: (widget.smallSecondaryBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('secondaryBody1'),
+                outAnimation: AdaptiveScaffold.stayOnScreen,
+                builder: widget.smallSecondaryBody,
+              ):null,
+              if(widget.secondaryBody!=null) Breakpoints.medium: (widget.secondaryBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('secondaryBody'),
+                outAnimation: AdaptiveScaffold.stayOnScreen,
+                builder: widget.secondaryBody,
+              ):null,
+             if(widget.largeSecondaryBody!=null) Breakpoints.large: (widget.largeSecondaryBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('secondaryBody2'),
+                outAnimation: AdaptiveScaffold.stayOnScreen,
+                builder: widget.largeSecondaryBody,
+              ):null,
+            },
+          ),
         ),
       ),
     );
-  }
-
-  SlotLayout? _createSlotFromProperties(List<WidgetBuilder?>? list, String name) {
-    return list != null
-        ? SlotLayout(
-            config: <Breakpoint, SlotLayoutConfig?>{
-              for (MapEntry<int, WidgetBuilder?> entry in list.asMap().entries)
-                if (entry.key == 0 || list[entry.key] != list[entry.key - 1])
-                  widget.breakpoints[entry.key]: (entry.value != null)
-                      ? SlotLayoutConfig(
-                          key: Key('$name${entry.key}'),
-                          inAnimation: AdaptiveScaffold.fadeIn,
-                          outAnimation: AdaptiveScaffold.fadeOut,
-                          builder: entry.value,
-                        )
-                      : null
-            },
-          )
-        : null;
   }
 }
 
