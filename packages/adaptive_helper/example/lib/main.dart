@@ -134,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
       NavigationDestination(label: 'Chat', icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
       NavigationDestination(label: 'Video', icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
-    showGridView.value = Breakpoints.medium.isActive;
+    showGridView.value = Breakpoints.medium.isActive(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 236, 235, 243),
       body: SafeArea(
@@ -347,28 +347,7 @@ class ItemList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-      floatingActionButton: showGridView
-          ? null
-          : TextButton(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 254, 215, 227),
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                width: 50,
-                height: 50,
-                child: const Icon(Icons.edit_outlined),
-              ),
-              onPressed: () => {},
-            ),
+      floatingActionButton: Breakpoints.medium.isActive(context) ? null : const ComposeIcon(),
       body: Column(
         children: [
           Padding(
