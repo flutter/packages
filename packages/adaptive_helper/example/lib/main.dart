@@ -134,11 +134,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
       NavigationDestination(label: 'Chat', icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
       NavigationDestination(label: 'Video', icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
-    if (MediaQuery.of(context).size.width > 800) {
-      showGridView.value = true;
-    } else {
-      showGridView.value = false;
-    }
+    showGridView.value = Breakpoints.medium.isActive;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 236, 235, 243),
       body: SafeArea(
@@ -165,23 +161,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
                         selectedIndex: _selectedIndex,
                         leading: ScaleTransition(
                           scale: _controller1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 254, 215, 227),
-                              borderRadius: const BorderRadius.all(Radius.circular(15)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: const Offset(0, 2), // changes position of shadow
-                                ),
-                              ],
-                            ),
-                            width: 50,
-                            height: 50,
-                            child: const Icon(Icons.edit_outlined),
-                          ),
+                          child: const ComposeIcon(),
                         ),
                         backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                         labelType: NavigationRailLabelType.none,
@@ -218,37 +198,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
                     key: const Key('primaryNavigation1'),
                     inAnimation: AdaptiveScaffold.leftOutIn,
                     builder: (_) => AdaptiveScaffold.toNavigationRail(
-                      leading: Padding(
-                        padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 255, 225, 231),
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 2,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          width: 200,
-                          height: 50,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
-                            child: Row(
-                              children: const [
-                                Icon(Icons.edit_outlined),
-                                SizedBox(width: 20),
-                                Center(child: Text('Compose')),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                      leading: const ComposeButton(),
+                      backgroundColor: Colors.transparent,
                       labelType: NavigationRailLabelType.none,
                       selectedIndex: 0,
                       extended: true,
@@ -265,10 +216,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
                         ? Padding(
                             padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
                             child: ItemList(
-                                items: allItems,
-                                selectCard: selectCard,
-                                setDisplayed: setDisplayed,
-                                showGridView: false),
+                              items: allItems,
+                              selectCard: selectCard,
+                              setDisplayed: setDisplayed,
+                              showGridView: false,
+                            ),
                           )
                         : const ExamplePage(),
                   ),
@@ -278,13 +230,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
                   ? SlotLayout(
                       config: {
                         Breakpoints.medium: SlotLayoutConfig(
-                            outAnimation: AdaptiveScaffold.stayOnScreen,
-                            key: const Key('sb1'),
-                            builder: (_) => DetailTile(item: allItems[selected ?? 0])),
+                          outAnimation: AdaptiveScaffold.stayOnScreen,
+                          key: const Key('sb1'),
+                          builder: (_) => DetailTile(item: allItems[selected ?? 0]),
+                        ),
                         Breakpoints.large: SlotLayoutConfig(
-                            outAnimation: AdaptiveScaffold.stayOnScreen,
-                            key: const Key('sb1'),
-                            builder: (_) => DetailTile(item: allItems[selected ?? 0])),
+                          outAnimation: AdaptiveScaffold.stayOnScreen,
+                          key: const Key('sb1'),
+                          builder: (_) => DetailTile(item: allItems[selected ?? 0]),
+                        ),
                       },
                     )
                   : null,
@@ -301,6 +255,73 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
                 },
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ComposeIcon extends StatelessWidget {
+  const ComposeIcon({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 254, 215, 227),
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: const Offset(0, 2), // changes position of shadow
+          ),
+        ],
+      ),
+      width: 50,
+      height: 50,
+      child: const Icon(Icons.edit_outlined),
+    );
+  }
+}
+
+class ComposeButton extends StatelessWidget {
+  const ComposeButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+      child: Container(
+        alignment: Alignment.centerLeft,
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 255, 225, 231),
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 2,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        width: 200,
+        height: 50,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
+          child: Row(
+            children: const [
+              Icon(Icons.edit_outlined),
+              SizedBox(width: 20),
+              Center(child: Text('Compose')),
+            ],
           ),
         ),
       ),
