@@ -1,3 +1,7 @@
+## 4.2.0
+
+* Adds iOS template app icons, updated to square icons with no transparency.
+
 ## 4.1.1
 
 * Removes empty Dart file.

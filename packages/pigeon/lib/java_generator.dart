@@ -376,7 +376,13 @@ static MessageCodec<Object> getCodec() {
           } else {
             const String output = 'output';
             indent.writeln('@SuppressWarnings("ConstantConditions")');
-            indent.writeln('$returnType $output = ($returnType)channelReply;');
+            if (func.returnType.baseName == 'int') {
+              indent.writeln(
+                  '$returnType $output = channelReply == null ? null : ((Number)channelReply).longValue();');
+            } else {
+              indent
+                  .writeln('$returnType $output = ($returnType)channelReply;');
+            }
             indent.writeln('callback.reply($output);');
           }
         });
@@ -451,8 +457,8 @@ String _nullsafeJavaTypeForDartType(TypeDeclaration type) {
 /// object.
 String _castObject(
     NamedType field, List<Class> classes, List<Enum> enums, String varName) {
-  final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
-      (NamedType x) => _javaTypeForBuiltinDartType(x.type));
+  final HostDatatype hostDatatype = getFieldHostDatatype(field, classes, enums,
+      (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
   if (field.type.baseName == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
   } else if (!hostDatatype.isBuiltin &&
@@ -521,8 +527,11 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
   void writeDataClass(Class klass) {
     void writeField(NamedType field) {
-      final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-          root.enums, (NamedType x) => _javaTypeForBuiltinDartType(x.type));
+      final HostDatatype hostDatatype = getFieldHostDatatype(
+          field,
+          root.classes,
+          root.enums,
+          (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
       final String nullability =
           field.type.isNullable ? '@Nullable' : '@NonNull';
       indent.writeln(
@@ -547,8 +556,11 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.scoped('{', '}', () {
         indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
         for (final NamedType field in klass.fields) {
-          final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-              root.enums, (NamedType x) => _javaTypeForBuiltinDartType(x.type));
+          final HostDatatype hostDatatype = getFieldHostDatatype(
+              field,
+              root.classes,
+              root.enums,
+              (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
           String toWriteValue = '';
           final String fieldName = field.name;
           if (!hostDatatype.isBuiltin &&
@@ -592,8 +604,11 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.write('public static final class Builder ');
       indent.scoped('{', '}', () {
         for (final NamedType field in klass.fields) {
-          final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-              root.enums, (NamedType x) => _javaTypeForBuiltinDartType(x.type));
+          final HostDatatype hostDatatype = getFieldHostDatatype(
+              field,
+              root.classes,
+              root.enums,
+              (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
           final String nullability =
               field.type.isNullable ? '@Nullable' : '@NonNull';
           indent.writeln(

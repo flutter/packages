@@ -59,7 +59,7 @@ class MockApi : public MessageApi {
   ~MockApi() = default;
 
   MOCK_METHOD(std::optional<FlutterError>, Initialize, (), (override));
-  MOCK_METHOD(ErrorOr<std::unique_ptr<MessageSearchReply>>, Search,
+  MOCK_METHOD(ErrorOr<MessageSearchReply>, Search,
               (const MessageSearchRequest&), (override));
 };
 
@@ -130,8 +130,8 @@ TEST(PigeonTests, CallSearch) {
       .Times(1)
       .WillOnce(testing::SaveArg<1>(&handler));
   EXPECT_CALL(mock_api, Search(testing::_))
-      .WillOnce(Return(ByMove(ErrorOr<MessageSearchReply>::MakeWithUniquePtr(
-          std::make_unique<MessageSearchReply>()))));
+      .WillOnce(
+          Return(ByMove(ErrorOr<MessageSearchReply>(MessageSearchReply()))));
   MessageApi::SetUp(&mock_messenger, &mock_api);
   bool did_call_reply = false;
   flutter::BinaryReply reply = [&did_call_reply](const uint8_t* data,

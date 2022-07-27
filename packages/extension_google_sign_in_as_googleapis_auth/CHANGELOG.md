@@ -1,3 +1,7 @@
+## 2.0.6
+
+* Drops support for Flutter <2.8.
+
 ## 2.0.5
 
 * Updates README to reference the correct github URL.

@@ -1,5 +1,21 @@
-## 3.2.4
+## 3.2.7
 * Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
+## 3.2.6
+
+* [java] Fixes returning int values from FlutterApi methods that fit in 32 bits.
+
+## 3.2.5
+
+* [c++] Fixes style issues in `FlutterError` and `ErrorOr`. The names and
+  visibility of some members have changed, so this may require updates
+  to existing code.
+
+## 3.2.4
+
+* [c++] Fixes most non-class arguments and return values in host APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
 
 ## 3.2.3
 
