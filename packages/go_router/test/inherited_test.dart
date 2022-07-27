@@ -131,7 +131,7 @@ class MockGoRouter extends GoRouter {
   @override
   void pushNamed(String name,
       {Map<String, String> params = const <String, String>{},
-      Map<String, String> queryParams = const <String, String>{},
+      Map<String, dynamic> queryParams = const <String, dynamic>{},
       Object? extra}) {
     latestPushedName = name;
   }
