@@ -1,3 +1,7 @@
+## 4.2.2
+
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+
 ## 4.2.1
 
 - Refactors internal classes and methods
