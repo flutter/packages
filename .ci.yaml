@@ -69,6 +69,7 @@ targets:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: stable
+      version_file: flutter_stable.version
       dependencies: >
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
@@ -80,6 +81,11 @@ targets:
     timeout: 90
     properties:
       add_recipes_cq: "true"
+    runIf:
+      - .ci.yaml
+      - .ci/
+      - packages/fuchsia_ctl/
+      - script/
 
   - name: Linux ci_yaml packages roller
     recipe: infra/ci_yaml

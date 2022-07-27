@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:meta/meta_meta.dart';
 
-import 'go_route.dart';
-import 'go_router_state.dart';
+import 'route.dart';
+import 'state.dart';
 
 /// Baseclass for supporting
 /// [typed routing](https://gorouter.dev/typed-routing).
