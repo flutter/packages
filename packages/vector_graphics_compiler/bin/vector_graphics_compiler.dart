@@ -27,9 +27,9 @@ final ArgParser argParser = ArgParser()
         'raster times at the cost of slightly larger file sizes.',
   )
   ..addFlag(
-    'path-ops',
-    help: 'Allows for path_ops library to be used when'
-        'calculating path intersections.',
+    'optimize-masks',
+    help: 'Allows for masking optimizer to be enabled or disabled',
+    defaultsTo: true,
   )
   ..addOption('input',
       abbr: 'i',
@@ -52,6 +52,7 @@ Future<void> main(List<String> args) async {
     print(argParser.usage);
     exit(1);
   }
+
   if (results['tessellate'] == true) {
     if (results.wasParsed('libtessellator')) {
       initializeLibTesselator(results['libtessellator'] as String);
@@ -62,7 +63,7 @@ Future<void> main(List<String> args) async {
     }
   }
 
-  if (results['pathops'] == true) {
+  if (results['optimize-masks'] == true) {
     if (results.wasParsed('libpathops')) {
       initializeLibPathOps(results['libpathops'] as String);
     } else {
@@ -76,7 +77,17 @@ Future<void> main(List<String> args) async {
   final String xml = File(inputFilePath).readAsStringSync();
   final File outputFile =
       File(results['output'] as String? ?? '$inputFilePath.vg');
-  final Uint8List bytes = await encodeSvg(xml, args[0]);
+
+  bool maskingOptimizerEnabled = true;
+
+  if (results['optimize-masks'] == false) {
+    maskingOptimizerEnabled = false;
+  }
+
+  final Uint8List bytes = await encodeSvg(
+      xml: xml,
+      debugName: args[0],
+      enableMaskingOptimizer: maskingOptimizerEnabled);
 
   outputFile.writeAsBytesSync(bytes);
 }

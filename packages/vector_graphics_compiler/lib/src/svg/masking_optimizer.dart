@@ -133,12 +133,12 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   }
 
   /// Applies mask to a path node, and returns resulting path node.
-  ResolvedPathNode applyMask(Node child, ResolvedPathNode maskPathNode) {
-    final ResolvedPathNode pathNode = child as ResolvedPathNode;
+  ResolvedPathNode applyMask(
+      ResolvedPathNode pathNode, ResolvedPathNode maskPathNode) {
     final path_ops.Path maskPathOpsPath = toPathOpsPath(maskPathNode.path);
     final path_ops.Path pathPathOpsPath = toPathOpsPath(pathNode.path);
     final path_ops.Path intersection =
-        maskPathOpsPath.applyOp(pathPathOpsPath, path_ops.PathOp.intersect);
+        pathPathOpsPath.applyOp(maskPathOpsPath, path_ops.PathOp.intersect);
     final Path newPath = toVectorGraphicsPath(intersection);
     final ResolvedPathNode newPathNode = ResolvedPathNode(
         paint: pathNode.paint, bounds: maskPathNode.bounds, path: newPath);

@@ -51,7 +51,8 @@ class _MyAppState extends State<MyApp> {
     }
     _debounce = Timer(const Duration(milliseconds: 250), () {
       compute((String svg) async {
-        final Uint8List compiledBytes = await encodeSvg(svg, '<string>');
+        final Uint8List compiledBytes =
+            await encodeSvg(xml: svg, debugName: '<string>');
         return compiledBytes.buffer.asByteData();
       }, text, debugLabel: 'Load Bytes')
           .then((ByteData data) {
