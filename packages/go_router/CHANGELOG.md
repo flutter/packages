@@ -1,6 +1,10 @@
-## 4.2.2
+## 4.2.3
 
 - Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+
+## 4.2.2
+
+- Fixes a bug where go_router_builder wasn't detecting annotations.
 
 ## 4.2.1
 
