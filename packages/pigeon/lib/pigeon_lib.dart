@@ -96,7 +96,7 @@ class ObjCSelector {
   final String value;
 }
 
-/// Metadata to annotation methods to control the function signature used for swift output.
+/// Metadata to annotate methods to control the signature used for Swift output.
 /// The number of components in the provided signature must match the number of
 /// arguments in the annotated method.
 /// For example:
