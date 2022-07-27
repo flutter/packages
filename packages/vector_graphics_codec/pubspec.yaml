@@ -1,5 +1,5 @@
 name: vector_graphics_codec
-description: A simple command-line application.
+description: An encoding library for `package:vector_graphics`
 version: 0.0.1
 homepage: https://github.com/dnfield/vector_graphics
 
