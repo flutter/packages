@@ -278,7 +278,7 @@ class ComposeIcon extends StatelessWidget {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 1,
             blurRadius: 2,
-            offset: const Offset(0, 2), // changes position of shadow
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -367,7 +367,8 @@ class ItemList extends StatelessWidget {
                 height: 50,
                 child: const Icon(Icons.edit_outlined),
               ),
-              onPressed: () => {}),
+              onPressed: () => {},
+            ),
       body: Column(
         children: [
           Padding(
