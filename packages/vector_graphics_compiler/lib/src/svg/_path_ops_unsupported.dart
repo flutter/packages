@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 /// Whether or not tesselation should be used.
-bool get isTesselatorInitialized => false;
+bool get isPathOpsInitialized => false;
 
 /// Initialize the libpathops dynamic library.
 void initializeLibPathOps(String path) {}

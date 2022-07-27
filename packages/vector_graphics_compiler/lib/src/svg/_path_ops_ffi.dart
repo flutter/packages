@@ -13,19 +13,6 @@ import 'path_ops.dart';
 final ffi.DynamicLibrary _dylib = ffi.DynamicLibrary.open(_dylibPath);
 late final String _dylibPath;
 
-/// Whether or not tesselation should be used.
-bool get isTesselatorInitialized => _isTesselatorInitialized;
-bool _isTesselatorInitialized = false;
-
-/// Initialize the libtesselator dynamic library.
-///
-/// This method must be called before [VerticesBuilder] can be used or
-/// constructed.
-void initializeLibTesselator(String path) {
-  _dylibPath = path;
-  _isTesselatorInitialized = true;
-}
-
 /// A path proxy that can print the SVG path-data representation of this path.
 class SvgPathProxy implements PathProxy {
   final StringBuffer _buffer = StringBuffer();
