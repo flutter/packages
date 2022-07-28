@@ -405,11 +405,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onDrawImage(int imageId, double x, double y, int width, int height) {
+  void onDrawImage(
+      int imageId, double x, double y, double width, double height) {
     final ui.Image image = _images[imageId]!;
     paintImage(
       canvas: _canvas,
-      rect: ui.Rect.fromLTWH(x, y, width.toDouble(), height.toDouble()),
+      rect: ui.Rect.fromLTWH(x, y, width, height),
       image: image,
     );
   }

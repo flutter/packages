@@ -641,8 +641,8 @@ class VectorGraphicsCodec {
     int imageId,
     double x,
     double y,
-    int width,
-    int height,
+    double width,
+    double height,
   ) {
     buffer._checkPhase(_CurrentSection.commands);
     buffer._addCommandsTag();
@@ -652,8 +652,8 @@ class VectorGraphicsCodec {
     buffer._putUint16(imageId);
     buffer._putFloat32(x);
     buffer._putFloat32(y);
-    buffer._putUint32(width);
-    buffer._putUint32(height);
+    buffer._putFloat32(width);
+    buffer._putFloat32(height);
   }
 
   void _readPath(
@@ -788,8 +788,8 @@ class VectorGraphicsCodec {
     final int id = buffer.getUint16();
     final double x = buffer.getFloat32();
     final double y = buffer.getFloat32();
-    final int width = buffer.getUint32();
-    final int height = buffer.getUint32();
+    final double width = buffer.getFloat32();
+    final double height = buffer.getFloat32();
 
     listener?.onDrawImage(id, x, y, width, height);
   }
@@ -927,8 +927,8 @@ abstract class VectorGraphicsCodecListener {
     int imageId,
     double x,
     double y,
-    int width,
-    int height,
+    double width,
+    double height,
   );
 }
 

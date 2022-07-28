@@ -92,10 +92,7 @@ class DrawCommandBuilder {
     final int imageId = _getOrGenerateId(imageData, _images);
     final DrawImageData drawImageData = DrawImageData(
       imageId,
-      node.x,
-      node.y,
-      node.width,
-      node.height,
+      node.rect,
     );
     final int drawImageId = _getOrGenerateId(drawImageData, _drawImages);
     _commands.add(DrawCommand(

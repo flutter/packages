@@ -205,12 +205,15 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   @override
   Node visitImageNode(ImageNode imageNode, AffineMatrix data) {
     final SvgAttributes attributes = imageNode.attributes;
+    final double left = double.parse(attributes.raw['x'] ?? '0');
+    final double top = double.parse(attributes.raw['y'] ?? '0');
+    final double width = double.parse(attributes.raw['width']!);
+    final double height = double.parse(attributes.raw['height']!);
+    final Rect rect =
+        data.transformRect(Rect.fromLTWH(left, top, width, height));
     return ResolvedImageNode(
       data: imageNode.data,
-      x: double.parse(attributes.raw['x'] ?? '0'),
-      y: double.parse(attributes.raw['y'] ?? '0'),
-      width: int.parse(attributes.raw['width']!),
-      height: int.parse(attributes.raw['height']!),
+      rect: rect,
     );
   }
 
@@ -367,26 +370,14 @@ class ResolvedImageNode extends Node {
   /// Create a new [ResolvedImageNode].
   const ResolvedImageNode({
     required this.data,
-    required this.x,
-    required this.y,
-    required this.width,
-    required this.height,
+    required this.rect,
   });
 
   /// The image [data] encoded as a PNG.
   final Uint8List data;
 
-  /// The [x] position of the image in global coordinates.
-  final double x;
-
-  /// The [y] position of the image in global coordinates.
-  final double y;
-
-  /// The [width] of the image in pixels.
-  final int width;
-
-  /// The [height] of the image in pixels.
-  final int height;
+  /// The region to draw the image to.
+  final Rect rect;
 
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {

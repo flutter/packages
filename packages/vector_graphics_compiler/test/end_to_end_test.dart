@@ -389,7 +389,8 @@ class TestListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onDrawImage(int imageId, double x, double y, int width, int height) {
+  void onDrawImage(
+      int imageId, double x, double y, double width, double height) {
     commands.add(OnDrawImage(imageId, x, y, width, height));
   }
 
@@ -839,8 +840,8 @@ class OnDrawImage {
   final int id;
   final double x;
   final double y;
-  final int width;
-  final int height;
+  final double width;
+  final double height;
 
   @override
   int get hashCode => Object.hash(id, x, y, width, height);

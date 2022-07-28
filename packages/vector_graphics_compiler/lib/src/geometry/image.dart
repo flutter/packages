@@ -4,6 +4,8 @@
 
 import 'dart:typed_data';
 
+import 'basic_types.dart';
+
 /// The encoded image data and its format.
 class ImageData {
   /// Create a new [ImageData].
@@ -27,24 +29,12 @@ class DrawImageData {
   /// Create a new [DrawImageData].
   const DrawImageData(
     this.id,
-    this.x,
-    this.y,
-    this.width,
-    this.height,
+    this.rect,
   );
 
   /// The corresponding encoding image to draw.
   final int id;
 
   /// The x position of the image in pixels.
-  final double x;
-
-  /// The y position of the image in pixels.
-  final double y;
-
-  /// The width of the image in pixels.
-  final int width;
-
-  /// The height of the image in pixels.
-  final int height;
+  final Rect rect;
 }

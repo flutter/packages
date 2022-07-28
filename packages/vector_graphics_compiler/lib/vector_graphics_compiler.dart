@@ -278,10 +278,10 @@ Future<Uint8List> encodeSvg({
         codec.writeDrawImage(
           buffer,
           drawImageData.id,
-          drawImageData.x,
-          drawImageData.y,
-          drawImageData.width,
-          drawImageData.height,
+          drawImageData.rect.left,
+          drawImageData.rect.top,
+          drawImageData.rect.width,
+          drawImageData.rect.height,
         );
     }
   }
