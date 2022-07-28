@@ -376,7 +376,13 @@ static MessageCodec<Object> getCodec() {
           } else {
             const String output = 'output';
             indent.writeln('@SuppressWarnings("ConstantConditions")');
-            indent.writeln('$returnType $output = ($returnType)channelReply;');
+            if (func.returnType.baseName == 'int') {
+              indent.writeln(
+                  '$returnType $output = channelReply == null ? null : ((Number)channelReply).longValue();');
+            } else {
+              indent
+                  .writeln('$returnType $output = ($returnType)channelReply;');
+            }
             indent.writeln('callback.reply($output);');
           }
         });
