@@ -225,4 +225,10 @@ class ClippingOptimizer extends Visitor<_Result, Node>
     _result.childCount = children.length;
     return _result;
   }
+
+  @override
+  _Result visitResolvedImageNode(
+      ResolvedImageNode resolvedImageNode, Node data) {
+    return _Result(resolvedImageNode);
+  }
 }

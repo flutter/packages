@@ -166,6 +166,11 @@ class Tessellator extends Visitor<Node, void>
   Node visitResolvedVerticesNode(ResolvedVerticesNode verticesNode, void data) {
     return verticesNode;
   }
+
+  @override
+  Node visitResolvedImageNode(ResolvedImageNode resolvedImageNode, void data) {
+    return resolvedImageNode;
+  }
 }
 
 /// Creates vertices from path commands.

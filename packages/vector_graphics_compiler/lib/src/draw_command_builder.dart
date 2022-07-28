@@ -2,9 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'geometry/image.dart';
 import 'geometry/path.dart';
 import 'geometry/vertices.dart';
 import 'paint.dart';
+import 'svg/resolver.dart';
 import 'vector_instructions.dart';
 
 /// An interface for building up a stack of vector commands.
@@ -12,6 +14,8 @@ class DrawCommandBuilder {
   final Map<Paint, int> _paints = <Paint, int>{};
   final Map<Path, int> _paths = <Path, int>{};
   final Map<TextConfig, int> _text = <TextConfig, int>{};
+  final Map<ImageData, int> _images = <ImageData, int>{};
+  final Map<DrawImageData, int> _drawImages = <DrawImageData, int>{};
   final Map<IndexedVertices, int> _vertices = <IndexedVertices, int>{};
   final List<DrawCommand> _commands = <DrawCommand>[];
 
@@ -82,6 +86,25 @@ class DrawCommandBuilder {
     ));
   }
 
+  /// Add an image to the current draw command stack.
+  void addImage(ResolvedImageNode node, String? debugString) {
+    final ImageData imageData = ImageData(node.data, 0);
+    final int imageId = _getOrGenerateId(imageData, _images);
+    final DrawImageData drawImageData = DrawImageData(
+      imageId,
+      node.x,
+      node.y,
+      node.width,
+      node.height,
+    );
+    final int drawImageId = _getOrGenerateId(drawImageData, _drawImages);
+    _commands.add(DrawCommand(
+      DrawCommandType.image,
+      objectId: drawImageId,
+      debugString: debugString,
+    ));
+  }
+
   /// Create a new [VectorInstructions] with the given width and height.
   VectorInstructions toInstructions(double width, double height) {
     return VectorInstructions(
@@ -91,6 +114,8 @@ class DrawCommandBuilder {
       paths: _paths.keys.toList(),
       text: _text.keys.toList(),
       vertices: _vertices.keys.toList(),
+      images: _images.keys.toList(),
+      drawImages: _drawImages.keys.toList(),
       commands: _commands,
     );
   }

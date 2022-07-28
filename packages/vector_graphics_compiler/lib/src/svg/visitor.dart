@@ -26,6 +26,9 @@ abstract class Visitor<S, V> {
   /// Visit a [TextNode].
   S visitTextNode(TextNode textNode, V data);
 
+  /// VIsit an [ImageNode].
+  S visitImageNode(ImageNode imageNode, V data);
+
   /// Visit a [PathNode].
   S visitPathNode(PathNode pathNode, V data);
 
@@ -49,6 +52,9 @@ abstract class Visitor<S, V> {
 
   /// Visit a [ResolvedMaskNode].
   S visitResolvedMaskNode(ResolvedMaskNode maskNode, V data);
+
+  /// Visit a [ResolvedImageNode].
+  S visitResolvedImageNode(ResolvedImageNode resolvedImageNode, V data);
 
   /// Visit a [SaveLayerNode].
   S visitSaveLayerNode(SaveLayerNode layerNode, V data);
@@ -84,6 +90,11 @@ mixin ErrorOnUnResolvedNode<S, V> on Visitor<S, V> {
 
   @override
   S visitPathNode(PathNode pathNode, V data) {
+    throw UnsupportedError(_message);
+  }
+
+  @override
+  S visitImageNode(ImageNode imageNode, V data) {
     throw UnsupportedError(_message);
   }
 }
@@ -168,5 +179,10 @@ class CommandBuilderVisitor extends Visitor<void, void>
   @override
   void visitResolvedVerticesNode(ResolvedVerticesNode verticesNode, void data) {
     _builder.addVertices(verticesNode.vertices, verticesNode.paint);
+  }
+
+  @override
+  void visitResolvedImageNode(ResolvedImageNode resolvedImageNode, void data) {
+    _builder.addImage(resolvedImageNode, null);
   }
 }

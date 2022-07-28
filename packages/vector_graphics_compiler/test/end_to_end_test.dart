@@ -37,10 +37,15 @@ void main() {
       fail('error in setup');
     }
   });
+
   testWidgets('Can endcode and decode simple SVGs with no errors',
       (WidgetTester tester) async {
     for (final String svg in allSvgTestStrings) {
-      final Uint8List bytes = await encodeSvg(xml: svg, debugName: 'test.svg');
+      final Uint8List bytes = await encodeSvg(
+        xml: svg,
+        debugName: 'test.svg',
+        warningsAsErrors: true,
+      );
 
       await tester.pumpWidget(Center(
           child: VectorGraphic(
@@ -49,6 +54,20 @@ void main() {
 
       expect(tester.takeException(), isNull);
     }
+  });
+
+  testWidgets('Errors on unsupported image mime type',
+      (WidgetTester tester) async {
+    const String svgInlineImage = r'''
+<svg width="248" height="100" viewBox="0 0 248 100">
+<image id="image0" width="50" height="50" xlink:href="data:image/foobar;base64,iVBORw0I5IAAM1SvoAAAAASUVORK5CYII=">
+</svg>
+''';
+
+    expect(
+        () => encodeSvg(
+            xml: svgInlineImage, debugName: 'test.svg', warningsAsErrors: true),
+        throwsA(isA<UnimplementedError>()));
   });
 
   test('encodeSvg encodes stroke shaders', () async {

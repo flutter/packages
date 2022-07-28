@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:meta/meta.dart';
+import 'package:vector_graphics_compiler/src/geometry/image.dart';
 import 'package:vector_graphics_compiler/src/util.dart';
 
 import 'geometry/path.dart';
@@ -23,6 +24,8 @@ class VectorInstructions {
     this.paths = const <Path>[],
     this.vertices = const <IndexedVertices>[],
     this.text = const <TextConfig>[],
+    this.images = const <ImageData>[],
+    this.drawImages = const <DrawImageData>[],
     required this.commands,
   });
 
@@ -44,6 +47,12 @@ class VectorInstructions {
   /// The [TextConfig] objects, if any, used in [commands].
   final List<TextConfig> text;
 
+  /// The [ImageData] objects, if any, used in [commands].
+  final List<ImageData> images;
+
+  /// The [DrawImageData] objects, if any, used in [commands].
+  final List<DrawImageData> drawImages;
+
   /// The painting order list of drawing commands.
   ///
   /// If the command type is [DrawCommandType.path], this command specifies
@@ -61,7 +70,9 @@ class VectorInstructions {
       Object.hashAll(paths),
       Object.hashAll(vertices),
       Object.hashAll(text),
-      Object.hashAll(commands));
+      Object.hashAll(commands),
+      Object.hashAll(images),
+      Object.hashAll(drawImages));
 
   @override
   bool operator ==(Object other) {
@@ -72,7 +83,9 @@ class VectorInstructions {
         listEquals(other.paths, paths) &&
         listEquals(other.vertices, vertices) &&
         listEquals(other.text, text) &&
-        listEquals(other.commands, commands);
+        listEquals(other.commands, commands) &&
+        listEquals(other.images, images) &&
+        listEquals(other.drawImages, drawImages);
   }
 
   @override
@@ -114,6 +127,9 @@ enum DrawCommandType {
 
   /// Specifies that this command draws text.
   text,
+
+  /// Specifies that this command draws an image.
+  image,
 }
 
 /// A drawing command combining the index of a [Path] or an [IndexedVertices]

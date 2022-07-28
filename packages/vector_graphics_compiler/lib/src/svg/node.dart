@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:typed_data';
+
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
@@ -472,5 +474,36 @@ class TextNode extends AttributedNode {
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {
     return visitor.visitTextNode(this, data);
+  }
+}
+
+/// A leaf node in the tree that represents an image.
+///
+/// Leaf nodes get added with all paint and transform accumulations from their
+/// parents applied.
+class ImageNode extends AttributedNode {
+  /// Create a new [ImageNode] with the given [text].
+  ImageNode(
+    this.data,
+    super.attributes,
+  );
+
+  /// The text this node contains.
+  final Uint8List data;
+
+  @override
+  AttributedNode applyAttributes(SvgAttributes newAttributes) {
+    return ImageNode(
+      data,
+      attributes.applyParent(newAttributes),
+    );
+  }
+
+  @override
+  void visitChildren(NodeCallback visitor) {}
+
+  @override
+  S accept<S, V>(Visitor<S, V> visitor, V data) {
+    return visitor.visitImageNode(this, data);
   }
 }
