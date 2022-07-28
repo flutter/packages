@@ -71,19 +71,19 @@ class MissingPathParam extends GoRouteData {
   final String id;
 }
 
-@ShouldGenerate('''
-GoRoute get \$enumParam => GoRouteData.\$route(
+@ShouldGenerate(r'''
+GoRoute get $enumParam => GoRouteData.$route(
       path: '/:y',
-      factory: \$EnumParamExtension._fromState,
+      factory: $EnumParamExtension._fromState,
     );
 
-extension \$EnumParamExtension on EnumParam {
+extension $EnumParamExtension on EnumParam {
   static EnumParam _fromState(GoRouterState state) => EnumParam(
-        y: _\$EnumTestEnumMap._\$fromName(state.params['y']!),
+        y: _$EnumTestEnumMap._$fromName(state.params['y']!),
       );
 
-  String get location => GoRouteData.\$location(
-        '/\${Uri.encodeComponent(_\$EnumTestEnumMap[y]!)}',
+  String get location => GoRouteData.$location(
+        '/${Uri.encodeComponent(_$EnumTestEnumMap[y]!)}',
       );
 
   void go(BuildContext context) => context.go(location, extra: this);
@@ -91,14 +91,14 @@ extension \$EnumParamExtension on EnumParam {
   void push(BuildContext context) => context.push(location, extra: this);
 }
 
-const _\$EnumTestEnumMap = {
+const _$EnumTestEnumMap = {
   EnumTest.a: 'a',
   EnumTest.b: 'b',
   EnumTest.c: 'c',
 };
 
 extension<T extends Enum> on Map<T, String> {
-  T _\$fromName(String value) =>
+  T _$fromName(String value) =>
       entries.singleWhere((element) => element.value == value).key;
 }
 ''')
@@ -112,8 +112,6 @@ enum EnumTest {
   a(1),
   b(3),
   c(5);
-
-  final int x;
-
   const EnumTest(this.x);
+  final int x;
 }
