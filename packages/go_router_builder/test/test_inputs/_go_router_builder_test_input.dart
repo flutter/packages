@@ -71,8 +71,7 @@ class MissingPathParam extends GoRouteData {
   final String id;
 }
 
-@ShouldGenerate(
-  '''
+@ShouldGenerate('''
 GoRoute get \$enumParam => GoRouteData.\$route(
       path: '/:y',
       factory: \$EnumParamExtension._fromState,
@@ -102,8 +101,7 @@ extension<T extends Enum> on Map<T, String> {
   T _\$fromName(String value) =>
       entries.singleWhere((element) => element.value == value).key;
 }
-'''
-)
+''')
 @TypedGoRoute<EnumParam>(path: '/:y')
 class EnumParam extends GoRouteData {
   EnumParam({required this.y});
