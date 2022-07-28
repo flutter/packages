@@ -15,6 +15,35 @@ abstract class ControlPointTypes {
   static const int close = 3;
 }
 
+/// enumeration of the types of image data accepted by [VectorGraphicsCodec.writeImage].
+///
+/// Currently only PNG encoding is supported.
+abstract class ImageFormatTypes {
+  /// PNG format.
+  ///
+  /// A loss-less compression format for images. This format is well suited for
+  /// images with hard edges, such as screenshots or sprites, and images with
+  /// text. Transparency is supported. The PNG format supports images up to
+  /// 2,147,483,647 pixels in either dimension, though in practice available
+  /// memory provides a more immediate limitation on maximum image size.
+  ///
+  /// PNG images normally use the `.png` file extension and the `image/png` MIME
+  /// type.
+  ///
+  /// See also:
+  ///
+  ///  * <https://en.wikipedia.org/wiki/Portable_Network_Graphics>, the Wikipedia page on PNG.
+  ///  * <https://tools.ietf.org/rfc/rfc2083.txt>, the PNG standard.
+  static const int png = 0;
+}
+
+class DecodeResponse {
+  const DecodeResponse(this.complete, this._buffer);
+
+  final bool complete;
+  final _ReadBuffer? _buffer;
+}
+
 /// The [VectorGraphicsCodec] provides support for both encoding and
 /// decoding the vector_graphics binary format.
 class VectorGraphicsCodec {
@@ -45,6 +74,9 @@ class VectorGraphicsCodec {
   static const int _maskTag = 43;
   static const int _drawTextTag = 44;
   static const int _textConfigTag = 45;
+  static const int _imageConfigTag = 46;
+  static const int _drawImageTag = 47;
+  static const int _beginCommandsTag = 48;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -56,25 +88,38 @@ class VectorGraphicsCodec {
   /// a dart:ui Picture object should implement [VectorGraphicsCodecListener].
   ///
   /// Throws a [StateError] If the message is invalid.
-  void decode(ByteData data, VectorGraphicsCodecListener? listener) {
-    final _ReadBuffer buffer = _ReadBuffer(data);
-    if (data.lengthInBytes < 5) {
-      throw StateError(
-          'The provided data was not a vector_graphics binary asset.');
+  DecodeResponse decode(ByteData data, VectorGraphicsCodecListener? listener,
+      {DecodeResponse? response}) {
+    final _ReadBuffer buffer;
+    if (response == null) {
+      buffer = _ReadBuffer(data);
+      if (data.lengthInBytes < 5) {
+        throw StateError(
+            'The provided data was not a vector_graphics binary asset.');
+      }
+      final int magicNumber = buffer.getUint32();
+      if (magicNumber != _magicNumber) {
+        throw StateError(
+            'The provided data was not a vector_graphics binary asset.');
+      }
+      final int version = buffer.getUint8();
+      if (version != _version) {
+        throw StateError(
+            'The provided data does not match the currently supported version.');
+      }
+    } else {
+      buffer = response._buffer!;
     }
-    final int magicNumber = buffer.getUint32();
-    if (magicNumber != _magicNumber) {
-      throw StateError(
-          'The provided data was not a vector_graphics binary asset.');
-    }
-    final int version = buffer.getUint8();
-    if (version != _version) {
-      throw StateError(
-          'The provided data does not match the currently supported version.');
-    }
+
+    bool readImage = false;
     while (buffer.hasRemaining) {
       final int type = buffer.getUint8();
       switch (type) {
+        case _beginCommandsTag:
+          if (readImage) {
+            return DecodeResponse(false, buffer);
+          }
+          continue;
         case _linearGradientTag:
           _readLinearGradient(buffer, listener);
           continue;
@@ -117,10 +162,18 @@ class VectorGraphicsCodec {
         case _drawTextTag:
           _readDrawText(buffer, listener);
           continue;
+        case _imageConfigTag:
+          readImage = true;
+          _readImageConfig(buffer, listener);
+          continue;
+        case _drawImageTag:
+          _readDrawImage(buffer, listener);
+          continue;
         default:
           throw StateError('Unknown type tag $type');
       }
     }
+    return const DecodeResponse(true, null);
   }
 
   /// Encode the dimensions of the vector graphic.
@@ -148,6 +201,9 @@ class VectorGraphicsCodec {
     int pathId,
     int paintId,
   ) {
+    buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
+
     buffer._putUint8(_drawPathTag);
     buffer._putUint16(pathId);
     buffer._putUint16(paintId);
@@ -163,6 +219,7 @@ class VectorGraphicsCodec {
     int? paintId,
   ) {
     buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
 
     // Type Tag
     // Vertex Length
@@ -438,6 +495,9 @@ class VectorGraphicsCodec {
   /// See also:
   ///   * [Canvas.saveLayer]
   void writeSaveLayer(VectorGraphicsBuffer buffer, int paint) {
+    buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
+
     buffer._putUint8(_saveLayerTag);
     buffer._putUint16(paint);
   }
@@ -448,6 +508,8 @@ class VectorGraphicsCodec {
   /// See also:
   ///   * [Canvas.restore]
   void writeRestoreLayer(VectorGraphicsBuffer buffer) {
+    buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
     buffer._putUint8(_restoreTag);
   }
 
@@ -500,17 +562,23 @@ class VectorGraphicsCodec {
     int textId,
     int paintId,
   ) {
+    buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
     buffer._putUint8(_drawTextTag);
     buffer._putUint16(textId);
     buffer._putUint16(paintId);
   }
 
   void writeClipPath(VectorGraphicsBuffer buffer, int path) {
+    buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
     buffer._putUint8(_clipPathTag);
     buffer._putUint16(path);
   }
 
   void writeMask(VectorGraphicsBuffer buffer) {
+    buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
     buffer._putUint8(_maskTag);
   }
 
@@ -541,6 +609,51 @@ class VectorGraphicsCodec {
     buffer._putUint32(controlPoints.length);
     buffer._putFloat32List(controlPoints);
     return id;
+  }
+
+  /// Write an image to the [buffer], returning the identifier
+  /// assigned to it.
+  ///
+  /// The [data] argument should be the image data encoded according
+  /// to the [format] argument. Currently only PNG is supported.
+  int writeImage(
+    VectorGraphicsBuffer buffer,
+    int format,
+    Uint8List data,
+  ) {
+    buffer._checkPhase(_CurrentSection.images);
+    assert(buffer._nextImageId < kMaxId);
+    assert(format == 0);
+
+    final int id = buffer._nextImageId;
+    buffer._nextImageId += 1;
+
+    buffer._putUint8(_imageConfigTag);
+    buffer._putUint16(id);
+    buffer._putUint8(format);
+    buffer._putUint32(data.length);
+    buffer._putUint8List(data);
+    return id;
+  }
+
+  void writeDrawImage(
+    VectorGraphicsBuffer buffer,
+    int imageId,
+    double x,
+    double y,
+    int width,
+    int height,
+  ) {
+    buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
+    assert(width > 0 && height > 0);
+
+    buffer._putUint8(_drawImageTag);
+    buffer._putUint16(imageId);
+    buffer._putFloat32(x);
+    buffer._putFloat32(y);
+    buffer._putUint32(width);
+    buffer._putUint32(height);
   }
 
   void _readPath(
@@ -659,6 +772,26 @@ class VectorGraphicsCodec {
     final int textId = buffer.getUint16();
     final int paintId = buffer.getUint16();
     listener?.onDrawText(textId, paintId);
+  }
+
+  void _readImageConfig(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    final int id = buffer.getUint16();
+    final int format = buffer.getUint8();
+    final int dataLength = buffer.getUint32();
+    final Uint8List data = buffer.getUint8List(dataLength);
+    listener?.onImage(id, format, data);
+  }
+
+  void _readDrawImage(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    final int id = buffer.getUint16();
+    final double x = buffer.getFloat32();
+    final double y = buffer.getFloat32();
+    final int width = buffer.getUint32();
+    final int height = buffer.getUint32();
+
+    listener?.onDrawImage(id, x, y, width, height);
   }
 }
 
@@ -781,10 +914,27 @@ abstract class VectorGraphicsCodecListener {
     int textId,
     int paintId,
   );
+
+  /// An image has been decoded.
+  void onImage(
+    int imageId,
+    int format,
+    Uint8List data,
+  );
+
+  /// An image should be drawn at the provided location.
+  void onDrawImage(
+    int imageId,
+    double x,
+    double y,
+    int width,
+    int height,
+  );
 }
 
 enum _CurrentSection {
   size,
+  images,
   shaders,
   paints,
   paths,
@@ -828,11 +978,25 @@ class VectorGraphicsBuffer {
   /// The next text id to be used.
   int _nextTextId = 0;
 
+  /// The next image id to be used.
+  int _nextImageId = 0;
+
+  bool _addedCommandTag = false;
+
   /// The current decoding phase.
   ///
   /// Objects must be written in the correct order, the same as the
   /// enum order.
   _CurrentSection _decodePhase = _CurrentSection.size;
+
+  /// Add a commands tag section if it is not already present.
+  void _addCommandsTag() {
+    if (_addedCommandTag) {
+      return;
+    }
+    _putUint8(VectorGraphicsCodec._beginCommandsTag);
+    _addedCommandTag = true;
+  }
 
   void _checkPhase(_CurrentSection expected) {
     if (_decodePhase.index > expected.index) {

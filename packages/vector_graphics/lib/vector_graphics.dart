@@ -220,11 +220,12 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     }
     final Future<_PictureData> result =
         loader.loadBytes(context).then((ByteData data) {
-      final PictureInfo pictureInfo = decodeVectorGraphics(
+      return decodeVectorGraphics(
         data,
         locale: key.locale,
         textDirection: key.textDirection,
       );
+    }).then((PictureInfo pictureInfo) {
       return _PictureData(pictureInfo, 0, key);
     });
     _pendingPictures[key] = result;

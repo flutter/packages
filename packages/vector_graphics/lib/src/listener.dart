@@ -38,11 +38,11 @@ TextDirection? _debugLastTextDirection;
 /// Decode a vector graphics binary asset into a [ui.Picture].
 ///
 /// Throws a [StateError] if the data is invalid.
-PictureInfo decodeVectorGraphics(
+Future<PictureInfo> decodeVectorGraphics(
   ByteData data, {
   required Locale? locale,
   required TextDirection? textDirection,
-}) {
+}) async {
   assert(() {
     _debugLastTextDirection = textDirection;
     _debugLastLocale = locale;
@@ -52,7 +52,14 @@ PictureInfo decodeVectorGraphics(
     locale: locale,
     textDirection: textDirection,
   );
-  _codec.decode(data, listener);
+  DecodeResponse response = _codec.decode(data, listener);
+  if (response.complete) {
+    return listener.toPicture();
+  }
+  await listener.waitForImageDecode();
+  response = _codec.decode(data, listener, response: response);
+  assert(response.complete);
+
   return listener.toPicture();
 }
 
@@ -94,6 +101,8 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   final List<ui.Path> _paths = <ui.Path>[];
   final List<ui.Shader> _shaders = <ui.Shader>[];
   final List<_TextConfig> _textConfig = <_TextConfig>[];
+  final List<Future<ui.Image>> _pendingImages = <Future<ui.Image>>[];
+  final Map<int, ui.Image> _images = <int, ui.Image>{};
 
   ui.Path? _currentPath;
   ui.Size _size = ui.Size.zero;
@@ -115,7 +124,20 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   PictureInfo toPicture() {
     assert(!_done);
     _done = true;
-    return PictureInfo._(_recorder.endRecording(), _size);
+    try {
+      return PictureInfo._(_recorder.endRecording(), _size);
+    } finally {
+      for (final ui.Image image in _images.values) {
+        image.dispose();
+      }
+      _images.clear();
+    }
+  }
+
+  /// Wait for all pending images to load.
+  Future<void> waitForImageDecode() {
+    assert(_pendingImages.isNotEmpty);
+    return Future.wait(_pendingImages);
   }
 
   @override
@@ -362,6 +384,34 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     if (textConfig.transform != null) {
       _canvas.restore();
     }
+  }
+
+  @override
+  void onImage(int imageId, int format, Uint8List data) {
+    assert(format == 0); // Only PNG is supported.
+    _pendingImages.add(ui.ImmutableBuffer.fromUint8List(data)
+        .then((ui.ImmutableBuffer buffer) async {
+      final ui.ImageDescriptor descriptor =
+          await ui.ImageDescriptor.encoded(buffer);
+      final ui.Codec codec = await descriptor.instantiateCodec();
+      final ui.FrameInfo info = await codec.getNextFrame();
+      final ui.Image image = info.image;
+      buffer.dispose();
+      descriptor.dispose();
+      codec.dispose();
+      _images[imageId] = image;
+      return image;
+    }));
+  }
+
+  @override
+  void onDrawImage(int imageId, double x, double y, int width, int height) {
+    final ui.Image image = _images[imageId]!;
+    paintImage(
+      canvas: _canvas,
+      rect: ui.Rect.fromLTWH(x, y, width.toDouble(), height.toDouble()),
+      image: image,
+    );
   }
 }
 

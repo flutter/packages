@@ -19,11 +19,11 @@ void main() {
     debugClearRasteCaches();
   });
 
-  setUpAll(() {
+  setUpAll(() async {
     final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     const VectorGraphicsCodec().writeSize(buffer, 50, 50);
 
-    pictureInfo = decodeVectorGraphics(
+    pictureInfo = await decodeVectorGraphics(
       buffer.done(),
       locale: const Locale('fr', 'CH'),
       textDirection: TextDirection.ltr,
