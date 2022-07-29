@@ -1298,6 +1298,45 @@ void main() {
     });
   });
 
+  group('redirection', (){
+    testWidgets('Top-level redirect take priority', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+            Text('/'),
+          redirect: (GoRouterState state) => '/abc',
+        ),
+        GoRoute(
+          path: '/abc',
+          builder: (BuildContext context, GoRouterState state) =>
+             Text('/abc'),
+        ),
+        GoRoute(
+          path: '/def',
+          builder: (BuildContext context, GoRouterState state) =>
+              Text('/def'),
+        )
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect: (GoRouterState state) => '/def',
+      );
+      for (final String fid in <String>['f2', 'F2']) {
+        final String loc = '/family/$fid';
+        router.go(loc);
+        final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+
+        expect(router.location, loc);
+        expect(matches, hasLength(1));
+        expect(router.screenFor(matches.first).runtimeType, FamilyScreen);
+        expect(matches.first.decodedParams['fid'], fid);
+      }
+    });
+  });
+
   group('params', () {
     testWidgets('preserve path param case', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
