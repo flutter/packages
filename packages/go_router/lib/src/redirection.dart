@@ -61,7 +61,7 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
 
     // check route redirection.
     RouteMatchList? newMatchList;
-    for (final RouteMatch match in currentMatches.matches.reversed) {
+    for (final RouteMatch match in currentMatches.matches) {
       final String? redirectedLocation = match.route.redirect(
         GoRouterState(
           configuration,

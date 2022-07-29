@@ -257,6 +257,30 @@ class GoRoute {
   /// );
   /// ```
   ///
+  /// If there are multiple redirects in the matched routes, the parent route's
+  /// redirect takes priority over sub-route's.
+  ///
+  /// For example:
+  /// ```
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       path: '/',
+  ///       redirect: (_) => '/page1', // this takes priority over the sub-route.
+  ///       routes: <GoRoute>[
+  ///         GoRoute(
+  ///           path: 'child',
+  ///           redirect: (_) => '/page2',
+  ///         ),
+  ///       ],
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
+  ///
+  /// The `context.go('/child')` will be redirected to `/page1` instead of
+  /// `/page2`.
+  ///
   /// Redirect can also be used for conditionally preventing users from visiting
   /// routes, also known as route guards. One canonical example is user
   /// authentication. See [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart)
