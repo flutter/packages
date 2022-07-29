@@ -1,3 +1,7 @@
+## 3.2.6
+
+* [java] Fixes returning int values from FlutterApi methods that fit in 32 bits.
+
 ## 3.2.5
 
 * [c++] Fixes style issues in `FlutterError` and `ErrorOr`. The names and
