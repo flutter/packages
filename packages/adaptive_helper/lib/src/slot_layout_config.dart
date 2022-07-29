@@ -57,10 +57,6 @@ class SlotLayoutConfig extends StatefulWidget {
 class _SlotLayoutConfigState extends State<SlotLayoutConfig> {
   @override
   Widget build(BuildContext context) {
-    if (widget.builder != null) {
-      return widget.builder!(context);
-    } else {
-      return const SizedBox.shrink();
-    }
+    return (widget.builder != null) ? widget.builder!(context) : const SizedBox.shrink();
   }
 }
