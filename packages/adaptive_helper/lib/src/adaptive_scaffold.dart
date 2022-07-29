@@ -354,20 +354,20 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 outAnimation: AdaptiveScaffold.fadeOut,
                 builder: widget.body,
               ),
-              if(widget.smallBody!=null) Breakpoints.small: (widget.smallBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
-                key: const Key('body1'),
+              if(widget.smallBody!=null) widget.breakpoints[0]: (widget.smallBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('smallBody'),
                 inAnimation: AdaptiveScaffold.fadeIn,
                 outAnimation: AdaptiveScaffold.fadeOut,
                 builder: widget.smallBody,
               ):null,
-              if(widget.body!=null) Breakpoints.medium: (widget.body!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+              if(widget.body!=null) widget.breakpoints[1]: (widget.body!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
                 key: const Key('body'),
                 inAnimation: AdaptiveScaffold.fadeIn,
                 outAnimation: AdaptiveScaffold.fadeOut,
                 builder: widget.body,
               ):null,
-              if(widget.largeBody!=null) Breakpoints.large: (widget.largeBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
-                key: const Key('body2'),
+              if(widget.largeBody!=null) widget.breakpoints[2]: (widget.largeBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('largeBody'),
                 inAnimation: AdaptiveScaffold.fadeIn,
                 outAnimation: AdaptiveScaffold.fadeOut,
                 builder: widget.largeBody,
@@ -377,22 +377,22 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           secondaryBody: SlotLayout(
             config: <Breakpoint, SlotLayoutConfig?>{
               Breakpoints.standard: SlotLayoutConfig(
-                key: const Key('secondaryBody'),
+                key: const Key('sBody'),
                 outAnimation: AdaptiveScaffold.stayOnScreen,
                 builder: widget.secondaryBody,
               ),
-              if(widget.smallSecondaryBody!=null) Breakpoints.small: (widget.smallSecondaryBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
-                key: const Key('secondaryBody1'),
+              if(widget.smallSecondaryBody!=null) widget.breakpoints[0]: (widget.smallSecondaryBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('smallSBody'),
                 outAnimation: AdaptiveScaffold.stayOnScreen,
                 builder: widget.smallSecondaryBody,
               ):null,
-              if(widget.secondaryBody!=null) Breakpoints.medium: (widget.secondaryBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
-                key: const Key('secondaryBody'),
+              if(widget.secondaryBody!=null) widget.breakpoints[1]: (widget.secondaryBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('sBody'),
                 outAnimation: AdaptiveScaffold.stayOnScreen,
                 builder: widget.secondaryBody,
               ):null,
-             if(widget.largeSecondaryBody!=null) Breakpoints.large: (widget.largeSecondaryBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
-                key: const Key('secondaryBody2'),
+             if(widget.largeSecondaryBody!=null) widget.breakpoints[2]: (widget.largeSecondaryBody!= AdaptiveScaffold.emptyBuilder) ? SlotLayoutConfig(
+                key: const Key('largeSBody'),
                 outAnimation: AdaptiveScaffold.stayOnScreen,
                 builder: widget.largeSecondaryBody,
               ):null,

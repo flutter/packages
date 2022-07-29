@@ -16,7 +16,7 @@ class TestBreakpoint0 extends Breakpoint{
 class TestBreakpoint800 extends Breakpoint{
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width>=800 && MediaQuery.of(context).size.width<1000;
+    return MediaQuery.of(context).size.width>=800;
   }
 }
 class TestBreakpoint1000 extends Breakpoint{
@@ -56,12 +56,12 @@ Future<MaterialApp> scaffold({
 }
 void main() {
   testWidgets('adaptive scaffold lays out slots as expected', (WidgetTester tester) async {
-      final Finder smallBody = find.byKey(const Key('body'));
-      final Finder body = find.byKey(const Key('body1'));
-      final Finder largeBody = find.byKey(const Key('body2'));
-      final Finder smallSBody = find.byKey(const Key('secondaryBody'));
-      final Finder sBody = find.byKey(const Key('secondaryBody1'));
-      final Finder largeSBody = find.byKey(const Key('secondaryBody2'));
+      final Finder smallBody = find.byKey(const Key('smallBody'));
+      final Finder body = find.byKey(const Key('body'));
+      final Finder largeBody = find.byKey(const Key('largeBody'));
+      final Finder smallSBody = find.byKey(const Key('smallSBody'));
+      final Finder sBody = find.byKey(const Key('sBody'));
+      final Finder largeSBody = find.byKey(const Key('largeSBody'));
       final Finder bnav = find.byKey(const Key('bottomNavigation'));
       final Finder pnav = find.byKey(const Key('primaryNavigation'));
       final Finder pnav1 = find.byKey(const Key('primaryNavigation1'));
@@ -69,37 +69,37 @@ void main() {
       await tester.pumpWidget(await scaffold(width: 300, tester: tester));
       await tester.pumpAndSettle();
 
-      expect(body, findsOneWidget);
-      expect(sBody, findsOneWidget);
+      expect(smallBody, findsOneWidget);
+      expect(smallSBody, findsOneWidget);
       expect(bnav, findsOneWidget);
       expect(pnav, findsNothing);
 
-      expect(tester.getTopLeft(body), Offset.zero);
-      expect(tester.getTopLeft(sBody), const Offset(150, 0));
+      expect(tester.getTopLeft(smallBody), Offset.zero);
+      expect(tester.getTopLeft(smallSBody), const Offset(150, 0));
       expect(tester.getTopLeft(bnav), const Offset(0, 744));
 
 
       await tester.pumpWidget(await scaffold(width: 900, tester: tester));
       await tester.pumpAndSettle();
 
-      expect(body, findsNothing);
-      expect(smallBody, findsOneWidget);
-      expect(sBody, findsNothing);
-      expect(smallSBody, findsOneWidget);
+      expect(smallBody, findsNothing);
+      expect(body, findsOneWidget);
+      expect(smallSBody, findsNothing);
+      expect(sBody, findsOneWidget);
       expect(bnav, findsNothing);
       expect(pnav, findsOneWidget);
 
-      expect(tester.getTopLeft(smallBody), const Offset(72, 0));
-      expect(tester.getTopLeft(smallSBody), const Offset(450, 0));
+      expect(tester.getTopLeft(body), const Offset(72, 0));
+      expect(tester.getTopLeft(sBody), const Offset(450, 0));
       expect(tester.getTopLeft(pnav), Offset.zero);
       expect(tester.getBottomRight(pnav), const Offset(72, 800));
 
       await tester.pumpWidget(await scaffold(width: 1100, tester: tester));
       await tester.pumpAndSettle();
 
-      expect(smallBody, findsNothing);
+      expect(body, findsNothing);
       expect(largeBody, findsOneWidget);
-      expect(smallSBody, findsNothing);
+      expect(sBody, findsNothing);
       expect(largeSBody, findsOneWidget);
       expect(pnav, findsNothing);
       expect(pnav1, findsOneWidget);
@@ -111,7 +111,7 @@ void main() {
   });
   testWidgets('adaptive scaffold animations work correctly', (WidgetTester tester) async {
     final Finder b = find.byKey(const Key('body'));
-    final Finder sBody = find.byKey(const Key('secondaryBody'));
+    final Finder sBody = find.byKey(const Key('sBody'));
 
     await tester.pumpWidget(await scaffold(width: 400, tester: tester));
     await tester.pumpWidget(await scaffold(width: 800, tester: tester));
@@ -142,7 +142,7 @@ void main() {
   });
   testWidgets('adaptive scaffold animations can be disabled', (WidgetTester tester) async {
     final Finder b = find.byKey(const Key('body'));
-    final Finder sBody = find.byKey(const Key('secondaryBody'));
+    final Finder sBody = find.byKey(const Key('sBody'));
 
     await tester.pumpWidget(await scaffold(width: 400, tester: tester, animations: false));
     await tester.pumpWidget(await scaffold(width: 800, tester: tester, animations: false));

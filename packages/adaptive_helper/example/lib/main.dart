@@ -246,7 +246,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
                 config: {
                   Breakpoints.small: SlotLayoutConfig(
                     key: const Key('bn'),
-                    inAnimation: AdaptiveScaffold.bottomToTop,
+
                     outAnimation: AdaptiveScaffold.topToBottom,
                     builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
                   ),
