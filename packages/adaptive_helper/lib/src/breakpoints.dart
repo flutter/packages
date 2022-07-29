@@ -17,21 +17,21 @@ class Breakpoints {
   /// Small breakpoint for non-mobile. Open bounded.
   static const Breakpoint smallDesktop =  _Breakpoint(begin: 0, platform: _desktop);
   /// Small breakpoint for non-mobile. Close bounded.
-  static const Breakpoint onlySmallDesktop =  _Breakpoint(begin: 0, end: 800, platform: _desktop);
+  static const Breakpoint onlySmallDesktop =  _Breakpoint(begin: 0, end: 600, platform: _desktop);
   /// Small breakpoint for mobile. Open bounded.
   static const Breakpoint smallMobile =  _Breakpoint(begin: 0, platform: _mobile);
   /// Medium breakpoint. Close bounded.
-  static const Breakpoint medium = _Breakpoint(begin: 800);
+  static const Breakpoint medium = _Breakpoint(begin: 600);
   /// Medium breakpoint for non-mobile. Close bounded.
-  static const Breakpoint mediumDesktop = _Breakpoint(begin: 800, end: 1000, platform: _desktop);
+  static const Breakpoint mediumDesktop = _Breakpoint(begin: 600, end: 840, platform: _desktop);
   /// Medium breakpoint for mobile. Close bounded.
-  static const Breakpoint mediumMobile = _Breakpoint(begin: 800, end: 1000, platform: _mobile);
+  static const Breakpoint mediumMobile = _Breakpoint(begin: 600, end: 840, platform: _mobile);
   /// Large breakpoint. Open bounded.
-  static const Breakpoint large = _Breakpoint(begin: 1000);
+  static const Breakpoint large = _Breakpoint(begin: 840);
   /// Large breakpoint for non-mobile. Open bounded.
-  static const Breakpoint largeDesktop = _Breakpoint(begin: 1000, platform: _desktop);
+  static const Breakpoint largeDesktop = _Breakpoint(begin: 840, platform: _desktop);
   /// Large breakpoint for mobile. Open bounded.
-  static const Breakpoint largeMobile = _Breakpoint(begin: 1000, platform: _mobile);
+  static const Breakpoint largeMobile = _Breakpoint(begin: 840, platform: _mobile);
 }
 
 
