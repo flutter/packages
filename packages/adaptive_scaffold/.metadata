@@ -4,7 +4,7 @@
 # This file should be version controlled and should not be manually edited.
 
 version:
-  revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
-  channel: adaptive_layout
+  revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+  channel: sliverQuickDocumentationFix
 
 project_type: package

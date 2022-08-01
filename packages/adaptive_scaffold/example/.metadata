@@ -4,8 +4,8 @@
 # This file should be version controlled.
 
 version:
-  revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
-  channel: adaptive_layout
+  revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+  channel: sliverQuickDocumentationFix
 
 project_type: app
 
@@ -13,26 +13,26 @@ project_type: app
 migration:
   platforms:
     - platform: root
-      create_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
-      base_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
+      create_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+      base_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
     - platform: android
-      create_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
-      base_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
+      create_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+      base_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
     - platform: ios
-      create_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
-      base_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
+      create_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+      base_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
     - platform: linux
-      create_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
-      base_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
+      create_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+      base_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
     - platform: macos
-      create_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
-      base_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
+      create_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+      base_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
     - platform: web
-      create_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
-      base_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
+      create_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+      base_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
     - platform: windows
-      create_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
-      base_revision: c05d179eec77134f8dddf7bcdecae2e4b2b27ed4
+      create_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+      base_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
 
   # User provided section
 
