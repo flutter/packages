@@ -634,13 +634,13 @@ void main() {
     ]);
   });
 
-  test('Encodes image data', () {
+  test('Encodes image data without transform', () {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
     final id =
         codec.writeImage(buffer, 0, Uint8List.fromList(<int>[0, 1, 3, 4, 5]));
-    codec.writeDrawImage(buffer, id, 1, 2, 100, 100);
+    codec.writeDrawImage(buffer, id, 1, 2, 100, 100, null);
     final ByteData data = buffer.done();
     final DecodeResponse response = codec.decode(data, listener);
 
@@ -655,7 +655,32 @@ void main() {
     expect(nextResponse.complete, true);
     expect(listener.commands, [
       OnImage(id, 0, [0, 1, 3, 4, 5]),
-      OnDrawImage(id, 1, 2, 100, 100),
+      OnDrawImage(id, 1, 2, 100, 100, null),
+    ]);
+  });
+
+  test('Encodes image data with transform', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+
+    final id =
+        codec.writeImage(buffer, 0, Uint8List.fromList(<int>[0, 1, 3, 4, 5]));
+    codec.writeDrawImage(buffer, id, 1, 2, 100, 100, mat4);
+    final ByteData data = buffer.done();
+    final DecodeResponse response = codec.decode(data, listener);
+
+    expect(response.complete, false);
+    expect(listener.commands, [
+      OnImage(id, 0, [0, 1, 3, 4, 5]),
+    ]);
+
+    final DecodeResponse nextResponse =
+        codec.decode(data, listener, response: response);
+
+    expect(nextResponse.complete, true);
+    expect(listener.commands, [
+      OnImage(id, 0, [0, 1, 3, 4, 5]),
+      OnDrawImage(id, 1, 2, 100, 100, mat4),
     ]);
   });
 
@@ -690,7 +715,7 @@ void main() {
     );
     codec.writeDrawPath(buffer, pathId, fillId);
     codec.writeDrawPath(buffer, pathId, strokeId);
-    codec.writeDrawImage(buffer, imageId, 1, 2, 100, 100);
+    codec.writeDrawImage(buffer, imageId, 1, 2, 100, 100, null);
 
     final ByteData data = buffer.done();
 
@@ -790,7 +815,7 @@ void main() {
       const OnPathFinished(),
       OnDrawPath(pathId, fillId),
       OnDrawPath(pathId, strokeId),
-      OnDrawImage(imageId, 1, 2, 100, 100),
+      OnDrawImage(imageId, 1, 2, 100, 100, null),
     ]);
   });
 }
@@ -982,8 +1007,14 @@ class TestListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawImage(
-      int imageId, double x, double y, double width, double height) {
-    commands.add(OnDrawImage(imageId, x, y, width, height));
+    int imageId,
+    double x,
+    double y,
+    double width,
+    double height,
+    Float64List? transform,
+  ) {
+    commands.add(OnDrawImage(imageId, x, y, width, height, transform));
   }
 }
 
@@ -1422,16 +1453,19 @@ class OnImage {
 }
 
 class OnDrawImage {
-  const OnDrawImage(this.id, this.x, this.y, this.width, this.height);
+  const OnDrawImage(
+      this.id, this.x, this.y, this.width, this.height, this.transform);
 
   final int id;
   final double x;
   final double y;
   final double width;
   final double height;
+  final Float64List? transform;
 
   @override
-  int get hashCode => Object.hash(id, x, y, width, height);
+  int get hashCode => Object.hash(
+      id, x, y, width, height, Object.hashAll(transform ?? const []));
 
   @override
   bool operator ==(Object other) {
@@ -1440,11 +1474,12 @@ class OnDrawImage {
         other.x == x &&
         other.y == y &&
         other.width == width &&
-        other.height == height;
+        other.height == height &&
+        _listEquals(other.transform, transform);
   }
 
   @override
-  String toString() => 'OnDrawImage($id, $x, $y, $width, $height)';
+  String toString() => 'OnDrawImage($id, $x, $y, $width, $height, $transform)';
 }
 
 bool _listEquals<E>(List<E>? left, List<E>? right) {

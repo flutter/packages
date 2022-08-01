@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
@@ -210,6 +211,92 @@ void main() {
       const OnDrawText(4, 3),
     ]);
   });
+
+  test('Encodes image elids trivial translation transform', () async {
+    const String svg = '''
+<svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <g transform="translate(3, 3)">
+    <image id="image0" width="50" height="50" xlink:href="data:image/png;base64,$kBase64ImageContents"/>
+  </g>
+</svg>
+''';
+
+    final Uint8List bytes = await encodeSvg(xml: svg, debugName: 'test');
+    const VectorGraphicsCodec codec = VectorGraphicsCodec();
+    final TestListener listener = TestListener();
+    final ByteData data = bytes.buffer.asByteData();
+    final DecodeResponse response = codec.decode(data, listener);
+    codec.decode(data, listener, response: response);
+
+    expect(listener.commands, <Object>[
+      const OnSize(1000, 300),
+      OnImage(0, 0, base64.decode(kBase64ImageContents)),
+      const OnDrawImage(0, 3, 3, 50, 50, null),
+    ]);
+  });
+
+  test('Encodes image elids trivial scale transform', () async {
+    const String svg = '''
+<svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <g transform="scale(2, 2)">
+    <image id="image0" width="50" height="50" xlink:href="data:image/png;base64,$kBase64ImageContents"/>
+  </g>
+</svg>
+''';
+
+    final Uint8List bytes = await encodeSvg(xml: svg, debugName: 'test');
+    const VectorGraphicsCodec codec = VectorGraphicsCodec();
+    final TestListener listener = TestListener();
+    final ByteData data = bytes.buffer.asByteData();
+    final DecodeResponse response = codec.decode(data, listener);
+    codec.decode(data, listener, response: response);
+
+    expect(listener.commands, <Object>[
+      const OnSize(1000, 300),
+      OnImage(0, 0, base64.decode(kBase64ImageContents)),
+      const OnDrawImage(0, 0, 0, 100, 100, null),
+    ]);
+  });
+
+  test('Encodes image does not elide non-trivial transform', () async {
+    const String svg = '''
+<svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <g transform="matrix(3 1 -1 3 30 40)">
+    <image id="image0" width="50" height="50" xlink:href="data:image/png;base64,$kBase64ImageContents"/>
+  </g>
+</svg>
+''';
+
+    final Uint8List bytes = await encodeSvg(xml: svg, debugName: 'test');
+    const VectorGraphicsCodec codec = VectorGraphicsCodec();
+    final TestListener listener = TestListener();
+    final ByteData data = bytes.buffer.asByteData();
+    final DecodeResponse response = codec.decode(data, listener);
+    codec.decode(data, listener, response: response);
+
+    expect(listener.commands, <Object>[
+      const OnSize(1000, 300),
+      OnImage(0, 0, base64.decode(kBase64ImageContents)),
+      const OnDrawImage(0, 0, 0, 50, 50, <double>[
+        3.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        3.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0,
+        0.0,
+        30.0,
+        40.0,
+        0.0,
+        1.0,
+      ]),
+    ]);
+  });
 }
 
 class TestListener extends VectorGraphicsCodecListener {
@@ -390,8 +477,14 @@ class TestListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawImage(
-      int imageId, double x, double y, double width, double height) {
-    commands.add(OnDrawImage(imageId, x, y, width, height));
+    int imageId,
+    double x,
+    double y,
+    double width,
+    double height,
+    Float64List? transform,
+  ) {
+    commands.add(OnDrawImage(imageId, x, y, width, height, transform));
   }
 
   @override
@@ -835,13 +928,21 @@ class OnImage {
 }
 
 class OnDrawImage {
-  const OnDrawImage(this.id, this.x, this.y, this.width, this.height);
+  const OnDrawImage(
+    this.id,
+    this.x,
+    this.y,
+    this.width,
+    this.height,
+    this.transform,
+  );
 
   final int id;
   final double x;
   final double y;
   final double width;
   final double height;
+  final List<double>? transform;
 
   @override
   int get hashCode => Object.hash(id, x, y, width, height);
@@ -853,11 +954,12 @@ class OnDrawImage {
         other.x == x &&
         other.y == y &&
         other.width == width &&
-        other.height == height;
+        other.height == height &&
+        _listEquals(other.transform, transform);
   }
 
   @override
-  String toString() => 'OnDrawImage($id, $x, $y, $width, $height)';
+  String toString() => 'OnDrawImage($id, $x, $y, $width, $height, $transform)';
 }
 
 bool _listEquals<E>(List<E>? left, List<E>? right) {

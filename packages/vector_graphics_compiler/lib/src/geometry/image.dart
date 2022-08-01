@@ -4,6 +4,8 @@
 
 import 'dart:typed_data';
 
+import 'package:vector_graphics_compiler/src/geometry/matrix.dart';
+
 import 'basic_types.dart';
 
 /// The encoded image data and its format.
@@ -30,6 +32,7 @@ class DrawImageData {
   const DrawImageData(
     this.id,
     this.rect,
+    this.transform,
   );
 
   /// The corresponding encoding image to draw.
@@ -37,4 +40,8 @@ class DrawImageData {
 
   /// The x position of the image in pixels.
   final Rect rect;
+
+  /// An optional transform, if the position cannot be fully described
+  /// by [rect].
+  final AffineMatrix? transform;
 }

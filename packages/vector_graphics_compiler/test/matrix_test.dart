@@ -106,6 +106,15 @@ void main() {
     expect(rotatedRect.top - 10, lessThan(epsillon));
     expect(rotatedRect.right + 20, lessThan(epsillon));
     expect(rotatedRect.bottom - 30, lessThan(epsillon));
+
+    // Translation
+    final Rect shiftedRect =
+        AffineMatrix.identity.translated(10, 20).transformRect(rectangle20x20);
+
+    expect(shiftedRect.left, rectangle20x20.left + 10);
+    expect(shiftedRect.top, rectangle20x20.top + 20);
+    expect(shiftedRect.right, rectangle20x20.right + 10);
+    expect(shiftedRect.bottom, rectangle20x20.bottom + 20);
   });
 
   test('== and hashCode account for hidden field', () {
@@ -114,5 +123,31 @@ void main() {
 
     expect(matrixA != matrixB, true);
     expect(matrixA.hashCode != matrixB.hashCode, true);
+  });
+
+  test('removeTranslation', () {
+    final AffineMatrix matrixA = AffineMatrix.identity.translated(1, 3);
+    final AffineMatrix matrixB = AffineMatrix.identity.translated(0, 3);
+    final AffineMatrix matrixC =
+        AffineMatrix.identity.translated(1, 3).scaled(10);
+
+    expect(matrixA.removeTranslation(), AffineMatrix.identity);
+    expect(matrixB.removeTranslation(), AffineMatrix.identity);
+    expect(matrixC.removeTranslation(), AffineMatrix.identity.scaled(10));
+    expect(AffineMatrix.identity.removeTranslation(), AffineMatrix.identity);
+  });
+
+  test('removeScale', () {
+    final AffineMatrix matrixA = AffineMatrix.identity.scaled(2);
+    final AffineMatrix matrixB = AffineMatrix.identity.scaled(2, 3);
+    final AffineMatrix matrixC = AffineMatrix.identity.xSkewed(2);
+    final AffineMatrix matrixD = AffineMatrix.identity.ySkewed(2);
+    final AffineMatrix matrixE = AffineMatrix.identity.rotated(math.pi);
+
+    expect(matrixA.removeScale(), AffineMatrix.identity);
+    expect(matrixB.removeScale(), AffineMatrix.identity);
+    expect(matrixC.removeScale(), null);
+    expect(matrixD.removeScale(), null);
+    expect(matrixE.removeScale(), null);
   });
 }

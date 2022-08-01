@@ -209,11 +209,36 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     final double top = double.parse(attributes.raw['y'] ?? '0');
     final double width = double.parse(attributes.raw['width']!);
     final double height = double.parse(attributes.raw['height']!);
-    final Rect rect =
-        data.transformRect(Rect.fromLTWH(left, top, width, height));
+    final Rect rect = Rect.fromLTWH(left, top, width, height);
+
+    // Determine if this image can be drawn without any transforms because
+    // it only has an offset and/or scale.
+    final AffineMatrix removedTranslation = data.removeTranslation();
+
+    final Point? scale = removedTranslation.getScale();
+    if (scale == null) {
+      // Non-trivial transform.
+      return ResolvedImageNode(
+        data: imageNode.data,
+        rect: rect,
+        transform: data,
+      );
+    }
+    final AffineMatrix removedScale = removedTranslation.removeScale()!;
+    if (removedScale == AffineMatrix.identity) {
+      // trivial transform.
+      return ResolvedImageNode(
+        data: imageNode.data,
+        rect: data.transformRect(rect),
+        transform: null,
+      );
+    }
+
+    // Non-trivial transform.
     return ResolvedImageNode(
       data: imageNode.data,
       rect: rect,
+      transform: data,
     );
   }
 
@@ -371,6 +396,7 @@ class ResolvedImageNode extends Node {
   const ResolvedImageNode({
     required this.data,
     required this.rect,
+    required this.transform,
   });
 
   /// The image [data] encoded as a PNG.
@@ -378,6 +404,12 @@ class ResolvedImageNode extends Node {
 
   /// The region to draw the image to.
   final Rect rect;
+
+  /// An optional transform.
+  ///
+  /// This is set when the accumulated image transform causes the image rect
+  /// to not stay rectangular.
+  final AffineMatrix? transform;
 
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {

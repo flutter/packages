@@ -643,6 +643,7 @@ class VectorGraphicsCodec {
     double y,
     double width,
     double height,
+    Float64List? transform,
   ) {
     buffer._checkPhase(_CurrentSection.commands);
     buffer._addCommandsTag();
@@ -654,6 +655,7 @@ class VectorGraphicsCodec {
     buffer._putFloat32(y);
     buffer._putFloat32(width);
     buffer._putFloat32(height);
+    buffer._writeTransform(transform);
   }
 
   void _readPath(
@@ -790,8 +792,9 @@ class VectorGraphicsCodec {
     final double y = buffer.getFloat32();
     final double width = buffer.getFloat32();
     final double height = buffer.getFloat32();
+    final Float64List? transformLength = buffer.getTransform();
 
-    listener?.onDrawImage(id, x, y, width, height);
+    listener?.onDrawImage(id, x, y, width, height, transformLength);
   }
 }
 
@@ -929,6 +932,7 @@ abstract class VectorGraphicsCodecListener {
     double y,
     double width,
     double height,
+    Float64List? transform,
   );
 }
 
