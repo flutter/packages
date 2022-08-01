@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:meta/meta.dart';
-import 'package:vector_graphics_compiler/src/geometry/image.dart';
+import '../src/geometry/image.dart';
 import 'package:vector_graphics_compiler/src/util.dart';
 
 import 'geometry/path.dart';

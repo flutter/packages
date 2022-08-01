@@ -2,10 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:vector_graphics_compiler/src/svg/parser.dart';
-import 'package:vector_graphics_compiler/src/svg/resolver.dart';
-import 'package:vector_graphics_compiler/src/svg/visitor.dart';
-
+import 'parser.dart';
+import 'resolver.dart';
+import 'visitor.dart';
 import '../geometry/basic_types.dart';
 import '../paint.dart';
 import 'node.dart';

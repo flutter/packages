@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
-import 'package:vector_graphics_compiler/src/svg/tessellator.dart';
-import 'package:vector_graphics_compiler/src/svg/masking_optimizer.dart';
-import 'package:vector_graphics_compiler/src/svg/clipping_optimizer.dart';
-import 'package:vector_graphics_compiler/src/svg/path_ops.dart' as path_ops;
+import 'tessellator.dart';
+import 'masking_optimizer.dart';
+import 'clipping_optimizer.dart';
+import 'overdraw_optimizer.dart';
+import 'path_ops.dart' as path_ops;
 import 'package:xml/xml_events.dart';
 
 import '../geometry/basic_types.dart';
@@ -587,6 +588,9 @@ class SvgParser {
   /// Toggles whether [ClippingOptimizer] is enabled or disabled.
   bool enableClippingOptimizer = true;
 
+  /// Toggles whether [OverdrawOptimizer] is enabled or disabled.
+  bool enableOverdrawOptimizer = true;
+
   ViewportNode? _root;
   SvgAttributes _currentAttributes = SvgAttributes.empty;
   XmlStartElementEvent? _currentStartElement;
@@ -687,8 +691,17 @@ class SvgParser {
     final Tessellator tessellator = Tessellator();
     final MaskingOptimizer maskingOptimizer = MaskingOptimizer();
     final ClippingOptimizer clippingOptimizer = ClippingOptimizer();
+    final OverdrawOptimizer overdrawOptimizer = OverdrawOptimizer();
 
     Node newRoot = _root!.accept(resolvingVisitor, AffineMatrix.identity);
+
+    if (enableOverdrawOptimizer == true) {
+      if (path_ops.isPathOpsInitialized) {
+        newRoot = overdrawOptimizer.apply(newRoot);
+      } else {
+        throw Exception('PathOps library was not initialized.');
+      }
+    }
     if (isTesselatorInitialized) {
       newRoot = newRoot.accept(tessellator, null);
     }

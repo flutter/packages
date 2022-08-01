@@ -36,6 +36,11 @@ final ArgParser argParser = ArgParser()
     help: 'Allows for clipping optimizer to be enabled or disabled',
     defaultsTo: true,
   )
+  ..addFlag(
+    'optimize-overdraw',
+    help: 'Allows for overdraw optimizer to be enabled or disabled',
+    defaultsTo: true,
+  )
   ..addOption('input',
       abbr: 'i',
       help: 'The path to a file containing a single SVG',
@@ -49,7 +54,9 @@ final ArgParser argParser = ArgParser()
   );
 
 void loadPathOpsIfNeeded(ArgResults results) {
-  if (results['optimize-masks'] == true || results['optimize-clips'] == true) {
+  if (results['optimize-masks'] == true ||
+      results['optimize-clips'] == true ||
+      results['optimize-overdraw'] == true) {
     if (results.wasParsed('libpathops')) {
       initializeLibPathOps(results['libpathops'] as String);
     } else {
@@ -89,6 +96,7 @@ Future<void> main(List<String> args) async {
 
   bool maskingOptimizerEnabled = true;
   bool clippingOptimizerEnabled = true;
+  bool overdrawOptimizerEnabled = true;
 
   if (results['optimize-masks'] == false) {
     maskingOptimizerEnabled = false;
@@ -98,11 +106,16 @@ Future<void> main(List<String> args) async {
     clippingOptimizerEnabled = false;
   }
 
+  if (results['optimize-overdraw'] == false) {
+    overdrawOptimizerEnabled = false;
+  }
+
   final Uint8List bytes = await encodeSvg(
       xml: xml,
       debugName: args[0],
       enableMaskingOptimizer: maskingOptimizerEnabled,
-      enableClippingOptimizer: clippingOptimizerEnabled);
+      enableClippingOptimizer: clippingOptimizerEnabled,
+      enableOverdrawOptimizer: overdrawOptimizerEnabled);
 
   outputFile.writeAsBytesSync(bytes);
 }

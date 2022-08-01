@@ -4,11 +4,11 @@
 
 import 'dart:typed_data';
 
-import 'package:vector_graphics_compiler/src/svg/node.dart';
-import 'package:vector_graphics_compiler/src/svg/resolver.dart';
-import 'package:vector_graphics_compiler/src/svg/visitor.dart';
-import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
-import 'package:vector_graphics_compiler/src/svg/path_ops.dart' as path_ops;
+import 'node.dart';
+import 'resolver.dart';
+import 'visitor.dart';
+import '../../vector_graphics_compiler.dart';
+import 'path_ops.dart' as path_ops;
 
 class _Result {
   _Result(this.node);

@@ -5,16 +5,14 @@
 import 'dart:typed_data';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
-import 'package:vector_graphics_compiler/src/geometry/image.dart';
-import 'package:vector_graphics_compiler/src/geometry/matrix.dart';
-
+import 'src/geometry/matrix.dart';
+import 'src/geometry/image.dart';
 import 'src/geometry/vertices.dart';
 import 'src/geometry/path.dart';
 import 'src/paint.dart';
 import 'src/svg/theme.dart';
 import 'src/svg/parser.dart';
 import 'src/vector_instructions.dart';
-
 export 'src/geometry/basic_types.dart';
 export 'src/geometry/matrix.dart';
 export 'src/geometry/path.dart';
@@ -37,10 +35,12 @@ Future<VectorInstructions> parse(
   SvgTheme theme = const SvgTheme(),
   bool enableMaskingOptimizer = true,
   bool enableClippingOptimizer = true,
+  bool enableOverdrawOptimizer = true,
 }) async {
   final SvgParser parser = SvgParser(xml, theme, key, warningsAsErrors);
   parser.enableMaskingOptimizer = enableMaskingOptimizer;
   parser.enableClippingOptimizer = enableClippingOptimizer;
+  parser.enableOverdrawOptimizer = enableOverdrawOptimizer;
   return parser.parse();
 }
 
@@ -101,6 +101,7 @@ Future<Uint8List> encodeSvg({
   required String debugName,
   bool enableMaskingOptimizer = true,
   bool enableClippingOptimizer = true,
+  bool enableOverdrawOptimizer = true,
   bool warningsAsErrors = false,
 }) async {
   const VectorGraphicsCodec codec = VectorGraphicsCodec();
@@ -109,6 +110,7 @@ Future<Uint8List> encodeSvg({
     key: debugName,
     enableMaskingOptimizer: enableMaskingOptimizer,
     enableClippingOptimizer: enableClippingOptimizer,
+    enableOverdrawOptimizer: enableOverdrawOptimizer,
     warningsAsErrors: warningsAsErrors,
   );
 
