@@ -49,7 +49,7 @@ library rfw;
 
 export 'src/dart/binary.dart';
 export 'src/dart/model.dart';
-export 'src/dart/text.dart' hide parseDataFile, parseLibraryFile;
+export 'src/dart/text.dart' hide parseDataFile, parseLibraryFile; // those two aren't for client-side code, they're exported by formats.dart instead.
 export 'src/flutter/argument_decoders.dart';
 export 'src/flutter/content.dart';
 export 'src/flutter/core_widgets.dart';
