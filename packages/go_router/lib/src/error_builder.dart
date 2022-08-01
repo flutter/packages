@@ -1,3 +1,1 @@
-class RouteErrorBuilder {
-
-}
+class RouteErrorBuilder {}
