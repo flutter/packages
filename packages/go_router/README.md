@@ -1,4 +1,4 @@
-# Go_router, A Declarative Routing Package for Flutter
+# go_router, A Declarative Routing Package for Flutter
 
 This package builds on top of the Flutter framework's Router API and provides
 convenient url-based APIs to navigate between different screens. You can
