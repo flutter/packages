@@ -150,30 +150,32 @@ class AdaptiveScaffold extends StatefulWidget {
     if (extended && width == 72) {
       width = 150;
     }
-    return Builder(builder: (BuildContext context) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SizedBox(
-          width: width,
-          height: MediaQuery.of(context).size.height,
-          child: NavigationRail(
-            labelType: labelType,
-            leading: leading,
-            trailing: trailing,
-            backgroundColor: backgroundColor,
-            extended: extended,
-            selectedIndex: selectedIndex,
-            destinations: <NavigationRailDestination>[
-              for (NavigationDestination destination in destinations)
-                NavigationRailDestination(
-                  label: Text(destination.label),
-                  icon: destination.icon,
-                )
-            ],
+    return Builder(
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: width,
+            height: MediaQuery.of(context).size.height,
+            child: NavigationRail(
+              labelType: labelType,
+              leading: leading,
+              trailing: trailing,
+              backgroundColor: backgroundColor,
+              extended: extended,
+              selectedIndex: selectedIndex,
+              destinations: <NavigationRailDestination>[
+                for (NavigationDestination destination in destinations)
+                  NavigationRailDestination(
+                    label: Text(destination.label),
+                    icon: destination.icon,
+                  )
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   /// Public helper method to be used for creating a [BottomNavigationBar] from
