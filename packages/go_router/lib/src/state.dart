@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'configuration.dart';
 
 /// The route state during routing.
+///
+/// The state contains parsed artifacts of the current URI.
 class GoRouterState {
   /// Default constructor for creating route state during routing.
   GoRouterState(
