@@ -1,4 +1,4 @@
-# Helper Widgets for Making Adaptive Layouts in Flutter
+# Helper Widgets for Making Adaptive Layouts in Flutter (AdaptiveScaffold)
 
 This package contains some helper widgets that make the process of developing adaptive layouts easier, especially with navigational elements.
 
@@ -8,7 +8,41 @@ To see examples of using these helper widgets to make a simple but common adapti
 cd example/
 flutter run --release
 ```
-## The Main Widget Suite
+## AdaptiveScaffold:
+AdaptiveScaffold is an abstracted form built upon the aforementioned widgets. It takes a list of destinations and handles all the moving navigational pieces. It still allows for customizability in body/secondaryBody adaptivity. It is much simpler to use but is not the best if you would like high customizability.
+### Example Usage:
+```dart
+AdaptiveScaffold(
+ selectedIndex: 0,
+ destinations: const [
+   NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+   NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
+   NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
+   NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
+ ],
+ smallBody: (_) => ListView.builder(
+   itemCount: allItems.length,
+   itemBuilder: (context, index) => Padding(
+     padding: const EdgeInsets.all(8.0),
+     child: Container(
+       height: 250,
+       color: const Color.fromARGB(255, 255, 201, 197),
+     ),
+   ),
+ ),
+ body: (_) => GridView.count(
+   crossAxisCount: 2,
+   children: allItems.map((item) => Padding(
+     padding: const EdgeInsets.all(8.0),
+     child: Container(
+       color: const Color.fromARGB(255, 255, 201, 197),
+       height: 400,
+     ),
+   )).toList(),
+ ),
+),
+```
+## The Background Widget Suite
 These are the set of widgets that are used on a lower level and offer more customizability at a cost of more lines of code.
 #### AdaptiveLayout:
 AdaptiveLayout is the top-level widget class that arranges the layout of the slots and their animation, similar to Scaffold. It takes in several LayoutSlots and returns an appropriate layout based on the diagram above. [IMAGE]
@@ -72,41 +106,6 @@ AdaptiveLayout(
        builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
      ),
    },
- ),
-),
-```
-## Abstracted Widget
-#### AdaptiveScaffold:
-AdaptiveScaffold is an abstracted form built upon the aforementioned widgets. It takes a list of destinations and handles all the moving navigational pieces. It still allows for customizability in body/secondaryBody adaptivity. It is much simpler to use but is not the best if you would like high customizability.
-### Example Usage:
-```dart
-AdaptiveScaffold(
- selectedIndex: 0,
- destinations: const [
-   NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
-   NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
-   NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
-   NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
- ],
- smallBody: (_) => ListView.builder(
-   itemCount: allItems.length,
-   itemBuilder: (context, index) => Padding(
-     padding: const EdgeInsets.all(8.0),
-     child: Container(
-       height: 250,
-       color: const Color.fromARGB(255, 255, 201, 197),
-     ),
-   ),
- ),
- body: (_) => GridView.count(
-   crossAxisCount: 2,
-   children: allItems.map((item) => Padding(
-     padding: const EdgeInsets.all(8.0),
-     child: Container(
-       color: const Color.fromARGB(255, 255, 201, 197),
-       height: 400,
-     ),
-   )).toList(),
  ),
 ),
 ```
