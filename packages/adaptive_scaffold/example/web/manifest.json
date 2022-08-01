@@ -1,11 +1,11 @@
 {
-    "name": "example",
-    "short_name": "example",
+    "name": "adaptive_scaffold_example",
+    "short_name": "adaptive_scaffold_example",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Multiple examples of the usage of the AdaptiveScaffold widget and its lower level widgets.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
