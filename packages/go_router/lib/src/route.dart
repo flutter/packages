@@ -256,8 +256,6 @@ class GoRoute extends StackedRoute {
 /// root Navigator or the Navigator belonging to the nearest [NestedStackRoute]
 /// ancestor. The page will be either a [MaterialPage] or [CupertinoPage]
 /// depending on the application type.
-///
-/// This route has the same behavior as GoRoute in go_router >=3.0.0.
 class StackedRoute extends RouteBase {
   /// Constructs a [StackedRoute].
   StackedRoute({
