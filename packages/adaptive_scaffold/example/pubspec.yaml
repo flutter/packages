@@ -1,5 +1,5 @@
-name: example
-description: A new Flutter project.
+name: adaptive_scaffold_example
+description: Multiple examples of the usage of the AdaptiveScaffold widget and its lower level widgets.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -29,8 +29,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  adaptive_helper:
-    path: ../../adaptive_helper
+  adaptive_scaffold:
+    path: ../../adaptive_scaffold
   flutter:
     sdk: flutter
 

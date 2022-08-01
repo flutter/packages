@@ -1,4 +1,4 @@
-name: adaptive_helper
+name: adaptive_scaffold
 description: This package contains some helper widgets that make the process of developing adaptive layouts easier, especially with navigational elements.
 version: 1.0.0
 homepage:
