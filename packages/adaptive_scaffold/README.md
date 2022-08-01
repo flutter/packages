@@ -11,6 +11,8 @@ flutter run --release
 ## AdaptiveScaffold:
 AdaptiveScaffold is an abstracted form built upon the aforementioned widgets. It takes a list of destinations and handles all the moving navigational pieces. It still allows for customizability in body/secondaryBody adaptivity. It is much simpler to use but is not the best if you would like high customizability.
 ### Example Usage:
+
+<?code-excerpt ...>
 ```dart
 AdaptiveScaffold(
  selectedIndex: 0,
@@ -51,6 +53,8 @@ SlotLayout handles the adaptivity or the changes between widgets at certain Brea
 #### SlotLayoutConfig:
 SlotLayoutConfig holds the actual widget to be displayed and the entrance animation and exit animation.
 ### Example Usage:
+
+<?code-excerpt ...>
 ```dart
 AdaptiveLayout(
  primaryNavigation: SlotLayout(
