@@ -3,6 +3,7 @@ description: Widgets to easily build adaptive layouts, including navigation elem
 version: 0.0.1
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3Aadaptive_scaffold
 repository: https://github.com/flutter/packages/tree/main/packages/adaptive_scaffold
+publish_to: none
 
 environment:
   sdk: '>=2.17.0 <3.0.0'
