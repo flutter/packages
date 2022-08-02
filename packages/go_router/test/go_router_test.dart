@@ -1170,6 +1170,54 @@ void main() {
           (router.screenFor(matches.first) as TestErrorScreen).ex, isNotNull);
       log.info((router.screenFor(matches.first) as TestErrorScreen).ex);
     });
+
+    testWidgets('extra not null in redirect', (WidgetTester tester) async {
+      bool isCallTopRedirect = false;
+      bool isCallRouteRedirect = false;
+
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          name: 'home',
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+              name: 'login',
+              path: 'login',
+              builder: (BuildContext context, GoRouterState state) {
+                return const LoginScreen();
+              },
+              redirect: (GoRouterState state) {
+                isCallRouteRedirect = true;
+                expect(state.extra, isNotNull);
+                return null;
+              },
+              routes: <GoRoute>[],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect: (GoRouterState state) {
+          if (state.location == '/login') {
+            isCallTopRedirect = true;
+            expect(state.extra, isNotNull);
+          }
+
+          return null;
+        },
+      );
+
+      router.go('/login', extra: 1);
+      await tester.pump();
+
+      expect(isCallTopRedirect, true);
+      expect(isCallRouteRedirect, true);
+    });
   });
 
   group('initial location', () {
