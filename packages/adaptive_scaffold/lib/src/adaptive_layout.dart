@@ -90,10 +90,12 @@ const String _bottomNavigationID = 'bottomNavigation ';
 const String _bodyID = 'body';
 const String _secondaryBodyID = 'secondaryBody';
 
-class _AdaptiveLayoutState extends State<AdaptiveLayout> with TickerProviderStateMixin {
+class _AdaptiveLayoutState extends State<AdaptiveLayout>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
 
-  late Map<String, SlotLayoutConfig?> chosenWidgets = <String, SlotLayoutConfig?>{};
+  late Map<String, SlotLayoutConfig?> chosenWidgets =
+      <String, SlotLayoutConfig?>{};
   Map<String, Size?> slotSizes = <String, Size?>{
     _primaryNavigationID: Size.zero,
     _secondaryNavigationID: Size.zero,
@@ -177,13 +179,15 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> with TickerProviderStat
       chosenWidgets.update(
         key,
         (SlotLayoutConfig? val) => val,
-        ifAbsent: () => SlotLayout.pickWidget(context, value?.config ?? <Breakpoint, SlotLayoutConfig?>{}),
+        ifAbsent: () => SlotLayout.pickWidget(
+            context, value?.config ?? <Breakpoint, SlotLayoutConfig?>{}),
       );
     });
     final List<Widget> entries = slots.entries
         .map((MapEntry<String, SlotLayout?> entry) {
           if (entry.value != null) {
-            return LayoutId(id: entry.key, child: entry.value ?? const SizedBox());
+            return LayoutId(
+                id: entry.key, child: entry.value ?? const SizedBox());
           }
         })
         .whereType<Widget>()
@@ -195,7 +199,8 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> with TickerProviderStat
 
     Rect? hinge;
     for (final DisplayFeature e in MediaQuery.of(context).displayFeatures) {
-      if (e.type == DisplayFeatureType.hinge || e.type == DisplayFeatureType.fold) {
+      if (e.type == DisplayFeatureType.hinge ||
+          e.type == DisplayFeatureType.fold) {
         if (e.bounds.left != 0) {
           hinge = e.bounds;
         }
@@ -257,7 +262,10 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     double animatedSize(double begin, double end) {
       if (isAnimating[_secondaryBodyID]!) {
         return internalAnimations
-            ? Tween<double>(begin: begin, end: end).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic)).value
+            ? Tween<double>(begin: begin, end: end)
+                .animate(CurvedAnimation(
+                    parent: controller, curve: Curves.easeInOutCubic))
+                .value
             : end;
       }
       return end;
@@ -265,39 +273,58 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
 
     if (hasChild(_topNavigationID)) {
       // Getting the final child size
-      final Size childSize = layoutChild(_topNavigationID, BoxConstraints.loose(size));
+      final Size childSize =
+          layoutChild(_topNavigationID, BoxConstraints.loose(size));
       // Triggering the animation if the new size is different from the old size
       updateSize(_topNavigationID, childSize);
       // Here we tween not the actual size, but the size that is used in the margins so the offsets can be animated
-      final Size currentSize = Tween<Size>(begin: slotSizes[_topNavigationID], end: childSize).animate(controller).value;
+      final Size currentSize =
+          Tween<Size>(begin: slotSizes[_topNavigationID], end: childSize)
+              .animate(controller)
+              .value;
       positionChild(_topNavigationID, Offset.zero);
       topMargin += currentSize.height;
     }
     if (hasChild(_bottomNavigationID)) {
-      final Size childSize = layoutChild(_bottomNavigationID, BoxConstraints.loose(size));
+      final Size childSize =
+          layoutChild(_bottomNavigationID, BoxConstraints.loose(size));
       updateSize(_bottomNavigationID, childSize);
-      final Size currentSize = Tween<Size>(begin: slotSizes[_bottomNavigationID], end: childSize).animate(controller).value;
-      positionChild(_bottomNavigationID, Offset(0, size.height - currentSize.height));
+      final Size currentSize =
+          Tween<Size>(begin: slotSizes[_bottomNavigationID], end: childSize)
+              .animate(controller)
+              .value;
+      positionChild(
+          _bottomNavigationID, Offset(0, size.height - currentSize.height));
       bottomMargin += currentSize.height;
     }
     if (hasChild(_primaryNavigationID)) {
-      final Size childSize = layoutChild(_primaryNavigationID, BoxConstraints.loose(size));
+      final Size childSize =
+          layoutChild(_primaryNavigationID, BoxConstraints.loose(size));
       updateSize(_primaryNavigationID, childSize);
-      final Size currentSize = Tween<Size>(begin: slotSizes[_primaryNavigationID], end: childSize).animate(controller).value;
+      final Size currentSize =
+          Tween<Size>(begin: slotSizes[_primaryNavigationID], end: childSize)
+              .animate(controller)
+              .value;
       if (textDirection) {
         positionChild(_primaryNavigationID, Offset(leftMargin, topMargin));
         leftMargin += currentSize.width;
       } else {
-        positionChild(_primaryNavigationID, Offset(size.width - currentSize.width, topMargin));
+        positionChild(_primaryNavigationID,
+            Offset(size.width - currentSize.width, topMargin));
         rightMargin += currentSize.width;
       }
     }
     if (hasChild(_secondaryNavigationID)) {
-      final Size childSize = layoutChild(_secondaryNavigationID, BoxConstraints.loose(size));
+      final Size childSize =
+          layoutChild(_secondaryNavigationID, BoxConstraints.loose(size));
       updateSize(_secondaryNavigationID, childSize);
-      final Size currentSize = Tween<Size>(begin: slotSizes[_secondaryNavigationID], end: childSize).animate(controller).value;
+      final Size currentSize =
+          Tween<Size>(begin: slotSizes[_secondaryNavigationID], end: childSize)
+              .animate(controller)
+              .value;
       if (textDirection) {
-        positionChild(_secondaryNavigationID, Offset(size.width - currentSize.width, topMargin));
+        positionChild(_secondaryNavigationID,
+            Offset(size.width - currentSize.width, topMargin));
         rightMargin += currentSize.width;
       } else {
         positionChild(_secondaryNavigationID, Offset(0, topMargin));
@@ -314,9 +341,11 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     if (hasChild(_bodyID) && hasChild(_secondaryBodyID)) {
       Size currentBodySize = Size.zero;
       Size currentSBodySize = Size.zero;
-      if (chosenWidgets[_secondaryBodyID] == null || chosenWidgets[_secondaryBodyID]!.builder == null) {
+      if (chosenWidgets[_secondaryBodyID] == null ||
+          chosenWidgets[_secondaryBodyID]!.builder == null) {
         if (!textDirection) {
-          currentBodySize = layoutChild(_bodyID, BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
+          currentBodySize = layoutChild(_bodyID,
+              BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
         } else if (horizontalBody) {
           double beginWidth;
           if (bodyRatio == null) {
@@ -324,7 +353,10 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
           } else {
             beginWidth = remainingWidth * bodyRatio!;
           }
-          currentBodySize = layoutChild(_bodyID, BoxConstraints.tight(Size(animatedSize(beginWidth, remainingWidth), remainingHeight)));
+          currentBodySize = layoutChild(
+              _bodyID,
+              BoxConstraints.tight(Size(
+                  animatedSize(beginWidth, remainingWidth), remainingHeight)));
         } else {
           double beginHeight;
           if (bodyRatio == null) {
@@ -332,7 +364,10 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
           } else {
             beginHeight = remainingHeight * bodyRatio!;
           }
-          currentBodySize = layoutChild(_bodyID, BoxConstraints.tight(Size(remainingWidth, animatedSize(beginHeight, remainingHeight))));
+          currentBodySize = layoutChild(
+              _bodyID,
+              BoxConstraints.tight(Size(
+                  remainingWidth, animatedSize(beginHeight, remainingHeight))));
         }
         layoutChild(_secondaryBodyID, BoxConstraints.loose(size));
       } else {
@@ -345,7 +380,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
             double finalSBodySize;
             if (hinge != null) {
               finalBodySize = hinge!.left - leftMargin;
-              finalSBodySize = size.width - (hinge!.left + hingeWidth) - rightMargin;
+              finalSBodySize =
+                  size.width - (hinge!.left + hingeWidth) - rightMargin;
             } else if (bodyRatio != null) {
               finalBodySize = remainingWidth * bodyRatio!;
               finalSBodySize = remainingWidth * (1 - bodyRatio!);
@@ -354,15 +390,21 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
               finalSBodySize = halfWidth - rightMargin;
             }
 
-            currentBodySize = layoutChild(_bodyID, BoxConstraints.tight(Size(animatedSize(remainingWidth, finalBodySize), remainingHeight)));
-            layoutChild(_secondaryBodyID, BoxConstraints.tight(Size(finalSBodySize, remainingHeight)));
+            currentBodySize = layoutChild(
+                _bodyID,
+                BoxConstraints.tight(Size(
+                    animatedSize(remainingWidth, finalBodySize),
+                    remainingHeight)));
+            layoutChild(_secondaryBodyID,
+                BoxConstraints.tight(Size(finalSBodySize, remainingHeight)));
           } else {
             // If textDirection is RTL
 
             double finalBodySize;
             double finalSBodySize;
             if (hinge != null) {
-              finalBodySize = size.width - (hinge!.left + hingeWidth) - rightMargin;
+              finalBodySize =
+                  size.width - (hinge!.left + hingeWidth) - rightMargin;
               finalSBodySize = hinge!.left - leftMargin;
             } else if (bodyRatio != null) {
               finalBodySize = remainingWidth * bodyRatio!;
@@ -371,8 +413,12 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
               finalBodySize = halfWidth - rightMargin;
               finalSBodySize = halfWidth - leftMargin;
             }
-            currentSBodySize = layoutChild(_secondaryBodyID, BoxConstraints.tight(Size(animatedSize(0, finalSBodySize), remainingHeight)));
-            layoutChild(_bodyID, BoxConstraints.tight(Size(finalBodySize, remainingHeight)));
+            currentSBodySize = layoutChild(
+                _secondaryBodyID,
+                BoxConstraints.tight(
+                    Size(animatedSize(0, finalSBodySize), remainingHeight)));
+            layoutChild(_bodyID,
+                BoxConstraints.tight(Size(finalBodySize, remainingHeight)));
           }
         } else {
           // If body and secondaryBody laid out vertically
@@ -383,7 +429,9 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
                 remainingWidth,
                 animatedSize(
                   remainingHeight,
-                  bodyRatio == null ? halfHeight - topMargin : remainingHeight * bodyRatio!,
+                  bodyRatio == null
+                      ? halfHeight - topMargin
+                      : remainingHeight * bodyRatio!,
                 ),
               ),
             ),
@@ -393,45 +441,61 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
             BoxConstraints.tight(
               Size(
                 remainingWidth,
-                bodyRatio == null ? halfHeight - bottomMargin : remainingHeight * (1 - bodyRatio!),
+                bodyRatio == null
+                    ? halfHeight - bottomMargin
+                    : remainingHeight * (1 - bodyRatio!),
               ),
             ),
           );
         }
       }
       // Handling all positioning for body and secondaryBody
-      if (horizontalBody && !textDirection && chosenWidgets[_secondaryBodyID] != null) {
+      if (horizontalBody &&
+          !textDirection &&
+          chosenWidgets[_secondaryBodyID] != null) {
         if (hinge != null) {
-          positionChild(_bodyID, Offset(currentSBodySize.width + leftMargin + hingeWidth, topMargin));
+          positionChild(
+              _bodyID,
+              Offset(
+                  currentSBodySize.width + leftMargin + hingeWidth, topMargin));
           positionChild(_secondaryBodyID, Offset(leftMargin, topMargin));
         } else {
-          positionChild(_bodyID, Offset(currentSBodySize.width + leftMargin, topMargin));
+          positionChild(
+              _bodyID, Offset(currentSBodySize.width + leftMargin, topMargin));
           positionChild(_secondaryBodyID, Offset(leftMargin, topMargin));
         }
       } else {
         positionChild(_bodyID, Offset(leftMargin, topMargin));
         if (horizontalBody) {
           if (hinge != null) {
-            positionChild(_secondaryBodyID, Offset(currentBodySize.width + leftMargin + hingeWidth, topMargin));
+            positionChild(
+                _secondaryBodyID,
+                Offset(currentBodySize.width + leftMargin + hingeWidth,
+                    topMargin));
           } else {
-            positionChild(_secondaryBodyID, Offset(currentBodySize.width + leftMargin, topMargin));
+            positionChild(_secondaryBodyID,
+                Offset(currentBodySize.width + leftMargin, topMargin));
           }
         } else {
-          positionChild(_secondaryBodyID, Offset(leftMargin, topMargin + currentBodySize.height));
+          positionChild(_secondaryBodyID,
+              Offset(leftMargin, topMargin + currentBodySize.height));
         }
       }
     } else if (hasChild(_bodyID)) {
-      layoutChild(_bodyID, BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
+      layoutChild(
+          _bodyID, BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
       positionChild(_bodyID, Offset(leftMargin, topMargin));
     } else if (hasChild(_secondaryBodyID)) {
-      layoutChild(_secondaryBodyID, BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
+      layoutChild(_secondaryBodyID,
+          BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
     }
   }
 
   void updateSize(String id, Size childSize) {
     if (slotSizes[id] != childSize) {
       void listener(AnimationStatus status) {
-        if ((status == AnimationStatus.completed || status == AnimationStatus.dismissed) &&
+        if ((status == AnimationStatus.completed ||
+                status == AnimationStatus.dismissed) &&
             slotSizes[id] != childSize) {
           slotSizes.update(id, (Size? value) => childSize);
         }

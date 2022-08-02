@@ -21,7 +21,7 @@ class _MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AdaptiveScaffold(
       selectedIndex: 0,
-      destinations: const <NavigationDestination> [
+      destinations: const <NavigationDestination>[
         NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
         NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
         NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
@@ -48,7 +48,8 @@ class _MyHomePage extends StatelessWidget {
           )
       ]),
       smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
-      secondaryBody: (_) => Container(color: const Color.fromARGB(255, 234, 158, 192)),
+      secondaryBody: (_) =>
+          Container(color: const Color.fromARGB(255, 234, 158, 192)),
     );
   }
 }

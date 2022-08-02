@@ -20,30 +20,40 @@ class _MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const List<NavigationDestination> destinations = <NavigationDestination>[
-      NavigationDestination(label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
-      NavigationDestination(label: 'Articles', icon: Icon(Icons.article_outlined, color: Colors.black)),
-      NavigationDestination(label: 'Chat', icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
-      NavigationDestination(label: 'Video', icon: Icon(Icons.video_call_outlined, color: Colors.black)),
+      NavigationDestination(
+          label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
+      NavigationDestination(
+          label: 'Articles',
+          icon: Icon(Icons.article_outlined, color: Colors.black)),
+      NavigationDestination(
+          label: 'Chat',
+          icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
+      NavigationDestination(
+          label: 'Video',
+          icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
 
     return AdaptiveLayout(
       primaryNavigation: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig?> {
-          Breakpoints.small: SlotLayoutConfig(key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
+        config: <Breakpoint, SlotLayoutConfig?>{
+          Breakpoints.small: SlotLayoutConfig(
+              key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
           Breakpoints.medium: SlotLayoutConfig(
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('pnav1'),
-            builder: (_) => AdaptiveScaffold.toNavigationRail(destinations: destinations),
+            builder: (_) =>
+                AdaptiveScaffold.toNavigationRail(destinations: destinations),
           ),
           Breakpoints.large: SlotLayoutConfig(
             key: const Key('pnav2'),
             inAnimation: AdaptiveScaffold.leftOutIn,
-            builder: (_) => AdaptiveScaffold.toNavigationRail(extended: true, destinations: destinations),
+            builder: (_) => AdaptiveScaffold.toNavigationRail(
+                extended: true, destinations: destinations),
           ),
         },
       ),
       body: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig?> {
+        config: <Breakpoint, SlotLayoutConfig?>{
           Breakpoints.small: SlotLayoutConfig(
             key: const Key('body'),
             builder: (_) => ListView.builder(
@@ -59,7 +69,8 @@ class _MyHomePage extends StatelessWidget {
           ),
           Breakpoints.medium: SlotLayoutConfig(
             key: const Key('body1'),
-            builder: (_) => GridView.count(crossAxisCount: 2, children: <Widget>[
+            builder: (_) =>
+                GridView.count(crossAxisCount: 2, children: <Widget>[
               for (int i = 0; i < 10; i++)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -73,11 +84,12 @@ class _MyHomePage extends StatelessWidget {
         },
       ),
       bottomNavigation: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig?> {
+        config: <Breakpoint, SlotLayoutConfig?>{
           Breakpoints.small: SlotLayoutConfig(
             key: const Key('botnav'),
             inAnimation: AdaptiveScaffold.bottomToTop,
-            builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
+            builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
+                destinations: destinations),
           ),
         },
       ),
