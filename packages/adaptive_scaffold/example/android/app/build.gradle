@@ -37,7 +37,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "dev.flutter.packages.animations.example"
+        applicationId "dev.flutter.packages.adaptive_scaffold.example"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="dev.flutter.packages.animations.example">
+    package="dev.flutter.packages.adaptive_scaffold.example">
     <application
         android:label="example"
         android:icon="@mipmap/ic_launcher">
