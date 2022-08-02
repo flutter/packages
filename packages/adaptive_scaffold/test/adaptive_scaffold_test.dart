@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 
 void main() {
   test('adds one to input values', () {
-    final calculator = Calculator();
+    final Calculator calculator = Calculator();
     expect(calculator.addOne(2), 3);
     expect(calculator.addOne(-7), -6);
     expect(calculator.addOne(0), 1);
