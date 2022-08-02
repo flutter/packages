@@ -2,10 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-library adaptive_scaffold;
-
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/adaptive_layout.dart';
+export 'src/adaptive_scaffold.dart';
+export 'src/breakpoint.dart';
+export 'src/breakpoints.dart';
+export 'src/slot_layout.dart';
+export 'src/slot_layout_config.dart';
