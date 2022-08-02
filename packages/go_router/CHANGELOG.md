@@ -1,3 +1,7 @@
+## 4.2.5
+
+- Fixes a bug where calling extra parameter is always null in route level redirect callback
+
 ## 4.2.4
 
 - Rewrites Readme and examples.
