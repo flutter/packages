@@ -1,3 +1,7 @@
+## 4.2.5
+
+- Fixes rendering issues in teh README.
+
 ## 4.2.4
 
 - Rewrites Readme and examples.
