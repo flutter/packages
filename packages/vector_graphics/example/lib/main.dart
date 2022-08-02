@@ -52,6 +52,7 @@ class NetworkSvgLoader extends BytesLoader {
         debugName: svgUrl,
         enableClippingOptimizer: false,
         enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
       );
       task.finish();
       // sendAndExit will make sure this isn't copied.
