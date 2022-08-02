@@ -46,7 +46,7 @@ class _SlotLayoutState extends State<SlotLayout>
     chosenWidget = SlotLayout.pickWidget(context, widget.config);
     bool hasAnimation = false;
     return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 750),
+        duration: const Duration(milliseconds: 1000),
         layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
           final Stack elements = Stack(
             children: <Widget>[
