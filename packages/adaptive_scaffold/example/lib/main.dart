@@ -5,7 +5,6 @@
 import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
 
-
 /// A more functional demo of the usage of the adaptive layout helper widgets.
 /// Specifically, it is built using an [AdaptiveLayout] and uses static helpers
 /// from [AdaptiveScaffold].
@@ -140,16 +139,20 @@ class __MyHomePageState extends State<_MyHomePage>
   Widget build(BuildContext context) {
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
-          label: 'Inbox', icon: Icon(Icons.inbox, color: Color.fromARGB(255, 29, 25, 43))),
+          label: 'Inbox',
+          icon: Icon(Icons.inbox, color: Color.fromARGB(255, 29, 25, 43))),
       NavigationDestination(
           label: 'Articles',
-          icon: Icon(Icons.article_outlined, color: Color.fromARGB(255, 29, 25, 43))),
+          icon: Icon(Icons.article_outlined,
+              color: Color.fromARGB(255, 29, 25, 43))),
       NavigationDestination(
           label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline, color: Color.fromARGB(255, 29, 25, 43))),
+          icon: Icon(Icons.chat_bubble_outline,
+              color: Color.fromARGB(255, 29, 25, 43))),
       NavigationDestination(
           label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: Color.fromARGB(255, 29, 25, 43))),
+          icon: Icon(Icons.video_call_outlined,
+              color: Color.fromARGB(255, 29, 25, 43))),
     ];
     showGridView.value = Breakpoints.medium.isActive(context);
     return Scaffold(
@@ -335,14 +338,16 @@ class _ComposeButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 255, 216, 228),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
-          boxShadow: Breakpoints.medium.isActive(context)?null:<BoxShadow>[
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: Breakpoints.medium.isActive(context)
+              ? null
+              : <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
         ),
         width: 200,
         height: 50,
@@ -450,7 +455,9 @@ class _ItemListTile extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-            color: isSelected ? const Color.fromARGB(255, 234, 222, 255) : const Color.fromARGB(255, 243, 237, 247),
+            color: isSelected
+                ? const Color.fromARGB(255, 234, 222, 255)
+                : const Color.fromARGB(255, 243, 237, 247),
             borderRadius: const BorderRadius.all(Radius.circular(10))),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -466,16 +473,19 @@ class _ItemListTile extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(item.name, style: Theme.of(context).textTheme.bodyText1),
+                      Text(item.name,
+                          style: Theme.of(context).textTheme.bodyText1),
                       const SizedBox(height: 3),
-                      Text('${item.time} ago', style: Theme.of(context).textTheme.caption),
+                      Text('${item.time} ago',
+                          style: Theme.of(context).textTheme.caption),
                     ],
                   ),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.all(8.0),
-                    decoration:
-                        const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(50))),
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
                     child: const Icon(Icons.star_outline),
                   ),
                 ],
@@ -483,7 +493,8 @@ class _ItemListTile extends StatelessWidget {
               const SizedBox(height: 10),
               Text(item.title, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 4),
-              Text(item.body.replaceRange(80, item.body.length, '...'), style: Theme.of(context).textTheme.bodyText1),
+              Text(item.body.replaceRange(80, item.body.length, '...'),
+                  style: Theme.of(context).textTheme.bodyText1),
             ],
           ),
         ),

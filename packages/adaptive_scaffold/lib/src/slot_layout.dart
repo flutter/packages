@@ -16,7 +16,8 @@ class SlotLayout extends StatefulWidget {
 
   /// Given a context and a config, it returns the [SlotLayoutConfig] that will
   /// be chosen from the config under the context's conditions.
-  static SlotLayoutConfig? pickWidget(BuildContext context, Map<Breakpoint, SlotLayoutConfig?> config) {
+  static SlotLayoutConfig? pickWidget(
+      BuildContext context, Map<Breakpoint, SlotLayoutConfig?> config) {
     SlotLayoutConfig? chosenWidget;
     config.forEach((Breakpoint breakpoint, SlotLayoutConfig? pickedWidget) {
       if (breakpoint.isActive(context)) {
@@ -37,7 +38,8 @@ class SlotLayout extends StatefulWidget {
   State<SlotLayout> createState() => _SlotLayoutState();
 }
 
-class _SlotLayoutState extends State<SlotLayout> with SingleTickerProviderStateMixin {
+class _SlotLayoutState extends State<SlotLayout>
+    with SingleTickerProviderStateMixin {
   SlotLayoutConfig? chosenWidget;
 
   @override
@@ -58,12 +60,16 @@ class _SlotLayoutState extends State<SlotLayout> with SingleTickerProviderStateM
         transitionBuilder: (Widget child, Animation<double> animation) {
           final SlotLayoutConfig configChild = child as SlotLayoutConfig;
           if (child.key == chosenWidget?.key) {
-            return (configChild.inAnimation != null) ? child.inAnimation!(child, animation) : child;
+            return (configChild.inAnimation != null)
+                ? child.inAnimation!(child, animation)
+                : child;
           } else {
             if (configChild.outAnimation != null) {
               hasAnimation = true;
             }
-            return (configChild.outAnimation != null) ? child.outAnimation!(child, ReverseAnimation(animation)) : child;
+            return (configChild.outAnimation != null)
+                ? child.outAnimation!(child, ReverseAnimation(animation))
+                : child;
           }
         },
         child: chosenWidget ?? SlotLayoutConfig.empty());

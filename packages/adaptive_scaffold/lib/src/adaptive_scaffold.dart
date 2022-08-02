@@ -345,7 +345,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 )
               : null,
           bottomNavigation: widget.destinations != null &&
-                  ! widget.drawerBreakpoint.isActive(context)
+                  !widget.drawerBreakpoint.isActive(context)
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.breakpoints[0]: SlotLayoutConfig(

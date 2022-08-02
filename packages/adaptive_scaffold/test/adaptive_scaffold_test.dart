@@ -10,14 +10,16 @@ import 'package:flutter_test/flutter_test.dart';
 class TestBreakpoint0 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 0 && MediaQuery.of(context).size.width<800;
+    return MediaQuery.of(context).size.width >= 0 &&
+        MediaQuery.of(context).size.width < 800;
   }
 }
 
 class TestBreakpoint800 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 800 && MediaQuery.of(context).size.width<1000;
+    return MediaQuery.of(context).size.width >= 800 &&
+        MediaQuery.of(context).size.width < 1000;
   }
 }
 

@@ -46,7 +46,6 @@ class Breakpoints {
   static const Breakpoint smallMobile =
       _Breakpoint(begin: 0, end: 600, platform: _mobile);
 
-
   /// This is the defined medium breakpoint. Commonly used to indicate a tablet
   /// but this breakpoint does not rely on platform.
   ///

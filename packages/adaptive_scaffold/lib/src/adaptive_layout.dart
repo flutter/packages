@@ -89,7 +89,6 @@ class AdaptiveLayout extends StatefulWidget {
   State<AdaptiveLayout> createState() => _AdaptiveLayoutState();
 }
 
-
 class _AdaptiveLayoutState extends State<AdaptiveLayout>
     with TickerProviderStateMixin {
   late AnimationController _controller;
@@ -270,6 +269,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
       }
       return end;
     }
+
     if (hasChild(_kTopNavigationID)) {
       final Size childSize =
           layoutChild(_kTopNavigationID, BoxConstraints.loose(size));
@@ -478,8 +478,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
         }
       }
     } else if (hasChild(_kBodyID)) {
-      layoutChild(
-          _kBodyID, BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
+      layoutChild(_kBodyID,
+          BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
       positionChild(_kBodyID, Offset(leftMargin, topMargin));
     } else if (hasChild(_kSecondaryBodyID)) {
       layoutChild(_kSecondaryBodyID,
