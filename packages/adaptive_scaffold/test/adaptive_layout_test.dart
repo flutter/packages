@@ -101,27 +101,33 @@ Future<MediaQuery> layout({
         body: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig>{
             TestBreakpoint0(): SlotLayoutConfig(
-                key: const Key('b'),
-                builder: (_) => Container(color: Colors.red)),
+              key: const Key('b'),
+              builder: (_) => Container(color: Colors.red),
+            ),
             TestBreakpoint400(): SlotLayoutConfig(
-                key: const Key('b1'),
-                builder: (_) => Container(color: Colors.red)),
+              key: const Key('b1'),
+              builder: (_) => Container(color: Colors.red),
+            ),
             TestBreakpoint800(): SlotLayoutConfig(
-                key: const Key('b2'),
-                builder: (_) => Container(color: Colors.red)),
+              key: const Key('b2'),
+              builder: (_) => Container(color: Colors.red),
+            ),
           },
         ),
         secondaryBody: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig>{
             TestBreakpoint0(): SlotLayoutConfig(
-                key: const Key('sb'),
-                builder: (_) => Container(color: Colors.blue)),
+              key: const Key('sb'),
+              builder: (_) => Container(color: Colors.blue),
+            ),
             TestBreakpoint400(): SlotLayoutConfig(
-                key: const Key('sb1'),
-                builder: (_) => Container(color: Colors.blue)),
+              key: const Key('sb1'),
+              builder: (_) => Container(color: Colors.blue),
+            ),
             TestBreakpoint800(): SlotLayoutConfig(
-                key: const Key('sb2'),
-                builder: (_) => Container(color: Colors.blue)),
+              key: const Key('sb2'),
+              builder: (_) => Container(color: Colors.blue),
+            ),
           },
         ),
       ),
