@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'breakpoint.dart';
 
 const List<TargetPlatform> _desktop = <TargetPlatform>[
   TargetPlatform.fuchsia,
@@ -80,4 +79,14 @@ class _Breakpoint extends Breakpoint {
     }
     return size && isRightPlatform;
   }
+}
+
+/// Breakpoint used in [SlotLayout] and [AdaptiveScaffold].
+abstract class Breakpoint {
+  /// Returns a [Breakpoint].
+  const Breakpoint();
+
+  /// Whether the breakpoint is active under some conditions related to the
+  /// context of the screen.
+  bool isActive(BuildContext context);
 }

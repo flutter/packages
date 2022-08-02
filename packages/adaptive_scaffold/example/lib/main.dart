@@ -136,20 +136,20 @@ class __MyHomePageState extends State<_MyHomePage>
   Widget build(BuildContext context) {
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
-          label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
+          label: 'Inbox', icon: Icon(Icons.inbox, color: Color.fromARGB(255, 29, 25, 43))),
       NavigationDestination(
           label: 'Articles',
-          icon: Icon(Icons.article_outlined, color: Colors.black)),
+          icon: Icon(Icons.article_outlined, color: Color.fromARGB(255, 29, 25, 43))),
       NavigationDestination(
           label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
+          icon: Icon(Icons.chat_bubble_outline, color: Color.fromARGB(255, 29, 25, 43))),
       NavigationDestination(
           label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: Colors.black)),
+          icon: Icon(Icons.video_call_outlined, color: Color.fromARGB(255, 29, 25, 43))),
     ];
     showGridView.value = Breakpoints.medium.isActive(context);
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 236, 235, 243),
+      backgroundColor: const Color.fromARGB(255, 234, 227, 241),
       body: SafeArea(
         child: _ContextInformation(
           selected: selected,
@@ -225,7 +225,6 @@ class __MyHomePageState extends State<_MyHomePage>
                   ),
                   Breakpoints.large: SlotLayoutConfig(
                     key: const Key('primaryNavigation1'),
-                    inAnimation: AdaptiveScaffold.leftOutIn,
                     builder: (_) => AdaptiveScaffold.toNavigationRail(
                       leading: const _ComposeButton(),
                       backgroundColor: Colors.transparent,
@@ -332,9 +331,9 @@ class _ComposeButton extends StatelessWidget {
       child: Container(
         alignment: Alignment.centerLeft,
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 225, 231),
+          color: const Color.fromARGB(255, 255, 216, 228),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
-          boxShadow: <BoxShadow>[
+          boxShadow: Breakpoints.medium.isActive(context)?null:<BoxShadow>[
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 1,
@@ -445,72 +444,45 @@ class _ItemListTile extends StatelessWidget {
     final int index = _all_Items.indexOf(item);
     final bool isSelected = _ContextInformation.of(context).selected == index;
 
-    return GestureDetector(
-      onTap: () {
-        selectCard(index);
-        if (!showGridView) {
-          setDisplayed(true);
-          Navigator.push(
-            context,
-            MaterialPageRoute<Builder>(
-              builder: (_) => SafeArea(
-                child: _RouteDetailView(
-                  item: item,
-                  selectCard: selectCard,
-                  setDisplayed: setDisplayed,
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+            color: isSelected ? const Color.fromARGB(255, 234, 222, 255) : const Color.fromARGB(255, 243, 237, 247),
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(item.image),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(item.name, style: Theme.of(context).textTheme.bodyText1),
+                      const SizedBox(height: 3),
+                      Text('${item.time} ago', style: Theme.of(context).textTheme.caption),
+                    ],
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration:
+                        const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(50))),
+                    child: const Icon(Icons.star_outline),
+                  ),
+                ],
               ),
-            ),
-          );
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          decoration: BoxDecoration(
-              color: isSelected
-                  ? const Color.fromARGB(255, 237, 221, 255)
-                  : const Color.fromARGB(255, 245, 241, 248),
-              borderRadius: const BorderRadius.all(Radius.circular(10))),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(item.image),
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(item.name,
-                            style: Theme.of(context).textTheme.bodyText1),
-                        const SizedBox(height: 3),
-                        Text('${item.time} ago',
-                            style: Theme.of(context).textTheme.caption),
-                      ],
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(50))),
-                      child: const Icon(Icons.star_outline),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(item.title,
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 4),
-                Text(item.body.replaceRange(80, item.body.length, '...'),
-                    style: Theme.of(context).textTheme.bodyText1),
-              ],
-            ),
+              const SizedBox(height: 10),
+              Text(item.title, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 4),
+              Text(item.body.replaceRange(80, item.body.length, '...'), style: Theme.of(context).textTheme.bodyText1),
+            ],
           ),
         ),
       ),
@@ -533,7 +505,7 @@ class _DetailTile extends StatelessWidget {
         height: 300,
         child: Container(
           decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 245, 241, 248),
+              color: Color.fromARGB(255, 255, 251, 254),
               borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Padding(
             padding: const EdgeInsets.all(16.0),

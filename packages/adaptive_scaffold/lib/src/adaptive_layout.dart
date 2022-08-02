@@ -4,7 +4,7 @@
 
 import 'dart:ui';
 import 'package:flutter/widgets.dart';
-import 'breakpoint.dart';
+import 'breakpoints.dart';
 import 'slot_layout.dart';
 import 'slot_layout_config.dart';
 

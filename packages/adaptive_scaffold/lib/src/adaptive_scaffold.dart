@@ -4,7 +4,6 @@
 
 import 'package:flutter/material.dart';
 import 'adaptive_layout.dart';
-import 'breakpoint.dart';
 import 'breakpoints.dart';
 import 'slot_layout.dart';
 import 'slot_layout_config.dart';

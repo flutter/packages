@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:adaptive_scaffold/src/adaptive_layout.dart';
-import 'package:adaptive_scaffold/src/breakpoint.dart';
+import 'package:adaptive_scaffold/src/breakpoints.dart';
 import 'package:adaptive_scaffold/src/slot_layout.dart';
 import 'package:adaptive_scaffold/src/slot_layout_config.dart';
 import 'package:flutter/material.dart';
