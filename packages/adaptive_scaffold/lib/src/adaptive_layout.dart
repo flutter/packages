@@ -258,7 +258,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     double rightMargin = 0;
     double bottomMargin = 0;
 
-    // Used as either a width or height value on the Size for the body/secondaryBody
+    // An animation that is used as either a width or height value on the Size for the body/secondaryBody.
     double animatedSize(double begin, double end) {
       if (isAnimating[_kSecondaryBodyID]!) {
         return internalAnimations
@@ -273,9 +273,9 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     if (hasChild(_kTopNavigationID)) {
       final Size childSize =
           layoutChild(_kTopNavigationID, BoxConstraints.loose(size));
-      // Triggering the animation if the new size is different from the old size
+      // Trigger the animation if the new size is different from the old size.
       updateSize(_kTopNavigationID, childSize);
-      // Here we tween not the actual size, but the size that is used in the margins so the offsets can be animated
+      // Tween not the actual size, but the size that is used in the margins so the offsets can be animated.
       final Size currentSize =
           Tween<Size>(begin: slotSizes[_kTopNavigationID], end: childSize)
               .animate(controller)
