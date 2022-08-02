@@ -5,10 +5,14 @@
 import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
 
-// A more functional demo of the usage of the adaptive layout helper widgets.
-// Modeled off of the example on the Material 3 page regarding adaptive layouts.
-// For a more clear cut example usage, please look at adaptive_layout_demo.dart
-// or adaptive_scaffold_demo.dart
+
+/// A more functional demo of the usage of the adaptive layout helper widgets.
+/// Specifically, it is built using an [AdaptiveLayout] and uses static helpers
+/// from [AdaptiveScaffold].
+///
+/// Modeled off of the example on the Material 3 page regarding adaptive layouts.
+/// For a more clear cut example usage, please look at adaptive_layout_demo.dart
+/// or adaptive_scaffold_demo.dart
 
 void main() {
   runApp(const _MyApp());
@@ -238,7 +242,7 @@ class __MyHomePageState extends State<_MyHomePage>
               ),
               body: SlotLayout(
                 config: <Breakpoint, SlotLayoutConfig?>{
-                  Breakpoints.small: SlotLayoutConfig(
+                  Breakpoints.standard: SlotLayoutConfig(
                     key: const Key('body'),
                     builder: (_) => (_selectedIndex == 0)
                         ? Padding(
@@ -280,8 +284,6 @@ class __MyHomePageState extends State<_MyHomePage>
                     builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
                         destinations: destinations),
                   ),
-                  Breakpoints.medium: SlotLayoutConfig.empty(),
-                  Breakpoints.large: SlotLayoutConfig.empty(),
                 },
               ),
             ),

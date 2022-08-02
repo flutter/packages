@@ -7,10 +7,9 @@ import 'breakpoints.dart';
 import 'slot_layout_config.dart';
 
 /// A Widget that takes a mapping of [SlotLayoutConfig]s to breakpoints and
-/// returns a chosen Widget based on the current screen size.
+/// adds the appropriate Widget based on the current screen size.
 ///
 /// Commonly used with [AdaptiveLayout] but also functional on its own.
-
 class SlotLayout extends StatefulWidget {
   /// Creates a [SlotLayout] widget.
   const SlotLayout({required this.config, super.key});
@@ -27,9 +26,11 @@ class SlotLayout extends StatefulWidget {
     return chosenWidget;
   }
 
-  /// The mapping that is used to determine what Widget to display at what point.
+  /// This is a mapping from [Breakpoint]s to nullable [SlotLayoutConfig]s that
+  /// is used to determine what Widget to display at what poont.
   ///
-  /// The int represents screen width.
+  /// The appropriate [SlotLayoutConfig] is picked based on the assigned
+  /// [Breakpoint]'s isActive method.
   final Map<Breakpoint, SlotLayoutConfig?> config;
 
   @override
@@ -44,7 +45,7 @@ class _SlotLayoutState extends State<SlotLayout> with SingleTickerProviderStateM
     chosenWidget = SlotLayout.pickWidget(context, widget.config);
     bool hasAnimation = false;
     return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 750),
+        duration: const Duration(milliseconds: 1000),
         layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
           final Stack elements = Stack(
             children: <Widget>[

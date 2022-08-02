@@ -28,7 +28,7 @@ class AdaptiveScaffold extends StatefulWidget {
       Breakpoints.medium,
       Breakpoints.large
     ],
-    this.drawerBreakpoint = Breakpoints.onlySmallDesktop,
+    this.drawerBreakpoint = Breakpoints.smallDesktop,
     this.internalAnimations = true,
     this.horizontalBody = true,
     this.onSelectedIndexChange,
@@ -345,8 +345,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 )
               : null,
           bottomNavigation: widget.destinations != null &&
-                  widget.selectedIndex != null &&
-                  Breakpoints.smallMobile.isActive(context)
+                  ! widget.drawerBreakpoint.isActive(context)
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.breakpoints[0]: SlotLayoutConfig(
@@ -358,8 +357,6 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                             widget.destinations!.map(_toBottomNavItem).toList(),
                       ),
                     ),
-                    widget.breakpoints[1]: SlotLayoutConfig.empty(),
-                    widget.breakpoints[2]: SlotLayoutConfig.empty(),
                   },
                 )
               : null,

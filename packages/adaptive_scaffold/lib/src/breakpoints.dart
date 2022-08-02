@@ -15,45 +15,73 @@ const List<TargetPlatform> _mobile = <TargetPlatform>[
   TargetPlatform.android
 ];
 
-/// Standard Breakpoints.
+/// A group of standard breakpoints built according to the material
+/// specifications for screen width size.
+///
+/// These are directly used in [AdaptiveScaffold] and can be used as
+/// [Breakpoint]s within [SlotLayout]. Anywhere that takes a [Breakpoint] can
+/// take these values.
 class Breakpoints {
-  /// Standard breakpoint. Always active.
+  /// This is a standard breakpoint that can be used as a fallthrough in the
+  /// case that no other breakpoint is active.
+  ///
+  /// It is active from a width of -1 dp to infinity.
   static const Breakpoint standard = _Breakpoint(begin: -1);
 
-  /// Small breakpoint. Open bounded.
-  static const Breakpoint small = _Breakpoint(begin: 0);
+  /// This is the defined small breakpoint. Commonly used to indicate mobile but
+  /// this breakpoint does not rely on platform.
+  ///
+  /// It is active from a width of 0 to 600 dp.
+  static const Breakpoint small = _Breakpoint(begin: 0, end: 600);
 
-  /// Small breakpoint for non-mobile. Open bounded.
+  /// This is the defined small desktop breakpoint.
+  ///
+  /// It is active from a width of 0 to 600 dp and only on desktop devices.
   static const Breakpoint smallDesktop =
-      _Breakpoint(begin: 0, platform: _desktop);
-
-  /// Small breakpoint for non-mobile. Close bounded.
-  static const Breakpoint onlySmallDesktop =
       _Breakpoint(begin: 0, end: 600, platform: _desktop);
 
-  /// Small breakpoint for mobile. Open bounded.
+  /// This is the defined small mobile breakpoint.
+  ///
+  /// It is active from a width of 0 to 600 dp and only on mobile devices.
   static const Breakpoint smallMobile =
-      _Breakpoint(begin: 0, platform: _mobile);
+      _Breakpoint(begin: 0, end: 600, platform: _mobile);
 
-  /// Medium breakpoint. Close bounded.
-  static const Breakpoint medium = _Breakpoint(begin: 600);
 
-  /// Medium breakpoint for non-mobile. Close bounded.
+  /// This is the defined medium breakpoint. Commonly used to indicate a tablet
+  /// but this breakpoint does not rely on platform.
+  ///
+  /// It is active from a width of 600 to 840 dp.
+  static const Breakpoint medium = _Breakpoint(begin: 600, end: 840);
+
+  /// This is the defined medium desktop breakpoint.
+  ///
+  /// It is active from a width of 600 to 840 dp and only on desktop devices.
   static const Breakpoint mediumDesktop =
       _Breakpoint(begin: 600, end: 840, platform: _desktop);
 
-  /// Medium breakpoint for mobile. Close bounded.
+  /// This is the defined medium mobile breakpoint.
+  ///
+  /// It is active from a width of 600 to 840 dp and only on mobile devices.
   static const Breakpoint mediumMobile =
       _Breakpoint(begin: 600, end: 840, platform: _mobile);
 
-  /// Large breakpoint. Open bounded.
+  /// This is the defined large breakpoint. Commonly used to indicate a large
+  /// screen desktop but this breakpoint does not rely on platform.
+  ///
+  /// It is active from a width of 840 dp to infinity.
   static const Breakpoint large = _Breakpoint(begin: 840);
 
-  /// Large breakpoint for non-mobile. Open bounded.
+  /// This is the defined large desktop breakpoint.
+  ///
+  /// It is active from a width of 840 dp to infinity and only on desktop
+  /// devices.
   static const Breakpoint largeDesktop =
       _Breakpoint(begin: 840, platform: _desktop);
 
-  /// Large breakpoint for mobile. Open bounded.
+  /// This is the defined large mobile breakpoint.
+  ///
+  /// It is active from a width of 840 dp to infinity and only on mobile
+  /// devices.
   static const Breakpoint largeMobile =
       _Breakpoint(begin: 840, platform: _mobile);
 }
@@ -81,12 +109,15 @@ class _Breakpoint extends Breakpoint {
   }
 }
 
-/// Breakpoint used in [SlotLayout] and [AdaptiveScaffold].
+/// A class to indicate whether a given number of conditions based on the
+/// current [BuildContext] are met or not. This class can really be used for
+/// wide variety of purposes but the typical use is within [SlotLayout] and
+/// [AdaptiveScaffold].
 abstract class Breakpoint {
   /// Returns a [Breakpoint].
   const Breakpoint();
 
-  /// Whether the breakpoint is active under some conditions related to the
-  /// context of the screen.
+  /// A method that returns whether the breakpoint is active under some
+  /// conditions related to the [BuildContext] of the screen.
   bool isActive(BuildContext context);
 }

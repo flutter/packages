@@ -10,14 +10,14 @@ import 'package:flutter_test/flutter_test.dart';
 class TestBreakpoint0 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 0;
+    return MediaQuery.of(context).size.width >= 0 && MediaQuery.of(context).size.width<800;
   }
 }
 
 class TestBreakpoint800 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 800;
+    return MediaQuery.of(context).size.width >= 800 && MediaQuery.of(context).size.width<1000;
   }
 }
 
@@ -25,6 +25,13 @@ class TestBreakpoint1000 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
     return MediaQuery.of(context).size.width >= 1000;
+  }
+}
+
+class NeverOnBreakpoint extends Breakpoint {
+  @override
+  bool isActive(BuildContext context) {
+    return false;
   }
 }
 
@@ -38,6 +45,7 @@ Future<MaterialApp> scaffold({
     home: MediaQuery(
       data: MediaQueryData(size: Size(width, 800)),
       child: AdaptiveScaffold(
+        drawerBreakpoint: NeverOnBreakpoint(),
         internalAnimations: animations,
         breakpoints: <Breakpoint>[
           TestBreakpoint0(),

@@ -9,7 +9,6 @@ import 'package:flutter/widgets.dart';
 ///
 /// Most commonly used in [LayoutSlot] however it would be functional outside of
 /// this Widget as well.
-///
 class SlotLayoutConfig extends StatefulWidget {
   /// Creates a new [SlotLayoutConfig].
   ///
@@ -30,8 +29,11 @@ class SlotLayoutConfig extends StatefulWidget {
   ///
   /// The animation to be played when the child enters.
   ///
-  /// While it is not enforced, the recommended usage for this property is to
+  /// While it is not enforced, the typical usage for this property is to
   /// return a Widget of type [AnimatedWidget] or [ImplicitlyAnimatedWidget].
+  /// There are use cases where it may be appropriate to not return one of these
+  /// types such as if you want to show a custom Widget while the animation is
+  /// happening.
   final Widget Function(Widget, Animation<double>)? inAnimation;
 
   /// A function that takes an [AnimationController] and a [Widget] and returns
@@ -40,8 +42,11 @@ class SlotLayoutConfig extends StatefulWidget {
   /// This animation is ran on the overtaken Widget when this child Widget is
   /// animated into view, replacing the other Widget.
   ///
-  /// While it is not enforced, the recommended usage for this property is to
+  /// While it is not enforced, the typical usage for this property is to
   /// return a Widget of type [AnimatedWidget] or [ImplicitlyAnimatedWidget].
+  /// There are use cases where it may be appropriate to not return one of these
+  /// types such as if you want to show a custom Widget while the animation is
+  /// happening.
   final Widget Function(Widget, Animation<double>)? outAnimation;
 
   /// An empty [SlotLayoutConfig] to be placed in a slot to indicate it is not
