@@ -19,6 +19,7 @@ class _MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Define the list of destinations to be used within the app.
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
           label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
@@ -33,11 +34,12 @@ class _MyHomePage extends StatelessWidget {
           icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
 
+    // AdaptiveLayout has a number of slots that take SlotLayouts and these SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
     return AdaptiveLayout(
+      // Primary navigation config has nothing from 0 to 600, then an unextended
+      // NavigationRail then an extended NavigationRail.
       primaryNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig?>{
-          Breakpoints.small: SlotLayoutConfig(
-              key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
           Breakpoints.medium: SlotLayoutConfig(
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('pnav1'),
@@ -52,6 +54,7 @@ class _MyHomePage extends StatelessWidget {
           ),
         },
       ),
+      // Body switches between a ListView and a GridView from small to medium breakpoints and onwards.
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig?>{
           Breakpoints.small: SlotLayoutConfig(
@@ -67,7 +70,7 @@ class _MyHomePage extends StatelessWidget {
               ),
             ),
           ),
-          Breakpoints.medium: SlotLayoutConfig(
+          Breakpoints.mediumAndUp: SlotLayoutConfig(
             key: const Key('body1'),
             builder: (_) =>
                 GridView.count(crossAxisCount: 2, children: <Widget>[
@@ -83,6 +86,7 @@ class _MyHomePage extends StatelessWidget {
           ),
         },
       ),
+      // BottomNavigation is only active in mobile.
       bottomNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig?>{
           Breakpoints.small: SlotLayoutConfig(

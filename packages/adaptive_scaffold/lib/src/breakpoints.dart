@@ -34,6 +34,12 @@ class Breakpoints {
   /// It is active from a width of 0 to 600 dp.
   static const Breakpoint small = _Breakpoint(begin: 0, end: 600);
 
+  /// This is the defined smallAndUp breakpoint. Starts from small and is open
+  /// ended to include everything onwards
+  ///
+  /// It is active from a width of 0 dp to infinity.
+  static const Breakpoint smallAndUp = _Breakpoint(begin: 0);
+
   /// This is the defined small desktop breakpoint.
   ///
   /// It is active from a width of 0 to 600 dp and only on desktop devices.
@@ -51,6 +57,12 @@ class Breakpoints {
   ///
   /// It is active from a width of 600 to 840 dp.
   static const Breakpoint medium = _Breakpoint(begin: 600, end: 840);
+
+  /// This is the defined mediumAndUp breakpoint. Starts from small and is open
+  /// ended to include everything onwards
+  ///
+  /// It is active from a width of 600 dp to infinity.
+  static const Breakpoint mediumAndUp = _Breakpoint(begin: 600);
 
   /// This is the defined medium desktop breakpoint.
   ///
