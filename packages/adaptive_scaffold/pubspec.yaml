@@ -2,6 +2,7 @@ name: adaptive_scaffold
 description: This package contains some helper widgets that make the process of developing adaptive layouts easier, especially with navigational elements.
 version: 0.0.1
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3Aadaptive_scaffold
+repository: https://github.com/flutter/packages/adaptive_scaffold
 homepage:
 
 environment:
