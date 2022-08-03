@@ -15,8 +15,22 @@ const String _kBottomNavigationID = 'bottomNavigation ';
 const String _kBodyID = 'body';
 const String _kSecondaryBodyID = 'secondaryBody';
 
-/// A parent Widget takes in multiple [SlotLayout] components and places them
-/// into their appropriate positions on the screen.
+/// [AdaptiveLayout] is dedicated to simplifying the process of developing
+/// layouts for many different screen sizes. It separates the screen into
+/// several sections, also referred to as "slots". The Widget defines slots for
+/// the different placements of navigational elements and two slots for a body
+/// and secondaryBody. All of these slots take a [SlotLayout] Widget. This class
+/// works in junction with [SlotLayout] and [SlotLayoutConfig]. This class
+/// handles the placement of the slots on the screen and animations regarding
+/// their macromovements.
+///
+/// See also:
+///
+///  * [SlotLayout], which handles the actual switching and animations between
+/// elements based on [Breakpoint]s.
+///  * [SlotLayoutConfig], which holds information regarding the actual Widgets
+/// and the desired way to animate between switches.
+///  * [Design Doc](https://flutter.dev/go/adaptive-layout-foldables)
 class AdaptiveLayout extends StatefulWidget {
   /// Creates an [AdaptiveLayout] widget.
   const AdaptiveLayout({
@@ -32,13 +46,15 @@ class AdaptiveLayout extends StatefulWidget {
     super.key,
   });
 
-  /// The slot placed on the beginning side of the screen.
+  /// The slot placed on the beginning side of the screen; meaning on the left
+  /// when the textDirection is LTR and on the right when it is RTL.
   ///
   /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
   /// [SizedBox] or limit its size by another method.
   final SlotLayout? primaryNavigation;
 
-  /// The slot placed on the end side of the screen.
+  /// The slot placed on the end side of the screen; meaning on the right
+  /// when the textDirection is LTR and on the left when it is RTL.
   ///
   /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
   /// [SizedBox] or limit its size by another method.
