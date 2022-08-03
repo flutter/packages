@@ -42,7 +42,8 @@ class _MyHomePage extends StatefulWidget {
   State<_MyHomePage> createState() => __MyHomePageState();
 }
 
-class __MyHomePageState extends State<_MyHomePage> with TickerProviderStateMixin, ChangeNotifier {
+class __MyHomePageState extends State<_MyHomePage>
+    with TickerProviderStateMixin, ChangeNotifier {
   // A listener used for the controllers to reanimate the staggered animation of the navigation elements.
   ValueNotifier<bool?> showGridView = ValueNotifier<bool?>(false);
 
@@ -65,7 +66,8 @@ class __MyHomePageState extends State<_MyHomePage> with TickerProviderStateMixin
   @override
   void initState() {
     showGridView.addListener(() {
-      Navigator.popUntil(context, (Route<dynamic> route) => route.settings.name == '/');
+      Navigator.popUntil(
+          context, (Route<dynamic> route) => route.settings.name == '/');
       _controller
         ..reset()
         ..forward();
@@ -113,10 +115,17 @@ class __MyHomePageState extends State<_MyHomePage> with TickerProviderStateMixin
 
     // These are the destinations used within the AdaptiveScaffold navigation builders.
     const List<NavigationDestination> destinations = <NavigationDestination>[
-      NavigationDestination(label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
-      NavigationDestination(label: 'Articles', icon: Icon(Icons.article_outlined, color: iconColor)),
-      NavigationDestination(label: 'Chat', icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
-      NavigationDestination(label: 'Video', icon: Icon(Icons.video_call_outlined, color: iconColor)),
+      NavigationDestination(
+          label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
+      NavigationDestination(
+          label: 'Articles',
+          icon: Icon(Icons.article_outlined, color: iconColor)),
+      NavigationDestination(
+          label: 'Chat',
+          icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
+      NavigationDestination(
+          label: 'Video',
+          icon: Icon(Icons.video_call_outlined, color: iconColor)),
     ];
 
     // Updating the listener value.
@@ -153,26 +162,42 @@ class __MyHomePageState extends State<_MyHomePage> with TickerProviderStateMixin
                   destinations: <NavigationRailDestination>[
                     NavigationRailDestination(
                         icon: SlideTransition(
-                            position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
-                                .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic)),
+                            position: Tween<Offset>(
+                                    begin: const Offset(-1, 0),
+                                    end: Offset.zero)
+                                .animate(CurvedAnimation(
+                                    parent: _controller,
+                                    curve: Curves.easeInOutCubic)),
                             child: const Icon(Icons.inbox)),
                         label: const Text('Inbox')),
                     NavigationRailDestination(
                         icon: SlideTransition(
-                            position: Tween<Offset>(begin: const Offset(-2, 0), end: Offset.zero)
-                                .animate(CurvedAnimation(parent: _controller1, curve: Curves.easeInOutCubic)),
+                            position: Tween<Offset>(
+                                    begin: const Offset(-2, 0),
+                                    end: Offset.zero)
+                                .animate(CurvedAnimation(
+                                    parent: _controller1,
+                                    curve: Curves.easeInOutCubic)),
                             child: const Icon(Icons.article_outlined)),
                         label: const Text('Articles')),
                     NavigationRailDestination(
                         icon: SlideTransition(
-                            position: Tween<Offset>(begin: const Offset(-3, 0), end: Offset.zero)
-                                .animate(CurvedAnimation(parent: _controller2, curve: Curves.easeInOutCubic)),
+                            position: Tween<Offset>(
+                                    begin: const Offset(-3, 0),
+                                    end: Offset.zero)
+                                .animate(CurvedAnimation(
+                                    parent: _controller2,
+                                    curve: Curves.easeInOutCubic)),
                             child: const Icon(Icons.chat_bubble_outline)),
                         label: const Text('Chat')),
                     NavigationRailDestination(
                         icon: SlideTransition(
-                            position: Tween<Offset>(begin: const Offset(-4, 0), end: Offset.zero)
-                                .animate(CurvedAnimation(parent: _controller3, curve: Curves.easeInOutCubic)),
+                            position: Tween<Offset>(
+                                    begin: const Offset(-4, 0),
+                                    end: Offset.zero)
+                                .animate(CurvedAnimation(
+                                    parent: _controller3,
+                                    curve: Curves.easeInOutCubic)),
                             child: const Icon(Icons.video_call_outlined)),
                         label: const Text('Video')),
                   ],
@@ -221,12 +246,14 @@ class __MyHomePageState extends State<_MyHomePage> with TickerProviderStateMixin
                     // This overrides the default behavior of the secondaryBody disappearing as it is animating out.
                     outAnimation: AdaptiveScaffold.stayOnScreen,
                     key: const Key('sb1'),
-                    builder: (_) => _DetailTile(item: _all_Items[selected ?? 0]),
+                    builder: (_) =>
+                        _DetailTile(item: _all_Items[selected ?? 0]),
                   ),
                   Breakpoints.large: SlotLayoutConfig(
                     outAnimation: AdaptiveScaffold.stayOnScreen,
                     key: const Key('sb1'),
-                    builder: (_) => _DetailTile(item: _all_Items[selected ?? 0]),
+                    builder: (_) =>
+                        _DetailTile(item: _all_Items[selected ?? 0]),
                   ),
                 },
               )
@@ -237,7 +264,8 @@ class __MyHomePageState extends State<_MyHomePage> with TickerProviderStateMixin
               key: const Key('bn'),
               // You can define inAnimations or outAnimations to override the default offset transition.
               outAnimation: AdaptiveScaffold.topToBottom,
-              builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
+              builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
+                  destinations: destinations),
             ),
           },
         ),
@@ -332,7 +360,9 @@ class _ItemList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-      floatingActionButton: Breakpoints.mediumAndUp.isActive(context) ? null : const _ComposeIcon(),
+      floatingActionButton: Breakpoints.mediumAndUp.isActive(context)
+          ? null
+          : const _ComposeIcon(),
       body: Column(
         children: <Widget>[
           Padding(
@@ -355,7 +385,8 @@ class _ItemList extends StatelessWidget {
                 ),
                 filled: true,
                 contentPadding: const EdgeInsets.all(25),
-                hintStyle: const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
+                hintStyle:
+                    const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
                 hintText: 'Search replies',
                 fillColor: Colors.white,
               ),
@@ -395,7 +426,7 @@ class _ItemListTile extends StatelessWidget {
       onTap: () {
         // The behavior of opening a detail view is different on small screens than large screens.
         // Small screens open a modal with the detail view while large screens simply show the details on the secondaryBody.
-        if(!Breakpoints.mediumAndUp.isActive(context)){
+        if (!Breakpoints.mediumAndUp.isActive(context)) {
           Navigator.of(context).pushNamed(
             _ExtractRouteArguments.routeName,
             arguments: _ScreenArguments(item: item, selectCard: selectCard),
@@ -424,24 +455,29 @@ class _ItemListTile extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(item.name, style: Theme.of(context).textTheme.bodyText1),
+                        Text(item.name,
+                            style: Theme.of(context).textTheme.bodyText1),
                         const SizedBox(height: 3),
-                        Text('${item.time} ago', style: Theme.of(context).textTheme.caption),
+                        Text('${item.time} ago',
+                            style: Theme.of(context).textTheme.caption),
                       ],
                     ),
                     const Spacer(),
                     Container(
                       padding: const EdgeInsets.all(8.0),
-                      decoration:
-                          const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(50))),
+                      decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(50))),
                       child: const Icon(Icons.star_outline),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
-                Text(item.title, style: Theme.of(context).textTheme.titleMedium),
+                Text(item.title,
+                    style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 4),
-                Text(item.body.replaceRange(80, item.body.length, '...'), style: Theme.of(context).textTheme.bodyText1),
+                Text(item.body.replaceRange(80, item.body.length, '...'),
+                    style: Theme.of(context).textTheme.bodyText1),
               ],
             ),
           ),
@@ -466,14 +502,16 @@ class _DetailTile extends StatelessWidget {
         height: 300,
         child: Container(
           decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 255, 251, 254), borderRadius: BorderRadius.all(Radius.circular(10))),
+              color: Color.fromARGB(255, 255, 251, 254),
+              borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(item.title, style: Theme.of(context).textTheme.titleLarge),
-                Text('3 Messages', style: Theme.of(context).textTheme.labelSmall),
+                Text('3 Messages',
+                    style: Theme.of(context).textTheme.labelSmall),
                 const SizedBox(
                   height: 20,
                 ),
@@ -504,7 +542,8 @@ class _ExtractRouteArguments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _ScreenArguments args = ModalRoute.of(context)!.settings.arguments! as _ScreenArguments;
+    final _ScreenArguments args =
+        ModalRoute.of(context)!.settings.arguments! as _ScreenArguments;
 
     return _RouteDetailView(item: args.item, selectCard: args.selectCard);
   }
@@ -529,7 +568,8 @@ class _RouteDetailView extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: TextButton(
               onPressed: () {
-                Navigator.popUntil(context, (Route<dynamic> route) => route.settings.name == '/');
+                Navigator.popUntil(context,
+                    (Route<dynamic> route) => route.settings.name == '/');
                 selectCard(null);
               },
               child: const Icon(Icons.arrow_back),
