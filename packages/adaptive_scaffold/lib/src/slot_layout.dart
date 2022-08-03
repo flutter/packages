@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'breakpoints.dart';
 import 'slot_layout_config.dart';
 
-/// A Widget that takes a mapping of [SlotLayoutConfig]s to breakpoints and
+/// A Widget that takes a mapping of [SlotLayoutConfig]s to [Breakpoint]s and
 /// adds the appropriate Widget based on the current screen size.
 ///
 /// Commonly used with [AdaptiveLayout] but also functional on its own.
