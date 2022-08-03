@@ -30,6 +30,9 @@ class RouteMatcher {
       routes: configuration.routes,
       parentFullpath: '',
       parentSubloc: '',
+      // Here, if the request is `a/b/?q1=v1&q2=v2&q2=v3`;
+      // Then `uri.queryParametersAll` => `{q1: ['v1'], q2: ['v2', 'v3']}`
+      // And `uri.queryParameters` => `{q1: 'v1', q2: 'v2'}`
       queryParams: uri.queryParameters,
       extra: extra,
     );
