@@ -51,8 +51,10 @@ class AdaptiveScaffold extends StatefulWidget {
     this.internalAnimations = true,
     this.bodyOrientation = Axis.horizontal,
     this.onSelectedIndexChange,
-    this.useDrawer = true,
+    this.preferDrawerOnDesktop = true,
     this.appBar,
+    this.navigationRailWidth = 72,
+    this.extendedNavigationRailWidth = 192,
     super.key,
   });
 
@@ -148,7 +150,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// and Breakpoint is small.
   ///
   /// Defaults to true.
-  final bool useDrawer;
+  final bool preferDrawerOnDesktop;
 
   /// Option to override the drawerBreakpoint for the usage of [Drawer] over the
   /// usual [BottomNavigationBar].
@@ -163,6 +165,13 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Callback function for when the index of a [NavigationRail] changes.
   final Function(int)? onSelectedIndexChange;
 
+  /// The width used for the internal [NavigationRail] at the medium [Breakpoint].
+  final double navigationRailWidth;
+
+  /// The width used for the internal extended [NavigationRail] at the large
+  /// [Breakpoint].
+  final double extendedNavigationRailWidth;
+
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
 
@@ -176,18 +185,19 @@ class AdaptiveScaffold extends StatefulWidget {
     int selectedIndex = 0,
     bool extended = false,
     Color backgroundColor = Colors.transparent,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
     Widget? leading,
     Widget? trailing,
     Function(int)? onDestinationSelected,
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
     if (extended && width == 72) {
-      width = 150;
+      width = 192;
     }
     return Builder(
       builder: (BuildContext context) {
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: padding,
           child: SizedBox(
             width: width,
             height: MediaQuery.of(context).size.height,
@@ -347,7 +357,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     widget.mediumBreakpoint: SlotLayoutConfig(
                       key: const Key('primaryNavigation'),
                       builder: (_) => SizedBox(
-                        width: 72,
+                        width: widget.navigationRailWidth,
                         height: MediaQuery.of(context).size.height,
                         child: NavigationRail(
                           selectedIndex: widget.selectedIndex,
@@ -361,7 +371,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     widget.largeBreakpoint: SlotLayoutConfig(
                       key: const Key('primaryNavigation1'),
                       builder: (_) => SizedBox(
-                        width: 192,
+                        width: widget.extendedNavigationRailWidth,
                         height: MediaQuery.of(context).size.height,
                         child: NavigationRail(
                           extended: true,
@@ -383,8 +393,6 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     widget.smallBreakpoint: SlotLayoutConfig(
                       key: const Key('bottomNavigation'),
                       builder: (_) => BottomNavigationBar(
-                        unselectedItemColor: Colors.grey,
-                        selectedItemColor: Colors.black,
                         items:
                             widget.destinations!.map(_toBottomNavItem).toList(),
                       ),
