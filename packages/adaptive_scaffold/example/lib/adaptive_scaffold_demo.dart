@@ -21,7 +21,9 @@ class _MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AdaptiveScaffold(
       // An option to override the default breakpoints used for small, medium, and large.
-      breakpoints: const <Breakpoint>[Breakpoints.small, Breakpoints.medium, Breakpoints.large],
+      smallBreakpoint: Breakpoints.small,
+      mediumBreakpoint: Breakpoints.medium,
+      largeBreakpoint: Breakpoints.large,
       // The selectedIndex property is not required but defaults to 0 and is used internally for the NavigationRail.
       selectedIndex: 0,
       // Define the list of destinations to be used within the app.

@@ -49,11 +49,9 @@ Future<MaterialApp> scaffold({
       child: AdaptiveScaffold(
         drawerBreakpoint: NeverOnBreakpoint(),
         internalAnimations: animations,
-        breakpoints: <Breakpoint>[
-          TestBreakpoint0(),
-          TestBreakpoint800(),
-          TestBreakpoint1000()
-        ],
+        smallBreakpoint: TestBreakpoint0(),
+        mediumBreakpoint: TestBreakpoint800(),
+        largeBreakpoint: TestBreakpoint1000(),
         destinations: const <NavigationDestination>[
           NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
           NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
