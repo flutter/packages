@@ -1,3 +1,7 @@
+## 4.2.7
+
+- Update README
+
 ## 4.2.6
 
 - Fixes rendering issues in the README.
