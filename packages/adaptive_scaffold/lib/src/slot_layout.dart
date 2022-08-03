@@ -27,8 +27,11 @@ class SlotLayout extends StatefulWidget {
     return chosenWidget;
   }
 
-  /// This is a mapping from [Breakpoint]s to nullable [SlotLayoutConfig]s that
-  /// is used to determine what Widget to display at what poont.
+  /// This is a mapping from [Breakpoint]s to [SlotLayoutConfig]s that
+  /// is used to determine what Widget to display at what point. The
+  /// [SlotLayoutConfig]s in this map are nullable since some breakpoints apply
+  /// to more open ranges and the nullability allows one to override the value
+  /// at that Breakpoint to be null.
   ///
   /// The appropriate [SlotLayoutConfig] is picked based on the assigned
   /// [Breakpoint]'s isActive method.

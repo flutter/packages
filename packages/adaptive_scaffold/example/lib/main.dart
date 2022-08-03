@@ -23,51 +23,30 @@ class _MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Adaptive Layout Demo',
+      routes: <String, Widget Function(BuildContext)>{
+        _ExtractRouteArguments.routeName: (_) => const _ExtractRouteArguments()
+      },
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: const _MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const _MyHomePage(),
     );
   }
 }
 
-class _ContextInformation extends InheritedWidget {
-  const _ContextInformation({
-    Key? key,
-    required this.selected,
-    required this.displayed,
-    required Widget child,
-  }) : super(key: key, child: child);
-
-  final int? selected;
-  final bool displayed;
-
-  static _ContextInformation of(BuildContext context) {
-    final _ContextInformation? result =
-        context.dependOnInheritedWidgetOfExactType<_ContextInformation>();
-    assert(result != null, 'No ContextInformation found in context');
-    return result!;
-  }
-
-  @override
-  bool updateShouldNotify(_ContextInformation oldWidget) =>
-      selected != oldWidget.selected || displayed != displayed;
-}
-
 class _MyHomePage extends StatefulWidget {
-  const _MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const _MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<_MyHomePage> createState() => __MyHomePageState();
 }
 
-class __MyHomePageState extends State<_MyHomePage>
-    with TickerProviderStateMixin, ChangeNotifier {
+class __MyHomePageState extends State<_MyHomePage> with TickerProviderStateMixin, ChangeNotifier {
+  // A listener used for the controllers to reanimate the staggered animation of the navigation elements.
   ValueNotifier<bool?> showGridView = ValueNotifier<bool?>(false);
 
+  // The index of the selected mail card.
   int? selected;
   void selectCard(int? index) {
     setState(() {
@@ -75,23 +54,21 @@ class __MyHomePageState extends State<_MyHomePage>
     });
   }
 
-  bool displayed = false;
-  void setDisplayed(bool display) {
-    setState(() {
-      displayed = display;
-    });
-  }
+  // The index of the navigation screen. Only impacts body/secondaryBody
+  int _navigationIndex = 0;
 
-  int _selectedIndex = 0;
-
+  // The controllers used for the staggered animation of the navigation elements.
   late AnimationController _controller;
   late AnimationController _controller1;
   late AnimationController _controller2;
   late AnimationController _controller3;
-  late AnimationController _controller4;
   @override
   void initState() {
     showGridView.addListener(() {
+      Navigator.popUntil(context, (Route<dynamic> route) => route.settings.name == '/');
+      _controller
+        ..reset()
+        ..forward();
       _controller1
         ..reset()
         ..forward();
@@ -99,9 +76,6 @@ class __MyHomePageState extends State<_MyHomePage>
         ..reset()
         ..forward();
       _controller3
-        ..reset()
-        ..forward();
-      _controller4
         ..reset()
         ..forward();
     });
@@ -121,176 +95,151 @@ class __MyHomePageState extends State<_MyHomePage>
       duration: const Duration(milliseconds: 1600),
       vsync: this,
     )..forward();
-    _controller4 = AnimationController(
-      duration: const Duration(milliseconds: 1800),
-      vsync: this,
-    )..forward();
-
     super.initState();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _controller1.dispose();
+    _controller2.dispose();
+    _controller3.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    const Color iconColor = Color.fromARGB(255, 29, 25, 43);
+
+    // These are the destinations used within the AdaptiveScaffold navigation builders.
     const List<NavigationDestination> destinations = <NavigationDestination>[
-      NavigationDestination(
-          label: 'Inbox',
-          icon: Icon(Icons.inbox, color: Color.fromARGB(255, 29, 25, 43))),
-      NavigationDestination(
-          label: 'Articles',
-          icon: Icon(Icons.article_outlined,
-              color: Color.fromARGB(255, 29, 25, 43))),
-      NavigationDestination(
-          label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline,
-              color: Color.fromARGB(255, 29, 25, 43))),
-      NavigationDestination(
-          label: 'Video',
-          icon: Icon(Icons.video_call_outlined,
-              color: Color.fromARGB(255, 29, 25, 43))),
+      NavigationDestination(label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
+      NavigationDestination(label: 'Articles', icon: Icon(Icons.article_outlined, color: iconColor)),
+      NavigationDestination(label: 'Chat', icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
+      NavigationDestination(label: 'Video', icon: Icon(Icons.video_call_outlined, color: iconColor)),
     ];
-    showGridView.value = Breakpoints.medium.isActive(context);
+
+    // Updating the listener value.
+    showGridView.value = Breakpoints.mediumAndUp.isActive(context);
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 234, 227, 241),
-      body: SafeArea(
-        child: _ContextInformation(
-          selected: selected,
-          displayed: displayed,
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            // Adaptive Layout Helper Widgets use starting here:
-            child: AdaptiveLayout(
-              primaryNavigation: SlotLayout(
-                config: <Breakpoint, SlotLayoutConfig?>{
-                  Breakpoints.medium: SlotLayoutConfig(
-                    key: const Key('primaryNavigation'),
-                    builder: (_) => SizedBox(
-                      width: 72,
-                      height: MediaQuery.of(context).size.height,
-                      child: NavigationRail(
-                        onDestinationSelected: (int index) {
-                          setState(() {
-                            _selectedIndex = index;
-                          });
-                        },
-                        selectedIndex: _selectedIndex,
-                        leading: ScaleTransition(
-                          scale: _controller1,
-                          child: const _ComposeIcon(),
-                        ),
-                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                        labelType: NavigationRailLabelType.none,
-                        destinations: <NavigationRailDestination>[
-                          NavigationRailDestination(
-                              icon: SlideTransition(
-                                  position: Tween<Offset>(
-                                          begin: const Offset(-1, 0),
-                                          end: Offset.zero)
-                                      .animate(CurvedAnimation(
-                                          parent: _controller1,
-                                          curve: Curves.easeInOutCubic)),
-                                  child: const Icon(Icons.inbox)),
-                              label: const Text('Inbox')),
-                          NavigationRailDestination(
-                              icon: SlideTransition(
-                                  position: Tween<Offset>(
-                                          begin: const Offset(-2, 0),
-                                          end: Offset.zero)
-                                      .animate(CurvedAnimation(
-                                          parent: _controller2,
-                                          curve: Curves.easeInOutCubic)),
-                                  child: const Icon(Icons.article_outlined)),
-                              label: const Text('Articles')),
-                          NavigationRailDestination(
-                              icon: SlideTransition(
-                                  position: Tween<Offset>(
-                                          begin: const Offset(-3, 0),
-                                          end: Offset.zero)
-                                      .animate(CurvedAnimation(
-                                          parent: _controller3,
-                                          curve: Curves.easeInOutCubic)),
-                                  child: const Icon(Icons.chat_bubble_outline)),
-                              label: const Text('Chat')),
-                          NavigationRailDestination(
-                              icon: SlideTransition(
-                                  position: Tween<Offset>(
-                                          begin: const Offset(-4, 0),
-                                          end: Offset.zero)
-                                      .animate(CurvedAnimation(
-                                          parent: _controller4,
-                                          curve: Curves.easeInOutCubic)),
-                                  child: const Icon(Icons.video_call_outlined)),
-                              label: const Text('Video')),
-                        ],
-                      ),
-                    ),
+      // Usage of AdaptiveLayout suite begins here. AdaptiveLayout takes LayoutSlots for its variety of screen slots.
+      body: AdaptiveLayout(
+        // Each SlotLayout has a config which maps Breakpoints to SlotLayoutConfigs.
+        primaryNavigation: SlotLayout(
+          config: <Breakpoint, SlotLayoutConfig?>{
+            // The breakpoint used here is from the Breakpoints class but custom Breakpoints can be defined by extending the Breakpoint class
+            Breakpoints.medium: SlotLayoutConfig(
+              // Every SlotLayoutConfig takes a key and a builder. The builder is to save memory that would be spent on initialization.
+              key: const Key('primaryNavigation'),
+              builder: (_) => SizedBox(
+                width: 72,
+                height: MediaQuery.of(context).size.height,
+                // Usually it would be easier to use a builder from AdaptiveScaffold for these types of navigations but this navigation has custom staggered item animations.
+                child: NavigationRail(
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _navigationIndex = index;
+                    });
+                  },
+                  selectedIndex: _navigationIndex,
+                  leading: ScaleTransition(
+                    scale: _controller1,
+                    child: const _ComposeIcon(),
                   ),
-                  Breakpoints.large: SlotLayoutConfig(
-                    key: const Key('primaryNavigation1'),
-                    builder: (_) => AdaptiveScaffold.toNavigationRail(
-                      leading: const _ComposeButton(),
-                      backgroundColor: Colors.transparent,
-                      labelType: NavigationRailLabelType.none,
-                      selectedIndex: 0,
-                      extended: true,
-                      destinations: destinations,
-                    ),
-                  ),
-                },
-              ),
-              body: SlotLayout(
-                config: <Breakpoint, SlotLayoutConfig?>{
-                  Breakpoints.standard: SlotLayoutConfig(
-                    key: const Key('body'),
-                    builder: (_) => (_selectedIndex == 0)
-                        ? Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
-                            child: _ItemList(
-                              items: _all_Items,
-                              selectCard: selectCard,
-                              setDisplayed: setDisplayed,
-                              showGridView: false,
-                            ),
-                          )
-                        : const _ExamplePage(),
-                  ),
-                },
-              ),
-              secondaryBody: _selectedIndex == 0
-                  ? SlotLayout(
-                      config: <Breakpoint, SlotLayoutConfig?>{
-                        Breakpoints.medium: SlotLayoutConfig(
-                          outAnimation: AdaptiveScaffold.stayOnScreen,
-                          key: const Key('sb1'),
-                          builder: (_) =>
-                              _DetailTile(item: _all_Items[selected ?? 0]),
-                        ),
-                        Breakpoints.large: SlotLayoutConfig(
-                          outAnimation: AdaptiveScaffold.stayOnScreen,
-                          key: const Key('sb1'),
-                          builder: (_) =>
-                              _DetailTile(item: _all_Items[selected ?? 0]),
-                        ),
-                      },
-                    )
-                  : null,
-              bottomNavigation: SlotLayout(
-                config: <Breakpoint, SlotLayoutConfig?>{
-                  Breakpoints.small: SlotLayoutConfig(
-                    key: const Key('bn'),
-                    outAnimation: AdaptiveScaffold.topToBottom,
-                    builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
-                        destinations: destinations),
-                  ),
-                },
+                  backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                  labelType: NavigationRailLabelType.none,
+                  destinations: <NavigationRailDestination>[
+                    NavigationRailDestination(
+                        icon: SlideTransition(
+                            position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
+                                .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic)),
+                            child: const Icon(Icons.inbox)),
+                        label: const Text('Inbox')),
+                    NavigationRailDestination(
+                        icon: SlideTransition(
+                            position: Tween<Offset>(begin: const Offset(-2, 0), end: Offset.zero)
+                                .animate(CurvedAnimation(parent: _controller1, curve: Curves.easeInOutCubic)),
+                            child: const Icon(Icons.article_outlined)),
+                        label: const Text('Articles')),
+                    NavigationRailDestination(
+                        icon: SlideTransition(
+                            position: Tween<Offset>(begin: const Offset(-3, 0), end: Offset.zero)
+                                .animate(CurvedAnimation(parent: _controller2, curve: Curves.easeInOutCubic)),
+                            child: const Icon(Icons.chat_bubble_outline)),
+                        label: const Text('Chat')),
+                    NavigationRailDestination(
+                        icon: SlideTransition(
+                            position: Tween<Offset>(begin: const Offset(-4, 0), end: Offset.zero)
+                                .animate(CurvedAnimation(parent: _controller3, curve: Curves.easeInOutCubic)),
+                            child: const Icon(Icons.video_call_outlined)),
+                        label: const Text('Video')),
+                  ],
+                ),
               ),
             ),
-          ),
+            Breakpoints.large: SlotLayoutConfig(
+              key: const Key('primaryNavigation1'),
+              // The AdaptiveScaffold builder here greatly simplifies navigational elements.
+              builder: (_) => AdaptiveScaffold.toNavigationRail(
+                leading: const _ComposeButton(),
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    _navigationIndex = index;
+                  });
+                },
+                selectedIndex: _navigationIndex,
+                extended: true,
+                destinations: destinations,
+              ),
+            ),
+          },
+        ),
+        body: SlotLayout(
+          config: <Breakpoint, SlotLayoutConfig?>{
+            Breakpoints.standard: SlotLayoutConfig(
+              key: const Key('body'),
+              // The conditional here is for navigation screens. The first screen shows the main screen and every other screeen shows ExamplePage.
+              builder: (_) => (_navigationIndex == 0)
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                      child: _ItemList(
+                        selected: selected,
+                        items: _all_Items,
+                        selectCard: selectCard,
+                      ),
+                    )
+                  : const _ExamplePage(),
+            ),
+          },
+        ),
+        secondaryBody: _navigationIndex == 0
+            ? SlotLayout(
+                config: <Breakpoint, SlotLayoutConfig?>{
+                  Breakpoints.medium: SlotLayoutConfig(
+                    // This overrides the default behavior of the secondaryBody disappearing as it is animating out.
+                    outAnimation: AdaptiveScaffold.stayOnScreen,
+                    key: const Key('sb1'),
+                    builder: (_) => _DetailTile(item: _all_Items[selected ?? 0]),
+                  ),
+                  Breakpoints.large: SlotLayoutConfig(
+                    outAnimation: AdaptiveScaffold.stayOnScreen,
+                    key: const Key('sb1'),
+                    builder: (_) => _DetailTile(item: _all_Items[selected ?? 0]),
+                  ),
+                },
+              )
+            : null,
+        bottomNavigation: SlotLayout(
+          config: <Breakpoint, SlotLayoutConfig?>{
+            Breakpoints.small: SlotLayoutConfig(
+              key: const Key('bn'),
+              // You can define inAnimations or outAnimations to override the default offset transition.
+              outAnimation: AdaptiveScaffold.topToBottom,
+              builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
+            ),
+          },
         ),
       ),
     );
@@ -338,7 +287,7 @@ class _ComposeButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 255, 216, 228),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
-          boxShadow: Breakpoints.medium.isActive(context)
+          boxShadow: Breakpoints.mediumAndUp.isActive(context)
               ? null
               : <BoxShadow>[
                   BoxShadow(
@@ -366,26 +315,24 @@ class _ComposeButton extends StatelessWidget {
   }
 }
 
+// ItemList creates the list of cards and the search bar.
 class _ItemList extends StatelessWidget {
   const _ItemList({
     Key? key,
     required this.items,
     required this.selectCard,
-    required this.setDisplayed,
-    required this.showGridView,
+    required this.selected,
   }) : super(key: key);
 
   final List<_Item> items;
+  final int? selected;
   final Function selectCard;
-  final Function setDisplayed;
-  final bool showGridView;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-      floatingActionButton:
-          Breakpoints.medium.isActive(context) ? null : const _ComposeIcon(),
+      floatingActionButton: Breakpoints.mediumAndUp.isActive(context) ? null : const _ComposeIcon(),
       body: Column(
         children: <Widget>[
           Padding(
@@ -408,8 +355,7 @@ class _ItemList extends StatelessWidget {
                 ),
                 filled: true,
                 contentPadding: const EdgeInsets.all(25),
-                hintStyle:
-                    const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
+                hintStyle: const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
                 hintText: 'Search replies',
                 fillColor: Colors.white,
               ),
@@ -419,10 +365,9 @@ class _ItemList extends StatelessWidget {
             child: ListView.builder(
               itemCount: items.length,
               itemBuilder: (_, int index) => _ItemListTile(
+                selected: selected,
                 item: items[index],
                 selectCard: selectCard,
-                showGridView: showGridView,
-                setDisplayed: setDisplayed,
               ),
             ),
           ),
@@ -437,65 +382,68 @@ class _ItemListTile extends StatelessWidget {
     Key? key,
     required this.item,
     required this.selectCard,
-    required this.showGridView,
-    required this.setDisplayed,
+    required this.selected,
   }) : super(key: key);
 
   final _Item item;
+  final int? selected;
   final Function selectCard;
-  final Function setDisplayed;
-  final bool showGridView;
 
   @override
   Widget build(BuildContext context) {
-    final int index = _all_Items.indexOf(item);
-    final bool isSelected = _ContextInformation.of(context).selected == index;
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-            color: isSelected
-                ? const Color.fromARGB(255, 234, 222, 255)
-                : const Color.fromARGB(255, 243, 237, 247),
-            borderRadius: const BorderRadius.all(Radius.circular(10))),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(item.image),
-                  ),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(item.name,
-                          style: Theme.of(context).textTheme.bodyText1),
-                      const SizedBox(height: 3),
-                      Text('${item.time} ago',
-                          style: Theme.of(context).textTheme.caption),
-                    ],
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(50))),
-                    child: const Icon(Icons.star_outline),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(item.title, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 4),
-              Text(item.body.replaceRange(80, item.body.length, '...'),
-                  style: Theme.of(context).textTheme.bodyText1),
-            ],
+    return GestureDetector(
+      onTap: () {
+        // The behavior of opening a detail view is different on small screens than large screens.
+        // Small screens open a modal with the detail view while large screens simply show the details on the secondaryBody.
+        if(!Breakpoints.mediumAndUp.isActive(context)){
+          Navigator.of(context).pushNamed(
+            _ExtractRouteArguments.routeName,
+            arguments: _ScreenArguments(item: item, selectCard: selectCard),
+          );
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+              color: selected == _all_Items.indexOf(item)
+                  ? const Color.fromARGB(255, 234, 222, 255)
+                  : const Color.fromARGB(255, 243, 237, 247),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(item.image),
+                    ),
+                    const SizedBox(width: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(item.name, style: Theme.of(context).textTheme.bodyText1),
+                        const SizedBox(height: 3),
+                        Text('${item.time} ago', style: Theme.of(context).textTheme.caption),
+                      ],
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration:
+                          const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(50))),
+                      child: const Icon(Icons.star_outline),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(item.title, style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 4),
+                Text(item.body.replaceRange(80, item.body.length, '...'), style: Theme.of(context).textTheme.bodyText1),
+              ],
+            ),
           ),
         ),
       ),
@@ -518,16 +466,14 @@ class _DetailTile extends StatelessWidget {
         height: 300,
         child: Container(
           decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 255, 251, 254),
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+              color: Color.fromARGB(255, 255, 251, 254), borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(item.title, style: Theme.of(context).textTheme.titleLarge),
-                Text('3 Messages',
-                    style: Theme.of(context).textTheme.labelSmall),
+                Text('3 Messages', style: Theme.of(context).textTheme.labelSmall),
                 const SizedBox(
                   height: 20,
                 ),
@@ -541,16 +487,38 @@ class _DetailTile extends StatelessWidget {
   }
 }
 
-class _RouteDetailView extends StatelessWidget {
-  const _RouteDetailView(
-      {required this.item,
-      required this.selectCard,
-      required this.setDisplayed,
-      Key? key})
-      : super(key: key);
+// The ScreenArguments used to pass arguments to the RouteDetailView as a named route.
+class _ScreenArguments {
+  _ScreenArguments({
+    required this.item,
+    required this.selectCard,
+  });
   final _Item item;
   final Function selectCard;
-  final Function setDisplayed;
+}
+
+class _ExtractRouteArguments extends StatelessWidget {
+  const _ExtractRouteArguments({Key? key}) : super(key: key);
+
+  static const String routeName = '/detailView';
+
+  @override
+  Widget build(BuildContext context) {
+    final _ScreenArguments args = ModalRoute.of(context)!.settings.arguments! as _ScreenArguments;
+
+    return _RouteDetailView(item: args.item, selectCard: args.selectCard);
+  }
+}
+
+class _RouteDetailView extends StatelessWidget {
+  const _RouteDetailView({
+    required this.item,
+    required this.selectCard,
+    Key? key,
+  }) : super(key: key);
+
+  final _Item item;
+  final Function selectCard;
 
   @override
   Widget build(BuildContext context) {
@@ -561,9 +529,8 @@ class _RouteDetailView extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.popUntil(context, (Route<dynamic> route) => route.settings.name == '/');
                 selectCard(null);
-                setDisplayed(false);
               },
               child: const Icon(Icons.arrow_back),
             ),
