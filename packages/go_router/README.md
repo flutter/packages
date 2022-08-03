@@ -122,10 +122,10 @@ onTap: () => context.go('/page2')
 
 ## Migration guides
 
-[Migrating to 2.0](https://flutter.dev/go/go-router-v2-breaking-changes)<br/>
-[Migrating to 2.5](https://flutter.dev/go/go-router-v2-5-breaking-changes)<br/>
-[Migrating to 3.0](https://flutter.dev/go/go-router-v3-breaking-changes)<br/>
-[Migrating to 4.0](https://flutter.dev/go/go-router-v4-breaking-changes)<br/>
+- [Migrating to 2.0](https://flutter.dev/go/go-router-v2-breaking-changes)
+- [Migrating to 2.5](https://flutter.dev/go/go-router-v2-5-breaking-changes)
+- [Migrating to 3.0](https://flutter.dev/go/go-router-v3-breaking-changes)
+- [Migrating to 4.0](https://flutter.dev/go/go-router-v4-breaking-changes)
 
 ## Changelog
 
