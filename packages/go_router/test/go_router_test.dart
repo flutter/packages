@@ -178,7 +178,6 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login/');
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
-      print(matches);
       expect(matches, hasLength(1));
       expect(matches.first.subloc, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
@@ -1588,14 +1587,14 @@ void main() {
     });
 
     testWidgets('keep param in nested route', (WidgetTester tester) async {
-      const Map<String, dynamic> queryParams = <String, dynamic>{
-        'q1': 'v1',
+      const Map<String, dynamic> queryParametersAll = <String, List<dynamic>>{
+        'q1': <String>['v1'],
         'q2': <String>['v2', 'v3'],
       };
       void expectLocationWithQueryParams(String location) {
         final Uri uri = Uri.parse(location);
         expect(uri.path, '/page');
-        expect(uri.queryParameters, queryParams);
+        expect(uri.queryParametersAll, queryParametersAll);
       }
 
       final List<GoRoute> routes = <GoRoute>[
@@ -1608,9 +1607,10 @@ void main() {
           name: 'page',
           path: '/page',
           builder: (BuildContext context, GoRouterState state) {
+            expect(state.queryParametersAll, queryParametersAll);
             expectLocationWithQueryParams(state.location);
             return DummyScreen(
-              queryParams: state.queryParams,
+              queryParametersAll: state.queryParametersAll,
             );
           },
         ),
@@ -1618,18 +1618,21 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
 
-      router.goNamed('page', queryParams: queryParams);
+      router.goNamed('page', queryParams: const <String, dynamic>{
+        'q1': 'v1',
+        'q2': <String>['v2', 'v3'],
+      });
       await tester.pump();
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
 
       expect(matches, hasLength(1));
       expectLocationWithQueryParams(router.location);
       expect(
-        router.screenFor(matches.last).runtimeType,
+        router.screenFor(matches.last),
         isA<DummyScreen>().having(
-          (DummyScreen screen) => screen.queryParams,
-          'screen.queryParams',
-          queryParams,
+          (DummyScreen screen) => screen.queryParametersAll,
+          'screen.queryParametersAll',
+          queryParametersAll,
         ),
       );
     });

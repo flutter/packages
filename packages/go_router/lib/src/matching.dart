@@ -34,6 +34,7 @@ class RouteMatcher {
       // Then `uri.queryParametersAll` => `{q1: ['v1'], q2: ['v2', 'v3']}`
       // And `uri.queryParameters` => `{q1: 'v1', q2: 'v2'}`
       queryParams: uri.queryParameters,
+      queryParametersAll: uri.queryParametersAll,
       extra: extra,
     );
 
@@ -124,7 +125,8 @@ List<RouteMatch> _getLocRouteRecursively({
   required String parentSubloc,
   required List<GoRoute> routes,
   required String parentFullpath,
-  required Map<String, String> queryParams,
+  required Map<String, dynamic> queryParams,
+  required Map<String, dynamic> queryParametersAll,
   required Object? extra,
 }) {
   bool debugGatherAllMatches = false;
@@ -142,6 +144,7 @@ List<RouteMatch> _getLocRouteRecursively({
       parentSubloc: parentSubloc,
       fullpath: fullpath,
       queryParams: queryParams,
+      queryParametersAll: queryParametersAll,
       extra: extra,
     );
 
@@ -170,6 +173,7 @@ List<RouteMatch> _getLocRouteRecursively({
         routes: route.routes,
         parentFullpath: fullpath,
         queryParams: queryParams,
+        queryParametersAll: queryParametersAll,
         extra: extra,
       ).toList();
 

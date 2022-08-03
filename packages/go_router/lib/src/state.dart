@@ -19,7 +19,8 @@ class GoRouterState {
     this.path,
     this.fullpath,
     this.params = const <String, String>{},
-    this.queryParams = const <String, String>{},
+    this.queryParams = const <String, dynamic>{},
+    this.queryParametersAll = const <String, dynamic>{},
     this.extra,
     this.error,
     ValueKey<String>? pageKey,
@@ -54,7 +55,11 @@ class GoRouterState {
   final Map<String, String> params;
 
   /// The query parameters for the location, e.g. {'from': '/family/f2'}
-  final Map<String, String> queryParams;
+  final Map<String, dynamic> queryParams;
+
+  /// The query parameters for the location,
+  /// e.g. `{'q1': ['v1'], 'q2': ['v2', 'v3']}`
+  final Map<String, dynamic> queryParametersAll;
 
   /// An extra object to pass along with the navigation.
   final Object? extra;

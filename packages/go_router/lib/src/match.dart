@@ -18,10 +18,11 @@ class RouteMatch {
     required this.fullpath,
     required this.encodedParams,
     required this.queryParams,
+    required this.queryParametersAll,
     required this.extra,
     required this.error,
     this.pageKey,
-  })  : fullUriString = _addQueryParams(subloc, queryParams),
+  })  : fullUriString = _addQueryParams(subloc, queryParametersAll),
         assert(subloc.startsWith('/')),
         assert(Uri.parse(subloc).queryParameters.isEmpty),
         assert(fullpath.startsWith('/')),
@@ -41,6 +42,7 @@ class RouteMatch {
     required String parentSubloc, // e.g. /family/f2
     required String fullpath, // e.g. /family/:fid/person/:pid
     required Map<String, dynamic> queryParams,
+    required Map<String, dynamic> queryParametersAll,
     required Object? extra,
   }) {
     assert(!route.path.contains('//'));
@@ -59,6 +61,7 @@ class RouteMatch {
       fullpath: fullpath,
       encodedParams: encodedParams,
       queryParams: queryParams,
+      queryParametersAll: queryParametersAll,
       extra: extra,
       error: null,
     );
@@ -79,6 +82,9 @@ class RouteMatch {
   /// Query parameters for the matched route.
   final Map<String, dynamic> queryParams;
 
+  /// Query parameters for the matched route.
+  final Map<String, dynamic> queryParametersAll;
+
   /// An extra object to pass along with the navigation.
   final Object? extra;
 
@@ -91,12 +97,14 @@ class RouteMatch {
   /// The full uri string
   final String fullUriString; // e.g. /family/12?query=14
 
-  static String _addQueryParams(String loc, Map<String, dynamic> queryParams) {
+  static String _addQueryParams(
+      String loc, Map<String, dynamic> queryParametersAll) {
     final Uri uri = Uri.parse(loc);
     assert(uri.queryParameters.isEmpty);
     return Uri(
             path: uri.path,
-            queryParameters: queryParams.isEmpty ? null : queryParams)
+            queryParameters:
+                queryParametersAll.isEmpty ? null : queryParametersAll)
         .toString();
   }
 

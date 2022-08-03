@@ -124,7 +124,8 @@ void main() {
     );
 
     expect(
-      configuration.namedLocation('routeName', queryParams: <String, dynamic>{
+      configuration
+          .namedLocation('routeName', queryParams: const <String, dynamic>{
         'q1': 'v1',
         'q2': <String>['v2', 'v3'],
       }),
