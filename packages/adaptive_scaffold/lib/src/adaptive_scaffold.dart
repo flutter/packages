@@ -8,8 +8,29 @@ import 'breakpoints.dart';
 import 'slot_layout.dart';
 import 'slot_layout_config.dart';
 
-/// [AdaptiveScaffold] is an abstraction that passes properties to
-/// [AdaptiveLayout] and reduces repetition and a burden on the developer.
+/// [AdaptiveScaffold] is a Widget that handles macro changes in navigational
+/// elemtents and a body/secondaryBody based on the current features of the
+/// screen such as screen width and platform. For example, the navigational
+/// elements would be a [BottomNavigationBar] on a small mobile device and a
+/// [NavigationRail] on larger devices.
+///
+/// Also provides a variety of helper methods for navigational elements,
+/// animations, and more.
+///
+/// The interior of this widget is an abstraction of [AdaptiveLayout] but easier
+/// to use at the cost of being less customizable. If you feel like you are too
+/// constrained by [AdaptiveScaffold] then [AdaptiveLayout] should fit all your
+/// needs.
+///
+/// See also:
+///  * [AdaptiveLayout], which is what this widget is built upon internally and
+/// acts as a more customizable alternative.
+///  * [SlotLayout], which handles switching and animations between elements
+/// based on [Breakpoint]s.
+///  * [SlotLayoutConfig], which holds information regarding Widgets and the
+/// desired way to animate between switches. Often used within [SlotLayout].
+///  * [Design Doc](https://flutter.dev/go/adaptive-layout-foldables).
+///  * [Material Design 3 Specifications] (https://m3.material.io/foundations/adaptive-design/overview).
 class AdaptiveScaffold extends StatefulWidget {
   /// Returns an [AdaptiveScaffold] by passing information down to an
   /// [AdaptiveLayout].

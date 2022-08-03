@@ -29,7 +29,8 @@ const String _kSecondaryBodyID = 'secondaryBody';
 ///  * [SlotLayout], which handles the actual switching and animations between
 /// elements based on [Breakpoint]s.
 ///  * [SlotLayoutConfig], which holds information regarding the actual Widgets
-/// and the desired way to animate between switches.
+/// and the desired way to animate between switches. Often used within
+/// [SlotLayout].
 ///  * [Design Doc](https://flutter.dev/go/adaptive-layout-foldables).
 ///  * [Material Design 3 Specifications] (https://m3.material.io/foundations/adaptive-design/overview).
 class AdaptiveLayout extends StatefulWidget {
