@@ -136,12 +136,12 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
     }
 
     for (final _SlotIds item in _SlotIds.values) {
-      notifiers[item.name] = ValueNotifier<Key?>(null);
-      notifiers[item.name]!.addListener(() {
-        isAnimating.add(item.name);
-        _controller.reset();
-        _controller.forward();
-      });
+      notifiers[item.name] = ValueNotifier<Key?>(null)
+        ..addListener(() {
+          isAnimating.add(item.name);
+          _controller.reset();
+          _controller.forward();
+        });
     }
 
     _controller.addStatusListener((AnimationStatus status) {
