@@ -19,15 +19,12 @@ typedef RouteRedirector = RouteMatchList Function(RouteMatchList matches,
 RouteMatchList redirect(RouteMatchList prevMatchList,
     RouteConfiguration configuration, RouteMatcher matcher,
     {Object? extra}) {
-  RouteMatchList matches;
-
   // Store each redirect to detect loops
   final List<RouteMatchList> redirects = <RouteMatchList>[prevMatchList];
 
   // Keep looping until redirecting is done
   while (true) {
     final RouteMatchList currentMatches = redirects.last;
-
     // Check for top-level redirect
     final Uri uri = currentMatches.location;
     final String? topRedirectLocation = configuration.topRedirect(
@@ -50,11 +47,8 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
       continue;
     }
 
-    // If there's no top-level redirect, keep the matches the same as before.
-    matches = currentMatches;
-
     // Merge new params to keep params from previously matched paths, e.g.
-    // /users/:userId/book/:bookId provides userId and bookId to book/:bookId
+    // /users/:userId/book/:bookId provides userId and bookId to bookgit /:bookId
     Map<String, String> previouslyMatchedParams = <String, String>{};
     for (final RouteMatch match in currentMatches.matches) {
       assert(
@@ -65,35 +59,35 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
       previouslyMatchedParams = match.encodedParams;
     }
 
-    // check top route for redirect
-    final RouteMatch? top = matches.isNotEmpty ? matches.last : null;
-    if (top == null) {
-      break;
+    // check route redirection.
+    RouteMatchList? newMatchList;
+    for (final RouteMatch match in currentMatches.matches) {
+      final String? redirectedLocation = match.route.redirect(
+        GoRouterState(
+          configuration,
+          location: currentMatches.location.toString(),
+          subloc: match.subloc,
+          name: match.route.name,
+          path: match.route.path,
+          fullpath: match.fullpath,
+          extra: match.extra,
+          params: match.decodedParams,
+          queryParams: match.queryParams,
+        ),
+      );
+      if (redirectedLocation != null) {
+        newMatchList = matcher.findMatch(redirectedLocation);
+        _addRedirect(redirects, newMatchList, prevMatchList.location,
+            configuration.redirectLimit);
+        break;
+      }
     }
-    final String? topRouteLocation = top.route.redirect(
-      GoRouterState(
-        configuration,
-        location: currentMatches.location.toString(),
-        subloc: top.subloc,
-        name: top.route.name,
-        path: top.route.path,
-        fullpath: top.fullpath,
-        extra: top.extra,
-        params: top.decodedParams,
-        queryParams: top.queryParams,
-      ),
-    );
-
-    if (topRouteLocation == null) {
-      break;
+    if (newMatchList != null) {
+      continue;
     }
 
-    final RouteMatchList newMatchList = matcher.findMatch(topRouteLocation);
-    _addRedirect(redirects, newMatchList, prevMatchList.location,
-        configuration.redirectLimit);
-    continue;
+    return currentMatches;
   }
-  return matches;
 }
 
 /// A configuration error detected while processing redirects.

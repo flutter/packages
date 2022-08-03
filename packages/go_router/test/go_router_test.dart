@@ -7,6 +7,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/delegate.dart';
@@ -17,6 +18,17 @@ import 'test_helpers.dart';
 
 const bool enableLogs = true;
 final Logger log = Logger('GoRouter tests');
+
+Future<void> sendPlatformUrl(String url) async {
+  final Map<String, dynamic> testRouteInformation = <String, dynamic>{
+    'location': url,
+  };
+  final ByteData message = const JSONMethodCodec().encodeMethodCall(
+    MethodCall('pushRouteInformation', testRouteInformation),
+  );
+  await ServicesBinding.instance.defaultBinaryMessenger
+      .handlePlatformMessage('flutter/navigation', message, (_) {});
+}
 
 void main() {
   if (enableLogs)
@@ -812,12 +824,24 @@ void main() {
           ],
         ),
       ];
+      bool redirected = false;
 
-      final GoRouter router = await createRouter(routes, tester,
-          redirect: (GoRouterState state) =>
-              state.subloc == '/login' ? null : '/login');
+      final GoRouter router =
+          await createRouter(routes, tester, redirect: (GoRouterState state) {
+        redirected = true;
+        return state.subloc == '/login' ? null : '/login';
+      });
 
       expect(router.location, '/login');
+      expect(redirected, isTrue);
+
+      redirected = false;
+      // Directly set the url through platform message.
+      await sendPlatformUrl('/dummy');
+
+      await tester.pumpAndSettle();
+      expect(router.location, '/login');
+      expect(redirected, isTrue);
     });
 
     testWidgets('top-level redirect w/ named routes',
@@ -880,6 +904,49 @@ void main() {
       router.go('/dummy');
       await tester.pump();
       expect(router.location, '/login');
+    });
+
+    testWidgets('top-level redirect take priority over route level',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+                path: 'dummy',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen(),
+                redirect: (GoRouterState state) {
+                  // should never be reached.
+                  assert(false);
+                  return '/dummy2';
+                }),
+            GoRoute(
+                path: 'dummy2',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen()),
+            GoRoute(
+                path: 'login',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const LoginScreen()),
+          ],
+        ),
+      ];
+      bool redirected = false;
+      final GoRouter router =
+          await createRouter(routes, tester, redirect: (GoRouterState state) {
+        redirected = true;
+        return state.subloc == '/login' ? null : '/login';
+      });
+      redirected = false;
+      // Directly set the url through platform message.
+      await sendPlatformUrl('/dummy');
+
+      await tester.pumpAndSettle();
+      expect(router.location, '/login');
+      expect(redirected, isTrue);
     });
 
     testWidgets('route-level redirect w/ named routes',
@@ -1217,6 +1284,51 @@ void main() {
 
       expect(isCallTopRedirect, true);
       expect(isCallRouteRedirect, true);
+    });
+
+    testWidgets('parent route level redirect take priority over child',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+                path: 'dummy',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen(),
+                redirect: (GoRouterState state) => '/other',
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: 'dummy2',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const DummyScreen(),
+                    redirect: (GoRouterState state) {
+                      assert(false);
+                      return '/other2';
+                    },
+                  ),
+                ]),
+            GoRoute(
+                path: 'other',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen()),
+            GoRoute(
+                path: 'other2',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen()),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      // Directly set the url through platform message.
+      await sendPlatformUrl('/dummy/dummy2');
+
+      await tester.pumpAndSettle();
+      expect(router.location, '/other');
     });
   });
 
