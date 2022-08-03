@@ -223,7 +223,12 @@ class PersonScreen extends DummyScreen {
 }
 
 class DummyScreen extends StatelessWidget {
-  const DummyScreen({Key? key}) : super(key: key);
+  const DummyScreen({
+    this.queryParams = const <String, dynamic>{},
+    Key? key,
+  }) : super(key: key);
+
+  final Map<String, dynamic> queryParams;
 
   @override
   Widget build(BuildContext context) => const Placeholder();

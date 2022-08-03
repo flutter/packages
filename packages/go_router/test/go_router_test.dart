@@ -1586,6 +1586,53 @@ void main() {
       expect(matches.last.decodedParams['fid'], fid);
       expect(matches.last.decodedParams['pid'], pid);
     });
+
+    testWidgets('keep param in nested route', (WidgetTester tester) async {
+      const Map<String, dynamic> queryParams = <String, dynamic>{
+        'q1': 'v1',
+        'q2': <String>['v2', 'v3'],
+      };
+      void expectLocationWithQueryParams(String location) {
+        final Uri uri = Uri.parse(location);
+        expect(uri.path, '/page');
+        expect(uri.queryParameters, queryParams);
+      }
+
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          name: 'page',
+          path: '/page',
+          builder: (BuildContext context, GoRouterState state) {
+            expectLocationWithQueryParams(state.location);
+            return DummyScreen(
+              queryParams: state.queryParams,
+            );
+          },
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      router.goNamed('page', queryParams: queryParams);
+      await tester.pump();
+      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+
+      expect(matches, hasLength(1));
+      expectLocationWithQueryParams(router.location);
+      expect(
+        router.screenFor(matches.last).runtimeType,
+        isA<DummyScreen>().having(
+          (DummyScreen screen) => screen.queryParams,
+          'screen.queryParams',
+          queryParams,
+        ),
+      );
+    });
   });
 
   group('refresh listenable', () {
