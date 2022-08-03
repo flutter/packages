@@ -61,7 +61,9 @@ class App extends StatelessWidget {
           title: title,
           debugShowCheckedModeBanner: false,
           builder: (BuildContext context, Widget? child) {
-            return _appState.loginInfo.loggedIn ? AuthOverlay(child: child!) : child!;
+            return _appState.loginInfo.loggedIn
+                ? AuthOverlay(child: child!)
+                : child!;
           },
         ),
       );
