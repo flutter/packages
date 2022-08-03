@@ -36,39 +36,17 @@ class App extends StatelessWidget {
       GoRoute(
         path: '/',
         builder: (BuildContext context, GoRouterState state) {
-          return Screen(
-            text: 'Page 1',
-          );
+          return ScreenA();
         },
       ),
       GoRoute(
-        path: '/page2',
+        path: '/b',
         builder: (BuildContext context, GoRouterState state) {
-          return Screen(
-            text: 'Page 2',
-          );
+          return ScreenB();
         },
       ),
     ],
   );
-}
-
-class Screen extends StatelessWidget {
-  final String text;
-
-  const Screen({
-    required this.text,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text(text),
-      ),
-    );
-  }
 }
 ```
 
