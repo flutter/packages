@@ -8,6 +8,15 @@ import 'breakpoints.dart';
 import 'slot_layout.dart';
 import 'slot_layout_config.dart';
 
+enum _SlotIds {
+  primaryNavigation,
+  secondaryNavigation,
+  topNavigation,
+  bottomNavigation,
+  body,
+  secondaryBody,
+}
+
 const String _kPrimaryNavigationID = 'primaryNavigation';
 const String _kSecondaryNavigationID = 'secondaryNavigation';
 const String _kTopNavigationID = 'topNavigation';
@@ -129,13 +138,13 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
     _kSecondaryBodyID: ValueNotifier<Key?>(null),
   };
 
-  Map<String, bool> isAnimating = <String, bool>{
-    _kPrimaryNavigationID: false,
-    _kSecondaryNavigationID: false,
-    _kTopNavigationID: false,
-    _kBottomNavigationID: false,
-    _kBodyID: false,
-    _kSecondaryBodyID: false,
+  Set<String> isAnimating = <String>{
+    _kPrimaryNavigationID,
+    _kSecondaryNavigationID,
+    _kTopNavigationID,
+    _kBottomNavigationID,
+    _kBodyID,
+    _kSecondaryBodyID,
   };
 
   @override
@@ -154,7 +163,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
 
     notifiers.forEach((String key, ValueNotifier<Key?> notifier) {
       notifier.addListener(() {
-        isAnimating[key] = true;
+        isAnimating.add(key);
         _controller.reset();
         _controller.forward();
       });
@@ -162,7 +171,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
 
     _controller.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed) {
-        isAnimating.updateAll((_, __) => false);
+        isAnimating.clear();
       }
     });
 
@@ -260,7 +269,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
   final Map<String, SlotLayout?> slots;
   final Map<String, SlotLayoutConfig?> chosenWidgets;
   final Map<String, Size?> slotSizes;
-  final Map<String, bool> isAnimating;
+  final Set<String> isAnimating;
   final AnimationController controller;
   final double? bodyRatio;
   final bool internalAnimations;
@@ -277,7 +286,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
 
     // An animation that is used as either a width or height value on the Size for the body/secondaryBody.
     double animatedSize(double begin, double end) {
-      if (isAnimating[_kSecondaryBodyID]!) {
+      if (isAnimating.contains(_kSecondaryBodyID)) {
         return internalAnimations
             ? Tween<double>(begin: begin, end: end)
                 .animate(CurvedAnimation(
