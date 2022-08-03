@@ -20,11 +20,13 @@ class _MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdaptiveScaffold(
-      // An option to override the default breakpoints used for small, medium, and large.
+      // An option to override the default breakpoints used for small, medium,
+      // and large.
       smallBreakpoint: Breakpoints.small,
       mediumBreakpoint: Breakpoints.medium,
       largeBreakpoint: Breakpoints.large,
-      // The selectedIndex property is not required but defaults to 0 and is used internally for the NavigationRail.
+      // The selectedIndex property is not required but defaults to 0 and is
+      // used internally for the NavigationRail.
       selectedIndex: 0,
       // Define the list of destinations to be used within the app.
       destinations: const <NavigationDestination>[
@@ -44,7 +46,8 @@ class _MyHomePage extends StatelessWidget {
             ),
           )
       ]),
-      // Override the default body during the small breakpoint to instead become a ListView.
+      // Override the default body during the small breakpoint to instead become
+      // a ListView.
       smallBody: (_) => ListView.builder(
         itemCount: 10,
         itemBuilder: (BuildContext context, int index) => Padding(
@@ -58,7 +61,9 @@ class _MyHomePage extends StatelessWidget {
       // Define a default secondaryBody.
       secondaryBody: (_) =>
           Container(color: const Color.fromARGB(255, 234, 158, 192)),
-      // Override the default secondaryBody during the smallBreakpoint to be empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly overriden.
+      // Override the default secondaryBody during the smallBreakpoint to be
+      // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
+      // overriden.
       smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
     );
   }

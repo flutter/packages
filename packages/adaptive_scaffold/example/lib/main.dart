@@ -44,7 +44,8 @@ class _MyHomePage extends StatefulWidget {
 
 class __MyHomePageState extends State<_MyHomePage>
     with TickerProviderStateMixin, ChangeNotifier {
-  // A listener used for the controllers to reanimate the staggered animation of the navigation elements.
+  // A listener used for the controllers to reanimate the staggered animation of
+  // the navigation elements.
   ValueNotifier<bool?> showGridView = ValueNotifier<bool?>(false);
 
   // The index of the selected mail card.
@@ -113,7 +114,8 @@ class __MyHomePageState extends State<_MyHomePage>
   Widget build(BuildContext context) {
     const Color iconColor = Color.fromARGB(255, 29, 25, 43);
 
-    // These are the destinations used within the AdaptiveScaffold navigation builders.
+    // These are the destinations used within the AdaptiveScaffold navigation
+    // builders.
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
           label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
@@ -133,19 +135,25 @@ class __MyHomePageState extends State<_MyHomePage>
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 234, 227, 241),
-      // Usage of AdaptiveLayout suite begins here. AdaptiveLayout takes LayoutSlots for its variety of screen slots.
+      // Usage of AdaptiveLayout suite begins here. AdaptiveLayout takes
+      // LayoutSlots for its variety of screen slots.
       body: AdaptiveLayout(
-        // Each SlotLayout has a config which maps Breakpoints to SlotLayoutConfigs.
+        // Each SlotLayout has a config which maps Breakpoints to
+        // SlotLayoutConfigs.
         primaryNavigation: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig?>{
-            // The breakpoint used here is from the Breakpoints class but custom Breakpoints can be defined by extending the Breakpoint class
+            // The breakpoint used here is from the Breakpoints class but custom
+            // Breakpoints can be defined by extending the Breakpoint class
             Breakpoints.medium: SlotLayoutConfig(
-              // Every SlotLayoutConfig takes a key and a builder. The builder is to save memory that would be spent on initialization.
+              // Every SlotLayoutConfig takes a key and a builder. The builder
+              // is to save memory that would be spent on initialization.
               key: const Key('primaryNavigation'),
               builder: (_) => SizedBox(
                 width: 72,
                 height: MediaQuery.of(context).size.height,
-                // Usually it would be easier to use a builder from AdaptiveScaffold for these types of navigations but this navigation has custom staggered item animations.
+                // Usually it would be easier to use a builder from
+                // AdaptiveScaffold for these types of navigations but this
+                // navigation has custom staggered item animations.
                 child: NavigationRail(
                   onDestinationSelected: (int index) {
                     setState(() {
@@ -206,7 +214,8 @@ class __MyHomePageState extends State<_MyHomePage>
             ),
             Breakpoints.large: SlotLayoutConfig(
               key: const Key('primaryNavigation1'),
-              // The AdaptiveScaffold builder here greatly simplifies navigational elements.
+              // The AdaptiveScaffold builder here greatly simplifies
+              // navigational elements.
               builder: (_) => AdaptiveScaffold.toNavigationRail(
                 leading: const _ComposeButton(),
                 onDestinationSelected: (int index) {
@@ -225,7 +234,9 @@ class __MyHomePageState extends State<_MyHomePage>
           config: <Breakpoint, SlotLayoutConfig?>{
             Breakpoints.standard: SlotLayoutConfig(
               key: const Key('body'),
-              // The conditional here is for navigation screens. The first screen shows the main screen and every other screeen shows ExamplePage.
+              // The conditional here is for navigation screens. The first
+              // screen shows the main screen and every other screeen shows
+              //  ExamplePage.
               builder: (_) => (_navigationIndex == 0)
                   ? Padding(
                       padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
@@ -243,7 +254,8 @@ class __MyHomePageState extends State<_MyHomePage>
             ? SlotLayout(
                 config: <Breakpoint, SlotLayoutConfig?>{
                   Breakpoints.medium: SlotLayoutConfig(
-                    // This overrides the default behavior of the secondaryBody disappearing as it is animating out.
+                    // This overrides the default behavior of the secondaryBody
+                    // disappearing as it is animating out.
                     outAnimation: AdaptiveScaffold.stayOnScreen,
                     key: const Key('sb1'),
                     builder: (_) =>
@@ -262,7 +274,8 @@ class __MyHomePageState extends State<_MyHomePage>
           config: <Breakpoint, SlotLayoutConfig?>{
             Breakpoints.small: SlotLayoutConfig(
               key: const Key('bn'),
-              // You can define inAnimations or outAnimations to override the default offset transition.
+              // You can define inAnimations or outAnimations to override the
+              // default offset transition.
               outAnimation: AdaptiveScaffold.topToBottom,
               builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
                   destinations: destinations),
@@ -424,8 +437,10 @@ class _ItemListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // The behavior of opening a detail view is different on small screens than large screens.
-        // Small screens open a modal with the detail view while large screens simply show the details on the secondaryBody.
+        // The behavior of opening a detail view is different on small screens
+        // than large screens.
+        // Small screens open a modal with the detail view while large screens
+        // simply show the details on the secondaryBody.
         if (!Breakpoints.mediumAndUp.isActive(context)) {
           Navigator.of(context).pushNamed(
             _ExtractRouteArguments.routeName,
@@ -525,7 +540,8 @@ class _DetailTile extends StatelessWidget {
   }
 }
 
-// The ScreenArguments used to pass arguments to the RouteDetailView as a named route.
+// The ScreenArguments used to pass arguments to the RouteDetailView as a named
+// route.
 class _ScreenArguments {
   _ScreenArguments({
     required this.item,

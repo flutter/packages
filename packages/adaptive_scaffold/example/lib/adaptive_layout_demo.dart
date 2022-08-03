@@ -34,7 +34,8 @@ class _MyHomePage extends StatelessWidget {
           icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
 
-    // AdaptiveLayout has a number of slots that take SlotLayouts and these SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
+    // AdaptiveLayout has a number of slots that take SlotLayouts and these
+    // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
     return AdaptiveLayout(
       // Primary navigation config has nothing from 0 to 600, then an unextended
       // NavigationRail then an extended NavigationRail.
@@ -54,7 +55,8 @@ class _MyHomePage extends StatelessWidget {
           ),
         },
       ),
-      // Body switches between a ListView and a GridView from small to medium breakpoints and onwards.
+      // Body switches between a ListView and a GridView from small to medium
+      // breakpoints and onwards.
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig?>{
           Breakpoints.small: SlotLayoutConfig(
