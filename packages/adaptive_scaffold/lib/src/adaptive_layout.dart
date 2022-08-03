@@ -44,7 +44,7 @@ class AdaptiveLayout extends StatefulWidget {
     this.secondaryBody,
     this.bodyRatio,
     this.internalAnimations = true,
-    this.horizontalBody = true,
+    this.bodyOrientation = Axis.horizontal,
     super.key,
   });
 
@@ -97,11 +97,11 @@ class AdaptiveLayout extends StatefulWidget {
   /// Defaults to true.
   final bool internalAnimations;
 
-  /// Whether to orient the body and secondaryBody in horizontal order (true) or
-  /// in vertical order (false).
+  /// The orientation of the body and secondaryBody. Either horizontal (side by
+  /// side) or vertical (top to bottom).
   ///
-  /// Defaults to true.
-  final bool horizontalBody;
+  /// Defaults to Axis.horizontal.
+  final Axis bodyOrientation;
 
   @override
   State<AdaptiveLayout> createState() => _AdaptiveLayoutState();
@@ -233,7 +233,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
         bodyRatio: widget.bodyRatio,
         isAnimating: isAnimating,
         internalAnimations: widget.internalAnimations,
-        horizontalBody: widget.horizontalBody,
+        bodyOrientation: widget.bodyOrientation,
         textDirection: Directionality.of(context) == TextDirection.ltr,
         hinge: hinge,
       ),
@@ -252,7 +252,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     required this.bodyRatio,
     required this.isAnimating,
     required this.internalAnimations,
-    required this.horizontalBody,
+    required this.bodyOrientation,
     required this.textDirection,
     this.hinge,
   }) : super(relayout: controller);
@@ -264,7 +264,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
   final AnimationController controller;
   final double? bodyRatio;
   final bool internalAnimations;
-  final bool horizontalBody;
+  final Axis bodyOrientation;
   final bool textDirection;
   final Rect? hinge;
 
@@ -362,7 +362,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
         if (!textDirection) {
           currentBodySize = layoutChild(_kBodyID,
               BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
-        } else if (horizontalBody) {
+        } else if (bodyOrientation == Axis.horizontal) {
           double beginWidth;
           if (bodyRatio == null) {
             beginWidth = halfWidth - leftMargin;
@@ -387,7 +387,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
         }
         layoutChild(_kSecondaryBodyID, BoxConstraints.loose(size));
       } else {
-        if (horizontalBody) {
+        if (bodyOrientation == Axis.horizontal) {
           // Take this path if the body and secondaryBody are laid out horizontally.
           if (textDirection) {
             // Take this path if the textDirection is LTR.
@@ -464,7 +464,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
         }
       }
       // Handle positioning for the body and secondaryBody.
-      if (horizontalBody &&
+      if (bodyOrientation == Axis.horizontal &&
           !textDirection &&
           chosenWidgets[_kSecondaryBodyID] != null) {
         if (hinge != null) {
@@ -480,7 +480,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
         }
       } else {
         positionChild(_kBodyID, Offset(leftMargin, topMargin));
-        if (horizontalBody) {
+        if (bodyOrientation == Axis.horizontal) {
           if (hinge != null) {
             positionChild(
                 _kSecondaryBodyID,

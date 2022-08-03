@@ -49,7 +49,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.largeBreakpoint = Breakpoints.large,
     this.drawerBreakpoint = Breakpoints.smallDesktop,
     this.internalAnimations = true,
-    this.horizontalBody = true,
+    this.bodyOrientation = Axis.horizontal,
     this.onSelectedIndexChange,
     this.useDrawer = true,
     this.appBar,
@@ -138,11 +138,11 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Defaults to true.
   final bool internalAnimations;
 
-  /// Whether to orient the body and secondaryBody in horizontal order (true) or
-  /// in vertical order (false).
+  /// The orientation of the body and secondaryBody. Either horizontal (side by
+  /// side) or vertical (top to bottom).
   ///
-  /// Defaults to true.
-  final bool horizontalBody;
+  /// Defaults to Axis.horizontal.
+  final Axis bodyOrientation;
 
   /// Whether to use a [Drawer] over a [BottomNavigationBar] when not on mobile
   /// and Breakpoint is small.
@@ -337,7 +337,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               )
             : null,
         body: AdaptiveLayout(
-          horizontalBody: widget.horizontalBody,
+          bodyOrientation: widget.bodyOrientation,
           bodyRatio: widget.bodyRatio,
           internalAnimations: widget.internalAnimations,
           primaryNavigation: widget.destinations != null &&

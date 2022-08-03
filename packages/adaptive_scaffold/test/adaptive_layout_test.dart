@@ -44,7 +44,7 @@ Widget on(BuildContext _) {
 Future<MediaQuery> layout({
   required double width,
   required WidgetTester tester,
-  bool orientation = true,
+  Axis orientation = Axis.horizontal,
   TextDirection directionality = TextDirection.ltr,
   double? bodyRatio,
   bool animations = true,
@@ -55,7 +55,7 @@ Future<MediaQuery> layout({
     child: Directionality(
       textDirection: directionality,
       child: AdaptiveLayout(
-        horizontalBody: orientation,
+        bodyOrientation: orientation,
         bodyRatio: bodyRatio,
         internalAnimations: animations,
         primaryNavigation: SlotLayout(
@@ -240,7 +240,7 @@ void main() {
   testWidgets('adaptive layout correct layout when body vertical',
       (WidgetTester tester) async {
     await tester.pumpWidget(
-        await layout(width: 400, tester: tester, orientation: false));
+        await layout(width: 400, tester: tester, orientation: Axis.vertical));
     await tester.pumpAndSettle();
     expect(tester.getTopLeft(tnav), Offset.zero);
     expect(tester.getTopLeft(snav), const Offset(390, 10));
