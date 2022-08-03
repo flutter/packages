@@ -1,3 +1,10 @@
+## 5.0.0
+
+- **BREAKING CHANGES**:
+  - Removes GoRouterRefreshStream
+  - Removes navigatorBuilder
+  - Removes urlPathStrategy
+
 ## 4.2.6
 
 - Fixes rendering issues in the README.

@@ -4,19 +4,13 @@
 
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
-import 'package:go_router/src/typedefs.dart';
 
-Future<GoRouter> createGoRouter(
-  WidgetTester tester, {
-  GoRouterNavigatorBuilder? navigatorBuilder,
-}) async {
+Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final GoRouter goRouter = GoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
@@ -26,7 +20,6 @@ Future<GoRouter> createGoRouter(
         builder: (_, __) => TestErrorScreen(TestFailure('Exception')),
       ),
     ],
-    navigatorBuilder: navigatorBuilder,
   );
   await tester.pumpWidget(MaterialApp.router(
       routeInformationProvider: goRouter.routeInformationProvider,
@@ -141,21 +134,6 @@ class GoRouterPopSpy extends GoRouter {
   @override
   void pop() {
     popped = true;
-  }
-}
-
-class GoRouterRefreshStreamSpy extends GoRouterRefreshStream {
-  GoRouterRefreshStreamSpy(
-    Stream<dynamic> stream,
-  )   : notifyCount = 0,
-        super(stream);
-
-  late int notifyCount;
-
-  @override
-  void notifyListeners() {
-    notifyCount++;
-    super.notifyListeners();
   }
 }
 
