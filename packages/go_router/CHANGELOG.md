@@ -1,6 +1,10 @@
+## 4.2.6
+
+- Fixes rendering issues in the README.
+
 ## 4.2.5
 
-- Fixes rendering issues in teh README.
+- Fixes a bug where calling extra parameter is always null in route level redirect callback
 
 ## 4.2.4
 
