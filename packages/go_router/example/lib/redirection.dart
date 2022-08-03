@@ -8,6 +8,12 @@ import 'package:provider/provider.dart';
 
 import 'shared/data.dart';
 
+// This scenario demonstrates how to use redirect to handle a sign-in flow.
+//
+// The GoRouter.redirect method is called before the app is navigate to a
+// new page. You can choose to redirect to a different page by returning a
+// non-null URL string.
+
 void main() => runApp(App());
 
 /// The main app.
@@ -38,26 +44,7 @@ class App extends StatelessWidget {
       GoRoute(
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
-            HomeScreen(families: Families.data),
-        routes: <GoRoute>[
-          GoRoute(
-            path: 'family/:fid',
-            builder: (BuildContext context, GoRouterState state) =>
-                FamilyScreen(
-              family: Families.family(state.params['fid']!),
-            ),
-            routes: <GoRoute>[
-              GoRoute(
-                path: 'person/:pid',
-                builder: (BuildContext context, GoRouterState state) {
-                  final Family family = Families.family(state.params['fid']!);
-                  final Person person = family.person(state.params['pid']!);
-                  return PersonScreen(family: family, person: person);
-                },
-              ),
-            ],
-          ),
-        ],
+            const HomeScreen(),
       ),
       GoRoute(
         path: '/login',
@@ -109,7 +96,6 @@ class LoginScreen extends StatelessWidget {
 
                   // router will automatically redirect from /login to / using
                   // refreshListenable
-                  //context.go('/');
                 },
                 child: const Text('Login'),
               ),
@@ -119,13 +105,10 @@ class LoginScreen extends StatelessWidget {
       );
 }
 
-/// The home screen that shows a list of families.
+/// The home screen.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({required this.families, Key? key}) : super(key: key);
-
-  /// The list of families.
-  final List<Family> families;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -142,57 +125,9 @@ class HomeScreen extends StatelessWidget {
           )
         ],
       ),
-      body: ListView(
-        children: <Widget>[
-          for (final Family f in families)
-            ListTile(
-              title: Text(f.name),
-              onTap: () => context.go('/family/${f.id}'),
-            )
-        ],
+      body: const Center(
+        child: Text('HomeScreen'),
       ),
     );
   }
-}
-
-/// The screen that shows a list of persons in a family.
-class FamilyScreen extends StatelessWidget {
-  /// Creates a [FamilyScreen].
-  const FamilyScreen({required this.family, Key? key}) : super(key: key);
-
-  /// The family to display.
-  final Family family;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(family.name)),
-        body: ListView(
-          children: <Widget>[
-            for (final Person p in family.people)
-              ListTile(
-                title: Text(p.name),
-                onTap: () => context.go('/family/${family.id}/person/${p.id}'),
-              ),
-          ],
-        ),
-      );
-}
-
-/// The person screen.
-class PersonScreen extends StatelessWidget {
-  /// Creates a [PersonScreen].
-  const PersonScreen({required this.family, required this.person, Key? key})
-      : super(key: key);
-
-  /// The family this person belong to.
-  final Family family;
-
-  /// The person to be displayed.
-  final Person person;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(person.name)),
-        body: Text('${person.name} ${family.name} is ${person.age} years old'),
-      );
 }

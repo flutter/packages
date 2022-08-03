@@ -4,9 +4,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 import 'shared/data.dart';
+
+// This scenario demonstrates how to navigate using named locations instead of
+// URLs.
+//
+// Instead of hardcoding the URI locations , you can also use the named
+// locations. To use this API, give a unique name to each GoRoute. The name can
+// then be used in context.namedLocation to be translate back to the actual URL
+// location.
 
 void main() => runApp(App());
 
@@ -15,21 +22,16 @@ class App extends StatelessWidget {
   /// Creates an [App].
   App({Key? key}) : super(key: key);
 
-  final LoginInfo _loginInfo = LoginInfo();
-
   /// The title of the app.
   static const String title = 'GoRouter Example: Named Routes';
 
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider<LoginInfo>.value(
-        value: _loginInfo,
-        child: MaterialApp.router(
-          routeInformationProvider: _router.routeInformationProvider,
-          routeInformationParser: _router.routeInformationParser,
-          routerDelegate: _router.routerDelegate,
-          title: title,
-          debugShowCheckedModeBanner: false,
-        ),
+  Widget build(BuildContext context) => MaterialApp.router(
+        routeInformationProvider: _router.routeInformationProvider,
+        routeInformationParser: _router.routeInformationParser,
+        routerDelegate: _router.routerDelegate,
+        title: title,
+        debugShowCheckedModeBanner: false,
       );
 
   late final GoRouter _router = GoRouter(
@@ -62,47 +64,7 @@ class App extends StatelessWidget {
           ),
         ],
       ),
-      GoRoute(
-        name: 'login',
-        path: '/login',
-        builder: (BuildContext context, GoRouterState state) =>
-            const LoginScreen(),
-      ),
     ],
-
-    // redirect to the login page if the user is not logged in
-    redirect: (GoRouterState state) {
-      // if the user is not logged in, they need to login
-      final bool loggedIn = _loginInfo.loggedIn;
-      final String loginloc = state.namedLocation('login');
-      final bool loggingIn = state.subloc == loginloc;
-
-      // bundle the location the user is coming from into a query parameter
-      final String homeloc = state.namedLocation('home');
-      final String fromloc = state.subloc == homeloc ? '' : state.subloc;
-      if (!loggedIn) {
-        return loggingIn
-            ? null
-            : state.namedLocation(
-                'login',
-                queryParams: <String, String>{
-                  if (fromloc.isNotEmpty) 'from': fromloc
-                },
-              );
-      }
-
-      // if the user is logged in, send them where they were going before (or
-      // home if they weren't going anywhere)
-      if (loggingIn) {
-        return state.queryParams['from'] ?? homeloc;
-      }
-
-      // no need to redirect at all
-      return null;
-    },
-
-    // changes on the listenable will cause the router to refresh it's route
-    refreshListenable: _loginInfo,
   );
 }
 
@@ -116,26 +78,17 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LoginInfo info = context.read<LoginInfo>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(App.title),
-        actions: <Widget>[
-          IconButton(
-            onPressed: info.logout,
-            tooltip: 'Logout: ${info.userName}',
-            icon: const Icon(Icons.logout),
-          )
-        ],
       ),
       body: ListView(
         children: <Widget>[
           for (final Family f in families)
             ListTile(
               title: Text(f.name),
-              onTap: () => context
-                  .goNamed('family', params: <String, String>{'fid': f.id}),
+              onTap: () => context.go(context.namedLocation('family',
+                  params: <String, String>{'fid': f.id})),
             )
         ],
       ),
@@ -186,30 +139,5 @@ class PersonScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: Text(person.name)),
         body: Text('${person.name} ${family.name} is ${person.age} years old'),
-      );
-}
-
-/// The login screen.
-class LoginScreen extends StatelessWidget {
-  /// Creates a [LoginScreen].
-  const LoginScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  // log a user in, letting all the listeners know
-                  context.read<LoginInfo>().login('test-user');
-                },
-                child: const Text('Login'),
-              ),
-            ],
-          ),
-        ),
       );
 }

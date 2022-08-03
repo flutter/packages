@@ -6,7 +6,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'shared/data.dart';
+import '../shared/data.dart';
 
 void main() => runApp(App());
 

@@ -1,6 +1,18 @@
-## 4.2.3
+## 4.2.6
 
 - Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+
+## 4.2.5
+
+- Fixes a bug where calling extra parameter is always null in route level redirect callback
+
+## 4.2.4
+
+- Rewrites Readme and examples.
+
+## 4.2.3
+
+- Fixes a bug where the ValueKey to be the same when a page was pushed multiple times.
 
 ## 4.2.2
 
