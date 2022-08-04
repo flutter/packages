@@ -14,22 +14,6 @@ void main() {
   );
 }
 
-class _CustomSmallBreakpoint extends Breakpoint {
-  @override
-  bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 0 &&
-        MediaQuery.of(context).size.width < 400;
-  }
-}
-
-class _CustomMediumBreakpoint extends Breakpoint {
-  @override
-  bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 400 &&
-        MediaQuery.of(context).size.width < 840;
-  }
-}
-
 class _MyHomePage extends StatelessWidget {
   const _MyHomePage({Key? key}) : super(key: key);
 
@@ -47,31 +31,36 @@ class _MyHomePage extends StatelessWidget {
         )
     ];
 
-    return AdaptiveScaffold(
-      // An option to override the default breakpoints used for small, medium,
-      // and large.
-      smallBreakpoint: _CustomSmallBreakpoint(),
-      mediumBreakpoint: _CustomMediumBreakpoint(),
-      // Define the list of destinations to be used within the app.
-      destinations: const <NavigationDestination>[
-        NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
-        NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
-        NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
-        NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
-      ],
-      // Define the default body to be a GridView.
-      body: (_) => GridView.count(crossAxisCount: 2, children: children),
-      // Override the default body during the small breakpoint to instead become
-      // a ListView.
-      smallBody: (_) => ListView.builder(
-          itemCount: 10, itemBuilder: (_, int idx) => children[idx]),
-      // Define a default secondaryBody.
-      secondaryBody: (_) =>
-          Container(color: const Color.fromARGB(255, 234, 158, 192)),
-      // Override the default secondaryBody during the smallBreakpoint to be
-      // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
-      // overriden.
-      smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+    return BottomNavigationBarTheme(
+      data: const BottomNavigationBarThemeData(unselectedItemColor: Colors.black, selectedItemColor: Colors.black),
+      child: AdaptiveScaffold(
+        // An option to override the default breakpoints used for small, medium,
+        // and large.
+        smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
+        mediumBreakpoint: const WidthPlatformBreakpoint(begin:700, end: 1000),
+        largeBreakpoint:  const WidthPlatformBreakpoint(begin: 1000),
+        useDrawer:false,
+        // Define the list of destinations to be used within the app.
+        destinations: const <NavigationDestination>[
+          NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+          NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
+          NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
+          NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
+        ],
+        // Define the default body to be a GridView.
+        body: (_) => GridView.count(crossAxisCount: 2, children: children),
+        // Override the default body during the small breakpoint to instead become
+        // a ListView.
+        smallBody: (_) => ListView.builder(
+            itemCount: 10, itemBuilder: (_, int idx) => children[idx]),
+        // Define a default secondaryBody.
+        secondaryBody: (_) =>
+            Container(color: const Color.fromARGB(255, 234, 158, 192)),
+        // Override the default secondaryBody during the smallBreakpoint to be
+        // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
+        // overriden.
+        smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+      ),
     );
   }
 }
