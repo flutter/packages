@@ -184,7 +184,7 @@ void defineTests() {
       },
     );
   });
-  
+
   group('expandLists', () {
     testWidgets(
       'expandLists=true',
