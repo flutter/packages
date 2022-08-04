@@ -126,13 +126,17 @@ class _SlotLayoutState extends State<SlotLayout>
 }
 
 /// Defines how [SlotLayout] should display under a certain [Breakpoint].
-abstract class SlotLayoutConfig extends StatefulWidget {
+abstract class SlotLayoutConfig extends StatelessWidget {
   /// Creates a new [SlotLayoutConfig].
   ///
   /// Returns the child widget as is but holds properties to be accessed by other
   /// classes.
-  const SlotLayoutConfig(
-      {required this.builder, this.inAnimation, this.outAnimation, super.key});
+  const SlotLayoutConfig({
+    required this.builder,
+    this.inAnimation,
+    this.outAnimation,
+    super.key,
+  });
 
   /// The child Widget that [SlotLayout] eventually returns with an animation.
   final WidgetBuilder? builder;
@@ -160,9 +164,6 @@ abstract class SlotLayoutConfig extends StatefulWidget {
   static SlotLayoutConfig empty() {
     return const _SlotLayoutConfig(key: Key(''), builder: null);
   }
-
-  @override
-  State<SlotLayoutConfig> createState() => _SlotLayoutConfigState();
 }
 
 class _SlotLayoutConfig extends SlotLayoutConfig {
@@ -172,13 +173,9 @@ class _SlotLayoutConfig extends SlotLayoutConfig {
     super.outAnimation,
     required super.key,
   });
-}
 
-class _SlotLayoutConfigState extends State<SlotLayoutConfig> {
   @override
   Widget build(BuildContext context) {
-    return (widget.builder != null)
-        ? widget.builder!(context)
-        : const SizedBox.shrink();
+    return (builder != null) ? builder!(context) : const SizedBox.shrink();
   }
 }
