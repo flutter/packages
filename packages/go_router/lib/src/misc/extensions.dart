@@ -40,6 +40,10 @@ extension GoRouterHelper on BuildContext {
   void push(String location, {Object? extra}) =>
       GoRouter.of(this).push(location, extra: extra);
 
+  /// Push a location onto the page stack.
+  void pushAsync(String location, {Object? extra}) =>
+      GoRouter.of(this).pushAsync(location, extra: extra);
+
   /// Navigate to a named route onto the page stack.
   void pushNamed(
     String name, {
@@ -48,6 +52,20 @@ extension GoRouterHelper on BuildContext {
     Object? extra,
   }) =>
       GoRouter.of(this).pushNamed(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
+
+  /// Navigate to a named route onto the page stack.
+  Future<dynamic> pushNamedAsync(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
+      GoRouter.of(this).pushNamedAsync(
         name,
         params: params,
         queryParams: queryParams,
