@@ -190,6 +190,22 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     });
   }
 
+  /// Push a URI location onto the page stack w/ optional query parameters and
+  /// a promise, e.g.
+  /// `/family/f2/person/p1?color=blue`
+  Future<dynamic> pushAsync(String location, {Object? extra}) async {
+    assert(() {
+      log.info('pushing $location');
+      return true;
+    }());
+    _routeInformationParser
+        .parseRouteInformation(
+            DebugGoRouteInformation(location: location, state: extra))
+        .then<void>((RouteMatchList matches) {
+      _routerDelegate.pushAsync(matches.last);
+    });
+  }
+
   /// Push a named route onto the page stack w/ optional parameters, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
   void pushNamed(
@@ -202,6 +218,32 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         namedLocation(name, params: params, queryParams: queryParams),
         extra: extra,
       );
+
+  /// Push a named route onto the page stack w/ optional parameters and a
+  /// promise, e.g.
+  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  Future<dynamic> pushNamedAsync(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) =>
+      pushAsync(
+        namedLocation(name, params: params, queryParams: queryParams),
+        extra: extra,
+      );
+
+  /// Returns `true` if there is more than 1 page on the stack.
+  bool canPop() => _routerDelegate.canPop();
+
+  /// Pop the top page off the GoRouter's page stack.
+  void pop([dynamic result]) {
+    assert(() {
+      log.info('popping $location');
+      return true;
+    }());
+    routerDelegate.pop(result);
+  }
 
   /// Replaces the top-most page of the page stack with the given URL location
   /// w/ optional query parameters, e.g. `/family/f2/person/p1?color=blue`.
@@ -236,18 +278,6 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       namedLocation(name, params: params, queryParams: queryParams),
       extra: extra,
     );
-  }
-
-  /// Returns `true` if there is more than 1 page on the stack.
-  bool canPop() => _routerDelegate.canPop();
-
-  /// Pop the top page off the GoRouter's page stack.
-  void pop() {
-    assert(() {
-      log.info('popping $location');
-      return true;
-    }());
-    _routerDelegate.pop();
   }
 
   /// Refresh the route.
