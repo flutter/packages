@@ -1,3 +1,8 @@
+## 4.3.0
+
+- Adds `pushAsync` and `pushNamedAsync` to `GoRouterHelper` making it posible to await results from a `pop`.
+- Adds an optional parameter to the `pop` method, allowing to return values from a `pop.
+
 ## 4.2.7
 
 - Update README
