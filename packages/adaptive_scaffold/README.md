@@ -9,7 +9,7 @@ cd example/
 flutter run --release
 ```
 ## AdaptiveScaffold:
-AdaptiveScaffold is an abstracted form built upon the aforementioned widgets. It takes a list of destinations and handles all the moving navigational pieces. It still allows for customizability in body/secondaryBody adaptivity. It is much simpler to use but is not the best if you would like high customizability.
+AdaptiveScaffold is an abstracted form built upon AdaptiveLayout. It takes a list of destinations and handles all the moving navigational pieces. It still allows for customizability in body/secondaryBody adaptivity. The body is the primary screen that takes up the space left by the navigational elements. The secondaryBody acts as an option to split the space between two panes for purposes such as having a detail view. There is some automatic functionality with foldables to handle the split between panels properly. AdaptiveScaffold is much simpler to use but is not the best if you would like high customizability.
 ### Example Usage:
 
 <?code-excerpt ...>
@@ -31,9 +31,10 @@ AdaptiveScaffold is an abstracted form built upon the aforementioned widgets. It
 ## The Background Widget Suite
 These are the set of widgets that are used on a lower level and offer more customizability at a cost of more lines of code.
 #### AdaptiveLayout:
-AdaptiveLayout is the top-level widget class that arranges the layout of the slots and their animation, similar to Scaffold. It takes in several LayoutSlots and returns an appropriate layout based on the diagram above. [IMAGE]
+!["AdaptiveLayout's Assigned Slots Displayed on Screen"](example/demo_files/screenSlots.png)
+AdaptiveLayout is the top-level widget class that arranges the layout of the slots and their animation, similar to Scaffold. It takes in several LayoutSlots and returns an appropriate layout based on the diagram above.
 #### SlotLayout:
-SlotLayout handles the adaptivity or the changes between widgets at certain Breakpoints. It also holds the logic for animating between switches. It takes SlotLayoutConfigs mapped to Breakpoints in a config and displays a widget based on that information.
+SlotLayout handles the adaptivity or the changes between widgets at certain Breakpoints. It also holds the logic for animating between breakpoints. It takes SlotLayoutConfigs mapped to Breakpoints in a config and displays a widget based on that information.
 #### SlotLayout.from:
 SlotLayout.from creates a SlotLayoutConfig holds the actual widget to be displayed and the entrance animation and exit animation.
 ### Example Usage:
@@ -87,7 +88,7 @@ AdaptiveLayout(
 ```
 ##
 Both of the examples shown here produce the same output:
-[IMAGE]
+!["Example of a display made with AdaptiveScaffold"](example/demo_files/adaptiveScaffold.gif)
 
 ## Additional information
 You can find more information on this package and its usage in the public [design doc](https://docs.google.com/document/d/1qhrpTWYs5f67X8v32NCCNTRMIjSrVHuaMEFAul-Q_Ms/edit?usp=sharing)

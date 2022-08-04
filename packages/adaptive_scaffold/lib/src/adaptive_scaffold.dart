@@ -17,7 +17,7 @@ const double materialExpandedMinMargin = 32;
 /// Implements the basic visual layout structure for Material Design 3 that
 /// adapts to a variety of screens.
 ///
-/// [IMAGE]
+/// !["Example of a display made with AdaptiveScaffold"](../../example/demo_files/adaptiveScaffold.gif)
 ///
 /// [AdaptiveScaffold] provides a preset of layout, including positions and
 /// animations, by handling macro changes in navigational elements and bodies
@@ -80,7 +80,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.internalAnimations = true,
     this.bodyOrientation = Axis.horizontal,
     this.onSelectedIndexChange,
-    this.preferDrawerOnDesktop = true,
+    this.useDrawer = true,
     this.appBar,
     this.navigationRailWidth = 72,
     this.extendedNavigationRailWidth = 192,
@@ -191,7 +191,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// and Breakpoint is small.
   ///
   /// Defaults to true.
-  final bool preferDrawerOnDesktop;
+  final bool useDrawer;
 
   /// Option to override the drawerBreakpoint for the usage of [Drawer] over the
   /// usual [BottomNavigationBar].
@@ -458,10 +458,10 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Scaffold(
-        appBar: widget.drawerBreakpoint.isActive(context)
+        appBar: widget.drawerBreakpoint.isActive(context) && widget.useDrawer
             ? widget.appBar ?? AppBar()
             : null,
-        drawer: widget.drawerBreakpoint.isActive(context)
+        drawer: widget.drawerBreakpoint.isActive(context) && widget.useDrawer
             ? Drawer(
                 child: NavigationRail(
                   extended: true,
@@ -513,7 +513,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 )
               : null,
           bottomNavigation: widget.destinations != null &&
-                  !widget.drawerBreakpoint.isActive(context)
+                  (!widget.drawerBreakpoint.isActive(context) ||
+                      !widget.useDrawer)
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.smallBreakpoint: SlotLayout.from(

@@ -18,29 +18,30 @@ enum _SlotIds {
 
 /// Layout a typical app that adapts to different screens using predefined slots.
 ///
-/// This widget separates the screen into predefined sections called "slots".
+/// This widget separates the app window into predefined sections called "slots".
 /// It lays out the app using the following kinds of slots (in order):
 ///
 ///  * [topNavigation], full width at the top. Must have defined size.
 ///  * [bottomNavigation], full width at the bottom. Must have defined size.
-///  * [primaryNavigation], displayed on the beginning side of the screen from
+///  * [primaryNavigation], displayed on the beginning side of the app window from
 /// the bottom of [topNavigation] to the top of [bottomNavigation]. Must have
 /// defined size.
-///  * [secondaryNavigation], displayed on the end side of the screen from the
+///  * [secondaryNavigation], displayed on the end side of the app window from the
 /// bottom of [topNavigation] to the top of [bottomNavigation]. Must have defined
 /// size.
 ///  * [body], first panel; fills the remaining space from the beginning side.
-/// Flexible size.
-///  * [secondaryBody], second panel; fills the remaining space from the end
-/// side. Flexible size. Provides some automatic functionality with foldable
-/// screens.
+/// Should have flexible size (like a container).
+///  * [secondaryBody], second panel; fills the remaining space from the end side.
+/// The use of this property is common in apps that have a main view and a detail
+/// view. Should have flexible size (like a Container). Provides some automatic
+/// functionality with foldable screens.
 ///
 /// Slots must display differently under different screen conditions (such as
 /// different widths), and each slot is defined with a [SlotLayout], which maps
 /// [Breakpoint]s to [SlotLayoutConfig], where [SlotLayout.from] defines the
 /// content and transition.
 ///
-/// [AdaptiveLayout] handles the placement of the slots on the screen and
+/// [AdaptiveLayout] handles the placement of the slots on the app window and
 /// animations regarding their macromovements.
 ///
 /// ```dart
@@ -116,30 +117,34 @@ class AdaptiveLayout extends StatefulWidget {
     super.key,
   });
 
-  /// The slot placed on the beginning side of the screen; meaning on the left
+  /// The slot placed on the beginning side of the app window; meaning on the left
   /// when the textDirection is LTR and on the right when it is RTL.
   ///
   /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
-  /// [SizedBox] or limit its size by another method.
+  /// [SizedBox] or limit its size (width and height) by another method. See the
+  /// builder in [AdaptiveScaffold.toNavigationRail] for an example.
   final SlotLayout? primaryNavigation;
 
-  /// The slot placed on the end side of the screen; meaning on the right
+  /// The slot placed on the end side of the app window; meaning on the right
   /// when the textDirection is LTR and on the left when it is RTL.
   ///
   /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
-  /// [SizedBox] or limit its size by another method.
+  /// [SizedBox] or limit its size (width and height) by another method. See the
+  /// builder in [AdaptiveScaffold.toNavigationRail] for an example.
   final SlotLayout? secondaryNavigation;
 
-  /// The slot placed on the top part of the screen.
+  /// The slot placed on the top part of the app window.
   ///
   /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
-  /// [SizedBox] or limit its size by another method.
+  /// [SizedBox] or limit its size (width and height) by another method. See the
+  /// builder in [AdaptiveScaffold.toNavigationRail] for an example.
   final SlotLayout? topNavigation;
 
-  /// The slot placed on the bottom part of the screen.
+  /// The slot placed on the bottom part of the app window.
   ///
   /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
-  /// [SizedBox] or limit its size by another method.
+  /// [SizedBox] or limit its size (width and height) by another method. See the
+  /// builder in [AdaptiveScaffold.toNavigationRail] for an example.
   final SlotLayout? bottomNavigation;
 
   /// The slot that fills the rest of the space in the center.
@@ -147,7 +152,7 @@ class AdaptiveLayout extends StatefulWidget {
 
   /// A supporting slot for [body]. Has a sliding entrance animation by default.
   /// The default ratio for the split between [body] and [secondaryBody] is so
-  /// that the split axis is in the center of the screen.
+  /// that the split axis is in the center of the app window.
   final SlotLayout? secondaryBody;
 
   /// Defines the fractional ratio of [body] to the [secondaryBody].
@@ -156,7 +161,7 @@ class AdaptiveLayout extends StatefulWidget {
   /// and[secondaryBody] takes up the rest.
   ///
   /// If this value is null, the ratio is defined so that the split axis is in
-  /// the center of the screen.
+  /// the center of the app window.
   final double? bodyRatio;
 
   /// Whether or not the developer wants the smooth entering slide transition on
