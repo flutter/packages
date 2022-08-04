@@ -32,7 +32,7 @@ AdaptiveScaffold implements the basic visual layout structure for Material Desig
 These are the set of widgets that are used on a lower level and offer more customizability at a cost of more lines of code.
 #### AdaptiveLayout:
 !["AdaptiveLayout's Assigned Slots Displayed on Screen"](example/demo_files/screenSlots.png)
-AdaptiveLayout is the top-level widget class that arranges the layout of the slots and their animation, similar to Scaffold. It takes in several LayoutSlots and returns an appropriate layout based on the diagram above.
+AdaptiveLayout is the top-level widget class that arranges the layout of the slots and their animation, similar to Scaffold. It takes in several LayoutSlots and returns an appropriate layout based on the diagram above. AdaptiveScaffold is built upon AdaptiveLayout internally but abstracts some of the complexity with presets based on the Material 3 Design specification.
 #### SlotLayout:
 SlotLayout handles the adaptivity or the changes between widgets at certain Breakpoints. It also holds the logic for animating between breakpoints. It takes SlotLayoutConfigs mapped to Breakpoints in a config and displays a widget based on that information.
 #### SlotLayout.from:
