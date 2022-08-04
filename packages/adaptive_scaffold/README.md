@@ -14,35 +14,19 @@ AdaptiveScaffold is an abstracted form built upon the aforementioned widgets. It
 
 <?code-excerpt ...>
 ```dart
-AdaptiveScaffold(
- selectedIndex: 0,
- destinations: const [
-   NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
-   NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
-   NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
-   NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
- ],
- smallBody: (_) => ListView.builder(
-   itemCount: allItems.length,
-   itemBuilder: (context, index) => Padding(
-     padding: const EdgeInsets.all(8.0),
-     child: Container(
-       height: 250,
-       color: const Color.fromARGB(255, 255, 201, 197),
-     ),
-   ),
- ),
- body: (_) => GridView.count(
-   crossAxisCount: 2,
-   children: allItems.map((item) => Padding(
-     padding: const EdgeInsets.all(8.0),
-     child: Container(
-       color: const Color.fromARGB(255, 255, 201, 197),
-       height: 400,
-     ),
-   )).toList(),
- ),
-),
+ AdaptiveScaffold(
+  destinations: const [
+    NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+    NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
+    NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
+    NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
+  ],
+  smallBody: (_) => ListView.builder(
+    itemCount: children.length,
+    itemBuilder: (_, idx) => children[idx]
+  ),
+  body: (_) => GridView.count(crossAxisCount: 2, children: children),
+ )
 ```
 ## The Background Widget Suite
 These are the set of widgets that are used on a lower level and offer more customizability at a cost of more lines of code.
@@ -50,8 +34,8 @@ These are the set of widgets that are used on a lower level and offer more custo
 AdaptiveLayout is the top-level widget class that arranges the layout of the slots and their animation, similar to Scaffold. It takes in several LayoutSlots and returns an appropriate layout based on the diagram above. [IMAGE]
 #### SlotLayout:
 SlotLayout handles the adaptivity or the changes between widgets at certain Breakpoints. It also holds the logic for animating between switches. It takes SlotLayoutConfigs mapped to Breakpoints in a config and displays a widget based on that information.
-#### SlotLayoutConfig:
-SlotLayoutConfig holds the actual widget to be displayed and the entrance animation and exit animation.
+#### SlotLayout.from:
+SlotLayout.from creates a SlotLayoutConfig holds the actual widget to be displayed and the entrance animation and exit animation.
 ### Example Usage:
 
 <?code-excerpt ...>
@@ -59,13 +43,13 @@ SlotLayoutConfig holds the actual widget to be displayed and the entrance animat
 AdaptiveLayout(
  primaryNavigation: SlotLayout(
    config: {
-     Breakpoints.small: SlotLayoutConfig(key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
-     Breakpoints.medium: SlotLayoutConfig(
+     Breakpoints.small: SlotLayout.from(key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
+     Breakpoints.medium: SlotLayout.from(
        inAnimation: leftOutIn,
        key: const Key('pnav1'),
        builder: (_) => AdaptiveScaffold.toNavigationRail(destinations: destinations),
      ),
-     Breakpoints.large: SlotLayoutConfig(
+     Breakpoints.large: SlotLayout.from(
        key: const Key('pnav2'),
        inAnimation: leftOutIn,
        builder: (_) => AdaptiveScaffold.toNavigationRail(extended: true, destinations: destinations),
@@ -74,44 +58,32 @@ AdaptiveLayout(
  ),
  body: SlotLayout(
    config: {
-     Breakpoints.small: SlotLayoutConfig(
+     Breakpoints.small: SlotLayout.from(
        key: const Key('body'),
        builder: (_) => ListView.builder(
-         itemCount: allItems.length,
-         itemBuilder: (context, index) => Padding(
-           padding: const EdgeInsets.all(8.0),
-           child: Container(
-             color: const Color.fromARGB(255, 255, 201, 197),
-             height: 400,
-           ),
-         ),
+         itemCount: children.length,
+         itemBuilder: (_, idx) => children[idx]
        ),
      ),
-     Breakpoints.medium: SlotLayoutConfig(
+     Breakpoints.medium: SlotLayout.from(
        key: const Key('body1'),
        builder: (_) => GridView.count(
          crossAxisCount: 2,
-         children: allItems.map((item) => Padding(
-           padding: const EdgeInsets.all(8.0),
-           child: Container(
-             color: const Color.fromARGB(255, 255, 201, 197),
-             height: 400,
-           ),
-         )).toList(),
+         children: children
        ),
      ),
    },
  ),
  bottomNavigation: SlotLayout(
    config: {
-     Breakpoints.small: SlotLayoutConfig(
+     Breakpoints.small: SlotLayout.from(
        key: const Key('botnav'),
        inAnimation: bottomToTop,
        builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
      ),
    },
  ),
-),
+)
 ```
 ##
 Both of the examples shown here produce the same output:

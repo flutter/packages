@@ -2,22 +2,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:adaptive_scaffold/src/adaptive_scaffold.dart';
-import 'package:adaptive_scaffold/src/breakpoint.dart';
+import 'package:adaptive_scaffold/src/breakpoints.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class TestBreakpoint0 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 0;
+    return MediaQuery.of(context).size.width >= 0 &&
+        MediaQuery.of(context).size.width < 800;
   }
 }
 
 class TestBreakpoint800 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 800;
+    return MediaQuery.of(context).size.width >= 800 &&
+        MediaQuery.of(context).size.width < 1000;
   }
 }
 
@@ -25,6 +27,13 @@ class TestBreakpoint1000 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
     return MediaQuery.of(context).size.width >= 1000;
+  }
+}
+
+class NeverOnBreakpoint extends Breakpoint {
+  @override
+  bool isActive(BuildContext context) {
+    return false;
   }
 }
 
@@ -38,12 +47,11 @@ Future<MaterialApp> scaffold({
     home: MediaQuery(
       data: MediaQueryData(size: Size(width, 800)),
       child: AdaptiveScaffold(
+        drawerBreakpoint: NeverOnBreakpoint(),
         internalAnimations: animations,
-        breakpoints: <Breakpoint>[
-          TestBreakpoint0(),
-          TestBreakpoint800(),
-          TestBreakpoint1000()
-        ],
+        smallBreakpoint: TestBreakpoint0(),
+        mediumBreakpoint: TestBreakpoint800(),
+        largeBreakpoint: TestBreakpoint1000(),
         destinations: const <NavigationDestination>[
           NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
           NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
@@ -89,13 +97,6 @@ void main() {
     await tester.pumpWidget(await scaffold(width: 900, tester: tester));
     await tester.pumpAndSettle();
 
-    expect(body, findsNothing);
-    expect(smallBody, findsOneWidget);
-    expect(sBody, findsNothing);
-    expect(smallSBody, findsOneWidget);
-    expect(bnav, findsNothing);
-    expect(pnav, findsOneWidget);
-
     expect(smallBody, findsNothing);
     expect(body, findsOneWidget);
     expect(smallSBody, findsNothing);
@@ -108,12 +109,8 @@ void main() {
     expect(tester.getTopLeft(pnav), Offset.zero);
     expect(tester.getBottomRight(pnav), const Offset(72, 800));
 
-    expect(smallBody, findsNothing);
-    expect(largeBody, findsOneWidget);
-    expect(smallSBody, findsNothing);
-    expect(largeSBody, findsOneWidget);
-    expect(pnav, findsNothing);
-    expect(pnav1, findsOneWidget);
+    await tester.pumpWidget(await scaffold(width: 1100, tester: tester));
+    await tester.pumpAndSettle();
 
     expect(body, findsNothing);
     expect(largeBody, findsOneWidget);

@@ -1,66 +1,59 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:adaptive_scaffold/adaptive_helper.dart';
 
 // A more functional demo of the usage of the adaptive layout helper widgets.
 // Modeled off of the example on the Material 3 page regarding adaptive layouts.
 // For a more clear cut example usage, please look at adaptive_layout_demo.dart
 // or adaptive_scaffold_demo.dart
 
+/// A more functional demo of the usage of the adaptive layout helper widgets.
+/// Specifically, it is built using an [AdaptiveLayout] and uses static helpers
+/// from [AdaptiveScaffold].
+///
+/// Modeled off of the example on the Material 3 page regarding adaptive layouts.
+/// For a more clear cut example usage, please look at adaptive_layout_demo.dart
+/// or adaptive_scaffold_demo.dart
+
 void main() {
-  runApp(const MyApp());
+  runApp(const _MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _MyApp extends StatelessWidget {
+  const _MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Adaptive Layout Demo',
+      routes: <String, Widget Function(BuildContext)>{
+        _ExtractRouteArguments.routeName: (_) => const _ExtractRouteArguments()
+      },
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const _MyHomePage(),
     );
   }
 }
 
-class ContextInformation extends InheritedWidget {
-  const ContextInformation({
-    Key? key,
-    required this.selected,
-    required this.displayed,
-    required Widget child,
-  }) : super(key: key, child: child);
-
-  final int? selected;
-  final bool displayed;
-
-  static ContextInformation of(BuildContext context) {
-    final ContextInformation? result =
-        context.dependOnInheritedWidgetOfExactType<ContextInformation>();
-    assert(result != null, 'No ContextInformation found in context');
-    return result!;
-  }
+class _MyHomePage extends StatefulWidget {
+  const _MyHomePage({Key? key}) : super(key: key);
 
   @override
-  bool updateShouldNotify(ContextInformation oldWidget) =>
-      selected != oldWidget.selected || displayed != displayed;
+  State<_MyHomePage> createState() => __MyHomePageState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage>
+class __MyHomePageState extends State<_MyHomePage>
     with TickerProviderStateMixin, ChangeNotifier {
-  ValueNotifier showGridView = ValueNotifier<bool>(false);
+  // A listener used for the controllers to reanimate the staggered animation of
+  // the navigation elements.
+  ValueNotifier<bool?> showGridView = ValueNotifier<bool?>(false);
 
+  // The index of the selected mail card.
   int? selected;
   void selectCard(int? index) {
     setState(() {
@@ -68,23 +61,22 @@ class _MyHomePageState extends State<MyHomePage>
     });
   }
 
-  bool displayed = false;
-  void setDisplayed(bool display) {
-    setState(() {
-      displayed = display;
-    });
-  }
+  // The index of the navigation screen. Only impacts body/secondaryBody
+  int _navigationIndex = 0;
 
-  int _selectedIndex = 0;
-
+  // The controllers used for the staggered animation of the navigation elements.
   late AnimationController _controller;
   late AnimationController _controller1;
   late AnimationController _controller2;
   late AnimationController _controller3;
-  late AnimationController _controller4;
   @override
   void initState() {
     showGridView.addListener(() {
+      Navigator.popUntil(
+          context, (Route<dynamic> route) => route.settings.name == '/');
+      _controller
+        ..reset()
+        ..forward();
       _controller1
         ..reset()
         ..forward();
@@ -92,9 +84,6 @@ class _MyHomePageState extends State<MyHomePage>
         ..reset()
         ..forward();
       _controller3
-        ..reset()
-        ..forward();
-      _controller4
         ..reset()
         ..forward();
     });
@@ -114,17 +103,15 @@ class _MyHomePageState extends State<MyHomePage>
       duration: const Duration(milliseconds: 1600),
       vsync: this,
     )..forward();
-    _controller4 = AnimationController(
-      duration: const Duration(milliseconds: 1800),
-      vsync: this,
-    )..forward();
-
     super.initState();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _controller1.dispose();
+    _controller2.dispose();
+    _controller3.dispose();
     super.dispose();
   }
 
@@ -237,6 +224,10 @@ class _MyHomePageState extends State<MyHomePage>
       ],
     );
 
+    const Color iconColor = Color.fromARGB(255, 29, 25, 43);
+
+    // These are the destinations used within the AdaptiveScaffold navigation
+    // builders.
     const List<NavigationDestination> destinations = [
       NavigationDestination(
           label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
@@ -256,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage>
           icon: SlideTransition(
               position: Tween(begin: const Offset(-1, 0), end: Offset.zero)
                   .animate(CurvedAnimation(
-                      parent: _controller1, curve: Curves.easeInOutCubic)),
+                      parent: _controller, curve: Curves.easeInOutCubic)),
               child: const Icon(
                 Icons.inbox,
               )),
@@ -265,130 +256,142 @@ class _MyHomePageState extends State<MyHomePage>
           icon: SlideTransition(
               position: Tween(begin: const Offset(-2, 0), end: Offset.zero)
                   .animate(CurvedAnimation(
-                      parent: _controller2, curve: Curves.easeInOutCubic)),
+                      parent: _controller1, curve: Curves.easeInOutCubic)),
               child: const Icon(Icons.article_outlined)),
           label: 'Articles'),
       NavigationDestination(
           icon: SlideTransition(
               position: Tween(begin: const Offset(-3, 0), end: Offset.zero)
                   .animate(CurvedAnimation(
-                      parent: _controller3, curve: Curves.easeInOutCubic)),
+                      parent: _controller2, curve: Curves.easeInOutCubic)),
               child: const Icon(Icons.chat_bubble_outline)),
           label: 'Chat'),
       NavigationDestination(
           icon: SlideTransition(
               position: Tween(begin: const Offset(-4, 0), end: Offset.zero)
                   .animate(CurvedAnimation(
-                      parent: _controller4, curve: Curves.easeInOutCubic)),
+                      parent: _controller3, curve: Curves.easeInOutCubic)),
               child: const Icon(Icons.video_call_outlined)),
           label: 'Video'),
     ];
 
-    showGridView.value = Breakpoints.medium.isActive(context);
+    // Updating the listener value.
+    showGridView.value = Breakpoints.mediumAndUp.isActive(context);
+
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 236, 235, 243),
-      body: SafeArea(
-        child: ContextInformation(
-          selected: selected,
-          displayed: displayed,
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            // Adaptive Layout Helper Widgets use starting here:
-            child: AdaptiveLayout(
-              primaryNavigation: SlotLayout(
-                config: {
-                  Breakpoints.medium: SlotLayoutConfig(
-                      key: const Key('primaryNavigation'),
-                      builder: (_) => AdaptiveScaffold.toNavigationRail(
-                            onDestinationSelected: (int index) {
-                              setState(() {
-                                _selectedIndex = index;
-                              });
-                            },
-                            width: 72,
-                            selectedIndex: _selectedIndex,
-                            leading: ScaleTransition(
-                              scale: _controller1,
-                              child: const ComposeIcon(),
-                            ),
-                            backgroundColor:
-                                const Color.fromARGB(0, 255, 255, 255),
-                            labelType: NavigationRailLabelType.none,
-                            destinations: destinations2,
-                          )),
-                  Breakpoints.expanded: SlotLayoutConfig(
-                    key: const Key('primaryNavigation1'),
-                    inAnimation: AdaptiveScaffold.leftOutIn,
-                    builder: (_) => AdaptiveScaffold.toNavigationRail(
-                      leading: const ComposeButton(),
-                      trailing: trailingNavRail,
-                      backgroundColor: Colors.transparent,
-                      labelType: NavigationRailLabelType.none,
-                      selectedIndex: 0,
-                      extended: true,
-                      destinations: destinations,
-                    ),
+      backgroundColor: const Color.fromARGB(255, 234, 227, 241),
+      // Usage of AdaptiveLayout suite begins here. AdaptiveLayout takes
+      // LayoutSlots for its variety of screen slots.
+      body: AdaptiveLayout(
+        // Each SlotLayout has a config which maps Breakpoints to
+        // SlotLayoutConfigs.
+        primaryNavigation: SlotLayout(
+          config: <Breakpoint, SlotLayoutConfig?>{
+            // The breakpoint used here is from the Breakpoints class but custom
+            // Breakpoints can be defined by extending the Breakpoint class
+            Breakpoints.medium: SlotLayout.from(
+              // Every SlotLayoutConfig takes a key and a builder. The builder
+              // is to save memory that would be spent on initialization.
+              key: const Key('primaryNavigation'),
+              builder: (_) => SizedBox(
+                width: 72,
+                height: MediaQuery.of(context).size.height,
+                // Usually it would be easier to use a builder from
+                // AdaptiveScaffold for these types of navigations but this
+                // navigation has custom staggered item animations.
+                child: AdaptiveScaffold.toNavigationRail(
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _navigationIndex = index;
+                    });
+                  },
+                  selectedIndex: _navigationIndex,
+                  leading: ScaleTransition(
+                    scale: _controller1,
+                    child: const _ComposeIcon(),
                   ),
-                },
-              ),
-              body: SlotLayout(
-                config: {
-                  Breakpoints.compact: SlotLayoutConfig(
-                    key: const Key('body'),
-                    builder: (_) => (_selectedIndex == 0)
-                        ? Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
-                            child: ItemList(
-                              items: allItems,
-                              selectCard: selectCard,
-                              setDisplayed: setDisplayed,
-                              showGridView: false,
-                            ),
-                          )
-                        : const ExamplePage(),
-                  ),
-                },
-              ),
-              secondaryBody: _selectedIndex == 0
-                  ? SlotLayout(
-                      config: {
-                        Breakpoints.medium: SlotLayoutConfig(
-                          outAnimation: AdaptiveScaffold.stayOnScreen,
-                          key: const Key('sb1'),
-                          builder: (_) =>
-                              DetailTile(item: allItems[selected ?? 0]),
-                        ),
-                        Breakpoints.expanded: SlotLayoutConfig(
-                          outAnimation: AdaptiveScaffold.stayOnScreen,
-                          key: const Key('sb1'),
-                          builder: (_) =>
-                              DetailTile(item: allItems[selected ?? 0]),
-                        ),
-                      },
-                    )
-                  : null,
-              bottomNavigation: SlotLayout(
-                config: {
-                  Breakpoints.compact: SlotLayoutConfig(
-                    key: const Key('bn'),
-                    outAnimation: AdaptiveScaffold.topToBottom,
-                    builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
-                        destinations: destinations),
-                  ),
-                  Breakpoints.medium: SlotLayoutConfig.empty(),
-                  Breakpoints.expanded: SlotLayoutConfig.empty(),
-                },
+                  backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                  labelType: NavigationRailLabelType.none,
+                  destinations: destinations2,
+                ),
               ),
             ),
-          ),
+            Breakpoints.large: SlotLayout.from(
+              key: const Key('primaryNavigation1'),
+              // The AdaptiveScaffold builder here greatly simplifies
+              // navigational elements.
+              builder: (_) => AdaptiveScaffold.toNavigationRail(
+                leading: const _ComposeButton(),
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    _navigationIndex = index;
+                  });
+                },
+                selectedIndex: _navigationIndex,
+                trailing: trailingNavRail,
+                extended: true,
+                destinations: destinations,
+              ),
+            ),
+          },
+        ),
+        body: SlotLayout(
+          config: <Breakpoint, SlotLayoutConfig?>{
+            Breakpoints.standard: SlotLayout.from(
+              key: const Key('body'),
+              // The conditional here is for navigation screens. The first
+              // screen shows the main screen and every other screeen shows
+              //  ExamplePage.
+              builder: (_) => (_navigationIndex == 0)
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                      child: _ItemList(
+                        selected: selected,
+                        items: allItems,
+                        selectCard: selectCard,
+                      ),
+                    )
+                  : const _ExamplePage(),
+            ),
+          },
+        ),
+        secondaryBody: _navigationIndex == 0
+            ? SlotLayout(
+                config: <Breakpoint, SlotLayoutConfig?>{
+                  Breakpoints.medium: SlotLayout.from(
+                    // This overrides the default behavior of the secondaryBody
+                    // disappearing as it is animating out.
+                    outAnimation: AdaptiveScaffold.stayOnScreen,
+                    key: const Key('sb1'),
+                    builder: (_) => _DetailTile(item: allItems[selected ?? 0]),
+                  ),
+                  Breakpoints.large: SlotLayout.from(
+                    outAnimation: AdaptiveScaffold.stayOnScreen,
+                    key: const Key('sb1'),
+                    builder: (_) => _DetailTile(item: allItems[selected ?? 0]),
+                  ),
+                },
+              )
+            : null,
+        bottomNavigation: SlotLayout(
+          config: <Breakpoint, SlotLayoutConfig?>{
+            Breakpoints.small: SlotLayout.from(
+              key: const Key('bn'),
+              // You can define inAnimations or outAnimations to override the
+              // default offset transition.
+              outAnimation: AdaptiveScaffold.topToBottom,
+              builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
+                  destinations: destinations),
+            ),
+          },
         ),
       ),
     );
   }
 }
 
-class ComposeIcon extends StatelessWidget {
-  const ComposeIcon({
+class _ComposeIcon extends StatelessWidget {
+  const _ComposeIcon({
     Key? key,
   }) : super(key: key);
 
@@ -422,8 +425,8 @@ class ComposeIcon extends StatelessWidget {
   }
 }
 
-class ComposeButton extends StatelessWidget {
-  const ComposeButton({
+class _ComposeButton extends StatelessWidget {
+  const _ComposeButton({
     Key? key,
   }) : super(key: key);
 
@@ -431,12 +434,12 @@ class ComposeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8.0, 5, 0, 12),
-      child: Column(children: [
+      child: Column(children: <Widget>[
         Container(
-            padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+            padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: const <Widget>[
                 Text(
                   "REPLY",
                   style: TextStyle(color: Colors.deepPurple, fontSize: 15),
@@ -455,14 +458,16 @@ class ComposeButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color.fromARGB(255, 255, 225, 231),
             borderRadius: const BorderRadius.all(Radius.circular(15)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 2,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            boxShadow: Breakpoints.mediumAndUp.isActive(context)
+                ? null
+                : <BoxShadow>[
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
           ),
           width: 200,
           height: 50,
@@ -491,7 +496,7 @@ class ItemList extends StatelessWidget {
     required this.showGridView,
   }) : super(key: key);
 
-  final List<Item> items;
+  final List<_Item> items;
   final Function selectCard;
   final Function setDisplayed;
   final bool showGridView;
@@ -515,12 +520,61 @@ class ItemList extends StatelessWidget {
                   ),
                 ],
               ),
+              width: 200,
+              height: 50,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
+                child: Row(
+                  children: const <Widget>[
+                    Icon(Icons.edit_outlined),
+                    SizedBox(width: 20),
+                    Center(child: Text('Compose')),
+                  ],
+                ),
+              ),
+            ),
+    );
+  }
+}
+
+// ItemList creates the list of cards and the search bar.
+class _ItemList extends StatelessWidget {
+  const _ItemList({
+    Key? key,
+    required this.items,
+    required this.selectCard,
+    required this.selected,
+  }) : super(key: key);
+
+  final List<_Item> items;
+  final int? selected;
+  final Function selectCard;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+      floatingActionButton: Breakpoints.mediumAndUp.isActive(context)
+          ? null
+          : Container(
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 254, 215, 227),
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               width: 50,
               height: 50,
               child: const Icon(Icons.edit_outlined),
             ),
       body: Column(
-        children: [
+        children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -544,7 +598,7 @@ class ItemList extends StatelessWidget {
                 contentPadding: const EdgeInsets.all(25),
                 hintStyle:
                     const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
-                hintText: "Search replies",
+                hintText: 'Search replies',
                 fillColor: Colors.white,
               ),
             ),
@@ -552,12 +606,13 @@ class ItemList extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               itemCount: items.length,
-              itemBuilder: (context, index) => ItemListTile(
+              itemBuilder: (BuildContext context, int index) => _ItemListTile(
                 item: items[index],
                 email: items[index].emails![0],
                 selectCard: selectCard,
-                showGridView: showGridView,
-                setDisplayed: setDisplayed,
+                selected: selected,
+                //showGridView: showGridView,
+                //setDisplayed: setDisplayed,
               ),
             ),
           ),
@@ -567,51 +622,40 @@ class ItemList extends StatelessWidget {
   }
 }
 
-class ItemListTile extends StatelessWidget {
-  const ItemListTile({
+class _ItemListTile extends StatelessWidget {
+  const _ItemListTile({
     Key? key,
     required this.item,
     required this.email,
     required this.selectCard,
-    required this.showGridView,
-    required this.setDisplayed,
+    required this.selected,
   }) : super(key: key);
 
-  final Item item;
-  final Email email;
+  final _Item item;
+  final _Email email;
+  final int? selected;
   final Function selectCard;
-  final Function setDisplayed;
-  final bool showGridView;
 
   @override
   Widget build(BuildContext context) {
-    final int index = allItems.indexOf(item);
-    final bool isSelected = ContextInformation.of(context).selected == index;
-
     return GestureDetector(
-      onTap: (() {
-        selectCard(index);
-        if (!showGridView) {
-          setDisplayed(true);
-          Navigator.push<dynamic>(
-            context,
-            MaterialPageRoute<dynamic>(
-              builder: (context) => SafeArea(
-                child: RouteDetailView(
-                  item: item,
-                  selectCard: selectCard,
-                  setDisplayed: setDisplayed,
-                ),
-              ),
-            ),
+      onTap: () {
+        // The behavior of opening a detail view is different on small screens
+        // than large screens.
+        // Small screens open a modal with the detail view while large screens
+        // simply show the details on the secondaryBody.
+        if (!Breakpoints.mediumAndUp.isActive(context)) {
+          Navigator.of(context).pushNamed(
+            _ExtractRouteArguments.routeName,
+            arguments: _ScreenArguments(item: item, selectCard: selectCard),
           );
         }
-      }),
+      },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-              color: isSelected
+              color: selected == allItems.indexOf(item)
                   ? const Color.fromARGB(255, 237, 221, 255)
                   : const Color.fromARGB(255, 245, 241, 248),
               borderRadius: const BorderRadius.all(Radius.circular(10))),
@@ -673,12 +717,12 @@ class ItemListTile extends StatelessWidget {
   }
 }
 
-class DetailTile extends StatelessWidget {
-  const DetailTile({
+class _DetailTile extends StatelessWidget {
+  const _DetailTile({
     required this.item,
     Key? key,
   }) : super(key: key);
-  final Item item;
+  final _Item item;
 
   @override
   Widget build(BuildContext context) {
@@ -751,8 +795,8 @@ class DetailTile extends StatelessWidget {
                 child: ListView.builder(
                     itemCount: item.emails!.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final Email thisEmail = item.emails![index];
-                      return EmailTile(
+                      final _Email thisEmail = item.emails![index];
+                      return _EmailTile(
                         sender: thisEmail.sender,
                         time: thisEmail.time,
                         senderIcon: thisEmail.image,
@@ -771,8 +815,8 @@ class DetailTile extends StatelessWidget {
   }
 }
 
-class EmailTile extends StatelessWidget {
-  const EmailTile({
+class _EmailTile extends StatelessWidget {
+  const _EmailTile({
     required this.sender,
     required this.time,
     required this.senderIcon,
@@ -801,9 +845,9 @@ class EmailTile extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: <Widget>[
               Row(
-                children: [
+                children: <Widget>[
                   CircleAvatar(
                     radius: 18,
                     child: Image.asset(senderIcon),
@@ -850,7 +894,7 @@ class EmailTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
-                      width: 150,
+                      width: 126,
                       child: OutlinedButton(
                         onPressed: () {},
                         style: ButtonStyle(
@@ -869,7 +913,7 @@ class EmailTile extends StatelessWidget {
                         ),
                       )),
                   SizedBox(
-                      width: 150,
+                      width: 126,
                       child: OutlinedButton(
                         onPressed: () {},
                         style: ButtonStyle(
@@ -897,41 +941,66 @@ class EmailTile extends StatelessWidget {
   }
 }
 
-class RouteDetailView extends StatelessWidget {
-  const RouteDetailView(
-      {required this.item,
-      required this.selectCard,
-      required this.setDisplayed,
-      super.key});
-  final Item item;
+// The ScreenArguments used to pass arguments to the RouteDetailView as a named
+// route.
+class _ScreenArguments {
+  _ScreenArguments({
+    required this.item,
+    required this.selectCard,
+  });
+  final _Item item;
   final Function selectCard;
-  final Function setDisplayed;
+}
+
+class _ExtractRouteArguments extends StatelessWidget {
+  const _ExtractRouteArguments({Key? key}) : super(key: key);
+
+  static const String routeName = '/detailView';
+
+  @override
+  Widget build(BuildContext context) {
+    final _ScreenArguments args =
+        ModalRoute.of(context)!.settings.arguments! as _ScreenArguments;
+
+    return _RouteDetailView(item: args.item, selectCard: args.selectCard);
+  }
+}
+
+class _RouteDetailView extends StatelessWidget {
+  const _RouteDetailView({
+    required this.item,
+    required this.selectCard,
+    Key? key,
+  }) : super(key: key);
+
+  final _Item item;
+  final Function selectCard;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: [
+        children: <Widget>[
           Align(
             alignment: Alignment.topLeft,
             child: TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.popUntil(context,
+                    (Route<dynamic> route) => route.settings.name == '/');
                 selectCard(null);
-                setDisplayed(false);
               },
               child: const Icon(Icons.arrow_back),
             ),
           ),
-          DetailTile(item: item),
+          _DetailTile(item: item),
         ],
       ),
     );
   }
 }
 
-class ExamplePage extends StatelessWidget {
-  const ExamplePage({super.key});
+class _ExamplePage extends StatelessWidget {
+  const _ExamplePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -939,18 +1008,18 @@ class ExamplePage extends StatelessWidget {
   }
 }
 
-class Item {
-  const Item({
+class _Item {
+  const _Item({
     required this.title,
     required this.emails,
   });
 
   final String title;
-  final List<Email>? emails;
+  final List<_Email>? emails;
 }
 
-class Email {
-  const Email({
+class _Email {
+  const _Email({
     required this.sender,
     required this.recepients,
     required this.image,
@@ -967,11 +1036,11 @@ class Email {
   final String bodyImage;
 }
 
-const List<Item> allItems = [
-  Item(
+const List<_Item> allItems = <_Item>[
+  _Item(
     title: 'Dinner Club',
-    emails: [
-      Email(
+    emails: <_Email>[
+      _Email(
         sender: 'So Duri',
         recepients: 'me, Ziad and Lily',
         image: 'images/young-man.png',
@@ -980,7 +1049,7 @@ const List<Item> allItems = [
             "I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. I'm so intrigued by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
         bodyImage: '',
       ),
-      Email(
+      _Email(
           sender: 'Me',
           recepients: 'me, Ziad, and Lily',
           image: 'images/woman.png',
@@ -988,7 +1057,7 @@ const List<Item> allItems = [
           body:
               'Yes! I forgot about that place! Im definitely up for taking a risk this week and handing control over to this mysterious noodle chef. I wonder what happens if you have allergies though? Lucky none of us have any otherwise Id be a bit concerned.',
           bodyImage: ''),
-      Email(
+      _Email(
           sender: 'Ziad Aouad',
           recepients: 'me, Ziad and Lily',
           image: 'images/man.png',
@@ -998,28 +1067,28 @@ const List<Item> allItems = [
           bodyImage: ''),
     ],
   ),
-  Item(
+  _Item(
     title: '7 Best Yoga Poses for Strength Training',
     emails: [
-      Email(
+      _Email(
         sender: 'Elaine Howley',
         time: '2 hours',
         body:
-            "Though many people think of yoga as mostly a way to stretch out and relax, in actuality, it can provide a fantastic full-body workout that can even make you stronger.",
+            'Though many people think of yoga as mostly a way to stretch out and relax, in actuality, it can provide a fantastic full-body workout that can even make you stronger.',
         image: 'images/beauty.png',
         bodyImage: 'images/yoga.png',
         recepients: '',
       ),
     ],
   ),
-  Item(
+  _Item(
     title: 'A Programming Language for Hardware Accelerators',
     emails: [
-      Email(
+      _Email(
         sender: 'Laney Mansell',
         time: '10 min',
         body:
-            "Moore’s Law needs a hug. The days of stuffing transistors on little silicon computer chips are numbered, and their life rafts — hardware accelerators — come with a price. ",
+            'Moore’s Law needs a hug. The days of stuffing transistors on little silicon computer chips are numbered, and their life rafts — hardware accelerators — come with a price. ',
         image: 'images/woman2.png',
         bodyImage: '',
         recepients: '',

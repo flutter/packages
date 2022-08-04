@@ -1,22 +1,62 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:masonry_grid/masonry_grid.dart';
+
 import 'adaptive_layout.dart';
-import 'breakpoint.dart';
 import 'breakpoints.dart';
 import 'slot_layout.dart';
-import 'slot_layout_config.dart';
-import 'package:masonry_grid/masonry_grid.dart';
 
 const double materialGutterValue = 8;
 const double materialCompactMinMargin = 8;
 const double materialMediumMinMargin = 12;
 const double materialExpandedMinMargin = 32;
 
-/// [AdaptiveScaffold] is an abstraction that passes properties to
-/// [AdaptiveLayout] and reduces repetition and a burden on the developer.
+/// Implements the basic visual layout structure for Material Design 3 that
+/// adapts to a variety of screens.
+///
+/// [IMAGE]
+///
+/// [AdaptiveScaffold] provides a preset of layout, including positions and
+/// animations, by handling macro changes in navigational elements and bodies
+/// based on the current features of the screen, namely screen width and platform.
+/// For example, the navigational elements would be a [BottomNavigationBar] on a
+/// small mobile device and a [NavigationRail] on larger devices.
+///
+/// Also provides a variety of helper methods for navigational elements,
+/// animations, and more.
+///
+/// [AdaptiveScaffold] is based on [AdaptiveLayout] but is easier to use at the
+/// cost of being less customizable. Apps that would like more refined layout
+/// and/or animation should use [AdaptiveLayout].
+///
+/// ```dart
+/// AdaptiveScaffold(
+///  destinations: const [
+///    NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+///    NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
+///    NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
+///    NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
+///  ],
+///  smallBody: (_) => ListView.builder(
+///    itemCount: children.length,
+///    itemBuilder: (_, idx) => children[idx]
+///  ),
+///  body: (_) => GridView.count(crossAxisCount: 2, children: children),
+/// ),
+/// ```
+///
+/// See also:
+///  * [AdaptiveLayout], which is what this widget is built upon internally and
+/// acts as a more customizable alternative.
+///  * [SlotLayout], which handles switching and animations between elements
+/// based on [Breakpoint]s.
+///  * [SlotLayout.from], which holds information regarding Widgets and the
+/// desired way to animate between switches. Often used within [SlotLayout].
+///  * [Design Doc](https://flutter.dev/go/adaptive-layout-foldables).
+///  * [Material Design 3 Specifications] (https://m3.material.io/foundations/adaptive-design/overview).
 class AdaptiveScaffold extends StatefulWidget {
   /// Returns an [AdaptiveScaffold] by passing information down to an
   /// [AdaptiveLayout].
@@ -33,17 +73,17 @@ class AdaptiveScaffold extends StatefulWidget {
     this.secondaryBody,
     this.largeSecondaryBody,
     this.bodyRatio,
-    this.breakpoints = const <Breakpoint>[
-      Breakpoints.compact,
-      Breakpoints.medium,
-      Breakpoints.expanded
-    ],
-    this.drawerBreakpoint = Breakpoints.onlyCompactDesktop,
+    this.smallBreakpoint = Breakpoints.small,
+    this.mediumBreakpoint = Breakpoints.medium,
+    this.largeBreakpoint = Breakpoints.large,
+    this.drawerBreakpoint = Breakpoints.smallDesktop,
     this.internalAnimations = true,
-    this.horizontalBody = true,
+    this.bodyOrientation = Axis.horizontal,
     this.onSelectedIndexChange,
-    this.useDrawer = true,
+    this.preferDrawerOnDesktop = true,
     this.appBar,
+    this.navigationRailWidth = 72,
+    this.extendedNavigationRailWidth = 192,
     super.key,
   });
 
@@ -110,19 +150,30 @@ class AdaptiveScaffold extends StatefulWidget {
 
   /// Defines the fractional ratio of body to the secondaryBody.
   ///
-  /// For example 1 / 3 would mean body takes up 1/3 of the available space and
+  /// For example 0.3 would mean body takes up 30% of the available space and
   /// secondaryBody takes up the rest.
   ///
   /// If this value is null, the ratio is defined so that the split axis is in
   /// the center of the screen.
   final double? bodyRatio;
 
-  /// Must be of length 3. The list defining breakpoints for the
-  /// [AdaptiveLayout] the breakpoint is active from the value at the index up
-  /// until the value at the next index.
+  /// The breakpoint defined for the small size, associated with mobile-like
+  /// features.
   ///
-  /// Defaults to compact, medium, expanded breakpoints from breakpoints.dart.
-  final List<Breakpoint> breakpoints;
+  /// Defaults to [Breakpoints.small].
+  final Breakpoint smallBreakpoint;
+
+  /// The breakpoint defined for the medium size, associated with tablet-like
+  /// features.
+  ///
+  /// Defaults to [Breakpoints.mediumBreakpoint].
+  final Breakpoint mediumBreakpoint;
+
+  /// The breakpoint defined for the large size, associated with desktop-like
+  /// features.
+  ///
+  /// Defaults to [Breakpoints.largeBreakpoint].
+  final Breakpoint largeBreakpoint;
 
   /// Whether or not the developer wants the smooth entering slide transition on
   /// secondaryBody.
@@ -130,22 +181,22 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Defaults to true.
   final bool internalAnimations;
 
-  /// Whether to orient the body and secondaryBody in horizontal order (true) or
-  /// in vertical order (false).
+  /// The orientation of the body and secondaryBody. Either horizontal (side by
+  /// side) or vertical (top to bottom).
   ///
-  /// Defaults to true.
-  final bool horizontalBody;
+  /// Defaults to Axis.horizontal.
+  final Axis bodyOrientation;
 
   /// Whether to use a [Drawer] over a [BottomNavigationBar] when not on mobile
   /// and Breakpoint is small.
   ///
   /// Defaults to true.
-  final bool useDrawer;
+  final bool preferDrawerOnDesktop;
 
   /// Option to override the drawerBreakpoint for the usage of [Drawer] over the
   /// usual [BottomNavigationBar].
   ///
-  /// Defaults to [Breakpoints.onlyCompactDesktop].
+  /// Defaults to [Breakpoints.onlySmallDesktop].
   final Breakpoint drawerBreakpoint;
 
   /// Option to override the default [AppBar] when using drawer in desktop
@@ -154,6 +205,13 @@ class AdaptiveScaffold extends StatefulWidget {
 
   /// Callback function for when the index of a [NavigationRail] changes.
   final Function(int)? onSelectedIndexChange;
+
+  /// The width used for the internal [NavigationRail] at the medium [Breakpoint].
+  final double navigationRailWidth;
+
+  /// The width used for the internal extended [NavigationRail] at the large
+  /// [Breakpoint].
+  final double extendedNavigationRailWidth;
 
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
@@ -187,7 +245,7 @@ class AdaptiveScaffold extends StatefulWidget {
           width: width,
           height: MediaQuery.of(context).size.height,
           child: LayoutBuilder(
-            builder: (context, constraints) {
+            builder: (BuildContext context, BoxConstraints constraints) {
               return SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
@@ -230,7 +288,7 @@ class AdaptiveScaffold extends StatefulWidget {
       Color selectedItemColor = Colors.black,
       Color backgroundColor = Colors.transparent}) {
     return Builder(
-      builder: (context) {
+      builder: (BuildContext context) {
         return Theme(
             data: Theme.of(context).copyWith(
               canvasColor: backgroundColor,
@@ -255,26 +313,26 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Public helper method to be used for creating a [MasonryGrid] following m3
   /// specs from a list of [Widget]s
   static Builder toMaterialGrid({
-    List<Widget> thisWidgets = const [],
-    List<Breakpoint> breakpoints = const [
-      Breakpoints.compact,
+    List<Widget> thisWidgets = const <Widget>[],
+    List<Breakpoint> breakpoints = const <Breakpoint>[
+      Breakpoints.small,
       Breakpoints.medium,
-      Breakpoints.expanded
+      Breakpoints.large,
     ],
     double margin = 8,
     int itemColumns = 1,
     required BuildContext context,
   }) {
-    return Builder(builder: ((context) {
+    return Builder(builder: (BuildContext context) {
       Breakpoint? currentBreakpoint;
-      for (Breakpoint breakpoint in breakpoints) {
+      for (final Breakpoint breakpoint in breakpoints) {
         if (breakpoint.isActive(context)) {
           currentBreakpoint = breakpoint;
         }
       }
       double? thisMargin = margin;
 
-      if (currentBreakpoint == Breakpoints.compact) {
+      if (currentBreakpoint == Breakpoints.small) {
         if (thisMargin < materialCompactMinMargin) {
           thisMargin = materialCompactMinMargin;
         }
@@ -282,7 +340,7 @@ class AdaptiveScaffold extends StatefulWidget {
         if (thisMargin < materialMediumMinMargin) {
           thisMargin = materialMediumMinMargin;
         }
-      } else if (currentBreakpoint == Breakpoints.expanded) {
+      } else if (currentBreakpoint == Breakpoints.large) {
         if (thisMargin < materialExpandedMinMargin) {
           thisMargin = materialExpandedMinMargin;
         }
@@ -307,7 +365,7 @@ class AdaptiveScaffold extends StatefulWidget {
           ),
         ],
       );
-    }));
+    });
   }
 
   /// Animation from bottom offscreen up onto the screen.
@@ -415,21 +473,20 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               )
             : null,
         body: AdaptiveLayout(
-          horizontalBody: widget.horizontalBody,
+          bodyOrientation: widget.bodyOrientation,
           bodyRatio: widget.bodyRatio,
           internalAnimations: widget.internalAnimations,
           primaryNavigation: widget.destinations != null &&
                   widget.selectedIndex != null
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
-                    widget.breakpoints[1]: SlotLayoutConfig(
+                    widget.mediumBreakpoint: SlotLayout.from(
                       key: const Key('primaryNavigation'),
                       builder: (_) => SizedBox(
-                        width: 72,
+                        width: widget.navigationRailWidth,
                         height: MediaQuery.of(context).size.height,
                         child: NavigationRail(
                           selectedIndex: widget.selectedIndex,
-                          leading: widget.leadingUnExtendedNavRail,
                           destinations: widget.destinations!
                               .map(_toRailDestination)
                               .toList(),
@@ -437,15 +494,13 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         ),
                       ),
                     ),
-                    widget.breakpoints[2]: SlotLayoutConfig(
+                    widget.largeBreakpoint: SlotLayout.from(
                       key: const Key('primaryNavigation1'),
                       builder: (_) => SizedBox(
-                        width: 192,
+                        width: widget.extendedNavigationRailWidth,
                         height: MediaQuery.of(context).size.height,
                         child: NavigationRail(
                           extended: true,
-                          leading: widget.leadingExtendedNavRail,
-                          trailing: widget.trailingNavRail,
                           selectedIndex: widget.selectedIndex,
                           destinations: widget.destinations!
                               .map(_toRailDestination)
@@ -458,36 +513,31 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 )
               : null,
           bottomNavigation: widget.destinations != null &&
-                  widget.selectedIndex != null &&
-                  Breakpoints.compactMobile.isActive(context)
+                  !widget.drawerBreakpoint.isActive(context)
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
-                    widget.breakpoints[0]: SlotLayoutConfig(
+                    widget.smallBreakpoint: SlotLayout.from(
                       key: const Key('bottomNavigation'),
                       builder: (_) => BottomNavigationBar(
-                        unselectedItemColor: Colors.grey,
-                        selectedItemColor: Colors.black,
                         items:
                             widget.destinations!.map(_toBottomNavItem).toList(),
                       ),
                     ),
-                    widget.breakpoints[1]: SlotLayoutConfig.empty(),
-                    widget.breakpoints[2]: SlotLayoutConfig.empty(),
                   },
                 )
               : null,
           body: SlotLayout(
             config: <Breakpoint, SlotLayoutConfig?>{
-              Breakpoints.standard: SlotLayoutConfig(
+              Breakpoints.standard: SlotLayout.from(
                 key: const Key('body'),
                 inAnimation: AdaptiveScaffold.fadeIn,
                 outAnimation: AdaptiveScaffold.fadeOut,
                 builder: widget.body,
               ),
               if (widget.smallBody != null)
-                widget.breakpoints[0]:
+                widget.smallBreakpoint:
                     (widget.smallBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('smallBody'),
                             inAnimation: AdaptiveScaffold.fadeIn,
                             outAnimation: AdaptiveScaffold.fadeOut,
@@ -495,9 +545,9 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                           )
                         : null,
               if (widget.body != null)
-                widget.breakpoints[1]:
+                widget.mediumBreakpoint:
                     (widget.body != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('body'),
                             inAnimation: AdaptiveScaffold.fadeIn,
                             outAnimation: AdaptiveScaffold.fadeOut,
@@ -505,9 +555,9 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                           )
                         : null,
               if (widget.largeBody != null)
-                widget.breakpoints[2]:
+                widget.largeBreakpoint:
                     (widget.largeBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('largeBody'),
                             inAnimation: AdaptiveScaffold.fadeIn,
                             outAnimation: AdaptiveScaffold.fadeOut,
@@ -518,33 +568,33 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           ),
           secondaryBody: SlotLayout(
             config: <Breakpoint, SlotLayoutConfig?>{
-              Breakpoints.standard: SlotLayoutConfig(
+              Breakpoints.standard: SlotLayout.from(
                 key: const Key('sBody'),
                 outAnimation: AdaptiveScaffold.stayOnScreen,
                 builder: widget.secondaryBody,
               ),
               if (widget.smallSecondaryBody != null)
-                widget.breakpoints[0]:
+                widget.smallBreakpoint:
                     (widget.smallSecondaryBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('smallSBody'),
                             outAnimation: AdaptiveScaffold.stayOnScreen,
                             builder: widget.smallSecondaryBody,
                           )
                         : null,
               if (widget.secondaryBody != null)
-                widget.breakpoints[1]:
+                widget.mediumBreakpoint:
                     (widget.secondaryBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('sBody'),
                             outAnimation: AdaptiveScaffold.stayOnScreen,
                             builder: widget.secondaryBody,
                           )
                         : null,
               if (widget.largeSecondaryBody != null)
-                widget.breakpoints[2]:
+                widget.largeBreakpoint:
                     (widget.largeSecondaryBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('largeSBody'),
                             outAnimation: AdaptiveScaffold.stayOnScreen,
                             builder: widget.largeSecondaryBody,

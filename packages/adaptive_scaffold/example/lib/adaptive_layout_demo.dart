@@ -1,21 +1,38 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:adaptive_scaffold/adaptive_helper.dart';
 
 void main() {
   runApp(
     const MaterialApp(
       title: 'Adaptive Layout Example',
-      home: MyHomePage(),
+      home: _MyHomePage(),
     ),
   );
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+class _MyHomePage extends StatelessWidget {
+  const _MyHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    const List<NavigationDestination> destinations = [
+    // Define the children to display within the body.
+    final List<Widget> children = <Widget>[
+      for (int i = 0; i < 10; i++)
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            color: const Color.fromARGB(255, 255, 201, 197),
+            height: 400,
+          ),
+        )
+    ];
+
+    // Define the list of destinations to be used within the app.
+    const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
           label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
       NavigationDestination(
@@ -138,15 +155,15 @@ class MyHomePage extends StatelessWidget {
     return AdaptiveLayout(
       primaryNavigation: SlotLayout(
         config: {
-          Breakpoints.compact: SlotLayoutConfig(
+          Breakpoints.small: SlotLayout.from(
               key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
-          Breakpoints.medium: SlotLayoutConfig(
+          Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('pnav1'),
             builder: (_) => AdaptiveScaffold.toNavigationRail(
                 leading: const Icon(Icons.menu), destinations: destinations),
           ),
-          Breakpoints.expanded: SlotLayoutConfig(
+          Breakpoints.large: SlotLayout.from(
             key: const Key('pnav2'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.toNavigationRail(
@@ -169,7 +186,7 @@ class MyHomePage extends StatelessWidget {
       ),
       body: SlotLayout(
         config: {
-          Breakpoints.compact: SlotLayoutConfig(
+          Breakpoints.small: SlotLayout.from(
             key: const Key('body'),
             builder: (_) => ListView.builder(
               itemCount: 10,
@@ -182,7 +199,21 @@ class MyHomePage extends StatelessWidget {
               ),
             ),
           ),
-          Breakpoints.medium: SlotLayoutConfig(
+          Breakpoints.medium: SlotLayout.from(
+            key: const Key('body1'),
+            builder: (_) =>
+                GridView.count(crossAxisCount: 2, children: <Widget>[
+              for (int i = 0; i < 10; i++)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    color: const Color.fromARGB(255, 255, 201, 197),
+                    height: 400,
+                  ),
+                )
+            ]),
+          ),
+          Breakpoints.large: SlotLayout.from(
             key: const Key('body1'),
             builder: (_) =>
                 GridView.count(crossAxisCount: 2, children: <Widget>[
@@ -200,7 +231,7 @@ class MyHomePage extends StatelessWidget {
       ),
       bottomNavigation: SlotLayout(
         config: {
-          Breakpoints.compact: SlotLayoutConfig(
+          Breakpoints.small: SlotLayout.from(
             key: const Key('botnav'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
@@ -208,7 +239,7 @@ class MyHomePage extends StatelessWidget {
                 destinations: destinations),
           ),
           Breakpoints.medium: SlotLayoutConfig.empty(),
-          Breakpoints.expanded: SlotLayoutConfig.empty()
+          Breakpoints.large: SlotLayoutConfig.empty()
         },
       ),
     );
