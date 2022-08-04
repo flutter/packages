@@ -441,11 +441,14 @@ class _ItemListTile extends StatelessWidget {
         // than large screens.
         // Small screens open a modal with the detail view while large screens
         // simply show the details on the secondaryBody.
+        selectCard(_all_Items.indexOf(item));
         if (!Breakpoints.mediumAndUp.isActive(context)) {
           Navigator.of(context).pushNamed(
             _ExtractRouteArguments.routeName,
             arguments: _ScreenArguments(item: item, selectCard: selectCard),
           );
+        } else {
+          selectCard(_all_Items.indexOf(item));
         }
       },
       child: Padding(
