@@ -1,3 +1,7 @@
+## 0.6.10+4
+
+* Fixes MarkdownBody - Lists expand horizontally instead of using only the space they need ([flutter/flutter#108976](https://github.com/flutter/flutter/issues/108976)).
+
 ## 0.6.10+3
 
 * Fixes shrinkWrap not taken into account with single child ([flutter/flutter#105299](https://github.com/flutter/flutter/issues/105299)).
