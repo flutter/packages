@@ -19,7 +19,7 @@ class _MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Define the children to display within the body.
+    // Define the children to display within the body at different breakpoints.
     final List<Widget> children = <Widget>[
       for (int i = 0; i < 10; i++)
         Padding(
@@ -41,17 +41,13 @@ class _MyHomePage extends StatelessWidget {
         mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
         largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
         useDrawer: false,
-        // Define the list of destinations to be used within the app.
         destinations: const <NavigationDestination>[
           NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
           NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
           NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
           NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
         ],
-        // Define the default body to be a GridView.
         body: (_) => GridView.count(crossAxisCount: 2, children: children),
-        // Override the default body during the small breakpoint to instead become
-        // a ListView.
         smallBody: (_) => ListView.builder(
             itemCount: 10, itemBuilder: (_, int idx) => children[idx]),
         // Define a default secondaryBody.
