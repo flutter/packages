@@ -1,6 +1,14 @@
-## 4.2.6
+## 4.2.8
 
 - Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+
+## 4.2.7
+
+- Update README
+
+## 4.2.6
+
+- Fixes rendering issues in the README.
 
 ## 4.2.5
 
