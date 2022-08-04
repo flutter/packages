@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'adaptive_layout.dart';
 import 'breakpoints.dart';
 import 'slot_layout.dart';
-import 'slot_layout_config.dart';
 
 /// [AdaptiveScaffold] is a Widget that handles macro changes in navigational
 /// elemtents and a body/secondaryBody based on the current features of the
@@ -354,7 +353,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   widget.selectedIndex != null
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
-                    widget.mediumBreakpoint: SlotLayoutConfig(
+                    widget.mediumBreakpoint: SlotLayout.from(
                       key: const Key('primaryNavigation'),
                       builder: (_) => SizedBox(
                         width: widget.navigationRailWidth,
@@ -368,7 +367,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         ),
                       ),
                     ),
-                    widget.largeBreakpoint: SlotLayoutConfig(
+                    widget.largeBreakpoint: SlotLayout.from(
                       key: const Key('primaryNavigation1'),
                       builder: (_) => SizedBox(
                         width: widget.extendedNavigationRailWidth,
@@ -390,7 +389,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   !widget.drawerBreakpoint.isActive(context)
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
-                    widget.smallBreakpoint: SlotLayoutConfig(
+                    widget.smallBreakpoint: SlotLayout.from(
                       key: const Key('bottomNavigation'),
                       builder: (_) => BottomNavigationBar(
                         items:
@@ -402,7 +401,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               : null,
           body: SlotLayout(
             config: <Breakpoint, SlotLayoutConfig?>{
-              Breakpoints.standard: SlotLayoutConfig(
+              Breakpoints.standard: SlotLayout.from(
                 key: const Key('body'),
                 inAnimation: AdaptiveScaffold.fadeIn,
                 outAnimation: AdaptiveScaffold.fadeOut,
@@ -411,7 +410,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               if (widget.smallBody != null)
                 widget.smallBreakpoint:
                     (widget.smallBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('smallBody'),
                             inAnimation: AdaptiveScaffold.fadeIn,
                             outAnimation: AdaptiveScaffold.fadeOut,
@@ -421,7 +420,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               if (widget.body != null)
                 widget.mediumBreakpoint:
                     (widget.body != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('body'),
                             inAnimation: AdaptiveScaffold.fadeIn,
                             outAnimation: AdaptiveScaffold.fadeOut,
@@ -431,7 +430,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               if (widget.largeBody != null)
                 widget.largeBreakpoint:
                     (widget.largeBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('largeBody'),
                             inAnimation: AdaptiveScaffold.fadeIn,
                             outAnimation: AdaptiveScaffold.fadeOut,
@@ -442,7 +441,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           ),
           secondaryBody: SlotLayout(
             config: <Breakpoint, SlotLayoutConfig?>{
-              Breakpoints.standard: SlotLayoutConfig(
+              Breakpoints.standard: SlotLayout.from(
                 key: const Key('sBody'),
                 outAnimation: AdaptiveScaffold.stayOnScreen,
                 builder: widget.secondaryBody,
@@ -450,7 +449,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               if (widget.smallSecondaryBody != null)
                 widget.smallBreakpoint:
                     (widget.smallSecondaryBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('smallSBody'),
                             outAnimation: AdaptiveScaffold.stayOnScreen,
                             builder: widget.smallSecondaryBody,
@@ -459,7 +458,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               if (widget.secondaryBody != null)
                 widget.mediumBreakpoint:
                     (widget.secondaryBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('sBody'),
                             outAnimation: AdaptiveScaffold.stayOnScreen,
                             builder: widget.secondaryBody,
@@ -468,7 +467,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               if (widget.largeSecondaryBody != null)
                 widget.largeBreakpoint:
                     (widget.largeSecondaryBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayoutConfig(
+                        ? SlotLayout.from(
                             key: const Key('largeSBody'),
                             outAnimation: AdaptiveScaffold.stayOnScreen,
                             builder: widget.largeSecondaryBody,

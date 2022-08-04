@@ -144,7 +144,7 @@ class __MyHomePageState extends State<_MyHomePage>
           config: <Breakpoint, SlotLayoutConfig?>{
             // The breakpoint used here is from the Breakpoints class but custom
             // Breakpoints can be defined by extending the Breakpoint class
-            Breakpoints.medium: SlotLayoutConfig(
+            Breakpoints.medium: SlotLayout.from(
               // Every SlotLayoutConfig takes a key and a builder. The builder
               // is to save memory that would be spent on initialization.
               key: const Key('primaryNavigation'),
@@ -212,7 +212,7 @@ class __MyHomePageState extends State<_MyHomePage>
                 ),
               ),
             ),
-            Breakpoints.large: SlotLayoutConfig(
+            Breakpoints.large: SlotLayout.from(
               key: const Key('primaryNavigation1'),
               // The AdaptiveScaffold builder here greatly simplifies
               // navigational elements.
@@ -232,7 +232,7 @@ class __MyHomePageState extends State<_MyHomePage>
         ),
         body: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig?>{
-            Breakpoints.standard: SlotLayoutConfig(
+            Breakpoints.standard: SlotLayout.from(
               key: const Key('body'),
               // The conditional here is for navigation screens. The first
               // screen shows the main screen and every other screeen shows
@@ -253,7 +253,7 @@ class __MyHomePageState extends State<_MyHomePage>
         secondaryBody: _navigationIndex == 0
             ? SlotLayout(
                 config: <Breakpoint, SlotLayoutConfig?>{
-                  Breakpoints.medium: SlotLayoutConfig(
+                  Breakpoints.medium: SlotLayout.from(
                     // This overrides the default behavior of the secondaryBody
                     // disappearing as it is animating out.
                     outAnimation: AdaptiveScaffold.stayOnScreen,
@@ -261,7 +261,7 @@ class __MyHomePageState extends State<_MyHomePage>
                     builder: (_) =>
                         _DetailTile(item: _all_Items[selected ?? 0]),
                   ),
-                  Breakpoints.large: SlotLayoutConfig(
+                  Breakpoints.large: SlotLayout.from(
                     outAnimation: AdaptiveScaffold.stayOnScreen,
                     key: const Key('sb1'),
                     builder: (_) =>
@@ -272,7 +272,7 @@ class __MyHomePageState extends State<_MyHomePage>
             : null,
         bottomNavigation: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig?>{
-            Breakpoints.small: SlotLayoutConfig(
+            Breakpoints.small: SlotLayout.from(
               key: const Key('bn'),
               // You can define inAnimations or outAnimations to override the
               // default offset transition.

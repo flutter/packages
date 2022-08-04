@@ -6,4 +6,3 @@ export 'src/adaptive_layout.dart';
 export 'src/adaptive_scaffold.dart';
 export 'src/breakpoints.dart';
 export 'src/slot_layout.dart';
-export 'src/slot_layout_config.dart';

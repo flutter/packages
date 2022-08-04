@@ -19,6 +19,18 @@ class _MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Define the children to display within the body.
+    final List<Widget> children = <Widget>[
+      for (int i = 0; i < 10; i++)
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            color: const Color.fromARGB(255, 255, 201, 197),
+            height: 400,
+          ),
+        )
+    ];
+
     // Define the list of destinations to be used within the app.
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
@@ -42,13 +54,13 @@ class _MyHomePage extends StatelessWidget {
       // extended NavigationRail with both icons and labels.
       primaryNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig?>{
-          Breakpoints.medium: SlotLayoutConfig(
+          Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('pnav1'),
             builder: (_) =>
                 AdaptiveScaffold.toNavigationRail(destinations: destinations),
           ),
-          Breakpoints.large: SlotLayoutConfig(
+          Breakpoints.large: SlotLayout.from(
             key: const Key('pnav2'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.toNavigationRail(
@@ -60,32 +72,15 @@ class _MyHomePage extends StatelessWidget {
       // breakpoints and onwards.
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig?>{
-          Breakpoints.small: SlotLayoutConfig(
+          Breakpoints.small: SlotLayout.from(
             key: const Key('body'),
             builder: (_) => ListView.builder(
-              itemCount: 10,
-              itemBuilder: (_, __) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  color: const Color.fromARGB(255, 255, 201, 197),
-                  height: 400,
-                ),
-              ),
-            ),
+                itemCount: 10, itemBuilder: (_, int idx) => children[idx]),
           ),
-          Breakpoints.mediumAndUp: SlotLayoutConfig(
+          Breakpoints.mediumAndUp: SlotLayout.from(
             key: const Key('body1'),
             builder: (_) =>
-                GridView.count(crossAxisCount: 2, children: <Widget>[
-              for (int i = 0; i < 10; i++)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    color: const Color.fromARGB(255, 255, 201, 197),
-                    height: 400,
-                  ),
-                )
-            ]),
+                GridView.count(crossAxisCount: 2, children: children),
           ),
         },
       ),
@@ -93,7 +88,7 @@ class _MyHomePage extends StatelessWidget {
       // width.
       bottomNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig?>{
-          Breakpoints.small: SlotLayoutConfig(
+          Breakpoints.small: SlotLayout.from(
             key: const Key('botnav'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
