@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:isolate';
+
 import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
 
@@ -132,7 +134,7 @@ class __MyHomePageState extends State<_MyHomePage>
               width: 22,
             ),
             Text(
-              "Folders",
+              'Folders',
               style: TextStyle(fontSize: 13, color: Colors.grey[700]),
             ),
           ],
@@ -153,7 +155,7 @@ class __MyHomePageState extends State<_MyHomePage>
             const SizedBox(
               width: 21,
             ),
-            const Text("Freelance"),
+            const Text('Freelance'),
           ],
         ),
         const SizedBox(
@@ -172,7 +174,7 @@ class __MyHomePageState extends State<_MyHomePage>
             const SizedBox(
               width: 21,
             ),
-            const Text("Mortage"),
+            const Text('Mortage'),
           ],
         ),
         const SizedBox(
@@ -193,7 +195,7 @@ class __MyHomePageState extends State<_MyHomePage>
             ),
             const Flexible(
                 child: Text(
-              "Taxes",
+              'Taxes',
               overflow: TextOverflow.ellipsis,
             )),
           ],
@@ -216,7 +218,7 @@ class __MyHomePageState extends State<_MyHomePage>
             ),
             const Flexible(
                 child: Text(
-              "Receipts",
+              'Receipts',
               overflow: TextOverflow.ellipsis,
             )),
           ],
@@ -397,18 +399,19 @@ class _ComposeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    int _num = 0;
+    return Column(children: <Widget>[
       Container(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 18),
         child: const Icon(
-          Icons.menu,
+          (Icons.menu),
         ),
       ),
       Container(
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 254, 215, 227),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
-          boxShadow: [
+          boxShadow: <BoxShadow>[
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 1,
@@ -441,7 +444,7 @@ class _ComposeButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const <Widget>[
                 Text(
-                  "REPLY",
+                  'REPLY',
                   style: TextStyle(color: Colors.deepPurple, fontSize: 15),
                 ),
                 Icon(
@@ -474,7 +477,7 @@ class _ComposeButton extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
             child: Row(
-              children: const [
+              children: const <Widget>[
                 Icon(Icons.edit_outlined),
                 SizedBox(width: 20),
                 Center(child: Text('Compose')),
@@ -483,56 +486,6 @@ class _ComposeButton extends StatelessWidget {
           ),
         )
       ]),
-    );
-  }
-}
-
-class ItemList extends StatelessWidget {
-  const ItemList({
-    Key? key,
-    required this.items,
-    required this.selectCard,
-    required this.setDisplayed,
-    required this.showGridView,
-  }) : super(key: key);
-
-  final List<_Item> items;
-  final Function selectCard;
-  final Function setDisplayed;
-  final bool showGridView;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-      floatingActionButton: Breakpoints.medium.isActive(context)
-          ? null
-          : Container(
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 254, 215, 227),
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              width: 200,
-              height: 50,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
-                child: Row(
-                  children: const <Widget>[
-                    Icon(Icons.edit_outlined),
-                    SizedBox(width: 20),
-                    Center(child: Text('Compose')),
-                  ],
-                ),
-              ),
-            ),
     );
   }
 }
@@ -644,14 +597,14 @@ class _ItemListTile extends StatelessWidget {
         // than large screens.
         // Small screens open a modal with the detail view while large screens
         // simply show the details on the secondaryBody.
-        selectCard(_all_Items.indexOf(item));
+        selectCard(allItems.indexOf(item));
         if (!Breakpoints.mediumAndUp.isActive(context)) {
           Navigator.of(context).pushNamed(
             _ExtractRouteArguments.routeName,
             arguments: _ScreenArguments(item: item, selectCard: selectCard),
           );
         } else {
-          selectCard(_all_Items.indexOf(item));
+          selectCard(allItems.indexOf(item));
         }
       },
       child: Padding(
@@ -739,55 +692,66 @@ class _DetailTile extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: <Widget>[
               Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: Column(
-                    children: [
+                    children: <Widget>[
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(item.title,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge),
-                                  Text('${item.emails!.length} Messages',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall)
-                                ]),
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(15))),
-                                  child: Icon(
-                                    Icons.restore_from_trash,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(15))),
-                                  child: Icon(
-                                    Icons.more_vert,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(item.title,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge),
+                                        const SizedBox(
+                                          height: 7,
+                                        ),
+                                        Text('${item.emails!.length} Messages',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelSmall)
+                                      ])),
                             ),
+                            Container(
+                                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15))),
+                                      child: Icon(
+                                        Icons.restore_from_trash,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15))),
+                                      child: Icon(
+                                        Icons.more_vert,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                )),
                           ]),
                       const SizedBox(
                         height: 20,
@@ -845,7 +809,7 @@ class _EmailTile extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -858,7 +822,7 @@ class _EmailTile extends StatelessWidget {
                   const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: <Widget>[
                       Text(sender,
                           style:
                               TextStyle(color: Colors.grey[850], fontSize: 13)),
@@ -880,9 +844,14 @@ class _EmailTile extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 15),
-              Text('To $recepients',
-                  style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+              if (recepients != '')
+                Column(children: <Widget>[
+                  const SizedBox(height: 15),
+                  Text('To $recepients',
+                      style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                ])
+              else
+                Container(),
               const SizedBox(height: 15),
               Text(body,
                   style: TextStyle(
