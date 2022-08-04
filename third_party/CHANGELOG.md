@@ -1,5 +1,9 @@
 # CHANGES
 
+## 1.1.2
+
+- Update path parsing/drawing dependencies to fix arc parsing bug.
+
 ## 1.1.1+1
 
 - Fix regression introduced in 1.1.1
