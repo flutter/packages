@@ -1,6 +1,6 @@
 ## 0.3.3+2
 
-Dartdoc correction for `readAsBytes` and `readAsString`.
+* Dartdoc correction for `readAsBytes` and `readAsString`.
 
 ## 0.3.3+1
 
