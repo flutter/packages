@@ -32,14 +32,15 @@ class _MyHomePage extends StatelessWidget {
     ];
 
     return BottomNavigationBarTheme(
-      data: const BottomNavigationBarThemeData(unselectedItemColor: Colors.black, selectedItemColor: Colors.black),
+      data: const BottomNavigationBarThemeData(
+          unselectedItemColor: Colors.black, selectedItemColor: Colors.black),
       child: AdaptiveScaffold(
         // An option to override the default breakpoints used for small, medium,
         // and large.
         smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
-        mediumBreakpoint: const WidthPlatformBreakpoint(begin:700, end: 1000),
-        largeBreakpoint:  const WidthPlatformBreakpoint(begin: 1000),
-        useDrawer:false,
+        mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
+        largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
+        useDrawer: false,
         // Define the list of destinations to be used within the app.
         destinations: const <NavigationDestination>[
           NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
