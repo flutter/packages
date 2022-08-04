@@ -236,7 +236,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   bool canPop() => _routerDelegate.canPop();
 
   /// Pop the top page off the GoRouter's page stack.
-  void pop([dynamic result]) {
+  void pop<T extends Object?>([T? result]) {
     assert(() {
       log.info('popping $location');
       return true;

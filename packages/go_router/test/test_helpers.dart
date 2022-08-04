@@ -177,7 +177,7 @@ class GoRouterPopSpy extends GoRouter {
   bool popped = false;
 
   @override
-  void pop([dynamic value]) {
+  void pop<T extends Object?>([T? value]) {
     popped = true;
   }
 }
