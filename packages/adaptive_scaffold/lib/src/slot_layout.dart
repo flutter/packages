@@ -42,8 +42,11 @@ class SlotLayout extends StatefulWidget {
   /// in the map takes priority.
   final Map<Breakpoint, SlotLayoutConfig?> config;
 
+  /// A wrapper for the children passed to [SlotLayout] to provide appropriate
+  /// config information.
+  ///
   /// Acts as a delegate to the abstract class [SlotLayoutConfig].
-  /// It first takes a builder which returnsd the child Widget that [SlotLayout]
+  /// It first takes a builder which returns the child Widget that [SlotLayout]
   /// eventually displays with an animation.
   ///
   /// It also takes an inAnimation and outAnimation to describe how the Widget
@@ -56,7 +59,7 @@ class SlotLayout extends StatefulWidget {
   /// as this key is what is used to let the [SlotLayout] know that a change has
   /// been made to its child.
   ///
-  /// Note that if you define a given animation phase, there may be multiple
+  /// If you define a given animation phase, there may be multiple
   /// widgets being displayed depending on the phases you have chosen to animate.
   /// If you are using GlobalKeys, this may cause issues with the
   /// [AnimatedSwitcher].
@@ -67,12 +70,7 @@ class SlotLayout extends StatefulWidget {
   /// as the returned widget for the inAnimation and outAnimation functions.
   ///  * [AnimatedSwitcher.defaultTransitionBuilder], which is what takes the
   /// inAnimation and outAnimation.
-  static _SlotLayoutConfig Function({
-    WidgetBuilder? builder,
-    Widget Function(Widget, Animation<double>)? inAnimation,
-    Widget Function(Widget, Animation<double>)? outAnimation,
-    required Key key,
-  }) from = ({
+  static _SlotLayoutConfig from({
     WidgetBuilder? builder,
     Widget Function(Widget, Animation<double>)? inAnimation,
     Widget Function(Widget, Animation<double>)? outAnimation,
@@ -139,9 +137,8 @@ abstract class SlotLayoutConfig extends StatefulWidget {
   /// The child Widget that [SlotLayout] eventually returns with an animation.
   final WidgetBuilder? builder;
 
-  /// A function that takes a [Widget] and an [Animation] and returns a [Widget].
-  /// This function is passed to the [AnimatedSwitcher] inside [SlotLayout] and
-  /// is to be played when the child enters.
+  /// A function that provides the animation to be wrapped around the builder
+  /// child as it is being moved in during a switch in [SlotLayout].
   ///
   /// See also:
   ///
@@ -149,9 +146,8 @@ abstract class SlotLayoutConfig extends StatefulWidget {
   ///  as the returned widget.
   final Widget Function(Widget, Animation<double>)? inAnimation;
 
-  /// A function that takes a [Widget] and an [Animation] and returns a [Widget].
-  /// This function is passed to the [AnimatedSwitcher] inside [SlotLayout] and
-  /// is to be played when the child exits.
+  /// A function that provides the animation to be wrapped around the builder
+  /// child as it is being moved in during a switch in [SlotLayout].
   ///
   /// See also:
   ///
