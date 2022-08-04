@@ -16,7 +16,11 @@ import 'slot_layout.dart';
 /// animations, by handling macro changes in navigational elements and bodies
 /// based on the current features of the screen, namely screen width and platform.
 /// For example, the navigational elements would be a [BottomNavigationBar] on a
-/// small mobile device and a [NavigationRail] on larger devices.
+/// small mobile device or a [Drawer] on a small desktop device and a
+/// [NavigationRail] on larger devices. When the app's size changes, for example
+/// because its window is resized, the corresponding layout transition is animated.
+/// The layout and navigation changes are dictated by "breakpoints" which can be
+/// customized or overridden.
 ///
 /// Also provides a variety of helper methods for navigational elements,
 /// animations, and more.
@@ -406,8 +410,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 )
               : null,
           bottomNavigation: widget.destinations != null &&
-                  (!widget.drawerBreakpoint.isActive(context) ||
-                      !widget.useDrawer)
+                  (!widget.drawerBreakpoint.isActive(context) || !widget.useDrawer)
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.smallBreakpoint: SlotLayout.from(
