@@ -41,7 +41,7 @@ extension GoRouterHelper on BuildContext {
       GoRouter.of(this).push(location, extra: extra);
 
   /// Push a location onto the page stack.
-  void pushAsync(String location, {Object? extra}) =>
+  Future<dynamic> pushAsync(String location, {Object? extra}) =>
       GoRouter.of(this).pushAsync(location, extra: extra);
 
   /// Navigate to a named route onto the page stack.
