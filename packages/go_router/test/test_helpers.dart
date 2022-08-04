@@ -139,7 +139,7 @@ class GoRouterPopSpy extends GoRouter {
   bool popped = false;
 
   @override
-  void pop() {
+  void pop([dynamic value]) {
     popped = true;
   }
 }

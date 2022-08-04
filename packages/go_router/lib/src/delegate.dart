@@ -44,6 +44,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
 
+  /// The list of completers for the promises when pushing asynchronous routes.
+  final Map<String, Completer<dynamic>> _completers =
+      <String, Completer<dynamic>>{};
   RouteMatchList _matches = RouteMatchList.empty();
   final Map<String, int> _pushCounts = <String, int>{};
 
@@ -69,13 +72,44 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     notifyListeners();
   }
 
+  /// Pushes the given location onto the page stack
+  Future<dynamic> pushAsync(RouteMatch match) {
+    // Remap the pageKey to allow any number of the same page on the stack
+    final String fullPath = match.fullpath;
+    final Completer<dynamic> completer = Completer<dynamic>();
+    _completers[fullPath] = completer;
+    final int count = (_pushCounts[fullPath] ?? 0) + 1;
+    _pushCounts[fullPath] = count;
+    final ValueKey<String> pageKey = ValueKey<String>('$fullPath-p$count');
+    final RouteMatch newPageKeyMatch = RouteMatch(
+      route: match.route,
+      subloc: match.subloc,
+      fullpath: match.fullpath,
+      encodedParams: match.encodedParams,
+      queryParams: match.queryParams,
+      extra: match.extra,
+      error: match.error,
+      pageKey: pageKey,
+    );
+
+    _matches.push(newPageKeyMatch);
+    notifyListeners();
+    return completer.future;
+  }
+
   /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() {
     return _matches.canPop();
   }
 
   /// Pop the top page off the GoRouter's page stack.
-  void pop() {
+  void pop([dynamic value]) {
+    final RouteMatch last = _matches.last;
+    final Completer<dynamic>? completer = _completers[last.fullpath];
+    if (completer != null) {
+      completer.complete(value);
+    }
+    _completers.remove(last.fullpath);
     _matches.pop();
     notifyListeners();
   }

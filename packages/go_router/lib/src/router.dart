@@ -198,11 +198,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       log.info('pushing $location');
       return true;
     }());
-    final List<GoRouteMatch> matches =
-        await routeInformationParser.parseRouteInformation(
-      DebugGoRouteInformation(location: location, state: extra),
-    );
-    return routerDelegate.pushAsync(matches.last);
+    _routeInformationParser
+        .parseRouteInformation(
+            DebugGoRouteInformation(location: location, state: extra))
+        .then<void>((RouteMatchList matches) {
+      _routerDelegate.pushAsync(matches.last);
+    });
   }
 
   /// Push a named route onto the page stack w/ optional parameters, e.g.
