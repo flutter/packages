@@ -4,16 +4,16 @@
 
 import 'package:flutter/material.dart';
 
-const List<TargetPlatform> _desktop = <TargetPlatform>[
+const Set<TargetPlatform> _desktop = <TargetPlatform>{
   TargetPlatform.fuchsia,
   TargetPlatform.linux,
   TargetPlatform.macOS,
   TargetPlatform.windows
-];
-const List<TargetPlatform> _mobile = <TargetPlatform>[
+};
+const Set<TargetPlatform> _mobile = <TargetPlatform>{
   TargetPlatform.iOS,
   TargetPlatform.android
-];
+};
 
 /// A group of standard breakpoints built according to the material
 /// specifications for screen width size.
@@ -108,9 +108,9 @@ class WidthPlatformBreakpoint extends Breakpoint {
   /// no upper bound.
   final double? end;
 
-  /// A list of [TargetPlatform]s that the [Breakpoint] will be active on. If
+  /// A Set of [TargetPlatform]s that the [Breakpoint] will be active on. If
   /// left null then it will be active on all platforms.
-  final List<TargetPlatform>? platform;
+  final Set<TargetPlatform>? platform;
 
   @override
   bool isActive(BuildContext context) {
