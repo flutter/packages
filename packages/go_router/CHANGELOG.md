@@ -1,7 +1,42 @@
-## 4.2.0
+## 4.3.0
 
 - Adds `pushAsync` and `pushNamedAsync` to `GoRouterHelper` making it posible to await results from a `pop`.
 - Adds an optional parameter to the `pop` method, allowing to return values from a `pop.
+## 4.2.7
+
+- Update README
+
+## 4.2.6
+
+- Fixes rendering issues in the README.
+
+## 4.2.5
+
+- Fixes a bug where calling extra parameter is always null in route level redirect callback
+
+## 4.2.4
+
+- Rewrites Readme and examples.
+
+## 4.2.3
+
+- Fixes a bug where the ValueKey to be the same when a page was pushed multiple times.
+
+## 4.2.2
+
+- Fixes a bug where go_router_builder wasn't detecting annotations.
+
+## 4.2.1
+
+- Refactors internal classes and methods
+
+## 4.2.0
+
+- Adds `void replace()` and `replaceNamed` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
+
+## 4.1.1
+
+- Fixes a bug where calling namedLocation does not support case-insensitive way.
 
 ## 4.1.0
 

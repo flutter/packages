@@ -107,9 +107,10 @@ String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   return result;
 }
 
-String? _objcTypePtrForPrimitiveDartType(String? classPrefix, NamedType field) {
-  return _objcTypeForDartTypeMap.containsKey(field.type.baseName)
-      ? _objcTypeForDartType(classPrefix, field.type).ptr
+String? _objcTypePtrForPrimitiveDartType(
+    String? classPrefix, TypeDeclaration type) {
+  return _objcTypeForDartTypeMap.containsKey(type.baseName)
+      ? _objcTypeForDartType(classPrefix, type).ptr
       : null;
 }
 
@@ -170,8 +171,11 @@ void _writeInitializerDeclaration(Indent indent, Class klass,
               indent.write(x);
             };
       isFirst = false;
-      final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
-          (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+      final HostDatatype hostDatatype = getFieldHostDatatype(
+          field,
+          classes,
+          enums,
+          (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
           customResolver: enumNames.contains(field.type.baseName)
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
@@ -205,8 +209,11 @@ void _writeClassDeclarations(
       indent.addln(';');
     }
     for (final NamedType field in klass.fields) {
-      final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
-          (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+      final HostDatatype hostDatatype = getFieldHostDatatype(
+          field,
+          classes,
+          enums,
+          (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
           customResolver: enumNames.contains(field.type.baseName)
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
