@@ -125,8 +125,8 @@ List<RouteMatch> _getLocRouteRecursively({
   required String parentSubloc,
   required List<GoRoute> routes,
   required String parentFullpath,
-  required Map<String, dynamic> queryParams,
-  required Map<String, dynamic> queryParametersAll,
+  required Map<String, String> queryParams,
+  required Map<String, List<String>> queryParametersAll,
   required Object? extra,
 }) {
   bool debugGatherAllMatches = false;

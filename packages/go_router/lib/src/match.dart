@@ -41,8 +41,8 @@ class RouteMatch {
     required String restLoc, // e.g. person/p1
     required String parentSubloc, // e.g. /family/f2
     required String fullpath, // e.g. /family/:fid/person/:pid
-    required Map<String, dynamic> queryParams,
-    required Map<String, dynamic> queryParametersAll,
+    required Map<String, String> queryParams,
+    required Map<String, List<String>> queryParametersAll,
     required Object? extra,
   }) {
     assert(!route.path.contains('//'));
@@ -80,10 +80,10 @@ class RouteMatch {
   final Map<String, String> encodedParams;
 
   /// Query parameters for the matched route.
-  final Map<String, dynamic> queryParams;
+  final Map<String, String> queryParams;
 
   /// Query parameters for the matched route.
-  final Map<String, dynamic> queryParametersAll;
+  final Map<String, List<String>> queryParametersAll;
 
   /// An extra object to pass along with the navigation.
   final Object? extra;

@@ -55,11 +55,11 @@ class GoRouterState {
   final Map<String, String> params;
 
   /// The query parameters for the location, e.g. {'from': '/family/f2'}
-  final Map<String, dynamic> queryParams;
+  final Map<String, String> queryParams;
 
   /// The query parameters for the location,
   /// e.g. `{'q1': ['v1'], 'q2': ['v2', 'v3']}`
-  final Map<String, dynamic> queryParametersAll;
+  final Map<String, List<String>> queryParametersAll;
 
   /// An extra object to pass along with the navigation.
   final Object? extra;
