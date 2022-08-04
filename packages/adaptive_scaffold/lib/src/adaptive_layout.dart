@@ -1,6 +1,6 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/// Copyright 2013 The Flutter Authors. All rights reserved.
+/// Use of this source code is governed by a BSD-style license that can be
+/// found in the LICENSE file.
 
 import 'dart:ui';
 import 'package:flutter/widgets.dart';
@@ -16,30 +16,97 @@ enum _SlotIds {
   secondaryBody,
 }
 
-/// [AdaptiveLayout] is dedicated to simplifying the process of developing
-/// layouts for many different screen sizes. It separates the screen into
-/// several sections, also referred to as "slots". The Widget defines slots for
-/// the different placements of navigational elements and two slots for a body
-/// and secondaryBody. All of these slots take a [SlotLayout] Widget. This class
-/// works in junction with [SlotLayout] and [SlotLayoutConfig]. This class
-/// handles the placement of the slots on the screen and animations regarding
-/// their macromovements.
+/// Layout a typical app that adapts to different screens using predefined slots.
+///
+/// This widget separates the screen into predefined sections called "slots".
+/// It lays out the app using the following kinds of slots (in order):
+///
+///  * [topNavigation], full width at the top. Must have defined size.
+///  * [bottomNavigation], full width at the bottom. Must have defined size.
+///  * [primaryNavigation], displayed on the beginning side of the screen from
+/// the bottom of [topNavigation] to the top of [bottomNavigation]. Must have
+/// defined size.
+///  * [secondaryNavigation], displayed on the end side of the screen from the
+/// bottom of [topNavigation] to the top of [bottomNavigation]. Must have defined
+/// size.
+///  * [body], first panel; fills the remaining space from the beginning side.
+/// Flexible size.
+///  * [secondaryBody], second panel; fills the remaining space from the end
+/// side. Flexible size. Provides some automatic functionality with foldable
+/// screens.
+///
+/// Slots must display differently under different screen conditions (such as
+/// different widths), and each slot is defined with a [SlotLayout], which maps
+/// [Breakpoint]s to [SlotLayoutConfig], where [SlotLayout.from] defines the
+/// content and transition.
+///
+/// [AdaptiveLayout] handles the placement of the slots on the screen and
+/// animations regarding their macromovements.
+///
+/// ```dart
+/// AdaptiveLayout(
+///   primaryNavigation: SlotLayout(
+///     config: {
+///       Breakpoints.small: SlotLayout.from(key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
+///       Breakpoints.medium: SlotLayout.from(
+///         inAnimation: leftOutIn,
+///         key: const Key('pnav1'),
+///         builder: (_) => AdaptiveScaffold.toNavigationRail(destinations: destinations),
+///       ),
+///       Breakpoints.large: SlotLayout.from(
+///         key: const Key('pnav2'),
+///         inAnimation: leftOutIn,
+///         builder: (_) => AdaptiveScaffold.toNavigationRail(extended: true, destinations: destinations),
+///       ),
+///     },
+///   ),
+///   body: SlotLayout(
+///     config: {
+///       Breakpoints.small: SlotLayout.from(
+///         key: const Key('body'),
+///         builder: (_) => ListView.builder(
+///           itemCount: children.length,
+///           itemBuilder: (_, idx) => children[idx]
+///         ),
+///       ),
+///       Breakpoints.medium: SlotLayout.from(
+///         key: const Key('body1'),
+///         builder: (_) => GridView.count(
+///           crossAxisCount: 2,
+///           children: children
+///         ),
+///       ),
+///     },
+///   ),
+///   bottomNavigation: SlotLayout(
+///     config: {
+///       Breakpoints.small: SlotLayout.from(
+///         key: const Key('botnav'),
+///         inAnimation: bottomToTop,
+///         builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
+///       ),
+///     },
+///   ),
+/// )
+/// ```
 ///
 /// See also:
 ///
 ///  * [SlotLayout], which handles the actual switching and animations between
 /// elements based on [Breakpoint]s.
-///  * [SlotLayoutConfig], which holds information regarding the actual Widgets
+///  * [SlotLayout.from], which holds information regarding the actual Widgets
 /// and the desired way to animate between switches. Often used within
 /// [SlotLayout].
+///  * [AdaptiveScaffold], which provides a more friendly API with less
+/// customizability. and holds a preset of animations and helper builders.
 ///  * [Design Doc](https://flutter.dev/go/adaptive-layout-foldables).
 ///  * [Material Design 3 Specifications] (https://m3.material.io/foundations/adaptive-design/overview).
 class AdaptiveLayout extends StatefulWidget {
   /// Creates an [AdaptiveLayout] widget.
   const AdaptiveLayout({
+    this.topNavigation,
     this.primaryNavigation,
     this.secondaryNavigation,
-    this.topNavigation,
     this.bottomNavigation,
     this.body,
     this.secondaryBody,

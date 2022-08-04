@@ -56,6 +56,11 @@ class SlotLayout extends StatefulWidget {
   /// as this key is what is used to let the [SlotLayout] know that a change has
   /// been made to its child.
   ///
+  /// Note that if you define a given animation phase, there may be multiple
+  /// widgets being displayed depending on the phases you have chosen to animate.
+  /// If you are using GlobalKeys, this may cause issues with the
+  /// [AnimatedSwitcher].
+  ///
   /// See also:
   ///
   ///  * [AnimatedWidget] and [ImplicitlyAnimatedWidget], which are commonly used
@@ -154,8 +159,8 @@ abstract class SlotLayoutConfig extends StatefulWidget {
   ///  as the returned widget.
   final Widget Function(Widget, Animation<double>)? outAnimation;
 
-  /// An empty [SlotLayoutConfig] to be placed in a slot to indicate it is not
-  /// used.
+  /// An empty [SlotLayoutConfig] to be placed in a slot to indicate that the slot
+  /// should show nothing.
   static SlotLayoutConfig empty() {
     return const _SlotLayoutConfig(key: Key(''), builder: null);
   }
