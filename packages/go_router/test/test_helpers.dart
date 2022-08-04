@@ -133,6 +133,44 @@ class GoRouterPushNamedSpy extends GoRouter {
   }
 }
 
+class GoRouterPushAsyncSpy extends GoRouter {
+  GoRouterPushAsyncSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  String? myLocation;
+  Object? extra;
+
+  @override
+  Future<dynamic> pushAsync(String location, {Object? extra}) {
+    myLocation = location;
+    this.extra = extra;
+    return Future<bool>.value(true);
+  }
+}
+
+class GoRouterPushNamedAsyncSpy extends GoRouter {
+  GoRouterPushNamedAsyncSpy({required List<GoRoute> routes})
+      : super(routes: routes);
+
+  String? name;
+  Map<String, String>? params;
+  Map<String, String>? queryParams;
+  Object? extra;
+
+  @override
+  Future<dynamic> pushNamedAsync(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
+    Object? extra,
+  }) {
+    this.name = name;
+    this.params = params;
+    this.queryParams = queryParams;
+    this.extra = extra;
+    return Future<bool>.value(true);
+  }
+}
+
 class GoRouterPopSpy extends GoRouter {
   GoRouterPopSpy({required List<GoRoute> routes}) : super(routes: routes);
 

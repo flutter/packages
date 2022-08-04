@@ -1746,6 +1746,26 @@ void main() {
       expect(router.extra, extra);
     });
 
+    testWidgets('calls [pushAsync] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterPushAsyncSpy router = GoRouterPushAsyncSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationProvider: router.routeInformationProvider,
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      final bool? result = await key.currentContext!.pushAsync(
+        location,
+        extra: extra,
+      ) as bool?;
+      expect(result, true);
+      expect(router.myLocation, location);
+      expect(router.extra, extra);
+    });
+
     testWidgets('calls [pushNamed] on closest GoRouter',
         (WidgetTester tester) async {
       final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
@@ -1763,6 +1783,31 @@ void main() {
         queryParams: queryParams,
         extra: extra,
       );
+      expect(router.name, name);
+      expect(router.params, params);
+      expect(router.queryParams, queryParams);
+      expect(router.extra, extra);
+    });
+
+    testWidgets('calls [pushNamedAsync] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterPushNamedAsyncSpy router =
+          GoRouterPushNamedAsyncSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationProvider: router.routeInformationProvider,
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      final bool? result = await key.currentContext!.pushNamedAsync(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      ) as bool?;
+      expect(result, true);
       expect(router.name, name);
       expect(router.params, params);
       expect(router.queryParams, queryParams);
