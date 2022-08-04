@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.0.1
+
+- Fix [bug in arc decomposition](https://github.com/dnfield/flutter_svg/issues/742).
+- Minor code cleanup for analysis warnings.
+
 ## 1.0.0
 
 - Stable release.

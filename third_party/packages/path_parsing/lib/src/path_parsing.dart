@@ -13,7 +13,7 @@
 import 'dart:math' as math show sqrt, max, pi, tan, sin, cos, pow, atan2;
 
 import 'package:meta/meta.dart';
-import 'package:vector_math/vector_math.dart' show Matrix4;
+import 'package:vector_math/vector_math.dart' show Matrix4, radians;
 
 import './path_segment_type.dart';
 
@@ -178,10 +178,9 @@ class SvgPathStringSource {
   }
 
   bool _isValidRange(double x) =>
-     -double.maxFinite <= x && x <= double.maxFinite;
+      -double.maxFinite <= x && x <= double.maxFinite;
 
-  bool _isValidExponent(double x) =>
-     -37 <= x  && x <= 38;
+  bool _isValidExponent(double x) => -37 <= x && x <= 38;
 
   /// Reads a code unit and advances the index.
   ///
@@ -209,8 +208,8 @@ class SvgPathStringSource {
       c = _readCodeUnit();
     }
 
-    if ((c < AsciiConstants.number0 || c > AsciiConstants.number9)
-        && c != AsciiConstants.period) {
+    if ((c < AsciiConstants.number0 || c > AsciiConstants.number9) &&
+        c != AsciiConstants.period) {
       throw StateError('First character of a number must be one of [0-9+-.].');
     }
 
@@ -232,8 +231,7 @@ class SvgPathStringSource {
       c = _readCodeUnit();
 
       // There must be a least one digit following the .
-      if (c < AsciiConstants.number0 ||
-          c > AsciiConstants.number9)
+      if (c < AsciiConstants.number0 || c > AsciiConstants.number9)
         throw StateError('There must be at least one digit following the .');
 
       double frac = 1.0;
@@ -264,8 +262,7 @@ class SvgPathStringSource {
       }
 
       // There must be an exponent
-      if (c < AsciiConstants.number0 ||
-          c > AsciiConstants.number9)
+      if (c < AsciiConstants.number0 || c > AsciiConstants.number9)
         throw StateError('Missing exponent');
 
       double exponent = 0.0;
@@ -408,20 +405,18 @@ class SvgPathStringSource {
   }
 }
 
-class OffsetHelper {
-  static _PathOffset reflectedPoint(
-      _PathOffset reflectedIn, _PathOffset pointToReflect) {
-    return _PathOffset(2 * reflectedIn.dx - pointToReflect.dx,
-        2 * reflectedIn.dy - pointToReflect.dy);
-  }
+_PathOffset reflectedPoint(
+    _PathOffset reflectedIn, _PathOffset pointToReflect) {
+  return _PathOffset(2 * reflectedIn.dx - pointToReflect.dx,
+      2 * reflectedIn.dy - pointToReflect.dy);
+}
 
-  static const double _kOneOverThree = 1.0 / 3.0;
+const double _kOneOverThree = 1.0 / 3.0;
 
-  /// Blend the points with a ratio (1/3):(2/3).
-  static _PathOffset blendPoints(_PathOffset p1, _PathOffset p2) {
-    return _PathOffset((p1.dx + 2 * p2.dx) * _kOneOverThree,
-        (p1.dy + 2 * p2.dy) * _kOneOverThree);
-  }
+/// Blend the points with a ratio (1/3):(2/3).
+_PathOffset blendPoints(_PathOffset p1, _PathOffset p2) {
+  return _PathOffset((p1.dx + 2 * p2.dx) * _kOneOverThree,
+      (p1.dy + 2 * p2.dy) * _kOneOverThree);
 }
 
 bool isCubicCommand(SvgPathSegType command) {
@@ -448,7 +443,10 @@ class PathSegmentData {
 
   _PathOffset get arcRadii => point1;
 
+  /// Angle in degrees.
   double get arcAngle => point2.dx;
+
+  /// In degrees.
   set arcAngle(double angle) => point2 = _PathOffset(angle, point2.dy);
 
   double get r1 => arcRadii.dx;
@@ -553,7 +551,7 @@ class SvgPathNormalizer {
         if (!isCubicCommand(_lastCommand)) {
           normSeg.point1 = _currentPoint;
         } else {
-          normSeg.point1 = OffsetHelper.reflectedPoint(
+          normSeg.point1 = reflectedPoint(
             _currentPoint,
             _controlPoint,
           );
@@ -578,7 +576,7 @@ class SvgPathNormalizer {
         if (!isQuadraticCommand(_lastCommand)) {
           normSeg.point1 = _currentPoint;
         } else {
-          normSeg.point1 = OffsetHelper.reflectedPoint(
+          normSeg.point1 = reflectedPoint(
             _currentPoint,
             _controlPoint,
           );
@@ -589,8 +587,8 @@ class SvgPathNormalizer {
       case SvgPathSegType.quadToAbs:
         // Save the unmodified control point.
         _controlPoint = normSeg.point1;
-        normSeg.point1 = OffsetHelper.blendPoints(_currentPoint, _controlPoint);
-        normSeg.point2 = OffsetHelper.blendPoints(
+        normSeg.point1 = blendPoints(_currentPoint, _controlPoint);
+        normSeg.point2 = blendPoints(
           normSeg.targetPoint,
           _controlPoint,
         );
@@ -655,7 +653,7 @@ class SvgPathNormalizer {
       return false;
     }
 
-    final double angle = arcSegment.arcAngle;
+    final double angle = radians(arcSegment.arcAngle);
 
     final _PathOffset midPointDistance =
         (currentPoint - arcSegment.targetPoint) * 0.5;
