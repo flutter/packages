@@ -193,17 +193,16 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Push a URI location onto the page stack w/ optional query parameters and
   /// a promise, e.g.
   /// `/family/f2/person/p1?color=blue`
-  Future<dynamic> pushAsync(String location, {Object? extra}) async {
+  Future<T?> pushAsync<T extends Object?>(String location,
+      {Object? extra}) async {
     assert(() {
       log.info('pushing $location');
       return true;
     }());
-    _routeInformationParser
-        .parseRouteInformation(
-            DebugGoRouteInformation(location: location, state: extra))
-        .then<void>((RouteMatchList matches) {
-      _routerDelegate.pushAsync(matches.last);
-    });
+    final RouteMatchList matches =
+        await _routeInformationParser.parseRouteInformation(
+            DebugGoRouteInformation(location: location, state: extra));
+    return _routerDelegate.pushAsync<T>(matches.last);
   }
 
   /// Push a named route onto the page stack w/ optional parameters, e.g.
@@ -222,13 +221,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Push a named route onto the page stack w/ optional parameters and a
   /// promise, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
-  Future<dynamic> pushNamedAsync(
+  Future<T?> pushNamedAsync<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
-      pushAsync(
+      pushAsync<T>(
         namedLocation(name, params: params, queryParams: queryParams),
         extra: extra,
       );

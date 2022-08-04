@@ -73,10 +73,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   /// Pushes the given location onto the page stack
-  Future<dynamic> pushAsync(RouteMatch match) {
+  Future<T?> pushAsync<T extends Object?>(RouteMatch match) {
     // Remap the pageKey to allow any number of the same page on the stack
     final String fullPath = match.fullpath;
-    final Completer<dynamic> completer = Completer<dynamic>();
+    final Completer<T> completer = Completer<T>();
     _completers[fullPath] = completer;
     final int count = (_pushCounts[fullPath] ?? 0) + 1;
     _pushCounts[fullPath] = count;
@@ -103,9 +103,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   /// Pop the top page off the GoRouter's page stack.
-  void pop([dynamic value]) {
+  void pop<T extends Object?>([T? value]) {
     final RouteMatch last = _matches.last;
-    final Completer<dynamic>? completer = _completers[last.fullpath];
+    final Completer<T>? completer = _completers[last.fullpath] as Completer<T>?;
     if (completer != null) {
       completer.complete(value);
     }

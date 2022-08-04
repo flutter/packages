@@ -118,10 +118,10 @@ class GoRouterPushAsyncSpy extends GoRouter {
   Object? extra;
 
   @override
-  Future<dynamic> pushAsync(String location, {Object? extra}) {
+  Future<T?> pushAsync<T extends Object?>(String location, {Object? extra}) {
     myLocation = location;
     this.extra = extra;
-    return Future<bool>.value(true);
+    return Future<T?>.value(extra as T);
   }
 }
 
@@ -157,7 +157,7 @@ class GoRouterPushNamedAsyncSpy extends GoRouter {
   Object? extra;
 
   @override
-  Future<dynamic> pushNamedAsync(
+  Future<T> pushNamedAsync<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
@@ -167,7 +167,7 @@ class GoRouterPushNamedAsyncSpy extends GoRouter {
     this.params = params;
     this.queryParams = queryParams;
     this.extra = extra;
-    return Future<bool>.value(true);
+    return Future<T>.value(extra as T);
   }
 }
 
@@ -229,19 +229,19 @@ class TestErrorScreen extends DummyScreen {
 }
 
 class HomeScreen extends DummyScreen {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 }
 
 class Page1Screen extends DummyScreen {
-  const Page1Screen({Key? key}) : super(key: key);
+  const Page1Screen({super.key});
 }
 
 class Page2Screen extends DummyScreen {
-  const Page2Screen({Key? key}) : super(key: key);
+  const Page2Screen({super.key});
 }
 
 class LoginScreen extends DummyScreen {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 }
 
 class FamilyScreen extends DummyScreen {
@@ -261,7 +261,7 @@ class PersonScreen extends DummyScreen {
 }
 
 class DummyScreen extends StatelessWidget {
-  const DummyScreen({Key? key}) : super(key: key);
+  const DummyScreen({super.key});
 
   @override
   Widget build(BuildContext context) => const Placeholder();
@@ -374,7 +374,7 @@ class DummyBuildContext implements BuildContext {
 }
 
 class DummyStatefulWidget extends StatefulWidget {
-  const DummyStatefulWidget({Key? key}) : super(key: key);
+  const DummyStatefulWidget({super.key});
 
   @override
   State<DummyStatefulWidget> createState() => DummyStatefulWidgetState();
