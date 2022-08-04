@@ -184,4 +184,52 @@ void defineTests() {
       },
     );
   });
+  
+  group('expandLists', () {
+    testWidgets(
+      'expandLists=true',
+      (WidgetTester tester) async {
+        const String data = '- Foo\n- Bar';
+
+        await tester.pumpWidget(
+          boilerplate(
+            Column(
+              children: const <Widget>[
+                MarkdownBody(expandLists: true, data: data),
+              ],
+            ),
+          ),
+        );
+
+        final double screenWidth = tester.allElements.first.size!.width;
+        final double markdownBodyWidth =
+            find.byType(MarkdownBody).evaluate().single.size!.width;
+
+        expect(markdownBodyWidth, equals(screenWidth));
+      },
+    );
+
+    testWidgets(
+      'expandLists=false',
+      (WidgetTester tester) async {
+        const String data = '- Foo\n- Bar';
+
+        await tester.pumpWidget(
+          boilerplate(
+            Column(
+              children: const <Widget>[
+                MarkdownBody(expandLists: false, data: data),
+              ],
+            ),
+          ),
+        );
+
+        final double screenWidth = tester.allElements.first.size!.width;
+        final double markdownBodyWidth =
+            find.byType(MarkdownBody).evaluate().single.size!.width;
+
+        expect(markdownBodyWidth, lessThan(screenWidth));
+      },
+    );
+  });
 }

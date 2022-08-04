@@ -168,6 +168,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
     this.softLineBreak = false,
+    this.expandLists = true,
   }) : super(key: key);
 
   /// The Markdown to display.
@@ -265,6 +266,9 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// specification on soft line breaks when lines of text are joined.
   final bool softLineBreak;
 
+  /// Whether lists should expand to use all available horizontal space.
+  final bool expandLists;
+
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
   @protected
@@ -336,6 +340,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       listItemCrossAxisAlignment: widget.listItemCrossAxisAlignment,
       onTapText: widget.onTapText,
       softLineBreak: widget.softLineBreak,
+      expandLists: widget.expandLists,
     );
 
     _children = builder.build(astNodes);
@@ -413,6 +418,7 @@ class MarkdownBody extends MarkdownWidget {
     this.shrinkWrap = true,
     bool fitContent = true,
     bool softLineBreak = false,
+    bool expandLists = true,
   }) : super(
           key: key,
           data: data,
@@ -434,6 +440,7 @@ class MarkdownBody extends MarkdownWidget {
           bulletBuilder: bulletBuilder,
           fitContent: fitContent,
           softLineBreak: softLineBreak,
+          expandLists: expandLists,
         );
 
   /// If [shrinkWrap] is `true`, [MarkdownBody] will take the minimum height
