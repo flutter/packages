@@ -103,4 +103,8 @@ void main() {
     expect(parseRawFillRule('evenodd'), PathFillType.evenOdd);
     expect(parseRawFillRule('invalid'), PathFillType.nonZero);
   });
+
+  test('Point conversion', () {
+    expect(parseDoubleWithUnits('1pt', theme: const SvgTheme()), 1 + 1 / 3);
+  });
 }

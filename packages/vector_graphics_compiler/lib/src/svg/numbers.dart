@@ -23,6 +23,7 @@ double? parseDouble(String? rawDouble, {bool tryParse = false}) {
       .replaceFirst('em', '')
       .replaceFirst('ex', '')
       .replaceFirst('px', '')
+      .replaceFirst('pt', '')
       .trim();
 
   if (tryParse) {
@@ -33,6 +34,15 @@ double? parseDouble(String? rawDouble, {bool tryParse = false}) {
 
 /// Convert [degrees] to radians.
 double radians(double degrees) => degrees * math.pi / 180;
+
+/// The number of pixels per CSS inch.
+const int kCssPixelsPerInch = 96;
+
+/// The number of points per CSS inch.
+const int kCssPointsPerInch = 72;
+
+/// The multiplicand to convert from CSS points to pixels.
+const double kPointsToPixelFactor = kCssPixelsPerInch / kCssPointsPerInch;
 
 /// Parses a `rawDouble` `String` to a `double`
 /// taking into account absolute and relative units
@@ -60,7 +70,9 @@ double? parseDoubleWithUnits(
   // 1 rem unit is equal to the root font size.
   // 1 em unit is equal to the current font size.
   // 1 ex unit is equal to the current x-height.
-  if (rawDouble?.contains('rem') ?? false) {
+  if (rawDouble?.contains('pt') ?? false) {
+    unit = kPointsToPixelFactor;
+  } else if (rawDouble?.contains('rem') ?? false) {
     unit = theme.fontSize;
   } else if (rawDouble?.contains('em') ?? false) {
     unit = theme.fontSize;
