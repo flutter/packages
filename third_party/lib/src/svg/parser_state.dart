@@ -1028,6 +1028,16 @@ class SvgParserState {
     }
   }
 
+  /// The number of pixels per CSS inch.
+  static const int kCssPixelsPerInch = 96;
+
+  /// The number of points per CSS inch.
+  static const int kCssPointsPerInch = 72;
+
+  /// The multiplicand to convert from CSS points to pixels.
+  static const double kPointsToPixelFactor =
+      kCssPixelsPerInch / kCssPointsPerInch;
+
   /// Parses a `rawDouble` `String` to a `double`
   /// taking into account absolute and relative units
   /// (`px`, `em` or `ex`).
@@ -1048,18 +1058,23 @@ class SvgParserState {
     String? rawDouble, {
     bool tryParse = false,
   }) {
-    double unit = 1.0;
+    if (rawDouble == null) {
+      return null;
+    }
 
+    double unit = 1.0;
     // 1 rem unit is equal to the root font size.
     // 1 em unit is equal to the current font size.
     // 1 ex unit is equal to the current x-height.
-    if (rawDouble?.contains('rem') ?? false) {
+    if (rawDouble.contains('pt')) {
+      unit = kPointsToPixelFactor;
+    } else if (rawDouble.contains('rem')) {
       _compatibilityTester.usesFontSize = true;
       unit = theme.fontSize;
-    } else if (rawDouble?.contains('em') ?? false) {
+    } else if (rawDouble.contains('em')) {
       _compatibilityTester.usesFontSize = true;
       unit = theme.fontSize;
-    } else if (rawDouble?.contains('ex') ?? false) {
+    } else if (rawDouble.contains('ex')) {
       _compatibilityTester.usesFontSize = true;
       unit = theme.xHeight;
     }

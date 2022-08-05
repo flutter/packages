@@ -15,6 +15,7 @@ double? parseDouble(String? rawDouble, {bool tryParse = false}) {
       .replaceFirst('em', '')
       .replaceFirst('ex', '')
       .replaceFirst('px', '')
+      .replaceFirst('pt', '')
       .trim();
 
   if (tryParse) {

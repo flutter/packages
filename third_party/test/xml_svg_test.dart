@@ -427,4 +427,9 @@ void main() {
       });
     });
   });
+
+  test('Handles pt values', () {
+    final TestSvgParserState state = TestSvgParserState();
+    expect(state.parseDoubleWithUnits('1pt'), 1 + 1 / 3);
+  });
 }
