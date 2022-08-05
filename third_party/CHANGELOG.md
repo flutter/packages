@@ -1,5 +1,9 @@
 # CHANGES
 
+## 1.1.3
+
+- Handle `pt` values.
+
 ## 1.1.2
 
 - Update path parsing/drawing dependencies to fix arc parsing bug.
