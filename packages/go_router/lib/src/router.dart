@@ -175,25 +175,9 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         extra: extra,
       );
 
-  /// Push a URI location onto the page stack w/ optional query parameters, e.g.
-  /// `/family/f2/person/p1?color=blue`
-  void push(String location, {Object? extra}) {
-    assert(() {
-      log.info('pushing $location');
-      return true;
-    }());
-    _routeInformationParser
-        .parseRouteInformation(
-            DebugGoRouteInformation(location: location, state: extra))
-        .then<void>((RouteMatchList matches) {
-      _routerDelegate.push(matches.last);
-    });
-  }
-
-  /// Push a URI location asynchronously onto the page stack w/ optional query
-  /// parameters and a promise.
-  Future<T?> pushAsync<T extends Object?>(String location,
-      {Object? extra}) async {
+  /// Push a URI location onto the page stack w/ optional query parameters
+  /// and promise, e.g. `/family/f2/person/p1?color=blue`.
+  Future<T?> push<T extends Object?>(String location, {Object? extra}) async {
     assert(() {
       log.info('pushing $location');
       return true;
@@ -201,31 +185,18 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     final RouteMatchList matches =
         await _routeInformationParser.parseRouteInformation(
             DebugGoRouteInformation(location: location, state: extra));
-    return _routerDelegate.pushAsync<T>(matches.last);
+    return _routerDelegate.push<T>(matches.last);
   }
 
-  /// Push a named route onto the page stack w/ optional parameters, e.g.
-  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
-  void pushNamed(
-    String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
-    Object? extra,
-  }) =>
-      push(
-        namedLocation(name, params: params, queryParams: queryParams),
-        extra: extra,
-      );
-
   /// Push a named route asynchronously onto the page stack w/ optional
-  /// parameters and a promise.
-  Future<T?> pushNamedAsync<T extends Object?>(
+  /// parameters and promise.
+  Future<T?> pushNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
-      pushAsync<T>(
+      push<T>(
         namedLocation(name, params: params, queryParams: queryParams),
         extra: extra,
       );

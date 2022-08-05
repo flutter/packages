@@ -1738,7 +1738,7 @@ void main() {
           title: 'GoRouter Example',
         ),
       );
-      key.currentContext?.push(
+      await key.currentContext?.push(
         location,
         extra: extra,
       );
@@ -1746,7 +1746,7 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [pushAsync] on closest GoRouter',
+    testWidgets('calls [push] on closest GoRouter with a promise',
         (WidgetTester tester) async {
       final GoRouterPushAsyncSpy router = GoRouterPushAsyncSpy(routes: routes);
       await tester.pumpWidget(
@@ -1757,7 +1757,7 @@ void main() {
           title: 'GoRouter Example',
         ),
       );
-      final String? result = await key.currentContext?.pushAsync<String>(
+      final String? result = await key.currentContext?.push<String>(
         location,
         extra: extra,
       );
@@ -1777,19 +1777,19 @@ void main() {
           title: 'GoRouter Example',
         ),
       );
-      key.currentContext?.pushNamed(
+      await key.currentContext?.pushNamed(
         name,
         params: params,
         queryParams: queryParams,
         extra: extra,
       );
+      expect(router.extra, extra);
       expect(router.name, name);
       expect(router.params, params);
       expect(router.queryParams, queryParams);
-      expect(router.extra, extra);
     });
 
-    testWidgets('calls [pushNamedAsync] on closest GoRouter',
+    testWidgets('calls [pushNamed] on closest GoRouter with a promise',
         (WidgetTester tester) async {
       final GoRouterPushNamedAsyncSpy router =
           GoRouterPushNamedAsyncSpy(routes: routes);
@@ -1801,7 +1801,7 @@ void main() {
           title: 'GoRouter Example',
         ),
       );
-      final String? result = await key.currentContext?.pushNamedAsync<String>(
+      final String? result = await key.currentContext?.pushNamed<String>(
         name,
         params: params,
         queryParams: queryParams,

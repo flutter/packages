@@ -135,12 +135,12 @@ onTap: () => context.go('/page2')
 ```
 
 
-To wait for values when the screen pops, you can use the `pushAsync` or `pushNamedAsync` methods:
+To wait for values when the screen pops:
 
 ```dart
 onTap: () {
   // In the new page you can do 'context.pop<bool>(someValue)' to return a value.
-  final result = await context.pushAsync<bool>('/page2');
+  final bool? result = await context.push<bool>('/page2');
 
   WidgetsBinding.instance.addPostFrameCallback((_) {
     if(result ?? false)...

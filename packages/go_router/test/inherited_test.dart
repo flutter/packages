@@ -129,10 +129,11 @@ class MockGoRouter extends GoRouter {
   late String latestPushedName;
 
   @override
-  void pushNamed(String name,
+  Future<T?> pushNamed<T extends Object?>(String name,
       {Map<String, String> params = const <String, String>{},
       Map<String, String> queryParams = const <String, String>{},
       Object? extra}) {
     latestPushedName = name;
+    return Future<T>.value();
   }
 }

@@ -36,36 +36,18 @@ extension GoRouterHelper on BuildContext {
         extra: extra,
       );
 
-  /// Push a location onto the page stack.
-  void push(String location, {Object? extra}) =>
+  /// Push a location onto the page stack with an optional promise.
+  Future<T?> push<T extends Object?>(String location, {Object? extra}) =>
       GoRouter.of(this).push(location, extra: extra);
 
-  /// Push a location asynchronously onto the page stack with a promise.
-  Future<T?> pushAsync<T extends Object?>(String location, {Object? extra}) =>
-      GoRouter.of(this).pushAsync(location, extra: extra);
-
-  /// Navigate to a named route onto the page stack.
-  void pushNamed(
+  /// Navigate to a named route onto the page stack with an optional promise.
+  Future<T?> pushNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
-      GoRouter.of(this).pushNamed(
-        name,
-        params: params,
-        queryParams: queryParams,
-        extra: extra,
-      );
-
-  /// Navigate to a named route asynchronously onto the page stack with a promise.
-  Future<T?> pushNamedAsync<T extends Object?>(
-    String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
-    Object? extra,
-  }) =>
-      GoRouter.of(this).pushNamedAsync<T>(
+      GoRouter.of(this).pushNamed<T>(
         name,
         params: params,
         queryParams: queryParams,
