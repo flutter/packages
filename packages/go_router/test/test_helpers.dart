@@ -105,9 +105,10 @@ class GoRouterPushSpy extends GoRouter {
   Object? extra;
 
   @override
-  void push(String location, {Object? extra}) {
+  Future<T?> push<T extends Object?>(String location, {Object? extra}) {
     myLocation = location;
     this.extra = extra;
+    return Future<T>.value();
   }
 }
 
@@ -118,7 +119,7 @@ class GoRouterPushAsyncSpy extends GoRouter {
   Object? extra;
 
   @override
-  Future<T?> pushAsync<T extends Object?>(String location, {Object? extra}) {
+  Future<T?> push<T extends Object?>(String location, {Object? extra}) {
     myLocation = location;
     this.extra = extra;
     return Future<T?>.value(extra as T);
@@ -134,7 +135,7 @@ class GoRouterPushNamedSpy extends GoRouter {
   Object? extra;
 
   @override
-  void pushNamed(
+  Future<T?> pushNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
@@ -144,6 +145,7 @@ class GoRouterPushNamedSpy extends GoRouter {
     this.params = params;
     this.queryParams = queryParams;
     this.extra = extra;
+    return Future<T?>.value();
   }
 }
 
@@ -157,7 +159,7 @@ class GoRouterPushNamedAsyncSpy extends GoRouter {
   Object? extra;
 
   @override
-  Future<T> pushNamedAsync<T extends Object?>(
+  Future<T> pushNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},

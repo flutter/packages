@@ -134,6 +134,20 @@ methods:
 onTap: () => context.go('/page2')
 ```
 
+
+To wait for values when the screen pops:
+
+```dart
+onTap: () {
+  // In the new page you can do 'context.pop<bool>(someValue)' to return a value.
+  final bool? result = await context.push<bool>('/page2');
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if(result ?? false)...
+  });
+}
+```
+
 ### Still not sure how to proceed?
 See [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example) for complete runnable examples or visit [API documentation](https://pub.dev/documentation/go_router/latest/go_router/go_router-library.html)
 
