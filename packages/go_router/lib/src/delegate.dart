@@ -72,12 +72,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     notifyListeners();
   }
 
-  /// Pushes the given location onto the page stack
+  /// Pushes the given location asynchronously onto the page stack with a promise.
   Future<T?> pushAsync<T extends Object?>(RouteMatch match) {
-    // Remap the pageKey to allow any number of the same page on the stack
+    // Remap the pageKey to allow any number of the same page on the stack.
     final String fullPath = match.fullpath;
+
+    // Create a completer for the promise and store it in the completers map.
     final Completer<T> completer = Completer<T>();
     _completers[fullPath] = completer;
+
     final int count = (_pushCounts[fullPath] ?? 0) + 1;
     _pushCounts[fullPath] = count;
     final ValueKey<String> pageKey = ValueKey<String>('$fullPath-p$count');
@@ -102,13 +105,18 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return _matches.canPop();
   }
 
-  /// Pop the top page off the GoRouter's page stack.
+  /// Pop the top page off the GoRouter's page stack and complete a promise if
+  /// there is one.
   void pop<T extends Object?>([T? value]) {
     final RouteMatch last = _matches.last;
+
+    // If there is a promise for this page, complete it.
     final Completer<T>? completer = _completers[last.fullpath] as Completer<T>?;
     if (completer != null) {
       completer.complete(value);
     }
+
+    // Remove promise from completers map.
     _completers.remove(last.fullpath);
     _matches.pop();
     notifyListeners();

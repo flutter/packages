@@ -190,9 +190,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     });
   }
 
-  /// Push a URI location onto the page stack w/ optional query parameters and
-  /// a promise, e.g.
-  /// `/family/f2/person/p1?color=blue`
+  /// Push a URI location asynchronously onto the page stack w/ optional query
+  /// parameters and a promise.
   Future<T?> pushAsync<T extends Object?>(String location,
       {Object? extra}) async {
     assert(() {
@@ -218,9 +217,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         extra: extra,
       );
 
-  /// Push a named route onto the page stack w/ optional parameters and a
-  /// promise, e.g.
-  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  /// Push a named route asynchronously onto the page stack w/ optional
+  /// parameters and a promise.
   Future<T?> pushNamedAsync<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},

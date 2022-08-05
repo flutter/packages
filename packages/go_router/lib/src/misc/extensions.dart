@@ -40,7 +40,7 @@ extension GoRouterHelper on BuildContext {
   void push(String location, {Object? extra}) =>
       GoRouter.of(this).push(location, extra: extra);
 
-  /// Push a location onto the page stack.
+  /// Push a location asynchronously onto the page stack with a promise.
   Future<T?> pushAsync<T extends Object?>(String location, {Object? extra}) =>
       GoRouter.of(this).pushAsync(location, extra: extra);
 
@@ -58,7 +58,7 @@ extension GoRouterHelper on BuildContext {
         extra: extra,
       );
 
-  /// Navigate to a named route onto the page stack.
+  /// Navigate to a named route asynchronously onto the page stack with a promise.
   Future<T?> pushNamedAsync<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
