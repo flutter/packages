@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:isolate';
-
 import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
 
@@ -225,8 +223,6 @@ class __MyHomePageState extends State<_MyHomePage>
         ),
       ],
     );
-
-    const Color iconColor = Color.fromARGB(255, 29, 25, 43);
 
     // These are the destinations used within the AdaptiveScaffold navigation
     // builders.
@@ -964,7 +960,7 @@ class _RouteDetailView extends StatelessWidget {
               child: const Icon(Icons.arrow_back),
             ),
           ),
-          _DetailTile(item: item),
+          Expanded(child: _DetailTile(item: item)),
         ],
       ),
     );
