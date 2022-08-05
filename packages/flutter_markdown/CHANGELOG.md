@@ -1,6 +1,6 @@
-## 0.6.10+4
+## 0.6.11
 
-* Fixes MarkdownBody - Lists expand horizontally instead of using only the space they need ([flutter/flutter#108976](https://github.com/flutter/flutter/issues/108976)).
+* Markdown Lists now take into account `fitContent` instead of always expanding to the maximum horizontally ([flutter/flutter#108976](https://github.com/flutter/flutter/issues/108976)).
 
 ## 0.6.10+3
 

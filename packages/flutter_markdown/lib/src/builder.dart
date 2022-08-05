@@ -106,7 +106,6 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.fitContent = false,
     this.onTapText,
     this.softLineBreak = false,
-    this.expandLists = true,
   });
 
   /// A delegate that controls how link and `pre` elements behave.
@@ -157,9 +156,6 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// Default these spaces are removed in accordance with the Markdown
   /// specification on soft line breaks when lines of text are joined.
   final bool softLineBreak;
-
-  /// Whether lists should expand to use all available horizontal space.
-  final bool expandLists;
 
   final List<String> _listIndents = <String>[];
   final List<_BlockElement> _blocks = <_BlockElement>[];
@@ -395,7 +391,7 @@ class MarkdownBuilder implements md.NodeVisitor {
             bullet = _buildBullet(_listIndents.last);
           }
           child = Row(
-            mainAxisSize: expandLists ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisSize: fitContent ? MainAxisSize.min : MainAxisSize.max,
             textBaseline: listItemCrossAxisAlignment ==
                     MarkdownListItemCrossAxisAlignment.start
                 ? null
@@ -412,7 +408,7 @@ class MarkdownBuilder implements md.NodeVisitor {
                 child: bullet,
               ),
               Flexible(
-                fit: expandLists ? FlexFit.tight : FlexFit.loose,
+                fit: fitContent ? FlexFit.loose : FlexFit.tight,
                 child: child,
               )
             ],

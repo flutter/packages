@@ -185,9 +185,9 @@ void defineTests() {
     );
   });
 
-  group('expandLists', () {
+  group('fitContent', () {
     testWidgets(
-      'expandLists=true',
+      'Use maximum width when fitContent=false',
       (WidgetTester tester) async {
         const String data = '- Foo\n- Bar';
 
@@ -195,7 +195,7 @@ void defineTests() {
           boilerplate(
             Column(
               children: const <Widget>[
-                MarkdownBody(expandLists: true, data: data),
+                MarkdownBody(fitContent: false, data: data),
               ],
             ),
           ),
@@ -210,7 +210,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'expandLists=false',
+      'Use minimum width when fitContent=true',
       (WidgetTester tester) async {
         const String data = '- Foo\n- Bar';
 
@@ -218,7 +218,7 @@ void defineTests() {
           boilerplate(
             Column(
               children: const <Widget>[
-                MarkdownBody(expandLists: false, data: data),
+                MarkdownBody(fitContent: true, data: data),
               ],
             ),
           ),
