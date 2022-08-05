@@ -290,7 +290,7 @@ class AdaptiveScaffold extends StatefulWidget {
       int currentIndex = 0,
       double iconSize = 24,
       Color selectedItemColor = Colors.black,
-      Color backgroundColor = Colors.transparent}) {
+      Color backgroundColor = Colors.white}) {
     return Builder(
       builder: (BuildContext context) {
         return Theme(
