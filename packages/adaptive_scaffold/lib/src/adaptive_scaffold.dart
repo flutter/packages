@@ -58,7 +58,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Returns an [AdaptiveScaffold] by passing information down to an
   /// [AdaptiveLayout].
   const AdaptiveScaffold({
-    this.destinations,
+    required this.destinations,
     this.selectedIndex = 0,
     this.smallBody,
     this.body,
@@ -85,10 +85,10 @@ class AdaptiveScaffold extends StatefulWidget {
   /// [NavigationRailDestination]s and [BottomNavigationBarItem]s and inserted
   /// into the appropriate places. If passing destinations, you must also pass a
   /// selected index to be used by the [NavigationRail].
-  final List<NavigationDestination>? destinations;
+  final List<NavigationDestination> destinations;
 
-  /// The index to be used by the [NavigationRail] if applicable.
-  final int? selectedIndex;
+  /// The index to be used by the [NavigationRail].
+  final int selectedIndex;
 
   /// Widget to be displayed in the body slot at the smallest breakpoint.
   ///
@@ -249,12 +249,8 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Public helper method to be used for creating a [BottomNavigationBar] from
   /// a list of [NavigationDestination]s.
   static BottomNavigationBar toBottomNavigationBar(
-      {required List<NavigationDestination> destinations,
-      Color selectedItemColor = Colors.black,
-      Color backgroundColor = Colors.transparent}) {
+      {required List<NavigationDestination> destinations}) {
     return BottomNavigationBar(
-      backgroundColor: backgroundColor,
-      selectedItemColor: selectedItemColor,
       items: <BottomNavigationBarItem>[
         for (NavigationDestination destination in destinations)
           BottomNavigationBarItem(
@@ -364,7 +360,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   extended: true,
                   selectedIndex: widget.selectedIndex,
                   destinations:
-                      widget.destinations!.map(_toRailDestination).toList(),
+                      widget.destinations.map(_toRailDestination).toList(),
                   onDestinationSelected: widget.onSelectedIndexChange,
                 ),
               )
@@ -379,31 +375,21 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.mediumBreakpoint: SlotLayout.from(
                       key: const Key('primaryNavigation'),
-                      builder: (_) => SizedBox(
+                      builder: (_) => AdaptiveScaffold.toNavigationRail(
                         width: widget.navigationRailWidth,
-                        height: MediaQuery.of(context).size.height,
-                        child: NavigationRail(
-                          selectedIndex: widget.selectedIndex,
-                          destinations: widget.destinations!
-                              .map(_toRailDestination)
-                              .toList(),
-                          onDestinationSelected: widget.onSelectedIndexChange,
-                        ),
+                        selectedIndex: widget.selectedIndex,
+                        destinations: widget.destinations,
+                        onDestinationSelected: widget.onSelectedIndexChange,
                       ),
                     ),
                     widget.largeBreakpoint: SlotLayout.from(
                       key: const Key('primaryNavigation1'),
-                      builder: (_) => SizedBox(
+                      builder: (_) => AdaptiveScaffold.toNavigationRail(
                         width: widget.extendedNavigationRailWidth,
-                        height: MediaQuery.of(context).size.height,
-                        child: NavigationRail(
-                          extended: true,
-                          selectedIndex: widget.selectedIndex,
-                          destinations: widget.destinations!
-                              .map(_toRailDestination)
-                              .toList(),
-                          onDestinationSelected: widget.onSelectedIndexChange,
-                        ),
+                        extended: true,
+                        selectedIndex: widget.selectedIndex,
+                        destinations: widget.destinations,
+                        onDestinationSelected: widget.onSelectedIndexChange,
                       ),
                     ),
                   },
@@ -416,10 +402,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.smallBreakpoint: SlotLayout.from(
                       key: const Key('bottomNavigation'),
-                      builder: (_) => BottomNavigationBar(
-                        items:
-                            widget.destinations!.map(_toBottomNavItem).toList(),
-                      ),
+                      builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: widget.destinations),
                     ),
                   },
                 )
