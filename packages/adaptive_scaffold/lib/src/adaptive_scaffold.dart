@@ -242,13 +242,9 @@ class AdaptiveScaffold extends StatefulWidget {
   static BottomNavigationBar toBottomNavigationBar(
       {required List<NavigationDestination> destinations}) {
     return BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
-        for (NavigationDestination destination in destinations)
-          BottomNavigationBarItem(
-            label: destination.label,
-            icon: destination.icon,
-          )
-      ],
+      items: destinations
+          .map((NavigationDestination e) => _toBottomNavItem(e))
+          .toList(),
     );
   }
 
