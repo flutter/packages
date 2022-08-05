@@ -38,7 +38,7 @@ enum _SlotIds {
 ///
 /// Slots must display differently under different screen conditions (such as
 /// different widths), and each slot is defined with a [SlotLayout], which maps
-/// [Breakpoint]s to [SlotLayoutConfig], where [SlotLayout.from] defines the
+/// [Breakpoint]s to [SlotLayoutConfig], where [SlotLayoutConfig] defines the
 /// content and transition.
 ///
 /// [AdaptiveLayout] handles the placement of the slots on the app window and
@@ -117,42 +117,50 @@ class AdaptiveLayout extends StatefulWidget {
     super.key,
   });
 
-  /// The slot placed on the beginning side of the app window; meaning on the left
-  /// when the textDirection is LTR and on the right when it is RTL.
+  /// The slot placed on the beginning side of the app window.
   ///
-  /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
-  /// [SizedBox] or limit its size (width and height) by another method. See the
-  /// builder in [AdaptiveScaffold.toNavigationRail] for an example.
+  /// The beginning side means the left when the `textDirection` is LTR and on
+  /// the right when it is RTL.
+  ///
+  /// If the content is a flexibly sized Widget like [Container], wrap the content
+  /// in a [SizedBox] or limit its size (width and height) by another method. See
+  /// the builder in [AdaptiveScaffold.toNavigationRail] for an example.
   final SlotLayout? primaryNavigation;
 
-  /// The slot placed on the end side of the app window; meaning on the right
-  /// when the textDirection is LTR and on the left when it is RTL.
+  /// The slot placed on the end side of the app window.
   ///
-  /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
-  /// [SizedBox] or limit its size (width and height) by another method. See the
-  /// builder in [AdaptiveScaffold.toNavigationRail] for an example.
+  /// The end side means the right when the `textDirection` is LTR and on the
+  /// left when it is RTL.
+  ///
+  /// If the content is a flexibly sized Widget like [Container], wrap the content
+  /// in a [SizedBox] or limit its size (width and height) by another method. See
+  /// the builder in [AdaptiveScaffold.toNavigationRail] for an example.
   final SlotLayout? secondaryNavigation;
 
   /// The slot placed on the top part of the app window.
   ///
-  /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
-  /// [SizedBox] or limit its size (width and height) by another method. See the
-  /// builder in [AdaptiveScaffold.toNavigationRail] for an example.
+  /// If the content is a flexibly sized Widget like [Container], wrap the content
+  /// in a [SizedBox] or limit its size (width and height) by another method. See
+  /// the builder in [AdaptiveScaffold.toNavigationRail] for an example.
   final SlotLayout? topNavigation;
 
   /// The slot placed on the bottom part of the app window.
   ///
-  /// Note: if using flexibly sized Widgets like [Container], wrap the Widget in a
-  /// [SizedBox] or limit its size (width and height) by another method. See the
-  /// builder in [AdaptiveScaffold.toNavigationRail] for an example.
+  /// If the content is a flexibly sized Widget like [Container], wrap the content
+  /// in a [SizedBox] or limit its size (width and height) by another method. See
+  /// the builder in [AdaptiveScaffold.toNavigationRail] for an example.
   final SlotLayout? bottomNavigation;
 
   /// The slot that fills the rest of the space in the center.
   final SlotLayout? body;
 
-  /// A supporting slot for [body]. Has a sliding entrance animation by default.
+  /// A supporting slot for [body].
+  ///
+  /// The [secondaryBody] as a sliding entrance animation by default.
+  ///
   /// The default ratio for the split between [body] and [secondaryBody] is so
-  /// that the split axis is in the center of the app window.
+  /// that the split axis is in the center of the app window when there is no
+  /// hinge and surrounding the hinge when there is one.
   final SlotLayout? secondaryBody;
 
   /// Defines the fractional ratio of [body] to the [secondaryBody].
@@ -161,7 +169,8 @@ class AdaptiveLayout extends StatefulWidget {
   /// and[secondaryBody] takes up the rest.
   ///
   /// If this value is null, the ratio is defined so that the split axis is in
-  /// the center of the app window.
+  /// the center of the app window when there is no hinge and surrounding the
+  /// hinge when there is one.
   final double? bodyRatio;
 
   /// Whether or not the developer wants the smooth entering slide transition on
