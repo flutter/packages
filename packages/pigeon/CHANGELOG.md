@@ -1,3 +1,7 @@
+## 3.2.8
+
+* [java] fixes generator uses wrong style (camelCase) for enum values.
+
 ## 3.2.7
 
 * Requires `analyzer 4.4.0`, and replaces use of deprecated APIs.
