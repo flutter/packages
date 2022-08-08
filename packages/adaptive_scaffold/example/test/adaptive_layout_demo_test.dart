@@ -2,20 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:adaptive_scaffold_example/adaptive_layout_demo.dart' as example;
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('dislays correct item of config based on screen width',
       (WidgetTester tester) async {
-    updateScreen(double width) async {
+    Future<void> updateScreen(double width) async {
       await tester.binding.setSurfaceSize(Size(width, 800));
       await tester.pumpWidget(
         MaterialApp(
           home: MediaQuery(
               data: MediaQueryData(size: Size(width, 800)),
-              child: example.MyHomePage()),
+              child: const example.MyHomePage()),
         ),
       );
       await tester.pumpAndSettle();

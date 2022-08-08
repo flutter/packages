@@ -14,11 +14,11 @@ import 'package:flutter/material.dart';
 /// or adaptive_scaffold_demo.dart
 
 void main() {
-  runApp(const MyApp());
+  runApp(const _MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class _MyApp extends StatelessWidget {
+  const _MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +35,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Public for testing purposes.
 class MyHomePage extends StatefulWidget {
+  /// Creates a const [MyHomePage].
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class MyHomePageState extends State<MyHomePage>
+class _MyHomePageState extends State<MyHomePage>
     with TickerProviderStateMixin, ChangeNotifier {
   // A listener used for the controllers to reanimate the staggered animation of
   // the navigation elements.
@@ -168,22 +170,22 @@ class MyHomePageState extends State<MyHomePage>
                   backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                   labelType: NavigationRailLabelType.none,
                   destinations: <NavigationRailDestination>[
-                    SlideInNavigationItem(
+                    slideInNavigationItem(
                         begin: -1,
                         controller: _controller,
                         icon: Icons.inbox,
                         label: 'Inbox'),
-                    SlideInNavigationItem(
+                    slideInNavigationItem(
                         begin: -2,
                         controller: _controller1,
                         icon: Icons.article_outlined,
                         label: 'Articles'),
-                    SlideInNavigationItem(
+                    slideInNavigationItem(
                         begin: -3,
                         controller: _controller2,
                         icon: Icons.chat_bubble_outline,
                         label: 'Chat'),
-                    SlideInNavigationItem(
+                    slideInNavigationItem(
                         begin: -4,
                         controller: _controller3,
                         icon: Icons.video_call_outlined,
@@ -258,7 +260,7 @@ class MyHomePageState extends State<MyHomePage>
               // default offset transition.
               outAnimation: AdaptiveScaffold.topToBottom,
               builder: (_) => BottomNavigationBarTheme(
-                data: BottomNavigationBarThemeData(
+                data: const BottomNavigationBarThemeData(
                   unselectedItemColor: Colors.black,
                   selectedItemColor: Colors.black,
                 ),
@@ -272,7 +274,7 @@ class MyHomePageState extends State<MyHomePage>
     );
   }
 
-  NavigationRailDestination SlideInNavigationItem({
+  NavigationRailDestination slideInNavigationItem({
     required double begin,
     required AnimationController controller,
     required IconData icon,
