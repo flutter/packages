@@ -61,7 +61,7 @@ ${getters.map((String e) => "$e,").join('\n')}
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    if (element is! ClassElement) {
+    if (element is! InterfaceElement) {
       throw InvalidGenerationSourceError(
         'The @TypedGoRoute annotation can only be applied to classes.',
         element: element,
