@@ -14,11 +14,11 @@ import 'package:flutter/material.dart';
 /// or adaptive_scaffold_demo.dart
 
 void main() {
-  runApp(const _MyApp());
+  runApp(const MyApp());
 }
 
-class _MyApp extends StatelessWidget {
-  const _MyApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +30,19 @@ class _MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: const _MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
-class _MyHomePage extends StatefulWidget {
-  const _MyHomePage({Key? key}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  State<_MyHomePage> createState() => __MyHomePageState();
+  State<MyHomePage> createState() => MyHomePageState();
 }
 
-class __MyHomePageState extends State<_MyHomePage>
+class MyHomePageState extends State<MyHomePage>
     with TickerProviderStateMixin, ChangeNotifier {
   // A listener used for the controllers to reanimate the staggered animation of
   // the navigation elements.
@@ -168,10 +168,26 @@ class __MyHomePageState extends State<_MyHomePage>
                   backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                   labelType: NavigationRailLabelType.none,
                   destinations: <NavigationRailDestination>[
-                    SlideInNavigationItem(begin: -1, controller: _controller, icon: Icons.inbox, label: 'Inbox'),
-                    SlideInNavigationItem(begin: -2, controller: _controller1, icon: Icons.article_outlined, label: 'Articles'),
-                    SlideInNavigationItem(begin: -3, controller: _controller2, icon: Icons.chat_bubble_outline, label: 'Chat'),
-                    SlideInNavigationItem(begin: -4, controller: _controller3, icon: Icons.video_call_outlined, label: 'Video')
+                    SlideInNavigationItem(
+                        begin: -1,
+                        controller: _controller,
+                        icon: Icons.inbox,
+                        label: 'Inbox'),
+                    SlideInNavigationItem(
+                        begin: -2,
+                        controller: _controller1,
+                        icon: Icons.article_outlined,
+                        label: 'Articles'),
+                    SlideInNavigationItem(
+                        begin: -3,
+                        controller: _controller2,
+                        icon: Icons.chat_bubble_outline,
+                        label: 'Chat'),
+                    SlideInNavigationItem(
+                        begin: -4,
+                        controller: _controller3,
+                        icon: Icons.video_call_outlined,
+                        label: 'Video')
                   ],
                 ),
               ),
