@@ -159,7 +159,7 @@ Future<MaterialApp> layout2({
           config: <Breakpoint, SlotLayoutConfig>{
             TestBreakpoint0(): SlotLayout.from(
                 key: Key('pnav'),
-                builder: (_) => AdaptiveScaffold.toNavigationRail(
+                builder: (_) => AdaptiveScaffold.toRailFromDestinations(
                       destinations: navDestinations,
                       backgroundColor: Colors.amber,
                     )),
@@ -257,7 +257,7 @@ MaterialApp layout3({
           config: <Breakpoint, SlotLayoutConfig>{
             TestBreakpoint0(): SlotLayout.from(
                 key: Key('pnav'),
-                builder: (_) => AdaptiveScaffold.toNavigationRail(
+                builder: (_) => AdaptiveScaffold.toRailFromDestinations(
                       destinations: navDestinations,
                       backgroundColor: Colors.amber,
                     )),

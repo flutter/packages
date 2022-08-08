@@ -1,5 +1,5 @@
-name: example
-description: A new Flutter project.
+name: adaptive_scaffold_example
+description: Multiple examples of the usage of the AdaptiveScaffold widget and its lower level widgets.
 publish_to: 'none'
 version: 1.0.0+1
 
