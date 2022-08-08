@@ -67,8 +67,8 @@ extension GoRouterHelper on BuildContext {
   /// See also:
   /// * [go] which navigates to the location.
   /// * [push] which pushes the location onto the page stack.
-  void replace(String location, {Object? extra}) =>
-      GoRouter.of(this).replace(location, extra: extra);
+  Future<T?> replace<T extends Object?>(String location, {Object? extra}) =>
+      GoRouter.of(this).replace<T>(location, extra: extra);
 
   /// Replaces the top-most page of the page stack with the named route w/
   /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':

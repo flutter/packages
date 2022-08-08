@@ -56,7 +56,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     final String fullPath = match.fullpath;
 
     // Create a completer for the promise and store it in the completers map.
-    final Completer<T> completer = Completer<T>();
+    final Completer<T?> completer = Completer<T?>();
     _completers[fullPath] = completer;
 
     final int count = (_pushCounts[fullPath] ?? 0) + 1;
@@ -89,7 +89,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     final RouteMatch last = _matches.last;
 
     // If there is a promise for this page, complete it.
-    final Completer<T>? completer = _completers[last.fullpath] as Completer<T>?;
+    final Completer<T?>? completer =
+        _completers[last.fullpath] as Completer<T?>?;
     if (completer != null) {
       completer.complete(value);
     }
@@ -104,19 +105,19 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
-  void replace(RouteMatch match) {
-    final String lastPath = _matches.last.fullpath;
-    final Completer<dynamic>? completer = _completers[lastPath];
+  Future<T?> replace<T extends Object?>(RouteMatch match) {
+    final String lastPath = _matches.matches.last.fullpath;
 
-    // If there's a promise for the last page, we update it to make it point to
-    // the new page.
-    if (completer != null) {
-      _completers[match.fullpath] = completer;
-      _completers.remove(lastPath);
-    }
+    // Create a completer for the promise and store it in the completers map.
+    final Completer<T?> completer = Completer<T?>();
+    _completers[match.fullpath] = completer;
+
+    // Remove the old promise from the completers map.
+    _completers.remove(lastPath);
+
     _matches.matches.last = match;
-
     notifyListeners();
+    return completer.future;
   }
 
   /// For internal use; visible for testing only.

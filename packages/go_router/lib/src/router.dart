@@ -219,14 +219,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// See also:
   /// * [go] which navigates to the location.
   /// * [push] which pushes the location onto the page stack.
-  void replace(String location, {Object? extra}) {
-    routeInformationParser
-        .parseRouteInformation(
+  Future<T?> replace<T extends Object?>(String location,
+      {Object? extra}) async {
+    final RouteMatchList matchList =
+        await routeInformationParser.parseRouteInformation(
       DebugGoRouteInformation(location: location, state: extra),
-    )
-        .then<void>((RouteMatchList matchList) {
-      routerDelegate.replace(matchList.matches.last);
-    });
+    );
+    return routerDelegate.replace<T>(matchList.matches.last);
   }
 
   /// Replaces the top-most page of the page stack with the named route w/
