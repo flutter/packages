@@ -17,6 +17,10 @@ const Set<TargetPlatform> _mobile = <TargetPlatform>{
 
 /// A group of standard breakpoints built according to the material
 /// specifications for screen width size.
+///
+/// See also:
+///
+///  * [AdaptiveScaffold], which uses some of these Breakpoints as defaults.
 class Breakpoints {
   /// This is a standard breakpoint that can be used as a fallthrough in the
   /// case that no other breakpoint is active.
@@ -68,7 +72,7 @@ class Breakpoints {
 /// A class that can be used to quickly generate [Breakpoint]s that depend on
 /// the screen width and the platform.
 class WidthPlatformBreakpoint extends Breakpoint {
-  /// Returns a [Breakpoint] with the given constraints.
+  /// Returns a const [Breakpoint] with the given constraints.
   const WidthPlatformBreakpoint({this.begin, this.end, this.platform});
 
   /// The beginning width dp value. If left null then the [Breakpoint] will have
@@ -117,7 +121,7 @@ class WidthPlatformBreakpoint extends Breakpoint {
 /// See also:
 ///
 ///  * [SlotLayout.config], which uses breakpoints to dictate the layout of the
-/// screen.
+///    screen.
 abstract class Breakpoint {
   /// Returns a [Breakpoint].
   const Breakpoint();

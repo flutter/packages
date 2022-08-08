@@ -10,12 +10,12 @@ import 'breakpoints.dart';
 ///
 /// See also:
 /// * [AdaptiveLayout], where [SlotLayout]s are assigned to placements on the
-/// screen called "slots".
+///   screen called "slots".
 class SlotLayout extends StatefulWidget {
   /// Creates a [SlotLayout] widget.
   const SlotLayout({required this.config, super.key});
 
-  /// Given a context and a config, it returns the [SlotLayoutConfig] that will
+  /// Given a context and a config, it returns the [SlotLayoutConfig] that will g 
   /// be chosen from the config under the context's conditions.
   static SlotLayoutConfig? pickWidget(
       BuildContext context, Map<Breakpoint, SlotLayoutConfig?> config) {
@@ -67,16 +67,16 @@ class SlotLayout extends StatefulWidget {
   /// See also:
   ///
   ///  * [AnimatedWidget] and [ImplicitlyAnimatedWidget], which are commonly used
-  /// as the returned widget for the inAnimation and outAnimation functions.
+  ///   as the returned widget for the inAnimation and outAnimation functions.
   ///  * [AnimatedSwitcher.defaultTransitionBuilder], which is what takes the
-  /// inAnimation and outAnimation.
-  static _SlotLayoutConfig from({
+  ///   inAnimation and outAnimation.
+  static SlotLayoutConfig from({
     WidgetBuilder? builder,
     Widget Function(Widget, Animation<double>)? inAnimation,
     Widget Function(Widget, Animation<double>)? outAnimation,
     required Key key,
   }) =>
-      _SlotLayoutConfig(
+      SlotLayoutConfig._(
         builder: builder,
         inAnimation: inAnimation,
         outAnimation: outAnimation,
@@ -126,16 +126,16 @@ class _SlotLayoutState extends State<SlotLayout>
 }
 
 /// Defines how [SlotLayout] should display under a certain [Breakpoint].
-abstract class SlotLayoutConfig extends StatelessWidget {
+class SlotLayoutConfig extends StatelessWidget {
   /// Creates a new [SlotLayoutConfig].
   ///
   /// Returns the child widget as is but holds properties to be accessed by other
   /// classes.
-  const SlotLayoutConfig({
+  const SlotLayoutConfig._({
+    super.key,
     required this.builder,
     this.inAnimation,
     this.outAnimation,
-    super.key,
   });
 
   /// The child Widget that [SlotLayout] eventually returns with an animation.
@@ -147,7 +147,7 @@ abstract class SlotLayoutConfig extends StatelessWidget {
   /// See also:
   ///
   ///  * [AnimatedWidget] and [ImplicitlyAnimatedWidget], which are commonly used
-  ///  as the returned widget.
+  ///   as the returned widget.
   final Widget Function(Widget, Animation<double>)? inAnimation;
 
   /// A function that provides the animation to be wrapped around the builder
@@ -156,23 +156,14 @@ abstract class SlotLayoutConfig extends StatelessWidget {
   /// See also:
   ///
   ///  * [AnimatedWidget] and [ImplicitlyAnimatedWidget], which are commonly used
-  ///  as the returned widget.
+  ///   as the returned widget.
   final Widget Function(Widget, Animation<double>)? outAnimation;
 
   /// An empty [SlotLayoutConfig] to be placed in a slot to indicate that the slot
   /// should show nothing.
   static SlotLayoutConfig empty() {
-    return const _SlotLayoutConfig(key: Key(''), builder: null);
+    return const SlotLayoutConfig._(key: Key(''), builder: null);
   }
-}
-
-class _SlotLayoutConfig extends SlotLayoutConfig {
-  const _SlotLayoutConfig({
-    required super.builder,
-    super.inAnimation,
-    super.outAnimation,
-    required super.key,
-  });
 
   @override
   Widget build(BuildContext context) {

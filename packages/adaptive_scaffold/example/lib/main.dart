@@ -240,37 +240,27 @@ class __MyHomePageState extends State<_MyHomePage>
           icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
 
-    List<NavigationDestination> destinations2 = [
-      NavigationDestination(
-          icon: SlideTransition(
-              position: Tween(begin: const Offset(-1, 0), end: Offset.zero)
-                  .animate(CurvedAnimation(
-                      parent: _controller, curve: Curves.easeInOutCubic)),
-              child: const Icon(
-                Icons.inbox,
-              )),
+    List<NavigationRailDestination> destinations2 = <NavigationRailDestination>[
+      SlideInNavigationItem(
+          begin: -1,
+          controller: _controller,
+          icon: Icons.inbox,
           label: 'Inbox'),
-      NavigationDestination(
-          icon: SlideTransition(
-              position: Tween(begin: const Offset(-2, 0), end: Offset.zero)
-                  .animate(CurvedAnimation(
-                      parent: _controller1, curve: Curves.easeInOutCubic)),
-              child: const Icon(Icons.article_outlined)),
+      SlideInNavigationItem(
+          begin: -2,
+          controller: _controller1,
+          icon: Icons.article_outlined,
           label: 'Articles'),
-      NavigationDestination(
-          icon: SlideTransition(
-              position: Tween(begin: const Offset(-3, 0), end: Offset.zero)
-                  .animate(CurvedAnimation(
-                      parent: _controller2, curve: Curves.easeInOutCubic)),
-              child: const Icon(Icons.chat_bubble_outline)),
+      SlideInNavigationItem(
+          begin: -3,
+          controller: _controller2,
+          icon: Icons.chat_bubble_outline,
           label: 'Chat'),
-      NavigationDestination(
-          icon: SlideTransition(
-              position: Tween(begin: const Offset(-4, 0), end: Offset.zero)
-                  .animate(CurvedAnimation(
-                      parent: _controller3, curve: Curves.easeInOutCubic)),
-              child: const Icon(Icons.video_call_outlined)),
-          label: 'Video'),
+      SlideInNavigationItem(
+          begin: -4,
+          controller: _controller3,
+          icon: Icons.video_call_outlined,
+          label: 'Video')
     ];
 
     // Updating the listener value.
@@ -318,7 +308,7 @@ class __MyHomePageState extends State<_MyHomePage>
               key: const Key('primaryNavigation1'),
               // The AdaptiveScaffold builder here greatly simplifies
               // navigational elements.
-              builder: (_) => AdaptiveScaffold.toNavigationRail(
+              builder: (_) => AdaptiveScaffold.toRailFromDestinations(
                 leading: const _ComposeButton(),
                 onDestinationSelected: (int index) {
                   setState(() {
@@ -378,13 +368,37 @@ class __MyHomePageState extends State<_MyHomePage>
               // You can define inAnimations or outAnimations to override the
               // default offset transition.
               outAnimation: AdaptiveScaffold.topToBottom,
-              builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
-                  destinations: destinations),
+              builder: (_) => BottomNavigationBarTheme(
+                data: BottomNavigationBarThemeData(
+                  unselectedItemColor: Colors.black,
+                  selectedItemColor: Colors.black,
+                ),
+                child: AdaptiveScaffold.toBottomNavigationBar(
+                    destinations: destinations),
+              ),
             ),
           },
         ),
       ),
     );
+  }
+
+  NavigationRailDestination SlideInNavigationItem({
+    required double begin,
+    required AnimationController controller,
+    required IconData icon,
+    required String label,
+  }) {
+    return NavigationRailDestination(
+        icon: SlideTransition(
+            position: Tween<Offset>(
+              begin: Offset(begin, 0),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic),
+            ),
+            child: Icon(icon)),
+        label: Text(label));
   }
 }
 
