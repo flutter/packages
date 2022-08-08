@@ -847,7 +847,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     _storeCurrentApi();
     _storeCurrentClass();
 
-    if (node.isAbstract) {
+    if (node.abstractKeyword != null) {
       if (_hasMetadata(node.metadata, 'HostApi')) {
         final dart_ast.Annotation hostApi = node.metadata.firstWhere(
             (dart_ast.Annotation element) => element.name.name == 'HostApi');
@@ -868,20 +868,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
         _currentApi = Api(
-          name: node.name.name,
+          name: node.name2.lexeme,
           location: ApiLocation.host,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
         _currentApi = Api(
-          name: node.name.name,
+          name: node.name2.lexeme,
           location: ApiLocation.flutter,
           methods: <Method>[],
         );
       }
     } else {
-      _currentClass = Class(name: node.name.name, fields: <NamedType>[]);
+      _currentClass = Class(name: node.name2.lexeme, fields: <NamedType>[]);
     }
 
     node.visitChildren(this);
@@ -901,7 +901,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               baseName: argTypeBaseName,
               isNullable: isNullable,
               typeArguments: argTypeArguments),
-          name: parameter.identifier?.name ?? '',
+          name: parameter.name?.lexeme ?? '',
           offset: parameter.offset);
     } else {
       return NamedType(
@@ -964,7 +964,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       final dart_ast.SimpleIdentifier returnTypeIdentifier =
           getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
       _currentApi!.methods.add(Method(
-          name: node.name.name,
+          name: node.name2.lexeme,
           returnType: TypeDeclaration(
               baseName: returnTypeIdentifier.name,
               typeArguments: typeAnnotationsToTypeArguments(
@@ -978,7 +978,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else if (_currentClass != null) {
       _errors.add(Error(
           message:
-              'Methods aren\'t supported in Pigeon data classes ("${node.name.name}").',
+              'Methods aren\'t supported in Pigeon data classes ("${node.name2.lexeme}").',
           lineNumber: _calculateLineNumber(source, node.offset)));
     }
     node.visitChildren(this);
@@ -988,9 +988,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
     _enums.add(Enum(
-        name: node.name.name,
+        name: node.name2.lexeme,
         members: node.constants
-            .map((dart_ast.EnumConstantDeclaration e) => e.name.name)
+            .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
             .toList()));
     node.visitChildren(this);
     return null;
@@ -1036,7 +1036,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                   baseName: type.name.name,
                   isNullable: type.question != null,
                   typeArguments: typeAnnotationsToTypeArguments(typeArguments)),
-              name: node.fields.variables[0].name.name,
+              name: node.fields.variables[0].name2.lexeme,
               offset: node.offset));
         }
       } else {
