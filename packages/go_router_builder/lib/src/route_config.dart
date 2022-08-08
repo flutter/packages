@@ -88,7 +88,6 @@ class RouteConfig {
     }
 
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
-    //
     final InterfaceElement classElement = typeParamType.element2;
 
     final RouteConfig value = RouteConfig._(path, classElement, parent);
