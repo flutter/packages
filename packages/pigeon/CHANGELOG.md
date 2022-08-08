@@ -1,3 +1,7 @@
+## 3.2.7
+
+* Requires `analyzer 4.4.0`, and replaces use of deprecated APIs.
+
 ## 3.2.6
 
 * [java] Fixes returning int values from FlutterApi methods that fit in 32 bits.
