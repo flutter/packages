@@ -277,8 +277,14 @@ class __MyHomePageState extends State<_MyHomePage>
               // You can define inAnimations or outAnimations to override the
               // default offset transition.
               outAnimation: AdaptiveScaffold.topToBottom,
-              builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
-                  destinations: destinations),
+              builder: (_) => BottomNavigationBarTheme(
+                data: BottomNavigationBarThemeData(
+                  unselectedItemColor: Colors.black,
+                  selectedItemColor: Colors.black,
+                ),
+                child: AdaptiveScaffold.toBottomNavigationBar(
+                    destinations: destinations),
+              ),
             ),
           },
         ),
