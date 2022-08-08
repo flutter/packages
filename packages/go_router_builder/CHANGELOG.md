@@ -1,3 +1,7 @@
+## 1.0.8
+
+* Updated to element2
+
 ## 1.0.7
 
 * Supports newer versions of `analyzer`.
