@@ -1,5 +1,6 @@
 ## 3.2.7
-* Require `analyzer 4.4.0`, stop using deprecated APIs.
+
+* Requires `analyzer 4.4.0`, and replaces use of deprecated APIs.
 
 ## 3.2.6
 
