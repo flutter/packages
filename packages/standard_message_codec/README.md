@@ -11,7 +11,7 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-An efficient and schema-less binary format used by the Flutter SDK.
+An efficient and schemaless binary format used by the Flutter SDK.
 
 ## Features
 

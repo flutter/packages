@@ -1,7 +1,8 @@
 name: standard_message_codec
-description: An efficient binary encoding format for Flutter and Dart.
+description: An efficient and schemaless binary encoding format for Flutter and Dart.
 version: 0.0.1
-homepage:
+repository: https://github.com/flutter/packages/tree/main/packages/standard_message_codec
+issue_tracker: https://github.com/flutter/flutter/issues
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
