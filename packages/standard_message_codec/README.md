@@ -38,10 +38,9 @@ no automatic backwards compatibility like protobuf.
 ## Getting started
 
 standard_message_codec can be used to encode and decode messages in either Flutter
-or pure dart applications.
+or pure Dart applications.
 
 ```dart
-
 void main() {
   final ByteData? data = messageCodec.encodeMessage(<Object, Object>{
     'foo': true,
