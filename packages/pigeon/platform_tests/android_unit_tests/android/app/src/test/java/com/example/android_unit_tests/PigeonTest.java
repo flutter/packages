@@ -21,7 +21,7 @@ public class PigeonTest {
   public void toMapAndBack() {
     Pigeon.AndroidSetRequest request = new Pigeon.AndroidSetRequest();
     request.setValue(1234l);
-    request.setState(Pigeon.AndroidLoadingState.complete);
+    request.setState(Pigeon.AndroidLoadingState.COMPLETE);
     Map<String, Object> map = request.toMap();
     Pigeon.AndroidSetRequest readRequest = Pigeon.AndroidSetRequest.fromMap(map);
     assertEquals(request.getValue(), readRequest.getValue());
@@ -33,7 +33,7 @@ public class PigeonTest {
     Pigeon.AndroidNestedRequest nested = new Pigeon.AndroidNestedRequest();
     Pigeon.AndroidSetRequest request = new Pigeon.AndroidSetRequest();
     request.setValue(1234l);
-    request.setState(Pigeon.AndroidLoadingState.complete);
+    request.setState(Pigeon.AndroidLoadingState.COMPLETE);
     nested.setRequest(request);
     Map<String, Object> map = nested.toMap();
     Pigeon.AndroidNestedRequest readNested = Pigeon.AndroidNestedRequest.fromMap(map);
@@ -90,7 +90,7 @@ public class PigeonTest {
     verify(binaryMessenger).setMessageHandler(anyString(), handler.capture());
     Pigeon.AndroidSetRequest request = new Pigeon.AndroidSetRequest();
     request.setValue(1234l);
-    request.setState(Pigeon.AndroidLoadingState.complete);
+    request.setState(Pigeon.AndroidLoadingState.COMPLETE);
     MessageCodec<Object> codec = Pigeon.AndroidApi.getCodec();
     ByteBuffer message = codec.encodeMessage(new ArrayList<Object>(Arrays.asList(request)));
     message.rewind();
