@@ -168,46 +168,10 @@ class __MyHomePageState extends State<_MyHomePage>
                   backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                   labelType: NavigationRailLabelType.none,
                   destinations: <NavigationRailDestination>[
-                    NavigationRailDestination(
-                        icon: SlideTransition(
-                            position: Tween<Offset>(
-                                    begin: const Offset(-1, 0),
-                                    end: Offset.zero)
-                                .animate(CurvedAnimation(
-                                    parent: _controller,
-                                    curve: Curves.easeInOutCubic)),
-                            child: const Icon(Icons.inbox)),
-                        label: const Text('Inbox')),
-                    NavigationRailDestination(
-                        icon: SlideTransition(
-                            position: Tween<Offset>(
-                                    begin: const Offset(-2, 0),
-                                    end: Offset.zero)
-                                .animate(CurvedAnimation(
-                                    parent: _controller1,
-                                    curve: Curves.easeInOutCubic)),
-                            child: const Icon(Icons.article_outlined)),
-                        label: const Text('Articles')),
-                    NavigationRailDestination(
-                        icon: SlideTransition(
-                            position: Tween<Offset>(
-                                    begin: const Offset(-3, 0),
-                                    end: Offset.zero)
-                                .animate(CurvedAnimation(
-                                    parent: _controller2,
-                                    curve: Curves.easeInOutCubic)),
-                            child: const Icon(Icons.chat_bubble_outline)),
-                        label: const Text('Chat')),
-                    NavigationRailDestination(
-                        icon: SlideTransition(
-                            position: Tween<Offset>(
-                                    begin: const Offset(-4, 0),
-                                    end: Offset.zero)
-                                .animate(CurvedAnimation(
-                                    parent: _controller3,
-                                    curve: Curves.easeInOutCubic)),
-                            child: const Icon(Icons.video_call_outlined)),
-                        label: const Text('Video')),
+                    SlideInNavigationItem(begin: -1, controller: _controller, icon: Icons.inbox, label: 'Inbox'),
+                    SlideInNavigationItem(begin: -2, controller: _controller1, icon: Icons.article_outlined, label: 'Articles'),
+                    SlideInNavigationItem(begin: -3, controller: _controller2, icon: Icons.chat_bubble_outline, label: 'Chat'),
+                    SlideInNavigationItem(begin: -4, controller: _controller3, icon: Icons.video_call_outlined, label: 'Video')
                   ],
                 ),
               ),
@@ -290,6 +254,24 @@ class __MyHomePageState extends State<_MyHomePage>
         ),
       ),
     );
+  }
+
+  NavigationRailDestination SlideInNavigationItem({
+    required double begin,
+    required AnimationController controller,
+    required IconData icon,
+    required String label,
+  }) {
+    return NavigationRailDestination(
+        icon: SlideTransition(
+            position: Tween<Offset>(
+              begin: Offset(begin, 0),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic),
+            ),
+            child: Icon(icon)),
+        label: Text(label));
   }
 }
 

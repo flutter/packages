@@ -20,16 +20,15 @@ class _MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Define the children to display within the body.
-    final List<Widget> children = <Widget>[
-      for (int i = 0; i < 10; i++)
-        Padding(
+    final List<Widget> children = List<Widget>.generate(10, (int index) {
+      return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
             color: const Color.fromARGB(255, 255, 201, 197),
             height: 400,
           ),
-        )
-    ];
+        );
+    });
 
     // Define the list of destinations to be used within the app.
     const List<NavigationDestination> destinations = <NavigationDestination>[

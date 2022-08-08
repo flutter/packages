@@ -7,7 +7,7 @@ import 'adaptive_layout.dart';
 import 'breakpoints.dart';
 import 'slot_layout.dart';
 
-/// Implements the basic visual layout structure for Material Design 3 that
+/// Implements the basic visual layout structure for [Material Design 3](https://m3.material.io/foundations/adaptive-design/overview) that
 /// adapts to a variety of screens.
 ///
 /// !["Example of a display made with AdaptiveScaffold"](../../example/demo_files/adaptiveScaffold.gif)
@@ -46,18 +46,20 @@ import 'slot_layout.dart';
 /// ```
 ///
 /// See also:
+///
 ///  * [AdaptiveLayout], which is what this widget is built upon internally and
-/// acts as a more customizable alternative.
+///   acts as a more customizable alternative.
 ///  * [SlotLayout], which handles switching and animations between elements
-/// based on [Breakpoint]s.
+///   based on [Breakpoint]s.
 ///  * [SlotLayout.from], which holds information regarding Widgets and the
-/// desired way to animate between switches. Often used within [SlotLayout].
+///   desired way to animate between switches. Often used within [SlotLayout].
 ///  * [Design Doc](https://flutter.dev/go/adaptive-layout-foldables).
 ///  * [Material Design 3 Specifications] (https://m3.material.io/foundations/adaptive-design/overview).
 class AdaptiveScaffold extends StatefulWidget {
-  /// Returns an [AdaptiveScaffold] by passing information down to an
+  /// Returns a const [AdaptiveScaffold] by passing information down to an
   /// [AdaptiveLayout].
   const AdaptiveScaffold({
+    super.key,
     required this.destinations,
     this.selectedIndex = 0,
     this.smallBody,
@@ -78,7 +80,6 @@ class AdaptiveScaffold extends StatefulWidget {
     this.appBar,
     this.navigationRailWidth = 72,
     this.extendedNavigationRailWidth = 192,
-    super.key,
   });
 
   /// The destinations to be used in navigation items. These are converted to

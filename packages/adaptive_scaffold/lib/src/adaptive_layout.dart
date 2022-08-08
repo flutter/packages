@@ -16,7 +16,7 @@ enum _SlotIds {
   secondaryBody,
 }
 
-/// Layout a typical app that adapts to different screens using predefined slots.
+/// Layout an app that adapts to different screens using predefined slots.
 ///
 /// This widget separates the app window into predefined sections called "slots".
 /// It lays out the app using the following kinds of slots (in order):
@@ -24,19 +24,19 @@ enum _SlotIds {
 ///  * [topNavigation], full width at the top. Must have defined size.
 ///  * [bottomNavigation], full width at the bottom. Must have defined size.
 ///  * [primaryNavigation], displayed on the beginning side of the app window from
-/// the bottom of [topNavigation] to the top of [bottomNavigation]. Must have
-/// defined size.
+///   the bottom of [topNavigation] to the top of [bottomNavigation]. Must have
+///   defined size.
 ///  * [secondaryNavigation], displayed on the end side of the app window from the
-/// bottom of [topNavigation] to the top of [bottomNavigation]. Must have defined
-/// size.
+///   bottom of [topNavigation] to the top of [bottomNavigation]. Must have defined
+///   size.
 ///  * [body], first panel; fills the remaining space from the beginning side.
-/// Should have flexible size (like a container).
+///   The main view should have flexible size (like a container).
 ///  * [secondaryBody], second panel; fills the remaining space from the end side.
-/// The use of this property is common in apps that have a main view and a detail
-/// view. Should have flexible size (like a Container). Provides some automatic
-/// functionality with foldable screens.
+///   The use of this property is common in apps that have a main view and a detail
+///   view. The main view should have flexible size (like a Container). This
+///   provides some automatic functionality with foldable screens.
 ///
-/// Slots must display differently under different screen conditions (such as
+/// Slots can display differently under different screen conditions (such as
 /// different widths), and each slot is defined with a [SlotLayout], which maps
 /// [Breakpoint]s to [SlotLayoutConfig], where [SlotLayoutConfig] defines the
 /// content and transition.
@@ -94,17 +94,18 @@ enum _SlotIds {
 /// See also:
 ///
 ///  * [SlotLayout], which handles the actual switching and animations between
-/// elements based on [Breakpoint]s.
+///   elements based on [Breakpoint]s.
 ///  * [SlotLayout.from], which holds information regarding the actual Widgets
-/// and the desired way to animate between switches. Often used within
+///   and the desired way to animate between switches. Often used within
 /// [SlotLayout].
 ///  * [AdaptiveScaffold], which provides a more friendly API with less
-/// customizability. and holds a preset of animations and helper builders.
+///   customizability. and holds a preset of animations and helper builders.
 ///  * [Design Doc](https://flutter.dev/go/adaptive-layout-foldables).
 ///  * [Material Design 3 Specifications] (https://m3.material.io/foundations/adaptive-design/overview).
 class AdaptiveLayout extends StatefulWidget {
-  /// Creates an [AdaptiveLayout] widget.
+  /// Creates a const [AdaptiveLayout] widget.
   const AdaptiveLayout({
+    super.key,
     this.topNavigation,
     this.primaryNavigation,
     this.secondaryNavigation,
@@ -114,13 +115,12 @@ class AdaptiveLayout extends StatefulWidget {
     this.bodyRatio,
     this.internalAnimations = true,
     this.bodyOrientation = Axis.horizontal,
-    super.key,
   });
 
   /// The slot placed on the beginning side of the app window.
   ///
-  /// The beginning side means the left when the `textDirection` is LTR and on
-  /// the right when it is RTL.
+  /// The beginning side means the right when the ambient [Directionality] is
+  /// [TextDirection.rtl] and on the left when it is [TextDirection.ltr].
   ///
   /// If the content is a flexibly sized Widget like [Container], wrap the content
   /// in a [SizedBox] or limit its size (width and height) by another method. See
@@ -129,8 +129,8 @@ class AdaptiveLayout extends StatefulWidget {
 
   /// The slot placed on the end side of the app window.
   ///
-  /// The end side means the right when the `textDirection` is LTR and on the
-  /// left when it is RTL.
+  /// The end side means the right when the ambient [Directionality] is
+  /// [TextDirection.ltr] and on the left when it is [TextDirection.rtl].
   ///
   /// If the content is a flexibly sized Widget like [Container], wrap the content
   /// in a [SizedBox] or limit its size (width and height) by another method. See
