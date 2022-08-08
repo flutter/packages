@@ -6,28 +6,34 @@ import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(
-    const MaterialApp(
-      title: 'Adaptive Layout Example',
-      home: _MyHomePage(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
-class _MyHomePage extends StatelessWidget {
-  const _MyHomePage({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Define the children to display within the body.
     final List<Widget> children = List<Widget>.generate(10, (int index) {
       return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            color: const Color.fromARGB(255, 255, 201, 197),
-            height: 400,
-          ),
-        );
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          color: const Color.fromARGB(255, 255, 201, 197),
+          height: 400,
+        ),
+      );
     });
 
     // Define the list of destinations to be used within the app.
@@ -159,13 +165,13 @@ class _MyHomePage extends StatelessWidget {
           Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('pnav1'),
-            builder: (_) => AdaptiveScaffold.toNavigationRail(
+            builder: (_) => AdaptiveScaffold.toRailFromDestinations(
                 leading: const Icon(Icons.menu), destinations: destinations),
           ),
           Breakpoints.large: SlotLayout.from(
-            key: const Key('pnav2'),
+            key: const Key('pn1'),
             inAnimation: AdaptiveScaffold.leftOutIn,
-            builder: (_) => AdaptiveScaffold.toNavigationRail(
+            builder: (_) => AdaptiveScaffold.toRailFromDestinations(
               extended: true,
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -231,7 +237,7 @@ class _MyHomePage extends StatelessWidget {
       bottomNavigation: SlotLayout(
         config: {
           Breakpoints.small: SlotLayout.from(
-            key: const Key('botnav'),
+            key: const Key('bn'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
             builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
