@@ -105,7 +105,17 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
   void replace(RouteMatch match) {
+    final String lastPath = _matches.last.fullpath;
+    final Completer<dynamic>? completer = _completers[lastPath];
+
+    // If there's a promise for the last page, we update it to make it point to
+    // the new page.
+    if (completer != null) {
+      _completers[match.fullpath] = completer;
+      _completers.remove(lastPath);
+    }
     _matches.matches.last = match;
+
     notifyListeners();
   }
 
