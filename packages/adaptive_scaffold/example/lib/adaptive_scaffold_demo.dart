@@ -6,21 +6,24 @@ import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const _MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class _MyApp extends StatelessWidget {
+  const _MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const MyHomePage(),
+    return const MaterialApp(
+      home: MyHomePage(),
     );
   }
 }
 
+/// Creates a basic adaptive page with navigational elements and a body using
+/// [AdaptiveScaffold].
 class MyHomePage extends StatelessWidget {
+  /// Creates a const [MyHomePage].
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
