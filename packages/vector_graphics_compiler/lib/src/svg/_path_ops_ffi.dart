@@ -13,40 +13,6 @@ import 'path_ops.dart';
 final ffi.DynamicLibrary _dylib = ffi.DynamicLibrary.open(_dylibPath);
 late final String _dylibPath;
 
-/// A path proxy that can print the SVG path-data representation of this path.
-class SvgPathProxy implements PathProxy {
-  final StringBuffer _buffer = StringBuffer();
-
-  @override
-  void reset() {
-    _buffer.clear();
-  }
-
-  @override
-  void close() {
-    _buffer.write('Z');
-  }
-
-  @override
-  void cubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3) {
-    _buffer.write('C$x1,$y1 $x2,$y2 $x3,$y3');
-  }
-
-  @override
-  void lineTo(double x, double y) {
-    _buffer.write('L$x,$y');
-  }
-
-  @override
-  void moveTo(double x, double y) {
-    _buffer.write('M$x,$y');
-  }
-
-  @override
-  String toString() => _buffer.toString();
-}
-
 /// Creates a path object to operate on.
 ///
 /// First, build up the path contours with the [moveTo], [lineTo], [cubicTo],
