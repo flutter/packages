@@ -60,6 +60,11 @@ class App extends StatelessWidget {
           routerDelegate: _router.routerDelegate,
           title: title,
           debugShowCheckedModeBanner: false,
+          builder: (BuildContext context, Widget? child) {
+            return _appState.loginInfo.loggedIn
+                ? AuthOverlay(child: child!)
+                : child!;
+          },
         ),
       );
 
@@ -130,9 +135,6 @@ class App extends StatelessWidget {
       return null;
     },
     refreshListenable: _appState,
-    navigatorBuilder:
-        (BuildContext context, GoRouterState state, Widget child) =>
-            _appState.loginInfo.loggedIn ? AuthOverlay(child: child) : child,
   );
 }
 

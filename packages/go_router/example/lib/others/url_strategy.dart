@@ -3,14 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  // turn on the # in the URLs on the web (default)
-  // GoRouter.setUrlPathStrategy(UrlPathStrategy.hash);
-
-  // turn off the # in the URLs on the web
-  // GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
+  // turn on the path strategy
+  usePathUrlStrategy();
 
   runApp(App());
 }
@@ -32,9 +30,6 @@ class App extends StatelessWidget {
       );
 
   final GoRouter _router = GoRouter(
-    // turn off the # in the URLs on the web
-    urlPathStrategy: UrlPathStrategy.path,
-
     routes: <GoRoute>[
       GoRoute(
         path: '/',
