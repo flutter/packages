@@ -14,21 +14,23 @@ void main() {
   final Finder bnav = find.byKey(const Key('bottomNavigation'));
   final Finder pnav = find.byKey(const Key('primaryNavigation'));
   final Finder pnav1 = find.byKey(const Key('primaryNavigation1'));
+
+  Future<void> updateScreen(double width, WidgetTester tester) async {
+    await tester.binding.setSurfaceSize(Size(width, 800));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+            data: MediaQueryData(size: Size(width, 800)),
+            child: const example.MyHomePage()),
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('dislays correct item of config based on screen width',
       (WidgetTester tester) async {
-    Future<void> updateScreen(double width) async {
-      await tester.binding.setSurfaceSize(Size(width, 800));
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MediaQuery(
-              data: MediaQueryData(size: Size(width, 800)),
-              child: const example.MyHomePage()),
-        ),
-      );
-      await tester.pumpAndSettle();
-    }
 
-    await updateScreen(300);
+    await updateScreen(300, tester);
     expect(smallBody, findsOneWidget);
     expect(bnav, findsOneWidget);
     expect(body, findsNothing);
@@ -36,7 +38,7 @@ void main() {
     expect(pnav, findsNothing);
     expect(pnav1, findsNothing);
 
-    await updateScreen(800);
+    await updateScreen(800, tester);
     expect(body, findsOneWidget);
     expect(body, findsOneWidget);
     expect(bnav, findsNothing);
@@ -44,7 +46,7 @@ void main() {
     expect(pnav, findsOneWidget);
     expect(pnav1, findsNothing);
 
-    await updateScreen(1100);
+    await updateScreen(1100, tester);
     expect(body, findsOneWidget);
     expect(pnav, findsNothing);
     expect(pnav1, findsOneWidget);
