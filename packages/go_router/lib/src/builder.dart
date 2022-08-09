@@ -51,17 +51,17 @@ class RouteBuilder {
     BuildContext context,
     RouteMatchList matchList,
     VoidCallback pop,
-    Key navigatorKey,
     bool routerNeglect,
   ) {
     try {
-      return tryBuild(context, matchList, pop, navigatorKey, routerNeglect);
+      return tryBuild(context, matchList, pop, routerNeglect);
     } on RouteBuilderError catch (e) {
       final String location = matchList.location.toString();
       final uri = Uri.parse(location);
 
       // Build error page
-      return buildNavigator(context, uri, Exception(e), navigatorKey, pop, [
+      return buildNavigator(
+          context, uri, Exception(e), configuration.navigatorKey, pop, [
         buildErrorPage(context, e, uri),
       ]);
     }
@@ -76,7 +76,6 @@ class RouteBuilder {
     BuildContext context,
     RouteMatchList matchList,
     VoidCallback pop,
-    Key navigatorKey,
     bool routerNeglect,
   ) {
     List<Page<dynamic>>? pages;
@@ -102,7 +101,8 @@ class RouteBuilder {
       exception = matchList.error;
     }
 
-    return buildNavigator(context, uri, exception, navigatorKey, pop, pages!);
+    return buildNavigator(
+        context, uri, exception, configuration.navigatorKey, pop, pages!);
   }
 
   @visibleForTesting
@@ -177,10 +177,10 @@ class RouteBuilder {
       }
 
       final route = match.route;
-      if (route is StackedRoute) {
+      if (route is GoRoute) {
         final state = buildState(match, params);
 
-        pages.add(buildStackedRoute(context, state, match));
+        pages.add(buildGoRoute(context, state, match));
       } else if (route is ShellRoute) {
         final state = buildState(match, params);
         // Build the rest of the routes recursively
@@ -219,17 +219,17 @@ class RouteBuilder {
   }
 
   /// Builds a [Page] for [StackedRoute]
-  Page buildStackedRoute(
+  Page buildGoRoute(
       BuildContext context, GoRouterState state, RouteMatch match) {
     final route = match.route;
-    if (route is! StackedRoute) {
+    if (route is! GoRoute) {
       throw RouteBuilderError(
           'Unexpected route type in buildStackedRoute: $route');
     }
 
     // Call the pageBuilder if it's non-null
     final GoRouterPageBuilder? pageBuilder =
-        (match.route as StackedRoute).pageBuilder;
+        (match.route as GoRoute).pageBuilder;
     Page<dynamic>? page;
     if (pageBuilder != null) {
       page = pageBuilder(context, state);
@@ -240,11 +240,12 @@ class RouteBuilder {
 
     // Return the result of builder() or pageBuilder()
     return page ??
-        buildPage(context, state,
-            (match.route as StackedRoute).builder!(context, state));
+        buildPage(
+            context, state, (match.route as GoRoute).builder!(context, state));
   }
 
-  /// Builds a [Page] for [ShellRoute]
+  /// Builds a [Page] for [ShellRoute]. Child routes are placed onto the root
+  /// navigator.
   RecursiveBuildResult buildShellRouteRecursive(BuildContext context,
       GoRouterState state, RouteMatchList matchList, int i) {
     final parentMatch = matchList.matches[i];
@@ -259,7 +260,7 @@ class RouteBuilder {
     final childRoute = childMatch?.route ?? null;
 
     Widget? childWidget;
-    if (childRoute is StackedRoute) {
+    if (childRoute is GoRoute) {
       // Build the child route
       childWidget = callRouteBuilder(context, state, childMatch!);
       i++;
@@ -268,11 +269,20 @@ class RouteBuilder {
       i++;
     }
 
+    // // TODO: build Navigator?
+    // final navigator = Navigator(
+    //   key: (parentMatch.route as ShellRoute).navigatorKey,
+    //   pages: [
+    //     buildPage(context, state, childWidget!),
+    //   ],
+    // );
+
     final parentWidget =
         callRouteBuilder(context, state, parentMatch, childWidget: childWidget);
     return RecursiveBuildResult(parentWidget, i);
   }
 
+  /// Calls the user-provided route builder from the [RouteMatch]'s [RouteBase].
   Widget callRouteBuilder(
       BuildContext context, GoRouterState state, RouteMatch match,
       {Widget? childWidget}) {
@@ -282,7 +292,7 @@ class RouteBuilder {
       throw RouteBuilderError('No route found for match: $match');
     }
 
-    if (route is StackedRoute) {
+    if (route is GoRoute) {
       final builder = route.builder;
       if (builder != null) {
         return builder(context, state);

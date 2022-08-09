@@ -28,6 +28,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -90,6 +91,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       topRedirect: (_) => null,
+      navigatorKey: GlobalKey<NavigatorState>(),
     );
 
     expect(configuration.namedLocation('lowercase'), '/abc?');
@@ -118,6 +120,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -151,6 +154,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -198,6 +202,7 @@ void main() {
           }
           return null;
         },
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -238,6 +243,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -266,6 +272,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -289,6 +296,7 @@ void main() {
         routes: routes,
         redirectLimit: 5,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 

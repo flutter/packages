@@ -41,7 +41,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   ///
   /// The `routes` must not be null and must contain an [GoRouter] to match `/`.
   GoRouter({
-    required List<GoRoute> routes,
+    required List<RouteBase> routes,
     // TODO(johnpryan): Change to a route, improve error API
     // See https://github.com/flutter/flutter/issues/108144
     GoRouterPageBuilder? errorPageBuilder,
@@ -59,6 +59,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     // TODO(johnpryan): Deprecate this parameter
     // See https://github.com/flutter/flutter/issues/108145
     GoRouterNavigatorBuilder? navigatorBuilder,
+    GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
   }) {
     if (urlPathStrategy != null) {
@@ -68,10 +69,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
+    navigatorKey ??= GlobalKey<NavigatorState>();
+
     _routeConfiguration = RouteConfiguration(
       routes: routes,
       topRedirect: redirect ?? (_) => null,
       redirectLimit: redirectLimit,
+      navigatorKey: navigatorKey,
     );
 
     _routeInformationParser = GoRouteInformationParser(

@@ -236,19 +236,6 @@ abstract class RouteBase {
   static String? _emptyRedirect(GoRouterState state) => null;
 }
 
-/// Route configuration object equivalent to [StackedRoute].
-class GoRoute extends StackedRoute {
-  /// Constructs a [GoRoute] object.
-  GoRoute({
-    required super.path,
-    super.builder,
-    super.pageBuilder,
-    super.redirect,
-    super.routes,
-    super.name,
-  });
-}
-
 /// A route that is displayed visually above the matching parent route using the
 /// [Navigator].
 ///
@@ -256,9 +243,9 @@ class GoRoute extends StackedRoute {
 /// root Navigator or the Navigator belonging to the nearest [NestedStackRoute]
 /// ancestor. The page will be either a [MaterialPage] or [CupertinoPage]
 /// depending on the application type.
-class StackedRoute extends RouteBase {
+class GoRoute extends RouteBase {
   /// Constructs a [StackedRoute].
-  StackedRoute({
+  GoRoute({
     required String path,
     this.builder,
     this.pageBuilder,
@@ -326,6 +313,22 @@ class StackedRoute extends RouteBase {
 ///
 /// The widget built by the matching child route becomes to the child parameter
 /// of the [builder].
+///
+/// For example:
+///
+/// ```
+/// ShellRoute(
+///   path: '/',
+///   builder: (BuildContext context, GoRouterState state, Widget child) {
+///   return Scaffold(
+///       families: Families.family(
+///         state.params['id'],
+///       ),
+///     );
+///   }
+/// ),
+/// ```
+///
 class ShellRoute extends RouteBase {
   /// Constructs a [ShellRoute].
   ShellRoute({
@@ -334,6 +337,8 @@ class ShellRoute extends RouteBase {
     this.defaultRoute,
     GoRouterRedirect redirect = RouteBase._emptyRedirect,
     List<RouteBase> routes = const <RouteBase>[],
+    this.navigatorKey,
+    this.shellNavigatorKey,
   }) : super._(
           path: path,
           routes: routes,
@@ -347,29 +352,12 @@ class ShellRoute extends RouteBase {
   /// displayed. This allows the default child route to be specified without
   /// using redirection.
   final String? defaultRoute;
-}
 
-/// A route that displays all descendent [StackedRoute]s within its visual
-/// boundary, typically the UI shell of a [ShellRoute].
-///
-/// This route places a nested [Navigator] in the widget tree, where any
-/// descendent [StackedRoute]s are placed onto this
-/// Navigator instead of the root Navigator, which allows you to display a UI
-/// shell around a nested stack of routes if this route is a child route of
-/// [ShellRoute].
-class NestedStackRoute extends RouteBase {
-  /// Constructs a [NestedRoute].
-  NestedStackRoute({
-    required String path,
-    required this.builder,
-    GoRouterRedirect redirect = RouteBase._emptyRedirect,
-    List<RouteBase> routes = const <RouteBase>[],
-  }) : super._(
-          path: path,
-          routes: routes,
-          redirect: redirect,
-        );
+  /// The navigator key that this screen route should be placed onto.
+  final GlobalKey<NavigatorState>? navigatorKey;
 
-  /// The widget builder for a nested stack route.
-  final StackedRouteBuilder builder;
+  /// The [GlobalKey] to be used to the [Navigator] built for this route.
+  /// All ShellRoutes build a Navigator by default. Child GoRoutes
+  /// are placed onto this Navigator instead of the root Navigator.
+  final GlobalKey<NavigatorState>? shellNavigatorKey;
 }

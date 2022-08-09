@@ -26,7 +26,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
-  }) : builder = RouteBuilder(
+  })  : _configuration = configuration,
+        builder = RouteBuilder(
           configuration: configuration,
           builderWithNav: builderWithNav,
           errorPageBuilder: errorPageBuilder,
@@ -42,10 +43,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Set to true to disable creating history entries on the web.
   final bool routerNeglect;
 
-  final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
-
   RouteMatchList _matches = RouteMatchList.empty();
   final Map<String, int> _pushCounts = <String, int>{};
+  RouteConfiguration _configuration;
 
   /// Pushes the given location onto the page stack
   void push(RouteMatch match) {
@@ -95,7 +95,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
-  GlobalKey<NavigatorState> get navigatorKey => _key;
+  GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
@@ -108,7 +108,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       context,
       _matches,
       pop,
-      navigatorKey,
       routerNeglect,
     );
   }

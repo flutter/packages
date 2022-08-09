@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/widgets.dart';
+
 import 'configuration.dart';
 import 'logging.dart';
 import 'path_utils.dart';
@@ -17,6 +19,7 @@ class RouteConfiguration {
     required this.routes,
     required this.redirectLimit,
     required this.topRedirect,
+    required this.navigatorKey,
   }) {
     _cacheNameToPath('', routes);
 
@@ -41,6 +44,9 @@ class RouteConfiguration {
 
   /// Top level page redirect.
   final GoRouterRedirect topRedirect;
+
+  /// The key to use when building the root [Navigator].
+  final GlobalKey<NavigatorState> navigatorKey;
 
   final Map<String, String> _nameToPath = <String, String>{};
 

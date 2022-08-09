@@ -11,10 +11,10 @@ import 'package:go_router/src/matching.dart';
 
 void main() {
   group('RouteBuilder', () {
-    testWidgets('Builds StackedRoute', (WidgetTester tester) async {
+    testWidgets('Builds GoRoute', (WidgetTester tester) async {
       final config = RouteConfiguration(
         routes: [
-          StackedRoute(
+          GoRoute(
             path: '/',
             builder: (context, state) {
               return _HomeScreen();
@@ -25,6 +25,7 @@ void main() {
         topRedirect: (state) {
           return null;
         },
+        navigatorKey: GlobalKey<NavigatorState>(),
       );
 
       final matches = RouteMatchList([
@@ -63,6 +64,7 @@ void main() {
         topRedirect: (state) {
           return null;
         },
+        navigatorKey: GlobalKey<NavigatorState>(),
       );
 
       final matches = RouteMatchList([
@@ -86,6 +88,46 @@ void main() {
 
       expect(find.byType(_HomeScreen), findsOneWidget);
     });
+
+    testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
+      final config = RouteConfiguration(
+        navigatorKey: rootNavigatorKey,
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) {
+              return _HomeScreen();
+            },
+          ),
+        ],
+        redirectLimit: 10,
+        topRedirect: (state) {
+          return null;
+        },
+      );
+
+      final matches = RouteMatchList([
+        RouteMatch(
+          route: config.routes.first,
+          subloc: '/',
+          fullpath: '/',
+          encodedParams: {},
+          queryParams: {},
+          extra: null,
+          error: null,
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      expect(find.byKey(rootNavigatorKey), findsOneWidget);
+    });
   });
 }
 
@@ -102,14 +144,12 @@ class _BuilderTestWidget extends StatelessWidget {
   final RouteConfiguration routeConfiguration;
   final RouteBuilder builder;
   final RouteMatchList matches;
-  final ValueKey<NavigatorState> navigatorKey;
 
   _BuilderTestWidget({
     required this.routeConfiguration,
     required this.matches,
     Key? key,
-  })  : navigatorKey = ValueKey<NavigatorState>(NavigatorState()),
-        builder = _routeBuilder(routeConfiguration),
+  })  : builder = _routeBuilder(routeConfiguration),
         super(key: key);
 
   /// Builds a [RouteBuilder] for tests
@@ -149,7 +189,6 @@ class _BuilderTestWidget extends StatelessWidget {
         context,
         matches,
         () {},
-        navigatorKey,
         false,
       ),
       // builder: (context, child) => ,
