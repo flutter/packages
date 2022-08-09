@@ -16,25 +16,29 @@ enum PersonDetails {
 
 enum SportDetails {
   volleyball(
-    imageUrl: 'https://i.cbc.ca/1.6477752.1654316355!/fileImage/httpImage/image.jpg_gen/derivatives/16x9_940/canada-vs-usa-volleyball.jpg',
+    imageUrl:
+        'https://i.cbc.ca/1.6477752.1654316355!/fileImage/httpImage/image.jpg_gen/derivatives/16x9_940/canada-vs-usa-volleyball.jpg',
     playerPerTeam: 6,
     accessory: null,
     hasNet: true,
   ),
   football(
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b9/Football_iu_1996.jpg',
+    imageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/b/b9/Football_iu_1996.jpg',
     playerPerTeam: 11,
     accessory: null,
     hasNet: true,
   ),
   tennis(
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/94/2013_Australian_Open_-_Guillaume_Rufin.jpg',
+    imageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/9/94/2013_Australian_Open_-_Guillaume_Rufin.jpg',
     playerPerTeam: 2,
     accessory: 'Rackets',
     hasNet: true,
   ),
   hockey(
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/39/Pittsburgh_Penguins%2C_Washington_Capitals%2C_Bryan_Rust_%2833744033514%29.jpg',
+    imageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/3/39/Pittsburgh_Penguins%2C_Washington_Capitals%2C_Bryan_Rust_%2833744033514%29.jpg',
     playerPerTeam: 6,
     accessory: 'Hockey sticks',
     hasNet: true,
