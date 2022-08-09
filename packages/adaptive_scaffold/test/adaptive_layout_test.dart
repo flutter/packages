@@ -438,9 +438,6 @@ void main() {
         ((widgetFunction(context) as Builder).builder(context) as Padding).child
             as SizedBox;
     expect(sizedBox.width, 72);
-    /*NavigationRail navigationRail = (sizedBox.child as LayoutBuilder).builder(context, constraints) as ;
-    expect(navigationRail.backgroundColor, Colors.amber);
-    expect(navigationRail.extended, false)*/
     ;
   });
 

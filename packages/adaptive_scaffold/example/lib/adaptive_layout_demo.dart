@@ -193,7 +193,7 @@ class MyHomePage extends StatelessWidget {
         },
       ),
       body: SlotLayout(
-        config: {
+        config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
             key: const Key('body'),
             builder: (_) => ListView.builder(
