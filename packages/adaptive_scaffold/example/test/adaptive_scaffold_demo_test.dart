@@ -29,7 +29,6 @@ void main() {
 
   testWidgets('dislays correct item of config based on screen width',
       (WidgetTester tester) async {
-
     await updateScreen(300, tester);
     expect(smallBody, findsOneWidget);
     expect(bnav, findsOneWidget);

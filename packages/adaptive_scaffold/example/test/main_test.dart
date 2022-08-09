@@ -18,7 +18,9 @@ void main() {
     await tester.binding.setSurfaceSize(Size(width, 800));
     await tester.pumpWidget(
       MaterialApp(
-        home: MediaQuery(data: MediaQueryData(size: Size(width, 800)), child: const example.MyHomePage()),
+        home: MediaQuery(
+            data: MediaQueryData(size: Size(width, 800)),
+            child: const example.MyHomePage()),
       ),
     );
     await tester.pumpAndSettle();
@@ -26,7 +28,6 @@ void main() {
 
   testWidgets('dislays correct item of config based on screen width',
       (WidgetTester tester) async {
-
     await updateScreen(300, tester);
     expect(sBody, findsNothing);
     expect(bnav, findsOneWidget);
