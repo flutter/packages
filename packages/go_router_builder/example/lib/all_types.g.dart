@@ -14,7 +14,7 @@ List<GoRoute> get $appRoutes => [
 
 GoRoute get $allTypesRoute => GoRouteData.$route(
       path:
-          '/:requiredBigIntField/:requiredBoolField/:requiredDateTimeField/:requiredDoubleField/:requiredEnumField/:requiredIntField/:requiredNumField/:requiredStringField/:requiredUriField',
+          '/:requiredBigIntField/:requiredBoolField/:requiredDateTimeField/:requiredDoubleField/:requiredEnumField/:requiredEnhancedEnumField/:requiredIntField/:requiredNumField/:requiredStringField/:requiredUriField',
       factory: $AllTypesRouteExtension._fromState,
     );
 
@@ -29,6 +29,8 @@ extension $AllTypesRouteExtension on AllTypesRoute {
             ._$fromName(state.params['requiredEnumField']!),
         requiredIntField: int.parse(state.params['requiredIntField']!),
         requiredNumField: num.parse(state.params['requiredNumField']!),
+        requiredEnhancedEnumField: _$SportDetailsEnumMap
+            ._$fromName(state.params['requiredEnhancedEnumField']!),
         requiredStringField: state.params['requiredStringField']!,
         requiredUriField: Uri.parse(state.params['requiredUriField']!),
         bigIntField:
@@ -41,6 +43,8 @@ extension $AllTypesRouteExtension on AllTypesRoute {
             _$convertMapValue('double-field', state.queryParams, double.parse),
         enumField: _$convertMapValue(
             'enum-field', state.queryParams, _$PersonDetailsEnumMap._$fromName),
+        enhancedEnumField: _$convertMapValue('enhanced-enum-field',
+            state.queryParams, _$SportDetailsEnumMap._$fromName),
         intField: _$convertMapValue('int-field', state.queryParams, int.parse),
         numField: _$convertMapValue('num-field', state.queryParams, num.parse),
         stringField: state.queryParams['string-field'],
@@ -48,7 +52,7 @@ extension $AllTypesRouteExtension on AllTypesRoute {
       );
 
   String get location => GoRouteData.$location(
-        '/${Uri.encodeComponent(requiredBigIntField.toString())}/${Uri.encodeComponent(requiredBoolField.toString())}/${Uri.encodeComponent(requiredDateTimeField.toString())}/${Uri.encodeComponent(requiredDoubleField.toString())}/${Uri.encodeComponent(_$PersonDetailsEnumMap[requiredEnumField]!)}/${Uri.encodeComponent(requiredIntField.toString())}/${Uri.encodeComponent(requiredNumField.toString())}/${Uri.encodeComponent(requiredStringField)}/${Uri.encodeComponent(requiredUriField.toString())}',
+        '/${Uri.encodeComponent(requiredBigIntField.toString())}/${Uri.encodeComponent(requiredBoolField.toString())}/${Uri.encodeComponent(requiredDateTimeField.toString())}/${Uri.encodeComponent(requiredDoubleField.toString())}/${Uri.encodeComponent(_$PersonDetailsEnumMap[requiredEnumField]!)}/${Uri.encodeComponent(_$SportDetailsEnumMap[requiredEnhancedEnumField]!)}/${Uri.encodeComponent(requiredIntField.toString())}/${Uri.encodeComponent(requiredNumField.toString())}/${Uri.encodeComponent(requiredStringField)}/${Uri.encodeComponent(requiredUriField.toString())}',
         queryParams: {
           if (bigIntField != null) 'big-int-field': bigIntField!.toString(),
           if (boolField != null) 'bool-field': boolField!.toString(),
@@ -57,6 +61,8 @@ extension $AllTypesRouteExtension on AllTypesRoute {
           if (doubleField != null) 'double-field': doubleField!.toString(),
           if (enumField != null)
             'enum-field': _$PersonDetailsEnumMap[enumField!]!,
+          if (enhancedEnumField != null)
+            'enhanced-enum-field': _$SportDetailsEnumMap[enhancedEnumField!]!,
           if (intField != null) 'int-field': intField!.toString(),
           if (numField != null) 'num-field': numField!.toString(),
           if (stringField != null) 'string-field': stringField!,
@@ -73,6 +79,13 @@ const _$PersonDetailsEnumMap = {
   PersonDetails.hobbies: 'hobbies',
   PersonDetails.favoriteFood: 'favorite-food',
   PersonDetails.favoriteSport: 'favorite-sport',
+};
+
+const _$SportDetailsEnumMap = {
+  SportDetails.volleyball: 'volleyball',
+  SportDetails.football: 'football',
+  SportDetails.tennis: 'tennis',
+  SportDetails.hockey: 'hockey',
 };
 
 T? _$convertMapValue<T>(

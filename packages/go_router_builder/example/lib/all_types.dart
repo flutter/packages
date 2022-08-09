@@ -13,7 +13,7 @@ part 'all_types.g.dart';
 
 @TypedGoRoute<AllTypesRoute>(
   path: '/:requiredBigIntField/:requiredBoolField/:requiredDateTimeField'
-      '/:requiredDoubleField/:requiredEnumField/:requiredIntField'
+      '/:requiredDoubleField/:requiredEnumField/:requiredEnhancedEnumField/:requiredIntField'
       '/:requiredNumField/:requiredStringField/:requiredUriField',
 )
 @immutable
@@ -26,6 +26,7 @@ class AllTypesRoute extends GoRouteData {
     required this.requiredEnumField,
     required this.requiredIntField,
     required this.requiredNumField,
+    required this.requiredEnhancedEnumField,
     required this.requiredStringField,
     required this.requiredUriField,
     this.bigIntField,
@@ -33,6 +34,7 @@ class AllTypesRoute extends GoRouteData {
     this.dateTimeField,
     this.doubleField,
     this.enumField,
+    this.enhancedEnumField,
     this.intField,
     this.numField,
     this.stringField,
@@ -44,6 +46,7 @@ class AllTypesRoute extends GoRouteData {
   final DateTime requiredDateTimeField;
   final double requiredDoubleField;
   final PersonDetails requiredEnumField;
+  final SportDetails requiredEnhancedEnumField;
   final int requiredIntField;
   final num requiredNumField;
   final String requiredStringField;
@@ -54,6 +57,7 @@ class AllTypesRoute extends GoRouteData {
   final DateTime? dateTimeField;
   final double? doubleField;
   final PersonDetails? enumField;
+  final SportDetails? enhancedEnumField;
   final int? intField;
   final num? numField;
   final String? stringField;
@@ -120,11 +124,34 @@ class AllTypesApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp.router(
         routeInformationParser: _router.routeInformationParser,
         routerDelegate: _router.routerDelegate,
+        routeInformationProvider: _router.routeInformationProvider,
       );
 
   late final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,
     routes: $appRoutes,
+    initialLocation: AllTypesRoute(
+          requiredBigIntField: BigInt.two,
+          requiredBoolField: true,
+          requiredDateTimeField: DateTime.now(),
+          requiredDoubleField: 3.14,
+          requiredEnumField: PersonDetails.favoriteSport,
+          requiredEnhancedEnumField: SportDetails.football,
+          requiredIntField: -42,
+          requiredNumField: 3.15,
+          requiredStringField: r'$!/#bob%%20',
+          requiredUriField: Uri.parse('https://dart.dev'),
+          bigIntField: BigInt.zero,
+          boolField: false,
+          dateTimeField: DateTime(0),
+          doubleField: 3.14,
+          enumField: PersonDetails.favoriteSport,
+          enhancedEnumField: SportDetails.volleyball,
+          intField: -42,
+          numField: 3.15,
+          stringField: r'$!/#bob%%20',
+          uriField: Uri.parse('https://dart.dev'),
+        ).location,
 
     // redirect to the login page if the user is not logged in
     redirect: (GoRouterState state) {
@@ -135,6 +162,7 @@ class AllTypesApp extends StatelessWidget {
           requiredDateTimeField: DateTime.now(),
           requiredDoubleField: 3.14,
           requiredEnumField: PersonDetails.favoriteSport,
+          requiredEnhancedEnumField: SportDetails.football,
           requiredIntField: -42,
           requiredNumField: 3.15,
           requiredStringField: r'$!/#bob%%20',
@@ -144,6 +172,7 @@ class AllTypesApp extends StatelessWidget {
           dateTimeField: DateTime(0),
           doubleField: 3.14,
           enumField: PersonDetails.favoriteSport,
+          enhancedEnumField: SportDetails.volleyball,
           intField: -42,
           numField: 3.15,
           stringField: r'$!/#bob%%20',
