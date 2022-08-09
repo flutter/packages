@@ -11,9 +11,6 @@ void main() {
   final Finder smallBody = find.byKey(const Key('smallBody'));
   final Finder body = find.byKey(const Key('body'));
   final Finder largeBody = find.byKey(const Key('largeBody'));
-  // final Finder smallSBody = find.byKey(const Key('smallSBody'));
-  // final Finder sBody = find.byKey(const Key('sBody'));
-  // final Finder largeSBody = find.byKey(const Key('largeSBody'));
   final Finder bnav = find.byKey(const Key('bottomNavigation'));
   final Finder pnav = find.byKey(const Key('primaryNavigation'));
   final Finder pnav1 = find.byKey(const Key('primaryNavigation1'));

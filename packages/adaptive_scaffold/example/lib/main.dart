@@ -35,7 +35,7 @@ class _MyApp extends StatelessWidget {
   }
 }
 
-/// Public for testing purposes.
+/// Creates an example mail page using [AdaptiveLayout].
 class MyHomePage extends StatefulWidget {
   /// Creates a const [MyHomePage].
   const MyHomePage({Key? key}) : super(key: key);
@@ -171,25 +171,29 @@ class _MyHomePageState extends State<MyHomePage>
                   labelType: NavigationRailLabelType.none,
                   destinations: <NavigationRailDestination>[
                     slideInNavigationItem(
-                        begin: -1,
-                        controller: _controller,
-                        icon: Icons.inbox,
-                        label: 'Inbox'),
+                      begin: -1,
+                      controller: _controller,
+                      icon: Icons.inbox,
+                      label: 'Inbox',
+                    ),
                     slideInNavigationItem(
-                        begin: -2,
-                        controller: _controller1,
-                        icon: Icons.article_outlined,
-                        label: 'Articles'),
+                      begin: -2,
+                      controller: _controller1,
+                      icon: Icons.article_outlined,
+                      label: 'Articles',
+                    ),
                     slideInNavigationItem(
-                        begin: -3,
-                        controller: _controller2,
-                        icon: Icons.chat_bubble_outline,
-                        label: 'Chat'),
+                      begin: -3,
+                      controller: _controller2,
+                      icon: Icons.chat_bubble_outline,
+                      label: 'Chat',
+                    ),
                     slideInNavigationItem(
-                        begin: -4,
-                        controller: _controller3,
-                        icon: Icons.video_call_outlined,
-                        label: 'Video')
+                      begin: -4,
+                      controller: _controller3,
+                      icon: Icons.video_call_outlined,
+                      label: 'Video',
+                    )
                   ],
                 ),
               ),

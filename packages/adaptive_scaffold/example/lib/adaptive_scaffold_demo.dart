@@ -20,7 +20,8 @@ class _MyApp extends StatelessWidget {
   }
 }
 
-/// Public for testing purposes.
+/// Creates a basic adaptive page with navigational elements and a body using
+/// [AdaptiveScaffold].
 class MyHomePage extends StatelessWidget {
   /// Creates a const [MyHomePage].
   const MyHomePage({Key? key}) : super(key: key);
