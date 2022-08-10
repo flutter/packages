@@ -288,7 +288,7 @@ class AdaptiveScaffold extends StatefulWidget {
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
     if (extended && width == 72) {
-      width = 150;
+      width = 192;
     }
     return Builder(builder: (BuildContext context) {
       return Padding(

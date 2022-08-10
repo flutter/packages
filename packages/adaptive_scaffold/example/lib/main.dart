@@ -119,6 +119,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
+    const Color iconColor = Color.fromARGB(255, 29, 25, 43);
     final Widget trailingNavRail = Column(
       children: <Widget>[
         const Divider(
@@ -230,16 +231,16 @@ class _MyHomePageState extends State<MyHomePage>
     // builders.
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
-          label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
+          label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
       NavigationDestination(
           label: 'Articles',
-          icon: Icon(Icons.article_outlined, color: Colors.black)),
+          icon: Icon(Icons.article_outlined, color: iconColor)),
       NavigationDestination(
           label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
+          icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
       NavigationDestination(
           label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: Colors.black)),
+          icon: Icon(Icons.video_call_outlined, color: iconColor)),
     ];
 
     // Updating the listener value.
@@ -620,8 +621,8 @@ class _ItemListTile extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
               color: selected == allItems.indexOf(item)
-                  ? const Color.fromARGB(255, 237, 221, 255)
-                  : const Color.fromARGB(255, 245, 241, 248),
+                  ? const Color.fromARGB(255, 234, 222, 255)
+                  : const Color.fromARGB(255, 243, 237, 247),
               borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
