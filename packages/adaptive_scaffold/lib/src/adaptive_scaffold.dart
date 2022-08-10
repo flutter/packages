@@ -9,9 +9,20 @@ import 'adaptive_layout.dart';
 import 'breakpoints.dart';
 import 'slot_layout.dart';
 
+/// Gutter value between different parts of the body slot depending on
+/// material 3 design spec.
 const double materialGutterValue = 8;
+
+/// margin value of the compact breakpoint layout according to the material
+/// design 3 spec
 const double materialCompactMinMargin = 8;
+
+/// margin value of the medium breakpoint layout according to the material
+/// design 3 spec
 const double materialMediumMinMargin = 12;
+
+//// margin value of the expanded breakpoint layout according to the material
+/// design 3 spec
 const double materialExpandedMinMargin = 32;
 
 /// Implements the basic visual layout structure for Material Design 3 that
@@ -221,6 +232,10 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
 
+  /// Public helper method to be used for creating a [NavigationRail] from a
+  /// list of [NavigationDestination]s. Takes in a [selectedIndex] property for
+  /// the current selected item in the [NavigationRail] and [extended] for
+  /// whether the [NavigationRail] is extended or not.
   static Builder toRailFromDestinations({
     required List<NavigationDestination> destinations,
     double width = 72,
@@ -254,7 +269,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Public helper method to be used for creating a [NavigationRail] from a
-  /// list of [NavigationDestination]s. Takes in a [selectedIndex] property for
+  /// list of [NavigationRailDestination]s. Takes in a [selectedIndex] property for
   /// the current selected item in the [NavigationRail] and [extended] for
   /// whether the [NavigationRail] is extended or not.
   static Builder toNavigationRail({
@@ -377,7 +392,7 @@ class AdaptiveScaffold extends StatefulWidget {
         shrinkWrap: true,
         physics: const AlwaysScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
-        slivers: [
+        slivers: <Widget>[
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(thisMargin),
