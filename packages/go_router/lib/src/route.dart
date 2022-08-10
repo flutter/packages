@@ -315,7 +315,13 @@ class GoRoute extends RouteBase {
       const SizedBox.shrink();
 }
 
-/// A route that displays a UI shell around the matching child route.
+/// A route that displays a UI shell around the matching child route. Builds
+/// a new Navigator that is used to display any matching sub-routes, instead
+/// of placing them on the root Navigator.
+///
+/// To display a child route on a different Navigator, provide it with a
+/// `navigatorKey` that matches the key provided to either the `GoRouter` or
+/// `ShellRoute` constructor.
 ///
 /// The widget built by the matching child route becomes to the child parameter
 /// of the [builder].
@@ -326,9 +332,12 @@ class GoRoute extends RouteBase {
 /// ShellRoute(
 ///   path: '/',
 ///   builder: (BuildContext context, GoRouterState state, Widget child) {
-///   return Scaffold(
-///       families: Families.family(
-///         state.params['id'],
+///     return Scaffold(
+///       appBar: AppBar(
+///         title: Text('App Shell')
+///       ),
+///       body: Center(
+///         child: child,
 ///       ),
 ///     );
 ///   }
