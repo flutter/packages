@@ -249,6 +249,7 @@ class GoRoute extends RouteBase {
     required String path,
     this.builder,
     this.pageBuilder,
+    this.navigatorKey = null,
     super.name,
     GoRouterRedirect redirect = RouteBase._emptyRedirect,
     List<RouteBase> routes = const <RouteBase>[],
@@ -284,6 +285,11 @@ class GoRoute extends RouteBase {
   /// You can also use CupertinoPage, and for a custom page builder to use
   /// custom page transitions, you can use [CustomTransitionPage].
   final GoRouterPageBuilder? pageBuilder;
+
+  /// An optional key specifying which Navigator to display this route's screen
+  /// onto. Specifying the root Navigator will stack this route onto that
+  /// Navigator instead of the nearest ShellRoute ancestor.
+  final GlobalKey<NavigatorState>? navigatorKey;
 
   /// A custom builder for this route.
   ///

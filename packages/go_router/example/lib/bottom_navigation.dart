@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:go_router/src/route.dart';
 import 'package:go_router_examples/books/main.dart';
 
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 // This example demonstrates how to configure a nested navigation stack using
 // [ShellRoute].
 void main() => runApp(App());
@@ -28,6 +30,7 @@ class App extends StatelessWidget {
       );
 
   final GoRouter _router = GoRouter(
+    navigatorKey: rootNavigatorKey,
     routes: <RouteBase>[
       ShellRoute(
         path: '/',
@@ -72,6 +75,9 @@ class App extends StatelessWidget {
             routes: [
               GoRoute(
                 path: 'details',
+                // Stack this route on the root navigator, instead of the
+                // nearest ShellRoute ancestor.
+                navigatorKey: rootNavigatorKey,
                 builder: (context, state) {
                   return DetailsScreen(label: 'B');
                 },

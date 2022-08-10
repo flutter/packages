@@ -193,6 +193,73 @@ void main() {
       expect(find.byKey(rootNavigatorKey), findsOneWidget);
       expect(find.byKey(shellNavigatorKey), findsOneWidget);
     });
+
+    testWidgets('Builds a Navigator for ShellRoute',
+        (WidgetTester tester) async {
+      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final config = RouteConfiguration(
+        navigatorKey: rootNavigatorKey,
+        routes: [
+          ShellRoute(
+            path: '/',
+            builder: (context, state, child) {
+              return _HomeScreen(
+                child: child,
+              );
+            },
+            shellNavigatorKey: shellNavigatorKey,
+            routes: [
+              GoRoute(
+                path: 'details',
+                builder: (context, state) {
+                  return _DetailsScreen();
+                },
+                // This screen should stack onto the root navigator.
+                navigatorKey: rootNavigatorKey,
+              ),
+            ],
+          ),
+        ],
+        redirectLimit: 10,
+        topRedirect: (state) {
+          return null;
+        },
+      );
+
+      final matches = RouteMatchList([
+        RouteMatch(
+          route: config.routes.first,
+          subloc: '/',
+          fullpath: '/',
+          encodedParams: {},
+          queryParams: {},
+          extra: null,
+          error: null,
+        ),
+        RouteMatch(
+          route: config.routes.first.routes.first,
+          subloc: '/details',
+          fullpath: '/details',
+          encodedParams: {},
+          queryParams: {},
+          extra: null,
+          error: null,
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      // The Details screen should be visible, but the HomeScreen should be
+      // offstage (underneath) the DetailsScreen.
+      expect(find.byType(_HomeScreen), findsNothing);
+      expect(find.byType(_DetailsScreen), findsOneWidget);
+    });
   });
 }
 

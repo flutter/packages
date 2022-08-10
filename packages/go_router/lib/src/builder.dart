@@ -102,11 +102,13 @@ class RouteBuilder {
     RouteMatchList matchList,
     int startIndex,
     VoidCallback pop,
-    bool routerNeglect, // TODO: remove?
+    bool routerNeglect, // TODO(johnpryan): Is this working? Needs a test...
     Key navigatorKey,
     Map<String, String> params,
   ) {
     final pages = <Page>[];
+    final pagesForOutOfScopeNavigator = <OutOfScopePage>[];
+
     for (var i = startIndex; i < matchList.matches.length; i++) {
       final match = matchList.matches[i];
 
@@ -119,7 +121,16 @@ class RouteBuilder {
       final newParams = <String, String>{...params, ...match.decodedParams};
       if (route is GoRoute) {
         final state = buildState(match, newParams);
-        pages.add(buildGoRoutePage(context, state, match));
+        final page = buildGoRoutePage(context, state, match);
+
+        // If this GoRoute is for a different Navigator, add it to the
+        // pagesForOutOfScopeNavigator list instead.
+        if (route.navigatorKey != null) {
+          pagesForOutOfScopeNavigator
+              .add(OutOfScopePage(page, route.navigatorKey!));
+        } else {
+          pages.add(page);
+        }
       } else if (route is ShellRoute) {
         final state = buildState(match, newParams);
         final result = _buildRecursive(
@@ -132,9 +143,40 @@ class RouteBuilder {
             route.shellNavigatorKey ?? ValueKey(state.pageKey),
             newParams);
         final child = result.widget;
-        pages.add(buildPage(context, state,
-            callRouteBuilder(context, state, match, childWidget: child)));
+
+        final page = buildPage(context, state,
+            callRouteBuilder(context, state, match, childWidget: child));
+
+        // If this ShellRoute is for a different Navigator, add it to the
+        // pagesForOutOfScopeNavigator list instead.
+        if (route.navigatorKey != null) {
+          pagesForOutOfScopeNavigator
+              .add(OutOfScopePage(page, route.navigatorKey!));
+        } else {
+          pages.add(page);
+        }
+
+        // If any descendent GoRoutes have pages that are out of scope for this
+        // navigator, Add them to the list of routes that are out of scope. If
+        // they are in scope, add them to the list of pages for this navigator.
+        final pagesOutOfScopeForChildNavigator =
+            result.pagesForOutOfScopeNavigator;
+        for (var outOfScopePage in pagesOutOfScopeForChildNavigator) {
+          if (outOfScopePage.navigatorKey == route.shellNavigatorKey) {
+            pages.add(page);
+          } else {
+            pagesForOutOfScopeNavigator.add(outOfScopePage);
+          }
+        }
+
         i = result.newIndex;
+      }
+    }
+
+    // Add any pages that were out of scope to this Navigator if the keys match.
+    for (var outOfScopePage in pagesForOutOfScopeNavigator) {
+      if (outOfScopePage.navigatorKey == navigatorKey) {
+        pages.add(outOfScopePage.page);
       }
     }
 
@@ -154,8 +196,8 @@ class RouteBuilder {
       throw RouteBuilderError('No pages built for root Navigator');
     }
 
-    return RecursiveBuildResult(
-        child ?? SizedBox.shrink(), pages, matchList.matches.length);
+    return RecursiveBuildResult(child ?? SizedBox.shrink(), pages,
+        pagesForOutOfScopeNavigator, matchList.matches.length);
   }
 
   /// Helper method that calls [builderWithNav] with the [GoRouterState]
@@ -399,9 +441,21 @@ class RecursiveBuildResult {
 
   /// List of pages placed on the navigator. Used for testing.
   final List<Page> pages;
+
+  /// List of pages placed on a Navigator that isn't in the current scope (such as the root navigator)
+  final List<OutOfScopePage> pagesForOutOfScopeNavigator;
+
   final int newIndex;
 
-  RecursiveBuildResult(this.widget, this.pages, this.newIndex);
+  RecursiveBuildResult(
+      this.widget, this.pages, this.pagesForOutOfScopeNavigator, this.newIndex);
+}
+
+class OutOfScopePage {
+  final Page page;
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  OutOfScopePage(this.page, this.navigatorKey);
 }
 
 /// An error that occurred while building the app's UI based on the route
