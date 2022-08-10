@@ -29,15 +29,6 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Define the children to display within the body.
-    final List<Widget> children = List<Widget>.generate(10, (int index) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          color: const Color.fromARGB(255, 255, 201, 197),
-          height: 400,
-        ),
-      );
-    });
 
     // Define the list of destinations to be used within the app.
     const List<NavigationDestination> destinations = <NavigationDestination>[
@@ -54,8 +45,8 @@ class MyHomePage extends StatelessWidget {
           icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
 
-    Widget trailingNavRail = Column(
-      children: [
+    final Widget trailingNavRail = Column(
+      children: <Widget>[
         const Divider(
           color: Colors.black,
         ),
@@ -63,12 +54,12 @@ class MyHomePage extends StatelessWidget {
           height: 10,
         ),
         Row(
-          children: const [
+          children: const <Widget>[
             SizedBox(
               width: 27,
             ),
             Text(
-              "Folders",
+              'Folders',
               style: TextStyle(fontSize: 16),
             ),
           ],
@@ -77,7 +68,7 @@ class MyHomePage extends StatelessWidget {
           height: 10,
         ),
         Row(
-          children: [
+          children: <Widget>[
             const SizedBox(
               width: 16,
             ),
@@ -89,14 +80,14 @@ class MyHomePage extends StatelessWidget {
             const SizedBox(
               width: 21,
             ),
-            const Text("Freelance"),
+            const Text('Freelance'),
           ],
         ),
         const SizedBox(
           height: 12,
         ),
         Row(
-          children: [
+          children: <Widget>[
             const SizedBox(
               width: 16,
             ),
@@ -108,14 +99,14 @@ class MyHomePage extends StatelessWidget {
             const SizedBox(
               width: 21,
             ),
-            const Text("Mortage"),
+            const Text('Mortage'),
           ],
         ),
         const SizedBox(
           height: 12,
         ),
         Row(
-          children: [
+          children: <Widget>[
             const SizedBox(
               width: 16,
             ),
@@ -129,7 +120,7 @@ class MyHomePage extends StatelessWidget {
             ),
             const Flexible(
                 child: Text(
-              "Taxes",
+              'Taxes',
               overflow: TextOverflow.ellipsis,
             )),
           ],
@@ -138,7 +129,7 @@ class MyHomePage extends StatelessWidget {
           height: 12,
         ),
         Row(
-          children: [
+          children: <Widget>[
             const SizedBox(
               width: 16,
             ),
@@ -152,7 +143,7 @@ class MyHomePage extends StatelessWidget {
             ),
             const Flexible(
                 child: Text(
-              "Receipts",
+              'Receipts',
               overflow: TextOverflow.ellipsis,
             )),
           ],
@@ -162,7 +153,7 @@ class MyHomePage extends StatelessWidget {
 
     return AdaptiveLayout(
       primaryNavigation: SlotLayout(
-        config: {
+        config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
               key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
           Breakpoints.medium: SlotLayout.from(
@@ -178,9 +169,9 @@ class MyHomePage extends StatelessWidget {
               extended: true,
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
+                children: const <Widget>[
                   Text(
-                    "REPLY",
+                    'REPLY',
                     style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
                   ),
                   Icon(Icons.menu_open)
@@ -198,7 +189,7 @@ class MyHomePage extends StatelessWidget {
             key: const Key('body'),
             builder: (_) => ListView.builder(
               itemCount: 10,
-              itemBuilder: (context, index) => Padding(
+              itemBuilder: (BuildContext context, int index) => Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   color: const Color.fromARGB(255, 255, 201, 197),
@@ -238,7 +229,7 @@ class MyHomePage extends StatelessWidget {
         },
       ),
       bottomNavigation: SlotLayout(
-        config: {
+        config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
             key: const Key('bn'),
             inAnimation: AdaptiveScaffold.bottomToTop,

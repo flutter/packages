@@ -119,8 +119,8 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    Widget trailingNavRail = Column(
-      children: [
+    final Widget trailingNavRail = Column(
+      children: <Widget>[
         const Divider(
           color: Colors.white,
           thickness: 1.5,
@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage>
           height: 10,
         ),
         Row(
-          children: [
+          children: <Widget>[
             const SizedBox(
               width: 22,
             ),
@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage>
           height: 22,
         ),
         Row(
-          children: [
+          children: <Widget>[
             const SizedBox(
               width: 16,
             ),
@@ -162,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage>
           height: 16,
         ),
         Row(
-          children: [
+          children: <Widget>[
             const SizedBox(
               width: 16,
             ),
@@ -181,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage>
           height: 16,
         ),
         Row(
-          children: [
+          children: <Widget>[
             const SizedBox(
               width: 16,
             ),
@@ -204,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage>
           height: 16,
         ),
         Row(
-          children: [
+          children: <Widget>[
             const SizedBox(
               width: 16,
             ),
@@ -228,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage>
 
     // These are the destinations used within the AdaptiveScaffold navigation
     // builders.
-    const List<NavigationDestination> destinations = [
+    const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
           label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
       NavigationDestination(
@@ -408,12 +408,11 @@ class _ComposeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int _num = 0;
     return Column(children: <Widget>[
       Container(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 18),
         child: const Icon(
-          (Icons.menu),
+          Icons.menu,
         ),
       ),
       Container(
@@ -628,9 +627,9 @@ class _ItemListTile extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Row(
-                  children: [
+                  children: <Widget>[
                     CircleAvatar(
                       radius: 18,
                       child: Image.asset(email.image),
@@ -638,7 +637,7 @@ class _ItemListTile extends StatelessWidget {
                     const SizedBox(width: 8),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: <Widget>[
                         Text(email.sender,
                             style: TextStyle(
                                 color: Colors.grey[850], fontSize: 13)),
@@ -873,7 +872,7 @@ class _EmailTile extends StatelessWidget {
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
+                children: <Widget>[
                   SizedBox(
                       width: 126,
                       child: OutlinedButton(
@@ -1017,6 +1016,8 @@ class _Email {
   final String bodyImage;
 }
 
+/// List of items, each representing a thread of emails which will populate
+/// the different layouts.
 const List<_Item> allItems = <_Item>[
   _Item(
     title: 'Dinner Club',
@@ -1050,7 +1051,7 @@ const List<_Item> allItems = <_Item>[
   ),
   _Item(
     title: '7 Best Yoga Poses for Strength Training',
-    emails: [
+    emails: <_Email>[
       _Email(
         sender: 'Elaine Howley',
         time: '2 hours',
@@ -1064,7 +1065,7 @@ const List<_Item> allItems = <_Item>[
   ),
   _Item(
     title: 'A Programming Language for Hardware Accelerators',
-    emails: [
+    emails: <_Email>[
       _Email(
         sender: 'Laney Mansell',
         time: '10 min',

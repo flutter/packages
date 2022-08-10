@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:adaptive_scaffold/src/adaptive_layout.dart';
-import 'package:adaptive_scaffold/src/slot_layout.dart';
-import 'package:adaptive_scaffold/src/breakpoints.dart';
 import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:adaptive_scaffold_example/adaptive_layout_demo.dart' as example;
 import 'package:flutter/material.dart';
@@ -19,15 +16,6 @@ Future<MaterialApp> layout({
   bool animations = true,
 }) async {
   await tester.binding.setSurfaceSize(Size(width, 800));
-  final List<Widget> children = List<Widget>.generate(10, (int index) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        color: const Color.fromARGB(255, 255, 201, 197),
-        height: 400,
-      ),
-    );
-  });
 
   // Define the list of destinations to be used within the app.
   const List<NavigationDestination> destinations = <NavigationDestination>[
@@ -44,8 +32,8 @@ Future<MaterialApp> layout({
         icon: Icon(Icons.video_call_outlined, color: Colors.black)),
   ];
 
-  Widget trailingNavRail = Column(
-    children: [
+  final Widget trailingNavRail = Column(
+    children: <Widget>[
       const Divider(
         color: Colors.black,
       ),
@@ -53,12 +41,12 @@ Future<MaterialApp> layout({
         height: 10,
       ),
       Row(
-        children: const [
+        children: const <Widget>[
           SizedBox(
             width: 27,
           ),
           Text(
-            "Folders",
+            'Folders',
             style: TextStyle(fontSize: 16),
           ),
         ],
@@ -67,7 +55,7 @@ Future<MaterialApp> layout({
         height: 10,
       ),
       Row(
-        children: [
+        children: <Widget>[
           const SizedBox(
             width: 16,
           ),
@@ -79,14 +67,14 @@ Future<MaterialApp> layout({
           const SizedBox(
             width: 21,
           ),
-          const Text("Freelance"),
+          const Text('Freelance'),
         ],
       ),
       const SizedBox(
         height: 12,
       ),
       Row(
-        children: [
+        children: <Widget>[
           const SizedBox(
             width: 16,
           ),
@@ -98,14 +86,14 @@ Future<MaterialApp> layout({
           const SizedBox(
             width: 21,
           ),
-          const Text("Mortage"),
+          const Text('Mortage'),
         ],
       ),
       const SizedBox(
         height: 12,
       ),
       Row(
-        children: [
+        children: <Widget>[
           const SizedBox(
             width: 16,
           ),
@@ -119,7 +107,7 @@ Future<MaterialApp> layout({
           ),
           const Flexible(
               child: Text(
-            "Taxes",
+            'Taxes',
             overflow: TextOverflow.ellipsis,
           )),
         ],
@@ -128,7 +116,7 @@ Future<MaterialApp> layout({
         height: 12,
       ),
       Row(
-        children: [
+        children: <Widget>[
           const SizedBox(
             width: 16,
           ),
@@ -142,7 +130,7 @@ Future<MaterialApp> layout({
           ),
           const Flexible(
               child: Text(
-            "Receipts",
+            'Receipts',
             overflow: TextOverflow.ellipsis,
           )),
         ],
@@ -159,7 +147,7 @@ Future<MaterialApp> layout({
         bodyRatio: bodyRatio,
         internalAnimations: animations,
         primaryNavigation: SlotLayout(
-          config: {
+          config: <Breakpoint, SlotLayoutConfig>{
             Breakpoints.small: SlotLayout.from(
                 key: const Key('pnav'),
                 builder: (_) => const SizedBox.shrink()),
@@ -176,9 +164,9 @@ Future<MaterialApp> layout({
                 extended: true,
                 leading: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: const [
+                  children: const <Widget>[
                     Text(
-                      "REPLY",
+                      'REPLY',
                       style:
                           TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
                     ),
@@ -197,7 +185,7 @@ Future<MaterialApp> layout({
               key: const Key('body'),
               builder: (_) => ListView.builder(
                 itemCount: 10,
-                itemBuilder: (context, index) => Padding(
+                itemBuilder: (BuildContext context, int index) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     color: const Color.fromARGB(255, 255, 201, 197),
@@ -237,7 +225,7 @@ Future<MaterialApp> layout({
           },
         ),
         bottomNavigation: SlotLayout(
-          config: {
+          config: <Breakpoint, SlotLayoutConfig>{
             Breakpoints.small: SlotLayout.from(
               key: const Key('bn'),
               inAnimation: AdaptiveScaffold.bottomToTop,
@@ -256,10 +244,7 @@ Future<MaterialApp> layout({
 
 void main() {
   final Finder body = find.byKey(const Key('body'));
-  final Finder body1 = find.byKey(const Key('body1'));
   final Finder pnav = find.byKey(const Key('pnav'));
-  final Finder pnav1 = find.byKey(const Key('pnav1'));
-  final Finder pn1 = find.byKey(const Key('pn1'));
   final Finder bn = find.byKey(const Key('bn'));
 
   Future<void> updateScreen(double width, WidgetTester tester) async {
@@ -298,14 +283,14 @@ void main() {
     final BuildContext context = tester.element(find.byType(MaterialApp));
 
     // Bottom Navigation Bar
-    final findKey = find.byKey(const Key('bn'));
-    SlotLayoutConfig slotLayoutConfig =
+    final Finder findKey = find.byKey(const Key('bn'));
+    final SlotLayoutConfig slotLayoutConfig =
         tester.firstWidget<SlotLayoutConfig>(findKey);
-    WidgetBuilder? widgetBuilder = slotLayoutConfig.builder;
-    Widget Function(BuildContext) widgetFunction =
-        widgetBuilder as Widget Function(BuildContext);
+    final WidgetBuilder? widgetBuilder = slotLayoutConfig.builder;
+    final Widget Function(BuildContext) widgetFunction =
+        (widgetBuilder ?? () => Container()) as Widget Function(BuildContext);
 
-    BottomNavigationBar bottomNavigationBar =
+    final BottomNavigationBar bottomNavigationBar =
         ((widgetFunction(context) as Builder).builder(context) as Theme).child
             as BottomNavigationBar;
     expect(bottomNavigationBar.backgroundColor, Colors.white);
@@ -319,15 +304,19 @@ void main() {
     await updateScreen(620, tester);
     final BuildContext context = tester.element(find.byType(AdaptiveLayout));
 
-    final findKey = find.byKey(const Key('pnav1'));
-    SlotLayoutConfig slotLayoutConfig =
+    final Finder findKey = find.byKey(const Key('pnav1'));
+    final SlotLayoutConfig slotLayoutConfig =
         tester.firstWidget<SlotLayoutConfig>(findKey);
-    WidgetBuilder? widgetBuilder = slotLayoutConfig.builder;
-    Widget Function(BuildContext) widgetFunction =
-        widgetBuilder as Widget Function(BuildContext);
-    SizedBox sizedBox =
-        ((widgetFunction(context) as Builder).builder(context) as Padding).child
-            as SizedBox;
+    final WidgetBuilder? widgetBuilder = slotLayoutConfig.builder;
+    final Widget Function(BuildContext) widgetFunction =
+        (widgetBuilder ?? () => Container()) as Widget Function(BuildContext);
+    final SizedBox sizedBox =
+        (((widgetFunction(context) as Builder).builder(context) as Padding)
+                .child ??
+            () => const SizedBox()) as SizedBox;
+    /*final SizedBox sizedBox =
+        ((widgetFunction(context) as Builder).builder(context) as Padding)
+            .child as SizedBox;*/
     expect(sizedBox.width, 72);
   });
 

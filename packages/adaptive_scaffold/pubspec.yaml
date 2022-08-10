@@ -11,9 +11,9 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  masonry_grid: ^1.0.0
   flutter:
     sdk: flutter
+  masonry_grid: ^1.0.0
 
 dev_dependencies:
   flutter_test:
