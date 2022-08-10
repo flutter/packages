@@ -518,38 +518,32 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           bodyOrientation: widget.bodyOrientation,
           bodyRatio: widget.bodyRatio,
           internalAnimations: widget.internalAnimations,
-          primaryNavigation:
-              widget.destinations != null && widget.selectedIndex != null
-                  ? SlotLayout(
-                      config: <Breakpoint, SlotLayoutConfig>{
-                        widget.mediumBreakpoint: SlotLayout.from(
-                          key: const Key('primaryNavigation'),
-                          builder: (_) => AdaptiveScaffold.toNavigationRail(
-                            width: widget.navigationRailWidth,
-                            selectedIndex: widget.selectedIndex,
-                            destinations: widget.destinations
-                                .map((NavigationDestination e) =>
-                                    _toRailDestination(e))
-                                .toList(),
-                            onDestinationSelected: widget.onSelectedIndexChange,
-                          ),
-                        ),
-                        widget.largeBreakpoint: SlotLayout.from(
-                          key: const Key('primaryNavigation1'),
-                          builder: (_) => AdaptiveScaffold.toNavigationRail(
-                            width: widget.extendedNavigationRailWidth,
-                            extended: true,
-                            selectedIndex: widget.selectedIndex,
-                            destinations: widget.destinations
-                                .map((NavigationDestination e) =>
-                                    _toRailDestination(e))
-                                .toList(),
-                            onDestinationSelected: widget.onSelectedIndexChange,
-                          ),
-                        ),
-                      },
-                    )
-                  : null,
+          primaryNavigation: widget.destinations != null &&
+                  widget.selectedIndex != null
+              ? SlotLayout(
+                  config: <Breakpoint, SlotLayoutConfig>{
+                    widget.mediumBreakpoint: SlotLayout.from(
+                      key: const Key('primaryNavigation'),
+                      builder: (_) => AdaptiveScaffold.toRailFromDestinations(
+                        width: widget.navigationRailWidth,
+                        selectedIndex: widget.selectedIndex,
+                        destinations: widget.destinations,
+                        onDestinationSelected: widget.onSelectedIndexChange,
+                      ),
+                    ),
+                    widget.largeBreakpoint: SlotLayout.from(
+                      key: const Key('primaryNavigation1'),
+                      builder: (_) => AdaptiveScaffold.toRailFromDestinations(
+                        width: widget.extendedNavigationRailWidth,
+                        extended: true,
+                        selectedIndex: widget.selectedIndex,
+                        destinations: widget.destinations,
+                        onDestinationSelected: widget.onSelectedIndexChange,
+                      ),
+                    ),
+                  },
+                )
+              : null,
           bottomNavigation: widget.destinations != null &&
                   (!widget.drawerBreakpoint.isActive(context) ||
                       !widget.useDrawer)

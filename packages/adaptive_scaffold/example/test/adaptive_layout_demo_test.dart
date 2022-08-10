@@ -331,12 +331,7 @@ void main() {
   testWidgets('adaptive layout does not animate when animations off',
       (WidgetTester tester) async {
     final Finder b = find.byKey(const Key('body1'));
-
-    await tester.pumpWidget(
-        await layout(width: 690, tester: tester, animations: false));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+    await updateScreen(690, tester);
 
     expect(tester.getTopLeft(b), const Offset(88, 0));
     expect(tester.getBottomRight(b), const Offset(690, 800));
