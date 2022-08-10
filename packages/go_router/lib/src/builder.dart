@@ -47,6 +47,7 @@ class RouteBuilder {
   /// changes.
   final List<NavigatorObserver> observers;
 
+  /// Builds the top-level Navigator for the given [RouteMatchList].
   Widget build(
     BuildContext context,
     RouteMatchList matchList,
@@ -54,16 +55,15 @@ class RouteBuilder {
     bool routerNeglect,
   ) {
     try {
-      return tryBuild(context, matchList, pop, routerNeglect);
+      return tryBuild(
+          context, matchList, pop, routerNeglect, configuration.navigatorKey);
     } on RouteBuilderError catch (e) {
-      final String location = matchList.location.toString();
-      final uri = Uri.parse(location);
-
-      // Build error page
-      return buildNavigator(
-          context, uri, Exception(e), configuration.navigatorKey, pop, [
-        buildErrorPage(context, e, uri),
-      ]);
+      return buildErrorNavigator(
+          context,
+          e,
+          Uri.parse(matchList.location.toString()),
+          pop,
+          configuration.navigatorKey);
     }
   }
 
@@ -77,56 +77,124 @@ class RouteBuilder {
     RouteMatchList matchList,
     VoidCallback pop,
     bool routerNeglect,
+    GlobalKey<NavigatorState> navigatorKey,
   ) {
-    List<Page<dynamic>>? pages;
-    Exception? exception;
-    final String location = matchList.location.toString();
-    final uri = Uri.parse(location);
-
-    if (routerNeglect) {
-      Router.neglect(
-        context,
-        () => pages = buildPages(context, matchList).toList(),
-      );
-    } else {
-      pages = buildPages(context, matchList).toList();
-    }
-
-    // we should've set pages to something by now
-    assert(pages != null);
-
-    // pass either the match error or the build error along to the navigator
-    // builder, preferring the match error
-    if (matchList.isError) {
-      exception = matchList.error;
-    }
-
-    return buildNavigator(
-        context, uri, exception, configuration.navigatorKey, pop, pages!);
+    return _buildRecursive(context, matchList, 0, pop, routerNeglect,
+        navigatorKey, <String, String>{}).widget;
   }
 
+  /// Returns the top-level pages instead of the root navigator. Used for
+  /// testing.
+  @visibleForTesting
+  List<Page> buildPages(BuildContext context, RouteMatchList matchList) {
+    try {
+      return _buildRecursive(context, matchList, 0, () {}, false,
+          GlobalKey<NavigatorState>(), <String, String>{}).pages;
+    } on RouteBuilderError catch (e) {
+      return [
+        buildErrorPage(context, e, matchList.location),
+      ];
+    }
+  }
+
+  RecursiveBuildResult _buildRecursive(
+    BuildContext context,
+    RouteMatchList matchList,
+    int startIndex,
+    VoidCallback pop,
+    bool routerNeglect, // TODO: remove?
+    GlobalKey<NavigatorState> navigatorKey,
+    Map<String, String> params,
+  ) {
+    final pages = <Page>[];
+    for (var i = startIndex; i < matchList.matches.length; i++) {
+      final match = matchList.matches[i];
+
+      if (match.error != null) {
+        throw RouteBuilderError('Match error found during build phase',
+            exception: match.error);
+      }
+
+      final route = match.route;
+      final newParams = <String, String>{...params, ...match.decodedParams};
+      if (route is GoRoute) {
+        final state = buildState(match, newParams);
+        pages.add(buildGoRoute(context, state, match));
+      } else if (route is ShellRoute) {
+        final state = buildState(match, newParams);
+        final result = _buildRecursive(
+            context,
+            matchList,
+            i + 1,
+            pop,
+            routerNeglect,
+            route.shellNavigatorKey ?? GlobalKey<NavigatorState>(),
+            newParams);
+        final child = result.widget;
+        pages.add(buildPage(context, state,
+            callRouteBuilder(context, state, match, childWidget: child)));
+        i = result.newIndex;
+      }
+    }
+
+    Widget? child;
+    if (pages.isNotEmpty) {
+      child = buildNavigator(
+        context,
+        Uri.parse(matchList.location.toString()),
+        matchList.isError ? matchList.error : null,
+        navigatorKey,
+        pop,
+        pages,
+        root: startIndex == 0,
+      );
+    } else if (startIndex == 0) {
+      // It's an error to have an empty pages list on the root Navigator.
+      throw RouteBuilderError('No pages built for root Navigator');
+    }
+
+    return RecursiveBuildResult(
+        child ?? SizedBox.shrink(), pages, matchList.matches.length);
+  }
+
+  /// Helper method that calls [builderWithNav] with the [GoRouterState]
   @visibleForTesting
   Widget buildNavigator(BuildContext context, Uri uri, Exception? exception,
-      Key navigatorKey, VoidCallback pop, List<Page> pages) {
-    return builderWithNav(
-      context,
-      GoRouterState(
-        configuration,
-        location: uri.toString(),
-        // no name available at the top level
-        name: null,
-        // trim the query params off the subloc to match route.redirect
-        subloc: uri.path,
-        // pass along the query params 'cuz that's all we have right now
-        queryParams: uri.queryParameters,
-        // pass along the error, if there is one
-        error: exception,
-      ),
-      Navigator(
-        restorationScopeId: restorationScopeId,
+      Key navigatorKey, VoidCallback pop, List<Page> pages,
+      {bool root = true}) {
+    if (root) {
+      return builderWithNav(
+        context,
+        GoRouterState(
+          configuration,
+          location: uri.toString(),
+          // no name available at the top level
+          name: null,
+          // trim the query params off the subloc to match route.redirect
+          subloc: uri.path,
+          // pass along the query params 'cuz that's all we have right now
+          queryParams: uri.queryParameters,
+          // pass along the error, if there is one
+          error: exception,
+        ),
+        Navigator(
+          restorationScopeId: restorationScopeId,
+          key: navigatorKey,
+          pages: pages,
+          observers: observers,
+          onPopPage: (Route<dynamic> route, dynamic result) {
+            if (!route.didPop(result)) {
+              return false;
+            }
+            pop();
+            return true;
+          },
+        ),
+      );
+    } else {
+      return Navigator(
         key: navigatorKey,
         pages: pages,
-        observers: observers,
         onPopPage: (Route<dynamic> route, dynamic result) {
           if (!route.didPop(result)) {
             return false;
@@ -134,71 +202,8 @@ class RouteBuilder {
           pop();
           return true;
         },
-      ),
-    );
-  }
-
-  /// Builds the pages for the given [RouteMatchList].
-  @visibleForTesting
-  List<Page<dynamic>> buildPages(
-    BuildContext context,
-    RouteMatchList matchList,
-  ) {
-    try {
-      return [...tryBuildPages(context, matchList)];
-    } on RouteBuilderError catch (e) {
-      return [
-        buildErrorPage(context, e, Uri.parse(matchList.location.toString())),
-      ];
+      );
     }
-  }
-
-  @visibleForTesting
-  List<Page> tryBuildPages(
-    BuildContext context,
-    RouteMatchList matchList,
-  ) {
-    return _buildPagesRecursive(context, matchList, 0);
-  }
-
-  List<Page> _buildPagesRecursive(
-      BuildContext context, RouteMatchList matchList, int startIndex) {
-    final pages = <Page>[];
-    var params = <String, String>{};
-    for (var i = startIndex; i < matchList.matches.length; i++) {
-      final match = matchList.matches[i];
-      // Merge the parameters to combine them with previously matched paths
-      params = <String, String>{...params, ...match.decodedParams};
-
-      /// If matching reported an error, rethrow to build the error screen.
-      if (match.error != null) {
-        throw RouteBuilderError('Match error found during build phase: ',
-            exception: match.error);
-      }
-
-      final route = match.route;
-      if (route is GoRoute) {
-        final state = buildState(match, params);
-
-        pages.add(buildGoRoute(context, state, match));
-      } else if (route is ShellRoute) {
-        final state = buildState(match, params);
-        // Build the rest of the routes recursively
-        final result = buildShellRouteRecursive(context, state, matchList, i);
-        final child = result.widget;
-
-        pages.add(buildPage(context, state, child));
-
-        // buildShellRouteRecursive looks ahead and can potentially build
-        // additional StackedRoute objects. Adjust the index to the next route
-        // that hasn't been built yet.
-        i = result.newIndex;
-      }
-    }
-    if (pages.isEmpty) {
-      throw RouteBuilderError('No pages built');
-    }
-    return pages;
   }
 
   @visibleForTesting
@@ -219,6 +224,7 @@ class RouteBuilder {
   }
 
   /// Builds a [Page] for [StackedRoute]
+  // TODO(johnpryan): combine with callRouteBuilder()
   Page buildGoRoute(
       BuildContext context, GoRouterState state, RouteMatch match) {
     final route = match.route;
@@ -242,44 +248,6 @@ class RouteBuilder {
     return page ??
         buildPage(
             context, state, (match.route as GoRoute).builder!(context, state));
-  }
-
-  /// Builds a [Page] for [ShellRoute]. Child routes are placed onto the root
-  /// navigator.
-  RecursiveBuildResult buildShellRouteRecursive(BuildContext context,
-      GoRouterState state, RouteMatchList matchList, int i) {
-    final parentMatch = matchList.matches[i];
-    late final RouteMatch? childMatch;
-
-    if (i + 1 < matchList.matches.length) {
-      childMatch = matchList.matches[i + 1];
-    } else {
-      childMatch = null;
-    }
-
-    final childRoute = childMatch?.route ?? null;
-
-    Widget? childWidget;
-    if (childRoute is GoRoute) {
-      // Build the child route
-      childWidget = callRouteBuilder(context, state, childMatch!);
-      i++;
-    } else if (childRoute == null) {
-      childWidget = const SizedBox.shrink();
-      i++;
-    }
-
-    // // TODO: build Navigator?
-    // final navigator = Navigator(
-    //   key: (parentMatch.route as ShellRoute).navigatorKey,
-    //   pages: [
-    //     buildPage(context, state, childWidget!),
-    //   ],
-    // );
-
-    final parentWidget =
-        callRouteBuilder(context, state, parentMatch, childWidget: childWidget);
-    return RecursiveBuildResult(parentWidget, i);
   }
 
   /// Calls the user-provided route builder from the [RouteMatch]'s [RouteBase].
@@ -387,6 +355,15 @@ class RouteBuilder {
         child: child,
       );
 
+  /// Builds a Navigator containing an error page.
+  Widget buildErrorNavigator(BuildContext context, RouteBuilderError e, Uri uri,
+      VoidCallback pop, GlobalKey<NavigatorState> navigatorKey) {
+    return buildNavigator(context, uri, Exception(e), navigatorKey, pop, [
+      buildErrorPage(context, e, uri),
+    ]);
+  }
+
+  /// Builds a an error page.
   Page<void> buildErrorPage(
     BuildContext context,
     RouteBuilderError error,
@@ -401,11 +378,10 @@ class RouteBuilder {
       error: Exception(error),
     );
 
-    // if the error page builder is provided, use that; otherwise, if the error
-    // builder is provided, wrap that in an app-specific page, e.g.
-    // MaterialPage; finally, if nothing is provided, use a default error page
-    // wrapped in the app-specific page, e.g.
-    // MaterialPage(GoRouterMaterialErrorPage(...))
+    // If the error page builder is provided, use that, otherwise, if the error
+    // builder is provided, wrap that in an app-specific page (for example,
+    // MaterialPage). Finally, if nothing is provided, use a default error page
+    // wrapped in the app-specific page.
     _cacheAppType(context);
     final errorBuilder = this.errorBuilder;
     return errorPageBuilder != null
@@ -422,9 +398,12 @@ class RouteBuilder {
 
 class RecursiveBuildResult {
   final Widget widget;
+
+  /// List of pages placed on the navigator. Used for testing.
+  final List<Page> pages;
   final int newIndex;
 
-  RecursiveBuildResult(this.widget, this.newIndex);
+  RecursiveBuildResult(this.widget, this.pages, this.newIndex);
 }
 
 /// An error that occurred while building the app's UI based on the route

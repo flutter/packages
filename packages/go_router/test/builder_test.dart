@@ -17,7 +17,7 @@ void main() {
           GoRoute(
             path: '/',
             builder: (context, state) {
-              return _HomeScreen();
+              return _DetailsScreen();
             },
           ),
         ],
@@ -47,7 +47,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(_HomeScreen), findsOneWidget);
+      expect(find.byType(_DetailsScreen), findsOneWidget);
     });
 
     testWidgets('Builds ShellRoute', (WidgetTester tester) async {
@@ -56,7 +56,7 @@ void main() {
           ShellRoute(
             path: '/',
             builder: (context, state, child) {
-              return _HomeScreen();
+              return _DetailsScreen();
             },
           ),
         ],
@@ -86,7 +86,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(_HomeScreen), findsOneWidget);
+      expect(find.byType(_DetailsScreen), findsOneWidget);
     });
 
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
@@ -97,7 +97,7 @@ void main() {
           GoRoute(
             path: '/',
             builder: (context, state) {
-              return _HomeScreen();
+              return _DetailsScreen();
             },
           ),
         ],
@@ -128,14 +128,94 @@ void main() {
 
       expect(find.byKey(rootNavigatorKey), findsOneWidget);
     });
+
+    testWidgets('Builds a Navigator for ShellRoute',
+        (WidgetTester tester) async {
+      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final config = RouteConfiguration(
+        navigatorKey: rootNavigatorKey,
+        routes: [
+          ShellRoute(
+            path: '/',
+            builder: (context, state, child) {
+              return _HomeScreen(
+                child: child,
+              );
+            },
+            shellNavigatorKey: shellNavigatorKey,
+            routes: [
+              GoRoute(
+                path: 'details',
+                builder: (context, state) {
+                  return _DetailsScreen();
+                },
+              ),
+            ],
+          ),
+        ],
+        redirectLimit: 10,
+        topRedirect: (state) {
+          return null;
+        },
+      );
+
+      final matches = RouteMatchList([
+        RouteMatch(
+          route: config.routes.first,
+          subloc: '/',
+          fullpath: '/',
+          encodedParams: {},
+          queryParams: {},
+          extra: null,
+          error: null,
+        ),
+        RouteMatch(
+          route: config.routes.first.routes.first,
+          subloc: '/details',
+          fullpath: '/details',
+          encodedParams: {},
+          queryParams: {},
+          extra: null,
+          error: null,
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      expect(find.byType(_HomeScreen), findsOneWidget);
+      expect(find.byType(_DetailsScreen), findsOneWidget);
+      expect(find.byKey(rootNavigatorKey), findsOneWidget);
+      expect(find.byKey(shellNavigatorKey), findsOneWidget);
+    });
   });
 }
 
 class _HomeScreen extends StatelessWidget {
+  final Widget child;
+
+  _HomeScreen({
+    required this.child,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Text('Home Screen'),
+    );
+  }
+}
+
+class _DetailsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Text('Details Screen'),
     );
   }
 }
@@ -186,11 +266,7 @@ class _BuilderTestWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: builder.tryBuild(
-        context,
-        matches,
-        () {},
-        false,
-      ),
+          context, matches, () {}, false, routeConfiguration.navigatorKey),
       // builder: (context, child) => ,
     );
   }
