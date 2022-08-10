@@ -19,7 +19,7 @@ class NestedRouterDemo extends StatefulWidget {
 class _NestedRouterDemoState extends State<NestedRouterDemo> {
   BookRouterDelegate _routerDelegate = BookRouterDelegate();
   BookRouteInformationParser _routeInformationParser =
-  BookRouteInformationParser();
+      BookRouteInformationParser();
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,7 @@ class BookRouteInformationParser extends RouteInformationParser<BookRoutePath> {
     if (configuration is BooksDetailsPath) {
       return RouteInformation(location: '/book/${configuration.id}');
     }
-    throw('Unable to restore route info');
+    throw ('Unable to restore route info');
   }
 }
 
