@@ -240,11 +240,16 @@ abstract class RouteBase {
 /// [Navigator].
 ///
 /// The widget returned by [builder] is wrapped in [Page] and provided to the
-/// root Navigator or the Navigator belonging to the nearest [NestedStackRoute]
-/// ancestor. The page will be either a [MaterialPage] or [CupertinoPage]
-/// depending on the application type.
+/// root Navigator, the nearest ShellRoute ancestor's Navigator, or the
+/// Navigator with a matching [navigatorKey].
+///
+/// The Page will be either a [MaterialPage] (for [MaterialApp]),
+/// [CupertinoPage] (for [CupertinoApp], or [NoTransitionPage] (for
+/// [WidgetsApp]) depending on the application type.
 class GoRoute extends RouteBase {
-  /// Constructs a [StackedRoute].
+  /// Constructs a [GoRoute].
+  /// - [path] and [name] cannot be empty strings.
+  /// - One of either [builder] or [pageBuilder] must be provided.
   GoRoute({
     required String path,
     this.builder,
@@ -306,6 +311,7 @@ class GoRoute extends RouteBase {
   /// ```
   ///
   final StackedRouteBuilder? builder;
+
   static String? _noRedirection(GoRouterState state) => null;
 
   static Widget _invalidBuilder(
