@@ -1,6 +1,6 @@
 ## 4.3.0
 
-- Adds ShellRoute class, which displays the screens for  child routes in an inner
+- Adds ShellRoute class, which displays the screens for child routes in an inner
   Navigator.
 - Adds navigatorKey parameter to GoRouter and GoRoute, which can be used to
   specify which Navigator to stack onto when ShellRoute is used.
