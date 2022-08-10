@@ -3,11 +3,18 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:masonry_grid/masonry_grid.dart';
+
 import 'adaptive_layout.dart';
 import 'breakpoints.dart';
 import 'slot_layout.dart';
 
-/// Implements the basic visual layout structure for [Material Design 3](https://m3.material.io/foundations/adaptive-design/overview) that
+const double materialGutterValue = 8;
+const double materialCompactMinMargin = 8;
+const double materialMediumMinMargin = 12;
+const double materialExpandedMinMargin = 32;
+
+/// Implements the basic visual layout structure for Material Design 3 that
 /// adapts to a variety of screens.
 ///
 /// !["Example of a display made with AdaptiveScaffold"](../../example/demo_files/adaptiveScaffold.gif)
@@ -62,6 +69,9 @@ class AdaptiveScaffold extends StatefulWidget {
     super.key,
     required this.destinations,
     this.selectedIndex = 0,
+    this.leadingUnExtendedNavRail,
+    this.leadingExtendedNavRail,
+    this.trailingNavRail,
     this.smallBody,
     this.body,
     this.largeBody,
@@ -90,6 +100,18 @@ class AdaptiveScaffold extends StatefulWidget {
 
   /// The index to be used by the [NavigationRail].
   final int selectedIndex;
+
+  /// Option to display a leading widget at the top of the navigation rail
+  /// at the middle breakpoint.
+  final Widget? leadingUnExtendedNavRail;
+
+  /// Option to display a leading widget at the top of the navigation rail
+  /// at the largest breakpoint.
+  final Widget? leadingExtendedNavRail;
+
+  /// Option to display a trailing widget below the destinations of the
+  /// navigation rail at the largest breakpoint.
+  final Widget? trailingNavRail;
 
   /// Widget to be displayed in the body slot at the smallest breakpoint.
   ///
@@ -199,11 +221,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
 
-  /// Public helper method to be used for creating a [NavigationRail] from a
-  /// list of [NavigationDestination]s. Takes in a [selectedIndex] property for
-  /// the current selected item in the [NavigationRail] and [extended] for
-  /// whether the [NavigationRail] is extended or not.
-  static Builder toNavigationRail({
+  static Builder toRailFromDestinations({
     required List<NavigationDestination> destinations,
     double width = 72,
     int selectedIndex = 0,
@@ -212,41 +230,168 @@ class AdaptiveScaffold extends StatefulWidget {
     Widget? leading,
     Widget? trailing,
     Function(int)? onDestinationSelected,
+    IconThemeData selectedIconTheme = const IconThemeData(color: Colors.black),
+    IconThemeData unselectedIconTheme =
+        const IconThemeData(color: Colors.black),
+    TextStyle selectedLabelTextStyle = const TextStyle(color: Colors.black),
+    NavigationRailLabelType labelType = NavigationRailLabelType.none,
+  }) {
+    return toNavigationRail(
+        width: width,
+        labelType: labelType,
+        leading: leading,
+        trailing: trailing,
+        onDestinationSelected: onDestinationSelected,
+        backgroundColor: backgroundColor,
+        extended: extended,
+        selectedIndex: selectedIndex,
+        selectedIconTheme: selectedIconTheme,
+        unselectedIconTheme: unselectedIconTheme,
+        selectedLabelTextStyle: selectedLabelTextStyle,
+        destinations: destinations
+            .map((NavigationDestination e) => _toRailDestination(e))
+            .toList());
+  }
+
+  /// Public helper method to be used for creating a [NavigationRail] from a
+  /// list of [NavigationDestination]s. Takes in a [selectedIndex] property for
+  /// the current selected item in the [NavigationRail] and [extended] for
+  /// whether the [NavigationRail] is extended or not.
+  static Builder toNavigationRail({
+    required List<NavigationRailDestination> destinations,
+    double width = 72,
+    int selectedIndex = 0,
+    bool extended = false,
+    Color backgroundColor = Colors.transparent,
+    Widget? leading,
+    Widget? trailing,
+    Function(int)? onDestinationSelected,
+    IconThemeData selectedIconTheme = const IconThemeData(color: Colors.black),
+    IconThemeData unselectedIconTheme =
+        const IconThemeData(color: Colors.black),
+    TextStyle selectedLabelTextStyle = const TextStyle(color: Colors.black),
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
     if (extended && width == 72) {
-      width = 192;
+      width = 150;
     }
-    return Builder(
-      builder: (BuildContext context) {
-        return SizedBox(
+    return Builder(builder: (BuildContext context) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SizedBox(
           width: width,
           height: MediaQuery.of(context).size.height,
-          child: NavigationRail(
-              onDestinationSelected: onDestinationSelected,
-              labelType: labelType,
-              leading: leading,
-              trailing: trailing,
-              backgroundColor: backgroundColor,
-              extended: extended,
-              selectedIndex: selectedIndex,
-              destinations: destinations
-                  .map((NavigationDestination e) => _toRailDestination(e))
-                  .toList()),
-        );
-      },
-    );
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: NavigationRail(
+                        labelType: labelType,
+                        leading: leading,
+                        trailing: trailing,
+                        onDestinationSelected: onDestinationSelected,
+                        backgroundColor: backgroundColor,
+                        extended: extended,
+                        selectedIndex: selectedIndex,
+                        selectedIconTheme: selectedIconTheme,
+                        unselectedIconTheme: unselectedIconTheme,
+                        selectedLabelTextStyle: selectedLabelTextStyle,
+                        destinations: destinations.toList()),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    });
   }
 
   /// Public helper method to be used for creating a [BottomNavigationBar] from
   /// a list of [NavigationDestination]s.
-  static BottomNavigationBar toBottomNavigationBar(
-      {required List<NavigationDestination> destinations}) {
-    return BottomNavigationBar(
-      items: destinations
-          .map((NavigationDestination e) => _toBottomNavItem(e))
-          .toList(),
+  static Builder toBottomNavigationBar(
+      {required List<NavigationDestination> destinations,
+      int currentIndex = 0,
+      double iconSize = 24,
+      Color selectedItemColor = Colors.black,
+      Color backgroundColor = Colors.white}) {
+    return Builder(
+      builder: (BuildContext context) {
+        return Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: backgroundColor,
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: backgroundColor,
+              selectedItemColor: selectedItemColor,
+              currentIndex: currentIndex,
+              iconSize: iconSize,
+              items: destinations
+                  .map((NavigationDestination e) => _toBottomNavItem(e))
+                  .toList(),
+            ));
+      },
     );
+  }
+
+  /// Public helper method to be used for creating a [MasonryGrid] following m3
+  /// specs from a list of [Widget]s
+  static Builder toMaterialGrid({
+    List<Widget> thisWidgets = const <Widget>[],
+    List<Breakpoint> breakpoints = const <Breakpoint>[
+      Breakpoints.small,
+      Breakpoints.medium,
+      Breakpoints.large,
+    ],
+    double margin = 8,
+    int itemColumns = 1,
+    required BuildContext context,
+  }) {
+    return Builder(builder: (BuildContext context) {
+      Breakpoint? currentBreakpoint;
+      for (final Breakpoint breakpoint in breakpoints) {
+        if (breakpoint.isActive(context)) {
+          currentBreakpoint = breakpoint;
+        }
+      }
+      double? thisMargin = margin;
+
+      if (currentBreakpoint == Breakpoints.small) {
+        if (thisMargin < materialCompactMinMargin) {
+          thisMargin = materialCompactMinMargin;
+        }
+      } else if (currentBreakpoint == Breakpoints.medium) {
+        if (thisMargin < materialMediumMinMargin) {
+          thisMargin = materialMediumMinMargin;
+        }
+      } else if (currentBreakpoint == Breakpoints.large) {
+        if (thisMargin < materialExpandedMinMargin) {
+          thisMargin = materialExpandedMinMargin;
+        }
+      }
+      return CustomScrollView(
+        primary: false,
+        controller: ScrollController(),
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(thisMargin),
+              child: MasonryGrid(
+                column: itemColumns,
+                crossAxisSpacing: materialGutterValue,
+                mainAxisSpacing: materialGutterValue,
+                children: thisWidgets,
+              ),
+            ),
+          ),
+        ],
+      );
+    });
   }
 
   /// Animation from bottom offscreen up onto the screen.
@@ -366,7 +511,10 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                           builder: (_) => AdaptiveScaffold.toNavigationRail(
                             width: widget.navigationRailWidth,
                             selectedIndex: widget.selectedIndex,
-                            destinations: widget.destinations,
+                            destinations: widget.destinations
+                                .map((NavigationDestination e) =>
+                                    _toRailDestination(e))
+                                .toList(),
                             onDestinationSelected: widget.onSelectedIndexChange,
                           ),
                         ),
@@ -376,7 +524,10 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                             width: widget.extendedNavigationRailWidth,
                             extended: true,
                             selectedIndex: widget.selectedIndex,
-                            destinations: widget.destinations,
+                            destinations: widget.destinations
+                                .map((NavigationDestination e) =>
+                                    _toRailDestination(e))
+                                .toList(),
                             onDestinationSelected: widget.onSelectedIndexChange,
                           ),
                         ),

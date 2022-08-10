@@ -54,54 +54,200 @@ class MyHomePage extends StatelessWidget {
           icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
 
-    // AdaptiveLayout has a number of slots that take SlotLayouts and these
-    // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
+    Widget trailingNavRail = Column(
+      children: [
+        const Divider(
+          color: Colors.black,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Row(
+          children: const [
+            SizedBox(
+              width: 27,
+            ),
+            Text(
+              "Folders",
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Row(
+          children: [
+            const SizedBox(
+              width: 16,
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
+            const SizedBox(
+              width: 21,
+            ),
+            const Text("Freelance"),
+          ],
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        Row(
+          children: [
+            const SizedBox(
+              width: 16,
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
+            const SizedBox(
+              width: 21,
+            ),
+            const Text("Mortage"),
+          ],
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        Row(
+          children: [
+            const SizedBox(
+              width: 16,
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
+            const SizedBox(
+              width: 21,
+            ),
+            const Flexible(
+                child: Text(
+              "Taxes",
+              overflow: TextOverflow.ellipsis,
+            )),
+          ],
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        Row(
+          children: [
+            const SizedBox(
+              width: 16,
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
+            const SizedBox(
+              width: 21,
+            ),
+            const Flexible(
+                child: Text(
+              "Receipts",
+              overflow: TextOverflow.ellipsis,
+            )),
+          ],
+        ),
+      ],
+    );
+
     return AdaptiveLayout(
-      // Primary navigation config has nothing from 0 to 600 dp screen width,
-      // then an unextended NavigationRail with no labels and just icons then an
-      // extended NavigationRail with both icons and labels.
       primaryNavigation: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig?>{
+        config: {
+          Breakpoints.small: SlotLayout.from(
+              key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
           Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
-            key: const Key('pn'),
-            builder: (_) =>
-                AdaptiveScaffold.toNavigationRail(destinations: destinations),
+            key: const Key('pnav1'),
+            builder: (_) => AdaptiveScaffold.toRailFromDestinations(
+                leading: const Icon(Icons.menu), destinations: destinations),
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('pn1'),
             inAnimation: AdaptiveScaffold.leftOutIn,
-            builder: (_) => AdaptiveScaffold.toNavigationRail(
-                extended: true, destinations: destinations),
+            builder: (_) => AdaptiveScaffold.toRailFromDestinations(
+              extended: true,
+              leading: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const [
+                  Text(
+                    "REPLY",
+                    style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                  ),
+                  Icon(Icons.menu_open)
+                ],
+              ),
+              destinations: destinations,
+              trailing: trailingNavRail,
+            ),
           ),
         },
       ),
-      // Body switches between a ListView and a GridView from small to medium
-      // breakpoints and onwards.
       body: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig?>{
+        config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
             key: const Key('body'),
             builder: (_) => ListView.builder(
-                itemCount: 10, itemBuilder: (_, int idx) => children[idx]),
+              itemCount: 10,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  color: const Color.fromARGB(255, 255, 201, 197),
+                  height: 400,
+                ),
+              ),
+            ),
           ),
-          Breakpoints.mediumAndUp: SlotLayout.from(
+          Breakpoints.medium: SlotLayout.from(
             key: const Key('body1'),
             builder: (_) =>
-                GridView.count(crossAxisCount: 2, children: children),
+                GridView.count(crossAxisCount: 2, children: <Widget>[
+              for (int i = 0; i < 10; i++)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    color: const Color.fromARGB(255, 255, 201, 197),
+                    height: 400,
+                  ),
+                )
+            ]),
+          ),
+          Breakpoints.large: SlotLayout.from(
+            key: const Key('body1'),
+            builder: (_) =>
+                GridView.count(crossAxisCount: 2, children: <Widget>[
+              for (int i = 0; i < 10; i++)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    color: const Color.fromARGB(255, 255, 201, 197),
+                    height: 400,
+                  ),
+                )
+            ]),
           ),
         },
       ),
-      // BottomNavigation is only active in small views defined as under 600 dp
-      // width.
       bottomNavigation: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig?>{
+        config: {
           Breakpoints.small: SlotLayout.from(
             key: const Key('bn'),
             inAnimation: AdaptiveScaffold.bottomToTop,
+            outAnimation: AdaptiveScaffold.topToBottom,
             builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
                 destinations: destinations),
           ),
+          Breakpoints.medium: SlotLayoutConfig.empty(),
+          Breakpoints.large: SlotLayoutConfig.empty()
         },
       ),
     );
