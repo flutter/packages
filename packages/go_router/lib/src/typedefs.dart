@@ -6,11 +6,8 @@ import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
 
-/// Legacy type for [GoRouterWidgetBuilder]
-typedef GoRouterWidgetBuilder = StackedRouteBuilder;
-
-/// Builder for [StackedRoute]
-typedef StackedRouteBuilder = Widget Function(
+/// Builder for [GoRoute]
+typedef GoRouterWidgetBuilder = Widget Function(
   BuildContext context,
   GoRouterState state,
 );
