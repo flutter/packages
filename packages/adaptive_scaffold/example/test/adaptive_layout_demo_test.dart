@@ -314,9 +314,6 @@ void main() {
         (((widgetFunction(context) as Builder).builder(context) as Padding)
                 .child ??
             () => const SizedBox()) as SizedBox;
-    /*final SizedBox sizedBox =
-        ((widgetFunction(context) as Builder).builder(context) as Padding)
-            .child as SizedBox;*/
     expect(sizedBox.width, 72);
   });
 
