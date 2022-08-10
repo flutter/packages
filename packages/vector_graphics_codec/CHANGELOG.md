@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.0.2
+
+* Add support for encoding and decoding inline images.
+
 ## 0.0.1
 
 * Add [VectorGraphicsCodec], [VectorGraphicsCodecListener], and [VectorGraphicsBuffer]

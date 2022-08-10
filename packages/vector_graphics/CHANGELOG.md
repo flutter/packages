@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.0.2
+  * Support for drawing images
+
 ## 0.0.1
   * Added `VectorGraphic` which consumes encoded vector graphics assets using
     a `BytesLoader`.
