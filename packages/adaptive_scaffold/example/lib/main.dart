@@ -5,11 +5,6 @@
 import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
 
-// A more functional demo of the usage of the adaptive layout helper widgets.
-// Modeled off of the example on the Material 3 page regarding adaptive layouts.
-// For a more clear cut example usage, please look at adaptive_layout_demo.dart
-// or adaptive_scaffold_demo.dart
-
 /// A more functional demo of the usage of the adaptive layout helper widgets.
 /// Specifically, it is built using an [AdaptiveLayout] and uses static helpers
 /// from [AdaptiveScaffold].
@@ -573,8 +568,6 @@ class _ItemList extends StatelessWidget {
                 email: items[index].emails![0],
                 selectCard: selectCard,
                 selected: selected,
-                //showGridView: showGridView,
-                //setDisplayed: setDisplayed,
               ),
             ),
           ),

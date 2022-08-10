@@ -25,8 +25,9 @@ const double materialMediumMinMargin = 12;
 /// design 3 spec
 const double materialExpandedMinMargin = 32;
 
-/// Implements the basic visual layout structure for Material Design 3 that
-/// adapts to a variety of screens.
+/// Implements the basic visual layout structure for
+/// [Material Design 3](https://m3.material.io/foundations/adaptive-design/overview)
+/// that adapts to a variety of screens.
 ///
 /// !["Example of a display made with AdaptiveScaffold"](../../example/demo_files/adaptiveScaffold.gif)
 ///
