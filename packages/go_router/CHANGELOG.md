@@ -1,3 +1,7 @@
+## NEXT
+
+- Cleans up examples code
+
 ## 4.2.7
 
 - Update README
