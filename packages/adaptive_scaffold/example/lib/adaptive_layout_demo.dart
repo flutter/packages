@@ -151,7 +151,12 @@ class MyHomePage extends StatelessWidget {
       ],
     );
 
+    // AdaptiveLayout has a number of slots that take SlotLayouts and these
+    // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
     return AdaptiveLayout(
+      // Primary navigation config has nothing from 0 to 600 dp screen width,
+      // then an unextended NavigationRail with no labels and just icons then an
+      // extended NavigationRail with both icons and labels.
       primaryNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
@@ -183,6 +188,8 @@ class MyHomePage extends StatelessWidget {
           ),
         },
       ),
+      // Body switches between a ListView and a GridView from small to medium
+      // breakpoints and onwards.
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
@@ -228,6 +235,8 @@ class MyHomePage extends StatelessWidget {
           ),
         },
       ),
+      // BottomNavigation is only active in small views defined as under 600 dp
+      // width.
       bottomNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
