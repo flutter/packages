@@ -7,8 +7,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final Map<String, dynamic> _families = const JsonDecoder().convert(
-'''
+final Map<String, dynamic> _families = const JsonDecoder().convert('''
 {
   "f1": {
     "name": "Doe",
@@ -37,8 +36,7 @@ final Map<String, dynamic> _families = const JsonDecoder().convert(
     }
   }
 }
-'''
-);
+''');
 
 void main() => runApp(App());
 
@@ -52,11 +50,11 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-    routeInformationProvider: _router.routeInformationProvider,
-    routeInformationParser: _router.routeInformationParser,
-    routerDelegate: _router.routerDelegate,
-    title: title,
-  );
+        routeInformationProvider: _router.routeInformationProvider,
+        routeInformationParser: _router.routeInformationParser,
+        routerDelegate: _router.routerDelegate,
+        title: title,
+      );
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
@@ -113,7 +111,8 @@ class FamilyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> people = _families[fid]['people'] as Map<String, dynamic>;
+    final Map<String, dynamic> people =
+        _families[fid]['people'] as Map<String, dynamic>;
     return Scaffold(
       appBar: AppBar(title: Text(_families[fid]['name'])),
       body: ListView(

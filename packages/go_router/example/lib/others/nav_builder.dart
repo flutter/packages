@@ -65,7 +65,6 @@ class App extends StatelessWidget {
       ),
     ],
 
-
     // changes on the listenable will cause the router to refresh it's route
     refreshListenable: _loginInfo,
 
@@ -128,8 +127,7 @@ class AuthOverlay extends StatelessWidget {
 /// The home screen without a logout button.
 class HomeScreenNoLogout extends StatelessWidget {
   /// Creates a [HomeScreenNoLogout].
-  const HomeScreenNoLogout({ Key? key})
-      : super(key: key);
+  const HomeScreenNoLogout({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(

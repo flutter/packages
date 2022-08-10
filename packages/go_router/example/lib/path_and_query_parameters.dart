@@ -15,8 +15,7 @@ import 'package:go_router/go_router.dart';
 //
 // The query parameters are automatically stored in GoRouterState.queryParams.
 
-final Map<String, dynamic> _families = const JsonDecoder().convert(
-    '''
+final Map<String, dynamic> _families = const JsonDecoder().convert('''
 {
   "f1": {
     "name": "Doe",
@@ -45,8 +44,7 @@ final Map<String, dynamic> _families = const JsonDecoder().convert(
     }
   }
 }
-'''
-);
+''');
 
 void main() => runApp(App());
 
@@ -129,8 +127,10 @@ class FamilyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> newQueries;
-    final List<String> names =
-        _families[fid]['people'].values.map<String>((dynamic p) => p['name'] as String).toList();
+    final List<String> names = _families[fid]['people']
+        .values
+        .map<String>((dynamic p) => p['name'] as String)
+        .toList();
     names.sort();
     if (asc) {
       newQueries = const <String, String>{'sort': 'desc'};
@@ -142,7 +142,8 @@ class FamilyScreen extends StatelessWidget {
         title: Text(_families[fid]['name']),
         actions: <Widget>[
           IconButton(
-            onPressed: () => context.goNamed('family', params: <String, String>{'fid': fid}, queryParams: newQueries),
+            onPressed: () => context.goNamed('family',
+                params: <String, String>{'fid': fid}, queryParams: newQueries),
             tooltip: 'sort ascending or descending',
             icon: const Icon(Icons.sort),
           )

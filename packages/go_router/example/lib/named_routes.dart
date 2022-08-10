@@ -15,8 +15,7 @@ import 'package:go_router/go_router.dart';
 // then be used in context.namedLocation to be translate back to the actual URL
 // location.
 
-final Map<String, dynamic> _families = const JsonDecoder().convert(
-'''
+final Map<String, dynamic> _families = const JsonDecoder().convert('''
 {
   "f1": {
     "name": "Doe",
@@ -45,8 +44,7 @@ final Map<String, dynamic> _families = const JsonDecoder().convert(
     }
   }
 }
-'''
-);
+''');
 
 void main() => runApp(App());
 
@@ -86,7 +84,8 @@ class App extends StatelessWidget {
                 name: 'person',
                 path: 'person/:pid',
                 builder: (BuildContext context, GoRouterState state) {
-                  return PersonScreen(fid: state.params['fid']!, pid: state.params['pid']!);
+                  return PersonScreen(
+                      fid: state.params['fid']!, pid: state.params['pid']!);
                 },
               ),
             ],
@@ -132,7 +131,8 @@ class FamilyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> people = _families[fid]['people'] as Map<String, dynamic>;
+    final Map<String, dynamic> people =
+        _families[fid]['people'] as Map<String, dynamic>;
     return Scaffold(
       appBar: AppBar(title: Text(_families[fid]['name'])),
       body: ListView(
@@ -140,12 +140,11 @@ class FamilyScreen extends StatelessWidget {
           for (final String pid in people.keys)
             ListTile(
               title: Text(people[pid]['name']),
-              onTap: () =>
-                  context.go(context.namedLocation(
-                    'person',
-                    params: <String, String>{'fid': fid, 'pid': pid},
-                    queryParams: <String, String>{'qid': 'quid'},
-                  )),
+              onTap: () => context.go(context.namedLocation(
+                'person',
+                params: <String, String>{'fid': fid, 'pid': pid},
+                queryParams: <String, String>{'qid': 'quid'},
+              )),
             ),
         ],
       ),
@@ -171,7 +170,8 @@ class PersonScreen extends StatelessWidget {
     final Map<String, dynamic> person = family['people'][pid];
     return Scaffold(
       appBar: AppBar(title: Text(person['name'])),
-      body: Text('${person['name']} ${family['name']} is ${person['age']} years old'),
+      body: Text(
+          '${person['name']} ${family['name']} is ${person['age']} years old'),
     );
   }
 }
