@@ -188,7 +188,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(_HomeScreen), findsOneWidget);
+      expect(find.byType(_HomeScreen, skipOffstage: false), findsOneWidget);
       expect(find.byType(_DetailsScreen), findsOneWidget);
       expect(find.byKey(rootNavigatorKey), findsOneWidget);
       expect(find.byKey(shellNavigatorKey), findsOneWidget);
@@ -206,7 +206,12 @@ class _HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text('Home Screen'),
+      body: Column(
+        children: [
+          Text('Home Screen'),
+          Expanded(child: child),
+        ],
+      ),
     );
   }
 }

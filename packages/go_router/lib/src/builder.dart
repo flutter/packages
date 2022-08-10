@@ -103,7 +103,7 @@ class RouteBuilder {
     int startIndex,
     VoidCallback pop,
     bool routerNeglect, // TODO: remove?
-    GlobalKey<NavigatorState> navigatorKey,
+    Key navigatorKey,
     Map<String, String> params,
   ) {
     final pages = <Page>[];
@@ -119,7 +119,7 @@ class RouteBuilder {
       final newParams = <String, String>{...params, ...match.decodedParams};
       if (route is GoRoute) {
         final state = buildState(match, newParams);
-        pages.add(buildGoRoute(context, state, match));
+        pages.add(buildGoRoutePage(context, state, match));
       } else if (route is ShellRoute) {
         final state = buildState(match, newParams);
         final result = _buildRecursive(
@@ -128,7 +128,8 @@ class RouteBuilder {
             i + 1,
             pop,
             routerNeglect,
-            route.shellNavigatorKey ?? GlobalKey<NavigatorState>(),
+            // Use a default unique key for the Navigator if none is provided.
+            route.shellNavigatorKey ?? ValueKey(state.pageKey),
             newParams);
         final child = result.widget;
         pages.add(buildPage(context, state,
@@ -224,8 +225,7 @@ class RouteBuilder {
   }
 
   /// Builds a [Page] for [StackedRoute]
-  // TODO(johnpryan): combine with callRouteBuilder()
-  Page buildGoRoute(
+  Page buildGoRoutePage(
       BuildContext context, GoRouterState state, RouteMatch match) {
     final route = match.route;
     if (route is! GoRoute) {
@@ -244,10 +244,9 @@ class RouteBuilder {
       }
     }
 
-    // Return the result of builder() or pageBuilder()
+    // Return the result of the route's builder() or pageBuilder()
     return page ??
-        buildPage(
-            context, state, (match.route as GoRoute).builder!(context, state));
+        buildPage(context, state, callRouteBuilder(context, state, match));
   }
 
   /// Calls the user-provided route builder from the [RouteMatch]'s [RouteBase].
@@ -263,16 +262,15 @@ class RouteBuilder {
     if (route is GoRoute) {
       final builder = route.builder;
       if (builder != null) {
+        // Use a Builder to ensure the route gets the correct BuildContext.
         return builder(context, state);
-      } else {
-        // TODO(johnpryan): call pageBuilder
-        throw UnimplementedError('pageBuilder is not supported yet...');
       }
     } else if (route is ShellRoute) {
       if (childWidget == null) {
         throw RouteBuilderError(
             'Attempt to build ShellRoute without a child widget');
       }
+      // Use a Builder to ensure the route gets the correct BuildContext.
       return route.builder(context, state, childWidget);
     }
 
