@@ -1203,7 +1203,7 @@ void main() {
                 expect(state.extra, isNotNull);
                 return null;
               },
-              routes: <GoRoute>[],
+              routes: const <GoRoute>[],
             ),
           ],
         ),

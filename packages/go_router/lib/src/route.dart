@@ -254,7 +254,7 @@ class GoRoute extends RouteBase {
     required String path,
     this.builder,
     this.pageBuilder,
-    this.navigatorKey = null,
+    this.navigatorKey,
     super.name,
     GoRouterRedirect redirect = RouteBase._emptyRedirect,
     List<RouteBase> routes = const <RouteBase>[],
@@ -310,7 +310,7 @@ class GoRoute extends RouteBase {
   /// ),
   /// ```
   ///
-  final StackedRouteBuilder? builder;
+  final GoRouterWidgetBuilder? builder;
 
   static String? _noRedirection(GoRouterState state) => null;
 

@@ -34,7 +34,7 @@ class RouteBuilder {
   final GoRouterPageBuilder? errorPageBuilder;
 
   /// Error widget builder for the go router delegate.
-  final StackedRouteBuilder? errorBuilder;
+  final GoRouterWidgetBuilder? errorBuilder;
 
   /// The route configuration for the app.
   final RouteConfiguration configuration;
@@ -86,18 +86,19 @@ class RouteBuilder {
   /// Returns the top-level pages instead of the root navigator. Used for
   /// testing.
   @visibleForTesting
-  List<Page> buildPages(BuildContext context, RouteMatchList matchList) {
+  List<Page<dynamic>> buildPages(
+      BuildContext context, RouteMatchList matchList) {
     try {
       return _buildRecursive(context, matchList, 0, () {}, false,
           GlobalKey<NavigatorState>(), <String, String>{}).pages;
     } on RouteBuilderError catch (e) {
-      return [
+      return <Page<dynamic>>[
         buildErrorPage(context, e, matchList.location),
       ];
     }
   }
 
-  RecursiveBuildResult _buildRecursive(
+  _RecursiveBuildResult _buildRecursive(
     BuildContext context,
     RouteMatchList matchList,
     int startIndex,
@@ -106,52 +107,55 @@ class RouteBuilder {
     Key navigatorKey,
     Map<String, String> params,
   ) {
-    final pages = <Page>[];
-    final pagesForOutOfScopeNavigator = <OutOfScopePage>[];
+    final List<Page<dynamic>> pages = <Page<dynamic>>[];
+    final List<_OutOfScopePage> pagesForOutOfScopeNavigator = <_OutOfScopePage>[];
 
-    for (var i = startIndex; i < matchList.matches.length; i++) {
-      final match = matchList.matches[i];
+    for (int i = startIndex; i < matchList.matches.length; i++) {
+      final RouteMatch match = matchList.matches[i];
 
       if (match.error != null) {
         throw RouteBuilderError('Match error found during build phase',
             exception: match.error);
       }
 
-      final route = match.route;
-      final newParams = <String, String>{...params, ...match.decodedParams};
+      final RouteBase route = match.route;
+      final Map<String, String> newParams = <String, String>{
+        ...params,
+        ...match.decodedParams
+      };
       if (route is GoRoute) {
-        final state = buildState(match, newParams);
-        final page = buildGoRoutePage(context, state, match);
+        final GoRouterState state = buildState(match, newParams);
+        final Page<dynamic> page = buildGoRoutePage(context, state, match);
 
         // If this GoRoute is for a different Navigator, add it to the
         // pagesForOutOfScopeNavigator list instead.
         if (route.navigatorKey != null) {
           pagesForOutOfScopeNavigator
-              .add(OutOfScopePage(page, route.navigatorKey!));
+              .add(_OutOfScopePage(page, route.navigatorKey!));
         } else {
           pages.add(page);
         }
       } else if (route is ShellRoute) {
-        final state = buildState(match, newParams);
-        final result = _buildRecursive(
+        final GoRouterState state = buildState(match, newParams);
+        final _RecursiveBuildResult result = _buildRecursive(
             context,
             matchList,
             i + 1,
             pop,
             routerNeglect,
             // Use a default unique key for the Navigator if none is provided.
-            route.shellNavigatorKey ?? ValueKey(state.pageKey),
+            route.shellNavigatorKey ?? state.pageKey,
             newParams);
-        final child = result.widget;
+        final Widget child = result.widget;
 
-        final page = buildPage(context, state,
+        final Page<dynamic> page = buildPage(context, state,
             callRouteBuilder(context, state, match, childWidget: child));
 
         // If this ShellRoute is for a different Navigator, add it to the
         // pagesForOutOfScopeNavigator list instead.
         if (route.navigatorKey != null) {
           pagesForOutOfScopeNavigator
-              .add(OutOfScopePage(page, route.navigatorKey!));
+              .add(_OutOfScopePage(page, route.navigatorKey!));
         } else {
           pages.add(page);
         }
@@ -159,9 +163,10 @@ class RouteBuilder {
         // If any descendent GoRoutes have pages that are out of scope for this
         // navigator, Add them to the list of routes that are out of scope. If
         // they are in scope, add them to the list of pages for this navigator.
-        final pagesOutOfScopeForChildNavigator =
+        final List<_OutOfScopePage> pagesOutOfScopeForChildNavigator =
             result.pagesForOutOfScopeNavigator;
-        for (var outOfScopePage in pagesOutOfScopeForChildNavigator) {
+        for (final _OutOfScopePage outOfScopePage
+            in pagesOutOfScopeForChildNavigator) {
           if (outOfScopePage.navigatorKey == route.shellNavigatorKey) {
             pages.add(page);
           } else {
@@ -174,7 +179,7 @@ class RouteBuilder {
     }
 
     // Add any pages that were out of scope to this Navigator if the keys match.
-    for (var outOfScopePage in pagesForOutOfScopeNavigator) {
+    for (final _OutOfScopePage outOfScopePage in pagesForOutOfScopeNavigator) {
       if (outOfScopePage.navigatorKey == navigatorKey) {
         pages.add(outOfScopePage.page);
       }
@@ -196,14 +201,14 @@ class RouteBuilder {
       throw RouteBuilderError('No pages built for root Navigator');
     }
 
-    return RecursiveBuildResult(child ?? SizedBox.shrink(), pages,
+    return _RecursiveBuildResult(child ?? const SizedBox.shrink(), pages,
         pagesForOutOfScopeNavigator, matchList.matches.length);
   }
 
   /// Helper method that calls [builderWithNav] with the [GoRouterState]
   @visibleForTesting
   Widget buildNavigator(BuildContext context, Uri uri, Exception? exception,
-      Key navigatorKey, VoidCallback pop, List<Page> pages,
+      Key navigatorKey, VoidCallback pop, List<Page<dynamic>> pages,
       {bool root = true}) {
     if (root) {
       return builderWithNav(
@@ -249,6 +254,8 @@ class RouteBuilder {
     }
   }
 
+  /// Helper method that buidls a [GoRouterState] object for the given [match]
+  /// and [params].
   @visibleForTesting
   GoRouterState buildState(RouteMatch match, Map<String, String> params) {
     return GoRouterState(
@@ -267,9 +274,9 @@ class RouteBuilder {
   }
 
   /// Builds a [Page] for [StackedRoute]
-  Page buildGoRoutePage(
+  Page<dynamic> buildGoRoutePage(
       BuildContext context, GoRouterState state, RouteMatch match) {
-    final route = match.route;
+    final RouteBase route = match.route;
     if (route is! GoRoute) {
       throw RouteBuilderError(
           'Unexpected route type in buildStackedRoute: $route');
@@ -302,7 +309,7 @@ class RouteBuilder {
     }
 
     if (route is GoRoute) {
-      final builder = route.builder;
+      final GoRouterWidgetBuilder? builder = route.builder;
       if (builder != null) {
         // Use a Builder to ensure the route gets the correct BuildContext.
         return builder(context, state);
@@ -316,7 +323,7 @@ class RouteBuilder {
       return route.builder(context, state, childWidget);
     }
 
-    throw UnimplementedError('Unsupported route type ${route}');
+    throw UnimplementedError('Unsupported route type $route');
   }
 
   Page<void> Function({
@@ -362,7 +369,8 @@ class RouteBuilder {
     assert(_errorBuilderForAppType != null);
   }
 
-  // builds the page based on app type, i.e. MaterialApp vs. CupertinoApp
+  /// builds the page based on app type, i.e. MaterialApp vs. CupertinoApp
+  @visibleForTesting
   Page<dynamic> buildPage(
     BuildContext context,
     GoRouterState state,
@@ -398,7 +406,8 @@ class RouteBuilder {
   /// Builds a Navigator containing an error page.
   Widget buildErrorNavigator(BuildContext context, RouteBuilderError e, Uri uri,
       VoidCallback pop, GlobalKey<NavigatorState> navigatorKey) {
-    return buildNavigator(context, uri, Exception(e), navigatorKey, pop, [
+    return buildNavigator(
+        context, uri, Exception(e), navigatorKey, pop, <Page<dynamic>>[
       buildErrorPage(context, e, uri),
     ]);
   }
@@ -409,7 +418,7 @@ class RouteBuilder {
     RouteBuilderError error,
     Uri uri,
   ) {
-    final state = GoRouterState(
+    final GoRouterState state = GoRouterState(
       configuration,
       location: uri.toString(),
       subloc: uri.path,
@@ -423,7 +432,7 @@ class RouteBuilder {
     // MaterialPage). Finally, if nothing is provided, use a default error page
     // wrapped in the app-specific page.
     _cacheAppType(context);
-    final errorBuilder = this.errorBuilder;
+    final GoRouterWidgetBuilder? errorBuilder = this.errorBuilder;
     return errorPageBuilder != null
         ? errorPageBuilder!(context, state)
         : buildPage(
@@ -436,36 +445,38 @@ class RouteBuilder {
   }
 }
 
-class RecursiveBuildResult {
+class _RecursiveBuildResult {
+  _RecursiveBuildResult(
+      this.widget, this.pages, this.pagesForOutOfScopeNavigator, this.newIndex);
+
   final Widget widget;
 
   /// List of pages placed on the navigator. Used for testing.
-  final List<Page> pages;
+  final List<Page<dynamic>> pages;
 
   /// List of pages placed on a Navigator that isn't in the current scope (such as the root navigator)
-  final List<OutOfScopePage> pagesForOutOfScopeNavigator;
+  final List<_OutOfScopePage> pagesForOutOfScopeNavigator;
 
   final int newIndex;
-
-  RecursiveBuildResult(
-      this.widget, this.pages, this.pagesForOutOfScopeNavigator, this.newIndex);
 }
 
-class OutOfScopePage {
-  final Page page;
-  final GlobalKey<NavigatorState> navigatorKey;
+class _OutOfScopePage {
+  _OutOfScopePage(this.page, this.navigatorKey);
 
-  OutOfScopePage(this.page, this.navigatorKey);
+  final Page<dynamic> page;
+  final GlobalKey<NavigatorState> navigatorKey;
 }
 
 /// An error that occurred while building the app's UI based on the route
 /// matches.
 class RouteBuilderError extends Error {
   /// Constructs a [RouteBuilderError].
-  RouteBuilderError(String message, {this.exception}) : message = message;
+  RouteBuilderError(this.message, {this.exception});
 
   /// The error message.
   final String message;
+
+  /// The exception that occurred.
   final Exception? exception;
 
   @override

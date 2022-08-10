@@ -22,7 +22,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required RouteConfiguration configuration,
     required GoRouterBuilderWithNav builderWithNav,
     required GoRouterPageBuilder? errorPageBuilder,
-    required StackedRouteBuilder? errorBuilder,
+    required GoRouterWidgetBuilder? errorBuilder,
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
@@ -45,7 +45,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   RouteMatchList _matches = RouteMatchList.empty();
   final Map<String, int> _pushCounts = <String, int>{};
-  RouteConfiguration _configuration;
+  final RouteConfiguration _configuration;
 
   /// Pushes the given location onto the page stack
   void push(RouteMatch match) {

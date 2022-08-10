@@ -4,10 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/route.dart';
 import 'package:go_router_examples/books/main.dart';
 
-final rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 // This example demonstrates how to configure a nested navigation stack using
 // [ShellRoute].
@@ -30,19 +29,19 @@ class App extends StatelessWidget {
       );
 
   final GoRouter _router = GoRouter(
-    navigatorKey: rootNavigatorKey,
+    navigatorKey: _rootNavigatorKey,
     routes: <RouteBase>[
       ShellRoute(
         path: '/',
-        builder: (context, state, child) {
+        builder: (BuildContext context, GoRouterState state, Widget child) {
           return AppScaffold(
             child: child,
           );
         },
-        routes: [
+        routes: <RouteBase>[
           GoRoute(
             path: 'a',
-            pageBuilder: (context, state) {
+            pageBuilder: (BuildContext context, GoRouterState state) {
               return FadeTransitionPage(
                 key: state.pageKey,
                 child: Screen(
@@ -51,18 +50,18 @@ class App extends StatelessWidget {
                     backgroundColor: Colors.red.shade100),
               );
             },
-            routes: [
+            routes: <RouteBase>[
               GoRoute(
                 path: 'details',
-                builder: (context, state) {
-                  return DetailsScreen(label: 'A');
+                builder: (BuildContext context, GoRouterState state) {
+                  return const DetailsScreen(label: 'A');
                 },
               )
             ],
           ),
           GoRoute(
             path: 'b',
-            pageBuilder: (context, state) {
+            pageBuilder: (BuildContext context, GoRouterState state) {
               return FadeTransitionPage(
                 key: state.pageKey,
                 child: Screen(
@@ -72,14 +71,14 @@ class App extends StatelessWidget {
                 ),
               );
             },
-            routes: [
+            routes: <RouteBase>[
               GoRoute(
                 path: 'details',
                 // Stack this route on the root navigator, instead of the
                 // nearest ShellRoute ancestor.
-                navigatorKey: rootNavigatorKey,
-                builder: (context, state) {
-                  return DetailsScreen(label: 'B');
+                navigatorKey: _rootNavigatorKey,
+                builder: (BuildContext context, GoRouterState state) {
+                  return const DetailsScreen(label: 'B');
                 },
               )
             ],
@@ -92,16 +91,19 @@ class App extends StatelessWidget {
 
 /// The "shell" of this app.
 class AppScaffold extends StatelessWidget {
-  final Widget child;
-
+  /// AppScaffold constructor. [child] will
   const AppScaffold({
     required this.child,
     Key? key,
   }) : super(key: key);
 
+  /// The child widget to display in the body of the scaffold. In this sample,
+  /// it is the inner Navigator configured by GoRouter.
+  final Widget child;
+
   @override
   Widget build(BuildContext context) {
-    final selectedIndex = _calculateSelectedIndex(context);
+    final int selectedIndex = _calculateSelectedIndex(context);
     return Scaffold(
       body: child,
       bottomNavigationBar: BottomNavigationBar(
@@ -116,17 +118,21 @@ class AppScaffold extends StatelessWidget {
           ),
         ],
         currentIndex: selectedIndex,
-        onTap: (idx) => _onItemTapped(idx, context),
+        onTap: (int idx) => _onItemTapped(idx, context),
       ),
     );
   }
 
   static int _calculateSelectedIndex(BuildContext context) {
-    final route = GoRouter.of(context);
-    final location = route.location;
+    final GoRouter route = GoRouter.of(context);
+    final String location = route.location;
     if (location != null) {
-      if (location.startsWith('/a')) return 0;
-      if (location.startsWith('/b')) return 1;
+      if (location.startsWith('/a')) {
+        return 0;
+      }
+      if (location.startsWith('/b')) {
+        return 1;
+      }
     }
     return 0;
   }
@@ -145,10 +151,6 @@ class AppScaffold extends StatelessWidget {
 
 /// The screen of the second page.
 class Screen extends StatelessWidget {
-  final String title;
-  final String detailsPath;
-  final Color backgroundColor;
-
   /// Creates a screen with a given title
   const Screen({
     required this.title,
@@ -156,6 +158,15 @@ class Screen extends StatelessWidget {
     required this.backgroundColor,
     Key? key,
   }) : super(key: key);
+
+  /// The title of the screen.
+  final String title;
+
+  /// The path to navigate to when the user presses the View Details button.
+  final String detailsPath;
+
+  /// The background color.
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +178,7 @@ class Screen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Text(
               title,
               style: Theme.of(context).textTheme.headline4,
@@ -185,13 +196,16 @@ class Screen extends StatelessWidget {
   }
 }
 
+/// The details screen for either the A or B screen.
 class DetailsScreen extends StatelessWidget {
-  final String label;
-
+  /// Constructs a [DetailsScreen].
   const DetailsScreen({
     required this.label,
     Key? key,
   }) : super(key: key);
+
+  /// The label to display in the center of the screen.
+  final String label;
 
   @override
   Widget build(BuildContext context) {

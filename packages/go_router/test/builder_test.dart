@@ -12,29 +12,29 @@ import 'package:go_router/src/matching.dart';
 void main() {
   group('RouteBuilder', () {
     testWidgets('Builds GoRoute', (WidgetTester tester) async {
-      final config = RouteConfiguration(
-        routes: [
+      final RouteConfiguration config = RouteConfiguration(
+        routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (context, state) {
+            builder: (BuildContext context, GoRouterState state) {
               return _DetailsScreen();
             },
           ),
         ],
         redirectLimit: 10,
-        topRedirect: (state) {
+        topRedirect: (GoRouterState state) {
           return null;
         },
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final matches = RouteMatchList([
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
         RouteMatch(
           route: config.routes.first,
           subloc: '/',
           fullpath: '/',
-          encodedParams: {},
-          queryParams: {},
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
           extra: null,
           error: null,
         ),
@@ -51,29 +51,29 @@ void main() {
     });
 
     testWidgets('Builds ShellRoute', (WidgetTester tester) async {
-      final config = RouteConfiguration(
-        routes: [
+      final RouteConfiguration config = RouteConfiguration(
+        routes: <RouteBase>[
           ShellRoute(
             path: '/',
-            builder: (context, state, child) {
+            builder: (BuildContext context, GoRouterState state, Widget child) {
               return _DetailsScreen();
             },
           ),
         ],
         redirectLimit: 10,
-        topRedirect: (state) {
+        topRedirect: (GoRouterState state) {
           return null;
         },
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final matches = RouteMatchList([
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
         RouteMatch(
           route: config.routes.first,
           subloc: '/',
           fullpath: '/',
-          encodedParams: {},
-          queryParams: {},
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
           extra: null,
           error: null,
         ),
@@ -90,30 +90,31 @@ void main() {
     });
 
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
-      final rootNavigatorKey = GlobalKey<NavigatorState>();
-      final config = RouteConfiguration(
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final RouteConfiguration config = RouteConfiguration(
         navigatorKey: rootNavigatorKey,
-        routes: [
+        routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (context, state) {
+            builder: (BuildContext context, GoRouterState state) {
               return _DetailsScreen();
             },
           ),
         ],
         redirectLimit: 10,
-        topRedirect: (state) {
+        topRedirect: (GoRouterState state) {
           return null;
         },
       );
 
-      final matches = RouteMatchList([
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
         RouteMatch(
           route: config.routes.first,
           subloc: '/',
           fullpath: '/',
-          encodedParams: {},
-          queryParams: {},
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
           extra: null,
           error: null,
         ),
@@ -131,23 +132,25 @@ void main() {
 
     testWidgets('Builds a Navigator for ShellRoute',
         (WidgetTester tester) async {
-      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
-      final config = RouteConfiguration(
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> shellNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final RouteConfiguration config = RouteConfiguration(
         navigatorKey: rootNavigatorKey,
-        routes: [
+        routes: <RouteBase>[
           ShellRoute(
             path: '/',
-            builder: (context, state, child) {
+            builder: (BuildContext context, GoRouterState state, Widget child) {
               return _HomeScreen(
                 child: child,
               );
             },
             shellNavigatorKey: shellNavigatorKey,
-            routes: [
+            routes: <RouteBase>[
               GoRoute(
                 path: 'details',
-                builder: (context, state) {
+                builder: (BuildContext context, GoRouterState state) {
                   return _DetailsScreen();
                 },
               ),
@@ -155,18 +158,18 @@ void main() {
           ),
         ],
         redirectLimit: 10,
-        topRedirect: (state) {
+        topRedirect: (GoRouterState state) {
           return null;
         },
       );
 
-      final matches = RouteMatchList([
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
         RouteMatch(
           route: config.routes.first,
           subloc: '/',
           fullpath: '/',
-          encodedParams: {},
-          queryParams: {},
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
           extra: null,
           error: null,
         ),
@@ -174,8 +177,8 @@ void main() {
           route: config.routes.first.routes.first,
           subloc: '/details',
           fullpath: '/details',
-          encodedParams: {},
-          queryParams: {},
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
           extra: null,
           error: null,
         ),
@@ -196,23 +199,25 @@ void main() {
 
     testWidgets('Builds a Navigator for ShellRoute',
         (WidgetTester tester) async {
-      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
-      final config = RouteConfiguration(
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> shellNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final RouteConfiguration config = RouteConfiguration(
         navigatorKey: rootNavigatorKey,
-        routes: [
+        routes: <RouteBase>[
           ShellRoute(
             path: '/',
-            builder: (context, state, child) {
+            builder: (BuildContext context, GoRouterState state, Widget child) {
               return _HomeScreen(
                 child: child,
               );
             },
             shellNavigatorKey: shellNavigatorKey,
-            routes: [
+            routes: <RouteBase>[
               GoRoute(
                 path: 'details',
-                builder: (context, state) {
+                builder: (BuildContext context, GoRouterState state) {
                   return _DetailsScreen();
                 },
                 // This screen should stack onto the root navigator.
@@ -222,18 +227,18 @@ void main() {
           ),
         ],
         redirectLimit: 10,
-        topRedirect: (state) {
+        topRedirect: (GoRouterState state) {
           return null;
         },
       );
 
-      final matches = RouteMatchList([
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
         RouteMatch(
           route: config.routes.first,
           subloc: '/',
           fullpath: '/',
-          encodedParams: {},
-          queryParams: {},
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
           extra: null,
           error: null,
         ),
@@ -241,8 +246,8 @@ void main() {
           route: config.routes.first.routes.first,
           subloc: '/details',
           fullpath: '/details',
-          encodedParams: {},
-          queryParams: {},
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
           extra: null,
           error: null,
         ),
@@ -264,18 +269,18 @@ void main() {
 }
 
 class _HomeScreen extends StatelessWidget {
-  final Widget child;
-
-  _HomeScreen({
+  const _HomeScreen({
     required this.child,
   });
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: [
-          Text('Home Screen'),
+        children: <Widget>[
+          const Text('Home Screen'),
           Expanded(child: child),
         ],
       ),
@@ -286,23 +291,23 @@ class _HomeScreen extends StatelessWidget {
 class _DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Text('Details Screen'),
     );
   }
 }
 
 class _BuilderTestWidget extends StatelessWidget {
-  final RouteConfiguration routeConfiguration;
-  final RouteBuilder builder;
-  final RouteMatchList matches;
-
   _BuilderTestWidget({
     required this.routeConfiguration,
     required this.matches,
     Key? key,
   })  : builder = _routeBuilder(routeConfiguration),
         super(key: key);
+
+  final RouteConfiguration routeConfiguration;
+  final RouteBuilder builder;
+  final RouteMatchList matches;
 
   /// Builds a [RouteBuilder] for tests
   static RouteBuilder _routeBuilder(RouteConfiguration configuration) {
@@ -319,7 +324,7 @@ class _BuilderTestWidget extends StatelessWidget {
         BuildContext context,
         GoRouterState state,
       ) {
-        return MaterialPage(
+        return MaterialPage<dynamic>(
           child: Text('Error: ${state.error}'),
         );
       },
@@ -330,7 +335,7 @@ class _BuilderTestWidget extends StatelessWidget {
         return Text('Error: ${state.error}');
       },
       restorationScopeId: null,
-      observers: [],
+      observers: <NavigatorObserver>[],
     );
   }
 
