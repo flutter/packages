@@ -10,7 +10,7 @@ import 'pages/custom_transition_page.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
 
-/// The base class for all route configuration objects.
+/// The base class for [GoRoute] and [ShellRoute].
 @immutable
 abstract class RouteBase {
   RouteBase._({
