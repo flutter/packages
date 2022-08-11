@@ -23,10 +23,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/noodles.png
-    - images/plant-based.png
-    - images/user.png
-    - images/singapore.png
     - images/woman.png
     - images/woman2.png
     - images/young-man.png
