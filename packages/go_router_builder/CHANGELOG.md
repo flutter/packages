@@ -1,3 +1,12 @@
+## 1.0.9
+
+* Updated to element2
+
+## 1.0.8
+
+* Updates `analyzer` to 4.4.0.
+* Removes the usage of deprecated API in `analyzer`.
+
 ## 1.0.7
 
 * Supports newer versions of `analyzer`.
