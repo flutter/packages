@@ -33,6 +33,7 @@ class App extends StatelessWidget {
     routes: <RouteBase>[
       ShellRoute(
         path: '/',
+        defaultRoute: 'a',
         builder: (BuildContext context, GoRouterState state, Widget child) {
           return AppScaffold(
             child: child,

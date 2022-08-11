@@ -188,6 +188,34 @@ List<RouteMatch> _getLocRouteRecursively({
     return <RouteMatch>[];
   }
 
+  /// Add matches for ShellRoute defaultRoute
+  final RouteMatch lastMatch = result.first.last;
+  final RouteBase lastRoute = lastMatch.route;
+  if (lastRoute is ShellRoute) {
+    final String? defaultRoute = lastRoute.defaultRoute;
+    if (defaultRoute != null) {
+      // find the sub-route
+      for (final RouteBase subRoute in lastRoute.routes) {
+        if (subRoute.path == defaultRoute) {
+          final String fullpath =
+              concatenatePaths(lastMatch.subloc, subRoute.path);
+          final RouteMatch? match = RouteMatch.match(
+            route: subRoute,
+            restLoc: defaultRoute,
+            parentSubloc: lastMatch.subloc,
+            fullpath: fullpath,
+            queryParams: queryParams,
+            extra: extra,
+          );
+          if (match == null) {
+            continue;
+          }
+          result.first.add(match);
+        }
+      }
+    }
+  }
+
   // If there are multiple routes that match the location, returning the first one.
   // To make predefined routes to take precedence over dynamic routes eg. '/:id'
   // consider adding the dynamic route at the end of the routes

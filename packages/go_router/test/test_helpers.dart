@@ -161,7 +161,7 @@ class GoRouterRefreshStreamSpy extends GoRouterRefreshStream {
 }
 
 Future<GoRouter> createRouter(
-  List<GoRoute> routes,
+  List<RouteBase> routes,
   WidgetTester tester, {
   GoRouterRedirect? redirect,
   String initialLocation = '/',

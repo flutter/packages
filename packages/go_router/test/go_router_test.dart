@@ -1795,6 +1795,43 @@ void main() {
     });
   });
 
+  group('ShellRoute', () {
+    testWidgets('defaultRoute', (WidgetTester tester) async {
+      final List<RouteBase> routes = <RouteBase>[
+        ShellRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              body: child,
+            );
+          },
+          defaultRoute: 'b',
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'a',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen A'),
+                );
+              },
+            ),
+            GoRoute(
+              path: 'b',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen B'),
+                );
+              },
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester);
+      expect(find.text('Screen B'), findsOneWidget);
+    });
+  });
+
   testWidgets('pop triggers pop on routerDelegate',
       (WidgetTester tester) async {
     final GoRouter router = await createGoRouter(tester)
