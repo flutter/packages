@@ -179,8 +179,11 @@ class MyHomePage extends StatelessWidget {
             key: const Key('bn'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
-            builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
-                destinations: destinations),
+            builder: (_) => BottomNavigationBarTheme(
+                data: const BottomNavigationBarThemeData(
+                    selectedItemColor: Colors.black),
+                child: AdaptiveScaffold.toBottomNavigationBar(
+                    destinations: destinations)),
           )
         },
       ),
