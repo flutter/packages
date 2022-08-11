@@ -328,18 +328,12 @@ class AdaptiveScaffold extends StatefulWidget {
       int currentIndex = 0,
       double iconSize = 24}) {
     return Builder(
-        builder: (_) => BottomNavigationBarTheme(
-              data: const BottomNavigationBarThemeData(
-                  unselectedItemColor: Colors.black,
-                  selectedItemColor: Colors.black),
-              child: BottomNavigationBar(
-                currentIndex: currentIndex,
-                iconSize: iconSize,
-                items: destinations
-                    .map((NavigationDestination e) => _toBottomNavItem(e))
-                    .toList(),
-              ),
-            ));
+        builder: (_) => BottomNavigationBar(
+            currentIndex: currentIndex,
+            iconSize: iconSize,
+            items: destinations
+                .map((NavigationDestination e) => _toBottomNavItem(e))
+                .toList()));
   }
 
   /// Public helper method to be used for creating a [MasonryGrid] following m3
