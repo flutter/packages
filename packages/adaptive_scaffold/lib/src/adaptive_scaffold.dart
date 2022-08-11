@@ -249,7 +249,7 @@ class AdaptiveScaffold extends StatefulWidget {
     Function(int)? onDestinationSelected,
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
-    return toNavigationRail(
+    return standardNavigationRail(
         width: width,
         labelType: labelType,
         leading: leading,
@@ -268,7 +268,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// list of [NavigationRailDestination]s. Takes in a [selectedIndex] property for
   /// the current selected item in the [NavigationRail] and [extended] for
   /// whether the [NavigationRail] is extended or not.
-  static Builder toNavigationRail({
+  static Builder standardNavigationRail({
     required List<NavigationRailDestination> destinations,
     double width = 72,
     int selectedIndex = 0,
@@ -323,7 +323,7 @@ class AdaptiveScaffold extends StatefulWidget {
 
   /// Public helper method to be used for creating a [BottomNavigationBar] from
   /// a list of [NavigationDestination]s.
-  static Builder toBottomNavigationBar(
+  static Builder standardBottomNavigationBar(
       {required List<NavigationDestination> destinations,
       int currentIndex = 0,
       double iconSize = 24}) {
@@ -535,8 +535,9 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.smallBreakpoint: SlotLayout.from(
                       key: const Key('bottomNavigation'),
-                      builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
-                          destinations: widget.destinations),
+                      builder: (_) =>
+                          AdaptiveScaffold.standardBottomNavigationBar(
+                              destinations: widget.destinations),
                     ),
                   },
                 )

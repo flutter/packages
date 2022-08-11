@@ -182,7 +182,7 @@ class MyHomePage extends StatelessWidget {
             builder: (_) => BottomNavigationBarTheme(
                 data: const BottomNavigationBarThemeData(
                     selectedItemColor: Colors.black),
-                child: AdaptiveScaffold.toBottomNavigationBar(
+                child: AdaptiveScaffold.standardBottomNavigationBar(
                     destinations: destinations)),
           )
         },
