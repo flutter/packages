@@ -469,9 +469,13 @@ class _ItemList extends StatelessWidget {
                       suffixIcon: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                         child: CircleAvatar(
-                          radius: 18,
-                          child: Image.asset('images/woman.png'),
-                        ),
+                            radius: 18,
+                            child: Image.asset(
+                              'images/plum.png',
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            )),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
@@ -543,7 +547,14 @@ class _ItemListTile extends StatelessWidget {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    CircleAvatar(radius: 18, child: Image.asset(email.image)),
+                    CircleAvatar(
+                        radius: 18,
+                        child: Image.asset(
+                          email.image,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        )),
                     const SizedBox(width: 8),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -718,9 +729,13 @@ class _EmailTile extends StatelessWidget {
               Row(
                 children: <Widget>[
                   CircleAvatar(
-                    radius: 18,
-                    child: Image.asset(senderIcon),
-                  ),
+                      radius: 18,
+                      child: Image.asset(
+                        senderIcon,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      )),
                   const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -916,7 +931,7 @@ const List<_Item> allItems = <_Item>[
       _Email(
         sender: 'So Duri',
         recepients: 'me, Ziad and Lily',
-        image: 'images/young-man.png',
+        image: 'images/strawberry.png',
         time: '20 min',
         body:
             "I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. I'm so intrigued by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
@@ -925,7 +940,7 @@ const List<_Item> allItems = <_Item>[
       _Email(
           sender: 'Me',
           recepients: 'me, Ziad, and Lily',
-          image: 'images/woman.png',
+          image: 'images/plum.png',
           time: '4 min',
           body:
               'Yes! I forgot about that place! Im definitely up for taking a risk this week and handing control over to this mysterious noodle chef. I wonder what happens if you have allergies though? Lucky none of us have any otherwise Id be a bit concerned.',
@@ -933,7 +948,7 @@ const List<_Item> allItems = <_Item>[
       _Email(
           sender: 'Ziad Aouad',
           recepients: 'me, Ziad and Lily',
-          image: 'images/man.png',
+          image: 'images/mushroom.png',
           time: '2 min',
           body:
               'Hey guys! Im pretty sure if you tell your waiter about any food restrictions or allergies, they should be able to cater to it. Im super excited though, see yall soon!',
@@ -948,8 +963,8 @@ const List<_Item> allItems = <_Item>[
         time: '2 hours',
         body:
             'Though many people think of yoga as mostly a way to stretch out and relax, in actuality, it can provide a fantastic full-body workout that can even make you stronger.',
-        image: 'images/beauty.png',
-        bodyImage: 'images/yoga.png',
+        image: 'images/potato.png',
+        bodyImage: 'images/avocado.png',
         recepients: '',
       ),
     ],
@@ -962,7 +977,7 @@ const List<_Item> allItems = <_Item>[
         time: '10 min',
         body:
             'Moore’s Law needs a hug. The days of stuffing transistors on little silicon computer chips are numbered, and their life rafts — hardware accelerators — come with a price. ',
-        image: 'images/woman2.png',
+        image: 'images/habanero.png',
         bodyImage: '',
         recepients: '',
       ),
