@@ -243,6 +243,7 @@ class AdaptiveScaffold extends StatefulWidget {
     int selectedIndex = 0,
     bool extended = false,
     Color backgroundColor = Colors.transparent,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
     Widget? leading,
     Widget? trailing,
     Function(int)? onDestinationSelected,
@@ -259,6 +260,7 @@ class AdaptiveScaffold extends StatefulWidget {
         trailing: trailing,
         onDestinationSelected: onDestinationSelected,
         backgroundColor: backgroundColor,
+        padding: padding,
         extended: extended,
         selectedIndex: selectedIndex,
         selectedIconTheme: selectedIconTheme,
@@ -279,6 +281,7 @@ class AdaptiveScaffold extends StatefulWidget {
     int selectedIndex = 0,
     bool extended = false,
     Color backgroundColor = Colors.transparent,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
     Widget? leading,
     Widget? trailing,
     Function(int)? onDestinationSelected,
@@ -293,7 +296,7 @@ class AdaptiveScaffold extends StatefulWidget {
     }
     return Builder(builder: (BuildContext context) {
       return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: padding,
         child: SizedBox(
           width: width,
           height: MediaQuery.of(context).size.height,
