@@ -247,10 +247,6 @@ class AdaptiveScaffold extends StatefulWidget {
     Widget? leading,
     Widget? trailing,
     Function(int)? onDestinationSelected,
-    IconThemeData selectedIconTheme = const IconThemeData(color: Colors.black),
-    IconThemeData unselectedIconTheme =
-        const IconThemeData(color: Colors.black),
-    TextStyle selectedLabelTextStyle = const TextStyle(color: Colors.black),
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
     return toNavigationRail(
@@ -263,9 +259,6 @@ class AdaptiveScaffold extends StatefulWidget {
         padding: padding,
         extended: extended,
         selectedIndex: selectedIndex,
-        selectedIconTheme: selectedIconTheme,
-        unselectedIconTheme: unselectedIconTheme,
-        selectedLabelTextStyle: selectedLabelTextStyle,
         destinations: destinations
             .map((NavigationDestination e) => _toRailDestination(e))
             .toList());
@@ -333,26 +326,20 @@ class AdaptiveScaffold extends StatefulWidget {
   static Builder toBottomNavigationBar(
       {required List<NavigationDestination> destinations,
       int currentIndex = 0,
-      double iconSize = 24,
-      Color selectedItemColor = Colors.black,
-      Color backgroundColor = Colors.white}) {
+      double iconSize = 24}) {
     return Builder(
-      builder: (BuildContext context) {
-        return Theme(
-            data: Theme.of(context).copyWith(
-              canvasColor: backgroundColor,
-            ),
-            child: BottomNavigationBar(
-              backgroundColor: backgroundColor,
-              selectedItemColor: selectedItemColor,
-              currentIndex: currentIndex,
-              iconSize: iconSize,
-              items: destinations
-                  .map((NavigationDestination e) => _toBottomNavItem(e))
-                  .toList(),
+        builder: (_) => BottomNavigationBarTheme(
+              data: const BottomNavigationBarThemeData(
+                  unselectedItemColor: Colors.black,
+                  selectedItemColor: Colors.black),
+              child: BottomNavigationBar(
+                currentIndex: currentIndex,
+                iconSize: iconSize,
+                items: destinations
+                    .map((NavigationDestination e) => _toBottomNavItem(e))
+                    .toList(),
+              ),
             ));
-      },
-    );
   }
 
   /// Public helper method to be used for creating a [MasonryGrid] following m3
