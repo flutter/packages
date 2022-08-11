@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #docregion AdaptiveScaffoldDemo
 import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
+// #enddocregion AdaptiveScaffoldDemo
 
 void main() {
   runApp(const _MyApp());
@@ -40,38 +42,32 @@ class MyHomePage extends StatelessWidget {
             unselectedItemColor: Colors.black,
             selectedItemColor: Colors.black,
             backgroundColor: Colors.white),
-        child:
-            // #docregion AdaptiveScaffoldDemo
-            AdaptiveScaffold(
-                // An option to override the default breakpoints used for small, medium,
-                // and large.
-                smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
-                mediumBreakpoint:
-                    const WidthPlatformBreakpoint(begin: 700, end: 1000),
-                largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
-                useDrawer: false,
-                destinations: const <NavigationDestination>[
-                  NavigationDestination(
-                      icon: Icon(Icons.inbox), label: 'Inbox'),
-                  NavigationDestination(
-                      icon: Icon(Icons.article), label: 'Articles'),
-                  NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
-                  NavigationDestination(
-                      icon: Icon(Icons.video_call), label: 'Video')
-                ],
-                body: (_) =>
-                    GridView.count(crossAxisCount: 2, children: children),
-                smallBody: (_) => ListView.builder(
-                    itemCount: children.length,
-                    itemBuilder: (_, int idx) => children[idx]),
-                // Define a default secondaryBody.
-                secondaryBody: (_) =>
-                    Container(color: const Color.fromARGB(255, 234, 158, 192)),
-                // Override the default secondaryBody during the smallBreakpoint to be
-                // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
-                // overriden.
-                smallSecondaryBody: AdaptiveScaffold.emptyBuilder)
-        // #enddocregion AdaptiveScaffoldDemo
-        );
+        child: AdaptiveScaffold(
+            // An option to override the default breakpoints used for small, medium,
+            // and large.
+            smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
+            mediumBreakpoint:
+                const WidthPlatformBreakpoint(begin: 700, end: 1000),
+            largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
+            useDrawer: false,
+            destinations: const <NavigationDestination>[
+              NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+              NavigationDestination(
+                  icon: Icon(Icons.article), label: 'Articles'),
+              NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
+              NavigationDestination(
+                  icon: Icon(Icons.video_call), label: 'Video')
+            ],
+            body: (_) => GridView.count(crossAxisCount: 2, children: children),
+            smallBody: (_) => ListView.builder(
+                itemCount: children.length,
+                itemBuilder: (_, int idx) => children[idx]),
+            // Define a default secondaryBody.
+            secondaryBody: (_) =>
+                Container(color: const Color.fromARGB(255, 234, 158, 192)),
+            // Override the default secondaryBody during the smallBreakpoint to be
+            // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
+            // overriden.
+            smallSecondaryBody: AdaptiveScaffold.emptyBuilder));
   }
 }
