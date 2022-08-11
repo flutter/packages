@@ -18,6 +18,7 @@ abstract class RouteBase {
     this.name,
     this.routes = const <RouteBase>[],
     this.redirect = _emptyRedirect,
+    this.navigatorKey,
   }) {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, _pathParams);
@@ -225,6 +226,11 @@ abstract class RouteBase {
   /// for a complete runnable example.
   final GoRouterRedirect redirect;
 
+  /// An optional key specifying which Navigator to display this route's screen
+  /// onto. Specifying the root Navigator will stack this route onto that
+  /// Navigator instead of the nearest ShellRoute ancestor.
+  final GlobalKey<NavigatorState>? navigatorKey;
+
   /// Match this route against a location.
   RegExpMatch? matchPatternAsPrefix(String loc) =>
       _pathRE.matchAsPrefix(loc) as RegExpMatch?;
@@ -254,7 +260,7 @@ class GoRoute extends RouteBase {
     required String path,
     this.builder,
     this.pageBuilder,
-    this.navigatorKey,
+    GlobalKey<NavigatorState>? navigatorKey,
     super.name,
     GoRouterRedirect redirect = RouteBase._emptyRedirect,
     List<RouteBase> routes = const <RouteBase>[],
@@ -271,6 +277,7 @@ class GoRoute extends RouteBase {
           path: path,
           routes: routes,
           redirect: redirect,
+          navigatorKey: navigatorKey,
         );
 
   /// The path template for this route. For example "users/:userId" or
@@ -290,11 +297,6 @@ class GoRoute extends RouteBase {
   /// You can also use CupertinoPage, and for a custom page builder to use
   /// custom page transitions, you can use [CustomTransitionPage].
   final GoRouterPageBuilder? pageBuilder;
-
-  /// An optional key specifying which Navigator to display this route's screen
-  /// onto. Specifying the root Navigator will stack this route onto that
-  /// Navigator instead of the nearest ShellRoute ancestor.
-  final GlobalKey<NavigatorState>? navigatorKey;
 
   /// A custom builder for this route.
   ///
@@ -358,12 +360,14 @@ class ShellRoute extends RouteBase {
     this.defaultRoute,
     GoRouterRedirect redirect = RouteBase._emptyRedirect,
     List<RouteBase> routes = const <RouteBase>[],
-    this.navigatorKey,
-    this.shellNavigatorKey,
-  }) : super._(
+    GlobalKey<NavigatorState>? navigatorKey,
+    GlobalKey<NavigatorState>? shellNavigatorKey,
+  })  : shellNavigatorKey = shellNavigatorKey ?? GlobalKey<NavigatorState>(),
+        super._(
           path: path,
           routes: routes,
           redirect: redirect,
+          navigatorKey: navigatorKey,
         );
 
   /// The widget builder for a shell route.
@@ -374,11 +378,8 @@ class ShellRoute extends RouteBase {
   /// using redirection.
   final String? defaultRoute;
 
-  /// The navigator key that this screen route should be placed onto.
-  final GlobalKey<NavigatorState>? navigatorKey;
-
   /// The [GlobalKey] to be used to the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
-  final GlobalKey<NavigatorState>? shellNavigatorKey;
+  late final GlobalKey<NavigatorState> shellNavigatorKey;
 }

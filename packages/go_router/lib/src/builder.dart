@@ -145,7 +145,7 @@ class RouteBuilder {
             pop,
             routerNeglect,
             // Use a default unique key for the Navigator if none is provided.
-            route.shellNavigatorKey ?? state.pageKey,
+            route.shellNavigatorKey,
             newParams);
         final Widget child = result.widget;
 
@@ -241,6 +241,7 @@ class RouteBuilder {
         ),
       );
     } else {
+      // return Router(routerDelegate: _delegate,);
       return Navigator(
         key: navigatorKey,
         pages: pages,

@@ -7,6 +7,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -166,16 +167,17 @@ Future<GoRouter> createRouter(
   GoRouterRedirect? redirect,
   String initialLocation = '/',
   int redirectLimit = 5,
+  GlobalKey<NavigatorState>? navigatorKey,
 }) async {
   final GoRouter goRouter = GoRouter(
-    routes: routes,
-    redirect: redirect,
-    initialLocation: initialLocation,
-    redirectLimit: redirectLimit,
-    errorBuilder: (BuildContext context, GoRouterState state) =>
-        TestErrorScreen(state.error!),
-    debugLogDiagnostics: false,
-  );
+      routes: routes,
+      redirect: redirect,
+      initialLocation: initialLocation,
+      redirectLimit: redirectLimit,
+      errorBuilder: (BuildContext context, GoRouterState state) =>
+          TestErrorScreen(state.error!),
+      debugLogDiagnostics: false,
+      navigatorKey: navigatorKey);
   await tester.pumpWidget(
     MaterialApp.router(
       routeInformationProvider: goRouter.routeInformationProvider,
@@ -347,4 +349,11 @@ class DummyStatefulWidget extends StatefulWidget {
 class DummyStatefulWidgetState extends State<DummyStatefulWidget> {
   @override
   Widget build(BuildContext context) => Container();
+}
+
+Future<void> simulateAndroidBackButton() async {
+  final ByteData message =
+      const JSONMethodCodec().encodeMethodCall(const MethodCall('popRoute'));
+  await ServicesBinding.instance.defaultBinaryMessenger
+      .handlePlatformMessage('flutter/navigation', message, (_) {});
 }
