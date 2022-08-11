@@ -12,8 +12,8 @@ flutter run --release
 AdaptiveScaffold implements the basic visual layout structure for Material Design 3 that adapts to a variety of screens. It provides a preset of layout, including positions and animations, by handling macro changes in navigational elements and bodies based on the current features of the screen, namely screen width and platform. For example, the navigational elements would be a BottomNavigationBar on a small mobile device and a NavigationRail on larger devices. The body is the primary screen that takes up the space left by the navigational elements. The secondaryBody acts as an option to split the space between two panes for purposes such as having a detail view. There is some automatic functionality with foldables to handle the split between panels properly. AdaptiveScaffold is much simpler to use but is not the best if you would like high customizability. Apps that would like more refined layout and/or animation should use AdaptiveLayout.
 ### Example Usage:
 
-<?code-excerpt "adaptive_scaffold_demo.dart (AdaptiveScaffoldDemo)"?>
-```dart
+<?code-excerpt ..."?>
+```
             AdaptiveScaffold(
                 // An option to override the default breakpoints used for small, medium,
                 // and large.
@@ -44,6 +44,7 @@ AdaptiveScaffold implements the basic visual layout structure for Material Desig
                 // overriden.
                 smallSecondaryBody: AdaptiveScaffold.emptyBuilder)
 ```
+
 ## The Background Widget Suite
 These are the set of widgets that are used on a lower level and offer more customizability at a cost of more lines of code.
 #### AdaptiveLayout:
@@ -55,26 +56,11 @@ SlotLayout handles the adaptivity or the changes between widgets at certain Brea
 SlotLayout.from creates a SlotLayoutConfig holds the actual widget to be displayed and the entrance animation and exit animation.
 ### Example Usage:
 
-<?code-excerpt "adaptive_layout_demo.dart (AdaptiveLayoutDemo)"?>
-```dart
-  // Define the list of destinations to be used within the app.
-    const List<NavigationDestination> destinations = <NavigationDestination>[
-      NavigationDestination(
-          label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
-      NavigationDestination(
-          label: 'Articles',
-          icon: Icon(Icons.article_outlined, color: Colors.black)),
-      NavigationDestination(
-          label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
-      NavigationDestination(
-          label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: Colors.black)),
-    ];
-
+<?code-excerpt ..."?>
+```
     // AdaptiveLayout has a number of slots that take SlotLayouts and these
     // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
-    return AdaptiveLayout(
+    AdaptiveLayout(
       // Primary navigation config has nothing from 0 to 600 dp screen width,
       // then an unextended NavigationRail with no labels and just icons then an
       // extended NavigationRail with both icons and labels.
