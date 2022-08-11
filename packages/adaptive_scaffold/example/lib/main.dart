@@ -256,52 +256,49 @@ class _MyHomePageState extends State<MyHomePage>
               // Every SlotLayoutConfig takes a key and a builder. The builder
               // is to save memory that would be spent on initialization.
               key: const Key('primaryNavigation'),
-              builder: (_) => SizedBox(
-                width: 72,
-                height: MediaQuery.of(context).size.height,
-                // Usually it would be easier to use a builder from
-                // AdaptiveScaffold for these types of navigations but this
-                // navigation has custom staggered item animations.
-                child: AdaptiveScaffold.toNavigationRail(
-                  onDestinationSelected: (int index) {
-                    setState(() {
-                      _navigationIndex = index;
-                    });
-                  },
-                  selectedIndex: _navigationIndex,
-                  leading: ScaleTransition(
-                    scale: _controller1,
-                    child: const _ComposeIcon(),
-                  ),
-                  backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                  labelType: NavigationRailLabelType.none,
-                  destinations: <NavigationRailDestination>[
-                    slideInNavigationItem(
-                      begin: -1,
-                      controller: _controller,
-                      icon: Icons.inbox,
-                      label: 'Inbox',
-                    ),
-                    slideInNavigationItem(
-                      begin: -2,
-                      controller: _controller1,
-                      icon: Icons.article_outlined,
-                      label: 'Articles',
-                    ),
-                    slideInNavigationItem(
-                      begin: -3,
-                      controller: _controller2,
-                      icon: Icons.chat_bubble_outline,
-                      label: 'Chat',
-                    ),
-                    slideInNavigationItem(
-                      begin: -4,
-                      controller: _controller3,
-                      icon: Icons.video_call_outlined,
-                      label: 'Video',
-                    )
-                  ],
+              builder: (_) =>
+                  // Usually it would be easier to use a builder from
+                  // AdaptiveScaffold for these types of navigations but this
+                  // navigation has custom staggered item animations.
+                  AdaptiveScaffold.toNavigationRail(
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    _navigationIndex = index;
+                  });
+                },
+                selectedIndex: _navigationIndex,
+                leading: ScaleTransition(
+                  scale: _controller1,
+                  child: const _ComposeIcon(),
                 ),
+                backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                labelType: NavigationRailLabelType.none,
+                destinations: <NavigationRailDestination>[
+                  slideInNavigationItem(
+                    begin: -1,
+                    controller: _controller,
+                    icon: Icons.inbox,
+                    label: 'Inbox',
+                  ),
+                  slideInNavigationItem(
+                    begin: -2,
+                    controller: _controller1,
+                    icon: Icons.article_outlined,
+                    label: 'Articles',
+                  ),
+                  slideInNavigationItem(
+                    begin: -3,
+                    controller: _controller2,
+                    icon: Icons.chat_bubble_outline,
+                    label: 'Chat',
+                  ),
+                  slideInNavigationItem(
+                    begin: -4,
+                    controller: _controller3,
+                    icon: Icons.video_call_outlined,
+                    label: 'Video',
+                  )
+                ],
               ),
             ),
             Breakpoints.large: SlotLayout.from(
