@@ -10,23 +10,13 @@ import 'package:vector_graphics_compiler/src/svg/resolver.dart';
 import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
+import 'helpers.dart';
+import 'test_svg_strings.dart';
+
 Future<Node> parseAndResolve(String source) async {
   final Node node = await parseToNodeTree(source);
   final ResolvingVisitor visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
-}
-
-List<T> queryChildren<T extends Node>(Node node) {
-  final List<T> children = <T>[];
-  void visitor(Node child) {
-    if (child is T) {
-      children.add(child);
-    }
-    child.visitChildren(visitor);
-  }
-
-  node.visitChildren(visitor);
-  return children;
 }
 
 const String xmlString =
@@ -135,5 +125,105 @@ void main() {
 
     expect(pathNodesOld.length, pathNodesNew.length);
     expect(parentNodesOld.length, parentNodesNew.length);
+  });
+
+  test('Masks on groups', () async {
+    final VectorInstructions instructions =
+        await parse(groupMask, enableMaskingOptimizer: false);
+    expect(instructions.paths, <Path>[
+      parseSvgPathData(
+              'M 17.438 8.438 C 17.748 8.438 18 8.69 18 9 L 18 16.313 C 17.99834725871 17.24440923535 17.24341005121 17.99889920517 16.312 18 L 1.688 18 C 0.75620021668 17.99889792932 0.00110207068 17.24379978332 0 16.312 L 0 9 C 0.01271270943 8.69855860173 0.26079065383 8.46072235233 0.5625 8.46072235233 C 0.86420934617 8.46072235233 1.11228729057 8.69855860173 1.125 9 L 1.125 16.313 C 1.125 16.622 1.377 16.875 1.688 16.875 L 16.312 16.875 C 16.622 16.875 16.875 16.622 16.875 16.312 L 16.875 9 C 16.875 8.69 17.127 8.437 17.438 8.437 Z M 9 0 C 9.169 0 9.316 0.079 9.418 0.196 L 9.423 0.192 L 13.361 4.692 C 13.443 4.795 13.5 4.921 13.5 5.062 C 13.5 5.373 13.248 5.625 12.937 5.625 C 12.77572417052 5.6238681172 12.62300981305 5.55226042805 12.519 5.429 L 12.514 5.433 L 9.563 2.06 L 9.563 11.812 C 9.56299999183 12.12293630838 9.31093630838 12.3749999852 9 12.3749999852 C 8.68906369162 12.3749999852 8.43700000817 12.12293630838 8.437 11.812 L 8.437 2.06 L 5.486 5.433 C 5.37775998399 5.5529360201 5.22453705399 5.62248401669 5.063 5.625 C 4.75206368585 5.625 4.5 5.37293631415 4.5 5.062 C 4.5 4.921 4.557 4.795 4.644 4.696 L 4.639 4.692 L 8.577 0.192 C 8.68524001601 0.0720639799 8.83846294601 0.00251598331 9 0 Z',
+              PathFillType.evenOdd)
+          .transformed(const AffineMatrix(0.00000000000000006123233995736766, 1,
+              -1, 0.00000000000000006123233995736766, 21, 3)),
+      parseSvgPathData(
+              'M -3 -3 L 21 -3 L 21 21 L -3 21 Z', PathFillType.evenOdd)
+          .transformed(const AffineMatrix(1, 0, 0, 1, 3, 3)),
+      parseSvgPathData(
+              'M 17.438 8.438 C 17.748 8.438 18 8.69 18 9 L 18 16.313 C 17.99834725871 17.24440923535 17.24341005121 17.99889920517 16.312 18 L 1.688 18 C 0.75620021668 17.99889792932 0.00110207068 17.24379978332 0 16.312 L 0 9 C 0.01271270943 8.69855860173 0.26079065383 8.46072235233 0.5625 8.46072235233 C 0.86420934617 8.46072235233 1.11228729057 8.69855860173 1.125 9 L 1.125 16.313 C 1.125 16.622 1.377 16.875 1.688 16.875 L 16.312 16.875 C 16.622 16.875 16.875 16.622 16.875 16.312 L 16.875 9 C 16.875 8.69 17.127 8.437 17.438 8.437 Z M 9 0 C 9.169 0 9.316 0.079 9.418 0.196 L 9.423 0.192 L 13.361 4.692 C 13.443 4.795 13.5 4.921 13.5 5.062 C 13.5 5.373 13.248 5.625 12.937 5.625 C 12.77572417052 5.6238681172 12.62300981305 5.55226042805 12.519 5.429 L 12.514 5.433 L 9.563 2.06 L 9.563 11.812 C 9.56299999183 12.12293630838 9.31093630838 12.3749999852 9 12.3749999852 C 8.68906369162 12.3749999852 8.43700000817 12.12293630838 8.437 11.812 L 8.437 2.06 L 5.486 5.433 C 5.37775998399 5.5529360201 5.22453705399 5.62248401669 5.063 5.625 C 4.75206368585 5.625 4.5 5.37293631415 4.5 5.062 C 4.5 4.921 4.557 4.795 4.644 4.696 L 4.639 4.692 L 8.577 0.192 C 8.68524001601 0.0720639799 8.83846294601 0.00251598331 9 0 Z',
+              PathFillType.evenOdd)
+          .transformed(const AffineMatrix(1, 0, 0, 1, 3, 3)),
+    ]);
+
+    final VectorInstructions instructionsWithOptimizer = await parse(groupMask);
+    expect(instructionsWithOptimizer.paths, groupMaskForMaskingOptimizer);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xff727272))),
+      Paint(fill: Fill()),
+      Paint(fill: Fill(color: Color(0xff8e93a1))),
+      Paint(fill: Fill(color: Color(0xffffffff)))
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 2),
+      DrawCommand(DrawCommandType.mask),
+      DrawCommand(DrawCommandType.path, objectId: 2, paintId: 3),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.restore)
+    ]);
+  });
+
+  test('Handles masks with blends and gradients correctly', () async {
+    final VectorInstructions instructions = await parse(
+      blendAndMask,
+      enableClippingOptimizer: false,
+      enableMaskingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
+    expect(
+      instructions.paths,
+      <Path>[
+        PathBuilder().addOval(const Rect.fromCircle(50, 50, 50)).toPath(),
+        PathBuilder().addOval(const Rect.fromCircle(50, 50, 40)).toPath(),
+      ],
+    );
+
+    final VectorInstructions instructionsWithOptimizer =
+        await parse(blendAndMask);
+    expect(instructionsWithOptimizer.paths, blendsAndMasksForMaskingOptimizer);
+
+    const LinearGradient gradient1 = LinearGradient(
+      id: 'url(#linearGradient-3)',
+      from: Point(46.9782516, 60.9121966),
+      to: Point(60.42279469999999, 90.6839734),
+      colors: <Color>[Color(0xffffffff), Color(0xff0000ff)],
+      offsets: <double>[0.0, 1.0],
+      tileMode: TileMode.clamp,
+      unitMode: GradientUnitMode.transformed,
+    );
+    const LinearGradient gradient2 = LinearGradient(
+      id: 'url(#linearGradient-3)',
+      from: Point(47.58260128, 58.72975728),
+      to: Point(58.338235759999996, 82.54717871999999),
+      colors: <Color>[Color(0xffffffff), Color(0xff0000ff)],
+      offsets: <double>[0.0, 1.0],
+      tileMode: TileMode.clamp,
+      unitMode: GradientUnitMode.transformed,
+    );
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xffadd8e6))),
+      Paint(
+        blendMode: BlendMode.multiply,
+        fill: Fill(),
+      ),
+      Paint(
+        blendMode: BlendMode.multiply,
+        fill: Fill(color: Color(0x98ffffff), shader: gradient1),
+      ),
+      Paint(fill: Fill(color: Color(0x98ffffff), shader: gradient2)),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 2),
+      DrawCommand(DrawCommandType.mask),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 3),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.restore)
+    ]);
   });
 }

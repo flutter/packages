@@ -35,6 +35,7 @@ void main() {
       fail('error in setup');
     }
   });
+
   test('Only resolve ClipNode if .clips has one PathNode', () async {
     final Node node = await parseAndResolve(
         ''' <svg width="200px" height="200x" viewBox="0 0 200 200">
@@ -113,5 +114,52 @@ void main() {
 
     expect(pathNodesOld.length, pathNodesNew.length);
     expect(parentNodesOld.length, parentNodesNew.length);
+  });
+
+  test('Does not combine clips with multiple fill rules', () async {
+    final VectorInstructions instructions = await parse(multiClip);
+    expect(instructions.paths, <Path>[
+      parseSvgPathData(
+          'M 250,75 L 323,301 131,161 369,161 177,301 z', PathFillType.evenOdd),
+      PathBuilder().addOval(const Rect.fromCircle(400, 200, 150)).toPath(),
+      parseSvgPathData('M 250,75 L 323,301 131,161 369,161 177,301 z')
+          .transformed(AffineMatrix.identity.translated(250, 0)),
+      PathBuilder().addOval(const Rect.fromCircle(450, 300, 150)).toPath(),
+    ]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.clip, objectId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 0),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.clip, objectId: 2),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 0),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.clip, objectId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 3, paintId: 1),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.clip, objectId: 2),
+      DrawCommand(DrawCommandType.path, objectId: 3, paintId: 1),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
+  test('Combines clips where possible', () async {
+    final VectorInstructions instructions =
+        await parse(basicClip, enableClippingOptimizer: false);
+    final VectorInstructions instructionsWithOptimizer = await parse(basicClip);
+
+    expect(instructionsWithOptimizer.paths, basicClipsForClippingOptimzer);
+
+    expect(instructions.paths, <Path>[
+      PathBuilder()
+          .addOval(const Rect.fromCircle(30, 30, 20))
+          .addOval(const Rect.fromCircle(70, 70, 20))
+          .toPath(),
+      PathBuilder().addRect(const Rect.fromLTWH(10, 10, 100, 100)).toPath(),
+    ]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.clip, objectId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 0),
+      DrawCommand(DrawCommandType.restore),
+    ]);
   });
 }

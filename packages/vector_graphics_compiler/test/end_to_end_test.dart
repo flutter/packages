@@ -33,12 +33,6 @@ class TestBytesLoader extends BytesLoader {
 }
 
 void main() {
-  setUpAll(() {
-    if (!initializePathOpsFromFlutterCache()) {
-      fail('error in setup');
-    }
-  });
-
   testWidgets('Can endcode and decode simple SVGs with no errors',
       (WidgetTester tester) async {
     for (final String svg in allSvgTestStrings) {
@@ -46,6 +40,9 @@ void main() {
         xml: svg,
         debugName: 'test.svg',
         warningsAsErrors: true,
+        enableClippingOptimizer: false,
+        enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
       );
 
       await tester.pumpWidget(Center(
@@ -67,7 +64,13 @@ void main() {
 
     expect(
         () => encodeSvg(
-            xml: svgInlineImage, debugName: 'test.svg', warningsAsErrors: true),
+              xml: svgInlineImage,
+              debugName: 'test.svg',
+              warningsAsErrors: true,
+              enableClippingOptimizer: false,
+              enableMaskingOptimizer: false,
+              enableOverdrawOptimizer: false,
+            ),
         throwsA(isA<UnimplementedError>()));
   });
 
@@ -86,7 +89,13 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(xml: svg, debugName: 'test');
+    final Uint8List bytes = await encodeSvg(
+      xml: svg,
+      debugName: 'test',
+      enableClippingOptimizer: false,
+      enableMaskingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
     const VectorGraphicsCodec codec = VectorGraphicsCodec();
     final TestListener listener = TestListener();
     codec.decode(bytes.buffer.asByteData(), listener);
@@ -144,7 +153,13 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(xml: svg, debugName: 'test');
+    final Uint8List bytes = await encodeSvg(
+      xml: svg,
+      debugName: 'test',
+      enableClippingOptimizer: false,
+      enableMaskingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
     const VectorGraphicsCodec codec = VectorGraphicsCodec();
     final TestListener listener = TestListener();
     codec.decode(bytes.buffer.asByteData(), listener);
@@ -221,7 +236,13 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(xml: svg, debugName: 'test');
+    final Uint8List bytes = await encodeSvg(
+      xml: svg,
+      debugName: 'test',
+      enableClippingOptimizer: false,
+      enableMaskingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
     const VectorGraphicsCodec codec = VectorGraphicsCodec();
     final TestListener listener = TestListener();
     final ByteData data = bytes.buffer.asByteData();
@@ -244,7 +265,13 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(xml: svg, debugName: 'test');
+    final Uint8List bytes = await encodeSvg(
+      xml: svg,
+      debugName: 'test',
+      enableClippingOptimizer: false,
+      enableMaskingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
     const VectorGraphicsCodec codec = VectorGraphicsCodec();
     final TestListener listener = TestListener();
     final ByteData data = bytes.buffer.asByteData();
@@ -267,7 +294,13 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(xml: svg, debugName: 'test');
+    final Uint8List bytes = await encodeSvg(
+      xml: svg,
+      debugName: 'test',
+      enableClippingOptimizer: false,
+      enableMaskingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
     const VectorGraphicsCodec codec = VectorGraphicsCodec();
     final TestListener listener = TestListener();
     final ByteData data = bytes.buffer.asByteData();
