@@ -23,11 +23,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/woman.png
-    - images/woman2.png
-    - images/young-man.png
-    - images/man.png
-    - images/yoga.png
-    - images/beauty.png
+    - images/potato.png
+    - images/habanero.png
+    - images/strawberry.png
+    - images/plum.png
+    - images/mushroom.png
+    - images/avocado.png
 
   
