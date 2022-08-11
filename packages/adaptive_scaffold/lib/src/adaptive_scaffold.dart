@@ -233,10 +233,12 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
 
-  /// Public helper method to be used for creating a [NavigationRail] from a
-  /// list of [NavigationDestination]s. Takes in a [selectedIndex] property for
-  /// the current selected item in the [NavigationRail] and [extended] for
-  /// whether the [NavigationRail] is extended or not.
+  /// Creating a Material 3 Design Spec abiding [NavigationRail] from a
+  /// list of [NavigationDestination]s.
+  ///
+  /// Takes in a [selectedIndex] property for the current selected item in
+  /// the [NavigationRail] and [extended] for whether the [NavigationRail]
+  /// is extended or not.
   static Builder toRailFromDestinations({
     required List<NavigationDestination> destinations,
     double width = 72,
