@@ -255,7 +255,7 @@ class _MyHomePageState extends State<MyHomePage>
               // The AdaptiveScaffold builder here greatly simplifies
               // navigational elements.
               builder: (_) => AdaptiveScaffold.toRailFromDestinations(
-                  leading: const _LargeComposeButton(),
+                  leading: const _LargeComposeIcon(),
                   onDestinationSelected: (int index) {
                     setState(() {
                       _navigationIndex = index;
@@ -378,8 +378,8 @@ class _MediumComposeIcon extends StatelessWidget {
   }
 }
 
-class _LargeComposeButton extends StatelessWidget {
-  const _LargeComposeButton({
+class _LargeComposeIcon extends StatelessWidget {
+  const _LargeComposeIcon({
     Key? key,
   }) : super(key: key);
 
