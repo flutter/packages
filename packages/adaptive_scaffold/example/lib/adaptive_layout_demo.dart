@@ -104,7 +104,6 @@ class MyHomePage extends StatelessWidget {
       ],
     );
 
-    // #docregion AdaptiveLayoutDemo
     // Define the list of destinations to be used within the app.
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
@@ -194,6 +193,5 @@ class MyHomePage extends StatelessWidget {
         },
       ),
     );
-    // #enddocregion AdaptiveLayoutDemo
   }
 }
