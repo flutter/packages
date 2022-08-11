@@ -194,6 +194,6 @@ class MyHomePage extends StatelessWidget {
         },
       ),
     );
-    // #docregion AdaptiveLayoutDemo
+    // #enddocregion AdaptiveLayoutDemo
   }
 }

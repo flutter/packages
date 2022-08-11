@@ -71,8 +71,7 @@ class MyHomePage extends StatelessWidget {
                 // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
                 // overriden.
                 smallSecondaryBody: AdaptiveScaffold.emptyBuilder)
-
-        // #docregion AdaptiveScaffoldDemo
+        // #enddocregion AdaptiveScaffoldDemo
         );
   }
 }
