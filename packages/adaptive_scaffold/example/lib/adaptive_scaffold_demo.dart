@@ -37,7 +37,9 @@ class MyHomePage extends StatelessWidget {
 
     return BottomNavigationBarTheme(
         data: const BottomNavigationBarThemeData(
-            unselectedItemColor: Colors.black, selectedItemColor: Colors.black),
+            unselectedItemColor: Colors.black,
+            selectedItemColor: Colors.black,
+            backgroundColor: Colors.white),
         child: AdaptiveScaffold(
             // An option to override the default breakpoints used for small, medium,
             // and large.

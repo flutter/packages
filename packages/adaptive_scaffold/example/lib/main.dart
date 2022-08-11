@@ -117,106 +117,61 @@ class _MyHomePageState extends State<MyHomePage>
     const Color iconColor = Color.fromARGB(255, 29, 25, 43);
     final Widget trailingNavRail = Column(
       children: <Widget>[
-        const Divider(
-          color: Colors.white,
-          thickness: 1.5,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
+        const Divider(color: Colors.white, thickness: 1.5),
+        const SizedBox(height: 10),
+        Row(children: <Widget>[
+          const SizedBox(width: 22),
+          Text('Folders',
+              style: TextStyle(fontSize: 13, color: Colors.grey[700]))
+        ]),
+        const SizedBox(height: 22),
         Row(
           children: <Widget>[
-            const SizedBox(
-              width: 22,
-            ),
-            Text(
-              'Folders',
-              style: TextStyle(fontSize: 13, color: Colors.grey[700]),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 22,
-        ),
-        Row(
-          children: <Widget>[
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.folder_copy_outlined),
-              iconSize: 21,
-            ),
-            const SizedBox(
-              width: 21,
-            ),
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
             const Text('Freelance'),
           ],
         ),
-        const SizedBox(
-          height: 16,
-        ),
+        const SizedBox(height: 16),
         Row(
           children: <Widget>[
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.folder_copy_outlined),
-              iconSize: 21,
-            ),
-            const SizedBox(
-              width: 21,
-            ),
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
             const Text('Mortage'),
           ],
         ),
-        const SizedBox(
-          height: 16,
-        ),
+        const SizedBox(height: 16),
         Row(
           children: <Widget>[
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.folder_copy_outlined),
-              iconSize: 21,
-            ),
-            const SizedBox(
-              width: 21,
-            ),
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
             const Flexible(
-                child: Text(
-              'Taxes',
-              overflow: TextOverflow.ellipsis,
-            )),
+                child: Text('Taxes', overflow: TextOverflow.ellipsis))
           ],
         ),
-        const SizedBox(
-          height: 16,
-        ),
+        const SizedBox(height: 16),
         Row(
           children: <Widget>[
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.folder_copy_outlined),
-              iconSize: 21,
-            ),
-            const SizedBox(
-              width: 21,
-            ),
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
             const Flexible(
-                child: Text(
-              'Receipts',
-              overflow: TextOverflow.ellipsis,
-            )),
+                child: Text('Receipts', overflow: TextOverflow.ellipsis))
           ],
         ),
       ],
@@ -235,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage>
           icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
       NavigationDestination(
           label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: iconColor)),
+          icon: Icon(Icons.video_call_outlined, color: iconColor))
     ];
 
     // Updating the listener value.
@@ -268,36 +223,30 @@ class _MyHomePageState extends State<MyHomePage>
                 },
                 selectedIndex: _navigationIndex,
                 leading: ScaleTransition(
-                  scale: _controller1,
-                  child: const _ComposeIcon(),
-                ),
+                    scale: _controller1, child: const _ComposeIcon()),
                 backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                 labelType: NavigationRailLabelType.none,
                 destinations: <NavigationRailDestination>[
                   slideInNavigationItem(
-                    begin: -1,
-                    controller: _controller,
-                    icon: Icons.inbox,
-                    label: 'Inbox',
-                  ),
+                      begin: -1,
+                      controller: _controller,
+                      icon: Icons.inbox,
+                      label: 'Inbox'),
                   slideInNavigationItem(
-                    begin: -2,
-                    controller: _controller1,
-                    icon: Icons.article_outlined,
-                    label: 'Articles',
-                  ),
+                      begin: -2,
+                      controller: _controller1,
+                      icon: Icons.article_outlined,
+                      label: 'Articles'),
                   slideInNavigationItem(
-                    begin: -3,
-                    controller: _controller2,
-                    icon: Icons.chat_bubble_outline,
-                    label: 'Chat',
-                  ),
+                      begin: -3,
+                      controller: _controller2,
+                      icon: Icons.chat_bubble_outline,
+                      label: 'Chat'),
                   slideInNavigationItem(
-                    begin: -4,
-                    controller: _controller3,
-                    icon: Icons.video_call_outlined,
-                    label: 'Video',
-                  )
+                      begin: -4,
+                      controller: _controller3,
+                      icon: Icons.video_call_outlined,
+                      label: 'Video')
                 ],
               ),
             ),
@@ -306,69 +255,59 @@ class _MyHomePageState extends State<MyHomePage>
               // The AdaptiveScaffold builder here greatly simplifies
               // navigational elements.
               builder: (_) => AdaptiveScaffold.toRailFromDestinations(
-                leading: const _ComposeButton(),
-                onDestinationSelected: (int index) {
-                  setState(() {
-                    _navigationIndex = index;
-                  });
-                },
-                selectedIndex: _navigationIndex,
-                trailing: trailingNavRail,
-                extended: true,
-                destinations: destinations,
-              ),
+                  leading: const _ComposeButton(),
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _navigationIndex = index;
+                    });
+                  },
+                  selectedIndex: _navigationIndex,
+                  trailing: trailingNavRail,
+                  extended: true,
+                  destinations: destinations),
             ),
           },
         ),
         body: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig?>{
             Breakpoints.standard: SlotLayout.from(
-              key: const Key('body'),
-              // The conditional here is for navigation screens. The first
-              // screen shows the main screen and every other screeen shows
-              //  ExamplePage.
-              builder: (_) => (_navigationIndex == 0)
-                  ? Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
-                      child: _ItemList(
-                        selected: selected,
-                        items: allItems,
-                        selectCard: selectCard,
-                      ),
-                    )
-                  : const _ExamplePage(),
-            ),
+                key: const Key('body'),
+                // The conditional here is for navigation screens. The first
+                // screen shows the main screen and every other screeen shows
+                //  ExamplePage.
+                builder: (_) => (_navigationIndex == 0)
+                    ? Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                        child: _ItemList(
+                            selected: selected,
+                            items: allItems,
+                            selectCard: selectCard),
+                      )
+                    : const _ExamplePage()),
           },
         ),
         secondaryBody: _navigationIndex == 0
             ? SlotLayout(
                 config: <Breakpoint, SlotLayoutConfig?>{
                   Breakpoints.mediumAndUp: SlotLayout.from(
-                    // This overrides the default behavior of the secondaryBody
-                    // disappearing as it is animating out.
-                    outAnimation: AdaptiveScaffold.stayOnScreen,
-                    key: const Key('sBody'),
-                    builder: (_) => _DetailTile(item: allItems[selected ?? 0]),
-                  ),
+                      // This overrides the default behavior of the secondaryBody
+                      // disappearing as it is animating out.
+                      outAnimation: AdaptiveScaffold.stayOnScreen,
+                      key: const Key('sBody'),
+                      builder: (_) =>
+                          _DetailTile(item: allItems[selected ?? 0]))
                 },
               )
             : null,
         bottomNavigation: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig?>{
             Breakpoints.small: SlotLayout.from(
-              key: const Key('bottomNavigation'),
-              // You can define inAnimations or outAnimations to override the
-              // default offset transition.
-              outAnimation: AdaptiveScaffold.topToBottom,
-              builder: (_) => BottomNavigationBarTheme(
-                data: const BottomNavigationBarThemeData(
-                  unselectedItemColor: Colors.black,
-                  selectedItemColor: Colors.black,
-                ),
-                child: AdaptiveScaffold.toBottomNavigationBar(
-                    destinations: destinations),
-              ),
-            ),
+                key: const Key('bottomNavigation'),
+                // You can define inAnimations or outAnimations to override the
+                // default offset transition.
+                outAnimation: AdaptiveScaffold.topToBottom,
+                builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
+                    destinations: destinations))
           },
         ),
       ),
@@ -404,27 +343,23 @@ class _ComposeIcon extends StatelessWidget {
     return Column(children: <Widget>[
       Container(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 18),
-        child: const Icon(
-          Icons.menu,
-        ),
+        child: const Icon(Icons.menu),
       ),
       Container(
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 254, 215, 227),
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        width: 50,
-        height: 50,
-        child: const Icon(Icons.edit_outlined),
-      )
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 254, 215, 227),
+            borderRadius: const BorderRadius.all(Radius.circular(15)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                  offset: const Offset(0, 2))
+            ],
+          ),
+          width: 50,
+          height: 50,
+          child: const Icon(Icons.edit_outlined))
     ]);
   }
 }
@@ -444,14 +379,9 @@ class _ComposeButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const <Widget>[
-                Text(
-                  'REPLY',
-                  style: TextStyle(color: Colors.deepPurple, fontSize: 15),
-                ),
-                Icon(
-                  Icons.menu_open,
-                  size: 22,
-                )
+                Text('REPLY',
+                    style: TextStyle(color: Colors.deepPurple, fontSize: 15)),
+                Icon(Icons.menu_open, size: 22)
               ],
             )),
         const SizedBox(
@@ -466,11 +396,10 @@ class _ComposeButton extends StatelessWidget {
                 ? null
                 : <BoxShadow>[
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 2),
-                    ),
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                        offset: const Offset(0, 2)),
                   ],
           ),
           width: 200,
@@ -516,58 +445,51 @@ class _ItemList extends StatelessWidget {
                 borderRadius: const BorderRadius.all(Radius.circular(15)),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                    offset: const Offset(0, 2),
-                  ),
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: const Offset(0, 2)),
                 ],
               ),
               width: 50,
               height: 50,
-              child: const Icon(Icons.edit_outlined),
-            ),
+              child: const Icon(Icons.edit_outlined)),
       body: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Icon(Icons.search),
-                ),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: CircleAvatar(
-                    radius: 18,
-                    child: Image.asset('images/woman.png'),
-                  ),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                contentPadding: const EdgeInsets.all(25),
-                hintStyle:
-                    const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
-                hintText: 'Search replies',
-                fillColor: Colors.white,
-              ),
-            ),
-          ),
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                  decoration: InputDecoration(
+                      prefixIcon: const Padding(
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        child: Icon(Icons.search),
+                      ),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        child: CircleAvatar(
+                          radius: 18,
+                          child: Image.asset('images/woman.png'),
+                        ),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(25),
+                      hintStyle: const TextStyle(
+                          color: Color.fromARGB(255, 135, 129, 138)),
+                      hintText: 'Search replies',
+                      fillColor: Colors.white))),
           Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (BuildContext context, int index) => _ItemListTile(
+              child: ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (BuildContext context, int index) => _ItemListTile(
                 item: items[index],
                 email: items[index].emails![0],
                 selectCard: selectCard,
-                selected: selected,
-              ),
-            ),
-          ),
+                selected: selected),
+          ))
         ],
       ),
     );
@@ -598,10 +520,8 @@ class _ItemListTile extends StatelessWidget {
         // simply show the details on the secondaryBody.
         selectCard(allItems.indexOf(item));
         if (!Breakpoints.mediumAndUp.isActive(context)) {
-          Navigator.of(context).pushNamed(
-            _ExtractRouteArguments.routeName,
-            arguments: _ScreenArguments(item: item, selectCard: selectCard),
-          );
+          Navigator.of(context).pushNamed(_ExtractRouteArguments.routeName,
+              arguments: _ScreenArguments(item: item, selectCard: selectCard));
         } else {
           selectCard(allItems.indexOf(item));
         }
@@ -621,10 +541,7 @@ class _ItemListTile extends StatelessWidget {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    CircleAvatar(
-                      radius: 18,
-                      child: Image.asset(email.image),
-                    ),
+                    CircleAvatar(radius: 18, child: Image.asset(email.image)),
                     const SizedBox(width: 8),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -642,10 +559,7 @@ class _ItemListTile extends StatelessWidget {
                       decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(50))),
-                      child: Icon(
-                        Icons.star_outline,
-                        color: Colors.grey[500],
-                      ),
+                      child: Icon(Icons.star_outline, color: Colors.grey[500]),
                     ),
                   ],
                 ),
@@ -698,26 +612,24 @@ class _DetailTile extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Expanded(
-                              child: Container(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(item.title,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleLarge),
-                                        const SizedBox(
-                                          height: 7,
-                                        ),
-                                        Text('${item.emails!.length} Messages',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelSmall)
-                                      ])),
-                            ),
+                                child: Container(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(item.title,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge),
+                                          const SizedBox(height: 7),
+                                          Text(
+                                              '${item.emails!.length} Messages',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelSmall)
+                                        ]))),
                             Container(
                                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                                 child: Row(
@@ -728,48 +640,37 @@ class _DetailTile extends StatelessWidget {
                                           color: Colors.white,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(15))),
-                                      child: Icon(
-                                        Icons.restore_from_trash,
-                                        color: Colors.grey[600],
-                                      ),
+                                      child: Icon(Icons.restore_from_trash,
+                                          color: Colors.grey[600]),
                                     ),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
+                                    const SizedBox(width: 15),
                                     Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(15))),
-                                      child: Icon(
-                                        Icons.more_vert,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15))),
+                                        child: Icon(Icons.more_vert,
+                                            color: Colors.grey[600]))
                                   ],
                                 )),
                           ]),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                     ],
                   )),
               Expanded(
-                child: ListView.builder(
-                    itemCount: item.emails!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final _Email thisEmail = item.emails![index];
-                      return _EmailTile(
-                        sender: thisEmail.sender,
-                        time: thisEmail.time,
-                        senderIcon: thisEmail.image,
-                        recepients: thisEmail.recepients,
-                        body: thisEmail.body,
-                        bodyImage: thisEmail.bodyImage,
-                      );
-                    }),
-              ),
+                  child: ListView.builder(
+                      itemCount: item.emails!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final _Email thisEmail = item.emails![index];
+                        return _EmailTile(
+                            sender: thisEmail.sender,
+                            time: thisEmail.time,
+                            senderIcon: thisEmail.image,
+                            recepients: thisEmail.recepients,
+                            body: thisEmail.body,
+                            bodyImage: thisEmail.bodyImage);
+                      })),
               //Text(item.body, style: Theme.of(context).textTheme.bodyLarge),
             ],
           ),
@@ -834,10 +735,7 @@ class _EmailTile extends StatelessWidget {
                     decoration: const BoxDecoration(
                         color: Color.fromARGB(255, 245, 241, 248),
                         borderRadius: BorderRadius.all(Radius.circular(50))),
-                    child: Icon(
-                      Icons.star_outline,
-                      color: Colors.grey[500],
-                    ),
+                    child: Icon(Icons.star_outline, color: Colors.grey[500]),
                   ),
                 ],
               ),
