@@ -39,21 +39,6 @@ class MyHomePage extends StatelessWidget {
       );
     });
 
-    // Define the list of destinations to be used within the app.
-    const List<NavigationDestination> destinations = <NavigationDestination>[
-      NavigationDestination(
-          label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
-      NavigationDestination(
-          label: 'Articles',
-          icon: Icon(Icons.article_outlined, color: Colors.black)),
-      NavigationDestination(
-          label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
-      NavigationDestination(
-          label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: Colors.black)),
-    ];
-
     final Widget trailingNavRail = Column(
       children: <Widget>[
         const Divider(color: Colors.black),
@@ -118,6 +103,22 @@ class MyHomePage extends StatelessWidget {
         ),
       ],
     );
+
+    // #docregion AdaptiveLayoutDemo
+    // Define the list of destinations to be used within the app.
+    const List<NavigationDestination> destinations = <NavigationDestination>[
+      NavigationDestination(
+          label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
+      NavigationDestination(
+          label: 'Articles',
+          icon: Icon(Icons.article_outlined, color: Colors.black)),
+      NavigationDestination(
+          label: 'Chat',
+          icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
+      NavigationDestination(
+          label: 'Video',
+          icon: Icon(Icons.video_call_outlined, color: Colors.black)),
+    ];
 
     // AdaptiveLayout has a number of slots that take SlotLayouts and these
     // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
@@ -193,5 +194,6 @@ class MyHomePage extends StatelessWidget {
         },
       ),
     );
+    // #docregion AdaptiveLayoutDemo
   }
 }
