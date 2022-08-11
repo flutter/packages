@@ -130,13 +130,16 @@ class MyHomePage extends StatelessWidget {
           Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('pnav1'),
-            builder: (_) => AdaptiveScaffold.toRailFromDestinations(
-                leading: const Icon(Icons.menu), destinations: destinations),
+            builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                leading: const Icon(Icons.menu),
+                destinations: destinations
+                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .toList()),
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('pn1'),
             inAnimation: AdaptiveScaffold.leftOutIn,
-            builder: (_) => AdaptiveScaffold.toRailFromDestinations(
+            builder: (_) => AdaptiveScaffold.standardNavigationRail(
               extended: true,
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -147,7 +150,9 @@ class MyHomePage extends StatelessWidget {
                   Icon(Icons.menu_open)
                 ],
               ),
-              destinations: destinations,
+              destinations: destinations
+                  .map((_) => AdaptiveScaffold.toRailDestination(_))
+                  .toList(),
               trailing: trailingNavRail,
             ),
           ),

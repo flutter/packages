@@ -233,43 +233,22 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
 
-  /// Creating a Material 3 Design Spec abiding [NavigationRail] from a
+  /// Public helper method to be used for creating a [NavigationRailDestination] from
+  /// a [NavigationDestination].
+  static NavigationRailDestination toRailDestination(
+      NavigationDestination destination) {
+    return NavigationRailDestination(
+      label: Text(destination.label),
+      icon: destination.icon,
+    );
+  }
+
+  /// Creates a Material 3 Design Spec abiding [NavigationRail] from a
   /// list of [NavigationDestination]s.
   ///
   /// Takes in a [selectedIndex] property for the current selected item in
   /// the [NavigationRail] and [extended] for whether the [NavigationRail]
   /// is extended or not.
-  static Builder toRailFromDestinations({
-    required List<NavigationDestination> destinations,
-    double width = 72,
-    int selectedIndex = 0,
-    bool extended = false,
-    Color backgroundColor = Colors.transparent,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
-    Widget? leading,
-    Widget? trailing,
-    Function(int)? onDestinationSelected,
-    NavigationRailLabelType labelType = NavigationRailLabelType.none,
-  }) {
-    return standardNavigationRail(
-        width: width,
-        labelType: labelType,
-        leading: leading,
-        trailing: trailing,
-        onDestinationSelected: onDestinationSelected,
-        backgroundColor: backgroundColor,
-        padding: padding,
-        extended: extended,
-        selectedIndex: selectedIndex,
-        destinations: destinations
-            .map((NavigationDestination e) => _toRailDestination(e))
-            .toList());
-  }
-
-  /// Public helper method to be used for creating a [NavigationRail] from a
-  /// list of [NavigationRailDestination]s. Takes in a [selectedIndex] property for
-  /// the current selected item in the [NavigationRail] and [extended] for
-  /// whether the [NavigationRail] is extended or not.
   static Builder standardNavigationRail({
     required List<NavigationRailDestination> destinations,
     double width = 72,
@@ -298,24 +277,24 @@ class AdaptiveScaffold extends StatefulWidget {
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: NavigationRail(
-                        labelType: labelType,
-                        leading: leading,
-                        trailing: trailing,
-                        onDestinationSelected: onDestinationSelected,
-                        backgroundColor: backgroundColor,
-                        extended: extended,
-                        selectedIndex: selectedIndex,
-                        selectedIconTheme: selectedIconTheme,
-                        unselectedIconTheme: unselectedIconTheme,
-                        selectedLabelTextStyle: selectedLabelTextStyle,
-                        destinations: destinations.toList()),
+                  child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: NavigationRail(
+                    labelType: labelType,
+                    leading: leading,
+                    trailing: trailing,
+                    onDestinationSelected: onDestinationSelected,
+                    backgroundColor: backgroundColor,
+                    extended: extended,
+                    selectedIndex: selectedIndex,
+                    selectedIconTheme: selectedIconTheme,
+                    unselectedIconTheme: unselectedIconTheme,
+                    selectedLabelTextStyle: selectedLabelTextStyle,
+                    destinations: destinations,
                   ),
                 ),
-              );
+              ));
             },
           ),
         ),
@@ -494,8 +473,9 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 child: NavigationRail(
                   extended: true,
                   selectedIndex: widget.selectedIndex,
-                  destinations:
-                      widget.destinations.map(_toRailDestination).toList(),
+                  destinations: widget.destinations
+                      .map((e) => AdaptiveScaffold.toRailDestination(e))
+                      .toList(),
                   onDestinationSelected: widget.onSelectedIndexChange,
                 ),
               )
@@ -510,20 +490,24 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.mediumBreakpoint: SlotLayout.from(
                       key: const Key('primaryNavigation'),
-                      builder: (_) => AdaptiveScaffold.toRailFromDestinations(
+                      builder: (_) => AdaptiveScaffold.standardNavigationRail(
                         width: widget.navigationRailWidth,
                         selectedIndex: widget.selectedIndex,
-                        destinations: widget.destinations,
+                        destinations: widget.destinations
+                            .map((e) => AdaptiveScaffold.toRailDestination(e))
+                            .toList(),
                         onDestinationSelected: widget.onSelectedIndexChange,
                       ),
                     ),
                     widget.largeBreakpoint: SlotLayout.from(
                       key: const Key('primaryNavigation1'),
-                      builder: (_) => AdaptiveScaffold.toRailFromDestinations(
+                      builder: (_) => AdaptiveScaffold.standardNavigationRail(
                         width: widget.extendedNavigationRailWidth,
                         extended: true,
                         selectedIndex: widget.selectedIndex,
-                        destinations: widget.destinations,
+                        destinations: widget.destinations
+                            .map((e) => AdaptiveScaffold.toRailDestination(e))
+                            .toList(),
                         onDestinationSelected: widget.onSelectedIndexChange,
                       ),
                     ),
@@ -624,14 +608,6 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
       ),
     );
   }
-}
-
-NavigationRailDestination _toRailDestination(
-    NavigationDestination destination) {
-  return NavigationRailDestination(
-    label: Text(destination.label),
-    icon: destination.icon,
-  );
 }
 
 BottomNavigationBarItem _toBottomNavItem(NavigationDestination destination) {
