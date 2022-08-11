@@ -108,7 +108,8 @@ class RouteBuilder {
     Map<String, String> params,
   ) {
     final List<Page<dynamic>> pages = <Page<dynamic>>[];
-    final List<_OutOfScopePage> pagesForOutOfScopeNavigator = <_OutOfScopePage>[];
+    final List<_OutOfScopePage> pagesForOutOfScopeNavigator =
+        <_OutOfScopePage>[];
 
     for (int i = startIndex; i < matchList.matches.length; i++) {
       final RouteMatch match = matchList.matches[i];
