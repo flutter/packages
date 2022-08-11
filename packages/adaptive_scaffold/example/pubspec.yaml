@@ -12,17 +12,13 @@ dependencies:
     path: ../../adaptive_scaffold
   flutter:
     sdk: flutter
-
-
   flutter_lints: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
 flutter:
-
   uses-material-design: true
 
   assets:
