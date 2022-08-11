@@ -474,7 +474,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   extended: true,
                   selectedIndex: widget.selectedIndex,
                   destinations: widget.destinations
-                      .map((e) => AdaptiveScaffold.toRailDestination(e))
+                      .map((_) => AdaptiveScaffold.toRailDestination(_))
                       .toList(),
                   onDestinationSelected: widget.onSelectedIndexChange,
                 ),
@@ -494,7 +494,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         width: widget.navigationRailWidth,
                         selectedIndex: widget.selectedIndex,
                         destinations: widget.destinations
-                            .map((e) => AdaptiveScaffold.toRailDestination(e))
+                            .map((_) => AdaptiveScaffold.toRailDestination(_))
                             .toList(),
                         onDestinationSelected: widget.onSelectedIndexChange,
                       ),
@@ -506,7 +506,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         extended: true,
                         selectedIndex: widget.selectedIndex,
                         destinations: widget.destinations
-                            .map((e) => AdaptiveScaffold.toRailDestination(e))
+                            .map((_) => AdaptiveScaffold.toRailDestination(_))
                             .toList(),
                         onDestinationSelected: widget.onSelectedIndexChange,
                       ),
