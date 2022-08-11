@@ -223,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage>
                 },
                 selectedIndex: _navigationIndex,
                 leading: ScaleTransition(
-                    scale: _controller1, child: const _ComposeIcon()),
+                    scale: _controller1, child: const _MediumComposeIcon()),
                 backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                 labelType: NavigationRailLabelType.none,
                 destinations: <NavigationRailDestination>[
@@ -255,7 +255,7 @@ class _MyHomePageState extends State<MyHomePage>
               // The AdaptiveScaffold builder here greatly simplifies
               // navigational elements.
               builder: (_) => AdaptiveScaffold.toRailFromDestinations(
-                  leading: const _ComposeButton(),
+                  leading: const _LargeComposeButton(),
                   onDestinationSelected: (int index) {
                     setState(() {
                       _navigationIndex = index;
@@ -336,8 +336,33 @@ class _MyHomePageState extends State<MyHomePage>
   }
 }
 
-class _ComposeIcon extends StatelessWidget {
-  const _ComposeIcon({
+class _SmallComposeIcon extends StatelessWidget {
+  const _SmallComposeIcon({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 254, 215, 227),
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 2,
+                offset: const Offset(0, 2)),
+          ],
+        ),
+        width: 50,
+        height: 50,
+        child: const Icon(Icons.edit_outlined));
+  }
+}
+
+class _MediumComposeIcon extends StatelessWidget {
+  const _MediumComposeIcon({
     Key? key,
   }) : super(key: key);
 
@@ -348,27 +373,13 @@ class _ComposeIcon extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 18),
         child: const Icon(Icons.menu),
       ),
-      Container(
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 254, 215, 227),
-            borderRadius: const BorderRadius.all(Radius.circular(15)),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 2,
-                  offset: const Offset(0, 2))
-            ],
-          ),
-          width: 50,
-          height: 50,
-          child: const Icon(Icons.edit_outlined))
+      const _SmallComposeIcon(),
     ]);
   }
 }
 
-class _ComposeButton extends StatelessWidget {
-  const _ComposeButton({
+class _LargeComposeButton extends StatelessWidget {
+  const _LargeComposeButton({
     Key? key,
   }) : super(key: key);
 
@@ -442,21 +453,7 @@ class _ItemList extends StatelessWidget {
       backgroundColor: const Color.fromARGB(0, 0, 0, 0),
       floatingActionButton: Breakpoints.mediumAndUp.isActive(context)
           ? null
-          : Container(
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 254, 215, 227),
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 2)),
-                ],
-              ),
-              width: 50,
-              height: 50,
-              child: const Icon(Icons.edit_outlined)),
+          : const _SmallComposeIcon(),
       body: Column(
         children: <Widget>[
           Padding(

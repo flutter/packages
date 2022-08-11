@@ -9,7 +9,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   final Finder body = find.byKey(const Key('body'));
-  final Finder pnav = find.byKey(const Key('pnav'));
   final Finder bn = find.byKey(const Key('bn'));
 
   Future<void> updateScreen(double width, WidgetTester tester) async {
@@ -54,12 +53,10 @@ void main() {
     final WidgetBuilder? widgetBuilder = slotLayoutConfig.builder;
     final Widget Function(BuildContext) widgetFunction =
         (widgetBuilder ?? () => Container()) as Widget Function(BuildContext);
+    final BottomNavigationBarThemeData bottomNavigationBarThemeData =
+        (widgetFunction(context) as BottomNavigationBarTheme).data;
 
-    final BottomNavigationBar bottomNavigationBar =
-        (widgetFunction(context) as Builder).builder(context)
-            as BottomNavigationBar;
-
-    expect(bottomNavigationBar.iconSize, 24);
+    expect(bottomNavigationBarThemeData.selectedItemColor, Colors.black);
   });
 
   testWidgets(
