@@ -215,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage>
                   // Usually it would be easier to use a builder from
                   // AdaptiveScaffold for these types of navigations but this
                   // navigation has custom staggered item animations.
-                  AdaptiveScaffold.toNavigationRail(
+                  AdaptiveScaffold.standardNavigationRail(
                 onDestinationSelected: (int index) {
                   setState(() {
                     _navigationIndex = index;
@@ -309,7 +309,7 @@ class _MyHomePageState extends State<MyHomePage>
                 builder: (_) => BottomNavigationBarTheme(
                     data: const BottomNavigationBarThemeData(
                         selectedItemColor: Colors.black),
-                    child: AdaptiveScaffold.toBottomNavigationBar(
+                    child: AdaptiveScaffold.standardBottomNavigationBar(
                         destinations: destinations)))
           },
         ),
