@@ -11,19 +11,19 @@ import 'slot_layout.dart';
 
 /// Gutter value between different parts of the body slot depending on
 /// material 3 design spec.
-const double materialGutterValue = 8;
+const double kMaterialGutterValue = 8;
 
-/// margin value of the compact breakpoint layout according to the material
-/// design 3 spec
-const double materialCompactMinMargin = 8;
+/// Margin value of the compact breakpoint layout according to the material
+/// design 3 spec.
+const double kMaterialCompactMinMargin = 8;
 
-/// margin value of the medium breakpoint layout according to the material
-/// design 3 spec
-const double materialMediumMinMargin = 12;
+/// Margin value of the medium breakpoint layout according to the material
+/// design 3 spec.
+const double kMaterialMediumMinMargin = 12;
 
-//// margin value of the expanded breakpoint layout according to the material
-/// design 3 spec
-const double materialExpandedMinMargin = 32;
+//// Margin value of the expanded breakpoint layout according to the material
+/// design 3 spec.
+const double kMaterialExpandedMinMargin = 32;
 
 /// Implements the basic visual layout structure for
 /// [Material Design 3](https://m3.material.io/foundations/adaptive-design/overview)
@@ -81,7 +81,7 @@ class AdaptiveScaffold extends StatefulWidget {
     super.key,
     required this.destinations,
     this.selectedIndex = 0,
-    this.leadingUnExtendedNavRail,
+    this.leadingUnextendedNavRail,
     this.leadingExtendedNavRail,
     this.trailingNavRail,
     this.smallBody,
@@ -115,7 +115,7 @@ class AdaptiveScaffold extends StatefulWidget {
 
   /// Option to display a leading widget at the top of the navigation rail
   /// at the middle breakpoint.
-  final Widget? leadingUnExtendedNavRail;
+  final Widget? leadingUnextendedNavRail;
 
   /// Option to display a leading widget at the top of the navigation rail
   /// at the largest breakpoint.
@@ -359,16 +359,16 @@ class AdaptiveScaffold extends StatefulWidget {
       double? thisMargin = margin;
 
       if (currentBreakpoint == Breakpoints.small) {
-        if (thisMargin < materialCompactMinMargin) {
-          thisMargin = materialCompactMinMargin;
+        if (thisMargin < kMaterialCompactMinMargin) {
+          thisMargin = kMaterialCompactMinMargin;
         }
       } else if (currentBreakpoint == Breakpoints.medium) {
-        if (thisMargin < materialMediumMinMargin) {
-          thisMargin = materialMediumMinMargin;
+        if (thisMargin < kMaterialMediumMinMargin) {
+          thisMargin = kMaterialMediumMinMargin;
         }
       } else if (currentBreakpoint == Breakpoints.large) {
-        if (thisMargin < materialExpandedMinMargin) {
-          thisMargin = materialExpandedMinMargin;
+        if (thisMargin < kMaterialExpandedMinMargin) {
+          thisMargin = kMaterialExpandedMinMargin;
         }
       }
       return CustomScrollView(
@@ -383,8 +383,8 @@ class AdaptiveScaffold extends StatefulWidget {
               padding: EdgeInsets.all(thisMargin),
               child: MasonryGrid(
                 column: itemColumns,
-                crossAxisSpacing: materialGutterValue,
-                mainAxisSpacing: materialGutterValue,
+                crossAxisSpacing: kMaterialGutterValue,
+                mainAxisSpacing: kMaterialGutterValue,
                 children: thisWidgets,
               ),
             ),
