@@ -251,21 +251,23 @@ class _MyHomePageState extends State<MyHomePage>
               ),
             ),
             Breakpoints.large: SlotLayout.from(
-              key: const Key('primaryNavigation1'),
-              // The AdaptiveScaffold builder here greatly simplifies
-              // navigational elements.
-              builder: (_) => AdaptiveScaffold.toRailFromDestinations(
-                  leading: const _LargeComposeIcon(),
-                  onDestinationSelected: (int index) {
-                    setState(() {
-                      _navigationIndex = index;
-                    });
-                  },
-                  selectedIndex: _navigationIndex,
-                  trailing: trailingNavRail,
-                  extended: true,
-                  destinations: destinations),
-            ),
+                key: const Key('primaryNavigation1'),
+                // The AdaptiveScaffold builder here greatly simplifies
+                // navigational elements.
+                builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                      leading: const _LargeComposeIcon(),
+                      onDestinationSelected: (int index) {
+                        setState(() {
+                          _navigationIndex = index;
+                        });
+                      },
+                      selectedIndex: _navigationIndex,
+                      trailing: trailingNavRail,
+                      extended: true,
+                      destinations: destinations
+                          .map((_) => AdaptiveScaffold.toRailDestination(_))
+                          .toList(),
+                    )),
           },
         ),
         body: SlotLayout(
