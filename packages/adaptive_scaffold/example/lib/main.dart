@@ -251,68 +251,72 @@ class _MyHomePageState extends State<MyHomePage>
               ),
             ),
             Breakpoints.large: SlotLayout.from(
-                key: const Key('primaryNavigation1'),
-                // The AdaptiveScaffold builder here greatly simplifies
-                // navigational elements.
-                builder: (_) => AdaptiveScaffold.standardNavigationRail(
-                      leading: const _LargeComposeIcon(),
-                      onDestinationSelected: (int index) {
-                        setState(() {
-                          _navigationIndex = index;
-                        });
-                      },
-                      selectedIndex: _navigationIndex,
-                      trailing: trailingNavRail,
-                      extended: true,
-                      destinations: destinations
-                          .map((_) => AdaptiveScaffold.toRailDestination(_))
-                          .toList(),
-                    )),
+              key: const Key('primaryNavigation1'),
+              // The AdaptiveScaffold builder here greatly simplifies
+              // navigational elements.
+              builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                leading: const _LargeComposeIcon(),
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    _navigationIndex = index;
+                  });
+                },
+                selectedIndex: _navigationIndex,
+                trailing: trailingNavRail,
+                extended: true,
+                destinations: destinations
+                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .toList(),
+              ),
+            ),
           },
         ),
         body: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig?>{
             Breakpoints.standard: SlotLayout.from(
-                key: const Key('body'),
-                // The conditional here is for navigation screens. The first
-                // screen shows the main screen and every other screeen shows
-                //  ExamplePage.
-                builder: (_) => (_navigationIndex == 0)
-                    ? Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
-                        child: _ItemList(
-                            selected: selected,
-                            items: allItems,
-                            selectCard: selectCard),
-                      )
-                    : const _ExamplePage()),
+              key: const Key('body'),
+              // The conditional here is for navigation screens. The first
+              // screen shows the main screen and every other screeen shows
+              //  ExamplePage.
+              builder: (_) => (_navigationIndex == 0)
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                      child: _ItemList(
+                          selected: selected,
+                          items: allItems,
+                          selectCard: selectCard),
+                    )
+                  : const _ExamplePage(),
+            ),
           },
         ),
         secondaryBody: _navigationIndex == 0
             ? SlotLayout(
                 config: <Breakpoint, SlotLayoutConfig?>{
                   Breakpoints.mediumAndUp: SlotLayout.from(
-                      // This overrides the default behavior of the secondaryBody
-                      // disappearing as it is animating out.
-                      outAnimation: AdaptiveScaffold.stayOnScreen,
-                      key: const Key('sBody'),
-                      builder: (_) =>
-                          _DetailTile(item: allItems[selected ?? 0]))
+                    // This overrides the default behavior of the secondaryBody
+                    // disappearing as it is animating out.
+                    outAnimation: AdaptiveScaffold.stayOnScreen,
+                    key: const Key('sBody'),
+                    builder: (_) => _DetailTile(item: allItems[selected ?? 0]),
+                  )
                 },
               )
             : null,
         bottomNavigation: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig?>{
             Breakpoints.small: SlotLayout.from(
-                key: const Key('bottomNavigation'),
-                // You can define inAnimations or outAnimations to override the
-                // default offset transition.
-                outAnimation: AdaptiveScaffold.topToBottom,
-                builder: (_) => BottomNavigationBarTheme(
-                    data: const BottomNavigationBarThemeData(
-                        selectedItemColor: Colors.black),
-                    child: AdaptiveScaffold.standardBottomNavigationBar(
-                        destinations: destinations)))
+              key: const Key('bottomNavigation'),
+              // You can define inAnimations or outAnimations to override the
+              // default offset transition.
+              outAnimation: AdaptiveScaffold.topToBottom,
+              builder: (_) => BottomNavigationBarTheme(
+                data: const BottomNavigationBarThemeData(
+                    selectedItemColor: Colors.black),
+                child: AdaptiveScaffold.standardBottomNavigationBar(
+                    destinations: destinations),
+              ),
+            )
           },
         ),
       ),
@@ -326,15 +330,17 @@ class _MyHomePageState extends State<MyHomePage>
     required String label,
   }) {
     return NavigationRailDestination(
-        icon: SlideTransition(
-            position: Tween<Offset>(
-              begin: Offset(begin, 0),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic),
-            ),
-            child: Icon(icon)),
-        label: Text(label));
+      icon: SlideTransition(
+        position: Tween<Offset>(
+          begin: Offset(begin, 0),
+          end: Offset.zero,
+        ).animate(
+          CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic),
+        ),
+        child: Icon(icon),
+      ),
+      label: Text(label),
+    );
   }
 }
 
@@ -346,20 +352,22 @@ class _SmallComposeIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 254, 215, 227),
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 2,
-                offset: const Offset(0, 2)),
-          ],
-        ),
-        width: 50,
-        height: 50,
-        child: const Icon(Icons.edit_outlined));
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 254, 215, 227),
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      width: 50,
+      height: 50,
+      child: const Icon(Icons.edit_outlined),
+    );
   }
 }
 
@@ -391,18 +399,17 @@ class _LargeComposeIcon extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(8.0, 5, 0, 12),
       child: Column(children: <Widget>[
         Container(
-            padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const <Widget>[
-                Text('REPLY',
-                    style: TextStyle(color: Colors.deepPurple, fontSize: 15)),
-                Icon(Icons.menu_open, size: 22)
-              ],
-            )),
-        const SizedBox(
-          height: 10,
+          padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const <Widget>[
+              Text('REPLY',
+                  style: TextStyle(color: Colors.deepPurple, fontSize: 15)),
+              Icon(Icons.menu_open, size: 22)
+            ],
+          ),
         ),
+        const SizedBox(height: 10),
         Container(
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
@@ -412,10 +419,11 @@ class _LargeComposeIcon extends StatelessWidget {
                 ? null
                 : <BoxShadow>[
                     BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 1,
-                        blurRadius: 2,
-                        offset: const Offset(0, 2)),
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: const Offset(0, 2),
+                    ),
                   ],
           ),
           width: 200,
@@ -459,43 +467,47 @@ class _ItemList extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                  decoration: InputDecoration(
-                      prefixIcon: const Padding(
-                        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                        child: Icon(Icons.search),
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                  prefixIcon: const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Icon(Icons.search),
+                  ),
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: CircleAvatar(
+                      radius: 18,
+                      child: Image.asset(
+                        'images/plum.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
                       ),
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                        child: CircleAvatar(
-                            radius: 18,
-                            child: Image.asset(
-                              'images/plum.png',
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            )),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      contentPadding: const EdgeInsets.all(25),
-                      hintStyle: const TextStyle(
-                          color: Color.fromARGB(255, 135, 129, 138)),
-                      hintText: 'Search replies',
-                      fillColor: Colors.white))),
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  contentPadding: const EdgeInsets.all(25),
+                  hintStyle: const TextStyle(
+                      color: Color.fromARGB(255, 135, 129, 138)),
+                  hintText: 'Search replies',
+                  fillColor: Colors.white),
+            ),
+          ),
           Expanded(
-              child: ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (BuildContext context, int index) => _ItemListTile(
-                item: items[index],
-                email: items[index].emails![0],
-                selectCard: selectCard,
-                selected: selected),
-          ))
+            child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (BuildContext context, int index) => _ItemListTile(
+                  item: items[index],
+                  email: items[index].emails![0],
+                  selectCard: selectCard,
+                  selected: selected),
+            ),
+          )
         ],
       ),
     );
@@ -536,10 +548,11 @@ class _ItemListTile extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-              color: selected == allItems.indexOf(item)
-                  ? const Color.fromARGB(255, 234, 222, 255)
-                  : const Color.fromARGB(255, 243, 237, 247),
-              borderRadius: const BorderRadius.all(Radius.circular(10))),
+            color: selected == allItems.indexOf(item)
+                ? const Color.fromARGB(255, 234, 222, 255)
+                : const Color.fromARGB(255, 243, 237, 247),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -571,8 +584,9 @@ class _ItemListTile extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8.0),
                       decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(50))),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      ),
                       child: Icon(Icons.star_outline, color: Colors.grey[500]),
                     ),
                   ],
@@ -586,10 +600,11 @@ class _ItemListTile extends StatelessWidget {
                         color: Colors.grey[700], height: 1.35, fontSize: 14.5)),
                 const SizedBox(height: 9),
                 SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: (email.bodyImage != '')
-                        ? Image.asset(email.bodyImage)
-                        : Container()),
+                  width: MediaQuery.of(context).size.width,
+                  child: (email.bodyImage != '')
+                      ? Image.asset(email.bodyImage)
+                      : Container(),
+                ),
               ],
             ),
           ),
@@ -627,24 +642,24 @@ class _DetailTile extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Expanded(
-                                child: Container(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(item.title,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleLarge),
-                                          const SizedBox(height: 7),
-                                          Text(
-                                              '${item.emails!.length} Messages',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .labelSmall)
-                                        ]))),
+                              child: Container(
+                                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(item.title,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge),
+                                    const SizedBox(height: 7),
+                                    Text('${item.emails!.length} Messages',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall)
+                                  ],
+                                ),
+                              ),
+                            ),
                             Container(
                                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                                 child: Row(
@@ -652,21 +667,23 @@ class _DetailTile extends StatelessWidget {
                                     Container(
                                       padding: const EdgeInsets.all(8.0),
                                       decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(15))),
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15)),
+                                      ),
                                       child: Icon(Icons.restore_from_trash,
                                           color: Colors.grey[600]),
                                     ),
                                     const SizedBox(width: 15),
                                     Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: const BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(15))),
-                                        child: Icon(Icons.more_vert,
-                                            color: Colors.grey[600]))
+                                      padding: const EdgeInsets.all(8.0),
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15))),
+                                      child: Icon(Icons.more_vert,
+                                          color: Colors.grey[600]),
+                                    )
                                   ],
                                 )),
                           ]),
@@ -780,43 +797,44 @@ class _EmailTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   SizedBox(
-                      width: 126,
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0))),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color.fromARGB(255, 245, 241, 248)),
-                          side: MaterialStateProperty.all(const BorderSide(
-                              width: 0.0, color: Colors.transparent)),
+                    width: 126,
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
                         ),
-                        child: Text(
-                          'Reply',
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color.fromARGB(255, 245, 241, 248)),
+                        side: MaterialStateProperty.all(const BorderSide(
+                            width: 0.0, color: Colors.transparent)),
+                      ),
+                      child: Text('Reply',
                           style:
-                              TextStyle(color: Colors.grey[700], fontSize: 12),
-                        ),
-                      )),
+                              TextStyle(color: Colors.grey[700], fontSize: 12)),
+                    ),
+                  ),
                   SizedBox(
-                      width: 126,
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0))),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color.fromARGB(255, 245, 241, 248)),
-                          side: MaterialStateProperty.all(const BorderSide(
-                              width: 0.0, color: Colors.transparent)),
+                    width: 126,
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
                         ),
-                        child: Text(
-                          'Reply all',
-                          style:
-                              TextStyle(color: Colors.grey[700], fontSize: 12),
-                        ),
-                      )),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color.fromARGB(255, 245, 241, 248)),
+                        side: MaterialStateProperty.all(const BorderSide(
+                            width: 0.0, color: Colors.transparent)),
+                      ),
+                      child: Text(
+                        'Reply all',
+                        style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],
