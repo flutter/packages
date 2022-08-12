@@ -2,11 +2,41 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../shared/data.dart';
+final Map<String, dynamic> _families = const JsonDecoder().convert('''
+{
+  "f1": {
+    "name": "Doe",
+    "people": {
+      "p1": {
+        "name": "Jane",
+        "age": 23
+      },
+      "p2": {
+        "name": "John",
+        "age": 6
+      }
+    }
+  },
+  "f2": {
+    "name": "Wong",
+    "people": {
+      "p1": {
+        "name": "June",
+        "age": 51
+      },
+      "p2": {
+        "name": "Xin",
+        "age": 44
+      }
+    }
+  }
+}
+''');
 
 void main() => runApp(App());
 
@@ -18,20 +48,13 @@ class App extends StatelessWidget {
   /// The title of the app.
   static const String title = 'GoRouter Example: Extra Parameter';
 
-  static const bool _alertOnWeb = true;
-
   @override
-  Widget build(BuildContext context) => _alertOnWeb && kIsWeb
-      ? const MaterialApp(
-          title: title,
-          home: NoExtraParamOnWebScreen(),
-        )
-      : MaterialApp.router(
-          routeInformationProvider: _router.routeInformationProvider,
-          routeInformationParser: _router.routeInformationParser,
-          routerDelegate: _router.routerDelegate,
-          title: title,
-        );
+  Widget build(BuildContext context) => MaterialApp.router(
+        routeInformationProvider: _router.routeInformationProvider,
+        routeInformationParser: _router.routeInformationParser,
+        routerDelegate: _router.routerDelegate,
+        title: title,
+      );
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
@@ -39,30 +62,17 @@ class App extends StatelessWidget {
         name: 'home',
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
-            HomeScreen(families: Families.data),
+            const HomeScreen(),
         routes: <GoRoute>[
           GoRoute(
             name: 'family',
             path: 'family',
             builder: (BuildContext context, GoRouterState state) {
               final Map<String, Object> params =
-                  state.extra! as Map<String, Object>;
-              final Family family = params['family']! as Family;
-              return FamilyScreen(family: family);
+                  state.extra! as Map<String, String>;
+              final String fid = params['fid']! as String;
+              return FamilyScreen(fid: fid);
             },
-            routes: <GoRoute>[
-              GoRoute(
-                name: 'person',
-                path: 'person',
-                builder: (BuildContext context, GoRouterState state) {
-                  final Map<String, Object> params =
-                      state.extra! as Map<String, Object>;
-                  final Family family = params['family']! as Family;
-                  final Person person = params['person']! as Person;
-                  return PersonScreen(family: family, person: person);
-                },
-              ),
-            ],
           ),
         ],
       ),
@@ -73,21 +83,18 @@ class App extends StatelessWidget {
 /// The home screen that shows a list of families.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({required this.families, Key? key}) : super(key: key);
-
-  /// The list of families.
-  final List<Family> families;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text(App.title)),
         body: ListView(
           children: <Widget>[
-            for (final Family f in families)
+            for (final String fid in _families.keys)
               ListTile(
-                title: Text(f.name),
+                title: Text(_families[fid]['name']),
                 onTap: () => context
-                    .goNamed('family', extra: <String, Object?>{'family': f}),
+                    .goNamed('family', extra: <String, String>{'fid': fid}),
               )
           ],
         ),
@@ -97,65 +104,25 @@ class HomeScreen extends StatelessWidget {
 /// The screen that shows a list of persons in a family.
 class FamilyScreen extends StatelessWidget {
   /// Creates a [FamilyScreen].
-  const FamilyScreen({required this.family, Key? key}) : super(key: key);
+  const FamilyScreen({required this.fid, Key? key}) : super(key: key);
 
   /// The family to display.
-  final Family family;
+  final String fid;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(family.name)),
-        body: ListView(
-          children: <Widget>[
-            for (final Person p in family.people)
-              ListTile(
-                title: Text(p.name),
-                onTap: () => context.go(
-                  context.namedLocation('person'),
-                  extra: <String, Object>{'family': family, 'person': p},
-                ),
-              ),
-          ],
-        ),
-      );
-}
-
-/// The person screen.
-class PersonScreen extends StatelessWidget {
-  /// Creates a [PersonScreen].
-  const PersonScreen({required this.family, required this.person, Key? key})
-      : super(key: key);
-
-  /// The family this person belong to.
-  final Family family;
-
-  /// The person to be displayed.
-  final Person person;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(person.name)),
-        body: Text('${person.name} ${family.name} is ${person.age} years old'),
-      );
-}
-
-/// A screen that explains this example does not work on web platform.
-class NoExtraParamOnWebScreen extends StatelessWidget {
-  /// Creates a [NoExtraParamOnWebScreen].
-  const NoExtraParamOnWebScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[
-              Text("The `extra` param doesn't mix with the web:"),
-              Text("There's no support for the brower's Back button or"
-                  ' deep linking'),
-            ],
-          ),
-        ),
-      );
+  Widget build(BuildContext context) {
+    final Map<String, dynamic> people =
+        _families[fid]['people'] as Map<String, dynamic>;
+    return Scaffold(
+      appBar: AppBar(title: Text(_families[fid]['name'])),
+      body: ListView(
+        children: <Widget>[
+          for (final dynamic p in people.values)
+            ListTile(
+              title: Text(p['name']),
+            ),
+        ],
+      ),
+    );
+  }
 }
