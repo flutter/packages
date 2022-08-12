@@ -19,16 +19,16 @@ extension GoRouterHelper on BuildContext {
           .namedLocation(name, params: params, queryParams: queryParams);
 
   /// Navigate to a location.
-  void go(String location, {Object? extra}) =>
-      GoRouter.of(this).go(location, extra: extra);
+  Future<T?> go<T extends Object?>(String location, {Object? extra}) async =>
+      GoRouter.of(this).go<T?>(location, extra: extra);
 
   /// Navigate to a named route.
-  void goNamed(
+  Future<T?> goNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
-  }) =>
+  }) async =>
       GoRouter.of(this).goNamed(
         name,
         params: params,
@@ -77,13 +77,13 @@ extension GoRouterHelper on BuildContext {
   /// See also:
   /// * [goNamed] which navigates a named route.
   /// * [pushNamed] which pushes a named route onto the page stack.
-  void replaceNamed(
+  Future<T?> replaceNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
-      GoRouter.of(this).replaceNamed(
+      GoRouter.of(this).replaceNamed<T?>(
         name,
         params: params,
         queryParams: queryParams,

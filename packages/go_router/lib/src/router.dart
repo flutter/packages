@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -152,25 +154,29 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
-  void go(String location, {Object? extra}) {
+  Future<T?> go<T extends Object?>(String location, {Object? extra}) async {
     assert(() {
       log.info('going to $location');
       return true;
     }());
     _routeInformationProvider.value =
         RouteInformation(location: location, state: extra);
+    // Create a completer for the promise and store it in the completers map.
+    final Completer<T?> completer = Completer<T?>();
+    _routerDelegate.completers[location] = completer;
+    return completer.future;
   }
 
   /// Navigate to a named route w/ optional parameters, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
   /// Navigate to the named route.
-  void goNamed(
+  Future<T?> goNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
-  }) =>
-      go(
+  }) async =>
+      go<T?>(
         namedLocation(name, params: params, queryParams: queryParams),
         extra: extra,
       );
@@ -185,7 +191,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     final RouteMatchList matches =
         await _routeInformationParser.parseRouteInformation(
             DebugGoRouteInformation(location: location, state: extra));
-    return _routerDelegate.push<T>(matches.last);
+    return _routerDelegate.push<T?>(matches.last);
   }
 
   /// Push a named route asynchronously onto the page stack w/ optional
@@ -196,7 +202,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
-      push<T>(
+      push<T?>(
         namedLocation(name, params: params, queryParams: queryParams),
         extra: extra,
       );
@@ -225,7 +231,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         await routeInformationParser.parseRouteInformation(
       DebugGoRouteInformation(location: location, state: extra),
     );
-    return routerDelegate.replace<T>(matchList.matches.last);
+    return routerDelegate.replace<T?>(matchList.matches.last);
   }
 
   /// Replaces the top-most page of the page stack with the named route w/
@@ -235,17 +241,16 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// See also:
   /// * [goNamed] which navigates a named route.
   /// * [pushNamed] which pushes a named route onto the page stack.
-  void replaceNamed(
+  Future<T?> replaceNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
-  }) {
-    replace(
-      namedLocation(name, params: params, queryParams: queryParams),
-      extra: extra,
-    );
-  }
+  }) =>
+      replace<T?>(
+        namedLocation(name, params: params, queryParams: queryParams),
+        extra: extra,
+      );
 
   /// Refresh the route.
   void refresh() {

@@ -45,7 +45,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
 
   /// The list of completers for the promises when pushing asynchronous routes.
-  final Map<String, Completer<dynamic>> _completers =
+  final Map<String, Completer<dynamic>> completers =
       <String, Completer<dynamic>>{};
   RouteMatchList _matches = RouteMatchList.empty();
   final Map<String, int> _pushCounts = <String, int>{};
@@ -57,7 +57,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     // Create a completer for the promise and store it in the completers map.
     final Completer<T?> completer = Completer<T?>();
-    _completers[fullPath] = completer;
+    completers[fullPath] = completer;
 
     final int count = (_pushCounts[fullPath] ?? 0) + 1;
     _pushCounts[fullPath] = count;
@@ -90,13 +90,13 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     // If there is a promise for this page, complete it.
     final Completer<T?>? completer =
-        _completers[last.fullpath] as Completer<T?>?;
+        completers[last.fullpath] as Completer<T?>?;
     if (completer != null) {
       completer.complete(value);
     }
 
     // Remove promise from completers map.
-    _completers.remove(last.fullpath);
+    completers.remove(last.fullpath);
     _matches.pop();
     notifyListeners();
   }
@@ -110,10 +110,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     // Create a completer for the promise and store it in the completers map.
     final Completer<T?> completer = Completer<T?>();
-    _completers[match.fullpath] = completer;
+    completers[match.fullpath] = completer;
 
     // Remove the old promise from the completers map.
-    _completers.remove(lastPath);
+    completers.remove(lastPath);
 
     _matches.matches.last = match;
     notifyListeners();
