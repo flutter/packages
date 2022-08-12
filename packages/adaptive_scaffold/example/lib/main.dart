@@ -302,7 +302,9 @@ class _MyHomePageState extends State<MyHomePage>
                     // disappearing as it is animating out.
                     outAnimation: AdaptiveScaffold.stayOnScreen,
                     key: const Key('sBody'),
-                    builder: (_) => _DetailTile(item: allItems[selected ?? 0]),
+                    builder: (_) => SafeArea(
+                      child: _DetailTile(item: allItems[selected ?? 0]),
+                    ),
                   )
                 },
               )
