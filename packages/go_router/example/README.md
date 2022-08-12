@@ -25,6 +25,11 @@ An example to demonstrate how to navigate using named locations instead of URLs.
 
 An example to demonstrate how to use redirect to handle a sign-in flow.
 
+## [Extra parameter](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_parameter.dart)
+`flutter run lib/extra_parameter.dart`
+
+An example to demonstrate how to use extra parameter when navigate between locations.
+
 ## [books app](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/books)
 `flutter run lib/books/main.dart`
 

@@ -1,6 +1,7 @@
-## NEXT
+## 4.3.0
 
 - Cleans up examples
+- Adds BrowserState to support `extra` parameter in web platform.
 
 ## 4.2.7
 

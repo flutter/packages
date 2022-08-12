@@ -152,6 +152,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
+  ///
+  /// The `extra` provides a different way to send additional data that is not
+  /// part of the location string. If the application is targeting web platform,
+  /// consider use [BrowserState] hold the data. See
+  /// [Extra parameter](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_param.dart)
+  /// for a runnable example.
   void go(String location, {Object? extra}) {
     assert(() {
       log.info('going to $location');
@@ -164,6 +170,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Navigate to a named route w/ optional parameters, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
   /// Navigate to the named route.
+  ///
+  /// The `extra` provides a different way to send additional data that is not
+  /// part of the location string. If the application is targeting web platform,
+  /// consider use [BrowserState] hold the data. See
+  /// [Extra parameter](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_param.dart)
+  /// for a runnable example.
   void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
@@ -177,6 +189,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
+  ///
+  /// The `extra` provides a different way to send additional data that is not
+  /// part of the location string. If the application is targeting web platform,
+  /// consider use [BrowserState] hold the data. See
+  /// [Extra parameter](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_param.dart)
+  /// for a runnable example.
   void push(String location, {Object? extra}) {
     assert(() {
       log.info('pushing $location');
@@ -192,6 +210,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Push a named route onto the page stack w/ optional parameters, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  ///
+  /// The `extra` provides a different way to send additional data that is not
+  /// part of the location string. If the application is targeting web platform,
+  /// consider use [BrowserState] hold the data. See
+  /// [Extra parameter](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_param.dart)
+  /// for a runnable example.
   void pushNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
@@ -205,6 +229,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Replaces the top-most page of the page stack with the given URL location
   /// w/ optional query parameters, e.g. `/family/f2/person/p1?color=blue`.
+  ///
+  ///
+  /// The `extra` provides a different way to send additional data that is not
+  /// part of the location string. If the application is targeting web platform,
+  /// consider use [BrowserState] hold the data. See
+  /// [Extra parameter](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_param.dart)
+  /// for a runnable example.
   ///
   /// See also:
   /// * [go] which navigates to the location.
@@ -222,6 +253,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Replaces the top-most page of the page stack with the named route w/
   /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
   /// 'p1'}`.
+  ///
+  /// The `extra` provides a different way to send additional data that is not
+  /// part of the location string. If the application is targeting web platform,
+  /// consider use [BrowserState] hold the data. See
+  /// [Extra parameter](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_param.dart)
+  /// for a runnable example.
   ///
   /// See also:
   /// * [goNamed] which navigates a named route.

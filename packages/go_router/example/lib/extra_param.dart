@@ -7,6 +7,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+// This scenario demonstrates how to use the extra parameter.
+//
+// The example uses the extra parameter to send addition `fid` along with the
+// URL. The BrowserState is used for supporting web platform.
+
 final Map<String, dynamic> _families = const JsonDecoder().convert('''
 {
   "f1": {
@@ -68,8 +73,8 @@ class App extends StatelessWidget {
             name: 'family',
             path: 'family',
             builder: (BuildContext context, GoRouterState state) {
-              final Map<String, Object> params =
-                  state.extra! as Map<String, String>;
+              final dynamic params = const JsonDecoder()
+                  .convert((state.extra! as BrowserState).jsonString);
               final String fid = params['fid']! as String;
               return FamilyScreen(fid: fid);
             },
@@ -93,8 +98,12 @@ class HomeScreen extends StatelessWidget {
             for (final String fid in _families.keys)
               ListTile(
                 title: Text(_families[fid]['name']),
-                onTap: () => context
-                    .goNamed('family', extra: <String, String>{'fid': fid}),
+                onTap: () {
+                  final BrowserState state = BrowserState(
+                      jsonString: const JsonEncoder()
+                          .convert(<String, String>{'fid': fid}));
+                  context.goNamed('family', extra: state);
+                },
               )
           ],
         ),

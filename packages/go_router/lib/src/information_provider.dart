@@ -6,6 +6,39 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'parser.dart';
 
+/// A data class that can be serialized and stored into browser history entry.
+///
+/// Passing an instance of this class into the `extra` parameter makes the
+/// browser store to memorize data in this instance when handling browser
+/// backward and forward button, e.g pressing backward button in a browser will
+/// send back the BrowserState that associated with the URL.
+///
+/// {@tool snippet}
+/// To create a [BrowserState] with the data, the data must be encoded through
+/// JSON codec.
+///
+/// ```dart
+/// ElevatedButton(
+///   child: const Text('button'),
+///   onPressed: () {
+///     final Map<String, String> data = <String, String>{
+///       'id': '123',
+///     };
+///     final BrowserState extra = BrowserState(
+///       jsonString: const JsonEncoder.convert(data),
+///     );
+///     context.go('/user', extra);
+///   }
+/// )
+/// {@end-tool}
+class BrowserState {
+  /// Creates an [BrowserState] with a JSON encoded string.
+  const BrowserState({required this.jsonString});
+
+  /// A JSON encoded string for the data.
+  final String jsonString;
+}
+
 /// The [RouteInformationProvider] created by go_router.
 class GoRouteInformationProvider extends RouteInformationProvider
     with WidgetsBindingObserver, ChangeNotifier {
@@ -32,10 +65,14 @@ class GoRouteInformationProvider extends RouteInformationProvider
         (type == RouteInformationReportingType.none &&
             _valueInEngine.location == routeInformation.location);
     SystemNavigator.selectMultiEntryHistory();
-    // TODO(chunhtai): report extra to browser through state if possible
-    // See https://github.com/flutter/flutter/issues/108142
+    Object? effectiveState;
+    if (routeInformation.state != null &&
+        routeInformation.state is BrowserState) {
+      effectiveState = (routeInformation.state! as BrowserState).jsonString;
+    }
     SystemNavigator.routeInformationUpdated(
       location: routeInformation.location!,
+      state: effectiveState,
       replace: replace,
     );
     _value = routeInformation;
@@ -99,7 +136,15 @@ class GoRouteInformationProvider extends RouteInformationProvider
   Future<bool> didPushRouteInformation(
       RouteInformation routeInformation) async {
     assert(hasListeners);
-    _platformReportsNewRouteInformation(routeInformation);
+    Object? effectiveState;
+    if (routeInformation.state != null && routeInformation.state is String) {
+      effectiveState =
+          BrowserState(jsonString: routeInformation.state! as String);
+    }
+    _platformReportsNewRouteInformation(RouteInformation(
+      location: routeInformation.location,
+      state: effectiveState,
+    ));
     return true;
   }
 
