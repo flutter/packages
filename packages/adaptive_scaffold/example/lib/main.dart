@@ -228,25 +228,29 @@ class _MyHomePageState extends State<MyHomePage>
                 labelType: NavigationRailLabelType.none,
                 destinations: <NavigationRailDestination>[
                   slideInNavigationItem(
-                      begin: -1,
-                      controller: _controller,
-                      icon: Icons.inbox,
-                      label: 'Inbox'),
+                    begin: -1,
+                    controller: _controller,
+                    icon: Icons.inbox,
+                    label: 'Inbox',
+                  ),
                   slideInNavigationItem(
-                      begin: -2,
-                      controller: _controller1,
-                      icon: Icons.article_outlined,
-                      label: 'Articles'),
+                    begin: -2,
+                    controller: _controller1,
+                    icon: Icons.article_outlined,
+                    label: 'Articles',
+                  ),
                   slideInNavigationItem(
-                      begin: -3,
-                      controller: _controller2,
-                      icon: Icons.chat_bubble_outline,
-                      label: 'Chat'),
+                    begin: -3,
+                    controller: _controller2,
+                    icon: Icons.chat_bubble_outline,
+                    label: 'Chat',
+                  ),
                   slideInNavigationItem(
-                      begin: -4,
-                      controller: _controller3,
-                      icon: Icons.video_call_outlined,
-                      label: 'Video')
+                    begin: -4,
+                    controller: _controller3,
+                    icon: Icons.video_call_outlined,
+                    label: 'Video',
+                  )
                 ],
               ),
             ),
@@ -561,13 +565,14 @@ class _ItemListTile extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     CircleAvatar(
-                        radius: 18,
-                        child: Image.asset(
-                          email.image,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        )),
+                      radius: 18,
+                      child: Image.asset(
+                        email.image,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -691,18 +696,20 @@ class _DetailTile extends StatelessWidget {
                     ],
                   )),
               Expanded(
-                  child: ListView.builder(
-                      itemCount: item.emails!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final _Email thisEmail = item.emails![index];
-                        return _EmailTile(
-                            sender: thisEmail.sender,
-                            time: thisEmail.time,
-                            senderIcon: thisEmail.image,
-                            recepients: thisEmail.recepients,
-                            body: thisEmail.body,
-                            bodyImage: thisEmail.bodyImage);
-                      })),
+                child: ListView.builder(
+                  itemCount: item.emails!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final _Email thisEmail = item.emails![index];
+                    return _EmailTile(
+                        sender: thisEmail.sender,
+                        time: thisEmail.time,
+                        senderIcon: thisEmail.image,
+                        recepients: thisEmail.recepients,
+                        body: thisEmail.body,
+                        bodyImage: thisEmail.bodyImage);
+                  },
+                ),
+              ),
               //Text(item.body, style: Theme.of(context).textTheme.bodyLarge),
             ],
           ),
@@ -746,13 +753,14 @@ class _EmailTile extends StatelessWidget {
               Row(
                 children: <Widget>[
                   CircleAvatar(
-                      radius: 18,
-                      child: Image.asset(
-                        senderIcon,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      )),
+                    radius: 18,
+                    child: Image.asset(
+                      senderIcon,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -952,7 +960,7 @@ const List<_Item> allItems = <_Item>[
         image: 'images/strawberry.png',
         time: '20 min',
         body:
-            "I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. I'm so intrigued by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec gravida tellus, vel scelerisque nisi. Mauris egestas, augue nec dictum tempus, diam sapien luctus odio, a posuere sem neque at nulla. Vivamus pulvinar nisi et dapibus dapibus. Donec euismod pellentesque ultrices. Vivamus quis condimentum metus, in venenatis lorem. Proin suscipit tincidunt eleifend. Praesent a nisi ac ipsum sodales gravida.',
         bodyImage: '',
       ),
       _Email(
@@ -961,7 +969,7 @@ const List<_Item> allItems = <_Item>[
           image: 'images/plum.png',
           time: '4 min',
           body:
-              'Yes! I forgot about that place! Im definitely up for taking a risk this week and handing control over to this mysterious noodle chef. I wonder what happens if you have allergies though? Lucky none of us have any otherwise Id be a bit concerned.',
+              'Donec non mollis nulla, in varius mi. Ut id lorem eget felis lobortis tincidunt. Curabitur facilisis ex vitae tristique efficitur. Aenean eget augue finibus, tempor eros vitae, tempor neque. In sed pellentesque elit. Donec lacus lacus, malesuada in tincidunt sit amet, condimentum vel enim. Cras dapibus erat quis nisl hendrerit, vel pretium turpis condimentum. ',
           bodyImage: ''),
       _Email(
           sender: 'Ziad Aouad',
@@ -969,18 +977,18 @@ const List<_Item> allItems = <_Item>[
           image: 'images/mushroom.png',
           time: '2 min',
           body:
-              'Hey guys! Im pretty sure if you tell your waiter about any food restrictions or allergies, they should be able to cater to it. Im super excited though, see yall soon!',
+              'Duis sit amet nibh a diam placerat aliquam nec ac mi. Aenean hendrerit efficitur tellus, non pharetra eros posuere sit amet. Maecenas interdum lacinia eleifend. Nam efficitur tellus et dolor vestibulum, non dictum quam iaculis. Aenean id nulla ut erat placerat feugiat. Mauris in quam metus. Aliquam erat volutpat.',
           bodyImage: ''),
     ],
   ),
   _Item(
-    title: '7 Best Yoga Poses for Strength Training',
+    title: '7 Best Yoga Poses',
     emails: <_Email>[
       _Email(
         sender: 'Elaine Howley',
         time: '2 hours',
         body:
-            'Though many people think of yoga as mostly a way to stretch out and relax, in actuality, it can provide a fantastic full-body workout that can even make you stronger.',
+            'Curabitur tincidunt purus at vulputate mattis. Nam lectus urna, varius eget quam in, ultricies ultrices libero. Curabitur rutrum ultricies varius. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec vulputate auctor est, non semper velit eleifend sit amet.',
         image: 'images/potato.png',
         bodyImage: 'images/avocado.png',
         recepients: '',
@@ -988,13 +996,13 @@ const List<_Item> allItems = <_Item>[
     ],
   ),
   _Item(
-    title: 'A Programming Language for Hardware Accelerators',
+    title: 'A Programming Language',
     emails: <_Email>[
       _Email(
         sender: 'Laney Mansell',
         time: '10 min',
         body:
-            'Moore’s Law needs a hug. The days of stuffing transistors on little silicon computer chips are numbered, and their life rafts — hardware accelerators — come with a price. ',
+            'Cras egestas ultricies elit, vitae interdum lorem aliquam et. Donec quis arcu a quam tempor rutrum vitae in lectus. Nullam elit nunc, lacinia sed luctus non, mollis id nulla. Morbi luctus turpis sapien, id molestie ante maximus vel. Vivamus sagittis consequat nisl nec placerat.',
         image: 'images/habanero.png',
         bodyImage: '',
         recepients: '',
