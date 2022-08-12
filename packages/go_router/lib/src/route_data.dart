@@ -40,6 +40,10 @@ abstract class GoRouteData {
   /// [Page] implementation to be used with the results of [build].
   Page<void> buildPage(BuildContext context) => const NoOpPage();
 
+  /// A page builder for that expose the [state].
+  Page<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+      const NoOpPage();
+
   /// An optional redirect function for this route.
   ///
   /// Subclasses must override one of [build], [buildPage], or [redirect].
@@ -82,8 +86,14 @@ abstract class GoRouteData {
     Widget builder(BuildContext context, GoRouterState state) =>
         factoryImpl(state).build(context);
 
-    Page<void> pageBuilder(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).buildPage(context);
+    Page<void> pageBuilder(BuildContext context, GoRouterState state) {
+      final T routeData = factoryImpl(state);
+      final Page<void> page = routeData.buildPageWithState(context, state);
+      if (page is! NoOpPage) {
+        return page;
+      }
+      return routeData.buildPage(context);
+    }
 
     String? redirect(GoRouterState state) => factoryImpl(state).redirect();
 
