@@ -31,6 +31,7 @@ import 'parser.dart';
 ///   }
 /// )
 /// {@end-tool}
+/// ```
 class BrowserState {
   /// Creates an [BrowserState] with a JSON encoded string.
   const BrowserState({required this.jsonString});
