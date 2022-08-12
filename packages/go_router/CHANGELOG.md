@@ -4,6 +4,7 @@
   Navigator.
 - Adds navigatorKey parameter to GoRouter and GoRoute, which can be used to
   specify which Navigator to stack onto when ShellRoute is used.
+- Cleans up examples
 
 ## 4.2.7
 

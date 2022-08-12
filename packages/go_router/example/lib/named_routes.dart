@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import 'shared/data.dart';
 
 // This scenario demonstrates how to navigate using named locations instead of
 // URLs.
@@ -14,6 +14,37 @@ import 'shared/data.dart';
 // locations. To use this API, give a unique name to each GoRoute. The name can
 // then be used in context.namedLocation to be translate back to the actual URL
 // location.
+
+final Map<String, dynamic> _families = const JsonDecoder().convert('''
+{
+  "f1": {
+    "name": "Doe",
+    "people": {
+      "p1": {
+        "name": "Jane",
+        "age": 23
+      },
+      "p2": {
+        "name": "John",
+        "age": 6
+      }
+    }
+  },
+  "f2": {
+    "name": "Wong",
+    "people": {
+      "p1": {
+        "name": "June",
+        "age": 51
+      },
+      "p2": {
+        "name": "Xin",
+        "age": 44
+      }
+    }
+  }
+}
+''');
 
 void main() => runApp(App());
 
@@ -41,23 +72,20 @@ class App extends StatelessWidget {
         name: 'home',
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
-            HomeScreen(families: Families.data),
+            const HomeScreen(),
         routes: <GoRoute>[
           GoRoute(
             name: 'family',
             path: 'family/:fid',
             builder: (BuildContext context, GoRouterState state) =>
-                FamilyScreen(
-              family: Families.family(state.params['fid']!),
-            ),
+                FamilyScreen(fid: state.params['fid']!),
             routes: <GoRoute>[
               GoRoute(
                 name: 'person',
                 path: 'person/:pid',
                 builder: (BuildContext context, GoRouterState state) {
-                  final Family family = Families.family(state.params['fid']!);
-                  final Person person = family.person(state.params['pid']!);
-                  return PersonScreen(family: family, person: person);
+                  return PersonScreen(
+                      fid: state.params['fid']!, pid: state.params['pid']!);
                 },
               ),
             ],
@@ -71,10 +99,7 @@ class App extends StatelessWidget {
 /// The home screen that shows a list of families.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({required this.families, Key? key}) : super(key: key);
-
-  /// The list of families.
-  final List<Family> families;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -84,11 +109,11 @@ class HomeScreen extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          for (final Family f in families)
+          for (final String fid in _families.keys)
             ListTile(
-              title: Text(f.name),
+              title: Text(_families[fid]['name']),
               onTap: () => context.go(context.namedLocation('family',
-                  params: <String, String>{'fid': f.id})),
+                  params: <String, String>{'fid': fid})),
             )
         ],
       ),
@@ -99,45 +124,54 @@ class HomeScreen extends StatelessWidget {
 /// The screen that shows a list of persons in a family.
 class FamilyScreen extends StatelessWidget {
   /// Creates a [FamilyScreen].
-  const FamilyScreen({required this.family, Key? key}) : super(key: key);
+  const FamilyScreen({required this.fid, Key? key}) : super(key: key);
 
-  /// The family to display.
-  final Family family;
+  /// The id family to display.
+  final String fid;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(family.name)),
-        body: ListView(
-          children: <Widget>[
-            for (final Person p in family.people)
-              ListTile(
-                title: Text(p.name),
-                onTap: () => context.go(context.namedLocation(
-                  'person',
-                  params: <String, String>{'fid': family.id, 'pid': p.id},
-                  queryParams: <String, String>{'qid': 'quid'},
-                )),
-              ),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    final Map<String, dynamic> people =
+        _families[fid]['people'] as Map<String, dynamic>;
+    return Scaffold(
+      appBar: AppBar(title: Text(_families[fid]['name'])),
+      body: ListView(
+        children: <Widget>[
+          for (final String pid in people.keys)
+            ListTile(
+              title: Text(people[pid]['name']),
+              onTap: () => context.go(context.namedLocation(
+                'person',
+                params: <String, String>{'fid': fid, 'pid': pid},
+                queryParams: <String, String>{'qid': 'quid'},
+              )),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 /// The person screen.
 class PersonScreen extends StatelessWidget {
   /// Creates a [PersonScreen].
-  const PersonScreen({required this.family, required this.person, Key? key})
+  const PersonScreen({required this.fid, required this.pid, Key? key})
       : super(key: key);
 
-  /// The family this person belong to.
-  final Family family;
+  /// The id of family this person belong to.
+  final String fid;
 
-  /// The person to be displayed.
-  final Person person;
+  /// The id of the person to be displayed.
+  final String pid;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(person.name)),
-        body: Text('${person.name} ${family.name} is ${person.age} years old'),
-      );
+  Widget build(BuildContext context) {
+    final Map<String, dynamic> family = _families[fid];
+    final Map<String, dynamic> person = family['people'][pid];
+    return Scaffold(
+      appBar: AppBar(title: Text(person['name'])),
+      body: Text(
+          '${person['name']} ${family['name']} is ${person['age']} years old'),
+    );
+  }
 }
