@@ -119,6 +119,7 @@ class MyHomePage extends StatelessWidget {
           icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
 
+    // #docregion Example
     // AdaptiveLayout has a number of slots that take SlotLayouts and these
     // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
     return AdaptiveLayout(
@@ -193,5 +194,6 @@ class MyHomePage extends StatelessWidget {
         },
       ),
     );
+    // #enddocregion
   }
 }

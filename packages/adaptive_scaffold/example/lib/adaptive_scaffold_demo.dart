@@ -24,6 +24,7 @@ class MyHomePage extends StatelessWidget {
   /// Creates a const [MyHomePage].
   const MyHomePage({Key? key}) : super(key: key);
 
+  // #docregion Example
   @override
   Widget build(BuildContext context) {
     // Define the children to display within the body at different breakpoints.
@@ -68,4 +69,5 @@ class MyHomePage extends StatelessWidget {
             // overriden.
             smallSecondaryBody: AdaptiveScaffold.emptyBuilder));
   }
+  // #enddocregion
 }
