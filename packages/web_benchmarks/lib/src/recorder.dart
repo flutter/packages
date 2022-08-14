@@ -367,7 +367,9 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
 
   @override
   late Profile profile;
-  Completer<void>? _runCompleter;
+
+  // This will be initialized in [run].
+  late Completer<void> _runCompleter;
 
   /// Whether to delimit warm-up frames in a custom way.
   final bool useCustomWarmUp;
@@ -394,13 +396,13 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
       for (final VoidCallback fn in _didStopCallbacks) {
         fn();
       }
-      _runCompleter!.complete();
+      _runCompleter.complete();
     }
   }
 
   @override
   void _onError(dynamic error, StackTrace? stackTrace) {
-    _runCompleter!.completeError(error, stackTrace);
+    _runCompleter.completeError(error, stackTrace);
   }
 
   @override
@@ -430,12 +432,11 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
     binding._beginRecording(this, widget);
 
     try {
-      await _runCompleter!.future;
+      await _runCompleter.future;
       return localProfile;
     } finally {
       stopListeningToEngineBenchmarkValues(kProfilePrerollFrame);
       stopListeningToEngineBenchmarkValues(kProfileApplyFrame);
-      _runCompleter = null;
     }
   }
 }
@@ -605,8 +606,8 @@ class Timeseries {
   int? _warmUpFrameCount;
 
   /// The number of frames ignored as warm-up frames.
-  int? get warmUpFrameCount =>
-      useCustomWarmUp ? _warmUpFrameCount : count - kMeasuredSampleCount;
+  int get warmUpFrameCount =>
+      useCustomWarmUp ? _warmUpFrameCount! : count - kMeasuredSampleCount;
 
   /// List of all the values that have been recorded.
   ///
@@ -621,7 +622,7 @@ class Timeseries {
   ///
   /// See [TimeseriesStats] for more details.
   TimeseriesStats computeStats() {
-    final int finalWarmUpFrameCount = warmUpFrameCount!;
+    final int finalWarmUpFrameCount = warmUpFrameCount;
 
     assert(finalWarmUpFrameCount >= 0 && finalWarmUpFrameCount < count);
 
@@ -703,7 +704,7 @@ class Timeseries {
     }
     _allValues.add(value);
     if (useCustomWarmUp && isWarmUpValue) {
-      _warmUpFrameCount = _warmUpFrameCount! + 1;
+      _warmUpFrameCount = warmUpFrameCount + 1;
     }
   }
 }
@@ -1049,6 +1050,7 @@ class _RecordingWidgetsBinding extends BindingBase
     return _RecordingWidgetsBinding.instance;
   }
 
+  // This will be not null when the benchmark is running.
   FrameRecorder? _recorder;
   bool _hasErrored = false;
 

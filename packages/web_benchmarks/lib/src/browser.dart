@@ -166,8 +166,8 @@ class Chrome {
               '"Tracing.dataCollected" returned malformed data. '
               'Expected a List but got: ${value.runtimeType}');
         }
-        _tracingData!
-            .addAll(event.params!['value'].cast<Map<String, dynamic>>());
+        _tracingData
+            ?.addAll(event.params!['value'].cast<Map<String, dynamic>>());
       }
     });
     await _debugConnection?.sendCommand('Tracing.start', <String, dynamic>{
