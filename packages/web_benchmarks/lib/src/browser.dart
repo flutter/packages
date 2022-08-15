@@ -237,11 +237,14 @@ String _findSystemChromeExecutable() {
     return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
   } else if (io.Platform.isWindows) {
     const String kWindowsExecutable = r'Google\Chrome\Application\chrome.exe';
-    final List<String> kWindowsPrefixes = <String?>[
-      io.Platform.environment['LOCALAPPDATA'],
-      io.Platform.environment['PROGRAMFILES'],
-      io.Platform.environment['PROGRAMFILES(X86)'],
-    ].whereType<String>().toList();
+    final List<String> kWindowsPrefixes = <String>[
+      for (String? item in <String?>[
+        io.Platform.environment['LOCALAPPDATA'],
+        io.Platform.environment['PROGRAMFILES'],
+        io.Platform.environment['PROGRAMFILES(X86)'],
+      ])
+        if (item != null) item
+    ];
 
     final String windowsPrefix = kWindowsPrefixes.firstWhere((String prefix) {
       final String expectedPath = path.join(prefix, kWindowsExecutable);
