@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import 'shared/data.dart';
 
 // This scenario demonstrates how to use path parameters and query parameters.
 //
@@ -14,6 +14,37 @@ import 'shared/data.dart';
 // GoRouterState.params.
 //
 // The query parameters are automatically stored in GoRouterState.queryParams.
+
+final Map<String, dynamic> _families = const JsonDecoder().convert('''
+{
+  "f1": {
+    "name": "Doe",
+    "people": {
+      "p1": {
+        "name": "Jane",
+        "age": 23
+      },
+      "p2": {
+        "name": "John",
+        "age": 6
+      }
+    }
+  },
+  "f2": {
+    "name": "Wong",
+    "people": {
+      "p1": {
+        "name": "June",
+        "age": 51
+      },
+      "p2": {
+        "name": "Xin",
+        "age": 44
+      }
+    }
+  }
+}
+''');
 
 void main() => runApp(App());
 
@@ -40,13 +71,14 @@ class App extends StatelessWidget {
       GoRoute(
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
-            HomeScreen(families: Families.data),
+            const HomeScreen(),
         routes: <GoRoute>[
           GoRoute(
-              path: 'family/:id',
+              name: 'family',
+              path: 'family/:fid',
               builder: (BuildContext context, GoRouterState state) {
                 return FamilyScreen(
-                  family: Families.family(state.params['id']!),
+                  fid: state.params['fid']!,
                   asc: state.queryParams['sort'] == 'asc',
                 );
               }),
@@ -59,10 +91,7 @@ class App extends StatelessWidget {
 /// The home screen that shows a list of families.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({required this.families, Key? key}) : super(key: key);
-
-  /// The list of families.
-  final List<Family> families;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,10 +101,10 @@ class HomeScreen extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          for (final Family f in families)
+          for (final String fid in _families.keys)
             ListTile(
-              title: Text(f.name),
-              onTap: () => context.go('/family/${f.id}'),
+              title: Text(_families[fid]['name']),
+              onTap: () => context.go('/family/$fid'),
             )
         ],
       ),
@@ -86,34 +115,35 @@ class HomeScreen extends StatelessWidget {
 /// The screen that shows a list of persons in a family.
 class FamilyScreen extends StatelessWidget {
   /// Creates a [FamilyScreen].
-  const FamilyScreen({required this.family, required this.asc, Key? key})
+  const FamilyScreen({required this.fid, required this.asc, Key? key})
       : super(key: key);
 
   /// The family to display.
-  final Family family;
+  final String fid;
 
   /// Whether to sort the name in ascending order.
   final bool asc;
 
   @override
   Widget build(BuildContext context) {
-    final String curentPath = Uri.parse(GoRouter.of(context).location).path;
     final Map<String, String> newQueries;
-    final List<String> names =
-        family.people.map<String>((Person p) => p.name).toList();
+    final List<String> names = _families[fid]['people']
+        .values
+        .map<String>((dynamic p) => p['name'] as String)
+        .toList();
     names.sort();
     if (asc) {
       newQueries = const <String, String>{'sort': 'desc'};
     } else {
       newQueries = const <String, String>{'sort': 'asc'};
     }
-    final Uri iconLink = Uri(path: curentPath, queryParameters: newQueries);
     return Scaffold(
       appBar: AppBar(
-        title: Text(family.name),
+        title: Text(_families[fid]['name']),
         actions: <Widget>[
           IconButton(
-            onPressed: () => context.go(iconLink.toString()),
+            onPressed: () => context.goNamed('family',
+                params: <String, String>{'fid': fid}, queryParams: newQueries),
             tooltip: 'sort ascending or descending',
             icon: const Icon(Icons.sort),
           )

@@ -6,13 +6,33 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'shared/data.dart';
-
 // This scenario demonstrates how to use redirect to handle a sign-in flow.
 //
 // The GoRouter.redirect method is called before the app is navigate to a
 // new page. You can choose to redirect to a different page by returning a
 // non-null URL string.
+
+/// The login information.
+class LoginInfo extends ChangeNotifier {
+  /// The username of login.
+  String get userName => _userName;
+  String _userName = '';
+
+  /// Whether a user has logged in.
+  bool get loggedIn => _userName.isNotEmpty;
+
+  /// Logs in a user.
+  void login(String userName) {
+    _userName = userName;
+    notifyListeners();
+  }
+
+  /// Logs out the current user.
+  void logout() {
+    _userName = '';
+    notifyListeners();
+  }
+}
 
 void main() => runApp(App());
 

@@ -1,0 +1,21 @@
+name: adaptive_scaffold
+description: Widgets to easily build adaptive layouts, including navigation elements.
+version: 0.0.1
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aopen+is%3Aissue+label%3A%22p%3A+adaptive_scaffold%22
+repository: https://github.com/flutter/packages/tree/main/packages/adaptive_scaffold
+# Temporarily unpublished while in process of releasing full package in multiple stages.
+publish_to: none
+
+environment:
+  sdk: '>=2.17.0 <3.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+    
