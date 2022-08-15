@@ -106,8 +106,8 @@ class _FakeHttpClientResponse extends Fake implements HttpClientResponse {}
 
 class _FakeSocket extends Fake implements Socket {}
 
-class _FakeStreamSubscription<T> extends Fake implements StreamSubscription<T> {
-}
+class _FakeStreamSubscription<T> extends Fake
+    implements StreamSubscription<T> {}
 
 /// A class which mocks [HttpClient].
 ///
