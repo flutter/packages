@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' show Directory, File, FileSystemEntity;
+
+import 'package:path/path.dart' as path;
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator_tools.dart';
@@ -588,14 +592,62 @@ pigeonMap['${field.name}'] != null
   }
 }
 
-/// Generates Dart source code for test support libraries based on the
-/// given AST represented by [root], outputting the code to [sink].
+String? _findPubspecPath(String dartFilePath) {
+  try {
+    Directory dir = File(dartFilePath).parent;
+    String? pubspecPath;
+    while (pubspecPath == null) {
+      if (dir.existsSync()) {
+        final Iterable<String> pubspecPaths = dir
+            .listSync()
+            .map((FileSystemEntity e) => e.path)
+            .where((String path) => path.endsWith('pubspec.yaml'));
+        if (pubspecPaths.isNotEmpty) {
+          pubspecPath = pubspecPaths.first;
+        } else {
+          dir = dir.parent;
+        }
+      } else {
+        break;
+      }
+    }
+    return pubspecPath;
+  } catch (ex) {
+    return null;
+  }
+}
+
+String? _deducePackageName(String mainDartFile) {
+  final String? pubspecPath = _findPubspecPath(mainDartFile);
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  final String text = File(pubspecPath).readAsStringSync();
+  final RegExp nameFinder = RegExp(r'^name:\s*(.*)');
+  final RegExpMatch? match = nameFinder.firstMatch(text);
+  if (match == null) {
+    return null;
+  }
+  return match.group(1);
+}
+
+String _posixify(String input) {
+  final path.Context context = path.Context(style: path.Style.posix);
+  return context.fromUri(path.toUri(path.absolute(input)));
+}
+
+/// Generates Dart source code for test support libraries based on the given AST
+/// represented by [root], outputting the code to [sink]. [dartOutPath] is the
+/// path of the generated dart code to be tested. [testOutPath] is where the
+/// test code will be generated.
 void generateTestDart(
   DartOptions opt,
   Root root,
-  StringSink sink,
-  String mainDartFile,
-) {
+  StringSink sink, {
+  required String dartOutPath,
+  required String testOutPath,
+}) {
   final Indent indent = Indent(sink);
   if (opt.copyrightHeader != null) {
     addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
@@ -615,11 +667,23 @@ void generateTestDart(
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln('import \'package:flutter_test/flutter_test.dart\';');
   indent.writeln('');
-  // TODO(gaaclarke): Switch from relative paths to URIs. This fails in new versions of Dart,
-  // https://github.com/flutter/flutter/issues/97744.
-  indent.writeln(
-    'import \'${_escapeForDartSingleQuotedString(mainDartFile)}\';',
+  final String relativeDartPath =
+      path.Context(style: path.Style.posix).relative(
+    _posixify(dartOutPath),
+    from: _posixify(path.dirname(testOutPath)),
   );
+  late final String? packageName = _deducePackageName(dartOutPath);
+  if (!relativeDartPath.contains('/lib/') || packageName == null) {
+    // If we can't figure out the package name or the relative path doesn't
+    // include a 'lib' directory, try relative path import which only works in
+    // certain (older) versions of Dart.
+    indent.writeln(
+        'import \'${_escapeForDartSingleQuotedString(relativeDartPath)}\';');
+  } else {
+    final String path = relativeDartPath.replaceFirstMapped(
+        RegExp(r'.*/lib/(.*?)'), (Match match) => match.group(1).toString());
+    indent.writeln("import 'package:$packageName/$path';");
+  }
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
       final Api mockApi = Api(

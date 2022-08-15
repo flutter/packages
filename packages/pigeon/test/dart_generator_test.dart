@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' show Directory, File;
+
+import 'package:path/path.dart' as path;
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/dart_generator.dart';
 import 'package:pigeon/generator_tools.dart';
@@ -609,7 +612,13 @@ void main() {
     expect(mainCode, isNot(contains('.ApiMock.doSomething')));
     expect(mainCode, isNot(contains('\'${Keys.result}\': output')));
     expect(mainCode, isNot(contains('return <Object, Object>{};')));
-    generateTestDart(const DartOptions(), root, testCodeSink, "fo'o.dart");
+    generateTestDart(
+      const DartOptions(),
+      root,
+      testCodeSink,
+      dartOutPath: "fo'o.dart",
+      testOutPath: 'test.dart',
+    );
     final String testCode = testCodeSink.toString();
     expect(testCode, contains('import \'fo\\\'o.dart\';'));
     expect(testCode, isNot(contains('class Api {')));
@@ -1180,5 +1189,31 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('void doit(int? foo);'));
+  });
+
+  test('deduces package name', () {
+    final Directory tempDir = Directory.systemTemp.createTempSync('pigeon');
+    try {
+      final Directory foo = Directory(path.join(tempDir.path, 'lib', 'foo'));
+      foo.createSync(recursive: true);
+      final File pubspecFile = File(path.join(tempDir.path, 'pubspec.yaml'));
+      pubspecFile.writeAsStringSync('''
+name: foobar
+''');
+      final Root root =
+          Root(classes: <Class>[], apis: <Api>[], enums: <Enum>[]);
+      final StringBuffer sink = StringBuffer();
+      generateTestDart(
+        const DartOptions(),
+        root,
+        sink,
+        dartOutPath: path.join(foo.path, 'bar.dart'),
+        testOutPath: path.join(tempDir.path, 'test', 'bar_test.dart'),
+      );
+      final String code = sink.toString();
+      expect(code, contains("import 'package:foobar/foo/bar.dart';"));
+    } finally {
+      tempDir.delete();
+    }
   });
 }
