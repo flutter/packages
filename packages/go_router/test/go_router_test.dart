@@ -1704,9 +1704,9 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [go] on closest GoRouter  with a promise',
+    testWidgets('calls [go] on closest GoRouter with a Future',
         (WidgetTester tester) async {
-      final GoRouterGoAsyncSpy router = GoRouterGoAsyncSpy(routes: routes);
+      final GoRouterGoSpy router = GoRouterGoSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationProvider: router.routeInformationProvider,
@@ -1715,11 +1715,10 @@ void main() {
           title: 'GoRouter Example',
         ),
       );
-      final String? result = await key.currentContext?.go<String?>(
+      key.currentContext?.go(
         location,
         extra: extra,
       );
-      expect(result, extra);
       expect(router.myLocation, location);
       expect(router.extra, extra);
     });
@@ -1747,10 +1746,9 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [goNamed] on closest GoRouter with a promise',
+    testWidgets('calls [goNamed] on closest GoRouter with a Future',
         (WidgetTester tester) async {
-      final GoRouterGoNamedAsyncSpy router =
-          GoRouterGoNamedAsyncSpy(routes: routes);
+      final GoRouterGoNamedSpy router = GoRouterGoNamedSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationProvider: router.routeInformationProvider,
@@ -1759,13 +1757,12 @@ void main() {
           title: 'GoRouter Example',
         ),
       );
-      final String? result = await key.currentContext?.goNamed<String?>(
+      key.currentContext?.goNamed(
         name,
         params: params,
         queryParams: queryParams,
         extra: extra,
       );
-      expect(result, extra);
       expect(router.name, name);
       expect(router.params, params);
       expect(router.queryParams, queryParams);
@@ -1793,7 +1790,7 @@ void main() {
 
     testWidgets('calls [push] on closest GoRouter with a promise',
         (WidgetTester tester) async {
-      final GoRouterPushAsyncSpy router = GoRouterPushAsyncSpy(routes: routes);
+      final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationProvider: router.routeInformationProvider,
@@ -1836,8 +1833,7 @@ void main() {
 
     testWidgets('calls [pushNamed] on closest GoRouter with a promise',
         (WidgetTester tester) async {
-      final GoRouterPushNamedAsyncSpy router =
-          GoRouterPushNamedAsyncSpy(routes: routes);
+      final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationProvider: router.routeInformationProvider,

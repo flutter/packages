@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'configuration.dart';
 import 'match.dart';
 import 'path_utils.dart';
@@ -140,6 +142,7 @@ List<RouteMatch> _getLocRouteRecursively({
       fullpath: fullpath,
       queryParams: queryParams,
       extra: extra,
+      completer: Completer<void>(),
     );
 
     if (match == null) {

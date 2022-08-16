@@ -70,24 +70,9 @@ class GoRouterGoSpy extends GoRouter {
   Object? extra;
 
   @override
-  Future<T?> go<T extends Object?>(String location, {Object? extra}) {
+  void go(String location, {Object? extra}) {
     myLocation = location;
     this.extra = extra;
-    return Future<T?>.value();
-  }
-}
-
-class GoRouterGoAsyncSpy extends GoRouter {
-  GoRouterGoAsyncSpy({required List<GoRoute> routes}) : super(routes: routes);
-
-  String? myLocation;
-  Object? extra;
-
-  @override
-  Future<T?> go<T extends Object?>(String location, {Object? extra}) {
-    myLocation = location;
-    this.extra = extra;
-    return Future<T?>.value(extra as T?);
   }
 }
 
@@ -100,7 +85,7 @@ class GoRouterGoNamedSpy extends GoRouter {
   Object? extra;
 
   @override
-  Future<T?> goNamed<T extends Object?>(
+  void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
@@ -110,50 +95,11 @@ class GoRouterGoNamedSpy extends GoRouter {
     this.params = params;
     this.queryParams = queryParams;
     this.extra = extra;
-    return Future<T?>.value();
-  }
-}
-
-class GoRouterGoNamedAsyncSpy extends GoRouter {
-  GoRouterGoNamedAsyncSpy({required List<GoRoute> routes})
-      : super(routes: routes);
-
-  String? name;
-  Map<String, String>? params;
-  Map<String, String>? queryParams;
-  Object? extra;
-
-  @override
-  Future<T?> goNamed<T extends Object?>(
-    String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
-    Object? extra,
-  }) {
-    this.name = name;
-    this.params = params;
-    this.queryParams = queryParams;
-    this.extra = extra;
-    return Future<T?>.value(extra as T?);
   }
 }
 
 class GoRouterPushSpy extends GoRouter {
   GoRouterPushSpy({required List<GoRoute> routes}) : super(routes: routes);
-
-  String? myLocation;
-  Object? extra;
-
-  @override
-  Future<T?> push<T extends Object?>(String location, {Object? extra}) {
-    myLocation = location;
-    this.extra = extra;
-    return Future<T?>.value();
-  }
-}
-
-class GoRouterPushAsyncSpy extends GoRouter {
-  GoRouterPushAsyncSpy({required List<GoRoute> routes}) : super(routes: routes);
 
   String? myLocation;
   Object? extra;
@@ -168,30 +114,6 @@ class GoRouterPushAsyncSpy extends GoRouter {
 
 class GoRouterPushNamedSpy extends GoRouter {
   GoRouterPushNamedSpy({required List<GoRoute> routes}) : super(routes: routes);
-
-  String? name;
-  Map<String, String>? params;
-  Map<String, String>? queryParams;
-  Object? extra;
-
-  @override
-  Future<T?> pushNamed<T extends Object?>(
-    String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
-    Object? extra,
-  }) {
-    this.name = name;
-    this.params = params;
-    this.queryParams = queryParams;
-    this.extra = extra;
-    return Future<T?>.value();
-  }
-}
-
-class GoRouterPushNamedAsyncSpy extends GoRouter {
-  GoRouterPushNamedAsyncSpy({required List<GoRoute> routes})
-      : super(routes: routes);
 
   String? name;
   Map<String, String>? params;

@@ -19,16 +19,16 @@ extension GoRouterHelper on BuildContext {
           .namedLocation(name, params: params, queryParams: queryParams);
 
   /// Navigate to a location.
-  Future<T?> go<T extends Object?>(String location, {Object? extra}) async =>
-      GoRouter.of(this).go<T?>(location, extra: extra);
+  void go(String location, {Object? extra}) =>
+      GoRouter.of(this).go(location, extra: extra);
 
   /// Navigate to a named route.
-  Future<T?> goNamed<T extends Object?>(
+  void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
-  }) async =>
+  }) =>
       GoRouter.of(this).goNamed(
         name,
         params: params,

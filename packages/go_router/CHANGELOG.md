@@ -1,6 +1,7 @@
-## NEXT
+## 4.3.0
 
-- Cleans up examples
+- Adds a promise option to `push` and `pushNamed` making it posible to await results from a `pop`.
+- Adds an optional parameter to the `pop` method, allowing to return values from a `pop`.
 
 ## 4.2.7
 

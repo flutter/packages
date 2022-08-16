@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'path_utils.dart';
@@ -18,6 +20,7 @@ class RouteMatch {
     required this.fullpath,
     required this.encodedParams,
     required this.queryParams,
+    required this.completer,
     required this.extra,
     required this.error,
     this.pageKey,
@@ -41,6 +44,7 @@ class RouteMatch {
     required String parentSubloc, // e.g. /family/f2
     required String fullpath, // e.g. /family/:fid/person/:pid
     required Map<String, String> queryParams,
+    required Completer<dynamic> completer,
     required Object? extra,
   }) {
     assert(!route.path.contains('//'));
@@ -59,6 +63,7 @@ class RouteMatch {
       fullpath: fullpath,
       encodedParams: encodedParams,
       queryParams: queryParams,
+      completer: completer,
       extra: extra,
       error: null,
     );
@@ -78,6 +83,9 @@ class RouteMatch {
 
   /// Query parameters for the matched route.
   final Map<String, String> queryParams;
+
+  /// The completer for the promise when pushing routes.
+  final Completer<dynamic> completer;
 
   /// An extra object to pass along with the navigation.
   final Object? extra;

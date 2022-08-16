@@ -154,29 +154,25 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
-  Future<T?> go<T extends Object?>(String location, {Object? extra}) async {
+  void go(String location, {Object? extra}) {
     assert(() {
       log.info('going to $location');
       return true;
     }());
     _routeInformationProvider.value =
         RouteInformation(location: location, state: extra);
-    // Create a completer for the promise and store it in the completers map.
-    final Completer<T?> completer = Completer<T?>();
-    _routerDelegate.completers[location] = completer;
-    return completer.future;
   }
 
   /// Navigate to a named route w/ optional parameters, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
   /// Navigate to the named route.
-  Future<T?> goNamed<T extends Object?>(
+  void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
     Object? extra,
-  }) async =>
-      go<T?>(
+  }) =>
+      go(
         namedLocation(name, params: params, queryParams: queryParams),
         extra: extra,
       );
@@ -190,7 +186,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     }());
     final RouteMatchList matches =
         await _routeInformationParser.parseRouteInformation(
-            DebugGoRouteInformation(location: location, state: extra));
+      DebugGoRouteInformation(location: location, state: extra),
+    );
     return _routerDelegate.push<T?>(matches.last);
   }
 

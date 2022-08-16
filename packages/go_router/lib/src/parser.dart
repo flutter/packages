@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -109,6 +111,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     final Exception error = Exception(errorMessage);
     return RouteMatchList(<RouteMatch>[
       RouteMatch(
+        completer: Completer<void>(),
         subloc: uri.path,
         fullpath: uri.path,
         encodedParams: <String, String>{},
