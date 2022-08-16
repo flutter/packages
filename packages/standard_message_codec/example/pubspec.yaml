@@ -1,0 +1,11 @@
+name: standard_message_codec_examples
+description: Example code for standard message codec usage
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  standard_message_codec:
+    path: ../
