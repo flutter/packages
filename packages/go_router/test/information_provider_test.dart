@@ -48,7 +48,7 @@ void main() {
       final String jsonString1 =
           const JsonEncoder().convert(<String, String>{'1': '2'});
       provider.routerReportsNewRouteInformation(RouteInformation(
-          location: '/a', state: BrowserState(jsonString: jsonString1)));
+          location: '/a', state: BrowserState(data: jsonString1)));
       // Implicit reporting pushes new history entry if the location changes.
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
@@ -62,7 +62,7 @@ void main() {
       final String jsonString2 =
           const JsonEncoder().convert(<String, String>{'2': '3'});
       provider.routerReportsNewRouteInformation(RouteInformation(
-          location: '/a', state: BrowserState(jsonString: jsonString2)));
+          location: '/a', state: BrowserState(data: jsonString2)));
       // Since the location is the same, the provider sends replaces message.
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
@@ -116,7 +116,7 @@ void main() {
       expect(notifiedInformation!.location, newLocation);
       expect(notifiedInformation!.state, isA<BrowserState>());
       expect(
-          (notifiedInformation!.state! as BrowserState).jsonString, jsonString);
+          (notifiedInformation!.state! as BrowserState).data, jsonString);
     });
   });
 }

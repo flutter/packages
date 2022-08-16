@@ -14,8 +14,8 @@ import 'parser.dart';
 /// using the browser's Back button.
 ///
 /// {@tool snippet}
-/// To create a [BrowserState] with the data, the data must be encoded through
-/// JSON codec.
+/// To create a [BrowserState] with the data, the data must be a string. One
+/// can use JSON codec to encode complex objects to strings.
 ///
 /// ```dart
 /// ElevatedButton(
@@ -33,11 +33,11 @@ import 'parser.dart';
 /// {@end-tool}
 /// ```
 class BrowserState {
-  /// Creates an [BrowserState] with a JSON encoded string.
-  const BrowserState({required this.jsonString});
+  /// Creates an [BrowserState] with a data string.
+  const BrowserState({required this.data});
 
-  /// A JSON encoded string for the data.
-  final String jsonString;
+  /// The data in string format.
+  final String data;
 }
 
 /// The [RouteInformationProvider] created by go_router.
@@ -69,7 +69,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     Object? effectiveState;
     if (routeInformation.state != null &&
         routeInformation.state is BrowserState) {
-      effectiveState = (routeInformation.state! as BrowserState).jsonString;
+      effectiveState = (routeInformation.state! as BrowserState).data;
     }
     SystemNavigator.routeInformationUpdated(
       location: routeInformation.location!,
@@ -140,7 +140,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     Object? effectiveState;
     if (routeInformation.state != null && routeInformation.state is String) {
       effectiveState =
-          BrowserState(jsonString: routeInformation.state! as String);
+          BrowserState(data: routeInformation.state! as String);
     }
     _platformReportsNewRouteInformation(RouteInformation(
       location: routeInformation.location,

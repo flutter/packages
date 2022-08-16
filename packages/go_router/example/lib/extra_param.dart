@@ -74,7 +74,7 @@ class App extends StatelessWidget {
             path: 'family',
             builder: (BuildContext context, GoRouterState state) {
               final dynamic params = const JsonDecoder()
-                  .convert((state.extra! as BrowserState).jsonString);
+                  .convert((state.extra! as BrowserState).data);
               final String fid = params['fid']! as String;
               return FamilyScreen(fid: fid);
             },
@@ -100,7 +100,7 @@ class HomeScreen extends StatelessWidget {
                 title: Text(_families[fid]['name']),
                 onTap: () {
                   final BrowserState state = BrowserState(
-                      jsonString: const JsonEncoder()
+                      data: const JsonEncoder()
                           .convert(<String, String>{'fid': fid}));
                   context.goNamed('family', extra: state);
                 },
