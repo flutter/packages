@@ -6,12 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'parser.dart';
 
-/// A data class that can be serialized and stored into browser history entry.
+/// A data class that can be serialized and stored in the browser's history.
 ///
 /// Passing an instance of this class into the `extra` parameter makes the
-/// browser store to memorize data in this instance when handling browser
-/// backward and forward button, e.g pressing backward button in a browser will
-/// send back the BrowserState that associated with the URL.
+/// browser store its data along with its associated URL. The browser will
+/// send restore the BrowserState if the user navigates back to the URL
+/// using the browser's Back button.
 ///
 /// {@tool snippet}
 /// To create a [BrowserState] with the data, the data must be encoded through
