@@ -155,7 +155,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   ///
   /// The `extra` provides a different way to send additional data that is not
   /// part of the location string. If the application is targeting web platform,
-  /// consider use [BrowserState] hold the data. See
+  /// consider use [BrowserState] to hold the data. See
   /// [Extra parameter](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_param.dart)
   /// for a runnable example.
   void go(String location, {Object? extra}) {
