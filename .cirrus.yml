@@ -124,7 +124,7 @@ task:
     - name: downgraded_analyze
       depends_on: format+analyze
       analyze_script:
-        - ./script/tool_runner.sh analyze --downgrade
+        - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml
     - name: publishable
       env:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
