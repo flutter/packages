@@ -280,8 +280,7 @@ class GoRoute extends RouteBase {
           parentNavigatorKey: parentNavigatorKey,
         );
 
-  /// The path template for this route. For example "users/:userId" or
-  /// "settings".
+  /// A page builder for this route.
   ///
   /// Typically a MaterialPage, as in:
   /// ```
@@ -396,7 +395,7 @@ class ShellRoute extends RouteBase {
   /// using redirection.
   final String? defaultRoute;
 
-  /// The [GlobalKey] to be used to the [Navigator] built for this route.
+  /// The [GlobalKey] to be used by the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
   late final GlobalKey<NavigatorState> navigatorKey;

@@ -50,7 +50,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   @override
   Future<bool> popRoute() {
     // Iterate backwards through the RouteMatchList until seeing a GoRoute
-    // with a non-null navigatorKey or a ShellRoute with a non-null navigatorKey
+    // with a non-null parentNavigatorKey or a ShellRoute with a non-null parentNavigatorKey
     // and pop from that Navigator instead of the root.
     NavigatorState? navigator;
     final int matchCount = _matchList.matches.length;
