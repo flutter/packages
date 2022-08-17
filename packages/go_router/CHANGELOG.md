@@ -1,7 +1,7 @@
 ## 4.3.0
 
 - Adds ShellRoute for nested navigation support (flutter/flutter#99126)
-- Adds `navigatorKey` to GoRoute, which specifies the Navigator to place that
+- Adds `parentNavigatorKey` to GoRoute, which specifies the Navigator to place that
   route's Page onto.
 - Updates text theme parameters to avoid deprecation issues.
 

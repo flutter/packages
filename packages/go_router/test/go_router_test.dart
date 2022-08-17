@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/misc/extensions.dart';
+import 'package:go_router/src/pages/custom_transition_page.dart';
 import 'package:go_router/src/route.dart';
 import 'package:go_router/src/router.dart';
 import 'package:go_router/src/state.dart';
@@ -1974,6 +1975,64 @@ void main() {
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen C'), findsNothing);
+    });
+
+    testWidgets('pageBuilder', (WidgetTester tester) async {
+      final List<RouteBase> routes = <RouteBase>[
+        ShellRoute(
+          path: '/',
+          pageBuilder:
+              (BuildContext context, GoRouterState state, Widget child) {
+            return CustomTransitionPage<dynamic>(
+              child: Scaffold(
+                body: Column(
+                  children: <Widget>[
+                    const Text('App Scaffold'),
+                    Expanded(child: child),
+                  ],
+                ),
+              ),
+              transitionsBuilder: (BuildContext context,
+                  Animation<double> animation,
+                  Animation<double> secondaryAnimation,
+                  Widget child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            );
+          },
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              body: child,
+            );
+          },
+          defaultRoute: 'a',
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'a',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen A'),
+                );
+              },
+            ),
+            GoRoute(
+              path: 'b',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen B'),
+                );
+              },
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester);
+      expect(find.text('App Scaffold', skipOffstage: false), findsOneWidget);
+      expect(find.text('Screen A'), findsOneWidget);
     });
   });
 

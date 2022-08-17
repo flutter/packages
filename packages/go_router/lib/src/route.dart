@@ -356,13 +356,20 @@ class ShellRoute extends RouteBase {
   /// Constructs a [ShellRoute].
   ShellRoute({
     required String path,
-    required this.builder,
+    this.builder,
+    this.pageBuilder,
     this.defaultRoute,
+    super.name,
     GoRouterRedirect redirect = RouteBase._emptyRedirect,
     List<RouteBase> routes = const <RouteBase>[],
     GlobalKey<NavigatorState>? parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
   })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
+        assert(path.isNotEmpty, 'ShellRoute path cannot be empty'),
+        assert(
+            name == null || name.isNotEmpty, 'ShellRoute name cannot be empty'),
+        assert(!(builder == null && pageBuilder == null),
+            'builder or pageBuilder must be provided'),
         super._(
           path: path,
           routes: routes,
@@ -371,7 +378,10 @@ class ShellRoute extends RouteBase {
         );
 
   /// The widget builder for a shell route.
-  final ShellRouteBuilder builder;
+  final ShellRouteBuilder? builder;
+
+  /// The page builder for a shell route.
+  final ShellRoutePageBuilder? pageBuilder;
 
   /// The relative path to the child route to navigate to when this route is
   /// displayed. This allows the default child route to be specified without

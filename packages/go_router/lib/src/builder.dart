@@ -129,11 +129,12 @@ class RouteBuilder {
       };
       if (route is GoRoute) {
         final GoRouterState state = buildState(match, newParams);
-        final Page<dynamic> page = buildGoRoutePage(context, state, match);
+        final Page<dynamic> page = buildPageForRoute(context, state, match);
 
         // If this GoRoute is for a different Navigator, add it to the
         // list of out of scope pages
-        final GlobalKey<NavigatorState>? goRouteNavKey = route.parentNavigatorKey;
+        final GlobalKey<NavigatorState>? goRouteNavKey =
+            route.parentNavigatorKey;
         if (goRouteNavKey != null && goRouteNavKey != navigatorKey) {
           // Add this page to
           if (pagesForOutOfScopeNavigator.containsKey(goRouteNavKey) &&
@@ -152,8 +153,8 @@ class RouteBuilder {
             navigatorKey: route.navigatorKey);
         final Widget child = result.widget;
 
-        final Page<dynamic> page = buildPage(context, state,
-            callRouteBuilder(context, state, match, childWidget: child));
+        final Page<dynamic> page =
+            buildPageForRoute(context, state, match, child: child);
 
         // If this ShellRoute is for a different Navigator, add it to the
         // pagesForOutOfScopeNavigator list instead.
@@ -170,12 +171,9 @@ class RouteBuilder {
             pagesOutOfScopeForChildNavigator =
             result.pagesForOutOfScopeNavigator;
 
-        if (pagesOutOfScopeForChildNavigator
-                .containsKey(route.navigatorKey) &&
-            pagesOutOfScopeForChildNavigator[route.navigatorKey]!
-                .isNotEmpty) {
-          pages.addAll(
-              pagesOutOfScopeForChildNavigator[route.navigatorKey]!);
+        if (pagesOutOfScopeForChildNavigator.containsKey(route.navigatorKey) &&
+            pagesOutOfScopeForChildNavigator[route.navigatorKey]!.isNotEmpty) {
+          pages.addAll(pagesOutOfScopeForChildNavigator[route.navigatorKey]!);
         }
 
         // Include any out of scope pages in _RecursiveBuildResult
@@ -263,7 +261,7 @@ class RouteBuilder {
     }
   }
 
-  /// Helper method that buidls a [GoRouterState] object for the given [match]
+  /// Helper method that builds a [GoRouterState] object for the given [match]
   /// and [params].
   @visibleForTesting
   GoRouterState buildState(RouteMatch match, Map<String, String> params) {
@@ -283,28 +281,38 @@ class RouteBuilder {
   }
 
   /// Builds a [Page] for [StackedRoute]
-  Page<dynamic> buildGoRoutePage(
-      BuildContext context, GoRouterState state, RouteMatch match) {
+  Page<dynamic> buildPageForRoute(
+      BuildContext context, GoRouterState state, RouteMatch match,
+      {Widget? child}) {
     final RouteBase route = match.route;
-    if (route is! GoRoute) {
-      throw RouteBuilderError(
-          'Unexpected route type in buildStackedRoute: $route');
+    Page<dynamic>? page;
+
+    if (route is GoRoute) {
+      // Call the pageBuilder if it's non-null
+      final GoRouterPageBuilder? pageBuilder = route.pageBuilder;
+      if (pageBuilder != null) {
+        page = pageBuilder(context, state);
+      }
+    } else if (route is ShellRoute) {
+      final ShellRoutePageBuilder? pageBuilder = route.pageBuilder;
+      if (child != null) {
+        if (pageBuilder != null) {
+          page = pageBuilder(context, state, child);
+        }
+      } else {
+        throw RouteBuilderError(
+            'Expected a child widget when building a ShellRoute');
+      }
     }
 
-    // Call the pageBuilder if it's non-null
-    final GoRouterPageBuilder? pageBuilder =
-        (match.route as GoRoute).pageBuilder;
-    Page<dynamic>? page;
-    if (pageBuilder != null) {
-      page = pageBuilder(context, state);
-      if (page is NoOpPage) {
-        page = null;
-      }
+    if (page is NoOpPage) {
+      page = null;
     }
 
     // Return the result of the route's builder() or pageBuilder()
     return page ??
-        buildPage(context, state, callRouteBuilder(context, state, match));
+        buildPage(context, state,
+            callRouteBuilder(context, state, match, childWidget: child));
   }
 
   /// Calls the user-provided route builder from the [RouteMatch]'s [RouteBase].
@@ -319,8 +327,8 @@ class RouteBuilder {
 
     if (route is GoRoute) {
       final GoRouterWidgetBuilder? builder = route.builder;
+
       if (builder != null) {
-        // Use a Builder to ensure the route gets the correct BuildContext.
         return builder(context, state);
       }
     } else if (route is ShellRoute) {
@@ -328,8 +336,11 @@ class RouteBuilder {
         throw RouteBuilderError(
             'Attempt to build ShellRoute without a child widget');
       }
-      // Use a Builder to ensure the route gets the correct BuildContext.
-      return route.builder(context, state, childWidget);
+
+      final ShellRouteBuilder? builder = route.builder;
+      if (builder != null) {
+        return builder(context, state, childWidget);
+      }
     }
 
     throw UnimplementedError('Unsupported route type $route');
