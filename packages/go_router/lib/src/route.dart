@@ -249,9 +249,9 @@ abstract class RouteBase {
 /// root Navigator, the nearest ShellRoute ancestor's Navigator, or the
 /// Navigator with a matching [parentNavigatorKey].
 ///
-/// The Page will be either a [MaterialPage] (for [MaterialApp]),
-/// [CupertinoPage] (for [CupertinoApp], or [NoTransitionPage] (for
-/// [WidgetsApp]) depending on the application type.
+/// The Page depends on the application type: [MaterialPage] for
+/// [MaterialApp], [CupertinoPage] for [CupertinoApp], or
+/// [NoTransitionPage] for [WidgetsApp].
 class GoRoute extends RouteBase {
   /// Constructs a [GoRoute].
   /// - [path] and [name] cannot be empty strings.
