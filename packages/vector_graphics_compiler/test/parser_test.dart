@@ -695,6 +695,25 @@ void main() {
     );
   });
 
+  test('Defaults image height/width when not specified', () async {
+    // 1x1 PNG image from png-pixel.com.
+    const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg==" />
+</svg>''';
+
+    final VectorInstructions instructions = await parse(
+      svgStr,
+      key: 'image',
+      warningsAsErrors: true,
+      enableClippingOptimizer: false,
+      enableMaskingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
+
+    expect(instructions.drawImages.first.rect, const Rect.fromLTWH(0, 0, 1, 1));
+  });
+
   test('Ghostscript Tiger - dedupes paints', () async {
     final VectorInstructions instructions = await parse(
       ghostscriptTiger,

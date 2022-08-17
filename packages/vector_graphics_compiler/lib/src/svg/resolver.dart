@@ -8,6 +8,7 @@ import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
 import '../geometry/vertices.dart';
+import '../image/image_info.dart';
 import '../paint.dart';
 import 'node.dart';
 import 'parser.dart';
@@ -207,8 +208,14 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     final SvgAttributes attributes = imageNode.attributes;
     final double left = double.parse(attributes.raw['x'] ?? '0');
     final double top = double.parse(attributes.raw['y'] ?? '0');
-    final double width = double.parse(attributes.raw['width']!);
-    final double height = double.parse(attributes.raw['height']!);
+
+    double? width = double.tryParse(attributes.raw['width'] ?? '');
+    double? height = double.tryParse(attributes.raw['height'] ?? '');
+    if (width == null || height == null) {
+      final ImageSizeData data = ImageSizeData.fromBytes(imageNode.data);
+      width ??= data.width.toDouble();
+      height ??= data.height.toDouble();
+    }
     final Rect rect = Rect.fromLTWH(left, top, width, height);
 
     // Determine if this image can be drawn without any transforms because
