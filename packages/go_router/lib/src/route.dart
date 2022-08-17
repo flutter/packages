@@ -328,10 +328,10 @@ class GoRoute extends RouteBase {
 /// of placing them on the root Navigator.
 ///
 /// To display a child route on a different Navigator, provide it with a
-/// `navigatorKey` that matches the key provided to either the `GoRouter` or
-/// `ShellRoute` constructor.
+/// [parentNavigatorKey] that matches the key provided to either the [GoRouter] or
+/// [ShellRoute] constructor.
 ///
-/// The widget built by the matching child route becomes to the child parameter
+/// The widget built by the matching sub-route becomes the child parameter
 /// of the [builder].
 ///
 /// For example:
@@ -348,7 +348,15 @@ class GoRoute extends RouteBase {
 ///         child: child,
 ///       ),
 ///     );
-///   }
+///   },
+///   routes: [
+///     GoRoute(
+///       path: 'a'
+///       builder: (BuildContext context, GoRouterState state) {
+///         return Text('Child Route "/a"');
+///       }
+///     ),
+///   ],
 /// ),
 /// ```
 ///
