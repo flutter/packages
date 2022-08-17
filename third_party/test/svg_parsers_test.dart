@@ -1183,4 +1183,20 @@ BAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" x="1ex" y="0.5ex" width="2ex" height="1.5ex" /
     expect(circle.style.stroke!.strokeWidth, 5);
     expect(circle.style.stroke!.strokeMiterLimit, 8);
   });
+
+  test('Defaults image height/width when not specified', () async {
+    // 1x1 PNG image from png-pixel.com.
+    const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg==" />
+</svg>''';
+
+    final SvgParser parser = SvgParser();
+    final DrawableRoot root = await parser.parse(svgStr);
+
+    expect(root.children.length, 1);
+    final DrawableRasterImage image = root.children.first as DrawableRasterImage;
+    expect(image.size!.width, image.image.width);
+    expect(image.size!.height, image.image.height);
+  });
 }

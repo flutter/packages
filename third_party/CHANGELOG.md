@@ -1,5 +1,9 @@
 # CHANGES
 
+## 1.1.4
+
+- Handle default image width/height properly.
+
 ## 1.1.3
 
 - Handle `pt` values.

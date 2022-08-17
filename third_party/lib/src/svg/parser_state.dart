@@ -521,15 +521,13 @@ class _Elements {
         parserState.attribute('y', def: '0'),
       )!,
     );
-    final Size size = Size(
-      parserState.parseDoubleWithUnits(
-        parserState.attribute('width', def: '0'),
-      )!,
-      parserState.parseDoubleWithUnits(
-        parserState.attribute('height', def: '0'),
-      )!,
-    );
     final Image image = await resolveImage(href);
+    final Size size = Size(
+      parserState.parseDoubleWithUnits(parserState.attribute('width')) ??
+          image.width.toDouble(),
+      parserState.parseDoubleWithUnits(parserState.attribute('height')) ??
+          image.height.toDouble(),
+    );
     final DrawableParent parent = parserState._parentDrawables.last.drawable!;
     final DrawableStyle? parentStyle = parent.style;
     final DrawableRasterImage drawable = DrawableRasterImage(
