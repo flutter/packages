@@ -79,8 +79,10 @@ class RouteBuilder {
     bool routerNeglect,
     GlobalKey<NavigatorState> navigatorKey,
   ) {
-    return _buildRecursive(context, matchList, 0, pop, routerNeglect,
-        navigatorKey, <String, String>{}).widget;
+    return _buildRecursive(
+            context, matchList, 0, pop, routerNeglect, <String, String>{},
+            navigatorKey: navigatorKey)
+        .widget;
   }
 
   /// Returns the top-level pages instead of the root navigator. Used for
@@ -89,8 +91,8 @@ class RouteBuilder {
   List<Page<dynamic>> buildPages(
       BuildContext context, RouteMatchList matchList) {
     try {
-      return _buildRecursive(context, matchList, 0, () {}, false,
-          GlobalKey<NavigatorState>(), <String, String>{}).pages;
+      return _buildRecursive(
+          context, matchList, 0, () {}, false, <String, String>{}).pages;
     } on RouteBuilderError catch (e) {
       return <Page<dynamic>>[
         buildErrorPage(context, e, matchList.location),
@@ -103,13 +105,14 @@ class RouteBuilder {
     RouteMatchList matchList,
     int startIndex,
     VoidCallback pop,
-    bool routerNeglect, // TODO(johnpryan): Is this working? Needs a test...
-    Key navigatorKey,
-    Map<String, String> params,
-  ) {
+    bool routerNeglect,
+    Map<String, String> params, {
+    Key? navigatorKey,
+  }) {
     final List<Page<dynamic>> pages = <Page<dynamic>>[];
-    final List<_OutOfScopePage> pagesForOutOfScopeNavigator =
-        <_OutOfScopePage>[];
+    final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>>
+        pagesForOutOfScopeNavigator =
+        <GlobalKey<NavigatorState>, List<Page<dynamic>>>{};
 
     for (int i = startIndex; i < matchList.matches.length; i++) {
       final RouteMatch match = matchList.matches[i];
@@ -129,24 +132,24 @@ class RouteBuilder {
         final Page<dynamic> page = buildGoRoutePage(context, state, match);
 
         // If this GoRoute is for a different Navigator, add it to the
-        // pagesForOutOfScopeNavigator list instead.
-        if (route.navigatorKey != null) {
-          pagesForOutOfScopeNavigator
-              .add(_OutOfScopePage(page, route.navigatorKey!));
+        // list of out of scope pages
+        final GlobalKey<NavigatorState>? goRouteNavKey = route.parentNavigatorKey;
+        if (goRouteNavKey != null && goRouteNavKey != navigatorKey) {
+          // Add this page to
+          if (pagesForOutOfScopeNavigator.containsKey(goRouteNavKey) &&
+              pagesForOutOfScopeNavigator[goRouteNavKey] != null) {
+            pagesForOutOfScopeNavigator[goRouteNavKey]!.add(page);
+          } else {
+            pagesForOutOfScopeNavigator[goRouteNavKey] = <Page<dynamic>>[page];
+          }
         } else {
           pages.add(page);
         }
       } else if (route is ShellRoute) {
         final GoRouterState state = buildState(match, newParams);
         final _RecursiveBuildResult result = _buildRecursive(
-            context,
-            matchList,
-            i + 1,
-            pop,
-            routerNeglect,
-            // Use a default unique key for the Navigator if none is provided.
-            route.shellNavigatorKey,
-            newParams);
+            context, matchList, i + 1, pop, routerNeglect, newParams,
+            navigatorKey: route.navigatorKey);
         final Widget child = result.widget;
 
         final Page<dynamic> page = buildPage(context, state,
@@ -154,9 +157,8 @@ class RouteBuilder {
 
         // If this ShellRoute is for a different Navigator, add it to the
         // pagesForOutOfScopeNavigator list instead.
-        if (route.navigatorKey != null) {
-          pagesForOutOfScopeNavigator
-              .add(_OutOfScopePage(page, route.navigatorKey!));
+        if (route.parentNavigatorKey != null) {
+          pagesForOutOfScopeNavigator[route.parentNavigatorKey]!.add(page);
         } else {
           pages.add(page);
         }
@@ -164,26 +166,31 @@ class RouteBuilder {
         // If any descendent GoRoutes have pages that are out of scope for this
         // navigator, Add them to the list of routes that are out of scope. If
         // they are in scope, add them to the list of pages for this navigator.
-        final List<_OutOfScopePage> pagesOutOfScopeForChildNavigator =
+        final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>>
+            pagesOutOfScopeForChildNavigator =
             result.pagesForOutOfScopeNavigator;
-        for (final _OutOfScopePage outOfScopePage
-            in pagesOutOfScopeForChildNavigator) {
-          if (outOfScopePage.navigatorKey == route.shellNavigatorKey) {
-            pages.add(page);
-          } else {
-            pagesForOutOfScopeNavigator.add(outOfScopePage);
-          }
+
+        if (pagesOutOfScopeForChildNavigator
+                .containsKey(route.navigatorKey) &&
+            pagesOutOfScopeForChildNavigator[route.navigatorKey]!
+                .isNotEmpty) {
+          pages.addAll(
+              pagesOutOfScopeForChildNavigator[route.navigatorKey]!);
         }
+
+        // Include any out of scope pages in _RecursiveBuildResult
+        pagesForOutOfScopeNavigator.addAll(pagesOutOfScopeForChildNavigator);
 
         i = result.newIndex;
       }
     }
 
     // Add any pages that were out of scope to this Navigator if the keys match.
-    for (final _OutOfScopePage outOfScopePage in pagesForOutOfScopeNavigator) {
-      if (outOfScopePage.navigatorKey == navigatorKey) {
-        pages.add(outOfScopePage.page);
-      }
+    if (pagesForOutOfScopeNavigator.containsKey(navigatorKey)) {
+      pagesForOutOfScopeNavigator[navigatorKey]
+          ?.forEach((Page<dynamic> outOfScopePage) {
+        pages.add(outOfScopePage);
+      });
     }
 
     Widget? child;
@@ -192,10 +199,10 @@ class RouteBuilder {
         context,
         Uri.parse(matchList.location.toString()),
         matchList.isError ? matchList.error : null,
-        navigatorKey,
         pop,
         pages,
         root: startIndex == 0,
+        navigatorKey: navigatorKey,
       );
     } else if (startIndex == 0) {
       // It's an error to have an empty pages list on the root Navigator.
@@ -209,8 +216,8 @@ class RouteBuilder {
   /// Helper method that calls [builderWithNav] with the [GoRouterState]
   @visibleForTesting
   Widget buildNavigator(BuildContext context, Uri uri, Exception? exception,
-      Key navigatorKey, VoidCallback pop, List<Page<dynamic>> pages,
-      {bool root = true}) {
+      VoidCallback pop, List<Page<dynamic>> pages,
+      {bool root = true, Key? navigatorKey}) {
     if (root) {
       return builderWithNav(
         context,
@@ -409,9 +416,14 @@ class RouteBuilder {
   Widget buildErrorNavigator(BuildContext context, RouteBuilderError e, Uri uri,
       VoidCallback pop, GlobalKey<NavigatorState> navigatorKey) {
     return buildNavigator(
-        context, uri, Exception(e), navigatorKey, pop, <Page<dynamic>>[
-      buildErrorPage(context, e, uri),
-    ]);
+        context,
+        uri,
+        Exception(e),
+        pop,
+        <Page<dynamic>>[
+          buildErrorPage(context, e, uri),
+        ],
+        navigatorKey: navigatorKey);
   }
 
   /// Builds a an error page.
@@ -456,17 +468,12 @@ class _RecursiveBuildResult {
   /// List of pages placed on the navigator. Used for testing.
   final List<Page<dynamic>> pages;
 
-  /// List of pages placed on a Navigator that isn't in the current scope (such as the root navigator)
-  final List<_OutOfScopePage> pagesForOutOfScopeNavigator;
+  /// Pages placed on a Navigator that aren't in the current scope
+  /// (such as the root navigator)
+  final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>>
+      pagesForOutOfScopeNavigator;
 
   final int newIndex;
-}
-
-class _OutOfScopePage {
-  _OutOfScopePage(this.page, this.navigatorKey);
-
-  final Page<dynamic> page;
-  final GlobalKey<NavigatorState> navigatorKey;
 }
 
 /// An error that occurred while building the app's UI based on the route

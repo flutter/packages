@@ -57,13 +57,13 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     for (int i = matchCount - 1; i >= 0; i--) {
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
-      final GlobalKey<NavigatorState>? key = route.navigatorKey;
+      final GlobalKey<NavigatorState>? key = route.parentNavigatorKey;
 
       // If this is a ShellRoute, then pop one of the subsequent GoRoutes, if
       // there are any.
       if (route is ShellRoute && (matchCount - i) > 2) {
         // Pop from this navigator.
-        navigator = route.shellNavigatorKey.currentState;
+        navigator = route.navigatorKey.currentState;
         break;
       } else if (key != null) {
         navigator = key.currentState;

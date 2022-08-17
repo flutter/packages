@@ -146,7 +146,7 @@ void main() {
                 child: child,
               );
             },
-            shellNavigatorKey: shellNavigatorKey,
+            navigatorKey: shellNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 path: 'details',
@@ -213,7 +213,7 @@ void main() {
                 child: child,
               );
             },
-            shellNavigatorKey: shellNavigatorKey,
+            navigatorKey: shellNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 path: 'details',
@@ -221,7 +221,7 @@ void main() {
                   return _DetailsScreen();
                 },
                 // This screen should stack onto the root navigator.
-                navigatorKey: rootNavigatorKey,
+                parentNavigatorKey: rootNavigatorKey,
               ),
             ],
           ),

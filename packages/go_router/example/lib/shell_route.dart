@@ -56,7 +56,7 @@ class ShellRouteExampleApp extends StatelessWidget {
               GoRoute(
                 path: 'details',
                 // Display on the root Navigator
-                navigatorKey: _rootNavigatorKey,
+                parentNavigatorKey: _rootNavigatorKey,
                 builder: (BuildContext context, GoRouterState state) {
                   return const DetailsScreen(label: 'B');
                 },

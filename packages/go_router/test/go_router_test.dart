@@ -1927,7 +1927,7 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         ShellRoute(
           path: '/',
-          shellNavigatorKey: shellNavigatorKey,
+          navigatorKey: shellNavigatorKey,
           builder: (BuildContext context, GoRouterState state, Widget child) {
             return Scaffold(
               body: Column(
@@ -1949,7 +1949,7 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: 'c',
-                  navigatorKey: rootNavigatorKey,
+                  parentNavigatorKey: rootNavigatorKey,
                   builder: (BuildContext context, GoRouterState state) {
                     return const Scaffold(
                       body: Text('Screen C'),

@@ -18,7 +18,7 @@ abstract class RouteBase {
     this.name,
     this.routes = const <RouteBase>[],
     this.redirect = _emptyRedirect,
-    this.navigatorKey,
+    this.parentNavigatorKey,
   }) {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, _pathParams);
@@ -229,7 +229,7 @@ abstract class RouteBase {
   /// An optional key specifying which Navigator to display this route's screen
   /// onto. Specifying the root Navigator will stack this route onto that
   /// Navigator instead of the nearest ShellRoute ancestor.
-  final GlobalKey<NavigatorState>? navigatorKey;
+  final GlobalKey<NavigatorState>? parentNavigatorKey;
 
   /// Match this route against a location.
   RegExpMatch? matchPatternAsPrefix(String loc) =>
@@ -247,7 +247,7 @@ abstract class RouteBase {
 ///
 /// The widget returned by [builder] is wrapped in [Page] and provided to the
 /// root Navigator, the nearest ShellRoute ancestor's Navigator, or the
-/// Navigator with a matching [navigatorKey].
+/// Navigator with a matching [parentNavigatorKey].
 ///
 /// The Page will be either a [MaterialPage] (for [MaterialApp]),
 /// [CupertinoPage] (for [CupertinoApp], or [NoTransitionPage] (for
@@ -260,7 +260,7 @@ class GoRoute extends RouteBase {
     required String path,
     this.builder,
     this.pageBuilder,
-    GlobalKey<NavigatorState>? navigatorKey,
+    GlobalKey<NavigatorState>? parentNavigatorKey,
     super.name,
     GoRouterRedirect redirect = RouteBase._emptyRedirect,
     List<RouteBase> routes = const <RouteBase>[],
@@ -277,7 +277,7 @@ class GoRoute extends RouteBase {
           path: path,
           routes: routes,
           redirect: redirect,
-          navigatorKey: navigatorKey,
+          parentNavigatorKey: parentNavigatorKey,
         );
 
   /// The path template for this route. For example "users/:userId" or
@@ -360,14 +360,14 @@ class ShellRoute extends RouteBase {
     this.defaultRoute,
     GoRouterRedirect redirect = RouteBase._emptyRedirect,
     List<RouteBase> routes = const <RouteBase>[],
+    GlobalKey<NavigatorState>? parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
-    GlobalKey<NavigatorState>? shellNavigatorKey,
-  })  : shellNavigatorKey = shellNavigatorKey ?? GlobalKey<NavigatorState>(),
+  })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._(
           path: path,
           routes: routes,
           redirect: redirect,
-          navigatorKey: navigatorKey,
+          parentNavigatorKey: parentNavigatorKey,
         );
 
   /// The widget builder for a shell route.
@@ -381,5 +381,5 @@ class ShellRoute extends RouteBase {
   /// The [GlobalKey] to be used to the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
-  late final GlobalKey<NavigatorState> shellNavigatorKey;
+  late final GlobalKey<NavigatorState> navigatorKey;
 }
