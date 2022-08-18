@@ -1,11 +1,11 @@
-## 4.3.0
+## 4.2.8
 
-- Adds a promise option to `push` and `pushNamed` making it posible to await results from a `pop`.
-- Adds an optional parameter to the `pop` method, allowing to return values from a `pop`.
+- Fixes namedLocation to return URIs without trailing question marks if there are no query parameters.
+- Cleans up examples.
 
 ## 4.2.7
 
-- Update README
+- Updates README.
 
 ## 4.2.6
 

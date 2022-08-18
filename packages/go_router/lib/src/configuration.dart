@@ -80,7 +80,10 @@ class RouteConfiguration {
         param.key: Uri.encodeComponent(param.value)
     };
     final String location = patternToPath(path, encodedParams);
-    return Uri(path: location, queryParameters: queryParams).toString();
+    return Uri(
+            path: location,
+            queryParameters: queryParams.isEmpty ? null : queryParams)
+        .toString();
   }
 
   @override
