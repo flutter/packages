@@ -59,7 +59,7 @@ void main() {
       ]),
       0,
     );
-    codec.writeDrawPath(buffer, pathId, paintId);
+    codec.writeDrawPath(buffer, pathId, paintId, null);
 
     codec.decode(buffer.done(), listener);
 

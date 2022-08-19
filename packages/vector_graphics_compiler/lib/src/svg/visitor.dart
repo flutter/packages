@@ -4,6 +4,7 @@
 
 import '../draw_command_builder.dart';
 import '../geometry/path.dart';
+import '../geometry/pattern.dart';
 import '../paint.dart';
 import '../vector_instructions.dart';
 import 'node.dart';
@@ -41,6 +42,9 @@ abstract class Visitor<S, V> {
   /// Visit a [Node] that has no meaningful content.
   S visitEmptyNode(Node node, V data);
 
+  /// Visit a [PatternNode].
+  S visitPatternNode(PatternNode node, V data);
+
   /// Visit a [ResolvedTextNode].
   S visitResolvedText(ResolvedTextNode textNode, V data);
 
@@ -61,6 +65,9 @@ abstract class Visitor<S, V> {
 
   /// Visit a [ResolvedVerticesNode].
   S visitResolvedVerticesNode(ResolvedVerticesNode verticesNode, V data);
+
+  /// Visit a [ResolvedPatternNode].
+  S visitResolvedPatternNode(ResolvedPatternNode patternNode, V data);
 }
 
 /// A mixin that can be applied to a [Visitor] that makes visiting an
@@ -97,6 +104,11 @@ mixin ErrorOnUnResolvedNode<S, V> on Visitor<S, V> {
   S visitImageNode(ImageNode imageNode, V data) {
     throw UnsupportedError(_message);
   }
+
+  @override
+  S visitPatternNode(PatternNode patternNode, V data) {
+    throw UnsupportedError(_message);
+  }
 }
 
 /// A visitor that builds up a [VectorInstructions] for binary encoding.
@@ -105,6 +117,10 @@ class CommandBuilderVisitor extends Visitor<void, void>
   final DrawCommandBuilder _builder = DrawCommandBuilder();
   late double _width;
   late double _height;
+
+  /// The current patternId. This will be `null` if
+  /// there is no current pattern.
+  int? currentPatternId;
 
   /// Return the vector instructions encoded by the visitor given to this tree.
   VectorInstructions toInstructions() {
@@ -150,12 +166,13 @@ class CommandBuilderVisitor extends Visitor<void, void>
 
   @override
   void visitResolvedPath(ResolvedPathNode pathNode, void data) {
-    _builder.addPath(pathNode.path, pathNode.paint, null);
+    _builder.addPath(pathNode.path, pathNode.paint, null, currentPatternId);
   }
 
   @override
   void visitResolvedText(ResolvedTextNode textNode, void data) {
-    _builder.addText(textNode.textConfig, textNode.paint, null);
+    _builder.addText(
+        textNode.textConfig, textNode.paint, null, currentPatternId);
   }
 
   @override
@@ -184,5 +201,17 @@ class CommandBuilderVisitor extends Visitor<void, void>
   @override
   void visitResolvedImageNode(ResolvedImageNode resolvedImageNode, void data) {
     _builder.addImage(resolvedImageNode, null);
+  }
+
+  @override
+  void visitResolvedPatternNode(ResolvedPatternNode patternNode, void data) {
+    final int patternId = _builder.getOrGeneratePatternId(
+        PatternData.fromNode(patternNode), _builder.patterns);
+    _builder.addPattern(patternId);
+    patternNode.pattern.accept(this, data);
+    _builder.restore();
+    currentPatternId = patternId;
+    patternNode.child.accept(this, data);
+    currentPatternId = null;
   }
 }

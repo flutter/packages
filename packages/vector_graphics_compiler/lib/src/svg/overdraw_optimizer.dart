@@ -4,7 +4,6 @@
 
 import 'parser.dart';
 import 'node.dart';
-import 'resolver.dart';
 import 'visitor.dart';
 import '../../vector_graphics_compiler.dart';
 import 'masking_optimizer.dart';
@@ -329,5 +328,10 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
     final _Result _result = _Result(node);
     _result.children.addAll(children);
     return _result;
+  }
+
+  @override
+  _Result visitResolvedPatternNode(ResolvedPatternNode patternNode, Node data) {
+    return _Result(patternNode);
   }
 }

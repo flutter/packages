@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:meta/meta.dart';
+import 'geometry/pattern.dart';
 import '../src/geometry/image.dart';
 import 'package:vector_graphics_compiler/src/util.dart';
 
@@ -26,6 +27,7 @@ class VectorInstructions {
     this.text = const <TextConfig>[],
     this.images = const <ImageData>[],
     this.drawImages = const <DrawImageData>[],
+    this.patterns = const <PatternData>[],
     required this.commands,
   });
 
@@ -53,6 +55,9 @@ class VectorInstructions {
   /// The [DrawImageData] objects, if any, used in [commands].
   final List<DrawImageData> drawImages;
 
+  /// The [PatternData] objects, if any used in [commands].
+  final List<PatternData> patterns;
+
   /// The painting order list of drawing commands.
   ///
   /// If the command type is [DrawCommandType.path], this command specifies
@@ -66,6 +71,7 @@ class VectorInstructions {
   int get hashCode => Object.hash(
       width,
       height,
+      Object.hashAll(patterns),
       Object.hashAll(paints),
       Object.hashAll(paths),
       Object.hashAll(vertices),
@@ -79,6 +85,7 @@ class VectorInstructions {
     return other is VectorInstructions &&
         other.width == width &&
         other.height == height &&
+        listEquals(other.patterns, patterns) &&
         listEquals(other.paints, paints) &&
         listEquals(other.paths, paths) &&
         listEquals(other.vertices, vertices) &&
@@ -130,6 +137,9 @@ enum DrawCommandType {
 
   /// Specifies that this command draws an image.
   image,
+
+  /// Specifies that this command draws a pattern.
+  pattern,
 }
 
 /// A drawing command combining the index of a [Path] or an [IndexedVertices]
@@ -144,7 +154,8 @@ class DrawCommand {
   /// Creates a new canvas drawing operation.
   ///
   /// See [DrawCommand].
-  const DrawCommand(this.type, {this.objectId, this.paintId, this.debugString});
+  const DrawCommand(this.type,
+      {this.objectId, this.paintId, this.debugString, this.patternId});
 
   /// A string, possibly from the original source SVG file, identifying a source
   /// for this command.
@@ -169,6 +180,11 @@ class DrawCommand {
   /// this command.
   final int? paintId;
 
+  /// The index of a pattern for this object in [VectorInstructions.patterns].
+  ///
+  /// A value of `null` indicates that there is no paint object a
+  final int? patternId;
+
   @override
   int get hashCode => Object.hash(type, objectId, paintId, debugString);
 
@@ -191,6 +207,9 @@ class DrawCommand {
     }
     if (debugString != null) {
       buffer.write(", debugString: '$debugString'");
+    }
+    if (patternId != null) {
+      buffer.write(", patternId: '$patternId'");
     }
     buffer.write(')');
     return buffer.toString();

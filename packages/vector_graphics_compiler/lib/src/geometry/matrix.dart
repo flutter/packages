@@ -6,7 +6,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
-import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
+import '../../vector_graphics_compiler.dart';
 
 import 'basic_types.dart';
 

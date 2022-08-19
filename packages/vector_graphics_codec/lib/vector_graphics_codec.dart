@@ -77,6 +77,7 @@ class VectorGraphicsCodec {
   static const int _imageConfigTag = 46;
   static const int _drawImageTag = 47;
   static const int _beginCommandsTag = 48;
+  static const int _patternTag = 49;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -169,6 +170,9 @@ class VectorGraphicsCodec {
         case _drawImageTag:
           _readDrawImage(buffer, listener);
           continue;
+        case _patternTag:
+          _readPattern(buffer, listener);
+          continue;
         default:
           throw StateError('Unknown type tag $type');
       }
@@ -200,6 +204,7 @@ class VectorGraphicsCodec {
     VectorGraphicsBuffer buffer,
     int pathId,
     int paintId,
+    int? patternId,
   ) {
     buffer._checkPhase(_CurrentSection.commands);
     buffer._addCommandsTag();
@@ -207,6 +212,7 @@ class VectorGraphicsCodec {
     buffer._putUint8(_drawPathTag);
     buffer._putUint16(pathId);
     buffer._putUint16(paintId);
+    buffer._putUint16(patternId ?? kMaxId);
   }
 
   /// Encode a draw vertices command in the current buffer.
@@ -561,12 +567,14 @@ class VectorGraphicsCodec {
     VectorGraphicsBuffer buffer,
     int textId,
     int paintId,
+    int? patternId,
   ) {
     buffer._checkPhase(_CurrentSection.commands);
     buffer._addCommandsTag();
     buffer._putUint8(_drawTextTag);
     buffer._putUint16(textId);
     buffer._putUint16(paintId);
+    buffer._putUint16(patternId ?? kMaxId);
   }
 
   void writeClipPath(VectorGraphicsBuffer buffer, int path) {
@@ -580,6 +588,28 @@ class VectorGraphicsCodec {
     buffer._checkPhase(_CurrentSection.commands);
     buffer._addCommandsTag();
     buffer._putUint8(_maskTag);
+  }
+
+  int writePattern(
+    VectorGraphicsBuffer buffer,
+    double x,
+    double y,
+    double width,
+    double height,
+    Float64List transform,
+  ) {
+    buffer._checkPhase(_CurrentSection.commands);
+    assert(buffer._nextPatternId < kMaxId);
+    final int id = buffer._nextPatternId;
+    buffer._nextPatternId += 1;
+    buffer._putUint8(_patternTag);
+    buffer._putUint16(id);
+    buffer._putFloat32(x);
+    buffer._putFloat32(y);
+    buffer._putFloat32(width);
+    buffer._putFloat32(height);
+    buffer._writeTransform(transform);
+    return id;
   }
 
   /// Write a new path to the [buffer], returing the identifier
@@ -706,7 +736,11 @@ class VectorGraphicsCodec {
   ) {
     final int pathId = buffer.getUint16();
     final int paintId = buffer.getUint16();
-    listener?.onDrawPath(pathId, paintId);
+    int? patternId = buffer.getUint16();
+    if (patternId == kMaxId) {
+      patternId = null;
+    }
+    listener?.onDrawPath(pathId, paintId, patternId);
   }
 
   void _readDrawVertices(
@@ -773,7 +807,11 @@ class VectorGraphicsCodec {
       _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int textId = buffer.getUint16();
     final int paintId = buffer.getUint16();
-    listener?.onDrawText(textId, paintId);
+    int? patternId = buffer.getUint16();
+    if (patternId == kMaxId) {
+      patternId = null;
+    }
+    listener?.onDrawText(textId, paintId, patternId);
   }
 
   void _readImageConfig(
@@ -795,6 +833,16 @@ class VectorGraphicsCodec {
     final Float64List? transformLength = buffer.getTransform();
 
     listener?.onDrawImage(id, x, y, width, height, transformLength);
+  }
+
+  void _readPattern(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    final int patternId = buffer.getUint16();
+    final double x = buffer.getFloat32();
+    final double y = buffer.getFloat32();
+    final double width = buffer.getFloat32();
+    final double height = buffer.getFloat32();
+    final Float64List? transform = buffer.getTransform();
+    listener?.onPatternStart(patternId, x, y, width, height, transform!);
   }
 }
 
@@ -852,6 +900,7 @@ abstract class VectorGraphicsCodecListener {
   void onDrawPath(
     int pathId,
     int? paintId,
+    int? patternId,
   );
 
   /// Draw the vertices with the given [vertices] and optionally index buffer
@@ -916,6 +965,7 @@ abstract class VectorGraphicsCodecListener {
   void onDrawText(
     int textId,
     int paintId,
+    int? patternId,
   );
 
   /// An image has been decoded.
@@ -934,6 +984,13 @@ abstract class VectorGraphicsCodecListener {
     double height,
     Float64List? transform,
   );
+
+  /// A pattern has been decoded.
+  ///
+  /// All subsequent pattern commands will refer to this pattern, until
+  /// [onPatternFinished] is invoked.
+  void onPatternStart(int patternId, double x, double y, double width,
+      double height, Float64List transform);
 }
 
 enum _CurrentSection {
@@ -984,6 +1041,9 @@ class VectorGraphicsBuffer {
 
   /// The next image id to be used.
   int _nextImageId = 0;
+
+  /// The next pattern id to be used.
+  int _nextPatternId = 0;
 
   bool _addedCommandTag = false;
 

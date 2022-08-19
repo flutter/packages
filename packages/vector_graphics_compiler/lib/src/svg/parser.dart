@@ -38,6 +38,7 @@ const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'use': _Elements.use,
   'symbol': _Elements.symbol,
   'mask': _Elements.symbol, // treat as symbol
+  'pattern': _Elements.pattern,
   'radialGradient': _Elements.radialGradient,
   'linearGradient': _Elements.linearGradient,
   'clipPath': _Elements.clipPath,
@@ -96,12 +97,15 @@ class _Elements {
     final ParentNode parent = parserState.currentGroup!;
 
     final ParentNode group = ParentNode(parserState._currentAttributes);
+
     parent.addChild(
       group,
       clipId: parserState._currentAttributes.clipPathId,
       clipResolver: parserState._definitions.getClipPath,
       maskId: parserState.attribute('mask'),
       maskResolver: parserState._definitions.getDrawable,
+      patternId: parserState._definitions.getPattern(parserState),
+      patternResolver: parserState._definitions.getDrawable,
     );
     parserState.addGroup(parserState._currentStartElement!, group);
     return null;
@@ -109,6 +113,54 @@ class _Elements {
 
   static Future<void>? symbol(SvgParser parserState, bool warningsAsErrors) {
     final ParentNode group = ParentNode(parserState._currentAttributes);
+    parserState.addGroup(parserState._currentStartElement!, group);
+    return null;
+  }
+
+  static Future<void>? pattern(SvgParser parserState, bool warningsAsErrors) {
+    final SvgAttributes attributes = parserState._currentAttributes;
+    final String rawWidth = parserState.attribute('width') ?? '';
+    final String rawHeight = parserState.attribute('height') ?? '';
+
+    double? patternWidth =
+        parsePatternUnitToDouble(rawWidth, 'width', viewBox: parserState._root);
+    double? patternHeight = parsePatternUnitToDouble(rawHeight, 'height',
+        viewBox: parserState._root);
+
+    if (patternWidth == null || patternHeight == null) {
+      final _Viewport viewBox = parserState._parseViewBox();
+      patternWidth = viewBox.width;
+      patternHeight = viewBox.height;
+    }
+
+    final String rawX = attributes.raw['x'] ?? '0';
+    final String rawY = attributes.raw['y'] ?? '0';
+    final double x = parseDecimalOrPercentage(rawX);
+    final double y = parseDecimalOrPercentage(rawY);
+    final String id = parserState.buildUrlIri();
+    parserState.patternIds.add(id);
+    final SvgAttributes newAttributes = SvgAttributes._(
+        raw: attributes.raw,
+        id: attributes.id,
+        href: attributes.href,
+        transform: attributes.transform,
+        color: attributes.color,
+        opacity: attributes.opacity,
+        stroke: attributes.stroke,
+        fill: attributes.fill,
+        fillRule: attributes.fillRule,
+        clipRule: attributes.clipRule,
+        clipPathId: attributes.clipPathId,
+        blendMode: attributes.blendMode,
+        fontFamily: attributes.fontFamily,
+        fontWeight: attributes.fontWeight,
+        fontSize: attributes.fontSize,
+        x: x,
+        y: y,
+        width: patternWidth,
+        height: patternHeight);
+
+    final ParentNode group = ParentNode(newAttributes);
     parserState.addGroup(parserState._currentStartElement!, group);
     return null;
   }
@@ -145,6 +197,7 @@ class _Elements {
       ),
       clipResolver: parserState._definitions.getClipPath,
       maskResolver: parserState._definitions.getDrawable,
+      patternResolver: parserState._definitions.getDrawable,
     );
     parserState.checkForIri(group);
     parent!.addChild(
@@ -153,6 +206,8 @@ class _Elements {
       clipResolver: parserState._definitions.getClipPath,
       maskId: parserState.attribute('mask'),
       maskResolver: parserState._definitions.getDrawable,
+      patternId: parserState._definitions.getPattern(parserState),
+      patternResolver: parserState._definitions.getDrawable,
     );
     return null;
   }
@@ -368,6 +423,7 @@ class _Elements {
         ImageNode(data, parserState._currentAttributes),
         clipResolver: parserState._definitions.getClipPath,
         maskResolver: parserState._definitions.getDrawable,
+        patternResolver: parserState._definitions.getDrawable,
       );
       return null;
     }
@@ -419,8 +475,10 @@ class _Elements {
               parserState.parseFontWeight(attributes.raw['font-weight'])],
           attributes,
         ),
+        patternId: parserState._definitions.getPattern(parserState),
         clipResolver: parserState._definitions.getClipPath,
         maskResolver: parserState._definitions.getDrawable,
+        patternResolver: parserState._definitions.getDrawable,
       );
     }
 
@@ -590,6 +648,9 @@ class SvgParser {
 
   /// Toggles whether [OverdrawOptimizer] is enabled or disabled.
   bool enableOverdrawOptimizer = true;
+
+  /// List of known patternIds.
+  List<String> patternIds = <String>[];
 
   ViewportNode? _root;
   SvgAttributes _currentAttributes = SvgAttributes.empty;
@@ -779,15 +840,17 @@ class SvgParser {
     }
     final ParentNode parent = _parentDrawables.last.drawable;
     final Path path = pathFunc(this)!;
-
     final PathNode drawable = PathNode(path, _currentAttributes);
     checkForIri(drawable);
+
     parent.addChild(
       drawable,
       clipId: _currentAttributes.clipPathId,
       clipResolver: _definitions.getClipPath,
       maskId: attribute('mask'),
       maskResolver: _definitions.getDrawable,
+      patternId: _definitions.getPattern(this),
+      patternResolver: _definitions.getDrawable,
     );
     return true;
   }
@@ -1136,6 +1199,15 @@ class SvgParser {
     return null;
   }
 
+  /// Lookup the pattern if the attribute is present.
+  Node? parsePattern() {
+    final String? rawPattern = attribute('fill');
+    if (rawPattern != null) {
+      return _definitions.getDrawable(rawPattern);
+    }
+    return null;
+  }
+
   /// Parse the raw font weight string.
   int parseFontWeight(String? fontWeight) {
     if (fontWeight == null || fontWeight == 'normal') {
@@ -1375,9 +1447,13 @@ class SvgParser {
     Paint? definitionPaint;
     Color? strokeColor;
     String? shaderId;
+    bool? hasPattern;
     if (rawStroke?.startsWith('url') == true) {
       shaderId = rawStroke;
       strokeColor = Color.fromRGBO(255, 255, 255, opacity);
+      if (patternIds.contains(rawStroke)) {
+        hasPattern = true;
+      }
     } else {
       strokeColor = parseColor(rawStroke);
     }
@@ -1395,6 +1471,7 @@ class SvgParser {
           definitionPaint?.stroke?.width,
       dashArray: _parseDashArray(rawStrokeDashArray),
       dashOffset: _parseDashOffset(rawStrokeDashOffset),
+      hasPattern: hasPattern,
     );
   }
 
@@ -1417,12 +1494,16 @@ class SvgParser {
     if (uniformOpacity != null) {
       opacity *= uniformOpacity;
     }
-
+    bool? hasPattern;
     if (rawFill.startsWith('url')) {
+      if (patternIds.contains(rawFill)) {
+        hasPattern = true;
+      }
       return SvgFillAttributes._(
         _definitions,
         color: Color.fromRGBO(255, 255, 255, opacity),
         shaderId: rawFill,
+        hasPattern: hasPattern,
       );
     }
 
@@ -1538,6 +1619,25 @@ class _Resolver {
         .toList(growable: false);
   }
 
+  /// Get the pattern id if one exists.
+  String? getPattern(SvgParser parserState) {
+    if (parserState.attribute('fill') != null) {
+      final String? fill = parserState.attribute('fill');
+      if (fill!.startsWith('url') && parserState.patternIds.contains(fill)) {
+        return fill;
+      }
+    }
+
+    if (parserState.attribute('stroke') != null) {
+      final String? stroke = parserState.attribute('stroke');
+      if (stroke!.startsWith('url') &&
+          parserState.patternIds.contains(stroke)) {
+        return stroke;
+      }
+    }
+    return null;
+  }
+
   /// Retrieve the [Gradeint] defined by [ref].
   T? getGradient<T extends Gradient>(String ref) {
     assert(_sealed);
@@ -1619,6 +1719,10 @@ class SvgAttributes {
     this.fontFamily,
     this.fontWeight,
     this.fontSize,
+    this.x,
+    this.y,
+    this.width,
+    this.height,
   });
 
   /// The empty set of properties.
@@ -1748,6 +1852,18 @@ class SvgAttributes {
   /// The `font-size` attribute.
   final double? fontSize;
 
+  /// The `width` attribute.
+  final double? width;
+
+  /// The `height` attribute.
+  final double? height;
+
+  /// The x translation.
+  final double? x;
+
+  /// The y translation.
+  final double? y;
+
   /// Creates a new set of attributes as if this inherited from `parent`.
   ///
   /// If `includePosition` is true, the `x`/`y` coordinates are also inherited. This
@@ -1776,6 +1892,10 @@ class SvgAttributes {
       fontFamily: parent.fontFamily ?? fontFamily,
       fontWeight: parent.fontWeight ?? fontWeight,
       fontSize: parent.fontSize ?? fontSize,
+      x: parent.x ?? x,
+      y: parent.y ?? y,
+      height: parent.height ?? height,
+      width: parent.width ?? width,
     );
   }
 }
@@ -1792,6 +1912,7 @@ class SvgStrokeAttributes {
     this.width,
     this.dashArray,
     this.dashOffset,
+    this.hasPattern,
   });
 
   /// Specifies that strokes should not be drawn, even if they otherwise would
@@ -1825,11 +1946,23 @@ class SvgStrokeAttributes {
   /// The offset for [dashArray], if any.
   final double? dashOffset;
 
+  /// Indicates whether or not a pattern is used for stroke;
+  final bool? hasPattern;
+
   /// Creates a stroking paint object from this set of attributes, using the
   /// bounds and transform specified for shader computation.
   ///
   /// Returns null if this is [none].
   Stroke? toStroke(Rect shaderBounds, AffineMatrix transform) {
+    if (hasPattern == true) {
+      return Stroke(
+        join: join,
+        cap: cap,
+        miterLimit: miterLimit,
+        width: width,
+      );
+    }
+
     if (_definitions == null) {
       return null;
     }
@@ -1858,7 +1991,8 @@ class SvgStrokeAttributes {
 /// SVG attributes specific to filling.
 class SvgFillAttributes {
   /// Create a new [SvgFillAttributes];
-  const SvgFillAttributes._(this._definitions, {this.color, this.shaderId});
+  const SvgFillAttributes._(this._definitions,
+      {this.color, this.shaderId, this.hasPattern});
 
   /// Specifies that fills should not be drawn, even if they otherwise would be.
   static const SvgFillAttributes none = SvgFillAttributes._(null);
@@ -1872,11 +2006,18 @@ class SvgFillAttributes {
   /// The literal reference to a shader defined elsewhere.
   final String? shaderId;
 
+  /// If there is a pattern a default fill will be returned.
+  final bool? hasPattern;
+
   /// Creates a [Fill] from this information with appropriate transforms and
   /// bounds for shaders.
   ///
   /// Returns null if this is [none].
   Fill? toFill(Rect shaderBounds, AffineMatrix transform) {
+    if (hasPattern == true) {
+      return Fill(color: color);
+    }
+
     if (_definitions == null) {
       return null;
     }

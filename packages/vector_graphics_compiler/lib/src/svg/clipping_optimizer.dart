@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'node.dart';
-import 'resolver.dart';
 import 'visitor.dart';
 import 'masking_optimizer.dart';
 import '../../vector_graphics_compiler.dart';
@@ -229,6 +228,13 @@ class ClippingOptimizer extends Visitor<_Result, Node>
   @override
   _Result visitResolvedImageNode(
       ResolvedImageNode resolvedImageNode, Node data) {
-    return _Result(resolvedImageNode);
+    final _Result _result = _Result(resolvedImageNode);
+    _result.deleteClipNode = false;
+    return _result;
+  }
+
+  @override
+  _Result visitResolvedPatternNode(ResolvedPatternNode patternNode, Node data) {
+    return _Result(patternNode);
   }
 }

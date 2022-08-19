@@ -4,7 +4,7 @@
 
 import 'dart:typed_data';
 
-import 'package:vector_graphics_compiler/src/geometry/matrix.dart';
+import 'matrix.dart';
 
 import 'basic_types.dart';
 

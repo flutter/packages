@@ -5,6 +5,7 @@
 import 'dart:typed_data';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+import 'src/geometry/pattern.dart';
 import 'src/geometry/matrix.dart';
 import 'src/geometry/image.dart';
 import 'src/geometry/vertices.dart';
@@ -19,6 +20,7 @@ export 'src/geometry/path.dart';
 export 'src/geometry/vertices.dart';
 export 'src/paint.dart';
 export 'src/svg/theme.dart';
+export 'src/svg/resolver.dart';
 export 'src/vector_instructions.dart';
 export 'src/svg/tessellator.dart' show initializeLibTesselator;
 export 'src/svg/path_ops.dart' show initializeLibPathOps;
@@ -229,6 +231,7 @@ Future<Uint8List> encodeSvg({
             buffer,
             pathIds[command.objectId]!,
             fillIds[command.paintId]!,
+            command.patternId,
           );
         }
         if (strokeIds.containsKey(command.paintId)) {
@@ -236,6 +239,7 @@ Future<Uint8List> encodeSvg({
             buffer,
             pathIds[command.objectId]!,
             strokeIds[command.paintId]!,
+            command.patternId,
           );
         }
         break;
@@ -258,12 +262,27 @@ Future<Uint8List> encodeSvg({
       case DrawCommandType.mask:
         codec.writeMask(buffer);
         break;
+
+      case DrawCommandType.pattern:
+        final PatternData patternData =
+            instructions.patterns[command.objectId!];
+        codec.writePattern(
+          buffer,
+          patternData.x,
+          patternData.y,
+          patternData.width,
+          patternData.height,
+          patternData.transform.toMatrix4(),
+        );
+        break;
+
       case DrawCommandType.text:
         if (fillIds.containsKey(command.paintId)) {
           codec.writeDrawText(
             buffer,
             command.objectId!,
             fillIds[command.paintId]!,
+            command.patternId,
           );
         }
         if (strokeIds.containsKey(command.paintId)) {
@@ -271,6 +290,7 @@ Future<Uint8List> encodeSvg({
             buffer,
             command.objectId!,
             strokeIds[command.paintId]!,
+            command.patternId,
           );
         }
         break;

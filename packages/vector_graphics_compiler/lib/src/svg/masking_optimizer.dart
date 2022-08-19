@@ -5,7 +5,6 @@
 import 'dart:typed_data';
 
 import 'node.dart';
-import 'resolver.dart';
 import 'visitor.dart';
 import '../../vector_graphics_compiler.dart';
 import 'path_ops.dart' as path_ops;
@@ -324,6 +323,13 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   _Result visitResolvedImageNode(
       ResolvedImageNode resolvedImageNode, Node data) {
-    return _Result(resolvedImageNode);
+    final _Result _result = _Result(resolvedImageNode);
+    _result.deleteMaskNode = false;
+    return _result;
+  }
+
+  @override
+  _Result visitResolvedPatternNode(ResolvedPatternNode patternNode, Node data) {
+    return _Result(patternNode);
   }
 }

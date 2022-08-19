@@ -75,7 +75,7 @@ void main() {
       Float32List.fromList(<double>[1, 2, 2, 3]),
       0,
     );
-    codec.writeDrawPath(buffer, pathId, paintId);
+    codec.writeDrawPath(buffer, pathId, paintId, null);
 
     codec.decode(buffer.done(), listener);
 
@@ -96,7 +96,7 @@ void main() {
       const OnPathLineTo(2, 3),
       const OnPathClose(),
       const OnPathFinished(),
-      OnDrawPath(pathId, paintId),
+      OnDrawPath(pathId, paintId, null),
     ]);
   });
 
@@ -126,8 +126,8 @@ void main() {
       Float32List.fromList(<double>[1, 2, 2, 3]),
       0,
     );
-    codec.writeDrawPath(buffer, pathId, fillId);
-    codec.writeDrawPath(buffer, pathId, strokeId);
+    codec.writeDrawPath(buffer, pathId, fillId, null);
+    codec.writeDrawPath(buffer, pathId, strokeId, null);
 
     codec.decode(buffer.done(), listener);
 
@@ -169,8 +169,8 @@ void main() {
       const OnPathLineTo(2, 3),
       const OnPathClose(),
       const OnPathFinished(),
-      OnDrawPath(pathId, fillId),
-      OnDrawPath(pathId, strokeId),
+      OnDrawPath(pathId, fillId, null),
+      OnDrawPath(pathId, strokeId, null),
     ]);
   });
 
@@ -471,7 +471,7 @@ void main() {
       fontSize: 16,
       transform: null,
     );
-    codec.writeDrawText(buffer, textId, paintId);
+    codec.writeDrawText(buffer, textId, paintId, null);
     codec.decode(buffer.done(), listener);
 
     expect(listener.commands, [
@@ -496,7 +496,7 @@ void main() {
         null,
         textId,
       ),
-      OnDrawText(textId, paintId),
+      OnDrawText(textId, paintId, null),
     ]);
   });
 
@@ -517,7 +517,7 @@ void main() {
       fontSize: 16,
       transform: transform,
     );
-    codec.writeDrawText(buffer, textId, paintId);
+    codec.writeDrawText(buffer, textId, paintId, null);
     codec.decode(buffer.done(), listener);
 
     expect(listener.commands, [
@@ -542,7 +542,7 @@ void main() {
         transform,
         textId,
       ),
-      OnDrawText(textId, paintId),
+      OnDrawText(textId, paintId, null),
     ]);
   });
 
@@ -561,7 +561,7 @@ void main() {
       fontSize: 16,
       transform: null,
     );
-    codec.writeDrawText(buffer, textId, paintId);
+    codec.writeDrawText(buffer, textId, paintId, null);
     codec.decode(buffer.done(), listener);
 
     expect(listener.commands, [
@@ -586,7 +586,7 @@ void main() {
         null,
         textId,
       ),
-      OnDrawText(textId, paintId),
+      OnDrawText(textId, paintId, null),
     ]);
   });
 
@@ -605,7 +605,7 @@ void main() {
       fontSize: 16,
       transform: null,
     );
-    codec.writeDrawText(buffer, textId, paintId);
+    codec.writeDrawText(buffer, textId, paintId, null);
     codec.decode(buffer.done(), listener);
 
     expect(listener.commands, [
@@ -630,7 +630,7 @@ void main() {
         null,
         textId,
       ),
-      OnDrawText(textId, paintId),
+      OnDrawText(textId, paintId, null),
     ]);
   });
 
@@ -713,8 +713,8 @@ void main() {
       Float32List.fromList(<double>[1, 2, 2, 3]),
       0,
     );
-    codec.writeDrawPath(buffer, pathId, fillId);
-    codec.writeDrawPath(buffer, pathId, strokeId);
+    codec.writeDrawPath(buffer, pathId, fillId, null);
+    codec.writeDrawPath(buffer, pathId, strokeId, null);
     codec.writeDrawImage(buffer, imageId, 1, 2, 100, 100, null);
 
     final ByteData data = buffer.done();
@@ -813,8 +813,8 @@ void main() {
       const OnPathLineTo(2, 3),
       const OnPathClose(),
       const OnPathFinished(),
-      OnDrawPath(pathId, fillId),
-      OnDrawPath(pathId, strokeId),
+      OnDrawPath(pathId, fillId, null),
+      OnDrawPath(pathId, strokeId, null),
       OnDrawImage(imageId, 1, 2, 100, 100, null),
     ]);
   });
@@ -824,8 +824,8 @@ class TestListener extends VectorGraphicsCodecListener {
   final List<Object> commands = <Object>[];
 
   @override
-  void onDrawPath(int pathId, int? paintId) {
-    commands.add(OnDrawPath(pathId, paintId));
+  void onDrawPath(int pathId, int? paintId, int? patternId) {
+    commands.add(OnDrawPath(pathId, paintId, patternId));
   }
 
   @override
@@ -992,8 +992,8 @@ class TestListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onDrawText(int textId, int paintId) {
-    commands.add(OnDrawText(textId, paintId));
+  void onDrawText(int textId, int paintId, int? patternId) {
+    commands.add(OnDrawText(textId, paintId, patternId));
   }
 
   @override
@@ -1015,6 +1015,16 @@ class TestListener extends VectorGraphicsCodecListener {
     Float64List? transform,
   ) {
     commands.add(OnDrawImage(imageId, x, y, width, height, transform));
+  }
+
+  @override
+  void onPatternStart(int patternId, double x, double y, double width,
+      double height, Float64List transform) {
+    commands.add(OnPatternStart(patternId, x, y, width, height, transform));
+  }
+
+  void onPatternFinished() {
+    commands.add(const OnPatternFinished());
   }
 }
 
@@ -1166,20 +1176,24 @@ class OnRestoreLayer {
 }
 
 class OnDrawPath {
-  const OnDrawPath(this.pathId, this.paintId);
+  const OnDrawPath(this.pathId, this.paintId, this.patternId);
 
   final int pathId;
   final int? paintId;
+  final int? patternId;
 
   @override
-  int get hashCode => Object.hash(pathId, paintId);
+  int get hashCode => Object.hash(pathId, paintId, patternId);
 
   @override
   bool operator ==(Object other) =>
-      other is OnDrawPath && other.pathId == pathId && other.paintId == paintId;
+      other is OnDrawPath &&
+      other.pathId == pathId &&
+      other.paintId == paintId &&
+      other.patternId == patternId;
 
   @override
-  String toString() => 'OnDrawPath($pathId, $paintId)';
+  String toString() => 'OnDrawPath($pathId, $paintId, $patternId)';
 }
 
 class OnDrawVertices {
@@ -1415,20 +1429,24 @@ class OnTextConfig {
 }
 
 class OnDrawText {
-  const OnDrawText(this.textId, this.paintId);
+  const OnDrawText(this.textId, this.paintId, this.patternId);
 
   final int textId;
   final int paintId;
+  final int? patternId;
 
   @override
-  int get hashCode => Object.hash(textId, paintId);
+  int get hashCode => Object.hash(textId, paintId, patternId);
 
   @override
   bool operator ==(Object other) =>
-      other is OnDrawText && other.textId == textId && other.paintId == paintId;
+      other is OnDrawText &&
+      other.textId == textId &&
+      other.paintId == paintId &&
+      other.patternId == patternId;
 
   @override
-  String toString() => 'OnDrawText($textId, $paintId)';
+  String toString() => 'OnDrawText($textId, $paintId, $patternId)';
 }
 
 class OnImage {
@@ -1480,6 +1498,48 @@ class OnDrawImage {
 
   @override
   String toString() => 'OnDrawImage($id, $x, $y, $width, $height, $transform)';
+}
+
+class OnPatternStart {
+  const OnPatternStart(
+      this.patternId, this.x, this.y, this.width, this.height, this.transform);
+  final int patternId;
+  final double x;
+  final double y;
+  final double width;
+  final double height;
+  final Float64List transform;
+
+  @override
+  int get hashCode =>
+      Object.hash(patternId, x, y, width, height, Object.hashAll(transform));
+
+  @override
+  bool operator ==(Object other) =>
+      other is OnPatternStart &&
+      other.patternId == patternId &&
+      other.x == x &&
+      other.y == y &&
+      other.width == width &&
+      other.height == height &&
+      _listEquals(other.transform, transform);
+
+  @override
+  String toString() =>
+      'OnPatternStart($patternId, $x, $y, $width, $height, $transform)';
+}
+
+class OnPatternFinished {
+  const OnPatternFinished();
+
+  @override
+  int get hashCode => 55678;
+
+  @override
+  bool operator ==(Object other) => other is OnPathFinished;
+
+  @override
+  String toString() => 'OnPatternFinished';
 }
 
 bool _listEquals<E>(List<E>? left, List<E>? right) {

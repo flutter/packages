@@ -126,7 +126,7 @@ void main() {
       const OnPathMoveTo(34, 76),
       const OnPathLineTo(57, 76),
       const OnPathFinished(),
-      const OnDrawPath(0, 0),
+      const OnDrawPath(0, 0, null),
     ]);
   });
 
@@ -218,12 +218,12 @@ void main() {
       const OnTextConfig(
           'Stroked bold line', 150, 215, 55, 'Roboto', 8, null, 3),
       const OnTextConfig('Line 3', 150, 50, 55, 'Roboto', 3, null, 4),
-      const OnDrawText(0, 0),
-      const OnDrawText(1, 0),
-      const OnDrawText(2, 0),
-      const OnDrawText(3, 1),
-      const OnDrawText(3, 2),
-      const OnDrawText(4, 3),
+      const OnDrawText(0, 0, null),
+      const OnDrawText(1, 0, null),
+      const OnDrawText(2, 0, null),
+      const OnDrawText(3, 1, null),
+      const OnDrawText(3, 2, null),
+      const OnDrawText(4, 3, null),
     ]);
   });
 
@@ -336,8 +336,8 @@ class TestListener extends VectorGraphicsCodecListener {
   final List<Object> commands = <Object>[];
 
   @override
-  void onDrawPath(int pathId, int? paintId) {
-    commands.add(OnDrawPath(pathId, paintId));
+  void onDrawPath(int pathId, int? paintId, int? patternId) {
+    commands.add(OnDrawPath(pathId, paintId, patternId));
   }
 
   @override
@@ -504,8 +504,8 @@ class TestListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onDrawText(int textId, int paintId) {
-    commands.add(OnDrawText(textId, paintId));
+  void onDrawText(int textId, int paintId, int? patternId) {
+    commands.add(OnDrawText(textId, paintId, patternId));
   }
 
   @override
@@ -523,6 +523,16 @@ class TestListener extends VectorGraphicsCodecListener {
   @override
   void onImage(int imageId, int format, Uint8List data) {
     commands.add(OnImage(imageId, format, data));
+  }
+
+  @override
+  void onPatternStart(int patternId, double x, double y, double width,
+      double height, Float64List transform) {
+    commands.add(OnPatternStart(patternId, x, y, width, height, transform));
+  }
+
+  void onPatternFinished() {
+    commands.add(const OnPatternFinished());
   }
 }
 
@@ -674,20 +684,24 @@ class OnRestoreLayer {
 }
 
 class OnDrawPath {
-  const OnDrawPath(this.pathId, this.paintId);
+  const OnDrawPath(this.pathId, this.paintId, this.patternId);
 
   final int pathId;
   final int? paintId;
+  final int? patternId;
 
   @override
-  int get hashCode => Object.hash(pathId, paintId);
+  int get hashCode => Object.hash(pathId, paintId, patternId);
 
   @override
   bool operator ==(Object other) =>
-      other is OnDrawPath && other.pathId == pathId && other.paintId == paintId;
+      other is OnDrawPath &&
+      other.pathId == pathId &&
+      other.paintId == paintId &&
+      other.patternId == patternId;
 
   @override
-  String toString() => 'OnDrawPath($pathId, $paintId)';
+  String toString() => 'OnDrawPath($pathId, $paintId, $patternId)';
 }
 
 class OnDrawVertices {
@@ -923,20 +937,24 @@ class OnTextConfig {
 }
 
 class OnDrawText {
-  const OnDrawText(this.textId, this.paintId);
+  const OnDrawText(this.textId, this.paintId, this.patternId);
 
   final int textId;
   final int paintId;
+  final int? patternId;
 
   @override
-  int get hashCode => Object.hash(textId, paintId);
+  int get hashCode => Object.hash(textId, paintId, patternId);
 
   @override
   bool operator ==(Object other) =>
-      other is OnDrawText && other.textId == textId && other.paintId == paintId;
+      other is OnDrawText &&
+      other.textId == textId &&
+      other.paintId == paintId &&
+      other.patternId == patternId;
 
   @override
-  String toString() => 'OnDrawText($textId, $paintId)';
+  String toString() => 'OnDrawText($textId, $paintId, $patternId)';
 }
 
 class OnImage {
@@ -993,6 +1011,48 @@ class OnDrawImage {
 
   @override
   String toString() => 'OnDrawImage($id, $x, $y, $width, $height, $transform)';
+}
+
+class OnPatternStart {
+  const OnPatternStart(
+      this.patternId, this.x, this.y, this.width, this.height, this.transform);
+  final int patternId;
+  final double x;
+  final double y;
+  final double width;
+  final double height;
+  final Float64List transform;
+
+  @override
+  int get hashCode =>
+      Object.hash(patternId, x, y, width, height, Object.hashAll(transform));
+
+  @override
+  bool operator ==(Object other) =>
+      other is OnPatternStart &&
+      other.patternId == patternId &&
+      other.x == x &&
+      other.y == y &&
+      other.width == width &&
+      other.height == height &&
+      _listEquals(other.transform, transform);
+
+  @override
+  String toString() =>
+      'OnPatternStart($patternId, $x, $y, $width, $height, $transform)';
+}
+
+class OnPatternFinished {
+  const OnPatternFinished();
+
+  @override
+  int get hashCode => 55678;
+
+  @override
+  bool operator ==(Object other) => other is OnPathFinished;
+
+  @override
+  String toString() => 'OnPatternFinished';
 }
 
 bool _listEquals<E>(List<E>? left, List<E>? right) {

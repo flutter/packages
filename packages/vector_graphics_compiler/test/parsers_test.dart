@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/numbers.dart';
+import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/src/svg/parsers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
@@ -102,6 +104,19 @@ void main() {
     expect(parseRawFillRule('nonzero'), PathFillType.nonZero);
     expect(parseRawFillRule('evenodd'), PathFillType.evenOdd);
     expect(parseRawFillRule('invalid'), PathFillType.nonZero);
+  });
+
+  test('Parses pattern units to double correctly', () {
+    final ViewportNode viewportNode = ViewportNode(SvgAttributes.empty,
+        width: 100, height: 1000, transform: AffineMatrix.identity);
+    expect(parsePatternUnitToDouble('25.0', 'width'), 25.0);
+    expect(
+        parsePatternUnitToDouble('0.25', 'width', viewBox: viewportNode), 25.0);
+    expect(
+        parsePatternUnitToDouble('25%', 'width', viewBox: viewportNode), 25.0);
+    expect(parsePatternUnitToDouble('25', 'width'), 25.0);
+    expect(
+        parsePatternUnitToDouble('0.1%', 'height', viewBox: viewportNode), 1.0);
   });
 
   test('Point conversion', () {

@@ -143,8 +143,10 @@ class ParentNode extends AttributedNode {
     AttributedNode child, {
     String? clipId,
     String? maskId,
+    String? patternId,
     required Resolver<List<Path>> clipResolver,
     required Resolver<AttributedNode?> maskResolver,
+    required Resolver<AttributedNode?> patternResolver,
   }) {
     Node wrappedChild = child;
     if (clipId != null) {
@@ -161,6 +163,14 @@ class ParentNode extends AttributedNode {
         maskId: maskId,
         child: wrappedChild,
         blendMode: child.attributes.blendMode,
+        transform: child.attributes.transform,
+      );
+    }
+    if (patternId != null) {
+      wrappedChild = PatternNode(
+        resolver: patternResolver,
+        patternId: patternId,
+        child: wrappedChild,
         transform: child.attributes.transform,
       );
     }
@@ -505,5 +515,46 @@ class ImageNode extends AttributedNode {
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {
     return visitor.visitImageNode(this, data);
+  }
+}
+
+/// A leaf node in the tree that reprents an patterned-node.
+class PatternNode extends Node {
+  /// Creates a new pattern node that aaples [pattern] to [child].
+  PatternNode({
+    required this.child,
+    required this.patternId,
+    required this.resolver,
+    required this.transform,
+  });
+
+  /// This id will match any path or text element that has a non-null patternId.
+  final String patternId;
+
+  /// The child(ren) to apply the pattern to.
+  final Node child;
+
+  /// The decendant child's transform.
+  final AffineMatrix transform;
+
+  /// Called by visitors to resolve [patternId] to an [AttributedNode].
+  final Resolver<AttributedNode?> resolver;
+
+  @override
+  AffineMatrix concatTransform(AffineMatrix currentTransform) {
+    if (transform == AffineMatrix.identity) {
+      return currentTransform;
+    }
+    return currentTransform.multiplied(transform);
+  }
+
+  @override
+  void visitChildren(NodeCallback visitor) {
+    visitor(child);
+  }
+
+  @override
+  S accept<S, V>(Visitor<S, V> visitor, V data) {
+    return visitor.visitPatternNode(this, data);
   }
 }

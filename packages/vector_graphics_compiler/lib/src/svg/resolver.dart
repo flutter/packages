@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:typed_data';
-
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
@@ -255,6 +254,34 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     assert(false);
     return resolvedImageNode;
   }
+
+  @override
+  Node visitPatternNode(PatternNode node, AffineMatrix data) {
+    final AttributedNode? resolvedPattern = node.resolver(node.patternId);
+    if (resolvedPattern == null) {
+      return node.child.accept(this, data);
+    }
+    final Node child = node.child.accept(this, data);
+    final AffineMatrix childTransform = node.concatTransform(data);
+    final Node pattern = resolvedPattern.accept(this, childTransform);
+
+    return ResolvedPatternNode(
+      child: child,
+      pattern: pattern,
+      x: resolvedPattern.attributes.x,
+      y: resolvedPattern.attributes.y,
+      width: resolvedPattern.attributes.width!,
+      height: resolvedPattern.attributes.height!,
+      transform: data,
+    );
+  }
+
+  @override
+  Node visitResolvedPatternNode(
+      ResolvedPatternNode patternNode, AffineMatrix data) {
+    assert(false);
+    return patternNode;
+  }
 }
 
 /// A block of text that has its position and final transfrom fully known.
@@ -425,4 +452,52 @@ class ResolvedImageNode extends Node {
 
   @override
   void visitChildren(NodeCallback visitor) {}
+}
+
+/// A pattern node that has a fully resolved position and data.
+class ResolvedPatternNode extends Node {
+  /// Creates a new [ResolvedPatternNode].
+
+  ResolvedPatternNode({
+    required this.child,
+    required this.pattern,
+    required this.width,
+    required this.x,
+    required this.y,
+    required this.height,
+    required this.transform,
+  });
+
+  /// The child to apply a pattern to.
+  final Node child;
+
+  /// A node that represents the pattern.
+  final Node pattern;
+
+  /// The x coordinate shift of the pattern tile.
+  double? x;
+
+  /// The y coordinate shift of the pattern tile.
+  double? y;
+
+  /// The width of the pattern's viewbox in px.
+  /// Values must be > = 1.
+  double width;
+
+  /// The height of the pattern's viewbox in px.
+  /// Values must be > = 1.
+  double height;
+
+  /// This is the transform of the pattern that has been created from the children.
+  AffineMatrix transform;
+
+  @override
+  void visitChildren(NodeCallback visitor) {
+    visitor(child);
+  }
+
+  @override
+  S accept<S, V>(Visitor<S, V> visitor, V data) {
+    return visitor.visitResolvedPatternNode(this, data);
+  }
 }

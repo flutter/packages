@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-
 import 'package:vector_graphics_compiler/src/svg/numbers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
@@ -693,6 +692,53 @@ void main() {
             objectId: 2, paintId: 2, debugString: 'myCircle')
       ],
     );
+  });
+
+  test('Parses pattern used as fill and stroke', () async {
+    final VectorInstructions instructions = await parse(
+      starPatternCircles,
+      warningsAsErrors: true,
+      enableMaskingOptimizer: false,
+      enableClippingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.pattern, objectId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 1, patternId: 0),
+      DrawCommand(DrawCommandType.pattern, objectId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.path, objectId: 2, paintId: 2, patternId: 1)
+    ]);
+  });
+
+  test('Parses text with pattern as fill', () async {
+    const String textWithPattern = ''' <svg width="600" height="400">
+    <defs>
+          <pattern id="textPattern" x="7" y="7" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <rect x="5" y="5" width="5" height="5" fill= "#876fc1" />
+          </pattern>
+    </defs>
+    <text x="0" y="50%" font-size="200" fill="url(#textPattern)">Text</text>
+</svg>''';
+
+    final VectorInstructions instructions = await parse(
+      textWithPattern,
+      warningsAsErrors: true,
+      enableMaskingOptimizer: false,
+      enableClippingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.pattern, objectId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.text, objectId: 0, paintId: 1, patternId: 0)
+    ]);
   });
 
   test('Defaults image height/width when not specified', () async {
