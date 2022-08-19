@@ -191,10 +191,12 @@ run_flutter_unittests() {
 }
 
 run_mock_handler_tests() {
+  echo "run_mock_handler_tests"
   dart run tool/run_tests.dart -t mock_handler_tests
 }
 
 run_dart_compilation_tests() {
+  echo "run_dart_compilation_tests"
   local temp_dir=$(mktmpdir)
   local flutter_project_dir=$temp_dir/project
 
@@ -214,6 +216,7 @@ run_dart_compilation_tests() {
 }
 
 run_ios_unittests() {
+  echo "run_ios_unittests"
   gen_ios_unittests_code ./pigeons/all_void.dart ""
   gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
   gen_ios_unittests_code ./pigeons/async_handlers.dart ""
@@ -246,6 +249,7 @@ run_ios_unittests() {
 }
 
 run_ios_e2e_tests() {
+  echo "run_ios_e2e_tests"
   DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
   DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
   DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
@@ -274,7 +278,9 @@ run_ios_e2e_tests() {
 }
 
 run_android_unittests() {
+  echo "run_android_unittests"
   pushd $PWD
+  echo "gen_android_unittests_code"
   gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
   gen_android_unittests_code ./pigeons/all_void.dart AllVoid
   gen_android_unittests_code ./pigeons/android_unittests.dart Pigeon
@@ -297,9 +303,11 @@ run_android_unittests() {
   gen_android_unittests_code ./pigeons/voidhost.dart VoidHost
   cd platform_tests/android_unit_tests
   if [ ! -f "android/gradlew" ]; then
+    echo "run_android_unittests flutter build apk"
     flutter build apk --debug
   fi
   cd android
+    echo "run_android_unittests ./gradlew test"
   ./gradlew test
   popd
 }
