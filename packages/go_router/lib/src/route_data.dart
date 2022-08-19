@@ -12,7 +12,8 @@ import 'state.dart';
 /// Baseclass for supporting
 /// [typed routing](https://gorouter.dev/typed-routing).
 ///
-/// Subclasses must override one of [build], [buildPage], or [redirect].
+/// Subclasses must override one of [build], [buildPageWithState], or
+/// [redirect].
 abstract class GoRouteData {
   /// Allows subclasses to have `const` constructors.
   ///
@@ -21,7 +22,8 @@ abstract class GoRouteData {
 
   /// Creates the [Widget] for `this` route.
   ///
-  /// Subclasses must override one of [build], [buildPage], or [redirect].
+  /// Subclasses must override one of [build], [buildPageWithState], or
+  /// [redirect].
   ///
   /// Corresponds to [GoRoute.builder].
   Widget build(BuildContext context) => throw UnimplementedError(
@@ -54,11 +56,13 @@ abstract class GoRouteData {
   /// By default, returns a [Page] instance that is ignored, causing a default
   /// [Page] implementation to be used with the results of [build].
   Page<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+      // ignore: deprecated_member_use_from_same_package
       buildPage(context);
 
   /// An optional redirect function for this route.
   ///
-  /// Subclasses must override one of [build], [buildPage], or [redirect].
+  /// Subclasses must override one of [build], [buildPageWithState], or
+  /// [redirect].
   ///
   /// Corresponds to [GoRoute.redirect].
   String? redirect() => null;
