@@ -42,6 +42,7 @@ void main() {
       members: <String>[
         'one',
         'twoThreeFour',
+        'remoteDB',
       ],
     );
     final Root root = Root(
@@ -55,7 +56,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public enum Foobar'));
     expect(code, contains('    ONE(0),'));
-    expect(code, contains('    TWO_THREE_FOUR(1);'));
+    expect(code, contains('    TWO_THREE_FOUR(1),'));
+    expect(code, contains('    REMOTE_DB(2);'));
     expect(code, contains('private int index;'));
     expect(code, contains('private Foobar(final int index) {'));
     expect(code, contains('      this.index = index;'));
@@ -584,6 +586,7 @@ void main() {
       members: <String>[
         'one',
         'twoThreeFour',
+        'remoteDB',
       ],
     );
     final Class klass = Class(
@@ -609,7 +612,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public enum Enum1'));
     expect(code, contains('    ONE(0),'));
-    expect(code, contains('    TWO_THREE_FOUR(1);'));
+    expect(code, contains('    TWO_THREE_FOUR(1),'));
+    expect(code, contains('    REMOTE_DB(2);'));
     expect(code, contains('private int index;'));
     expect(code, contains('private Enum1(final int index) {'));
     expect(code, contains('      this.index = index;'));

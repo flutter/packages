@@ -1,6 +1,7 @@
-## 3.2.8
+## 4.0.0
 
-* [java] fixes generator uses wrong style (camelCase) for enum values.
+* [java] **BREAKING CHANGE**: Changes style for enum values from camelCase to snake_case.
+  Generated java enum values will now always be in upper snake_case.
 
 ## 3.2.7
 
