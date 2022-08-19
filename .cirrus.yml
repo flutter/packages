@@ -25,7 +25,14 @@ macos_template: &MACOS_TEMPLATE
   # Only one macOS task can run in parallel without credits, so use them for
   # PRs on macOS.
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-  # Run tasks on Apple Silicon.
+
+macos_intel_template: &MACOS_INTEL_TEMPLATE
+  << : *MACOS_TEMPLATE
+  osx_instance:
+    image: big-sur-xcode-13
+
+macos_arm_template: &MACOS_ARM_TEMPLATE
+  << : *MACOS_TEMPLATE
   macos_instance:
     image: ghcr.io/cirruslabs/macos-monterey-xcode:13.4
 
@@ -232,11 +239,11 @@ task:
         - ./script/tool_runner.sh native-test --linux --no-integration
 
 task:
-  << : *MACOS_TEMPLATE
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
    ### iOS tasks ###
     - name: ios-platform_tests
+      << : *MACOS_ARM_TEMPLATE
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
@@ -250,6 +257,8 @@ task:
       native_test_script:
         - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 13,OS=latest"
     - name: ios-custom_package_tests
+      # Run on macOS x64 image with Java runtime installed.
+      << : *MACOS_INTEL_TEMPLATE
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
@@ -267,6 +276,7 @@ task:
         - fi
     ### macOS desktop tasks ###
     - name: macos-platform_tests
+      << : *MACOS_ARM_TEMPLATE
       env:
         matrix:
           CHANNEL: "master"
