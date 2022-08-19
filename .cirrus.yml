@@ -25,8 +25,16 @@ macos_template: &MACOS_TEMPLATE
   # Only one macOS task can run in parallel without credits, so use them for
   # PRs on macOS.
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
+
+macos_intel_template: &MACOS_INTEL_TEMPLATE
+  << : *MACOS_TEMPLATE
   osx_instance:
-    image: big-sur-xcode-13
+    image: monterey-xcode-13.3
+
+macos_arm_template: &MACOS_ARM_TEMPLATE
+  << : *MACOS_TEMPLATE
+  macos_instance:
+    image: ghcr.io/cirruslabs/macos-monterey-xcode:13.4
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -231,11 +239,11 @@ task:
         - ./script/tool_runner.sh native-test --linux --no-integration
 
 task:
-  << : *MACOS_TEMPLATE
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
    ### iOS tasks ###
     - name: ios-platform_tests
+      << : *MACOS_ARM_TEMPLATE
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
@@ -243,12 +251,14 @@ task:
           CHANNEL: "stable"
       create_simulator_script:
         - xcrun simctl list
-        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-11 com.apple.CoreSimulator.SimRuntime.iOS-15-0 | xargs xcrun simctl boot
+        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-15-5 | xargs xcrun simctl boot
       build_script:
         - ./script/tool_runner.sh build-examples --ios
       native_test_script:
-        - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 11,OS=latest"
+        - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 13,OS=latest"
     - name: ios-custom_package_tests
+      # Run on macOS x64 image with Java runtime installed.
+      << : *MACOS_INTEL_TEMPLATE
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
@@ -266,6 +276,7 @@ task:
         - fi
     ### macOS desktop tasks ###
     - name: macos-platform_tests
+      << : *MACOS_ARM_TEMPLATE
       env:
         matrix:
           CHANNEL: "master"
