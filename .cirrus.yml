@@ -29,7 +29,7 @@ macos_template: &MACOS_TEMPLATE
 macos_intel_template: &MACOS_INTEL_TEMPLATE
   << : *MACOS_TEMPLATE
   osx_instance:
-    image: big-sur-xcode-13
+    image: monterey-xcode-13.3
 
 macos_arm_template: &MACOS_ARM_TEMPLATE
   << : *MACOS_TEMPLATE
