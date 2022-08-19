@@ -1,7 +1,7 @@
 ## 4.3.0
 
 - Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
-- Cleans up examples
+
 ## 4.2.8
 
 - Fixes namedLocation to return URIs without trailing question marks if there are no query parameters.
