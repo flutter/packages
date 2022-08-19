@@ -33,11 +33,14 @@ google_checks_version=7190c47ca5515ad8cb827bc4065ae7664d2766c1
 java_error_prone=error_prone_core-2.5.1-with-dependencies.jar
 dataflow_shaded=dataflow-shaded-3.7.1.jar
 jformat_string=jFormatString-3.0.0.jar
-java_version=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)
+java_version=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1) || "13"
+echo "$java_version"
 javac_jar=javac-9+181-r4173-1.jar
-if [ $java_version == "8" ]; then
+if [ "$java_version" == "8" ]; then
+  echo "8"
   javac_bootclasspath="-J-Xbootclasspath/p:ci/$javac_jar"
 else
+  echo "not 8"
   javac_bootclasspath=
 fi
 run_pigeon="dart bin/pigeon.dart.dill --copyright_header ./copyright_header.txt"
