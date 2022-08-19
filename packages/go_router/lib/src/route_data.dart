@@ -32,12 +32,14 @@ abstract class GoRouteData {
   ///
   /// Subclasses can override this function to provide a custom [Page].
   ///
-  /// Subclasses must override one of [build], [buildPage], or [redirect].
+  /// Subclasses must override one of [build], [buildPageWithState] or
+  /// [redirect].
   ///
   /// Corresponds to [GoRoute.pageBuilder].
   ///
   /// By default, returns a [Page] instance that is ignored, causing a default
   /// [Page] implementation to be used with the results of [build].
+  @Deprecated('Use buildPageWithState instead.')
   Page<void> buildPage(BuildContext context) => const NoOpPage();
 
   /// A page builder for that expose the [state].
