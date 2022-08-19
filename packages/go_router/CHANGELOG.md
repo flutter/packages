@@ -1,6 +1,7 @@
 ## 4.3.0
 
 - Add `buildPageWithState` to `GoRouteData`.
+- `GoRouteData.buildPage` is now deprecated in favor of `GoRouteData.buildPageWithState`.
 
 ## 4.2.8
 
