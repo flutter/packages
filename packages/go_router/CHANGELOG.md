@@ -1,6 +1,7 @@
 ## 4.3.0
 
 - Add `buildPageWithState` to `GoRouteData`.
+
 ## 4.2.8
 
 - Fixes namedLocation to return URIs without trailing question marks if there are no query parameters.

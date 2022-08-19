@@ -42,9 +42,19 @@ abstract class GoRouteData {
   @Deprecated('Use buildPageWithState instead.')
   Page<void> buildPage(BuildContext context) => const NoOpPage();
 
-  /// A page builder for that expose the [state].
+  /// A page builder for this route that expose the [state].
+  ///
+  /// Subclasses can override this function to provide a custom [Page].
+  ///
+  /// Subclasses must override one of [build], [buildPageWithState] or
+  /// [redirect].
+  ///
+  /// Corresponds to [GoRoute.pageBuilder].
+  ///
+  /// By default, returns a [Page] instance that is ignored, causing a default
+  /// [Page] implementation to be used with the results of [build].
   Page<void> buildPageWithState(BuildContext context, GoRouterState state) =>
-      const NoOpPage();
+      buildPage(context);
 
   /// An optional redirect function for this route.
   ///
@@ -88,14 +98,8 @@ abstract class GoRouteData {
     Widget builder(BuildContext context, GoRouterState state) =>
         factoryImpl(state).build(context);
 
-    Page<void> pageBuilder(BuildContext context, GoRouterState state) {
-      final T routeData = factoryImpl(state);
-      final Page<void> page = routeData.buildPageWithState(context, state);
-      if (page is! NoOpPage) {
-        return page;
-      }
-      return routeData.buildPage(context);
-    }
+    Page<void> pageBuilder(BuildContext context, GoRouterState state) =>
+        factoryImpl(state).buildPageWithState(context, state);
 
     String? redirect(GoRouterState state) => factoryImpl(state).redirect();
 
