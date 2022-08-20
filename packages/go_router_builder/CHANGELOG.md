@@ -1,3 +1,7 @@
+## 1.0.9
+
+* Replaces usages and mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
+
 ## 1.0.8
 
 * Updates `analyzer` to 4.4.0.
