@@ -130,7 +130,7 @@ class PersonDetailsRoute extends GoRouteData {
   final int? $extra;
 
   @override
-  Page<void> buildPage(BuildContext context) {
+  Page<void> buildPageWithState(BuildContext context, GoRouterState state) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
 
