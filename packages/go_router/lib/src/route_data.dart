@@ -27,7 +27,7 @@ abstract class GoRouteData {
   ///
   /// Corresponds to [GoRoute.builder].
   Widget build(BuildContext context) => throw UnimplementedError(
-        'One of `build` or `buildPage` must be implemented.',
+        'One of `build` or `buildPageWithState` must be implemented.',
       );
 
   /// A page builder for this route.
@@ -41,10 +41,13 @@ abstract class GoRouteData {
   ///
   /// By default, returns a [Page] instance that is ignored, causing a default
   /// [Page] implementation to be used with the results of [build].
-  @Deprecated('Use buildPageWithState instead.')
+  @Deprecated(
+    'This method has been deprecated in favor of buildPageWithState. '
+    'This feature was deprecated after v4.3.0.',
+  )
   Page<void> buildPage(BuildContext context) => const NoOpPage();
 
-  /// A page builder for this route that expose the [state].
+  /// A page builder for this route with [GoRouterState].
   ///
   /// Subclasses can override this function to provide a custom [Page].
   ///
