@@ -130,8 +130,8 @@ class PersonDetailsRoute extends GoRouteData {
   final int? $extra;
 
   @override
-  // ignore: override_on_non_overriding_member
-  Page<void> buildPageWithState(BuildContext context, GoRouterState state) {
+  // ignore: deprecated_member_use_from_same_package
+  Page<void> buildPage(BuildContext context) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
 

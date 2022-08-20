@@ -1,6 +1,6 @@
 ## 1.0.9
 
-* Replaces usages and mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
+* Replaces mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
 
 ## 1.0.8
 
