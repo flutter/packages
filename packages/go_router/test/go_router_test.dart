@@ -11,7 +11,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/misc/extensions.dart';
-import 'package:go_router/src/pages/custom_transition_page.dart';
 import 'package:go_router/src/route.dart';
 import 'package:go_router/src/router.dart';
 import 'package:go_router/src/state.dart';
@@ -36,9 +35,9 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.fullpath, '/');
+      expect(matches.first.template, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
@@ -51,9 +50,9 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/');
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.fullpath, '/');
+      expect(matches.first.template, '/');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
@@ -111,7 +110,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/foo');
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, TestErrorScreen);
     });
@@ -130,9 +129,9 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login');
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.subloc, '/login');
+      expect(matches.first.location, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
@@ -158,9 +157,9 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login');
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.subloc, '/login');
+      expect(matches.first.location, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
@@ -181,10 +180,10 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login/');
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       print(matches);
       expect(matches, hasLength(1));
-      expect(matches.first.subloc, '/login');
+      expect(matches.first.location, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
@@ -198,9 +197,9 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/profile/');
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.subloc, '/profile/foo');
+      expect(matches.first.location, '/profile/foo');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
@@ -214,9 +213,9 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/profile/?bar=baz');
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.subloc, '/profile/foo');
+      expect(matches.first.location, '/profile/foo');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
@@ -238,11 +237,11 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login');
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches.length, 2);
-      expect(matches.first.subloc, '/');
+      expect(matches.first.location, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
-      expect(matches[1].subloc, '/login');
+      expect(matches[1].location, '/login');
       expect(router.screenFor(matches[1]).runtimeType, LoginScreen);
     });
 
@@ -276,41 +275,41 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       {
-        final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
         expect(matches, hasLength(1));
-        expect(matches.first.fullpath, '/');
+        expect(matches.first.template, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
       }
 
       router.go('/login');
       {
-        final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
         expect(matches.length, 2);
-        expect(matches.first.subloc, '/');
+        expect(matches.first.location, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
-        expect(matches[1].subloc, '/login');
+        expect(matches[1].location, '/login');
         expect(router.screenFor(matches[1]).runtimeType, LoginScreen);
       }
 
       router.go('/family/f2');
       {
-        final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
         expect(matches.length, 2);
-        expect(matches.first.subloc, '/');
+        expect(matches.first.location, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
-        expect(matches[1].subloc, '/family/f2');
+        expect(matches[1].location, '/family/f2');
         expect(router.screenFor(matches[1]).runtimeType, FamilyScreen);
       }
 
       router.go('/family/f2/person/p1');
       {
-        final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
         expect(matches.length, 3);
-        expect(matches.first.subloc, '/');
+        expect(matches.first.location, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
-        expect(matches[1].subloc, '/family/f2');
+        expect(matches[1].location, '/family/f2');
         expect(router.screenFor(matches[1]).runtimeType, FamilyScreen);
-        expect(matches[2].subloc, '/family/f2/person/p1');
+        expect(matches[2].location, '/family/f2/person/p1');
         expect(router.screenFor(matches[2]).runtimeType, PersonScreen);
       }
     });
@@ -351,7 +350,7 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/bar');
-      List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(2));
       expect(router.screenFor(matches[1]).runtimeType, Page1Screen);
 
@@ -471,7 +470,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       const String loc = '/FaMiLy/f2';
       router.go(loc);
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
 
       // NOTE: match the lower case, since subloc is canonicalized to match the
       // path case whereas the location can be any case; so long as the path
@@ -494,7 +493,7 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/user');
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
@@ -778,7 +777,7 @@ void main() {
       router.goNamed('person',
           params: <String, String>{'fid': 'f2', 'pid': 'p1'});
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(router.screenFor(matches.last).runtimeType, PersonScreen);
     });
 
@@ -802,7 +801,7 @@ void main() {
       log.info('loc= $loc');
       router.go(loc);
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       log.info('param1= ${matches.first.decodedParams['param1']}');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
       expect(matches.first.decodedParams['param1'], param1);
@@ -827,7 +826,7 @@ void main() {
           queryParams: <String, String>{'param1': param1});
       router.go(loc);
       await tester.pump();
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
       expect(matches.first.queryParams['param1'], param1);
     });
@@ -992,7 +991,7 @@ void main() {
                   ? '/'
                   : null);
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, TestErrorScreen);
       expect(
@@ -1017,7 +1016,7 @@ void main() {
         tester,
       );
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, TestErrorScreen);
       expect(
@@ -1039,7 +1038,7 @@ void main() {
             state.subloc == '/' ? '/login' : null,
       );
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, TestErrorScreen);
       expect(
@@ -1059,7 +1058,7 @@ void main() {
                 : null,
       );
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, TestErrorScreen);
       expect(
@@ -1120,7 +1119,7 @@ void main() {
         },
       );
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
@@ -1149,7 +1148,7 @@ void main() {
         initialLocation: loc,
       );
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
@@ -1190,7 +1189,7 @@ void main() {
         initialLocation: '/family/f2/person/p1',
       );
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches.length, 3);
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
       expect(router.screenFor(matches[1]).runtimeType, FamilyScreen);
@@ -1207,7 +1206,7 @@ void main() {
         redirectLimit: 10,
       );
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, TestErrorScreen);
       expect(
@@ -1362,7 +1361,7 @@ void main() {
       for (final String fid in <String>['f2', 'F2']) {
         final String loc = '/family/$fid';
         router.go(loc);
-        final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
 
         expect(router.location, loc);
         expect(matches, hasLength(1));
@@ -1390,7 +1389,7 @@ void main() {
       for (final String fid in <String>['f2', 'F2']) {
         final String loc = '/family?fid=$fid';
         router.go(loc);
-        final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
 
         expect(router.location, loc);
         expect(matches, hasLength(1));
@@ -1416,7 +1415,7 @@ void main() {
       final String loc = '/page1/${Uri.encodeComponent(param1)}';
       router.go(loc);
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       log.info('param1= ${matches.first.decodedParams['param1']}');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
       expect(matches.first.decodedParams['param1'], param1);
@@ -1438,14 +1437,14 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/page1?param1=$param1');
 
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
       expect(matches.first.queryParams['param1'], param1);
 
       final String loc = '/page1?param1=${Uri.encodeQueryComponent(param1)}';
       router.go(loc);
 
-      final List<RouteMatch> matches2 = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches2 = router.routerDelegate.matches.matches;
       expect(router.screenFor(matches2[0]).runtimeType, DummyScreen);
       expect(matches2[0].queryParams['param1'], param1);
     });
@@ -1486,9 +1485,9 @@ void main() {
         tester,
         initialLocation: '/?id=0&id=1',
       );
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.fullpath, '/');
+      expect(matches.first.template, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
@@ -1509,9 +1508,9 @@ void main() {
 
       router.go('/0?id=1');
       await tester.pump();
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.fullpath, '/:id');
+      expect(matches.first.template, '/:id');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
@@ -1623,7 +1622,7 @@ void main() {
 
       router.push(loc);
       await tester.pump();
-      final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
 
       expect(router.location, loc);
       expect(matches, hasLength(2));
@@ -1833,16 +1832,14 @@ void main() {
     testWidgets('defaultRoute', (WidgetTester tester) async {
       final List<RouteBase> routes = <RouteBase>[
         ShellRoute(
-          path: '/',
           builder: (BuildContext context, GoRouterState state, Widget child) {
             return Scaffold(
               body: child,
             );
           },
-          defaultRoute: 'b',
           routes: <RouteBase>[
             GoRoute(
-              path: 'a',
+              path: '/a',
               builder: (BuildContext context, GoRouterState state) {
                 return const Scaffold(
                   body: Text('Screen A'),
@@ -1850,7 +1847,7 @@ void main() {
               },
             ),
             GoRoute(
-              path: 'b',
+              path: '/b',
               builder: (BuildContext context, GoRouterState state) {
                 return const Scaffold(
                   body: Text('Screen B'),
@@ -1870,7 +1867,6 @@ void main() {
         (WidgetTester tester) async {
       final List<RouteBase> routes = <RouteBase>[
         ShellRoute(
-          path: '/',
           builder: (BuildContext context, GoRouterState state, Widget child) {
             return Scaffold(
               body: Column(
@@ -1927,7 +1923,6 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         ShellRoute(
-          path: '/',
           navigatorKey: shellNavigatorKey,
           builder: (BuildContext context, GoRouterState state, Widget child) {
             return Scaffold(
@@ -1941,7 +1936,7 @@ void main() {
           },
           routes: <RouteBase>[
             GoRoute(
-              path: 'b',
+              path: '/b',
               builder: (BuildContext context, GoRouterState state) {
                 return const Scaffold(
                   body: Text('Screen B'),
@@ -1975,64 +1970,6 @@ void main() {
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen C'), findsNothing);
-    });
-
-    testWidgets('pageBuilder', (WidgetTester tester) async {
-      final List<RouteBase> routes = <RouteBase>[
-        ShellRoute(
-          path: '/',
-          pageBuilder:
-              (BuildContext context, GoRouterState state, Widget child) {
-            return CustomTransitionPage<dynamic>(
-              child: Scaffold(
-                body: Column(
-                  children: <Widget>[
-                    const Text('App Scaffold'),
-                    Expanded(child: child),
-                  ],
-                ),
-              ),
-              transitionsBuilder: (BuildContext context,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                  Widget child) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            );
-          },
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            return Scaffold(
-              body: child,
-            );
-          },
-          defaultRoute: 'a',
-          routes: <RouteBase>[
-            GoRoute(
-              path: 'a',
-              builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen A'),
-                );
-              },
-            ),
-            GoRoute(
-              path: 'b',
-              builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen B'),
-                );
-              },
-            ),
-          ],
-        ),
-      ];
-
-      await createRouter(routes, tester);
-      expect(find.text('App Scaffold', skipOffstage: false), findsOneWidget);
-      expect(find.text('Screen A'), findsOneWidget);
     });
   });
 

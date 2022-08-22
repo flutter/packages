@@ -56,7 +56,7 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
     // Merge new params to keep params from previously matched paths, e.g.
     // /users/:userId/book/:bookId provides userId and bookId to book/:bookId
     Map<String, String> previouslyMatchedParams = <String, String>{};
-    for (final RouteMatch match in currentMatches.matches) {
+    for (final GoRouteMatch match in currentMatches.matches) {
       assert(
         !previouslyMatchedParams.keys.any(match.encodedParams.containsKey),
         'Duplicated parameter names',
@@ -66,18 +66,18 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
     }
 
     // check top route for redirect
-    final RouteMatch? top = matches.isNotEmpty ? matches.last : null;
+    final GoRouteMatch? top = matches.isNotEmpty ? matches.last : null;
     if (top == null) {
       break;
     }
-    final String? topRouteLocation = top.route.redirect(
+    final String? topRouteLocation = (top.route as GoRoute).redirect(
       GoRouterState(
         configuration,
         location: currentMatches.location.toString(),
-        subloc: top.subloc,
-        name: top.route.name,
-        path: top.route.path,
-        fullpath: top.fullpath,
+        subloc: top.location,
+        name: (top.route as GoRoute).name,
+        path: (top.route as GoRoute).path,
+        fullpath: top.template,
         extra: top.extra,
         params: top.decodedParams,
         queryParams: top.queryParams,

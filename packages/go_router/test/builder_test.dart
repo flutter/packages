@@ -28,11 +28,11 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first,
-          subloc: '/',
-          fullpath: '/',
+      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
+        GoRouteMatch(
+          route: config.routes.first as GoRoute,
+          location: '/',
+          template: '/',
           encodedParams: <String, String>{},
           queryParams: <String, String>{},
           extra: null,
@@ -54,7 +54,6 @@ void main() {
       final RouteConfiguration config = RouteConfiguration(
         routes: <RouteBase>[
           ShellRoute(
-            path: '/',
             builder: (BuildContext context, GoRouterState state, Widget child) {
               return _DetailsScreen();
             },
@@ -67,11 +66,11 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first,
-          subloc: '/',
-          fullpath: '/',
+      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
+        GoRouteMatch(
+          route: config.routes.first as GoRoute,
+          location: '/',
+          template: '/',
           encodedParams: <String, String>{},
           queryParams: <String, String>{},
           extra: null,
@@ -108,11 +107,11 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first,
-          subloc: '/',
-          fullpath: '/',
+      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
+        GoRouteMatch(
+          route: config.routes.first as GoRoute,
+          location: '/',
+          template: '/',
           encodedParams: <String, String>{},
           queryParams: <String, String>{},
           extra: null,
@@ -140,7 +139,6 @@ void main() {
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           ShellRoute(
-            path: '/',
             builder: (BuildContext context, GoRouterState state, Widget child) {
               return _HomeScreen(
                 child: child,
@@ -163,20 +161,11 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first,
-          subloc: '/',
-          fullpath: '/',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          extra: null,
-          error: null,
-        ),
-        RouteMatch(
-          route: config.routes.first.routes.first,
-          subloc: '/details',
-          fullpath: '/details',
+      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
+        GoRouteMatch(
+          route: config.routes.first.routes.first as GoRoute,
+          location: '/details',
+          template: '/details',
           encodedParams: <String, String>{},
           queryParams: <String, String>{},
           extra: null,
@@ -207,7 +196,6 @@ void main() {
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           ShellRoute(
-            path: '/',
             builder: (BuildContext context, GoRouterState state, Widget child) {
               return _HomeScreen(
                 child: child,
@@ -216,7 +204,7 @@ void main() {
             navigatorKey: shellNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
-                path: 'details',
+                path: '/details',
                 builder: (BuildContext context, GoRouterState state) {
                   return _DetailsScreen();
                 },
@@ -232,20 +220,11 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first,
-          subloc: '/',
-          fullpath: '/',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          extra: null,
-          error: null,
-        ),
-        RouteMatch(
-          route: config.routes.first.routes.first,
-          subloc: '/details',
-          fullpath: '/details',
+      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
+        GoRouteMatch(
+          route: config.routes.first.routes.first as GoRoute,
+          location: '/details',
+          template: '/details',
           encodedParams: <String, String>{},
           queryParams: <String, String>{},
           extra: null,

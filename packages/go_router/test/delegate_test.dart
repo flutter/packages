@@ -38,7 +38,7 @@ void main() {
         ..push('/error');
 
       goRouter.routerDelegate.addListener(expectAsync0(() {}));
-      final RouteMatch last = goRouter.routerDelegate.matches.matches.last;
+      final GoRouteMatch last = goRouter.routerDelegate.matches.matches.last;
       goRouter.routerDelegate.pop();
       expect(goRouter.routerDelegate.matches.matches.length, 1);
       expect(goRouter.routerDelegate.matches.matches.contains(last), false);
@@ -134,8 +134,8 @@ void main() {
         goRouter.push('/page-0');
 
         goRouter.routerDelegate.addListener(expectAsync0(() {}));
-        final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
-        final RouteMatch last = goRouter.routerDelegate.matches.last;
+        final GoRouteMatch first = goRouter.routerDelegate.matches.matches.first;
+        final GoRouteMatch last = goRouter.routerDelegate.matches.last;
         goRouter.replace('/page-1');
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
@@ -149,7 +149,7 @@ void main() {
           reason: 'The last match should have been removed',
         );
         expect(
-          goRouter.routerDelegate.matches.last.fullpath,
+          goRouter.routerDelegate.matches.last.template,
           '/page-1',
           reason: 'The new location should have been pushed',
         );
@@ -186,8 +186,8 @@ void main() {
         goRouter.pushNamed('page0');
 
         goRouter.routerDelegate.addListener(expectAsync0(() {}));
-        final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
-        final RouteMatch last = goRouter.routerDelegate.matches.last;
+        final GoRouteMatch first = goRouter.routerDelegate.matches.matches.first;
+        final GoRouteMatch last = goRouter.routerDelegate.matches.last;
         goRouter.replaceNamed('page1');
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
@@ -202,14 +202,15 @@ void main() {
         );
         expect(
           goRouter.routerDelegate.matches.last,
-          isA<RouteMatch>()
+          isA<GoRouteMatch>()
               .having(
-                (RouteMatch match) => match.fullpath,
+                (GoRouteMatch match) => match.template,
                 'match.fullpath',
                 '/page-1',
               )
               .having(
-                (RouteMatch match) => match.route.name,
+            // TODO(johnpryan): remove cast
+                (GoRouteMatch match) => (match.route as GoRoute).name,
                 'match.route.name',
                 'page1',
               ),

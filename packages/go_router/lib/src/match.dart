@@ -7,35 +7,40 @@ import 'package:flutter/foundation.dart';
 import 'path_utils.dart';
 import 'route.dart';
 
-/// Each RouteMatch instance represents an instance of a GoRoute for a specific
-/// portion of a location.
-class RouteMatch {
-  /// Constructor for [RouteMatch], each instance represents an instance of a
-  /// [RouteBase] for a specific portion of a location.
-  RouteMatch({
+///  An instance of a GoRoute plus information about the current location.
+class GoRouteMatch {
+  /// Constructor for [GoRouteMatch].
+  GoRouteMatch({
     required this.route,
-    required this.subloc,
-    required this.fullpath,
+    required this.location,
+    required this.template,
     required this.encodedParams,
     required this.queryParams,
     required this.extra,
     required this.error,
     this.pageKey,
-  })  : fullUriString = _addQueryParams(subloc, queryParams),
-        assert(subloc.startsWith('/')),
-        assert(Uri.parse(subloc).queryParameters.isEmpty),
-        assert(fullpath.startsWith('/')),
-        assert(Uri.parse(fullpath).queryParameters.isEmpty),
+  })
+      : fullUriString = _addQueryParams(location, queryParams),
+        assert(location.startsWith('/')),
+        assert(Uri
+            .parse(location)
+            .queryParameters
+            .isEmpty),
+        assert(template.startsWith('/')),
+        assert(Uri
+            .parse(template)
+            .queryParameters
+            .isEmpty),
         assert(() {
           for (final MapEntry<String, String> p in encodedParams.entries) {
             assert(p.value == Uri.encodeComponent(Uri.decodeComponent(p.value)),
-                'encodedParams[${p.key}] is not encoded properly: "${p.value}"');
+            'encodedParams[${p.key}] is not encoded properly: "${p.value}"');
           }
           return true;
         }());
 
   // ignore: public_member_api_docs
-  static RouteMatch? match({
+  static GoRouteMatch? match({
     required RouteBase route,
     required String restLoc, // e.g. person/p1
     required String parentSubloc, // e.g. /family/f2
@@ -43,6 +48,8 @@ class RouteMatch {
     required Map<String, String> queryParams,
     required Object? extra,
   }) {
+    //TODO(johnpryan): remove cast
+    route = route as GoRoute;
     assert(!route.path.contains('//'));
 
     final RegExpMatch? match = route.matchPatternAsPrefix(restLoc);
@@ -53,10 +60,10 @@ class RouteMatch {
     final Map<String, String> encodedParams = route.extractPathParams(match);
     final String pathLoc = patternToPath(route.path, encodedParams);
     final String subloc = concatenatePaths(parentSubloc, pathLoc);
-    return RouteMatch(
+    return GoRouteMatch(
       route: route,
-      subloc: subloc,
-      fullpath: fullpath,
+      location: subloc,
+      template: fullpath,
       encodedParams: encodedParams,
       queryParams: queryParams,
       extra: extra,
@@ -67,11 +74,11 @@ class RouteMatch {
   /// The matched route.
   final RouteBase route;
 
-  /// Matched sub-location.
-  final String subloc; // e.g. /family/f2
+  /// The matched location.
+  final String location; // e.g. /family/f2
 
-  /// Matched full path.
-  final String fullpath; // e.g. /family/:fid
+  /// The matched template.
+  final String template; // e.g. /family/:fid
 
   /// Parameters for the matched route, URI-encoded.
   final Map<String, String> encodedParams;
@@ -95,18 +102,19 @@ class RouteMatch {
     final Uri uri = Uri.parse(loc);
     assert(uri.queryParameters.isEmpty);
     return Uri(
-            path: uri.path,
-            queryParameters: queryParams.isEmpty ? null : queryParams)
+        path: uri.path,
+        queryParameters: queryParams.isEmpty ? null : queryParams)
         .toString();
   }
 
   /// Parameters for the matched route, URI-decoded.
-  Map<String, String> get decodedParams => <String, String>{
+  Map<String, String> get decodedParams =>
+      <String, String>{
         for (final MapEntry<String, String> param in encodedParams.entries)
           param.key: Uri.decodeComponent(param.value)
       };
 
   /// For use by the Router architecture as part of the RouteMatch
   @override
-  String toString() => 'RouteMatch($fullpath, $encodedParams)';
+  String toString() => 'RouteMatch($template, $encodedParams)';
 }

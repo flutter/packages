@@ -34,12 +34,12 @@ void main() {
 
     RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/'));
-    List<RouteMatch> matches = matchesObj.matches;
+    List<GoRouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matches[0].queryParams.isEmpty, isTrue);
     expect(matches[0].extra, isNull);
     expect(matches[0].fullUriString, '/');
-    expect(matches[0].subloc, '/');
+    expect(matches[0].location, '/');
     expect(matches[0].route, routes[0]);
 
     final Object extra = Object();
@@ -51,14 +51,14 @@ void main() {
     expect(matches[0].queryParams['def'], 'ghi');
     expect(matches[0].extra, extra);
     expect(matches[0].fullUriString, '/?def=ghi');
-    expect(matches[0].subloc, '/');
+    expect(matches[0].location, '/');
     expect(matches[0].route, routes[0]);
 
     expect(matches[1].queryParams.length, 1);
     expect(matches[1].queryParams['def'], 'ghi');
     expect(matches[1].extra, extra);
     expect(matches[1].fullUriString, '/abc?def=ghi');
-    expect(matches[1].subloc, '/abc');
+    expect(matches[1].location, '/abc');
     expect(matches[1].route, routes[0].routes[0]);
   });
 
@@ -140,12 +140,12 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/def'));
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<GoRouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matches[0].queryParams.isEmpty, isTrue);
     expect(matches[0].extra, isNull);
     expect(matches[0].fullUriString, '/def');
-    expect(matches[0].subloc, '/def');
+    expect(matches[0].location, '/def');
     expect(matches[0].error!.toString(),
         'Exception: no routes for location: /def');
   });
@@ -174,18 +174,18 @@ void main() {
 
     final RouteMatchList matchesObj = await parser.parseRouteInformation(
         const RouteInformation(location: '/123/family/456'));
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<GoRouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matches[0].queryParams.isEmpty, isTrue);
     expect(matches[0].extra, isNull);
     expect(matches[0].fullUriString, '/');
-    expect(matches[0].subloc, '/');
+    expect(matches[0].location, '/');
 
     expect(matches[1].queryParams.isEmpty, isTrue);
     expect(matches[1].extra, isNull);
     expect(matches[1].fullUriString, '/123/family/456');
-    expect(matches[1].subloc, '/123/family/456');
+    expect(matches[1].location, '/123/family/456');
     expect(matches[1].encodedParams.length, 2);
     expect(matches[1].encodedParams['uid'], '123');
     expect(matches[1].encodedParams['fid'], '456');
@@ -222,14 +222,14 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/random/uri'));
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<GoRouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matches[0].fullUriString, '/');
-    expect(matches[0].subloc, '/');
+    expect(matches[0].location, '/');
 
     expect(matches[1].fullUriString, '/123/family/345');
-    expect(matches[1].subloc, '/123/family/345');
+    expect(matches[1].location, '/123/family/345');
   });
 
   test(
@@ -263,14 +263,14 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/redirect'));
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<GoRouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matches[0].fullUriString, '/');
-    expect(matches[0].subloc, '/');
+    expect(matches[0].location, '/');
 
     expect(matches[1].fullUriString, '/123/family/345');
-    expect(matches[1].subloc, '/123/family/345');
+    expect(matches[1].location, '/123/family/345');
   });
 
   test('GoRouteInformationParser throws an exception when route is malformed',
@@ -316,7 +316,7 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/abd'));
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<GoRouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(1));
     expect(matches.first.error, isNotNull);
@@ -325,16 +325,14 @@ void main() {
   test('Creates a match for ShellRoute defaultChild', () async {
     final List<RouteBase> routes = <RouteBase>[
       ShellRoute(
-        path: '/',
         builder: (BuildContext context, GoRouterState state, Widget child) {
           return Scaffold(
             body: child,
           );
         },
-        defaultRoute: 'b',
         routes: <RouteBase>[
           GoRoute(
-            path: 'a',
+            path: '/a',
             builder: (BuildContext context, GoRouterState state) {
               return const Scaffold(
                 body: Text('Screen A'),
@@ -342,7 +340,7 @@ void main() {
             },
           ),
           GoRoute(
-            path: 'b',
+            path: '/b',
             builder: (BuildContext context, GoRouterState state) {
               return const Scaffold(
                 body: Text('Screen B'),
@@ -363,7 +361,7 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/'));
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<GoRouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(2));
     expect(matches.first.error, isNull);

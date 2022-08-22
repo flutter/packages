@@ -29,7 +29,7 @@ class RouteConfiguration {
     }());
 
     for (final RouteBase route in routes) {
-      if (!route.path.startsWith('/')) {
+      if (route is GoRoute && !route.path.startsWith('/')) {
         throw RouteConfigurationError(
             'top-level path must start with "/": ${route.path}');
       }
@@ -115,27 +115,31 @@ class RouteConfiguration {
   void _debugFullPathsFor(List<RouteBase> routes, String parentFullpath,
       int depth, StringBuffer sb) {
     for (final RouteBase route in routes) {
-      final String fullpath = concatenatePaths(parentFullpath, route.path);
-      sb.writeln('  => ${''.padLeft(depth * 2)}$fullpath');
-      _debugFullPathsFor(route.routes, fullpath, depth + 1, sb);
+      if (route is GoRoute) {
+        final String fullpath = concatenatePaths(parentFullpath, route.path);
+        sb.writeln('  => ${''.padLeft(depth * 2)}$fullpath');
+        _debugFullPathsFor(route.routes, fullpath, depth + 1, sb);
+      }
     }
   }
 
   void _cacheNameToPath(String parentFullPath, List<RouteBase> childRoutes) {
     for (final RouteBase route in childRoutes) {
-      final String fullPath = concatenatePaths(parentFullPath, route.path);
+      if (route is GoRoute) {
+        final String fullPath = concatenatePaths(parentFullPath, route.path);
 
-      if (route.name != null) {
-        final String name = route.name!.toLowerCase();
-        assert(
-            !_nameToPath.containsKey(name),
-            'duplication fullpaths for name '
-            '"$name":${_nameToPath[name]}, $fullPath');
-        _nameToPath[name] = fullPath;
-      }
+        if (route.name != null) {
+          final String name = route.name!.toLowerCase();
+          assert(
+              !_nameToPath.containsKey(name),
+              'duplication fullpaths for name '
+              '"$name":${_nameToPath[name]}, $fullPath');
+          _nameToPath[name] = fullPath;
+        }
 
-      if (route.routes.isNotEmpty) {
-        _cacheNameToPath(fullPath, route.routes);
+        if (route.routes.isNotEmpty) {
+          _cacheNameToPath(fullPath, route.routes);
+        }
       }
     }
   }

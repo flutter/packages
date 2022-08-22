@@ -55,8 +55,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     NavigatorState? navigator;
     final int matchCount = _matchList.matches.length;
     for (int i = matchCount - 1; i >= 0; i--) {
-      final RouteMatch match = _matchList.matches[i];
-      final RouteBase route = match.route;
+      // TODO(johnpryan): remove cast
+      // TODO(johnpryan): add this back
+      /*
+      final GoRouteMatch match = _matchList.matches[i];
+      final GoRoute route = match.route as GoRoute;
       final GlobalKey<NavigatorState>? key = route.parentNavigatorKey;
 
       // If this is a ShellRoute, then pop one of the subsequent GoRoutes, if
@@ -69,6 +72,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         navigator = key.currentState;
         break;
       }
+      */
     }
 
     navigator ??= navigatorKey.currentState;
@@ -81,16 +85,16 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   /// Pushes the given location onto the page stack
-  void push(RouteMatch match) {
+  void push(GoRouteMatch match) {
     // Remap the pageKey to allow any number of the same page on the stack
-    final String fullPath = match.fullpath;
+    final String fullPath = match.template;
     final int count = (_pushCounts[fullPath] ?? 0) + 1;
     _pushCounts[fullPath] = count;
     final ValueKey<String> pageKey = ValueKey<String>('$fullPath-p$count');
-    final RouteMatch newPageKeyMatch = RouteMatch(
+    final GoRouteMatch newPageKeyMatch = GoRouteMatch(
       route: match.route,
-      subloc: match.subloc,
-      fullpath: match.fullpath,
+      location: match.location,
+      template: match.template,
       encodedParams: match.encodedParams,
       queryParams: match.queryParams,
       extra: match.extra,
@@ -117,7 +121,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
-  void replace(RouteMatch match) {
+  void replace(GoRouteMatch match) {
     _matchList.matches.last = match;
     notifyListeners();
   }

@@ -6,7 +6,7 @@ import 'configuration.dart';
 import 'match.dart';
 import 'path_utils.dart';
 
-/// Converts a location into a list of [RouteMatch] objects.
+/// Converts a location into a list of [GoRouteMatch] objects.
 class RouteMatcher {
   /// [RouteMatcher] constructor.
   RouteMatcher(this.configuration);
@@ -17,14 +17,14 @@ class RouteMatcher {
   /// Finds the routes that matched the given URL.
   RouteMatchList findMatch(String location, {Object? extra}) {
     final String canonicalLocation = canonicalUri(location);
-    final List<RouteMatch> matches =
+    final List<GoRouteMatch> matches =
         _getLocRouteMatches(canonicalLocation, extra);
     return RouteMatchList(matches);
   }
 
-  List<RouteMatch> _getLocRouteMatches(String location, Object? extra) {
+  List<GoRouteMatch> _getLocRouteMatches(String location, Object? extra) {
     final Uri uri = Uri.parse(location);
-    final List<RouteMatch> result = _getLocRouteRecursively(
+    final List<GoRouteMatch> result = _getLocRouteRecursively(
       loc: uri.path,
       restLoc: uri.path,
       routes: configuration.routes,
@@ -42,15 +42,15 @@ class RouteMatcher {
   }
 }
 
-/// The list of [RouteMatch] objects.
+/// The list of [GoRouteMatch] objects.
 class RouteMatchList {
   /// RouteMatchList constructor.
   RouteMatchList(this._matches);
 
   /// Constructs an empty matches object.
-  factory RouteMatchList.empty() => RouteMatchList(<RouteMatch>[]);
+  factory RouteMatchList.empty() => RouteMatchList(<GoRouteMatch>[]);
 
-  final List<RouteMatch> _matches;
+  final List<GoRouteMatch> _matches;
 
   /// Returns true if there are no matches.
   bool get isEmpty => _matches.isEmpty;
@@ -63,7 +63,7 @@ class RouteMatchList {
       _matches.isEmpty ? Uri() : Uri.parse(_matches.last.fullUriString);
 
   /// Pushes a match onto the list of matches.
-  void push(RouteMatch match) {
+  void push(GoRouteMatch match) {
     _matches.add(match);
   }
 
@@ -85,10 +85,10 @@ class RouteMatchList {
   Object? get extra => _matches.last.extra;
 
   /// The last matching route.
-  RouteMatch get last => _matches.last;
+  GoRouteMatch get last => _matches.last;
 
   /// The route matches.
-  List<RouteMatch> get matches => _matches;
+  List<GoRouteMatch> get matches => _matches;
 
   /// Returns true if the current match intends to display an error screen.
   bool get isError => matches.length == 1 && matches.first.error != null;
@@ -115,7 +115,7 @@ class MatcherError extends Error {
   }
 }
 
-List<RouteMatch> _getLocRouteRecursively({
+List<GoRouteMatch> _getLocRouteRecursively({
   required String loc,
   required String restLoc,
   required String parentSubloc,
@@ -129,11 +129,11 @@ List<RouteMatch> _getLocRouteRecursively({
     debugGatherAllMatches = true;
     return true;
   }());
-  final List<List<RouteMatch>> result = <List<RouteMatch>>[];
+  final List<List<GoRouteMatch>> result = <List<GoRouteMatch>>[];
   // find the set of matches at this level of the tree
-  for (final RouteBase route in routes) {
+  for (final GoRoute route in routes as List<GoRoute>) {
     final String fullpath = concatenatePaths(parentFullpath, route.path);
-    final RouteMatch? match = RouteMatch.match(
+    final GoRouteMatch? match = GoRouteMatch.match(
       route: route,
       restLoc: restLoc,
       parentSubloc: parentSubloc,
@@ -145,25 +145,25 @@ List<RouteMatch> _getLocRouteRecursively({
     if (match == null) {
       continue;
     }
-    if (match.subloc.toLowerCase() == loc.toLowerCase()) {
+    if (match.location.toLowerCase() == loc.toLowerCase()) {
       // If it is a complete match, then return the matched route
       // NOTE: need a lower case match because subloc is canonicalized to match
       // the path case whereas the location can be of any case and still match
-      result.add(<RouteMatch>[match]);
+      result.add(<GoRouteMatch>[match]);
     } else if (route.routes.isEmpty) {
       // If it is partial match but no sub-routes, bail.
       continue;
     } else {
       // Otherwise, recurse
       final String childRestLoc =
-          loc.substring(match.subloc.length + (match.subloc == '/' ? 0 : 1));
-      assert(loc.startsWith(match.subloc));
+          loc.substring(match.location.length + (match.location == '/' ? 0 : 1));
+      assert(loc.startsWith(match.location));
       assert(restLoc.isNotEmpty);
 
-      final List<RouteMatch> subRouteMatch = _getLocRouteRecursively(
+      final List<GoRouteMatch> subRouteMatch = _getLocRouteRecursively(
         loc: loc,
         restLoc: childRestLoc,
-        parentSubloc: match.subloc,
+        parentSubloc: match.location,
         routes: route.routes,
         parentFullpath: fullpath,
         queryParams: queryParams,
@@ -174,7 +174,7 @@ List<RouteMatch> _getLocRouteRecursively({
       if (subRouteMatch.isEmpty) {
         continue;
       }
-      result.add(<RouteMatch>[match, ...subRouteMatch]);
+      result.add(<GoRouteMatch>[match, ...subRouteMatch]);
     }
     // Should only reach here if there is a match.
     if (debugGatherAllMatches) {
@@ -185,21 +185,25 @@ List<RouteMatch> _getLocRouteRecursively({
   }
 
   if (result.isEmpty) {
-    return <RouteMatch>[];
+    return <GoRouteMatch>[];
   }
 
   /// Add matches for ShellRoute defaultRoute
-  final RouteMatch lastMatch = result.first.last;
-  final RouteBase lastRoute = lastMatch.route;
+  final GoRouteMatch lastMatch = result.first.last;
+  // TODO(johnpryan) remove cast
+  final GoRoute lastRoute = lastMatch.route as GoRoute;
   if (lastRoute is ShellRoute) {
+    // TODO(johnpryan): add this back
+    /*
     final String? defaultRoute = lastRoute.defaultRoute;
     if (defaultRoute != null) {
       // find the sub-route
-      for (final RouteBase subRoute in lastRoute.routes) {
+      //TODO(johnpryan) change to RouteBase
+      for (final GoRoute subRoute in lastRoute.routes as List<GoRoute>) {
         if (subRoute.path == defaultRoute) {
           final String fullpath =
               concatenatePaths(lastMatch.subloc, subRoute.path);
-          final RouteMatch? match = RouteMatch.match(
+          final GoRouteMatch? match = GoRouteMatch.match(
             route: subRoute,
             restLoc: defaultRoute,
             parentSubloc: lastMatch.subloc,
@@ -214,6 +218,7 @@ List<RouteMatch> _getLocRouteRecursively({
         }
       }
     }
+     */
   }
 
   // If there are multiple routes that match the location, returning the first one.

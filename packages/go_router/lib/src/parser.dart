@@ -107,10 +107,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Creates a match that routes to the error page.
   RouteMatchList _errorScreen(Uri uri, String errorMessage) {
     final Exception error = Exception(errorMessage);
-    return RouteMatchList(<RouteMatch>[
-      RouteMatch(
-        subloc: uri.path,
-        fullpath: uri.path,
+    return RouteMatchList(<GoRouteMatch>[
+      GoRouteMatch(
+        location: uri.path,
+        template: uri.path,
         encodedParams: <String, String>{},
         queryParams: uri.queryParameters,
         extra: null,

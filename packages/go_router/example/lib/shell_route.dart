@@ -21,8 +21,6 @@ class ShellRouteExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       /// Application shell
       ShellRoute(
-        path: '/',
-        defaultRoute: '/a',
         builder: (BuildContext context, GoRouterState state, Widget child) {
           /// Builds a Scaffold with a bottom navigation bar.
           return AppScaffold(child: child);

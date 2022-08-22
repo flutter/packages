@@ -13,104 +13,9 @@ import 'typedefs.dart';
 /// The base class for [GoRoute] and [ShellRoute].
 @immutable
 abstract class RouteBase {
-  RouteBase._({
-    required this.path,
-    this.name,
+  const RouteBase._({
     this.routes = const <RouteBase>[],
-    this.redirect = _emptyRedirect,
-    this.parentNavigatorKey,
-  }) {
-    // cache the path regexp and parameters
-    _pathRE = patternToRegExp(path, _pathParams);
-    assert(() {
-      // check path params
-      final Map<String, List<String>> groupedParams =
-          _pathParams.groupListsBy<String>((String p) => p);
-      final Map<String, List<String>> dupParams =
-          Map<String, List<String>>.fromEntries(
-        groupedParams.entries
-            .where((MapEntry<String, List<String>> e) => e.value.length > 1),
-      );
-      assert(dupParams.isEmpty,
-          'duplicate path params: ${dupParams.keys.join(', ')}');
-
-      // check sub-routes
-      for (final RouteBase route in routes) {
-        // check paths
-        assert(
-            route.path == '/' ||
-                (!route.path.startsWith('/') && !route.path.endsWith('/')),
-            'sub-route path may not start or end with /: ${route.path}');
-      }
-      return true;
-    }());
-  }
-
-  final List<String> _pathParams = <String>[];
-  late final RegExp _pathRE;
-
-  /// Optional name of the route.
-  ///
-  /// If used, a unique string name must be provided and it can not be empty.
-  ///
-  /// This is used in [GoRouter.namedLocation] and its related API. This
-  /// property can be used to navigate to this route without knowing exact the
-  /// URI of it.
-  ///
-  /// {@tool snippet}
-  /// Typical usage is as follows:
-  ///
-  /// ```dart
-  /// GoRoute(
-  ///   name: 'home',
-  ///   path: '/',
-  ///   builder: (BuildContext context, GoRouterState state) =>
-  ///       HomeScreen(),
-  ///   routes: <GoRoute>[
-  ///     GoRoute(
-  ///       name: 'family',
-  ///       path: 'family/:fid',
-  ///       builder: (BuildContext context, GoRouterState state) =>
-  ///           FamilyScreen(),
-  ///     ),
-  ///   ],
-  /// );
-  ///
-  /// context.go(
-  ///   context.namedLocation('family'),
-  ///   params: <String, String>{'fid': 123},
-  ///   queryParams: <String, String>{'qid': 'quid'},
-  /// );
-  /// ```
-  ///
-  /// See the [named routes example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/named_routes.dart)
-  /// for a complete runnable app.
-  final String? name;
-
-  /// The path of this go route.
-  ///
-  /// For example:
-  /// ```
-  /// GoRoute(
-  ///   path: '/',
-  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
-  ///     key: state.pageKey,
-  ///     child: HomePage(families: Families.data),
-  ///   ),
-  /// ),
-  /// ```
-  ///
-  /// The path also support path parameters. For a path: `/family/:fid`, it
-  /// matches all URIs start with `/family/...`, e.g. `/family/123`,
-  /// `/family/456` and etc. The parameter values are stored in [GoRouterState]
-  /// that are passed into [pageBuilder] and [builder].
-  ///
-  /// The query parameter are also capture during the route parsing and stored
-  /// in [GoRouterState].
-  ///
-  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
-  /// to learn more about parameters.
-  final String path;
+  });
 
   /// The list of child routes associated with this route.
   ///
@@ -197,6 +102,165 @@ abstract class RouteBase {
   /// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
   /// for a complete runnable example.
   final List<RouteBase> routes;
+}
+
+/// A route that is displayed visually above the matching parent route using the
+/// [Navigator].
+///
+/// The widget returned by [builder] is wrapped in [Page] and provided to the
+/// root Navigator, the nearest ShellRoute ancestor's Navigator, or the
+/// Navigator with a matching [parentNavigatorKey].
+///
+/// The Page depends on the application type: [MaterialPage] for
+/// [MaterialApp], [CupertinoPage] for [CupertinoApp], or
+/// [NoTransitionPage] for [WidgetsApp].
+class GoRoute extends RouteBase {
+  /// Constructs a [GoRoute].
+  /// - [path] and [name] cannot be empty strings.
+  /// - One of either [builder] or [pageBuilder] must be provided.
+  GoRoute({
+    required this.path,
+    this.name,
+    this.builder,
+    this.pageBuilder,
+    this.parentNavigatorKey,
+    this.redirect = _emptyRedirect,
+    List<RouteBase> routes = const <RouteBase>[],
+  })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
+        assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
+        assert(!(builder == null && pageBuilder == null),
+            'builder or pageBuilder must be provided'),
+        assert(
+            pageBuilder != null ||
+                builder != _invalidBuilder ||
+                redirect != _noRedirection,
+            'GoRoute builder parameter not set\n'),
+        super._(
+          routes: routes,
+        ) {
+    // cache the path regexp and parameters
+    _pathRE = patternToRegExp(path, _pathParams);
+    assert(() {
+      // check path params
+      final Map<String, List<String>> groupedParams =
+          _pathParams.groupListsBy<String>((String p) => p);
+      final Map<String, List<String>> dupParams =
+          Map<String, List<String>>.fromEntries(
+        groupedParams.entries
+            .where((MapEntry<String, List<String>> e) => e.value.length > 1),
+      );
+      assert(dupParams.isEmpty,
+          'duplicate path params: ${dupParams.keys.join(', ')}');
+
+      // check sub-routes
+      for (final RouteBase route in routes) {
+        // check paths
+        if (route is GoRoute) {
+          assert(
+              route.path == '/' ||
+                  (!route.path.startsWith('/') && !route.path.endsWith('/')),
+              'sub-route path may not start or end with /: ${route.path}');
+        }
+      }
+      return true;
+    }());
+  }
+
+  /// Optional name of the route.
+  ///
+  /// If used, a unique string name must be provided and it can not be empty.
+  ///
+  /// This is used in [GoRouter.namedLocation] and its related API. This
+  /// property can be used to navigate to this route without knowing exact the
+  /// URI of it.
+  ///
+  /// {@tool snippet}
+  /// Typical usage is as follows:
+  ///
+  /// ```dart
+  /// GoRoute(
+  ///   name: 'home',
+  ///   path: '/',
+  ///   builder: (BuildContext context, GoRouterState state) =>
+  ///       HomeScreen(),
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       name: 'family',
+  ///       path: 'family/:fid',
+  ///       builder: (BuildContext context, GoRouterState state) =>
+  ///           FamilyScreen(),
+  ///     ),
+  ///   ],
+  /// );
+  ///
+  /// context.go(
+  ///   context.namedLocation('family'),
+  ///   params: <String, String>{'fid': 123},
+  ///   queryParams: <String, String>{'qid': 'quid'},
+  /// );
+  /// ```
+  ///
+  /// See the [named routes example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/named_routes.dart)
+  /// for a complete runnable app.
+  final String? name;
+
+  /// The path of this go route.
+  ///
+  /// For example:
+  /// ```
+  /// GoRoute(
+  ///   path: '/',
+  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
+  ///     key: state.pageKey,
+  ///     child: HomePage(families: Families.data),
+  ///   ),
+  /// ),
+  /// ```
+  ///
+  /// The path also support path parameters. For a path: `/family/:fid`, it
+  /// matches all URIs start with `/family/...`, e.g. `/family/123`,
+  /// `/family/456` and etc. The parameter values are stored in [GoRouterState]
+  /// that are passed into [pageBuilder] and [builder].
+  ///
+  /// The query parameter are also capture during the route parsing and stored
+  /// in [GoRouterState].
+  ///
+  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
+  /// to learn more about parameters.
+  final String path;
+
+  /// A page builder for this route.
+  ///
+  /// Typically a MaterialPage, as in:
+  /// ```
+  /// GoRoute(
+  ///   path: '/',
+  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
+  ///     key: state.pageKey,
+  ///     child: HomePage(families: Families.data),
+  ///   ),
+  /// ),
+  /// ```
+  ///
+  /// You can also use CupertinoPage, and for a custom page builder to use
+  /// custom page transitions, you can use [CustomTransitionPage].
+  final GoRouterPageBuilder? pageBuilder;
+
+  /// A custom builder for this route.
+  ///
+  /// For example:
+  /// ```
+  /// GoRoute(
+  ///   path: '/',
+  ///   builder: (BuildContext context, GoRouterState state) => FamilyPage(
+  ///     families: Families.family(
+  ///       state.params['id'],
+  ///     ),
+  ///   ),
+  /// ),
+  /// ```
+  ///
+  final GoRouterWidgetBuilder? builder;
 
   /// An optional redirect function for this route.
   ///
@@ -240,78 +304,10 @@ abstract class RouteBase {
       extractPathParameters(_pathParams, match);
 
   static String? _emptyRedirect(GoRouterState state) => null;
-}
 
-/// A route that is displayed visually above the matching parent route using the
-/// [Navigator].
-///
-/// The widget returned by [builder] is wrapped in [Page] and provided to the
-/// root Navigator, the nearest ShellRoute ancestor's Navigator, or the
-/// Navigator with a matching [parentNavigatorKey].
-///
-/// The Page depends on the application type: [MaterialPage] for
-/// [MaterialApp], [CupertinoPage] for [CupertinoApp], or
-/// [NoTransitionPage] for [WidgetsApp].
-class GoRoute extends RouteBase {
-  /// Constructs a [GoRoute].
-  /// - [path] and [name] cannot be empty strings.
-  /// - One of either [builder] or [pageBuilder] must be provided.
-  GoRoute({
-    required String path,
-    this.builder,
-    this.pageBuilder,
-    GlobalKey<NavigatorState>? parentNavigatorKey,
-    super.name,
-    GoRouterRedirect redirect = RouteBase._emptyRedirect,
-    List<RouteBase> routes = const <RouteBase>[],
-  })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
-        assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
-        assert(!(builder == null && pageBuilder == null),
-            'builder or pageBuilder must be provided'),
-        assert(
-            pageBuilder != null ||
-                builder != _invalidBuilder ||
-                redirect != _noRedirection,
-            'GoRoute builder parameter not set\n'),
-        super._(
-          path: path,
-          routes: routes,
-          redirect: redirect,
-          parentNavigatorKey: parentNavigatorKey,
-        );
+  final List<String> _pathParams = <String>[];
 
-  /// A page builder for this route.
-  ///
-  /// Typically a MaterialPage, as in:
-  /// ```
-  /// GoRoute(
-  ///   path: '/',
-  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
-  ///     key: state.pageKey,
-  ///     child: HomePage(families: Families.data),
-  ///   ),
-  /// ),
-  /// ```
-  ///
-  /// You can also use CupertinoPage, and for a custom page builder to use
-  /// custom page transitions, you can use [CustomTransitionPage].
-  final GoRouterPageBuilder? pageBuilder;
-
-  /// A custom builder for this route.
-  ///
-  /// For example:
-  /// ```
-  /// GoRoute(
-  ///   path: '/',
-  ///   builder: (BuildContext context, GoRouterState state) => FamilyPage(
-  ///     families: Families.family(
-  ///       state.params['id'],
-  ///     ),
-  ///   ),
-  /// ),
-  /// ```
-  ///
-  final GoRouterWidgetBuilder? builder;
+  late final RegExp _pathRE;
 
   static String? _noRedirection(GoRouterState state) => null;
 
@@ -362,38 +358,16 @@ class GoRoute extends RouteBase {
 class ShellRoute extends RouteBase {
   /// Constructs a [ShellRoute].
   ShellRoute({
-    required String path,
     this.builder,
-    this.pageBuilder,
-    this.defaultRoute,
-    super.name,
-    GoRouterRedirect redirect = RouteBase._emptyRedirect,
     List<RouteBase> routes = const <RouteBase>[],
-    GlobalKey<NavigatorState>? parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
   })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
-        assert(path.isNotEmpty, 'ShellRoute path cannot be empty'),
-        assert(
-            name == null || name.isNotEmpty, 'ShellRoute name cannot be empty'),
-        assert(!(builder == null && pageBuilder == null),
-            'builder or pageBuilder must be provided'),
         super._(
-          path: path,
           routes: routes,
-          redirect: redirect,
-          parentNavigatorKey: parentNavigatorKey,
         );
 
   /// The widget builder for a shell route.
   final ShellRouteBuilder? builder;
-
-  /// The page builder for a shell route.
-  final ShellRoutePageBuilder? pageBuilder;
-
-  /// The relative path to the child route to navigate to when this route is
-  /// displayed. This allows the default child route to be specified without
-  /// using redirection.
-  final String? defaultRoute;
 
   /// The [GlobalKey] to be used by the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
