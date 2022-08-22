@@ -686,8 +686,7 @@ void generateTestDart(
     indent.writeln(
         'import \'${_escapeForDartSingleQuotedString(relativeDartPath)}\';');
   } else {
-    final String path = relativeDartPath.replaceFirstMapped(
-        RegExp(r'^.*/lib/(.*?)$'), (Match match) => match.group(1).toString());
+    final String path = relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
     indent.writeln("import 'package:$packageName/$path';");
   }
   for (final Api api in root.apis) {
