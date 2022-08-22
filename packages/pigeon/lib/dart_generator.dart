@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' show Directory, File, FileSystemEntity;
+
+import 'package:path/path.dart' as path;
+import 'package:yaml/yaml.dart' as yaml;
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator_tools.dart';
@@ -588,14 +593,66 @@ pigeonMap['${field.name}'] != null
   }
 }
 
-/// Generates Dart source code for test support libraries based on the
-/// given AST represented by [root], outputting the code to [sink].
+/// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
+/// parent directory and returns its path.
+String? _findPubspecPath(String dartFilePath) {
+  try {
+    Directory dir = File(dartFilePath).parent;
+    String? pubspecPath;
+    while (pubspecPath == null) {
+      if (dir.existsSync()) {
+        final Iterable<String> pubspecPaths = dir
+            .listSync()
+            .map((FileSystemEntity e) => e.path)
+            .where((String path) => path.endsWith('pubspec.yaml'));
+        if (pubspecPaths.isNotEmpty) {
+          pubspecPath = pubspecPaths.first;
+        } else {
+          dir = dir.parent;
+        }
+      } else {
+        break;
+      }
+    }
+    return pubspecPath;
+  } catch (ex) {
+    return null;
+  }
+}
+
+/// Given the path of a Dart file, [mainDartFile], the name of the package will
+/// be deduced by locating and parsing its associated pubspec.yaml.
+String? _deducePackageName(String mainDartFile) {
+  final String? pubspecPath = _findPubspecPath(mainDartFile);
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  try {
+    final String text = File(pubspecPath).readAsStringSync();
+    return (yaml.loadYaml(text) as Map<dynamic, dynamic>)['name'];
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Converts [inputPath] to a posix absolute path.
+String _posixify(String inputPath) {
+  final path.Context context = path.Context(style: path.Style.posix);
+  return context.fromUri(path.toUri(path.absolute(inputPath)));
+}
+
+/// Generates Dart source code for test support libraries based on the given AST
+/// represented by [root], outputting the code to [sink]. [dartOutPath] is the
+/// path of the generated dart code to be tested. [testOutPath] is where the
+/// test code will be generated.
 void generateTestDart(
   DartOptions opt,
   Root root,
-  StringSink sink,
-  String mainDartFile,
-) {
+  StringSink sink, {
+  required String dartOutPath,
+  required String testOutPath,
+}) {
   final Indent indent = Indent(sink);
   if (opt.copyrightHeader != null) {
     addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
@@ -615,11 +672,23 @@ void generateTestDart(
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln('import \'package:flutter_test/flutter_test.dart\';');
   indent.writeln('');
-  // TODO(gaaclarke): Switch from relative paths to URIs. This fails in new versions of Dart,
-  // https://github.com/flutter/flutter/issues/97744.
-  indent.writeln(
-    'import \'${_escapeForDartSingleQuotedString(mainDartFile)}\';',
+  final String relativeDartPath =
+      path.Context(style: path.Style.posix).relative(
+    _posixify(dartOutPath),
+    from: _posixify(path.dirname(testOutPath)),
   );
+  late final String? packageName = _deducePackageName(dartOutPath);
+  if (!relativeDartPath.contains('/lib/') || packageName == null) {
+    // If we can't figure out the package name or the relative path doesn't
+    // include a 'lib' directory, try relative path import which only works in
+    // certain (older) versions of Dart.
+    // TODO(gaaclarke): We should add a command-line parameter to override this import.
+    indent.writeln(
+        'import \'${_escapeForDartSingleQuotedString(relativeDartPath)}\';');
+  } else {
+    final String path = relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
+    indent.writeln("import 'package:$packageName/$path';");
+  }
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
       final Api mockApi = Api(

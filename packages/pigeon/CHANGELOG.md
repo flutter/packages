@@ -1,3 +1,8 @@
+## 3.2.8
+
+* [dart] Deduces the correct import statement for Dart test files made with
+  `dartHostTestHandler` instead of relying on relative imports.
+
 ## 3.2.7
 
 * Requires `analyzer 4.4.0`, and replaces use of deprecated APIs.
