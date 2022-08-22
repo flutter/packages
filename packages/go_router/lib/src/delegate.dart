@@ -114,7 +114,13 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
-    _matches = configuration;
+    // Check if there is no matches yet
+    if (_matches.isEmpty) {
+      _matches = configuration;
+    } else if (_matches.last.fullpath != configuration.last.fullpath) {
+      // Add new matches only if the last match of both lists is different
+      _matches = RouteMatchList(<RouteMatch>[..._matches.matches, ...configuration.matches]);
+    }
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
     return SynchronousFuture<void>(null);
