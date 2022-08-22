@@ -119,7 +119,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       _matches = configuration;
     } else if (_matches.last.fullpath != configuration.last.fullpath) {
       // Add new matches only if the last match of both lists is different
-      _matches = RouteMatchList(<RouteMatch>[..._matches.matches, ...configuration.matches]);
+      _matches = RouteMatchList(
+          <RouteMatch>[..._matches.matches, ...configuration.matches]);
     }
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
