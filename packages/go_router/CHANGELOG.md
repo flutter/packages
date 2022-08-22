@@ -3,6 +3,9 @@
 - Fixes a bug where intermediate route redirect methods are not called.
 - **BREAKING CHANGE**
   - Redesigns redirection API.
+  - Removes GoRouterRefreshStream
+  - Removes navigatorBuilder
+  - Removes urlPathStrategy
 
 ## 4.3.0
 

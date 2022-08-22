@@ -9,12 +9,8 @@ import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
-import 'package:go_router/src/typedefs.dart';
 
-Future<GoRouter> createGoRouter(
-  WidgetTester tester, {
-  GoRouterNavigatorBuilder? navigatorBuilder,
-}) async {
+Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final GoRouter goRouter = GoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
@@ -24,7 +20,6 @@ Future<GoRouter> createGoRouter(
         builder: (_, __) => TestErrorScreen(TestFailure('Exception')),
       ),
     ],
-    navigatorBuilder: navigatorBuilder,
   );
   await tester.pumpWidget(MaterialApp.router(
       routeInformationProvider: goRouter.routeInformationProvider,
@@ -138,20 +133,6 @@ class GoRouterPopSpy extends GoRouter {
   @override
   void pop() {
     popped = true;
-  }
-}
-
-class GoRouterRefreshStreamSpy extends GoRouterRefreshStream {
-  GoRouterRefreshStreamSpy(
-    super.stream,
-  ) : notifyCount = 0;
-
-  late int notifyCount;
-
-  @override
-  void notifyListeners() {
-    notifyCount++;
-    super.notifyListeners();
   }
 }
 

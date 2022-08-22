@@ -51,20 +51,10 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     int redirectLimit = 5,
     bool routerNeglect = false,
     String? initialLocation,
-    // TODO(johnpryan): Deprecate this parameter
-    // See https://github.com/flutter/flutter/issues/108132
-    UrlPathStrategy? urlPathStrategy,
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
-    // TODO(johnpryan): Deprecate this parameter
-    // See https://github.com/flutter/flutter/issues/108145
-    GoRouterNavigatorBuilder? navigatorBuilder,
     String? restorationScopeId,
   }) {
-    if (urlPathStrategy != null) {
-      setUrlPathStrategy(urlPathStrategy);
-    }
-
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -100,7 +90,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
           (BuildContext context, GoRouterState state, Navigator nav) =>
               InheritedGoRouter(
         goRouter: this,
-        child: navigatorBuilder?.call(context, state, nav) ?? nav,
+        child: nav,
       ),
     );
     assert(() {
