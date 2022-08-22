@@ -5,6 +5,7 @@
 import 'dart:io' show Directory, File, FileSystemEntity;
 
 import 'package:path/path.dart' as path;
+import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
 import 'functional.dart';
@@ -592,6 +593,8 @@ pigeonMap['${field.name}'] != null
   }
 }
 
+/// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
+/// parent directory and returns its path.
 String? _findPubspecPath(String dartFilePath) {
   try {
     Directory dir = File(dartFilePath).parent;
@@ -617,24 +620,26 @@ String? _findPubspecPath(String dartFilePath) {
   }
 }
 
+/// Given the path of a Dart file, [mainDartFile], the name of the package will
+/// be deduced by locating and parsing its associated pubspec.yaml.
 String? _deducePackageName(String mainDartFile) {
   final String? pubspecPath = _findPubspecPath(mainDartFile);
   if (pubspecPath == null) {
     return null;
   }
 
-  final String text = File(pubspecPath).readAsStringSync();
-  final RegExp nameFinder = RegExp(r'^name:\s*(.*)');
-  final RegExpMatch? match = nameFinder.firstMatch(text);
-  if (match == null) {
+  try {
+    final String text = File(pubspecPath).readAsStringSync();
+    return (yaml.loadYaml(text) as Map<dynamic, dynamic>)['name'];
+  } catch (_) {
     return null;
   }
-  return match.group(1);
 }
 
-String _posixify(String input) {
+/// Converts [inputPath] to a posix absolute path.
+String _posixify(String inputPath) {
   final path.Context context = path.Context(style: path.Style.posix);
-  return context.fromUri(path.toUri(path.absolute(input)));
+  return context.fromUri(path.toUri(path.absolute(inputPath)));
 }
 
 /// Generates Dart source code for test support libraries based on the given AST
@@ -677,11 +682,12 @@ void generateTestDart(
     // If we can't figure out the package name or the relative path doesn't
     // include a 'lib' directory, try relative path import which only works in
     // certain (older) versions of Dart.
+    // TODO(gaaclarke): We should add a command-line parameter to override this import.
     indent.writeln(
         'import \'${_escapeForDartSingleQuotedString(relativeDartPath)}\';');
   } else {
     final String path = relativeDartPath.replaceFirstMapped(
-        RegExp(r'.*/lib/(.*?)'), (Match match) => match.group(1).toString());
+        RegExp(r'^.*/lib/(.*?)$'), (Match match) => match.group(1).toString());
     indent.writeln("import 'package:$packageName/$path';");
   }
   for (final Api api in root.apis) {
