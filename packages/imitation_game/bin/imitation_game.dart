@@ -68,7 +68,8 @@ Future<String> _makeMarkdownOutput(Map<String, dynamic> results) async {
 /// have their values from [newResults] and the symmetric difference will have the
 /// value from their respective sets.
 Map<String, dynamic> _integrate(
-    {required Map<String, dynamic> oldResults, required Map<String, dynamic> newResults}) {
+    {required Map<String, dynamic> oldResults,
+    required Map<String, dynamic> newResults}) {
   final Map<String, dynamic> result = Map<String, dynamic>.from(oldResults);
   newResults.forEach((String test, dynamic testValue) {
     final Map<String, dynamic> testMap = testValue as Map<String, dynamic>;
