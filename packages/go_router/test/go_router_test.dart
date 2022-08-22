@@ -4,17 +4,11 @@
 
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/delegate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
-import 'package:go_router/src/misc/extensions.dart';
-import 'package:go_router/src/route.dart';
-import 'package:go_router/src/router.dart';
-import 'package:go_router/src/state.dart';
 import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
@@ -1925,54 +1919,6 @@ void main() {
     );
   });
 
-  group('refresh listenable', () {
-    late StreamController<int> streamController;
-
-    setUpAll(() async {
-      streamController = StreamController<int>.broadcast();
-      await streamController.addStream(Stream<int>.value(0));
-    });
-
-    tearDownAll(() {
-      streamController.close();
-    });
-
-    group('stream', () {
-      test('no stream emits', () async {
-        // Act
-        final GoRouterRefreshStreamSpy notifyListener =
-            GoRouterRefreshStreamSpy(
-          streamController.stream,
-        );
-
-        // Assert
-        expect(notifyListener.notifyCount, equals(1));
-
-        // Cleanup
-        notifyListener.dispose();
-      });
-
-      test('three stream emits', () async {
-        // Arrange
-        final List<int> toEmit = <int>[1, 2, 3];
-
-        // Act
-        final GoRouterRefreshStreamSpy notifyListener =
-            GoRouterRefreshStreamSpy(
-          streamController.stream,
-        );
-
-        await streamController.addStream(Stream<int>.fromIterable(toEmit));
-
-        // Assert
-        expect(notifyListener.notifyCount, equals(toEmit.length + 1));
-
-        // Cleanup
-        notifyListener.dispose();
-      });
-    });
-  });
-
   group('GoRouterHelper extensions', () {
     final GlobalKey<DummyStatefulWidgetState> key =
         GlobalKey<DummyStatefulWidgetState>();
@@ -2572,31 +2518,6 @@ void main() {
           expect(find.text('Home'), findsOneWidget);
           expect(find.text('Shell'), findsNothing);
         },
-      );
-    });
-
-    testWidgets('uses navigatorBuilder when provided',
-        (WidgetTester tester) async {
-      final Func3<Widget, BuildContext, GoRouterState, Widget>
-          navigatorBuilder = expectAsync3(fakeNavigationBuilder);
-      final GoRouter router = GoRouter(
-        initialLocation: '/',
-        routes: <GoRoute>[
-          GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
-          GoRoute(
-            path: '/error',
-            builder: (_, __) => TestErrorScreen(TestFailure('exception')),
-          ),
-        ],
-        navigatorBuilder: navigatorBuilder,
-      );
-
-      final GoRouterDelegate delegate = router.routerDelegate;
-      delegate.builder.builderWithNav(
-        DummyBuildContext(),
-        GoRouterState(router.routeConfiguration,
-            location: '/foo', subloc: '/bar', name: 'baz'),
-        const Navigator(),
       );
     });
   });
