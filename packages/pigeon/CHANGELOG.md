@@ -1,3 +1,7 @@
+## 3.2.9
+
+* Update text theme parameters to avoid deprecation issues.
+
 ## 3.2.8
 
 * [dart] Deduces the correct import statement for Dart test files made with
