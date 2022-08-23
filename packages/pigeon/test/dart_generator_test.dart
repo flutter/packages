@@ -1213,7 +1213,7 @@ name: foobar
       final String code = sink.toString();
       expect(code, contains("import 'package:foobar/foo/bar.dart';"));
     } finally {
-      tempDir.delete();
+      tempDir.deleteSync(recursive: true);
     }
   });
 }
