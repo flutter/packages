@@ -1,6 +1,6 @@
 ## NEXT
 
-* Update text theme parameters to avoid deprecation issues.
+* Updates text theme parameters to avoid deprecation issues.
 
 ## 4.2.8
 

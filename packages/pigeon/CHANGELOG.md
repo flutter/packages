@@ -1,6 +1,6 @@
 ## 3.2.9
 
-* Update text theme parameters to avoid deprecation issues.
+* Updates text theme parameters to avoid deprecation issues.
 
 ## 3.2.8
 

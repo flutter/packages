@@ -1,6 +1,6 @@
 ## 0.6.10+4
 
-* Update text theme parameters to avoid deprecation issues.
+* Updates text theme parameters to avoid deprecation issues.
 
 ## 0.6.10+3
 

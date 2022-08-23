@@ -1,6 +1,6 @@
 ## 0.0.1+1
 
-* Update text theme parameters to avoid deprecation issues.
+* Updates text theme parameters to avoid deprecation issues.
 
 ## 0.0.1
 
