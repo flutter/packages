@@ -7,18 +7,18 @@ import 'package:flutter/widgets.dart';
 import 'render_dynamic_grid.dart';
 
 /// A scrollable, 2D array of widgets.
-/// 
-/// TODO(DavBot02 & snat-s): Add more documentation & sample code. :)
+///
+// TODO(DavBot02 & snat-s): Add more documentation & sample code. :)
 class DynamicGridView extends GridView {
   /// Creates a scrollable, 2D array of widgets with a custom
   /// [SliverGridDelegate].
-  /// 
+  ///
   // TODO(DavBot02 & snat-s): what other parameters should we add to these
   // constructors, here, builder, etc.?
   // + reverse
   // + scrollDirection
   DynamicGridView({
-    super.key, 
+    super.key,
     required super.gridDelegate,
     // This creates a SliverChildListDelegate in the super class.
     super.children = const <Widget>[],
@@ -61,12 +61,15 @@ class DynamicSliverGrid extends SliverMultiBoxAdaptorWidget {
 
   @override
   RenderDynamicSliverGrid createRenderObject(BuildContext context) {
-    final SliverMultiBoxAdaptorElement element = context as SliverMultiBoxAdaptorElement;
-    return RenderDynamicSliverGrid(childManager: element, gridDelegate: gridDelegate);
+    final SliverMultiBoxAdaptorElement element =
+        context as SliverMultiBoxAdaptorElement;
+    return RenderDynamicSliverGrid(
+        childManager: element, gridDelegate: gridDelegate);
   }
 
   @override
-  void updateRenderObject(BuildContext context, RenderDynamicSliverGrid renderObject) {
+  void updateRenderObject(
+      BuildContext context, RenderDynamicSliverGrid renderObject) {
     renderObject.gridDelegate = gridDelegate;
   }
 }

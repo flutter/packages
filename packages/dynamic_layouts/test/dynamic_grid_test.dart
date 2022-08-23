@@ -8,7 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:dynamic_layouts/dynamic_layouts.dart';
 
 void main() {
-  testWidgets('DynamicGridView works with simple layout', (WidgetTester tester) async {
+  testWidgets('DynamicGridView works with simple layout',
+      (WidgetTester tester) async {
     // Can have no children
     await tester.pumpWidget(
       MaterialApp(
@@ -51,21 +52,21 @@ void main() {
     expect(find.text('Index 48'), findsNothing);
     expect(find.text('Index 49'), findsNothing);
   });
-  testWidgets('DynamicGridView.builder works with simple layout', (WidgetTester tester) async {
+  testWidgets('DynamicGridView.builder works with simple layout',
+      (WidgetTester tester) async {
     // Only a few number of tiles
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: DynamicGridView.builder(
-            gridDelegate: TestDelegate(crossAxisCount: 2),
-            itemCount: 3,
-            itemBuilder: (BuildContext context, int index) {
-              return SizedBox.square(
-                dimension: TestSimpleLayout.childExtent,
-                child: Text('Index $index'),
-              );
-            }
-          ),
+              gridDelegate: TestDelegate(crossAxisCount: 2),
+              itemCount: 3,
+              itemBuilder: (BuildContext context, int index) {
+                return SizedBox.square(
+                  dimension: TestSimpleLayout.childExtent,
+                  child: Text('Index $index'),
+                );
+              }),
         ),
       ),
     );
@@ -87,14 +88,13 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: DynamicGridView.builder(
-            gridDelegate: TestDelegate(crossAxisCount: 2),
-            itemBuilder: (BuildContext context, int index) {
-              return SizedBox.square(
-                dimension: TestSimpleLayout.childExtent,
-                child: Text('Index $index'),
-              );
-            }
-          ),
+              gridDelegate: TestDelegate(crossAxisCount: 2),
+              itemBuilder: (BuildContext context, int index) {
+                return SizedBox.square(
+                  dimension: TestSimpleLayout.childExtent,
+                  child: Text('Index $index'),
+                );
+              }),
         ),
       ),
     );
@@ -148,6 +148,4 @@ class TestDelegate extends SliverGridDelegateWithFixedCrossAxisCount {
   SliverGridLayout getLayout(SliverConstraints constraints) {
     return TestSimpleLayout(crossAxisCount: crossAxisCount);
   }
-
 }
-

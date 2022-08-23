@@ -7,7 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:dynamic_layouts/dynamic_layouts.dart';
 
 void main() {
-  test('DynamicSliverGridGeometry returns tight constraints for finite extents', () {
+  test('DynamicSliverGridGeometry returns tight constraints for finite extents',
+      () {
     const DynamicSliverGridGeometry geometry = DynamicSliverGridGeometry(
       scrollOffset: 0,
       crossAxisOffset: 0,
@@ -25,7 +26,7 @@ void main() {
       overlap: 0,
       remainingPaintExtent: 600,
       crossAxisExtent: 300,
-      crossAxisDirection: AxisDirection.left, 
+      crossAxisDirection: AxisDirection.left,
       viewportMainAxisExtent: 1000,
       remainingCacheExtent: 600,
       cacheOrigin: 0.0,
@@ -43,7 +44,7 @@ void main() {
       overlap: 0,
       remainingPaintExtent: 600,
       crossAxisExtent: 300,
-      crossAxisDirection: AxisDirection.down, 
+      crossAxisDirection: AxisDirection.down,
       viewportMainAxisExtent: 1000,
       remainingCacheExtent: 600,
       cacheOrigin: 0.0,
@@ -52,7 +53,9 @@ void main() {
     expect(constraints, BoxConstraints.tight(const Size(50.0, 150.0)));
   });
 
-  test('DynamicSliverGridGeometry returns loose constraints for infinite extents', () {
+  test(
+      'DynamicSliverGridGeometry returns loose constraints for infinite extents',
+      () {
     const DynamicSliverGridGeometry geometry = DynamicSliverGridGeometry(
       scrollOffset: 0,
       crossAxisOffset: 0,
@@ -70,7 +73,7 @@ void main() {
       overlap: 0,
       remainingPaintExtent: 600,
       crossAxisExtent: 300,
-      crossAxisDirection: AxisDirection.left, 
+      crossAxisDirection: AxisDirection.left,
       viewportMainAxisExtent: 1000,
       remainingCacheExtent: 600,
       cacheOrigin: 0.0,
@@ -88,7 +91,7 @@ void main() {
       overlap: 0,
       remainingPaintExtent: 600,
       crossAxisExtent: 300,
-      crossAxisDirection: AxisDirection.down, 
+      crossAxisDirection: AxisDirection.down,
       viewportMainAxisExtent: 1000,
       remainingCacheExtent: 600,
       cacheOrigin: 0.0,

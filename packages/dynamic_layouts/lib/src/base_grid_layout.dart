@@ -16,23 +16,27 @@ class DynamicSliverGridGeometry extends SliverGridGeometry {
     required super.crossAxisExtent,
   });
 
-  /// Returns [BoxConstraints] that will be tight if the [SliverGridLayout] has
-  /// provided fixed extents, forcing the child to have the
-  /// required size.
+  /// Returns [BoxConstraints] that will be tight if the
+  /// [DynamicSliverGridLayout] has provided fixed extents, forcing the child to
+  /// have the required size.
   ///
   /// If the [mainAxisExtent] is [double.infinity] the child will be allowed to
-  /// chose its own size in the main axis. Similarly, an infinite
+  /// choose its own size in the main axis. Similarly, an infinite
   /// [crossAxisExtent] will result in the child sizing itself in the cross
   /// axis. Otherwise, the provided cross axis size or the
   /// [SliverConstraints.crossAxisExtent] will be used to create tight
   /// constraints in the cross axis.
+  ///
+  /// This differs from [SliverGridGeometry.getBoxConstraints] in that is allows
+  /// loose constraints, allowing the child to be its preferred size, or within
+  /// a range of minimum and maximum extents.
   @override
   BoxConstraints getBoxConstraints(SliverConstraints constraints) {
     final double mainMinExtent = mainAxisExtent.isFinite ? mainAxisExtent : 0;
-    final double crossMinExtent = crossAxisExtent.isInfinite ? 0.0 : crossAxisExtent;
+    final double crossMinExtent =
+        crossAxisExtent.isInfinite ? 0.0 : crossAxisExtent;
 
-    switch(constraints.axis) {
-      
+    switch (constraints.axis) {
       case Axis.horizontal:
         return BoxConstraints(
           minHeight: mainMinExtent,
@@ -53,10 +57,10 @@ class DynamicSliverGridGeometry extends SliverGridGeometry {
 
 /// Manages the size and position of all the tiles in a [RenderSliverGrid].
 ///
-/// Rather that providing a grid with a [SliverGridLayout] directly, you instead
+/// Rather than providing a grid with a [SliverGridLayout] directly, you instead
 /// provide the grid a [SliverGridDelegate], which can compute a
 /// [SliverGridLayout] given the current [SliverConstraints].
-abstract class DynamicSliverGridLayout extends SliverGridLayout{
+abstract class DynamicSliverGridLayout extends SliverGridLayout {
   /// The  estimated size and position of the child with the given index.
   ///
   /// The [DynamicSliverGridGeometry] that is returned will
@@ -74,7 +78,7 @@ abstract class DynamicSliverGridLayout extends SliverGridLayout{
 
   /// Called by [RenderDynamicSliverGrid] to validate the layout pattern has
   /// filled the screen.
-  /// 
+  ///
   /// A given child may have reached the target scroll offset of the current
   /// layout pass, but there may still be more children to lay out based on the
   /// pattern.
@@ -89,8 +93,10 @@ abstract class DynamicSliverGridLayout extends SliverGridLayout{
   double computeMaxScrollOffset(int childCount) => throw UnimplementedError();
   @override
   @mustCallSuper
-  int getMaxChildIndexForScrollOffset(double scrollOffset) => throw UnimplementedError();
+  int getMaxChildIndexForScrollOffset(double scrollOffset) =>
+      throw UnimplementedError();
   @override
   @mustCallSuper
-  int getMinChildIndexForScrollOffset(double scrollOffset) => throw UnimplementedError();
+  int getMinChildIndexForScrollOffset(double scrollOffset) =>
+      throw UnimplementedError();
 }
