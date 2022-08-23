@@ -52,7 +52,7 @@ class SettingsContent extends StatelessWidget {
           ...<Widget>[
             Text(
               'Settings',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
             ElevatedButton(
               onPressed: () {
