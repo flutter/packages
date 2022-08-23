@@ -13,10 +13,7 @@
 //     super.crossAxisSpacing = 0.0,
 //     super.childAspectRatio = 1.0,
 //     super.mainAxisExtent,
-//   }) : assert(crossAxisCount != null && crossAxisCount > 0),
-//        assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
-//        assert(crossAxisSpacing != null && crossAxisSpacing >= 0),
-//        assert(childAspectRatio != null && childAspectRatio > 0);
+//   });
 //
 //   @override
 //   SliverGridLayout getLayout(SliverConstraints constraints) {
@@ -31,11 +28,8 @@
 //     super.crossAxisSpacing = 0.0,
 //     super.childAspectRatio = 1.0,
 //     super.mainAxisExtent,
-//   }) : assert(maxCrossAxisExtent != null && maxCrossAxisExtent > 0),
-//        assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
-//        assert(crossAxisSpacing != null && crossAxisSpacing >= 0),
-//        assert(childAspectRatio != null && childAspectRatio > 0);
-  
+//   });
+//
 //   @override
 //   SliverGridLayout getLayout(SliverConstraints constraints) {
 //     // TODO(DavBot02): return your stagger layout.

@@ -2,24 +2,36 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'render_dynamic_grid.dart';
 
+/// A scrollable, 2D array of widgets.
+/// 
+/// TODO(DavBot02 & snat-s): Add more documentation & sample code. :)
 class DynamicGridView extends GridView {
+  /// Creates a scrollable, 2D array of widgets with a custom
+  /// [SliverGridDelegate].
+  /// 
+  // TODO(DavBot02 & snat-s): what other parameters should we add to these
+  // constructors, here, builder, etc.?
+  // + reverse
+  // + scrollDirection
   DynamicGridView({
     super.key, 
     required super.gridDelegate,
+    // This creates a SliverChildListDelegate in the super class.
     super.children = const <Widget>[],
-  }) : assert(gridDelegate != null);
+  });
 
-  @override
+  /// Creates a scrollable, 2D array of widgets that are created on demand.
   DynamicGridView.builder({
     super.key,
     required super.gridDelegate,
-    required super.itemBuilder,
-  });
+    // This creates a SliverChildBuilderDelegate in the super class.
+    required IndexedWidgetBuilder itemBuilder,
+    super.itemCount,
+  }) : super.builder(itemBuilder: itemBuilder);
 
   // TODO(snat-s): DynamicGridView.wrap?
 
@@ -34,6 +46,7 @@ class DynamicGridView extends GridView {
   }
 }
 
+/// A sliver that places multiple box children in a two dimensional arrangement.
 class DynamicSliverGrid extends SliverMultiBoxAdaptorWidget {
   /// Creates a sliver that places multiple box children in a two dimensional
   /// arrangement.
@@ -43,7 +56,7 @@ class DynamicSliverGrid extends SliverMultiBoxAdaptorWidget {
     required this.gridDelegate,
   });
 
-  /// The delegate that controls the size and position of the children.
+  /// The delegate that manages the size and position of the children.
   final SliverGridDelegate gridDelegate;
 
   @override

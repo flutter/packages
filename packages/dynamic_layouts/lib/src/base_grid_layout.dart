@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 /// Describes the placement of a child in a [RenderDynamicSliverGrid].
@@ -48,4 +49,48 @@ class DynamicSliverGridGeometry extends SliverGridGeometry {
         );
     }
   }
+}
+
+/// Manages the size and position of all the tiles in a [RenderSliverGrid].
+///
+/// Rather that providing a grid with a [SliverGridLayout] directly, you instead
+/// provide the grid a [SliverGridDelegate], which can compute a
+/// [SliverGridLayout] given the current [SliverConstraints].
+abstract class DynamicSliverGridLayout extends SliverGridLayout{
+  /// The  estimated size and position of the child with the given index.
+  ///
+  /// The [DynamicSliverGridGeometry] that is returned will
+  /// provide looser constraints to the child, whose size after layout can be
+  /// reported back to the layout object in [updateGeometryForChildIndex].
+  @override
+  SliverGridGeometry getGeometryForChildIndex(int index);
+
+  /// Update the size and position of the child with the given index,
+  /// considering the size of the child after layout.
+  ///
+  /// This is used to update the layout object after the child has laid out,
+  /// allowing the layout pattern to adapt to the child's size.
+  SliverGridGeometry updateGeometryForChildIndex(int index, Size childSize);
+
+  /// Called by [RenderDynamicSliverGrid] to validate the layout pattern has
+  /// filled the screen.
+  /// 
+  /// A given child may have reached the target scroll offset of the current
+  /// layout pass, but there may still be more children to lay out based on the
+  /// pattern.
+  bool reachedTargetScrollOffset(double targetOffset);
+
+  // These methods are not relevant to dynamic grid building, but extending the
+  // base [SliverGridLayout] class allows us to re-use existing
+  // [SliverGridDelegate]s like [SliverGridDelegateWithFixedCrossAxisCount] and
+  // [SliverGridDelegateWithMaxCrossAxisExtent].
+  @override
+  @mustCallSuper
+  double computeMaxScrollOffset(int childCount) => throw UnimplementedError();
+  @override
+  @mustCallSuper
+  int getMaxChildIndexForScrollOffset(double scrollOffset) => throw UnimplementedError();
+  @override
+  @mustCallSuper
+  int getMinChildIndexForScrollOffset(double scrollOffset) => throw UnimplementedError();
 }

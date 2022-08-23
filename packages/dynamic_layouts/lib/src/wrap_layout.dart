@@ -2,6 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(snat-s): YourWrapLayout extends SliverGridLayout
+// TODO(snat-s): YourWrapLayout extends DynamicSliverGridLayout
 
 // TODO(snat-s): YourWrapDelegate extends SliverGridDelegate

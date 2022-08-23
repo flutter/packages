@@ -13,13 +13,6 @@ import 'base_grid_layout.dart';
 ///
 /// [RenderDynamicSliverGrid] places its children in arbitrary positions determined by
 /// the [DynamicSliverGridLayout] provided by the [gridDelegate].
-///
-/// See also:
-///
-///  * [RenderSliverList], which places its children in a linear
-///    array.
-///  * [RenderSliverFixedExtentList], which places its children in a linear
-///    array with a fixed extent in the main axis.
 class RenderDynamicSliverGrid extends RenderSliverMultiBoxAdaptor {
   /// Creates a sliver that contains multiple box children that whose size and
   /// position are determined by a delegate.
@@ -70,7 +63,7 @@ class RenderDynamicSliverGrid extends RenderSliverMultiBoxAdaptor {
     final double remainingExtent = constraints.remainingCacheExtent;
     assert(remainingExtent >= 0.0);
     final double targetEndScrollOffset = scrollOffset + remainingExtent;
-    final SliverGridLayout layout = _gridDelegate.getLayout(constraints);
+    final DynamicSliverGridLayout layout = _gridDelegate.getLayout(constraints) as DynamicSliverGridLayout;
     int leadingGarbage = 0;
     int trailingGarbage = 0;
     bool reachedEnd = false;
