@@ -25,14 +25,6 @@ macos_template: &MACOS_TEMPLATE
   # Only one macOS task can run in parallel without credits, so use them for
   # PRs on macOS.
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-
-macos_intel_template: &MACOS_INTEL_TEMPLATE
-  << : *MACOS_TEMPLATE
-  osx_instance:
-    image: monterey-xcode-13.3
-
-macos_arm_template: &MACOS_ARM_TEMPLATE
-  << : *MACOS_TEMPLATE
   macos_instance:
     image: ghcr.io/cirruslabs/macos-monterey-xcode:13.4.1
 
@@ -240,7 +232,7 @@ task:
 
 task:
   << : *FLUTTER_UPGRADE_TEMPLATE
-  << : *MACOS_ARM_TEMPLATE
+  << : *MACOS_TEMPLATE
   matrix:
    ### iOS tasks ###
     - name: ios-platform_tests
