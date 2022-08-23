@@ -74,7 +74,7 @@ class _OpenContainerTransformDemoState
                 children: <Widget>[
                   Text(
                     'Fade mode',
-                    style: Theme.of(context).textTheme.caption,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 12),
                   ToggleButtons(
@@ -336,7 +336,7 @@ class _ExampleCard extends StatelessWidget {
               'adipiscing elit, sed do eiusmod tempor.',
               style: Theme.of(context)
                   .textTheme
-                  .bodyText2!
+                  .bodyMedium!
                   .copyWith(color: Colors.black54),
             ),
           ),
@@ -382,12 +382,12 @@ class _SmallerCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: Theme.of(context).textTheme.caption,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),
@@ -432,13 +432,13 @@ class _ExampleSingleTile extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
                       'Lorem ipsum dolor sit amet, consectetur '
                       'adipiscing elit,',
-                      style: Theme.of(context).textTheme.caption),
+                      style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
@@ -511,7 +511,7 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Title',
-                  style: Theme.of(context).textTheme.headline5!.copyWith(
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                         color: Colors.black54,
                         fontSize: 30.0,
                       ),
@@ -519,7 +519,7 @@ class _DetailsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   _loremIpsumParagraph,
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: Colors.black54,
                         height: 1.5,
                         fontSize: 16.0,
