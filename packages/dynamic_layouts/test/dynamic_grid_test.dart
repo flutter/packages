@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:dynamic_layouts/dynamic_layouts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dynamic_layouts/dynamic_layouts.dart';
 
 void main() {
   testWidgets('DynamicGridView works with simple layout',
@@ -28,7 +28,7 @@ void main() {
         home: Scaffold(
           body: DynamicGridView(
             gridDelegate: TestDelegate(crossAxisCount: 2),
-            children: List.generate(
+            children: List<Widget>.generate(
               50,
               (int index) => SizedBox.square(
                 dimension: TestSimpleLayout.childExtent,
@@ -121,7 +121,7 @@ class TestSimpleLayout extends DynamicSliverGridLayout {
   });
 
   final int crossAxisCount;
-  static const childExtent = 50.0;
+  static const double childExtent = 50.0;
 
   @override
   SliverGridGeometry getGeometryForChildIndex(int index) {

@@ -27,7 +27,7 @@ class DynamicSliverGridGeometry extends SliverGridGeometry {
   /// [SliverConstraints.crossAxisExtent] will be used to create tight
   /// constraints in the cross axis.
   ///
-  /// This differs from [SliverGridGeometry.getBoxConstraints] in that is allows
+  /// This differs from [SliverGridGeometry.getBoxConstraints] in that it allows
   /// loose constraints, allowing the child to be its preferred size, or within
   /// a range of minimum and maximum extents.
   @override
@@ -55,10 +55,11 @@ class DynamicSliverGridGeometry extends SliverGridGeometry {
   }
 }
 
+// TODO(all): A bit more docs here
 /// Manages the size and position of all the tiles in a [RenderSliverGrid].
 ///
 /// Rather than providing a grid with a [SliverGridLayout] directly, you instead
-/// provide the grid a [SliverGridDelegate], which can compute a
+/// provide the grid with a [SliverGridDelegate], which can compute a
 /// [SliverGridLayout] given the current [SliverConstraints].
 abstract class DynamicSliverGridLayout extends SliverGridLayout {
   /// The  estimated size and position of the child with the given index.

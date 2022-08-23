@@ -8,12 +8,12 @@ import 'render_dynamic_grid.dart';
 
 /// A scrollable, 2D array of widgets.
 ///
-// TODO(DavBot02 & snat-s): Add more documentation & sample code. :)
+// TODO(all): Add more documentation & sample code
 class DynamicGridView extends GridView {
   /// Creates a scrollable, 2D array of widgets with a custom
   /// [SliverGridDelegate].
   ///
-  // TODO(DavBot02 & snat-s): what other parameters should we add to these
+  // TODO(all): what other parameters should we add to these
   // constructors, here, builder, etc.?
   // + reverse
   // + scrollDirection
