@@ -82,7 +82,7 @@ class DemoRawDataView extends StatelessWidget {
                 softWrap: true,
                 style: Theme.of(context)
                     .primaryTextTheme
-                    .bodyText1!
+                    .bodyLarge!
                     .copyWith(fontFamily: 'Roboto Mono', color: Colors.black),
               ),
             ),
@@ -129,22 +129,22 @@ class DemoNotesView extends StatelessWidget {
             children: <Widget>[
               Text(
                 'See the following link for more information:',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link text: $text',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link destination: $href',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link title: $title',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
