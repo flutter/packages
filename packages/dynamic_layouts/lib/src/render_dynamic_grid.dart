@@ -350,8 +350,20 @@ class RenderDynamicSliverGrid extends RenderSliverMultiBoxAdaptor {
 
     // At this point everything should be good to go, we just have to clean up
     // the garbage and report the geometry.
-    // Since dynamic tile placement is dependent on the preceding tile, we only
-    // collect trailing garbage.
+    // We only collect trailing garbage because
+    // 
+    // 1 - dynamic tile placement is dependent on the preceding tile,
+    //     potentially, the SliverGridLayout could cache the placement of each
+    //     tile to refer back to, but that would mean tiles could not change in
+    //     size or be added/removed without having to recompute the whole layout.
+    //
+    // 2 - Currently, Flutter only supports collecting garbage in sequential
+    //     order. Dynamic layout patterns can break this assumption. In order to
+    //     truly collect garbage efficiently, support for nonsequential garbage
+    //     collection is necessary.
+    // TODO(all): document this behavior so users are aware of this temporary
+    //   also - file a bug in https://github.com/flutter/flutter/labels/p%3A%20dynamic_layouts
+    // trade off
     collectGarbage(0, trailingGarbage);
 
     assert(debugAssertChildListIsNonEmptyAndContiguous());
