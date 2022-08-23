@@ -1858,7 +1858,7 @@ void main() {
         ),
       ];
 
-      await createRouter(routes, tester);
+      await createRouter(routes, tester, initialLocation: '/b');
       expect(find.text('Screen B'), findsOneWidget);
     });
 
@@ -1879,7 +1879,7 @@ void main() {
           },
           routes: <RouteBase>[
             GoRoute(
-              path: 'b',
+              path: '/b',
               builder: (BuildContext context, GoRouterState state) {
                 return const Scaffold(
                   body: Text('Screen B'),

@@ -359,6 +359,7 @@ class ShellRoute extends RouteBase {
   /// Constructs a [ShellRoute].
   ShellRoute({
     this.builder,
+    this.pageBuilder,
     List<RouteBase> routes = const <RouteBase>[],
     GlobalKey<NavigatorState>? navigatorKey,
   })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
@@ -368,6 +369,9 @@ class ShellRoute extends RouteBase {
 
   /// The widget builder for a shell route.
   final ShellRouteBuilder? builder;
+
+  /// The page builder for a shell route.
+  final ShellRoutePageBuilder? pageBuilder;
 
   /// The [GlobalKey] to be used by the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes

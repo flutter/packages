@@ -5,7 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 void main() {
   runApp(ShellRouteExampleApp());
@@ -18,9 +19,11 @@ class ShellRouteExampleApp extends StatelessWidget {
 
   final GoRouter _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
+    initialLocation: '/a',
     routes: <RouteBase>[
       /// Application shell
       ShellRoute(
+        navigatorKey: _shellNavigatorKey,
         builder: (BuildContext context, GoRouterState state, Widget child) {
           /// Builds a Scaffold with a bottom navigation bar.
           return AppScaffold(child: child);
@@ -28,7 +31,7 @@ class ShellRouteExampleApp extends StatelessWidget {
         routes: <RouteBase>[
           /// The first screen to display in the bottom navigation bar.
           GoRoute(
-            path: 'a',
+            path: '/a',
             builder: (BuildContext context, GoRouterState state) {
               return const ScreenA();
             },
@@ -45,7 +48,7 @@ class ShellRouteExampleApp extends StatelessWidget {
 
           /// Displayed when the second item in the the bottom navigation bar is selected.
           GoRoute(
-            path: 'b',
+            path: '/b',
             builder: (BuildContext context, GoRouterState state) {
               return const ScreenB();
             },
@@ -117,7 +120,7 @@ class AppScaffold extends StatelessWidget {
   static int _calculateSelectedIndex(BuildContext context) {
     final GoRouter route = GoRouter.of(context);
     final String location = route.location;
-    if (location == '/a') {
+    if (location == '/') {
       return 0;
     }
     if (location == '/b') {
@@ -129,7 +132,7 @@ class AppScaffold extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        GoRouter.of(context).go('/a');
+        GoRouter.of(context).go('/');
         break;
       case 1:
         GoRouter.of(context).go('/b');

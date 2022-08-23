@@ -209,7 +209,6 @@ void main() {
                 '/page-1',
               )
               .having(
-            // TODO(johnpryan): remove cast
                 (GoRouteMatch match) => (match.route as GoRoute).name,
                 'match.route.name',
                 'page1',

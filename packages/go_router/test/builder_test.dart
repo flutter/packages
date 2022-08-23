@@ -68,7 +68,7 @@ void main() {
 
       final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
         GoRouteMatch(
-          route: config.routes.first as GoRoute,
+          route: config.routes.first,
           location: '/',
           template: '/',
           encodedParams: <String, String>{},
@@ -163,7 +163,16 @@ void main() {
 
       final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
         GoRouteMatch(
-          route: config.routes.first.routes.first as GoRoute,
+          route: config.routes.first,
+          location: '',
+          template: '',
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
+          extra: null,
+          error: null,
+        ),
+        GoRouteMatch(
+          route: config.routes.first.routes.first,
           location: '/details',
           template: '/details',
           encodedParams: <String, String>{},

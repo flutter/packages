@@ -122,7 +122,6 @@ class RouteBuilder {
             exception: match.error);
       }
 
-      // TODO(johnpryan) remove cast
       final RouteBase route = match.route;
       final Map<String, String> newParams = <String, String>{
         ...params,
@@ -147,9 +146,7 @@ class RouteBuilder {
         } else {
           pages.add(page);
         }
-      }
-      // TODO(johnpryan): add this back
-      /*else if (route is ShellRoute) {
+      } else if (route is ShellRoute) {
         final GoRouterState state = buildState(match, newParams);
         final _RecursiveBuildResult result = _buildRecursive(
             context, matchList, i + 1, pop, routerNeglect, newParams,
@@ -159,13 +156,7 @@ class RouteBuilder {
         final Page<dynamic> page =
             buildPageForRoute(context, state, match, child: child);
 
-        // If this ShellRoute is for a different Navigator, add it to the
-        // pagesForOutOfScopeNavigator list instead.
-        if (route.parentNavigatorKey != null) {
-          pagesForOutOfScopeNavigator[route.parentNavigatorKey]!.add(page);
-        } else {
-          pages.add(page);
-        }
+        pages.add(page);
 
         // If any descendent GoRoutes have pages that are out of scope for this
         // navigator, Add them to the list of routes that are out of scope. If
@@ -183,7 +174,7 @@ class RouteBuilder {
         pagesForOutOfScopeNavigator.addAll(pagesOutOfScopeForChildNavigator);
 
         i = result.newIndex;
-      }*/
+      }
     }
 
     // Add any pages that were out of scope to this Navigator if the keys match.
@@ -229,7 +220,7 @@ class RouteBuilder {
           name: null,
           // trim the query params off the subloc to match route.redirect
           subloc: uri.path,
-          // pass along the query params 'cuz that's all we have right now
+          // pass along the query params because that's all we have right now
           queryParams: uri.queryParameters,
           // pass along the error, if there is one
           error: exception,
@@ -268,14 +259,19 @@ class RouteBuilder {
   /// and [params].
   @visibleForTesting
   GoRouterState buildState(GoRouteMatch match, Map<String, String> params) {
+    final RouteBase route = match.route;
+    String? name = '';
+    String path = '';
+    if (route is GoRoute) {
+      name = route.name;
+      path = route.path;
+    }
     return GoRouterState(
       configuration,
       location: match.fullUriString,
       subloc: match.location,
-      // TODO(johnpryan): remove cast
-      name: (match.route as GoRoute).name,
-      // TODO(johnpryan): remove cast
-      path: (match.route as GoRoute).path,
+      name: name,
+      path: path,
       fullpath: match.template,
       params: params,
       error: match.error,
@@ -289,8 +285,7 @@ class RouteBuilder {
   Page<dynamic> buildPageForRoute(
       BuildContext context, GoRouterState state, GoRouteMatch match,
       {Widget? child}) {
-    // TODO(johnpryan): remove cast
-    final RouteBase route = match.route as GoRoute;
+    final RouteBase route = match.route;
     Page<dynamic>? page;
 
     if (route is GoRoute) {
@@ -299,9 +294,7 @@ class RouteBuilder {
       if (pageBuilder != null) {
         page = pageBuilder(context, state);
       }
-    }
-    // TODO(johnpryan): add this back.
-    /*else if (route is ShellRoute) {
+    } else if (route is ShellRoute) {
       final ShellRoutePageBuilder? pageBuilder = route.pageBuilder;
       if (child != null) {
         if (pageBuilder != null) {
@@ -312,7 +305,6 @@ class RouteBuilder {
             'Expected a child widget when building a ShellRoute');
       }
     }
-      */
 
     if (page is NoOpPage) {
       page = null;

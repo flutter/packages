@@ -55,12 +55,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     NavigatorState? navigator;
     final int matchCount = _matchList.matches.length;
     for (int i = matchCount - 1; i >= 0; i--) {
-      // TODO(johnpryan): remove cast
-      // TODO(johnpryan): add this back
-      /*
       final GoRouteMatch match = _matchList.matches[i];
-      final GoRoute route = match.route as GoRoute;
-      final GlobalKey<NavigatorState>? key = route.parentNavigatorKey;
+      final RouteBase route = match.route;
 
       // If this is a ShellRoute, then pop one of the subsequent GoRoutes, if
       // there are any.
@@ -68,11 +64,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         // Pop from this navigator.
         navigator = route.navigatorKey.currentState;
         break;
-      } else if (key != null) {
-        navigator = key.currentState;
+      } else if (route is GoRoute && route.parentNavigatorKey != null) {
+        navigator = route.parentNavigatorKey!.currentState;
         break;
       }
-      */
     }
 
     navigator ??= navigatorKey.currentState;

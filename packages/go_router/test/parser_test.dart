@@ -322,7 +322,7 @@ void main() {
     expect(matches.first.error, isNotNull);
   });
 
-  test('Creates a match for ShellRoute defaultChild', () async {
+  test('Creates a match for ShellRoute', () async {
     final List<RouteBase> routes = <RouteBase>[
       ShellRoute(
         builder: (BuildContext context, GoRouterState state, Widget child) {
@@ -360,7 +360,7 @@ void main() {
     );
 
     final RouteMatchList matchesObj = await parser
-        .parseRouteInformation(const RouteInformation(location: '/'));
+        .parseRouteInformation(const RouteInformation(location: '/a'));
     final List<GoRouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(2));

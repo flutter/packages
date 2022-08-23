@@ -131,8 +131,14 @@ List<GoRouteMatch> _getLocRouteRecursively({
   }());
   final List<List<GoRouteMatch>> result = <List<GoRouteMatch>>[];
   // find the set of matches at this level of the tree
-  for (final GoRoute route in routes as List<GoRoute>) {
-    final String fullpath = concatenatePaths(parentFullpath, route.path);
+  for (final RouteBase route in routes) {
+    late final String fullpath;
+    if (route is GoRoute) {
+      fullpath = concatenatePaths(parentFullpath, route.path);
+    } else if (route is ShellRoute) {
+      fullpath = parentFullpath;
+    }
+
     final GoRouteMatch? match = GoRouteMatch.match(
       route: route,
       restLoc: restLoc,
@@ -145,7 +151,9 @@ List<GoRouteMatch> _getLocRouteRecursively({
     if (match == null) {
       continue;
     }
-    if (match.location.toLowerCase() == loc.toLowerCase()) {
+
+    if (match.route is GoRoute &&
+        match.location.toLowerCase() == loc.toLowerCase()) {
       // If it is a complete match, then return the matched route
       // NOTE: need a lower case match because subloc is canonicalized to match
       // the path case whereas the location can be of any case and still match
@@ -155,15 +163,23 @@ List<GoRouteMatch> _getLocRouteRecursively({
       continue;
     } else {
       // Otherwise, recurse
-      final String childRestLoc =
-          loc.substring(match.location.length + (match.location == '/' ? 0 : 1));
+      final String childRestLoc;
+      final String newParentSubLoc;
+      if (match.route is ShellRoute) {
+        childRestLoc = restLoc;
+        newParentSubLoc = parentSubloc;
+      } else {
+        childRestLoc = loc
+            .substring(match.location.length + (match.location == '/' ? 0 : 1));
+        newParentSubLoc = match.location;
+      }
       assert(loc.startsWith(match.location));
       assert(restLoc.isNotEmpty);
 
       final List<GoRouteMatch> subRouteMatch = _getLocRouteRecursively(
         loc: loc,
         restLoc: childRestLoc,
-        parentSubloc: match.location,
+        parentSubloc: newParentSubLoc,
         routes: route.routes,
         parentFullpath: fullpath,
         queryParams: queryParams,
@@ -186,39 +202,6 @@ List<GoRouteMatch> _getLocRouteRecursively({
 
   if (result.isEmpty) {
     return <GoRouteMatch>[];
-  }
-
-  /// Add matches for ShellRoute defaultRoute
-  final GoRouteMatch lastMatch = result.first.last;
-  // TODO(johnpryan) remove cast
-  final GoRoute lastRoute = lastMatch.route as GoRoute;
-  if (lastRoute is ShellRoute) {
-    // TODO(johnpryan): add this back
-    /*
-    final String? defaultRoute = lastRoute.defaultRoute;
-    if (defaultRoute != null) {
-      // find the sub-route
-      //TODO(johnpryan) change to RouteBase
-      for (final GoRoute subRoute in lastRoute.routes as List<GoRoute>) {
-        if (subRoute.path == defaultRoute) {
-          final String fullpath =
-              concatenatePaths(lastMatch.subloc, subRoute.path);
-          final GoRouteMatch? match = GoRouteMatch.match(
-            route: subRoute,
-            restLoc: defaultRoute,
-            parentSubloc: lastMatch.subloc,
-            fullpath: fullpath,
-            queryParams: queryParams,
-            extra: extra,
-          );
-          if (match == null) {
-            continue;
-          }
-          result.first.add(match);
-        }
-      }
-    }
-     */
   }
 
   // If there are multiple routes that match the location, returning the first one.

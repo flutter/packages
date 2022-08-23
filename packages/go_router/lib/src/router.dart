@@ -141,8 +141,6 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
-  // TODO(johnpryan): Deprecate this API
-  // See https://github.com/flutter/flutter/issues/107729
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
