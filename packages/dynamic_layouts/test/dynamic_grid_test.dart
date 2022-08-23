@@ -59,14 +59,15 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: DynamicGridView.builder(
-              gridDelegate: TestDelegate(crossAxisCount: 2),
-              itemCount: 3,
-              itemBuilder: (BuildContext context, int index) {
-                return SizedBox.square(
-                  dimension: TestSimpleLayout.childExtent,
-                  child: Text('Index $index'),
-                );
-              }),
+            gridDelegate: TestDelegate(crossAxisCount: 2),
+            itemCount: 3,
+            itemBuilder: (BuildContext context, int index) {
+              return SizedBox.square(
+                dimension: TestSimpleLayout.childExtent,
+                child: Text('Index $index'),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -88,13 +89,14 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: DynamicGridView.builder(
-              gridDelegate: TestDelegate(crossAxisCount: 2),
-              itemBuilder: (BuildContext context, int index) {
-                return SizedBox.square(
-                  dimension: TestSimpleLayout.childExtent,
-                  child: Text('Index $index'),
-                );
-              }),
+            gridDelegate: TestDelegate(crossAxisCount: 2),
+            itemBuilder: (BuildContext context, int index) {
+              return SizedBox.square(
+                dimension: TestSimpleLayout.childExtent,
+                child: Text('Index $index'),
+              );
+            },
+          ),
         ),
       ),
     );
