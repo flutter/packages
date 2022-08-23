@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -209,8 +211,9 @@ class MarkdownBuilder implements md.NodeVisitor {
       _addAnonymousBlockIfNeeded();
       if (_isListTag(tag)) {
         _listIndents.add(tag);
-        if (element.attributes['start'] != null)
+        if (element.attributes['start'] != null) {
           start = int.parse(element.attributes['start']!) - 1;
+        }
       } else if (tag == 'blockquote') {
         _isInBlockquote = true;
       } else if (tag == 'table') {
@@ -278,7 +281,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         ? element.children!
             .map((md.Node e) =>
                 e is md.Text ? e.text : extractTextFromElement(e))
-            .join('')
+            .join()
         : (element is md.Element && (element.attributes.isNotEmpty)
             ? element.attributes['alt']
             : '');
@@ -298,13 +301,13 @@ class MarkdownBuilder implements md.NodeVisitor {
     String trimText(String text) {
       // The leading spaces pattern is used to identify spaces
       // at the beginning of a line of text.
-      final RegExp _leadingSpacesPattern = RegExp(r'^ *');
+      final RegExp leadingSpacesPattern = RegExp(r'^ *');
 
       // The soft line break is used to identify the spaces at the end of a line
       // of text and the leading spaces in the immediately following the line
       // of text. These spaces are removed in accordance with the Markdown
       // specification on soft line breaks when lines of text are joined.
-      final RegExp _softLineBreak = RegExp(r' ?\n *');
+      final RegExp softLineBreakPattern = RegExp(r' ?\n *');
 
       // Leading spaces following a hard line break are ignored.
       // https://github.github.com/gfm/#example-657
@@ -312,13 +315,13 @@ class MarkdownBuilder implements md.NodeVisitor {
       // https://github.github.com/gfm/#example-192
       // https://github.github.com/gfm/#example-236
       if (const <String>['ul', 'ol', 'p', 'br'].contains(_lastVisitedTag)) {
-        text = text.replaceAll(_leadingSpacesPattern, '');
+        text = text.replaceAll(leadingSpacesPattern, '');
       }
 
       if (softLineBreak) {
         return text;
       }
-      return text.replaceAll(_softLineBreak, ' ');
+      return text.replaceAll(softLineBreakPattern, ' ');
     }
 
     Widget? child;
@@ -530,7 +533,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (_linkHandlers.isNotEmpty) {
       final TapGestureRecognizer recognizer =
           _linkHandlers.last as TapGestureRecognizer;
-      return GestureDetector(child: child, onTap: recognizer.onTap);
+      return GestureDetector(onTap: recognizer.onTap, child: child);
     } else {
       return child;
     }
@@ -648,8 +651,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       );
       final Wrap wrap = Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
-        children: mergedInlines,
         alignment: blockAlignment,
+        children: mergedInlines,
       );
 
       if (textPadding == EdgeInsets.zero) {

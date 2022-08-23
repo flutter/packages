@@ -73,7 +73,7 @@ Future<void> _runBenchmark(String? benchmarkName) async {
         await _client.sendProfileData(profile);
       } else {
         _printResultsToScreen(profile);
-        print(profile);
+        print(profile); // ignore: avoid_print
       }
     },
     zoneSpecification: ZoneSpecification(

@@ -22,6 +22,7 @@ void tryToDelete(Directory directory) {
   try {
     directory.deleteSync(recursive: true);
   } on FileSystemException catch (error) {
+    // ignore: avoid_print
     print('Failed to delete ${directory.path}: $error');
   }
 }

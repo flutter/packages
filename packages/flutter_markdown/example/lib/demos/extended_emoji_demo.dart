@@ -46,6 +46,7 @@ class ExtendedEmojiSyntax extends md.EmojiSyntax {
 ```
 """;
 
+// ignore: avoid_implementing_value_types
 class ExtendedEmojiDemo extends StatelessWidget implements MarkdownDemoWidget {
   const ExtendedEmojiDemo({Key? key}) : super(key: key);
 

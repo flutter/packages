@@ -451,6 +451,8 @@ class _LargeComposeIcon extends StatelessWidget {
   }
 }
 
+typedef _CardSelectedCallback = void Function(int?);
+
 // ItemList creates the list of cards and the search bar.
 class _ItemList extends StatelessWidget {
   const _ItemList({
@@ -462,7 +464,7 @@ class _ItemList extends StatelessWidget {
 
   final List<_Item> items;
   final int? selected;
-  final Function selectCard;
+  final _CardSelectedCallback selectCard;
 
   @override
   Widget build(BuildContext context) {
@@ -535,7 +537,7 @@ class _ItemListTile extends StatelessWidget {
   final _Item item;
   final _Email email;
   final int? selected;
-  final Function selectCard;
+  final _CardSelectedCallback selectCard;
 
   @override
   Widget build(BuildContext context) {
@@ -863,7 +865,7 @@ class _ScreenArguments {
     required this.selectCard,
   });
   final _Item item;
-  final Function selectCard;
+  final _CardSelectedCallback selectCard;
 }
 
 class _ExtractRouteArguments extends StatelessWidget {
@@ -888,7 +890,7 @@ class _RouteDetailView extends StatelessWidget {
   }) : super(key: key);
 
   final _Item item;
-  final Function selectCard;
+  final _CardSelectedCallback selectCard;
 
   @override
   Widget build(BuildContext context) {

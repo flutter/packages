@@ -25,6 +25,7 @@ This example demonstrates how to implement a centered headline using a custom bu
 
 ''';
 
+// ignore: avoid_implementing_value_types
 class CenteredHeaderDemo extends StatelessWidget implements MarkdownDemoWidget {
   const CenteredHeaderDemo({Key? key}) : super(key: key);
 

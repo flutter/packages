@@ -16,5 +16,5 @@ void main() {
     'foo': true,
     3: 'fizz',
   });
-  print('The encoded message is $data');
+  print('The encoded message is $data'); // ignore: avoid_print
 }

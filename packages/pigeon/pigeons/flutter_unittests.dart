@@ -14,12 +14,12 @@ class FlutterSearchReply {
 }
 
 class FlutterSearchRequests {
-  // ignore: always_specify_types
+  // ignore: always_specify_types, strict_raw_type
   List? requests;
 }
 
 class FlutterSearchReplies {
-  // ignore: always_specify_types
+  // ignore: always_specify_types, strict_raw_type
   List? replies;
 }
 

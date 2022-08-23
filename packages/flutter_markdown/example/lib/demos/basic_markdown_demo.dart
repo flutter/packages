@@ -43,6 +43,7 @@ Since GitHub Flavored is the default extension set, it is the initial setting
 for the formatted Markdown view in the demo.
 """;
 
+// ignore: avoid_implementing_value_types
 class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
   const BasicMarkdownDemo({Key? key}) : super(key: key);
 
@@ -63,7 +64,7 @@ class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
   Future<String> get notes => Future<String>.value(_notes);
 
   @override
-  _BasicMarkdownDemoState createState() => _BasicMarkdownDemoState();
+  State<BasicMarkdownDemo> createState() => _BasicMarkdownDemoState();
 }
 
 class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {

@@ -6,7 +6,7 @@
 /// deep linking, data-driven routes and more.
 library go_router;
 
-export 'src/configuration.dart' show GoRouterState, GoRoute;
+export 'src/configuration.dart' show GoRoute, GoRouterState;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
 export 'src/misc/refresh_stream.dart';
