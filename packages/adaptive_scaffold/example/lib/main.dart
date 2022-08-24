@@ -115,6 +115,67 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     const Color iconColor = Color.fromARGB(255, 29, 25, 43);
+    final Widget trailingNavRail = Column(
+      children: <Widget>[
+        const Divider(color: Colors.white, thickness: 1.5),
+        const SizedBox(height: 10),
+        Row(children: <Widget>[
+          const SizedBox(width: 22),
+          Text('Folders',
+              style: TextStyle(fontSize: 13, color: Colors.grey[700]))
+        ]),
+        const SizedBox(height: 22),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
+            const Text('Freelance', overflow: TextOverflow.ellipsis),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
+            const Text('Mortage', overflow: TextOverflow.ellipsis),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
+            const Flexible(
+                child: Text('Taxes', overflow: TextOverflow.ellipsis))
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
+            const Flexible(
+                child: Text('Receipts', overflow: TextOverflow.ellipsis))
+          ],
+        ),
+      ],
+    );
 
     // These are the destinations used within the AdaptiveScaffold navigation
     // builders.
@@ -129,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage>
           icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
       NavigationDestination(
           label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: iconColor)),
+          icon: Icon(Icons.video_call_outlined, color: iconColor))
     ];
 
     // Updating the listener value.
@@ -150,13 +211,11 @@ class _MyHomePageState extends State<MyHomePage>
               // Every SlotLayoutConfig takes a key and a builder. The builder
               // is to save memory that would be spent on initialization.
               key: const Key('primaryNavigation'),
-              builder: (_) => SizedBox(
-                width: 72,
-                height: MediaQuery.of(context).size.height,
-                // Usually it would be easier to use a builder from
-                // AdaptiveScaffold for these types of navigations but this
-                // navigation has custom staggered item animations.
-                child: NavigationRail(
+              builder: (_) {
+                return AdaptiveScaffold.standardNavigationRail(
+                  // Usually it would be easier to use a builder from
+                  // AdaptiveScaffold for these types of navigations but this
+                  // navigation has custom staggered item animations.
                   onDestinationSelected: (int index) {
                     setState(() {
                       _navigationIndex = index;
@@ -164,9 +223,7 @@ class _MyHomePageState extends State<MyHomePage>
                   },
                   selectedIndex: _navigationIndex,
                   leading: ScaleTransition(
-                    scale: _controller1,
-                    child: const _ComposeIcon(),
-                  ),
+                      scale: _controller1, child: const _MediumComposeIcon()),
                   backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                   labelType: NavigationRailLabelType.none,
                   destinations: <NavigationRailDestination>[
@@ -195,23 +252,26 @@ class _MyHomePageState extends State<MyHomePage>
                       label: 'Video',
                     )
                   ],
-                ),
-              ),
+                );
+              },
             ),
             Breakpoints.large: SlotLayout.from(
               key: const Key('primaryNavigation1'),
               // The AdaptiveScaffold builder here greatly simplifies
               // navigational elements.
-              builder: (_) => AdaptiveScaffold.toNavigationRail(
-                leading: const _ComposeButton(),
+              builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                leading: const _LargeComposeIcon(),
                 onDestinationSelected: (int index) {
                   setState(() {
                     _navigationIndex = index;
                   });
                 },
                 selectedIndex: _navigationIndex,
+                trailing: trailingNavRail,
                 extended: true,
-                destinations: destinations,
+                destinations: destinations
+                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .toList(),
               ),
             ),
           },
@@ -227,10 +287,9 @@ class _MyHomePageState extends State<MyHomePage>
                   ? Padding(
                       padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
                       child: _ItemList(
-                        selected: selected,
-                        items: _all_Items,
-                        selectCard: selectCard,
-                      ),
+                          selected: selected,
+                          items: allItems,
+                          selectCard: selectCard),
                     )
                   : const _ExamplePage(),
             ),
@@ -244,9 +303,10 @@ class _MyHomePageState extends State<MyHomePage>
                     // disappearing as it is animating out.
                     outAnimation: AdaptiveScaffold.stayOnScreen,
                     key: const Key('sBody'),
-                    builder: (_) =>
-                        _DetailTile(item: _all_Items[selected ?? 0]),
-                  ),
+                    builder: (_) => SafeArea(
+                      child: _DetailTile(item: allItems[selected ?? 0]),
+                    ),
+                  )
                 },
               )
             : null,
@@ -259,13 +319,11 @@ class _MyHomePageState extends State<MyHomePage>
               outAnimation: AdaptiveScaffold.topToBottom,
               builder: (_) => BottomNavigationBarTheme(
                 data: const BottomNavigationBarThemeData(
-                  unselectedItemColor: Colors.black,
-                  selectedItemColor: Colors.black,
-                ),
-                child: AdaptiveScaffold.toBottomNavigationBar(
+                    selectedItemColor: Colors.black),
+                child: AdaptiveScaffold.standardBottomNavigationBar(
                     destinations: destinations),
               ),
-            ),
+            )
           },
         ),
       ),
@@ -279,20 +337,22 @@ class _MyHomePageState extends State<MyHomePage>
     required String label,
   }) {
     return NavigationRailDestination(
-        icon: SlideTransition(
-            position: Tween<Offset>(
-              begin: Offset(begin, 0),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic),
-            ),
-            child: Icon(icon)),
-        label: Text(label));
+      icon: SlideTransition(
+        position: Tween<Offset>(
+          begin: Offset(begin, 0),
+          end: Offset.zero,
+        ).animate(
+          CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic),
+        ),
+        child: Icon(icon),
+      ),
+      label: Text(label),
+    );
   }
 }
 
-class _ComposeIcon extends StatelessWidget {
-  const _ComposeIcon({
+class _SmallComposeIcon extends StatelessWidget {
+  const _SmallComposeIcon({
     Key? key,
   }) : super(key: key);
 
@@ -318,44 +378,75 @@ class _ComposeIcon extends StatelessWidget {
   }
 }
 
-class _ComposeButton extends StatelessWidget {
-  const _ComposeButton({
+class _MediumComposeIcon extends StatelessWidget {
+  const _MediumComposeIcon({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: <Widget>[
+      Container(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 18),
+        child: const Icon(Icons.menu),
+      ),
+      const _SmallComposeIcon(),
+    ]);
+  }
+}
+
+class _LargeComposeIcon extends StatelessWidget {
+  const _LargeComposeIcon({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
-      child: Container(
-        alignment: Alignment.centerLeft,
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 216, 228),
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
-          boxShadow: Breakpoints.mediumAndUp.isActive(context)
-              ? null
-              : <BoxShadow>[
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-        ),
-        width: 200,
-        height: 50,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(8.0, 5, 0, 12),
+      child: Column(children: <Widget>[
+        Container(
+          padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const <Widget>[
-              Icon(Icons.edit_outlined),
-              SizedBox(width: 20),
-              Center(child: Text('Compose')),
+              Text('REPLY',
+                  style: TextStyle(color: Colors.deepPurple, fontSize: 15)),
+              Icon(Icons.menu_open, size: 22)
             ],
           ),
         ),
-      ),
+        const SizedBox(height: 10),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 255, 225, 231),
+            borderRadius: const BorderRadius.all(Radius.circular(15)),
+            boxShadow: Breakpoints.mediumAndUp.isActive(context)
+                ? null
+                : <BoxShadow>[
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+          ),
+          width: 200,
+          height: 50,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
+            child: Row(
+              children: const <Widget>[
+                Icon(Icons.edit_outlined),
+                SizedBox(width: 20),
+                Center(child: Text('Compose')),
+              ],
+            ),
+          ),
+        )
+      ]),
     );
   }
 }
@@ -379,7 +470,7 @@ class _ItemList extends StatelessWidget {
       backgroundColor: const Color.fromARGB(0, 0, 0, 0),
       floatingActionButton: Breakpoints.mediumAndUp.isActive(context)
           ? null
-          : const _ComposeIcon(),
+          : const _SmallComposeIcon(),
       body: Column(
         children: <Widget>[
           Padding(
@@ -393,7 +484,13 @@ class _ItemList extends StatelessWidget {
                 suffixIcon: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(_all_Items[0].image),
+                    radius: 18,
+                    child: Image.asset(
+                      'images/plum.png',
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 border: OutlineInputBorder(
@@ -412,10 +509,11 @@ class _ItemList extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               itemCount: items.length,
-              itemBuilder: (_, int index) => _ItemListTile(
-                selected: selected,
+              itemBuilder: (BuildContext context, int index) => _ItemListTile(
                 item: items[index],
+                email: items[index].emails![0],
                 selectCard: selectCard,
+                selected: selected,
               ),
             ),
           ),
@@ -429,11 +527,13 @@ class _ItemListTile extends StatelessWidget {
   const _ItemListTile({
     Key? key,
     required this.item,
+    required this.email,
     required this.selectCard,
     required this.selected,
   }) : super(key: key);
 
   final _Item item;
+  final _Email email;
   final int? selected;
   final Function selectCard;
 
@@ -445,24 +545,23 @@ class _ItemListTile extends StatelessWidget {
         // than large screens.
         // Small screens open a modal with the detail view while large screens
         // simply show the details on the secondaryBody.
-        selectCard(_all_Items.indexOf(item));
+        selectCard(allItems.indexOf(item));
         if (!Breakpoints.mediumAndUp.isActive(context)) {
-          Navigator.of(context).pushNamed(
-            _ExtractRouteArguments.routeName,
-            arguments: _ScreenArguments(item: item, selectCard: selectCard),
-          );
+          Navigator.of(context).pushNamed(_ExtractRouteArguments.routeName,
+              arguments: _ScreenArguments(item: item, selectCard: selectCard));
         } else {
-          selectCard(_all_Items.indexOf(item));
+          selectCard(allItems.indexOf(item));
         }
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-              color: selected == _all_Items.indexOf(item)
-                  ? const Color.fromARGB(255, 234, 222, 255)
-                  : const Color.fromARGB(255, 243, 237, 247),
-              borderRadius: const BorderRadius.all(Radius.circular(10))),
+            color: selected == allItems.indexOf(item)
+                ? const Color.fromARGB(255, 234, 222, 255)
+                : const Color.fromARGB(255, 243, 237, 247),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -471,16 +570,22 @@ class _ItemListTile extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     CircleAvatar(
-                      backgroundImage: NetworkImage(item.image),
+                      radius: 18,
+                      child: Image.asset(
+                        email.image,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(item.name,
+                        Text(email.sender,
                             style: Theme.of(context).textTheme.bodyLarge),
                         const SizedBox(height: 3),
-                        Text('${item.time} ago',
+                        Text('${email.time} ago',
                             style: Theme.of(context).textTheme.bodySmall),
                       ],
                     ),
@@ -488,18 +593,26 @@ class _ItemListTile extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8.0),
                       decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(50))),
-                      child: const Icon(Icons.star_outline),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      ),
+                      child: Icon(Icons.star_outline, color: Colors.grey[500]),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 13),
                 Text(item.title,
                     style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 4),
-                Text(item.body.replaceRange(80, item.body.length, '...'),
+                const SizedBox(height: 9),
+                Text(email.body.replaceRange(116, email.body.length, '...'),
                     style: Theme.of(context).textTheme.bodyLarge),
+                const SizedBox(height: 9),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: (email.bodyImage != '')
+                      ? Image.asset(email.bodyImage)
+                      : Container(),
+                ),
               ],
             ),
           ),
@@ -521,25 +634,220 @@ class _DetailTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
-        height: 300,
+        height: MediaQuery.of(context).size.height,
         child: Container(
           decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 255, 251, 254),
+              color: Color.fromARGB(255, 245, 241, 248),
               borderRadius: BorderRadius.all(Radius.circular(10))),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(item.title, style: Theme.of(context).textTheme.titleLarge),
-                Text('3 Messages',
-                    style: Theme.of(context).textTheme.labelSmall),
-                const SizedBox(
-                  height: 20,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(item.title,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge),
+                                    const SizedBox(height: 7),
+                                    Text('${item.emails!.length} Messages',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall)
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15)),
+                                      ),
+                                      child: Icon(Icons.restore_from_trash,
+                                          color: Colors.grey[600]),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15))),
+                                      child: Icon(Icons.more_vert,
+                                          color: Colors.grey[600]),
+                                    )
+                                  ],
+                                )),
+                          ]),
+                      const SizedBox(height: 20),
+                    ],
+                  )),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: item.emails!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final _Email thisEmail = item.emails![index];
+                    return _EmailTile(
+                        sender: thisEmail.sender,
+                        time: thisEmail.time,
+                        senderIcon: thisEmail.image,
+                        recepients: thisEmail.recepients,
+                        body: thisEmail.body,
+                        bodyImage: thisEmail.bodyImage);
+                  },
                 ),
-                Text(item.body, style: Theme.of(context).textTheme.bodyLarge),
-              ],
-            ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmailTile extends StatelessWidget {
+  const _EmailTile({
+    required this.sender,
+    required this.time,
+    required this.senderIcon,
+    required this.recepients,
+    required this.body,
+    required this.bodyImage,
+    Key? key,
+  }) : super(key: key);
+
+  final String sender;
+  final String time;
+  final String senderIcon;
+  final String recepients;
+  final String body;
+  final String bodyImage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+      child: Container(
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  CircleAvatar(
+                    radius: 18,
+                    child: Image.asset(
+                      senderIcon,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(sender,
+                          style:
+                              TextStyle(color: Colors.grey[850], fontSize: 13)),
+                      const SizedBox(height: 3),
+                      Text('$time ago',
+                          style: Theme.of(context).textTheme.bodySmall),
+                    ],
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 245, 241, 248),
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
+                    child: Icon(Icons.star_outline, color: Colors.grey[500]),
+                  ),
+                ],
+              ),
+              if (recepients != '')
+                Column(children: <Widget>[
+                  const SizedBox(height: 15),
+                  Text('To $recepients',
+                      style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                ])
+              else
+                Container(),
+              const SizedBox(height: 15),
+              Text(body,
+                  style: TextStyle(
+                      color: Colors.grey[700], height: 1.35, fontSize: 14.5)),
+              const SizedBox(height: 9),
+              SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child:
+                      (bodyImage != '') ? Image.asset(bodyImage) : Container()),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  SizedBox(
+                    width: 126,
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
+                        ),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color.fromARGB(255, 245, 241, 248)),
+                        side: MaterialStateProperty.all(const BorderSide(
+                            width: 0.0, color: Colors.transparent)),
+                      ),
+                      child: Text('Reply',
+                          style:
+                              TextStyle(color: Colors.grey[700], fontSize: 12)),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 126,
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
+                        ),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color.fromARGB(255, 245, 241, 248)),
+                        side: MaterialStateProperty.all(const BorderSide(
+                            width: 0.0, color: Colors.transparent)),
+                      ),
+                      child: Text(
+                        'Reply all',
+                        style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -598,7 +906,7 @@ class _RouteDetailView extends StatelessWidget {
               child: const Icon(Icons.arrow_back),
             ),
           ),
-          _DetailTile(item: item),
+          Expanded(child: _DetailTile(item: item)),
         ],
       ),
     );
@@ -616,100 +924,91 @@ class _ExamplePage extends StatelessWidget {
 
 class _Item {
   const _Item({
-    required this.name,
-    required this.time,
     required this.title,
-    required this.body,
-    required this.image,
+    required this.emails,
   });
 
-  final String name;
-  final String time;
   final String title;
-  final String body;
-  final String image;
+  final List<_Email>? emails;
 }
 
-const List<_Item> _all_Items = <_Item>[
+class _Email {
+  const _Email({
+    required this.sender,
+    required this.recepients,
+    required this.image,
+    required this.time,
+    required this.body,
+    required this.bodyImage,
+  });
+
+  final String sender;
+  final String recepients;
+  final String image;
+  final String time;
+  final String body;
+  final String bodyImage;
+}
+
+/// List of items, each representing a thread of emails which will populate
+/// the different layouts.
+const List<_Item> allItems = <_Item>[
   _Item(
-    name: 'So Duri',
-    time: '20 min',
     title: 'Dinner Club',
-    body:
-        "I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. Anyone else have other suggestions for dinner club this week? I'm so intruiged by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
-    image:
-        'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fHByb2ZpbGUlMjBwaWN0dXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=400&q=60',
+    emails: <_Email>[
+      _Email(
+        sender: 'So Duri',
+        recepients: 'me, Ziad and Lily',
+        image: 'images/strawberry.png',
+        time: '20 min',
+        body:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec gravida tellus, vel scelerisque nisi. Mauris egestas, augue nec dictum tempus, diam sapien luctus odio, a posuere sem neque at nulla. Vivamus pulvinar nisi et dapibus dapibus. Donec euismod pellentesque ultrices. Vivamus quis condimentum metus, in venenatis lorem. Proin suscipit tincidunt eleifend. Praesent a nisi ac ipsum sodales gravida.',
+        bodyImage: '',
+      ),
+      _Email(
+          sender: 'Me',
+          recepients: 'me, Ziad, and Lily',
+          image: 'images/plum.png',
+          time: '4 min',
+          body:
+              'Donec non mollis nulla, in varius mi. Ut id lorem eget felis lobortis tincidunt. Curabitur facilisis ex vitae tristique efficitur. Aenean eget augue finibus, tempor eros vitae, tempor neque. In sed pellentesque elit. Donec lacus lacus, malesuada in tincidunt sit amet, condimentum vel enim. Cras dapibus erat quis nisl hendrerit, vel pretium turpis condimentum. ',
+          bodyImage: ''),
+      _Email(
+          sender: 'Ziad Aouad',
+          recepients: 'me, Ziad and Lily',
+          image: 'images/mushroom.png',
+          time: '2 min',
+          body:
+              'Duis sit amet nibh a diam placerat aliquam nec ac mi. Aenean hendrerit efficitur tellus, non pharetra eros posuere sit amet. Maecenas interdum lacinia eleifend. Nam efficitur tellus et dolor vestibulum, non dictum quam iaculis. Aenean id nulla ut erat placerat feugiat. Mauris in quam metus. Aliquam erat volutpat.',
+          bodyImage: ''),
+    ],
   ),
   _Item(
-    name: 'Lily Mac',
-    time: '2 hours',
-    title: 'This food show is made for you',
-    body:
-        "3I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. Anyone else have other suggestions for dinner club this week? I'm so intruiged by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
-    image:
-        'https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZSUyMHBpY3R1cmV8ZW58MHx8MHx8&auto=format&fit=crop&w=400&q=60',
+    title: '7 Best Yoga Poses',
+    emails: <_Email>[
+      _Email(
+        sender: 'Elaine Howley',
+        time: '2 hours',
+        body:
+            'Curabitur tincidunt purus at vulputate mattis. Nam lectus urna, varius eget quam in, ultricies ultrices libero. Curabitur rutrum ultricies varius. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec vulputate auctor est, non semper velit eleifend sit amet.',
+        image: 'images/potato.png',
+        bodyImage: 'images/avocado.png',
+        recepients: '',
+      ),
+    ],
   ),
   _Item(
-    name: 'Lani Mansell',
-    time: '10 min',
-    title: 'Dinner Club 4',
-    body:
-        "4I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. Anyone else have other suggestions for dinner club this week? I'm so intruiged by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
-    image:
-        'https://images.unsplash.com/photo-1629467057571-42d22d8f0cbd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fHByb2ZpbGUlMjBwaWN0dXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=400&q=60',
-  ),
-  _Item(
-    name: 'Caitlyn Mars',
-    time: '10 min',
-    title: 'This food ',
-    body:
-        "1I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. Anyone else have other suggestions for dinner club this week? I'm so intruiged by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
-    image:
-        'https://images.unsplash.com/photo-1619895862022-09114b41f16f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8cHJvZmlsZSUyMHBpY3R1cmV8ZW58MHx8MHx8&auto=format&fit=crop&w=400&q=60',
-  ),
-  _Item(
-    name: 'Robin Goff',
-    time: '10 min',
-    title: 'Dinner Club 5',
-    body:
-        "5I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. Anyone else have other suggestions for dinner club this week? I'm so intruiged by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
-    image:
-        'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTh8fHByb2ZpbGUlMjBwaWN0dXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=400&q=60',
-  ),
-  _Item(
-    name: 'Klara Blan',
-    time: '10 min',
-    title: 'Dinner Club 6',
-    body:
-        "6I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. Anyone else have other suggestions for dinner club this week? I'm so intruiged by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
-    image:
-        'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTh8fHByb2ZpbGUlMjBwaWN0dXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=400&q=60',
-  ),
-  _Item(
-    name: 'Bianka Bass',
-    time: '10 min',
-    title: 'Dinner Club 7',
-    body:
-        "7I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. Anyone else have other suggestions for dinner club this week? I'm so intruiged by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
-    image:
-        'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTh8fHByb2ZpbGUlMjBwaWN0dXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=400&q=60',
-  ),
-  _Item(
-    name: 'Beau Kline',
-    time: '10 min',
-    title: 'Dinner Club 8',
-    body:
-        "8I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. Anyone else have other suggestions for dinner club this week? I'm so intruiged by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
-    image:
-        'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTh8fHByb2ZpbGUlMjBwaWN0dXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=400&q=60',
-  ),
-  _Item(
-    name: 'Fran Martin',
-    time: '10 min',
-    title: 'Dinner Club 9',
-    body:
-        "9I think it's time for us to finally try that new noodle shop downtown that doesn't use menus. Anyone else have other suggestions for dinner club this week? I'm so intruiged by this idea of a noodle restaurant where no one gets to order for themselves - could be fun, or terrible, or both :)",
-    image:
-        'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTh8fHByb2ZpbGUlMjBwaWN0dXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=400&q=60',
+    title: 'A Programming Language',
+    emails: <_Email>[
+      _Email(
+        sender: 'Laney Mansell',
+        time: '10 min',
+        body:
+            'Cras egestas ultricies elit, vitae interdum lorem aliquam et. Donec quis arcu a quam tempor rutrum vitae in lectus. Nullam elit nunc, lacinia sed luctus non, mollis id nulla. Morbi luctus turpis sapien, id molestie ante maximus vel. Vivamus sagittis consequat nisl nec placerat.',
+        image: 'images/habanero.png',
+        bodyImage: '',
+        recepients: '',
+      ),
+    ],
   ),
 ];

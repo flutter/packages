@@ -104,10 +104,10 @@ void main() {
     expect(bnav, findsNothing);
     expect(pnav, findsOneWidget);
 
-    expect(tester.getTopLeft(body), const Offset(72, 0));
+    expect(tester.getTopLeft(body), const Offset(88, 0));
     expect(tester.getTopLeft(sBody), const Offset(450, 0));
     expect(tester.getTopLeft(pnav), Offset.zero);
-    expect(tester.getBottomRight(pnav), const Offset(72, 800));
+    expect(tester.getBottomRight(pnav), const Offset(88, 800));
 
     await tester.pumpWidget(await scaffold(width: 1100, tester: tester));
     await tester.pumpAndSettle();
@@ -119,10 +119,10 @@ void main() {
     expect(pnav, findsNothing);
     expect(pnav1, findsOneWidget);
 
-    expect(tester.getTopLeft(largeBody), const Offset(192, 0));
+    expect(tester.getTopLeft(largeBody), const Offset(208, 0));
     expect(tester.getTopLeft(largeSBody), const Offset(550, 0));
     expect(tester.getTopLeft(pnav1), Offset.zero);
-    expect(tester.getBottomRight(pnav1), const Offset(192, 800));
+    expect(tester.getBottomRight(pnav1), const Offset(208, 800));
   });
   testWidgets('adaptive scaffold animations work correctly',
       (WidgetTester tester) async {
@@ -135,7 +135,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
-    expect(tester.getTopLeft(b), const Offset(14.4, 0));
+    expect(tester.getTopLeft(b), const Offset(17.6, 0));
     expect(tester.getBottomRight(b),
         offsetMoreOrLessEquals(const Offset(778.2, 755.2), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
@@ -146,7 +146,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    expect(tester.getTopLeft(b), const Offset(57.6, 0));
+    expect(tester.getTopLeft(b), const Offset(70.4, 0));
     expect(tester.getBottomRight(b),
         offsetMoreOrLessEquals(const Offset(416.0, 788.8), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
@@ -157,7 +157,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
-    expect(tester.getTopLeft(b), const Offset(72, 0));
+    expect(tester.getTopLeft(b), const Offset(88.0, 0));
     expect(tester.getBottomRight(b), const Offset(400, 800));
     expect(tester.getTopLeft(sBody), const Offset(400, 0));
     expect(tester.getBottomRight(sBody), const Offset(800, 800));
@@ -175,7 +175,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
-    expect(tester.getTopLeft(b), const Offset(72, 0));
+    expect(tester.getTopLeft(b), const Offset(88.0, 0));
     expect(tester.getBottomRight(b), const Offset(400, 800));
     expect(tester.getTopLeft(sBody), const Offset(400, 0));
     expect(tester.getBottomRight(sBody), const Offset(800, 800));
