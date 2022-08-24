@@ -1,10 +1,15 @@
 ## NEXT
 
-- Cleans up examples
+* Updates text theme parameters to avoid deprecation issues.
+
+## 4.2.8
+
+- Fixes namedLocation to return URIs without trailing question marks if there are no query parameters.
+- Cleans up examples.
 
 ## 4.2.7
 
-- Update README
+- Updates README.
 
 ## 4.2.6
 

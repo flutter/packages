@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
       body: Center(
         child: Text(
           'This is a sample app.',
-          style: Theme.of(context).textTheme.headline3,
+          style: Theme.of(context).textTheme.displaySmall,
         ),
       ),
     );

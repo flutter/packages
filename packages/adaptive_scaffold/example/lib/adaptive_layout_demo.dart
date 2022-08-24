@@ -39,6 +39,71 @@ class MyHomePage extends StatelessWidget {
       );
     });
 
+    final Widget trailingNavRail = Column(
+      children: <Widget>[
+        const Divider(color: Colors.black),
+        const SizedBox(height: 10),
+        Row(
+          children: const <Widget>[
+            SizedBox(
+              width: 27,
+            ),
+            Text('Folders', style: TextStyle(fontSize: 16)),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
+            const Text('Freelance'),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
+            const Text('Mortage'),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
+            const Flexible(
+                child: Text('Taxes', overflow: TextOverflow.ellipsis)),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
+            const SizedBox(width: 21),
+            const Flexible(
+                child: Text('Receipts', overflow: TextOverflow.ellipsis)),
+          ],
+        ),
+      ],
+    );
+
     // Define the list of destinations to be used within the app.
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
@@ -54,6 +119,7 @@ class MyHomePage extends StatelessWidget {
           icon: Icon(Icons.video_call_outlined, color: Colors.black)),
     ];
 
+    // #docregion Example
     // AdaptiveLayout has a number of slots that take SlotLayouts and these
     // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
     return AdaptiveLayout(
@@ -61,49 +127,73 @@ class MyHomePage extends StatelessWidget {
       // then an unextended NavigationRail with no labels and just icons then an
       // extended NavigationRail with both icons and labels.
       primaryNavigation: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig?>{
+        config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
-            key: const Key('pn'),
-            builder: (_) =>
-                AdaptiveScaffold.toNavigationRail(destinations: destinations),
+            key: const Key('pnav1'),
+            builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                leading: const Icon(Icons.menu),
+                destinations: destinations
+                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .toList()),
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('pn1'),
             inAnimation: AdaptiveScaffold.leftOutIn,
-            builder: (_) => AdaptiveScaffold.toNavigationRail(
-                extended: true, destinations: destinations),
+            builder: (_) => AdaptiveScaffold.standardNavigationRail(
+              extended: true,
+              leading: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const <Widget>[
+                  Text('REPLY',
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 255, 201, 197))),
+                  Icon(Icons.menu_open)
+                ],
+              ),
+              destinations: destinations
+                  .map((_) => AdaptiveScaffold.toRailDestination(_))
+                  .toList(),
+              trailing: trailingNavRail,
+            ),
           ),
         },
       ),
       // Body switches between a ListView and a GridView from small to medium
       // breakpoints and onwards.
       body: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig?>{
+        config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
             key: const Key('body'),
             builder: (_) => ListView.builder(
-                itemCount: 10, itemBuilder: (_, int idx) => children[idx]),
+              itemCount: children.length,
+              itemBuilder: (BuildContext context, int index) => children[index],
+            ),
           ),
           Breakpoints.mediumAndUp: SlotLayout.from(
             key: const Key('body1'),
             builder: (_) =>
                 GridView.count(crossAxisCount: 2, children: children),
-          ),
+          )
         },
       ),
       // BottomNavigation is only active in small views defined as under 600 dp
       // width.
       bottomNavigation: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig?>{
+        config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
             key: const Key('bn'),
             inAnimation: AdaptiveScaffold.bottomToTop,
-            builder: (_) => AdaptiveScaffold.toBottomNavigationBar(
-                destinations: destinations),
-          ),
+            outAnimation: AdaptiveScaffold.topToBottom,
+            builder: (_) => BottomNavigationBarTheme(
+                data: const BottomNavigationBarThemeData(
+                    selectedItemColor: Colors.black),
+                child: AdaptiveScaffold.standardBottomNavigationBar(
+                    destinations: destinations)),
+          )
         },
       ),
     );
+    // #enddocregion
   }
 }

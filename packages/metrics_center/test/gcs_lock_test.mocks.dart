@@ -27,8 +27,8 @@ class _FakeAccessCredentials_0 extends _i1.Fake
 
 class _FakeResponse_1 extends _i1.Fake implements _i3.Response {}
 
-class _FakeStreamedResponse_2 extends _i1.Fake implements _i3.StreamedResponse {
-}
+class _FakeStreamedResponse_2 extends _i1.Fake
+    implements _i3.StreamedResponse {}
 
 /// A class which mocks [AuthClient].
 ///

@@ -124,7 +124,7 @@ class AdaptiveLayout extends StatefulWidget {
   ///
   /// If the content is a flexibly sized Widget like [Container], wrap the content
   /// in a [SizedBox] or limit its size (width and height) by another method. See
-  /// the builder in [AdaptiveScaffold.toNavigationRail] for an example.
+  /// the builder in [AdaptiveScaffold.standardNavigationRail] for an example.
   final SlotLayout? primaryNavigation;
 
   /// The slot placed on the end side of the app window.
@@ -134,21 +134,21 @@ class AdaptiveLayout extends StatefulWidget {
   ///
   /// If the content is a flexibly sized Widget like [Container], wrap the content
   /// in a [SizedBox] or limit its size (width and height) by another method. See
-  /// the builder in [AdaptiveScaffold.toNavigationRail] for an example.
+  /// the builder in [AdaptiveScaffold.standardNavigationRail] for an example.
   final SlotLayout? secondaryNavigation;
 
   /// The slot placed on the top part of the app window.
   ///
   /// If the content is a flexibly sized Widget like [Container], wrap the content
   /// in a [SizedBox] or limit its size (width and height) by another method. See
-  /// the builder in [AdaptiveScaffold.toNavigationRail] for an example.
+  /// the builder in [AdaptiveScaffold.standardNavigationRail] for an example.
   final SlotLayout? topNavigation;
 
   /// The slot placed on the bottom part of the app window.
   ///
   /// If the content is a flexibly sized Widget like [Container], wrap the content
   /// in a [SizedBox] or limit its size (width and height) by another method. See
-  /// the builder in [AdaptiveScaffold.toNavigationRail] for an example.
+  /// the builder in [AdaptiveScaffold.standardNavigationRail] for an example.
   final SlotLayout? bottomNavigation;
 
   /// The slot that fills the rest of the space in the center.
