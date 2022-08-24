@@ -1,4 +1,4 @@
-## NEXT
+## 4.1.4
 
 * Ignores lint warnings from new changes in Flutter master.
 * Suppresses more deprecation warnings for changes to Flutter master.

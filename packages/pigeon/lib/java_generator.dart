@@ -503,7 +503,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     indent.writeln('import java.util.HashMap;');
   }
 
-  String _camelToSnake(String camelCase) {
+  String camelToSnake(String camelCase) {
     final RegExp regex = RegExp('([a-z])([A-Z]+)');
     return camelCase
         .replaceAllMapped(regex, (Match m) => '${m[1]}_${m[2]}')
@@ -516,7 +516,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       int index = 0;
       for (final String member in anEnum.members) {
         indent.writeln(
-            '${_camelToSnake(member)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
+            '${camelToSnake(member)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
         index++;
       }
       indent.writeln('');

@@ -193,7 +193,8 @@ class BenchmarkServer {
         } else if (request.requestedUri.path.endsWith('/next-benchmark')) {
           if (benchmarks == null) {
             benchmarks =
-                (json.decode(await request.readAsString())).cast<String>();
+                (json.decode(await request.readAsString()) as List<dynamic>)
+                    .cast<String>();
             benchmarkIterator = benchmarks!.iterator;
           }
           if (benchmarkIterator.moveNext()) {

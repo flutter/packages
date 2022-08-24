@@ -456,11 +456,11 @@ Duration _computeAverageDuration(List<BlinkTraceEvent> events) {
   final double sum = events
       .skip(math.max(events.length - kMeasuredSampleCount, 0))
       .fold(0.0, (double previousValue, BlinkTraceEvent event) {
-    final int? _threadClockDuration = event.tdur;
-    if (_threadClockDuration == null) {
+    final int? threadClockDuration = event.tdur;
+    if (threadClockDuration == null) {
       throw FormatException('Trace event lacks "tdur" field: $event');
     }
-    return previousValue + _threadClockDuration;
+    return previousValue + threadClockDuration;
   });
   final int sampleCount = math.min(events.length, kMeasuredSampleCount);
   return Duration(microseconds: sum ~/ sampleCount);

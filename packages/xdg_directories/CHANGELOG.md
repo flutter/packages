@@ -1,4 +1,4 @@
-## NEXT
+## 0.2.0+2
 
 * Fixes unit tests on Windows.
 * Fixes lint warnings.
