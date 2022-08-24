@@ -1440,7 +1440,7 @@ class SvgParser {
         rawStrokeDashArray ??
         rawStrokeDashOffset;
 
-    if (anyStrokeAttribute == null || rawStroke == 'none') {
+    if (anyStrokeAttribute == null) {
       return null;
     }
 
@@ -1946,7 +1946,7 @@ class SvgStrokeAttributes {
   /// The offset for [dashArray], if any.
   final double? dashOffset;
 
-  /// Indicates whether or not a pattern is used for stroke;
+  /// Indicates whether or not a pattern is used for stroke.
   final bool? hasPattern;
 
   /// Creates a stroking paint object from this set of attributes, using the
@@ -1954,6 +1954,10 @@ class SvgStrokeAttributes {
   ///
   /// Returns null if this is [none].
   Stroke? toStroke(Rect shaderBounds, AffineMatrix transform) {
+    if (color == null && hasPattern == null && shaderId == null) {
+      return null;
+    }
+
     if (hasPattern == true) {
       return Stroke(
         join: join,

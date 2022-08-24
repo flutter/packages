@@ -456,7 +456,7 @@ class Paint {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Paint($blendMode: $blendMode');
+    final StringBuffer buffer = StringBuffer('Paint(blendMode: $blendMode');
     const String leading = ', ';
     if (stroke != null) {
       buffer.write('${leading}stroke: $stroke');
@@ -581,7 +581,7 @@ class Fill {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Fill($color: $color');
+    final StringBuffer buffer = StringBuffer('Fill(color: $color');
     const String leading = ', ';
 
     if (shader != null) {

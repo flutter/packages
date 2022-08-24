@@ -4,6 +4,26 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Stroke property set but does not draw stroke', () async {
+    final VectorInstructions instructions = await parse(
+      strokePropertyButNoStroke,
+      enableClippingOptimizer: false,
+      enableMaskingOptimizer: false,
+      enableOverdrawOptimizer: false,
+    );
+    expect(instructions.paths.single.commands, const <PathCommand>[
+      MoveToCommand(10.0, 20.0),
+      LineToCommand(110.0, 20.0),
+      LineToCommand(110.0, 120.0),
+      LineToCommand(10.0, 120.0),
+      CloseCommand(),
+    ]);
+    expect(
+      instructions.paints.single,
+      const Paint(fill: Fill(color: Color(0xFFFF0000))),
+    );
+  });
+
   test('Clip with use', () async {
     final VectorInstructions instructions = await parse(
       basicClip,

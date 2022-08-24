@@ -23,6 +23,53 @@ void main() {
     }
   });
 
+  test(
+      'Basic case of two opaque shapes overlapping with a stroke (cannot be optimized yet)',
+      () async {
+    final Node node = await parseAndResolve(basicOverlapWithStroke);
+    final VectorInstructions instructions = await parse(basicOverlapWithStroke);
+
+    final List<ResolvedPathNode> pathNodesOld =
+        queryChildren<ResolvedPathNode>(node);
+
+    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final Node newNode = visitor.apply(node);
+
+    final List<ResolvedPathNode> pathNodesNew =
+        queryChildren<ResolvedPathNode>(newNode);
+
+    expect(pathNodesOld.length, pathNodesNew.length);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(
+          blendMode: BlendMode.srcOver,
+          stroke: Stroke(color: Color(0xff008000)),
+          fill: Fill(color: Color(0xffff0000))),
+      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff0000ff)))
+    ]);
+
+    expect(instructions.paths, <Path>[
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(99.0, 221.5),
+          LineToCommand(692.0, 221.5),
+          LineToCommand(692.0, 316.5),
+          LineToCommand(99.0, 316.5),
+          CloseCommand()
+        ],
+      ),
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(367.0, 41.50001),
+          LineToCommand(448.0, 41.50001),
+          LineToCommand(448.0, 527.49999),
+          LineToCommand(367.0, 527.49999),
+          CloseCommand()
+        ],
+      )
+    ]);
+  });
+
   test('Basic case of two opaque shapes overlapping', () async {
     final Node node = await parseAndResolve(basicOverlap);
     final VectorInstructions instructions = await parse(basicOverlap);
@@ -39,20 +86,24 @@ void main() {
     expect(pathNodesOld.length, pathNodesNew.length);
 
     expect(instructions.paints, const <Paint>[
-      Paint(
-          blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xff000000), width: 0.0),
-          fill: Fill(color: Color(0xffff0000))),
+      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xffff0000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff0000ff)))
     ]);
 
     expect(instructions.paths, <Path>[
       Path(
         commands: const <PathCommand>[
-          MoveToCommand(99.0, 221.5),
-          LineToCommand(692.0, 221.5),
-          LineToCommand(692.0, 316.5),
+          MoveToCommand(367.0, 221.5),
+          LineToCommand(99.0, 221.5),
           LineToCommand(99.0, 316.5),
+          LineToCommand(367.0, 316.5),
+          LineToCommand(367.0, 221.5),
+          CloseCommand(),
+          MoveToCommand(448.0, 221.5),
+          LineToCommand(448.0, 316.5),
+          LineToCommand(692.0, 316.5),
+          LineToCommand(692.0, 221.5),
+          LineToCommand(448.0, 221.5),
           CloseCommand()
         ],
       ),
