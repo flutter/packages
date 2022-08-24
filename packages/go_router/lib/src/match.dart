@@ -52,7 +52,7 @@ class GoRouteMatch {
         error: null,
         // Provide a unique pageKey to ensure that the page for this ShellRoute is
         // reused.
-        pageKey: ValueKey<String>(restLoc + ' ' + route.hashCode.toString()),
+        pageKey: ValueKey<String>(route.hashCode.toString()),
       );
     } else if (route is GoRoute) {
       assert(!route.path.contains('//'));
