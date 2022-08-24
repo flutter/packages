@@ -1,3 +1,7 @@
+## 0.0.2
+
+* Adds some more examples.
+
 ## 0.0.1+1
 
 * Updates text theme parameters to avoid deprecation issues.
