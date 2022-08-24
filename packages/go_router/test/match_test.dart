@@ -7,8 +7,8 @@ void main() {
   group('GoRouteMatch', () {
     test('simple', () {
       final GoRoute route = GoRoute(
-          path: '/users/:userId',
-          builder: _builder,
+        path: '/users/:userId',
+        builder: _builder,
       );
       final GoRouteMatch? match = GoRouteMatch.match(
         route: route,

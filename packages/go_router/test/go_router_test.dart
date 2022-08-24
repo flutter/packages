@@ -275,7 +275,8 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       {
-        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches =
+            router.routerDelegate.matches.matches;
         expect(matches, hasLength(1));
         expect(matches.first.template, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -283,7 +284,8 @@ void main() {
 
       router.go('/login');
       {
-        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches =
+            router.routerDelegate.matches.matches;
         expect(matches.length, 2);
         expect(matches.first.location, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -293,7 +295,8 @@ void main() {
 
       router.go('/family/f2');
       {
-        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches =
+            router.routerDelegate.matches.matches;
         expect(matches.length, 2);
         expect(matches.first.location, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -303,7 +306,8 @@ void main() {
 
       router.go('/family/f2/person/p1');
       {
-        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches =
+            router.routerDelegate.matches.matches;
         expect(matches.length, 3);
         expect(matches.first.location, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -1361,7 +1365,8 @@ void main() {
       for (final String fid in <String>['f2', 'F2']) {
         final String loc = '/family/$fid';
         router.go(loc);
-        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches =
+            router.routerDelegate.matches.matches;
 
         expect(router.location, loc);
         expect(matches, hasLength(1));
@@ -1389,7 +1394,8 @@ void main() {
       for (final String fid in <String>['f2', 'F2']) {
         final String loc = '/family?fid=$fid';
         router.go(loc);
-        final List<GoRouteMatch> matches = router.routerDelegate.matches.matches;
+        final List<GoRouteMatch> matches =
+            router.routerDelegate.matches.matches;
 
         expect(router.location, loc);
         expect(matches, hasLength(1));

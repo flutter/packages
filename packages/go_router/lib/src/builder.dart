@@ -277,7 +277,7 @@ class RouteBuilder {
       error: match.error,
       queryParams: match.queryParams,
       extra: match.extra,
-      pageKey: match.pageKey, // push() remaps the page key for uniqueness
+      pageKey: match.pageKey,
     );
   }
 

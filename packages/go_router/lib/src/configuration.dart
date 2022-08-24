@@ -35,7 +35,8 @@ class RouteConfiguration {
       } else if (route is ShellRoute) {
         for (final RouteBase route in routes) {
           if (route is GoRoute && !route.path.startsWith('/')) {
-            throw RouteConfigurationError('top-level path must start with "/": ${route.path}');
+            throw RouteConfigurationError(
+                'top-level path must start with "/": ${route.path}');
           }
         }
       }

@@ -195,7 +195,7 @@ void main() {
       expect(find.byKey(shellNavigatorKey), findsOneWidget);
     });
 
-    testWidgets('Builds a Navigator for ShellRoute',
+    testWidgets('Builds a Navigator for ShellRoute with parentNavigatorKey',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'root');

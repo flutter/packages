@@ -134,7 +134,8 @@ void main() {
         goRouter.push('/page-0');
 
         goRouter.routerDelegate.addListener(expectAsync0(() {}));
-        final GoRouteMatch first = goRouter.routerDelegate.matches.matches.first;
+        final GoRouteMatch first =
+            goRouter.routerDelegate.matches.matches.first;
         final GoRouteMatch last = goRouter.routerDelegate.matches.last;
         goRouter.replace('/page-1');
         expect(goRouter.routerDelegate.matches.matches.length, 2);
@@ -186,7 +187,8 @@ void main() {
         goRouter.pushNamed('page0');
 
         goRouter.routerDelegate.addListener(expectAsync0(() {}));
-        final GoRouteMatch first = goRouter.routerDelegate.matches.matches.first;
+        final GoRouteMatch first =
+            goRouter.routerDelegate.matches.matches.first;
         final GoRouteMatch last = goRouter.routerDelegate.matches.last;
         goRouter.replaceNamed('page1');
         expect(goRouter.routerDelegate.matches.matches.length, 2);

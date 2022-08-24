@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:go_router/src/matching.dart';
 
 import 'path_utils.dart';
 import 'route.dart';
@@ -48,6 +50,9 @@ class GoRouteMatch {
         queryParams: queryParams,
         extra: extra,
         error: null,
+        // Provide a unique pageKey to ensure that the page for this ShellRoute is
+        // reused.
+        pageKey: ValueKey<String>(restLoc + ' ' + route.hashCode.toString()),
       );
     } else if (route is GoRoute) {
       assert(!route.path.contains('//'));
@@ -70,6 +75,7 @@ class GoRouteMatch {
         error: null,
       );
     }
+    throw MatcherError('Unexpected route type: $route', restLoc);
   }
 
   /// The matched route.
