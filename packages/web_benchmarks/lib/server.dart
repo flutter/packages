@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 
 import 'src/benchmark_result.dart';
 import 'src/runner.dart';
@@ -41,9 +40,9 @@ const int defaultChromeDebugPort = 10000;
 /// If [headless] is true, runs Chrome without UI. In particular, this is
 /// useful in environments (e.g. CI) that doesn't have a display.
 Future<BenchmarkResults> serveWebBenchmark({
-  @required io.Directory benchmarkAppDirectory,
-  @required String entryPoint,
-  @required bool useCanvasKit,
+  required io.Directory benchmarkAppDirectory,
+  required String entryPoint,
+  required bool useCanvasKit,
   int benchmarkServerPort = defaultBenchmarkServerPort,
   int chromeDebugPort = defaultChromeDebugPort,
   bool headless = true,
