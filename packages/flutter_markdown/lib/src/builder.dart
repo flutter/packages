@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -760,9 +758,13 @@ class MarkdownBuilder implements md.NodeVisitor {
       case 'pre':
         return styleSheet.codeblockAlign;
       case 'hr':
+        // TODO(goderbauer): We shouldn't be printing here, https://github.com/flutter/flutter/issues/110209
+        // ignore: avoid_print
         print('Markdown did not handle hr for alignment');
         break;
       case 'li':
+        // TODO(goderbauer): We shouldn't be printing here, https://github.com/flutter/flutter/issues/110209
+        // ignore: avoid_print
         print('Markdown did not handle li for alignment');
         break;
     }

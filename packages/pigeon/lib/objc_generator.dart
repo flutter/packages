@@ -445,8 +445,15 @@ void _writeHostApiDeclaration(
         !func.isAsynchronous) {
       indent.writeln('/// @return `nil` only when `error != nil`.');
     }
-    indent.writeln(
-        '${_makeObjcSignature(func: func, options: options, returnType: returnType, lastArgName: lastArgName, lastArgType: lastArgType, isEnum: (TypeDeclaration t) => isEnum(root, t))};');
+    final String signature = _makeObjcSignature(
+      func: func,
+      options: options,
+      returnType: returnType,
+      lastArgName: lastArgName,
+      lastArgType: lastArgType,
+      isEnum: (TypeDeclaration t) => isEnum(root, t),
+    );
+    indent.writeln('$signature;');
   }
   indent.writeln('@end');
   indent.writeln('');

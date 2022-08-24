@@ -1,7 +1,3 @@
-## 0.3.3+2
-
-* Fixes lint warnings.
-
 ## 0.3.3+1
 
 * Fixes `lastModified` unimplemented error description.
