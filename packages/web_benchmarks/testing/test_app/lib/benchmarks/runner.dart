@@ -12,7 +12,7 @@ import '../main.dart';
 
 /// A recorder that measures frame building durations.
 abstract class AppRecorder extends WidgetRecorder {
-  AppRecorder({@required this.benchmarkName}) : super(name: benchmarkName);
+  AppRecorder({required this.benchmarkName}) : super(name: benchmarkName);
 
   final String benchmarkName;
 
@@ -37,7 +37,7 @@ class ScrollRecorder extends AppRecorder {
   @override
   Future<void> automate() async {
     final ScrollableState scrollable =
-        Scrollable.of(find.byKey(textKey).evaluate().single);
+        Scrollable.of(find.byKey(textKey).evaluate().single)!;
     await scrollable.position.animateTo(
       30000,
       curve: Curves.linear,

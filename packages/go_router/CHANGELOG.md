@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates text theme parameters to avoid deprecation issues.
+
 ## 4.2.8
 
 - Fixes namedLocation to return URIs without trailing question marks if there are no query parameters.

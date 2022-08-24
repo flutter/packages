@@ -14,9 +14,7 @@ class _MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyHomePage(),
-    );
+    return const MaterialApp(home: MyHomePage());
   }
 }
 
@@ -26,47 +24,50 @@ class MyHomePage extends StatelessWidget {
   /// Creates a const [MyHomePage].
   const MyHomePage({Key? key}) : super(key: key);
 
+  // #docregion Example
   @override
   Widget build(BuildContext context) {
     // Define the children to display within the body at different breakpoints.
     final List<Widget> children = <Widget>[
       for (int i = 0; i < 10; i++)
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            color: const Color.fromARGB(255, 255, 201, 197),
-            height: 400,
-          ),
-        )
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+                color: const Color.fromARGB(255, 255, 201, 197), height: 400))
     ];
 
     return BottomNavigationBarTheme(
-      data: const BottomNavigationBarThemeData(
-          unselectedItemColor: Colors.black, selectedItemColor: Colors.black),
-      child: AdaptiveScaffold(
-        // An option to override the default breakpoints used for small, medium,
-        // and large.
-        smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
-        mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-        largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
-        useDrawer: false,
-        destinations: const <NavigationDestination>[
-          NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
-          NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
-          NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
-          NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
-        ],
-        body: (_) => GridView.count(crossAxisCount: 2, children: children),
-        smallBody: (_) => ListView.builder(
-            itemCount: 10, itemBuilder: (_, int idx) => children[idx]),
-        // Define a default secondaryBody.
-        secondaryBody: (_) =>
-            Container(color: const Color.fromARGB(255, 234, 158, 192)),
-        // Override the default secondaryBody during the smallBreakpoint to be
-        // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
-        // overriden.
-        smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
-      ),
-    );
+        data: const BottomNavigationBarThemeData(
+            unselectedItemColor: Colors.black,
+            selectedItemColor: Colors.black,
+            backgroundColor: Colors.white),
+        child: AdaptiveScaffold(
+            // An option to override the default breakpoints used for small, medium,
+            // and large.
+            smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
+            mediumBreakpoint:
+                const WidthPlatformBreakpoint(begin: 700, end: 1000),
+            largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
+            useDrawer: false,
+            destinations: const <NavigationDestination>[
+              NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+              NavigationDestination(
+                  icon: Icon(Icons.article), label: 'Articles'),
+              NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
+              NavigationDestination(
+                  icon: Icon(Icons.video_call), label: 'Video')
+            ],
+            body: (_) => GridView.count(crossAxisCount: 2, children: children),
+            smallBody: (_) => ListView.builder(
+                itemCount: children.length,
+                itemBuilder: (_, int idx) => children[idx]),
+            // Define a default secondaryBody.
+            secondaryBody: (_) =>
+                Container(color: const Color.fromARGB(255, 234, 158, 192)),
+            // Override the default secondaryBody during the smallBreakpoint to be
+            // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
+            // overriden.
+            smallSecondaryBody: AdaptiveScaffold.emptyBuilder));
   }
+  // #enddocregion
 }
