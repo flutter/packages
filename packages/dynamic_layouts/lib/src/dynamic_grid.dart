@@ -69,7 +69,9 @@ class DynamicSliverGrid extends SliverMultiBoxAdaptorWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, RenderDynamicSliverGrid renderObject) {
+    BuildContext context,
+    RenderDynamicSliverGrid renderObject,
+  ) {
     renderObject.gridDelegate = gridDelegate;
   }
 }

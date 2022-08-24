@@ -21,7 +21,6 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -39,7 +38,6 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
 
     // Only the visible tiles have ben laid out.
     expect(find.text('Index 0'), findsOneWidget);
@@ -71,7 +69,6 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
 
     // Only the visible tiles have ben laid out, up to itemCount.
     expect(find.text('Index 0'), findsOneWidget);
@@ -100,7 +97,6 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
 
     // Only the visible tiles have ben laid out.
     expect(find.text('Index 0'), findsOneWidget);
