@@ -426,7 +426,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, combinators_ordering',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import',
     );
   }
 
@@ -445,11 +445,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   void writeImports() {
     indent.writeln("import 'dart:async';");
     indent.writeln(
-      "import 'dart:typed_data' show Uint8List, Int32List, Int64List, Float64List;",
+      "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
     );
     indent.addln('');
     indent.writeln(
-        "import 'package:flutter/foundation.dart' show WriteBuffer, ReadBuffer;");
+        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
     indent.writeln("import 'package:flutter/services.dart';");
   }
 
@@ -660,15 +660,15 @@ void generateTestDart(
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(
-    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import, combinators_ordering',
+    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import',
   );
   indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
   indent.writeln("import 'dart:async';");
   indent.writeln(
-    "import 'dart:typed_data' show Uint8List, Int32List, Int64List, Float64List;",
+    "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
   );
   indent.writeln(
-      "import 'package:flutter/foundation.dart' show WriteBuffer, ReadBuffer;");
+      "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
   indent.writeln("import 'package:flutter/services.dart';");
   indent.writeln("import 'package:flutter_test/flutter_test.dart';");
   indent.writeln('');
