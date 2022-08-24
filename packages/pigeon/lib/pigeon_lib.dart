@@ -313,11 +313,6 @@ class ParseResults {
   final Map<String, Object>? pigeonOptions;
 }
 
-String _posixify(String input) {
-  final path.Context context = path.Context(style: path.Style.posix);
-  return context.fromUri(path.toUri(path.absolute(input)));
-}
-
 Iterable<String> _lineReader(String path) sync* {
   final String contents = File(path).readAsStringSync();
   const LineSplitter lineSplitter = LineSplitter();
@@ -408,17 +403,14 @@ class DartTestGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final String mainPath = path.context.relative(
-      _posixify(options.dartOut!),
-      from: _posixify(path.dirname(options.dartTestOut!)),
-    );
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
         options.dartOptions, options.copyrightHeader);
     generateTestDart(
       dartOptionsWithHeader,
       root,
       sink,
-      mainPath,
+      dartOutPath: options.dartOut!,
+      testOutPath: options.dartTestOut!,
     );
   }
 

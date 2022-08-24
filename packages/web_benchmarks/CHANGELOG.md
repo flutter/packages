@@ -1,3 +1,7 @@
+## 0.0.7+1
+
+* Updates text theme parameters to avoid deprecation issues.
+
 ## 0.0.7
 
 * Updates BlinkTraceEvents to match with changes in Chromium v89+
