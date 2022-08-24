@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates text theme parameters to avoid deprecation issues.
+* Fixes lint warnings.
 
 ## 4.2.8
 

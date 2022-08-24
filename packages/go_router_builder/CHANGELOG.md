@@ -1,3 +1,7 @@
+## 1.0.9
+
+* Fixes lint warnings.
+
 ## 1.0.8
 
 * Updates `analyzer` to 4.4.0.
