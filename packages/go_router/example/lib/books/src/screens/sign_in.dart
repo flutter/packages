@@ -46,7 +46,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text('Sign in', style: Theme.of(context).textTheme.headline4),
+                  Text('Sign in',
+                      style: Theme.of(context).textTheme.headlineMedium),
                   TextField(
                     decoration: const InputDecoration(labelText: 'Username'),
                     controller: _usernameController,

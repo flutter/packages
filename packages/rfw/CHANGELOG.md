@@ -1,5 +1,6 @@
 ## NEXT
 
+* Temporarily lowers test coverage minimum to fix flutter roll.
 * Disable golden testing due to https://github.com/flutter/flutter/issues/106205
 
 ## 1.0.5

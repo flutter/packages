@@ -8,14 +8,14 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:imitation_game/readme_template.dart';
-import 'package:mustache/mustache.dart';
+import 'package:mustache_template/mustache.dart';
 
 // ignore_for_file: avoid_as
 
 const int _port = 4040;
 
-Future<String> _findIpAddress() async {
-  String result;
+Future<String?> _findIpAddress() async {
+  String? result;
   final List<NetworkInterface> interfaces = await NetworkInterface.list();
   for (final NetworkInterface interface in interfaces) {
     for (final InternetAddress address in interface.addresses) {
@@ -41,7 +41,7 @@ Future<String> _getFlutterVersion() async {
 }
 
 typedef FileFilter = bool Function(FileSystemEntity);
-Future<List<FileSystemEntity>> findFiles(Directory dir, {FileFilter where}) {
+Future<List<FileSystemEntity>> findFiles(Directory dir, {FileFilter? where}) {
   final List<FileSystemEntity> files = <FileSystemEntity>[];
   final Completer<List<FileSystemEntity>> completer =
       Completer<List<FileSystemEntity>>();
@@ -68,7 +68,8 @@ Future<String> _makeMarkdownOutput(Map<String, dynamic> results) async {
 /// have their values from [newResults] and the symmetric difference will have the
 /// value from their respective sets.
 Map<String, dynamic> _integrate(
-    {Map<String, dynamic> oldResults, Map<String, dynamic> newResults}) {
+    {required Map<String, dynamic> oldResults,
+    required Map<String, dynamic> newResults}) {
   final Map<String, dynamic> result = Map<String, dynamic>.from(oldResults);
   newResults.forEach((String test, dynamic testValue) {
     final Map<String, dynamic> testMap = testValue as Map<String, dynamic>;
@@ -90,7 +91,7 @@ Map<String, dynamic> _integrate(
 }
 
 class _Script {
-  _Script({this.path});
+  _Script({required this.path});
   String path;
 }
 
@@ -98,15 +99,15 @@ class _ScriptRunner {
   _ScriptRunner(this._scriptPaths);
 
   final List<String> _scriptPaths;
-  Process _currentProcess;
-  StreamSubscription<String> _stdoutSubscription;
-  StreamSubscription<String> _stderrSubscription;
+  Process? _currentProcess;
+  late StreamSubscription<String> _stdoutSubscription;
+  late StreamSubscription<String> _stderrSubscription;
 
-  Future<_Script> runNext() async {
+  Future<_Script?> runNext() async {
     if (_currentProcess != null) {
       _stdoutSubscription.cancel();
       _stderrSubscription.cancel();
-      _currentProcess.kill();
+      _currentProcess!.kill();
       _currentProcess = null;
     }
 
@@ -119,11 +120,11 @@ class _ScriptRunner {
       _currentProcess = await Process.start('sh', <String>[path]);
       // TODO(gaaclarke): Implement a timeout.
       _stdoutSubscription =
-          _currentProcess.stdout.transform(utf8.decoder).listen((String data) {
+          _currentProcess!.stdout.transform(utf8.decoder).listen((String data) {
         print(data);
       });
       _stderrSubscription =
-          _currentProcess.stderr.transform(utf8.decoder).listen((String data) {
+          _currentProcess!.stderr.transform(utf8.decoder).listen((String data) {
         print(data);
       });
       return _Script(path: path);
@@ -160,8 +161,8 @@ Map<String, dynamic> _map2List(Map<String, dynamic> map, List<String> names) {
 
 class _ImitationGame {
   final Map<String, dynamic> results = <String, dynamic>{};
-  _ScriptRunner _scriptRunner;
-  _Script _currentScript;
+  late _ScriptRunner _scriptRunner;
+  _Script? _currentScript;
 
   Future<bool> start(List<String> iosScripts) {
     _scriptRunner = _ScriptRunner(iosScripts);
@@ -170,7 +171,7 @@ class _ImitationGame {
 
   Future<bool> handleResult(Map<String, dynamic> data) {
     final String test = data['test'];
-    final String platform = data['platform'];
+    final String? platform = data['platform'];
     results.putIfAbsent(test, () => <String, dynamic>{});
     results[test].putIfAbsent(platform, () => <String, dynamic>{});
     data['results'].forEach((String k, dynamic v) {
@@ -204,7 +205,7 @@ Future<void> main(List<String> args) async {
     InternetAddress.anyIPv4,
     _port,
   );
-  final String ipaddress = await _findIpAddress();
+  final String? ipaddress = await _findIpAddress();
   print('Listening on $ipaddress:${server.port}');
 
   for (final FileSystemEntity entity in await findFiles(Directory.current,

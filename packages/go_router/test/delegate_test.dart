@@ -16,6 +16,7 @@ Future<GoRouter> createGoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
+      GoRoute(path: '/a', builder: (_, __) => const DummyStatefulWidget()),
       GoRoute(
         path: '/error',
         builder: (_, __) => const ErrorScreen(null),
@@ -54,6 +55,38 @@ void main() {
         throwsA(isAssertionError),
       );
     });
+  });
+
+  group('push', () {
+    testWidgets(
+      'It should return different pageKey when push is called',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = await createGoRouter(tester);
+        expect(goRouter.routerDelegate.matches.matches.length, 1);
+        expect(
+          goRouter.routerDelegate.matches.matches[0].pageKey,
+          null,
+        );
+
+        goRouter.push('/a');
+        await tester.pumpAndSettle();
+
+        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(
+          goRouter.routerDelegate.matches.matches[1].pageKey,
+          const Key('/a-p1'),
+        );
+
+        goRouter.push('/a');
+        await tester.pumpAndSettle();
+
+        expect(goRouter.routerDelegate.matches.matches.length, 3);
+        expect(
+          goRouter.routerDelegate.matches.matches[2].pageKey,
+          const Key('/a-p2'),
+        );
+      },
+    );
   });
 
   group('canPop', () {

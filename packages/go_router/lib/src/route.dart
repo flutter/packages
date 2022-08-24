@@ -61,11 +61,44 @@ class GoRoute {
   /// Optional name of the route.
   ///
   /// If used, a unique string name must be provided and it can not be empty.
+  ///
+  /// This is used in [GoRouter.namedLocation] and its related API. This
+  /// property can be used to navigate to this route without knowing exact the
+  /// URI of it.
+  ///
+  /// {@tool snippet}
+  /// Typical usage is as follows:
+  ///
+  /// ```dart
+  /// GoRoute(
+  ///   name: 'home',
+  ///   path: '/',
+  ///   builder: (BuildContext context, GoRouterState state) =>
+  ///       HomeScreen(),
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       name: 'family',
+  ///       path: 'family/:fid',
+  ///       builder: (BuildContext context, GoRouterState state) =>
+  ///           FamilyScreen(),
+  ///     ),
+  ///   ],
+  /// );
+  ///
+  /// context.go(
+  ///   context.namedLocation('family'),
+  ///   params: <String, String>{'fid': 123},
+  ///   queryParams: <String, String>{'qid': 'quid'},
+  /// );
+  /// ```
+  ///
+  /// See the [named routes example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/named_routes.dart)
+  /// for a complete runnable app.
   final String? name;
 
   /// The path of this go route.
   ///
-  /// For example in:
+  /// For example:
   /// ```
   /// GoRoute(
   ///   path: '/',
@@ -75,6 +108,17 @@ class GoRoute {
   ///   ),
   /// ),
   /// ```
+  ///
+  /// The path also support path parameters. For a path: `/family/:fid`, it
+  /// matches all URIs start with `/family/...`, e.g. `/family/123`,
+  /// `/family/456` and etc. The parameter values are stored in [GoRouterState]
+  /// that are passed into [pageBuilder] and [builder].
+  ///
+  /// The query parameter are also capture during the route parsing and stored
+  /// in [GoRouterState].
+  ///
+  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
+  /// to learn more about parameters.
   final String path;
 
   /// A page builder for this route.
@@ -186,12 +230,15 @@ class GoRoute {
   /// ```
   /// In the above example, if /family route is matched, it will be used.
   /// else /:username route will be used.
+  ///
+  /// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
+  /// for a complete runnable example.
   final List<GoRoute> routes;
 
   /// An optional redirect function for this route.
   ///
   /// In the case that you like to make a redirection decision for a specific
-  /// route (or sub-route), you can do so by passing a redirect function to
+  /// route (or sub-route), consider doing so by passing a redirect function to
   /// the GoRoute constructor.
   ///
   /// For example:
@@ -209,6 +256,11 @@ class GoRoute {
   ///   ],
   /// );
   /// ```
+  ///
+  /// Redirect can also be used for conditionally preventing users from visiting
+  /// routes, also known as route guards. One canonical example is user
+  /// authentication. See [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart)
+  /// for a complete runnable example.
   final GoRouterRedirect redirect;
 
   /// Match this route against a location.

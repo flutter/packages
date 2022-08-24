@@ -29,8 +29,8 @@ class _FakeDateTime_3 extends _i1.Fake implements DateTime {}
 
 class _FakeUri_4 extends _i1.Fake implements Uri {}
 
-class _FakeObjectGeneration_5 extends _i1.Fake implements _i3.ObjectGeneration {
-}
+class _FakeObjectGeneration_5 extends _i1.Fake
+    implements _i3.ObjectGeneration {}
 
 class _FakeObjectMetadata_6 extends _i1.Fake implements _i3.ObjectMetadata {}
 
