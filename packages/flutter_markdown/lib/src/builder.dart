@@ -757,10 +757,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       case 'pre':
         return styleSheet.codeblockAlign;
       case 'hr':
-        print('Markdown did not handle hr for alignment');
         break;
       case 'li':
-        print('Markdown did not handle li for alignment');
         break;
     }
     return WrapAlignment.start;
