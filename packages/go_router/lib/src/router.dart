@@ -16,11 +16,30 @@ import 'typedefs.dart';
 
 /// The top-level go router class.
 ///
-/// Create one of these to initialize your app's routing policy.
-// ignore: prefer_mixin
+/// This is the main entry point for defining app's routing policy.
+///
+/// The `routes` defines the routing table. It must not be empty and must
+/// contain an [GoRouter] to match `/`.
+///
+/// See [Routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
+/// for an example of defining a simple routing table.
+///
+/// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
+/// for an example of defining a multi-level routing table.
+///
+/// The `redirect` does top-level redirection before the URIs are parsed by
+/// the `routes`. Consider using [GoRoute.redirect] for individual route
+/// redirection.
+///
+/// See also:
+///  * [GoRoute], which provides APIs to define the routing table.
+///  * [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example),
+///    which contains examples for different routing scenarios.
 class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
+  ///
+  /// The `routes` must not be null and must contain an [GoRouter] to match `/`.
   GoRouter({
     required List<GoRoute> routes,
     // TODO(johnpryan): Change to a route, improve error API

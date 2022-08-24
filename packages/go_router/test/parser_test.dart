@@ -92,12 +92,26 @@ void main() {
       topRedirect: (_) => null,
     );
 
-    expect(configuration.namedLocation('lowercase'), '/abc?');
-    expect(configuration.namedLocation('LOWERCASE'), '/abc?');
-    expect(configuration.namedLocation('camelCase'), '/efg?');
-    expect(configuration.namedLocation('camelcase'), '/efg?');
-    expect(configuration.namedLocation('snake_case'), '/hij?');
-    expect(configuration.namedLocation('SNAKE_CASE'), '/hij?');
+    expect(configuration.namedLocation('lowercase'), '/abc');
+    expect(configuration.namedLocation('LOWERCASE'), '/abc');
+    expect(configuration.namedLocation('camelCase'), '/efg');
+    expect(configuration.namedLocation('camelcase'), '/efg');
+    expect(configuration.namedLocation('snake_case'), '/hij');
+    expect(configuration.namedLocation('SNAKE_CASE'), '/hij');
+
+    // With query parameters
+    expect(
+        configuration
+            .namedLocation('lowercase', queryParams: const <String, String>{}),
+        '/abc');
+    expect(
+        configuration.namedLocation('lowercase',
+            queryParams: const <String, String>{'q': '1'}),
+        '/abc?q=1');
+    expect(
+        configuration.namedLocation('lowercase',
+            queryParams: const <String, String>{'q': '1', 'g': '2'}),
+        '/abc?q=1&g=2');
   });
 
   test('GoRouteInformationParser returns error when unknown route', () async {

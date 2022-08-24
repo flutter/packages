@@ -45,10 +45,27 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
 
   RouteMatchList _matches = RouteMatchList.empty();
+  final Map<String, int> _pushCounts = <String, int>{};
 
-  /// Push the given location onto the page stack
+  /// Pushes the given location onto the page stack
   void push(RouteMatch match) {
-    _matches.push(match);
+    // Remap the pageKey to allow any number of the same page on the stack
+    final String fullPath = match.fullpath;
+    final int count = (_pushCounts[fullPath] ?? 0) + 1;
+    _pushCounts[fullPath] = count;
+    final ValueKey<String> pageKey = ValueKey<String>('$fullPath-p$count');
+    final RouteMatch newPageKeyMatch = RouteMatch(
+      route: match.route,
+      subloc: match.subloc,
+      fullpath: match.fullpath,
+      encodedParams: match.encodedParams,
+      queryParams: match.queryParams,
+      extra: match.extra,
+      error: match.error,
+      pageKey: pageKey,
+    );
+
+    _matches.push(newPageKeyMatch);
     notifyListeners();
   }
 

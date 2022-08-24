@@ -1,4 +1,4 @@
-gcp_credentials: ENCRYPTED[!ebad0a1f4f7a446b77944c33651460a7ab010b4617273cb016cf354eb8fc22aa92e37a3c58bfa4a0c40a799351e027a6!]
+gcp_credentials: ENCRYPTED[!f1177d1ddb5330ffaa9ea11c9c9e8e0c542185e895c36071f18cec923dd31c50ece6d18da89c2f6f1cd2d1a98d0c2eea!]
 
 # Run on PRs and main branch post submit only. Don't run tests when tagging.
 only_if: $CIRRUS_TAG == '' && ($CIRRUS_PR != '' || $CIRRUS_BRANCH == 'main')
@@ -25,8 +25,8 @@ macos_template: &MACOS_TEMPLATE
   # Only one macOS task can run in parallel without credits, so use them for
   # PRs on macOS.
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-  osx_instance:
-    image: big-sur-xcode-13
+  macos_instance:
+    image: ghcr.io/cirruslabs/macos-monterey-xcode:13.4.1
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -111,8 +111,20 @@ task:
         env:
           CHANNEL: "2.8.1"
           DART_VERSION: "2.15.1"
+      package_prep_script:
+        # Allow analyzing packages that use a dev dependency with a higher
+        # minimum Flutter/Dart version than the package itself.
+        - ./script/tool_runner.sh remove-dev-dependencies
       analyze_script:
-        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --skip-if-not-supporting-dart-version="$DART_VERSION" --custom-analysis=script/configs/custom_analysis.yaml
+        - ./script/tool_runner.sh analyze --lib-only --skip-if-not-supporting-flutter-version="$CHANNEL" --skip-if-not-supporting-dart-version="$DART_VERSION" --custom-analysis=script/configs/custom_analysis.yaml
+    # Does a sanity check that packages pass analysis with the lowest possible
+    # versions of all dependencies. This is to catch cases where we add use of
+    # new APIs but forget to update minimum versions of dependencies to where
+    # those APIs are introduced.
+    - name: downgraded_analyze
+      depends_on: format+analyze
+      analyze_script:
+        - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml
     - name: publishable
       env:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
@@ -130,7 +142,7 @@ task:
         -   ./script/tool_runner.sh version-check
         - else
         -   echo "$CIRRUS_CHANGE_MESSAGE" > "$CHANGE_DESC"
-        -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC"
+        -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC" --pr-labels="$CIRRUS_PR_LABELS"
         - fi
       publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
       depends_on:
@@ -219,8 +231,8 @@ task:
         - ./script/tool_runner.sh native-test --linux --no-integration
 
 task:
-  << : *MACOS_TEMPLATE
   << : *FLUTTER_UPGRADE_TEMPLATE
+  << : *MACOS_TEMPLATE
   matrix:
    ### iOS tasks ###
     - name: ios-platform_tests
@@ -231,12 +243,13 @@ task:
           CHANNEL: "stable"
       create_simulator_script:
         - xcrun simctl list
-        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-11 com.apple.CoreSimulator.SimRuntime.iOS-15-0 | xargs xcrun simctl boot
+        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-15-5 | xargs xcrun simctl boot
       build_script:
         - ./script/tool_runner.sh build-examples --ios
       native_test_script:
-        - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 11,OS=latest"
+        - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 13,OS=latest"
     - name: ios-custom_package_tests
+      # Run on macOS x64 image with Java runtime installed.
       env:
         PATH: $PATH:/usr/local/bin
         matrix:

@@ -1,0 +1,20 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This file exists solely to host compiled excerpts for README.md, and is not
+// intended for use as an actual example application.
+
+// #docregion Encoding
+import 'dart:typed_data';
+import 'package:standard_message_codec/standard_message_codec.dart';
+// #enddocregion Encoding
+
+void main() {
+  final ByteData? data =
+      const StandardMessageCodec().encodeMessage(<Object, Object>{
+    'foo': true,
+    3: 'fizz',
+  });
+  print('The encoded message is $data');
+}
