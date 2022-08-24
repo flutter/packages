@@ -211,48 +211,49 @@ class _MyHomePageState extends State<MyHomePage>
               // Every SlotLayoutConfig takes a key and a builder. The builder
               // is to save memory that would be spent on initialization.
               key: const Key('primaryNavigation'),
-              builder: (_) =>
+              builder: (_) {
+                return AdaptiveScaffold.standardNavigationRail(
                   // Usually it would be easier to use a builder from
                   // AdaptiveScaffold for these types of navigations but this
                   // navigation has custom staggered item animations.
-                  AdaptiveScaffold.standardNavigationRail(
-                onDestinationSelected: (int index) {
-                  setState(() {
-                    _navigationIndex = index;
-                  });
-                },
-                selectedIndex: _navigationIndex,
-                leading: ScaleTransition(
-                    scale: _controller1, child: const _MediumComposeIcon()),
-                backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                labelType: NavigationRailLabelType.none,
-                destinations: <NavigationRailDestination>[
-                  slideInNavigationItem(
-                    begin: -1,
-                    controller: _controller,
-                    icon: Icons.inbox,
-                    label: 'Inbox',
-                  ),
-                  slideInNavigationItem(
-                    begin: -2,
-                    controller: _controller1,
-                    icon: Icons.article_outlined,
-                    label: 'Articles',
-                  ),
-                  slideInNavigationItem(
-                    begin: -3,
-                    controller: _controller2,
-                    icon: Icons.chat_bubble_outline,
-                    label: 'Chat',
-                  ),
-                  slideInNavigationItem(
-                    begin: -4,
-                    controller: _controller3,
-                    icon: Icons.video_call_outlined,
-                    label: 'Video',
-                  )
-                ],
-              ),
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _navigationIndex = index;
+                    });
+                  },
+                  selectedIndex: _navigationIndex,
+                  leading: ScaleTransition(
+                      scale: _controller1, child: const _MediumComposeIcon()),
+                  backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                  labelType: NavigationRailLabelType.none,
+                  destinations: <NavigationRailDestination>[
+                    slideInNavigationItem(
+                      begin: -1,
+                      controller: _controller,
+                      icon: Icons.inbox,
+                      label: 'Inbox',
+                    ),
+                    slideInNavigationItem(
+                      begin: -2,
+                      controller: _controller1,
+                      icon: Icons.article_outlined,
+                      label: 'Articles',
+                    ),
+                    slideInNavigationItem(
+                      begin: -3,
+                      controller: _controller2,
+                      icon: Icons.chat_bubble_outline,
+                      label: 'Chat',
+                    ),
+                    slideInNavigationItem(
+                      begin: -4,
+                      controller: _controller3,
+                      icon: Icons.video_call_outlined,
+                      label: 'Video',
+                    )
+                  ],
+                );
+              },
             ),
             Breakpoints.large: SlotLayout.from(
               key: const Key('primaryNavigation1'),
@@ -476,44 +477,46 @@ class _ItemList extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               decoration: InputDecoration(
-                  prefixIcon: const Padding(
-                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: Icon(Icons.search),
-                  ),
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: CircleAvatar(
-                      radius: 18,
-                      child: Image.asset(
-                        'images/plum.png',
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+                prefixIcon: const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: Icon(Icons.search),
+                ),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: CircleAvatar(
+                    radius: 18,
+                    child: Image.asset(
+                      'images/plum.png',
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  contentPadding: const EdgeInsets.all(25),
-                  hintStyle: const TextStyle(
-                      color: Color.fromARGB(255, 135, 129, 138)),
-                  hintText: 'Search replies',
-                  fillColor: Colors.white),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                contentPadding: const EdgeInsets.all(25),
+                hintStyle:
+                    const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
+                hintText: 'Search replies',
+                fillColor: Colors.white,
+              ),
             ),
           ),
           Expanded(
             child: ListView.builder(
               itemCount: items.length,
               itemBuilder: (BuildContext context, int index) => _ItemListTile(
-                  item: items[index],
-                  email: items[index].emails![0],
-                  selectCard: selectCard,
-                  selected: selected),
+                item: items[index],
+                email: items[index].emails![0],
+                selectCard: selectCard,
+                selected: selected,
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -710,7 +713,6 @@ class _DetailTile extends StatelessWidget {
                   },
                 ),
               ),
-              //Text(item.body, style: Theme.of(context).textTheme.bodyLarge),
             ],
           ),
         ),
@@ -770,7 +772,7 @@ class _EmailTile extends StatelessWidget {
                               TextStyle(color: Colors.grey[850], fontSize: 13)),
                       const SizedBox(height: 3),
                       Text('$time ago',
-                          style: Theme.of(context).textTheme.caption),
+                          style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
                   const Spacer(),
