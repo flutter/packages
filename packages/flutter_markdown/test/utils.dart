@@ -13,7 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 final TextTheme textTheme =
     Typography.material2018(platform: TargetPlatform.android)
         .black
-        .merge(const TextTheme(bodyText2: TextStyle(fontSize: 12.0)));
+        .merge(const TextTheme(bodyMedium: TextStyle(fontSize: 12.0)));
 
 void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
   final List<Type> actual = widgets.map((Widget w) => w.runtimeType).toList();

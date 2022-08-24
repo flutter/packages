@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   const Text('You have pushed the button this many times:'),
                   Text(
                     '$_counter',
-                    style: Theme.of(context).textTheme.headline4,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ],
               );
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                       children: <Widget>[
                         Text(
                           'Line $index',
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         Expanded(child: Container()),
                         const Icon(Icons.camera),

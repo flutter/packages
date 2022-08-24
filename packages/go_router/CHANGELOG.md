@@ -2,6 +2,7 @@
 
 - Add `buildPageWithState` to `GoRouteData`.
 - `GoRouteData.buildPage` is now deprecated in favor of `GoRouteData.buildPageWithState`.
+- Updates text theme parameters to avoid deprecation issues.
 
 ## 4.2.8
 
