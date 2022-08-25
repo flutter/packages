@@ -1,7 +1,10 @@
-
 ## 4.1.0
 
 * Adds experimental support for Kotlin generation.
+
+## 4.0.1
+
+* Exposes `SwiftOptions`.
 
 ## 4.0.0
 
