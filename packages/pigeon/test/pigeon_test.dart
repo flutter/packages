@@ -20,4 +20,9 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     expect(swiftOptions, isNotNull);
   });
+
+  test('Should be able to import KotlinOptions', () async {
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    expect(kotlinOptions, isNotNull);
+  });
 }
