@@ -1,6 +1,6 @@
 ## 4.0.1
 
-* Expose SwiftOptions
+* Exposes `SwiftOptions`.
 
 ## 4.0.0
 
