@@ -1,6 +1,6 @@
 ## NEXT
 
-* Fixed lint warnings in tests.
+* Fixes lint warnings in tests.
 
 ## 0.3.3+1
 

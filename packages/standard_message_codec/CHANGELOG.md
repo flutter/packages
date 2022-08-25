@@ -1,6 +1,6 @@
 ## 0.0.1+2
 
-* Fixed lint warnings.
+* Fixes lint warnings.
 
 ## 0.0.1+1
 
