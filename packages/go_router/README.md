@@ -134,6 +134,40 @@ methods:
 onTap: () => context.go('/page2')
 ```
 
+## Nested Navigation
+
+The `ShellRoute` route type provdes a way to wrap all sub-routes with a UI shell.
+Under the hood, GoRouter places a Navigator in the widget tree, which is used
+to display matching sub-routes:
+
+```dart
+final  _router = GoRouter(
+  routes: [
+    ShellRoute(
+      builder: (context, state, child) {
+        return AppScaffold(child: child);
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/albums',
+          builder: (context, state) {
+            return HomeScreen();
+          },
+          routes: <RouteBase>[
+            /// The details screen to display stacked on the inner Navigator.
+            GoRoute(
+              path: 'song/:songId',
+              builder: (BuildContext context, GoRouterState state) {
+                return const DetailsScreen(label: 'A');
+              },
+            ),
+          ],
+        ),
+```
+
+For more details, see the `ShellRoute` API documentation. For a complete
+example, see the `shell_route.dart` sample in the example/ directory.
+
 ### Still not sure how to proceed?
 See [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example) for complete runnable examples or visit [API documentation](https://pub.dev/documentation/go_router/latest/go_router/go_router-library.html)
 
