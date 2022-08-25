@@ -11,7 +11,7 @@ class FadeThroughTransitionDemo extends StatefulWidget {
   const FadeThroughTransitionDemo({Key? key}) : super(key: key);
 
   @override
-  _FadeThroughTransitionDemoState createState() =>
+  State<FadeThroughTransitionDemo> createState() =>
       _FadeThroughTransitionDemoState();
 }
 

@@ -100,10 +100,7 @@ void main() {
     expect(configuration.namedLocation('SNAKE_CASE'), '/hij');
 
     // With query parameters
-    expect(
-        configuration
-            .namedLocation('lowercase', queryParams: const <String, String>{}),
-        '/abc');
+    expect(configuration.namedLocation('lowercase'), '/abc');
     expect(
         configuration.namedLocation('lowercase',
             queryParams: const <String, String>{'q': '1'}),

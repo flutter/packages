@@ -17,7 +17,7 @@ import 'fakes.dart';
 void main() {
   const String deviceName = 'some-name-to-use';
   FakeSshKeyManager sshKeyManager;
-  final MemoryFileSystem fs = MemoryFileSystem(style: FileSystemStyle.posix);
+  final MemoryFileSystem fs = MemoryFileSystem();
   FakeTar tar;
   MockProcessManager processManager;
   SshKeyManagerProvider sshKeyManagerProvider;

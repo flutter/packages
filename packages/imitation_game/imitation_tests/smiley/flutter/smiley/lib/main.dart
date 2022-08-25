@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'dart:convert' show jsonEncode;
 import 'dart:io';
 
@@ -73,7 +75,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -83,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     _image
-        .resolve(const ImageConfiguration())
+        .resolve(ImageConfiguration.empty)
         .addListener(ImageStreamListener((_, __) {
       if (mounted) {
         setState(() {
@@ -91,8 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // This should get called when the image has actually been drawn to the screen.
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             final DateTime renderTime = DateTime.now();
-            final PollIosStats _poller = PollIosStats();
-            final StartupTime startupTime = await _poller.pollStartupTime();
+            final PollIosStats poller = PollIosStats();
+            final StartupTime startupTime = await poller.pollStartupTime();
             final Duration diff = renderTime.difference(
                 DateTime.fromMicrosecondsSinceEpoch(startupTime.startupTime));
             _sendResult(diff.inMicroseconds / 1000000.0);

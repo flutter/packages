@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/functional.dart';
-import 'package:pigeon/pigeon_lib.dart' show TaskQueueType, Error;
-
 import 'ast.dart';
+import 'functional.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart' show Error, TaskQueueType;
 
 /// Options that control how Objective-C code will be generated.
 class ObjcOptions {
@@ -446,14 +445,15 @@ void _writeHostApiDeclaration(
         !func.isAsynchronous) {
       indent.writeln('/// @return `nil` only when `error != nil`.');
     }
-    indent.writeln(_makeObjcSignature(
-            func: func,
-            options: options,
-            returnType: returnType,
-            lastArgName: lastArgName,
-            lastArgType: lastArgType,
-            isEnum: (TypeDeclaration t) => isEnum(root, t)) +
-        ';');
+    final String signature = _makeObjcSignature(
+      func: func,
+      options: options,
+      returnType: returnType,
+      lastArgName: lastArgName,
+      lastArgType: lastArgType,
+      isEnum: (TypeDeclaration t) => isEnum(root, t),
+    );
+    indent.writeln('$signature;');
   }
   indent.writeln('@end');
   indent.writeln('');
@@ -480,15 +480,14 @@ void _writeFlutterApiDeclaration(
     final _ObjcPtr returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
-    indent.writeln(_makeObjcSignature(
-          func: func,
-          options: options,
-          returnType: 'void',
-          lastArgName: 'completion',
-          lastArgType: callbackType,
-          isEnum: (TypeDeclaration t) => isEnum(root, t),
-        ) +
-        ';');
+    indent.writeln('${_makeObjcSignature(
+      func: func,
+      options: options,
+      returnType: 'void',
+      lastArgName: 'completion',
+      lastArgType: callbackType,
+      isEnum: (TypeDeclaration t) => isEnum(root, t),
+    )};');
   }
   indent.writeln('@end');
 }
@@ -593,7 +592,7 @@ String _dictValue(
 }
 
 String _getSelector(Method func, String lastSelectorComponent) =>
-    _getSelectorComponents(func, lastSelectorComponent).join(':') + ':';
+    '${_getSelectorComponents(func, lastSelectorComponent).join(':')}:';
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgName(int count, NamedType arg) =>
@@ -990,7 +989,7 @@ List<Error> validateObjc(ObjcOptions options, Root root) {
           // TODO(gaaclarke): Add line number.
           errors.add(Error(
               message:
-                  'Nullable enum types aren\'t support in ObjC arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name}).'));
+                  "Nullable enum types aren't support in ObjC arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name})."));
         }
       }
     }

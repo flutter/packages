@@ -71,7 +71,7 @@ void main() {
     expect(properties.properties.first.value, goRouter);
   });
 
-  testWidgets('mediates Widget\'s access to GoRouter.',
+  testWidgets("mediates Widget's access to GoRouter.",
       (WidgetTester tester) async {
     final MockGoRouter router = MockGoRouter();
     await tester.pumpWidget(MaterialApp(
@@ -99,21 +99,21 @@ bool setupInheritedGoRouterChange({
 }
 
 class Page1 extends StatelessWidget {
-  const Page1({Key? key}) : super(key: key);
+  const Page1({super.key});
 
   @override
   Widget build(BuildContext context) => Container();
 }
 
 class Page2 extends StatelessWidget {
-  const Page2({Key? key}) : super(key: key);
+  const Page2({super.key});
 
   @override
   Widget build(BuildContext context) => Container();
 }
 
 class _MyWidget extends StatelessWidget {
-  const _MyWidget({Key? key}) : super(key: key);
+  const _MyWidget();
 
   @override
   Widget build(BuildContext context) {

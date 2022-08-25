@@ -29,9 +29,9 @@ class DynamicGridView extends GridView {
     super.key,
     required super.gridDelegate,
     // This creates a SliverChildBuilderDelegate in the super class.
-    required IndexedWidgetBuilder itemBuilder,
+    required super.itemBuilder,
     super.itemCount,
-  }) : super.builder(itemBuilder: itemBuilder);
+  }) : super.builder();
 
   // TODO(snat-s): DynamicGridView.wrap?
 

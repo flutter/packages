@@ -46,6 +46,8 @@ class ExtendedEmojiSyntax extends md.EmojiSyntax {
 ```
 """;
 
+// TODO(goderbauer): Restructure the examples to avoid this ignore, https://github.com/flutter/flutter/issues/110208.
+// ignore: avoid_implementing_value_types
 class ExtendedEmojiDemo extends StatelessWidget implements MarkdownDemoWidget {
   const ExtendedEmojiDemo({Key? key}) : super(key: key);
 

@@ -27,19 +27,13 @@ void main() {
 
   test('test request constructor with nulls', () {
     final NullFieldsSearchRequest request =
-        NullFieldsSearchRequest(query: null, identifier: 1);
+        NullFieldsSearchRequest(identifier: 1);
 
     expect(request.query, isNull);
   });
 
   test('test reply constructor with nulls', () {
-    final NullFieldsSearchReply reply = NullFieldsSearchReply(
-      result: null,
-      error: null,
-      indices: null,
-      request: null,
-      type: null,
-    );
+    final NullFieldsSearchReply reply = NullFieldsSearchReply();
 
     expect(reply.result, isNull);
     expect(reply.error, isNull);
@@ -117,7 +111,7 @@ void main() {
 
   test('test request encode with null', () {
     final NullFieldsSearchRequest request =
-        NullFieldsSearchRequest(query: null, identifier: 1);
+        NullFieldsSearchRequest(identifier: 1);
 
     expect(request.encode(), <String, dynamic>{
       'query': null,
@@ -147,13 +141,7 @@ void main() {
   });
 
   test('test reply encode with nulls', () {
-    final NullFieldsSearchReply reply = NullFieldsSearchReply(
-      result: null,
-      error: null,
-      indices: null,
-      request: null,
-      type: null,
-    );
+    final NullFieldsSearchReply reply = NullFieldsSearchReply();
 
     expect(reply.encode(), <String, dynamic>{
       'result': null,

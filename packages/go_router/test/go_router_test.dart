@@ -19,8 +19,9 @@ const bool enableLogs = true;
 final Logger log = Logger('GoRouter tests');
 
 void main() {
-  if (enableLogs)
+  if (enableLogs) {
     Logger.root.onRecord.listen((LogRecord e) => debugPrint('$e'));
+  }
 
   group('path routes', () {
     testWidgets('match home route', (WidgetTester tester) async {
@@ -178,7 +179,6 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login/');
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
-      print(matches);
       expect(matches, hasLength(1));
       expect(matches.first.subloc, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
@@ -1290,7 +1290,6 @@ void main() {
       final GoRouter router = await createRouter(
         routes,
         tester,
-        initialLocation: '/',
       );
       expect(router.routeInformationProvider.value.location, '/dummy');
       TestWidgetsFlutterBinding

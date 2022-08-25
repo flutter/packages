@@ -23,16 +23,11 @@ class CustomTransitionPage<T> extends Page<T> {
     this.barrierDismissible = false,
     this.barrierColor,
     this.barrierLabel,
-    LocalKey? key,
-    String? name,
-    Object? arguments,
-    String? restorationId,
-  }) : super(
-          key: key,
-          name: name,
-          arguments: arguments,
-          restorationId: restorationId,
-        );
+    super.key,
+    super.name,
+    super.arguments,
+    super.restorationId,
+  });
 
   /// The content to be shown in the Route created by this page.
   final Widget child;
@@ -160,19 +155,14 @@ class _CustomTransitionPageRoute<T> extends PageRoute<T> {
 class NoTransitionPage<T> extends CustomTransitionPage<T> {
   /// Constructor for a page with no transition functionality.
   const NoTransitionPage({
-    required Widget child,
-    String? name,
-    Object? arguments,
-    String? restorationId,
-    LocalKey? key,
+    required super.child,
+    super.name,
+    super.arguments,
+    super.restorationId,
+    super.key,
   }) : super(
           transitionsBuilder: _transitionsBuilder,
-          transitionDuration: const Duration(microseconds: 1), // hack for #205
-          key: key,
-          name: name,
-          arguments: arguments,
-          restorationId: restorationId,
-          child: child,
+          transitionDuration: const Duration(microseconds: 1),
         );
 
   static Widget _transitionsBuilder(
