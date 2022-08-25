@@ -406,6 +406,28 @@ void main() {
     expect(debugLastLocale, const Locale('fr', 'CH'));
     expect(debugLastTextDirection, TextDirection.rtl);
   });
+
+  testWidgets('Throws a helpful exception if decoding fails',
+      (WidgetTester tester) async {
+    final Uint8List data = Uint8List(256);
+    final TestBytesLoader loader = TestBytesLoader(
+      data.buffer.asByteData(),
+      '/foo/bar/whatever.vec',
+    );
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(Placeholder(key: key));
+
+    late final VectorGraphicsDecodeException exception;
+    try {
+      await vg.loadPicture(loader, key.currentContext!);
+    } on VectorGraphicsDecodeException catch (e) {
+      exception = e;
+    }
+
+    expect(exception.source, loader);
+    expect(exception.originalException, isA<StateError>());
+    expect(exception.toString(), contains(loader.toString()));
+  });
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {
@@ -440,9 +462,10 @@ class DelayedBytesLoader extends BytesLoader {
 }
 
 class TestBytesLoader extends BytesLoader {
-  const TestBytesLoader(this.data);
+  const TestBytesLoader(this.data, [this.source]);
 
   final ByteData data;
+  final String? source;
 
   @override
   Future<ByteData> loadBytes(BuildContext context) async {
@@ -456,4 +479,7 @@ class TestBytesLoader extends BytesLoader {
   bool operator ==(Object other) {
     return other is TestBytesLoader && other.data == data;
   }
+
+  @override
+  String toString() => 'TestBytesLoader: $source';
 }

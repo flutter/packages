@@ -143,7 +143,7 @@ double parsePercentage(String val, {double multiplier = 1.0}) {
 bool isPercentage(String val) => val.endsWith('%');
 
 /// Parses value from the form '25%', 0.25 or 25.0 as a double.
-/// Note: Percentage or decimals will be multipled by the total
+/// Note: Percentage or decimals will be multiplied by the total
 /// view box size, where as doubles will be returned as is.
 double? parsePatternUnitToDouble(String rawValue, String mode,
     {ViewportNode? viewBox}) {

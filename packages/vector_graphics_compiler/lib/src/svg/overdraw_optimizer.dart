@@ -164,7 +164,7 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
     ResolvedPathNode? lastPathNode;
     int? lastPathNodeIndex;
 
-    /// If the group opacity is set the the children path nodes
+    /// If the group opacity is set the children path nodes
     /// cannot be optimized.
     if (parentNode.attributes.opacity == null) {
       /// If there are not at least 2 path nodes, an optimization cannot be
@@ -174,7 +174,7 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
           if (isOptimizable(child)) {
             child = child as ResolvedPathNode;
 
-            /// If the there is no previous path node to calculate
+            /// If there is no previous path node to calculate
             /// the overlap with, the current optimizable child will
             /// be assigned as the lastPathNode.
             if (lastPathNode == null || lastPathNodeIndex == null) {

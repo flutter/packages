@@ -2,13 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:typed_data';
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/src/render_vector_graphics.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+
+import 'caching_test.dart';
 
 void main() {
   late PictureInfo pictureInfo;
@@ -27,6 +31,7 @@ void main() {
       buffer.done(),
       locale: const Locale('fr', 'CH'),
       textDirection: TextDirection.ltr,
+      loader: TestBytesLoader(Uint8List(0).buffer.asByteData()),
     );
   });
 

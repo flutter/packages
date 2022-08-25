@@ -9,11 +9,12 @@ import 'package:flutter/widgets.dart';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
-import 'src/http.dart';
+import 'src/loader.dart';
 import 'src/listener.dart';
 import 'src/render_vector_graphics.dart';
 
 export 'src/listener.dart' show PictureInfo;
+export 'src/loader.dart';
 
 /// A widget that displays a [VectorGraphicsCodec] encoded asset.
 ///
@@ -224,6 +225,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         data,
         locale: key.locale,
         textDirection: key.textDirection,
+        loader: loader,
       );
     }).then((PictureInfo pictureInfo) {
       return _PictureData(pictureInfo, 0, key);
@@ -335,147 +337,6 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   }
 }
 
-/// An interface that can be implemented to support decoding vector graphic
-/// binary assets from different byte sources.
-///
-/// A bytes loader class should not be constructed directly in a build method,
-/// if this is done the corresponding [VectorGraphic] widget may repeatedly
-/// reload the bytes.
-///
-/// See also:
-///   * [AssetBytesLoader], for loading from the asset bundle.
-///   * [NetworkBytesLoader], for loading network bytes.
-@immutable
-abstract class BytesLoader {
-  /// Const constructor to allow subtypes to be const.
-  const BytesLoader();
-
-  /// Load the byte data for a vector graphic binary asset.
-  Future<ByteData> loadBytes(BuildContext context);
-
-  /// Create an object that can be used to uniquely identify this asset
-  /// and loader combination.
-  ///
-  /// For most [BytesLoader] subclasses, this can safely return the same
-  /// instance. If the loader looks up additional dependencies using the
-  /// [context] argument of [loadBytes], then those objects should be
-  /// incorporated into a new cache key.
-  Object cacheKey(BuildContext context) => this;
-}
-
-/// Loads vector graphics data from an asset bundle.
-///
-/// This loader does not cache bytes by default. The Flutter framework
-/// implementations of [AssetBundle] also do not typically cache binary data.
-///
-/// Callers that would benefit from caching should provide a custom
-/// [AssetBundle] that caches data, or should create their own implementation
-/// of an asset bytes loader.
-class AssetBytesLoader extends BytesLoader {
-  /// A loader that retrieves bytes from an [AssetBundle].
-  ///
-  /// See [AssetBytesLoader].
-  const AssetBytesLoader(
-    this.assetName, {
-    this.packageName,
-    this.assetBundle,
-  });
-
-  /// The name of the asset to load.
-  final String assetName;
-
-  /// The package name to load from, if any.
-  final String? packageName;
-
-  /// The asset bundle to use.
-  ///
-  /// If unspecified, [DefaultAssetBundle.of] the current context will be used.
-  final AssetBundle? assetBundle;
-
-  @override
-  Future<ByteData> loadBytes(BuildContext context) {
-    return (assetBundle ?? DefaultAssetBundle.of(context)).load(assetName);
-  }
-
-  @override
-  int get hashCode => Object.hash(assetName, packageName, assetBundle);
-
-  @override
-  bool operator ==(Object other) {
-    return other is AssetBytesLoader &&
-        other.assetName == assetName &&
-        other.assetBundle == assetBundle &&
-        other.packageName == packageName;
-  }
-
-  @override
-  Object cacheKey(BuildContext context) {
-    return _AssetByteLoaderCacheKey(
-      assetName,
-      packageName,
-      assetBundle ?? DefaultAssetBundle.of(context),
-    );
-  }
-}
-
-// Replaces the cache key for [AssetBytesLoader] to account for the fact that
-// different widgets may select a different asset bundle based on the return
-// value of `DefaultAssetBundle.of(context)`.
-@immutable
-class _AssetByteLoaderCacheKey {
-  const _AssetByteLoaderCacheKey(
-      this.assetName, this.packageName, this.assetBundle);
-
-  final String assetName;
-  final String? packageName;
-
-  final AssetBundle assetBundle;
-
-  @override
-  int get hashCode => Object.hash(assetName, packageName, assetBundle);
-
-  @override
-  bool operator ==(Object other) {
-    return other is _AssetByteLoaderCacheKey &&
-        other.assetName == assetName &&
-        other.assetBundle == assetBundle &&
-        other.packageName == packageName;
-  }
-}
-
-/// A controller for loading vector graphics data from over the network.
-///
-/// This loader does not cache bytes requested from the network.
-class NetworkBytesLoader extends BytesLoader {
-  /// Creates a new loading context for network bytes.
-  const NetworkBytesLoader(
-    this.url, {
-    this.headers,
-  });
-
-  /// The HTTP headers to use for the network request.
-  final Map<String, String>? headers;
-
-  /// The [Uri] of the resource to request.
-  final Uri url;
-
-  @override
-  Future<ByteData> loadBytes(BuildContext context) async {
-    final Uint8List bytes = await httpGet(url, headers: headers);
-    return bytes.buffer.asByteData();
-  }
-
-  @override
-  int get hashCode => Object.hash(url, headers);
-
-  @override
-  bool operator ==(Object other) {
-    return other is NetworkBytesLoader &&
-        other.headers == headers &&
-        other.url == url;
-  }
-}
-
 class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
   const _RawVectorGraphicWidget({
     required this.pictureInfo,
@@ -535,11 +396,17 @@ class VectorGraphicUtilities {
     final Locale? locale = Localizations.maybeLocaleOf(context);
     final TextDirection? textDirection = Directionality.maybeOf(context);
     return loader.loadBytes(context).then((ByteData data) {
-      return decodeVectorGraphics(
-        data,
-        locale: locale,
-        textDirection: textDirection,
-      );
+      try {
+        return decodeVectorGraphics(
+          data,
+          locale: locale,
+          textDirection: textDirection,
+          loader: loader,
+        );
+      } catch (e) {
+        debugPrint('Failed to decode $loader');
+        rethrow;
+      }
     });
   }
 }

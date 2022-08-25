@@ -260,7 +260,7 @@ class ClipNode extends Node {
   /// The child to clip.
   final Node child;
 
-  /// The decendant child's transform
+  /// The descendant child's transform
   final AffineMatrix transform;
 
   @override
@@ -302,7 +302,7 @@ class MaskNode extends Node {
   /// The blend mode to apply when saving a layer for the mask, if any.
   final BlendMode? blendMode;
 
-  /// The decendant child's transform
+  /// The descendant child's transform
   final AffineMatrix transform;
 
   /// Called by visitors to resolve [maskId] to an [AttributedNode].
@@ -534,7 +534,7 @@ class PatternNode extends Node {
   /// The child(ren) to apply the pattern to.
   final Node child;
 
-  /// The decendant child's transform.
+  /// The descendant child's transform.
   final AffineMatrix transform;
 
   /// Called by visitors to resolve [patternId] to an [AttributedNode].

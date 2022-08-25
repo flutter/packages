@@ -112,7 +112,7 @@ abstract class Gradient {
   /// The transform, if any, to apply to the gradient.
   final AffineMatrix? transform;
 
-  /// Apply the bounds and transform the the shader.
+  /// Apply the bounds and transform the shader.
   Gradient applyBounds(Rect bounds, AffineMatrix transform);
 
   /// Creates a new gradient

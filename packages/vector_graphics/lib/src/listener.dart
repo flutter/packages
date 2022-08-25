@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:ui' as ui;
 import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/cupertino.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+
+import 'loader.dart';
 
 const VectorGraphicsCodec _codec = VectorGraphicsCodec();
 
@@ -41,25 +44,31 @@ Future<PictureInfo> decodeVectorGraphics(
   ByteData data, {
   required Locale? locale,
   required TextDirection? textDirection,
+  required BytesLoader loader,
 }) async {
-  assert(() {
-    _debugLastTextDirection = textDirection;
-    _debugLastLocale = locale;
-    return true;
-  }());
-  final FlutterVectorGraphicsListener listener = FlutterVectorGraphicsListener(
-    locale: locale,
-    textDirection: textDirection,
-  );
-  DecodeResponse response = _codec.decode(data, listener);
-  if (response.complete) {
-    return listener.toPicture();
-  }
-  await listener.waitForImageDecode();
-  response = _codec.decode(data, listener, response: response);
-  assert(response.complete);
+  try {
+    assert(() {
+      _debugLastTextDirection = textDirection;
+      _debugLastLocale = locale;
+      return true;
+    }());
+    final FlutterVectorGraphicsListener listener =
+        FlutterVectorGraphicsListener(
+      locale: locale,
+      textDirection: textDirection,
+    );
+    DecodeResponse response = _codec.decode(data, listener);
+    if (response.complete) {
+      return listener.toPicture();
+    }
+    await listener.waitForImageDecode();
+    response = _codec.decode(data, listener, response: response);
+    assert(response.complete);
 
-  return listener.toPicture();
+    return listener.toPicture();
+  } catch (e) {
+    throw VectorGraphicsDecodeException._(loader, e);
+  }
 }
 
 /// Pattern configuration to be used when creating ImageShader.
@@ -537,4 +546,23 @@ class _TextConfig {
   final double dy;
   final ui.FontWeight fontWeight;
   final Float64List? transform;
+}
+
+/// An exception thrown if decoding fails.
+///
+/// The [originalException] is a detailed exception about what failed in
+/// decoding. The [source] contains the object that was used to load the bytes.
+class VectorGraphicsDecodeException implements Exception {
+  const VectorGraphicsDecodeException._(this.source, this.originalException);
+
+  /// The object used to load the bytes for this
+  final BytesLoader source;
+
+  /// The original exception thrown by the decoder, for example a [StateError]
+  /// indicating what specifically went wrong.
+  final Object originalException;
+
+  @override
+  String toString() =>
+      'VectorGraphicsDecodeException: Failed to decode vector graphic from $source.\n\nAdditional error: $originalException';
 }
