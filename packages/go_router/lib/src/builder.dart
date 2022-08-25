@@ -136,13 +136,9 @@ class RouteBuilder {
         final GlobalKey<NavigatorState>? goRouteNavKey =
             route.parentNavigatorKey;
         if (goRouteNavKey != null && goRouteNavKey != navigatorKey) {
-          // Add this page to
-          if (pagesForOutOfScopeNavigator.containsKey(goRouteNavKey) &&
-              pagesForOutOfScopeNavigator[goRouteNavKey] != null) {
-            pagesForOutOfScopeNavigator[goRouteNavKey]!.add(page);
-          } else {
-            pagesForOutOfScopeNavigator[goRouteNavKey] = <Page<dynamic>>[page];
-          }
+          pagesForOutOfScopeNavigator
+              .putIfAbsent(goRouteNavKey, () => <Page<dynamic>>[])
+              .add(page);
         } else {
           pages.add(page);
         }
