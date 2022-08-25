@@ -1,3 +1,7 @@
+## 4.0.1
+
+* Exposes `SwiftOptions`.
+
 ## 4.0.0
 
 * [java] **BREAKING CHANGE**: Changes style for enum values from camelCase to snake_case.
