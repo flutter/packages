@@ -226,8 +226,8 @@ class RouteBuilder {
           error: exception,
         ),
         Navigator(
-          restorationScopeId: restorationScopeId,
           key: navigatorKey,
+          restorationScopeId: restorationScopeId,
           pages: pages,
           observers: observers,
           onPopPage: (Route<dynamic> route, dynamic result) {
@@ -240,9 +240,9 @@ class RouteBuilder {
         ),
       );
     } else {
-      // return Router(routerDelegate: _delegate,);
       return Navigator(
         key: navigatorKey,
+        restorationScopeId: restorationScopeId,
         pages: pages,
         onPopPage: (Route<dynamic> route, dynamic result) {
           if (!route.didPop(result)) {

@@ -65,6 +65,25 @@ void main() {
       expect(match.pageKey, isNull);
       expect(match.fullUriString, '/home/users/123?foo=bar');
     });
+    test('ShellRoute has a unique pageKey', () {
+      final ShellRoute route = ShellRoute(
+        builder: _shellBuilder,
+      );
+      final GoRouteMatch? match = GoRouteMatch.match(
+        route: route,
+        restLoc: 'users/123',
+        parentSubloc: '/home',
+        fullpath: '/home/users/:userId',
+        queryParams: <String, String>{
+          'foo': 'bar',
+        },
+        extra: const _Extra('foo'),
+      );
+      if (match == null) {
+        fail('Null match');
+      }
+      expect(match.pageKey, isNotNull);
+    });
   });
 }
 
@@ -84,4 +103,6 @@ class _Extra {
 }
 
 Widget _builder(BuildContext context, GoRouterState state) =>
+    const Placeholder();
+Widget _shellBuilder(BuildContext context, GoRouterState state, Widget child) =>
     const Placeholder();
