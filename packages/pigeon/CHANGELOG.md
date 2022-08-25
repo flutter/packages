@@ -1,5 +1,10 @@
-## 4.0.1
+## 4.0.2
+
 * Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
+## 4.0.1
+
+* Exposes `SwiftOptions`.
 
 ## 4.0.0
 
