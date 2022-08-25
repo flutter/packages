@@ -360,12 +360,10 @@ class ShellRoute extends RouteBase {
   ShellRoute({
     this.builder,
     this.pageBuilder,
-    List<RouteBase> routes = const <RouteBase>[],
+    super.routes,
     GlobalKey<NavigatorState>? navigatorKey,
   })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
-        super._(
-          routes: routes,
-        );
+        super._();
 
   /// The widget builder for a shell route.
   final ShellRouteBuilder? builder;

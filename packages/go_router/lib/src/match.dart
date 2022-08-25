@@ -4,8 +4,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:go_router/src/matching.dart';
 
+import 'matching.dart';
 import 'path_utils.dart';
 import 'route.dart';
 
