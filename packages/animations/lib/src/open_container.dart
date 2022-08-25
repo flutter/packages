@@ -315,6 +315,10 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
           clipBehavior: widget.clipBehavior,
           color: widget.closedColor,
           elevation: widget.closedElevation,
+          // For compatibility during the M3 migration the default shadow needs to be passed.
+          shadowColor: Theme.of(context).useMaterial3
+              ? Theme.of(context).shadowColor
+              : null,
           shape: widget.closedShape,
           child: Builder(
             key: _closedBuilderKey,

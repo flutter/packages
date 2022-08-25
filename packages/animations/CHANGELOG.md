@@ -1,5 +1,6 @@
-## NEXT
+## 2.0.4
 
+* Fixes shadow when Material 3 is enabled.
 * Updates text theme parameters to avoid deprecation issues.
 
 ## 2.0.3
