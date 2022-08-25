@@ -248,7 +248,7 @@ task:
         - ./script/tool_runner.sh build-examples --ios
       native_test_script:
         - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 13,OS=latest"
-    - name: ios-custom_package_tests
+    - name: macos-custom_package_tests
       # Run on macOS x64 image with Java runtime installed.
       env:
         PATH: $PATH:/usr/local/bin
