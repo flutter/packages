@@ -7,8 +7,6 @@ import 'dart:convert' show json;
 import 'dart:html' as html;
 import 'dart:math' as math;
 
-import 'package:meta/meta.dart';
-
 import 'src/common.dart';
 import 'src/recorder.dart';
 export 'src/recorder.dart';
@@ -20,7 +18,7 @@ typedef RecorderFactory = Recorder Function();
 ///
 /// When adding a new benchmark, add it to this map. Make sure that the name
 /// of your benchmark is unique.
-Map<String, RecorderFactory> _benchmarks;
+late Map<String, RecorderFactory> _benchmarks;
 
 final LocalBenchmarkServerClient _client = LocalBenchmarkServerClient();
 
@@ -50,8 +48,8 @@ Future<void> runBenchmarks(Map<String, RecorderFactory> benchmarks) async {
   html.window.location.reload();
 }
 
-Future<void> _runBenchmark(String benchmarkName) async {
-  final RecorderFactory recorderFactory = _benchmarks[benchmarkName];
+Future<void> _runBenchmark(String? benchmarkName) async {
+  final RecorderFactory? recorderFactory = _benchmarks[benchmarkName];
 
   if (recorderFactory == null) {
     _fallbackToManual('Benchmark $benchmarkName not found.');
@@ -105,7 +103,7 @@ Future<void> _runBenchmark(String benchmarkName) async {
 }
 
 void _fallbackToManual(String error) {
-  html.document.body.appendHtml('''
+  html.document.body!.appendHtml('''
     <div id="manual-panel">
       <h3>$error</h3>
 
@@ -122,9 +120,10 @@ void _fallbackToManual(String error) {
         ..allowInlineStyles());
 
   for (final String benchmarkName in _benchmarks.keys) {
-    final html.Element button = html.document.querySelector('#$benchmarkName');
+    // Find the button elements added above.
+    final html.Element button = html.document.querySelector('#$benchmarkName')!;
     button.addEventListener('click', (_) {
-      final html.Element manualPanel =
+      final html.Element? manualPanel =
           html.document.querySelector('#manual-panel');
       manualPanel?.remove();
       _runBenchmark(benchmarkName);
@@ -134,12 +133,14 @@ void _fallbackToManual(String error) {
 
 /// Visualizes results on the Web page for manual inspection.
 void _printResultsToScreen(Profile profile) {
-  html.document.body.innerHtml = '<h2>${profile.name}</h2>';
+  final html.BodyElement _body = html.document.body!;
+
+  _body.innerHtml = '<h2>${profile.name}</h2>';
 
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
-    html.document.body.appendHtml('<h2>$scoreKey</h2>');
-    html.document.body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    html.document.body.append(TimeseriesVisualization(timeseries).render());
+    _body.appendHtml('<h2>$scoreKey</h2>');
+    _body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
+    _body.append(TimeseriesVisualization(timeseries).render());
   });
 }
 
@@ -149,7 +150,7 @@ class TimeseriesVisualization {
   TimeseriesVisualization(this._timeseries) {
     _stats = _timeseries.computeStats();
     _canvas = html.CanvasElement();
-    _screenWidth = html.window.screen.width;
+    _screenWidth = html.window.screen!.width!;
     _canvas.width = _screenWidth;
     _canvas.height = (_kCanvasHeight * html.window.devicePixelRatio).round();
     _canvas.style
@@ -171,13 +172,13 @@ class TimeseriesVisualization {
   static const double _kCanvasHeight = 200;
 
   final Timeseries _timeseries;
-  TimeseriesStats _stats;
-  html.CanvasElement _canvas;
-  html.CanvasRenderingContext2D _ctx;
-  int _screenWidth;
+  late TimeseriesStats _stats;
+  late html.CanvasElement _canvas;
+  late html.CanvasRenderingContext2D _ctx;
+  late int _screenWidth;
 
   // Used to normalize benchmark values to chart height.
-  double _maxValueChartRange;
+  late double _maxValueChartRange;
 
   /// Converts a sample value to vertical canvas coordinates.
   ///
@@ -205,7 +206,7 @@ class TimeseriesVisualization {
       final AnnotatedSample sample = _stats.samples[i];
 
       if (sample.isWarmUpValue) {
-        // Put gray background behing warm-up samples.
+        // Put gray background behind warm-up samples.
         _ctx.fillStyle = 'rgba(200,200,200,1)';
         _ctx.fillRect(xOffset, 0, barWidth, _normalized(_maxValueChartRange));
       }
@@ -262,7 +263,7 @@ class LocalBenchmarkServerClient {
   /// This happens when you run benchmarks using plain `flutter run` rather than
   /// devicelab test harness. The test harness spins up a special server that
   /// provides API for automatically picking the next benchmark to run.
-  bool isInManualMode;
+  late bool isInManualMode;
 
   /// Asks the local server for the name of the next benchmark to run.
   ///
@@ -284,7 +285,7 @@ class LocalBenchmarkServerClient {
     }
 
     isInManualMode = false;
-    return request.responseText;
+    return request.responseText ?? kManualFallback;
   }
 
   void _checkNotManualMode() {
@@ -298,7 +299,7 @@ class LocalBenchmarkServerClient {
   /// This uses the chrome://tracing tracer, which is not available from within
   /// the page itself, and therefore must be controlled from outside using the
   /// DevTools Protocol.
-  Future<void> startPerformanceTracing(String benchmarkName) async {
+  Future<void> startPerformanceTracing(String? benchmarkName) async {
     _checkNotManualMode();
     await html.HttpRequest.request(
       '/start-performance-tracing?label=$benchmarkName',
@@ -364,13 +365,12 @@ class LocalBenchmarkServerClient {
   /// crash on 404, which we use to detect `flutter run`.
   Future<html.HttpRequest> _requestXhr(
     String url, {
-    @required String method,
-    @required String mimeType,
-    @required dynamic sendData,
+    required String method,
+    required String mimeType,
+    required dynamic sendData,
   }) {
     final Completer<html.HttpRequest> completer = Completer<html.HttpRequest>();
     final html.HttpRequest xhr = html.HttpRequest();
-    method ??= 'GET';
     xhr.open(method, url, async: true);
     xhr.overrideMimeType(mimeType);
     xhr.onLoad.listen((html.ProgressEvent e) {
