@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print, avoid_dynamic_calls
+
 import 'dart:async';
-import 'dart:convert' show json, utf8, LineSplitter, JsonEncoder;
+import 'dart:convert' show JsonEncoder, LineSplitter, json, utf8;
 import 'dart:io' as io;
 import 'dart:math' as math;
 
@@ -327,7 +329,7 @@ class BlinkTraceSummary {
       Exception noMeasuredFramesFound() => Exception(
             'No measured frames found in benchmark tracing data. This likely '
             'indicates a bug in the benchmark. For example, the benchmark failed '
-            'to pump enough frames. It may also indicate a change in Chrome\'s '
+            "to pump enough frames. It may also indicate a change in Chrome's "
             'tracing data format. Check if Chrome version changed recently and '
             'adjust the parsing code accordingly.',
           );
@@ -396,7 +398,7 @@ class BlinkTraceSummary {
             .whereType<BlinkTraceEvent>()
             .toList()),
       );
-    } catch (_, __) {
+    } catch (_) {
       final io.File traceFile = io.File('./chrome-trace.json');
       io.stderr.writeln(
           'Failed to interpret the Chrome trace contents. The trace was saved in ${traceFile.path}');
@@ -454,11 +456,11 @@ Duration _computeAverageDuration(List<BlinkTraceEvent> events) {
   final double sum = events
       .skip(math.max(events.length - kMeasuredSampleCount, 0))
       .fold(0.0, (double previousValue, BlinkTraceEvent event) {
-    final int? _threadClockDuration = event.tdur;
-    if (_threadClockDuration == null) {
+    final int? threadClockDuration = event.tdur;
+    if (threadClockDuration == null) {
       throw FormatException('Trace event lacks "tdur" field: $event');
     }
-    return previousValue + _threadClockDuration;
+    return previousValue + threadClockDuration;
   });
   final int sampleCount = math.min(events.length, kMeasuredSampleCount);
   return Duration(microseconds: sum ~/ sampleCount);
@@ -614,7 +616,7 @@ int? _readInt(Map<String, dynamic> json, String key) {
   final num? jsonValue = json[key];
 
   if (jsonValue == null) {
-    return null;
+    return null; // ignore: avoid_returning_null
   }
 
   return jsonValue.toInt();

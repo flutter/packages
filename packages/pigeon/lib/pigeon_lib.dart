@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
@@ -19,23 +21,23 @@ import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
-import 'package:pigeon/cpp_generator.dart';
-import 'package:pigeon/generator_tools.dart';
-import 'package:pigeon/java_generator.dart';
-import 'package:pigeon/swift_generator.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
+import 'cpp_generator.dart';
 import 'dart_generator.dart';
+import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
+import 'java_generator.dart';
 import 'objc_generator.dart';
+import 'swift_generator.dart';
 
 class _Asynchronous {
   const _Asynchronous();
 }
 
 /// Metadata to annotate a Api method as asynchronous
-const _Asynchronous async = _Asynchronous();
+const Object async = _Asynchronous();
 
 /// Metadata annotation used to configure how Pigeon will generate code.
 class ConfigurePigeon {
@@ -809,7 +811,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (node.uri.stringValue != 'package:pigeon/pigeon.dart') {
       _errors.add(Error(
         message:
-            'Unsupported import ${node.uri}, only imports of \'package:pigeon/pigeon.dart\' are supported.',
+            "Unsupported import ${node.uri}, only imports of 'package:pigeon/pigeon.dart' are supported.",
         lineNumber: _calculateLineNumber(source, node.offset),
       ));
     }
@@ -1011,7 +1013,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       if (node.isStatic) {
         _errors.add(Error(
             message:
-                'Pigeon doesn\'t support static fields ("${node.toString()}"), consider using enums.',
+                'Pigeon doesn\'t support static fields ("$node"), consider using enums.',
             lineNumber: _calculateLineNumber(source, node.offset)));
       } else if (type is dart_ast.NamedType) {
         final _FindInitializer findInitializerVisitor = _FindInitializer();
@@ -1033,7 +1035,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         }
       } else {
         _errors.add(Error(
-            message: 'Expected a named type but found "${node.toString()}".',
+            message: 'Expected a named type but found "$node".',
             lineNumber: _calculateLineNumber(source, node.offset)));
       }
     } else if (_currentApi != null) {
@@ -1140,15 +1142,13 @@ class Pigeon {
   /// String that describes how the tool is used.
   static String get usage {
     return '''
-
 Pigeon is a tool for generating type-safe communication code between Flutter
 and the host platform.
 
 usage: pigeon --input <pigeon path> --dart_out <dart path> [option]*
 
 options:
-''' +
-        _argParser.usage;
+${_argParser.usage}''';
   }
 
   static final ArgParser _argParser = ArgParser()
@@ -1182,14 +1182,13 @@ options:
         help:
             'Path to file with copyright header to be prepended to generated code.')
     ..addFlag('one_language',
-        help: 'Allow Pigeon to only generate code for one language.',
-        defaultsTo: false)
+        help: 'Allow Pigeon to only generate code for one language.')
     ..addOption('ast_out',
         help:
             'Path to generated AST debugging info. (Warning: format subject to change)')
     ..addFlag('debug_generators',
-        help: 'Print the line number of the generator in comments at newlines.',
-        defaultsTo: false);
+        help:
+            'Print the line number of the generator in comments at newlines.');
 
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
@@ -1239,7 +1238,7 @@ options:
               declaration.parameters[0].type == reflectClass(PigeonOptions)) {
             library.invoke(declaration.simpleName, <dynamic>[options]);
           } else {
-            print('warning: invalid \'configurePigeon\' method defined.');
+            print("warning: invalid 'configurePigeon' method defined.");
           }
         }
       }

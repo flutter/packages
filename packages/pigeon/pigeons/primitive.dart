@@ -10,9 +10,9 @@ abstract class PrimitiveHostApi {
   bool aBool(bool value);
   String aString(String value);
   double aDouble(double value);
-  // ignore: always_specify_types
+  // ignore: always_specify_types, strict_raw_type
   Map aMap(Map value);
-  // ignore: always_specify_types
+  // ignore: always_specify_types, strict_raw_type
   List aList(List value);
   Int32List anInt32List(Int32List value);
   List<bool?> aBoolList(List<bool?> value);
@@ -25,9 +25,9 @@ abstract class PrimitiveFlutterApi {
   bool aBool(bool value);
   String aString(String value);
   double aDouble(double value);
-  // ignore: always_specify_types
+  // ignore: always_specify_types, strict_raw_type
   Map aMap(Map value);
-  // ignore: always_specify_types
+  // ignore: always_specify_types, strict_raw_type
   List aList(List value);
   Int32List anInt32List(Int32List value);
   List<bool?> aBoolList(List<bool?> value);
