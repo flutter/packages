@@ -27,8 +27,7 @@ class ShellRouteExampleApp extends StatelessWidget {
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (BuildContext context, GoRouterState state, Widget child) {
-          /// Builds a Scaffold with a bottom navigation bar.
-          return AppScaffold(child: child);
+          return ScaffoldWithNavBar(child: child);
         },
         routes: <RouteBase>[
           /// The first screen to display in the bottom navigation bar.
@@ -86,9 +85,9 @@ class ShellRouteExampleApp extends StatelessWidget {
 
 /// Builds the "shell" for the app by building a Scaffold with a
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
-class AppScaffold extends StatelessWidget {
-  /// Constructs an [AppScaffold].
-  const AppScaffold({
+class ScaffoldWithNavBar extends StatelessWidget {
+  /// Constructs an [ScaffoldWithNavBar].
+  const ScaffoldWithNavBar({
     required this.child,
     Key? key,
   }) : super(key: key);
