@@ -81,6 +81,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Pushes the given location onto the page stack
   void push(GoRouteMatch match) {
+    if (match.route is ShellRoute) {
+      throw GoError('ShellRoutes cannot be pushed');
+    }
+
     // Remap the pageKey to allow any number of the same page on the stack
     final String fullPath = match.template;
     final int count = (_pushCounts[fullPath] ?? 0) + 1;
@@ -152,4 +156,16 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // synchronously and remove unwanted initial animations on deep-linking
     return SynchronousFuture<void>(null);
   }
+}
+
+/// Thrown when [GoRouter] is used incorrectly.
+class GoError extends Error {
+  /// Constructs a [GoError]
+  GoError(this.message);
+
+  /// The error message.
+  final String message;
+
+  @override
+  String toString() => 'GoError: $message';
 }
