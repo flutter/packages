@@ -239,8 +239,8 @@ class _ZoomedFadeInFadeOut extends StatelessWidget {
         Widget? child,
       ) {
         return _FadeOut(
-          child: child,
           animation: animation,
+          child: child,
         );
       },
       child: child,

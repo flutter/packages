@@ -1,3 +1,16 @@
+## 4.0.2
+
+* Fixes lint warnings.
+
+## 4.0.1
+
+* Exposes `SwiftOptions`.
+
+## 4.0.0
+
+* [java] **BREAKING CHANGE**: Changes style for enum values from camelCase to snake_case.
+  Generated java enum values will now always be in upper snake_case.
+
 ## 3.2.9
 
 * Updates text theme parameters to avoid deprecation issues.

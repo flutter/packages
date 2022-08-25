@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes lint warnings in tests.
+
 ## 0.3.3+1
 
 * Fixes `lastModified` unimplemented error description.

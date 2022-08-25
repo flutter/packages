@@ -8,6 +8,7 @@ import 'package:rfw/formats.dart';
 
 void main(List<String> arguments) {
   if (arguments.length != 2) {
+    // ignore: avoid_print
     print('usage: dart encode.dart source.rfwtxt output.rfw');
     exit(1);
   }

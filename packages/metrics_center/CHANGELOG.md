@@ -1,3 +1,7 @@
+## 1.0.6
+
+- Fixes lint warnings.
+
 ## 1.0.5
 
 - Fix JSON parsing issue when running in sound null-safety mode.

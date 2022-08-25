@@ -17,8 +17,7 @@ void main() {
               baseName: 'int',
               isNullable: true,
             ),
-            name: 'field1',
-            offset: null),
+            name: 'field1'),
       ],
     );
     final Root root = Root(
@@ -41,7 +40,8 @@ void main() {
       name: 'Foobar',
       members: <String>[
         'one',
-        'two',
+        'twoThreeFour',
+        'remoteDB',
       ],
     );
     final Root root = Root(
@@ -54,8 +54,9 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public enum Foobar'));
-    expect(code, contains('    one(0),'));
-    expect(code, contains('    two(1);'));
+    expect(code, contains('    ONE(0),'));
+    expect(code, contains('    TWO_THREE_FOUR(1),'));
+    expect(code, contains('    REMOTE_DB(2);'));
     expect(code, contains('private int index;'));
     expect(code, contains('private Foobar(final int index) {'));
     expect(code, contains('      this.index = index;'));
@@ -70,8 +71,7 @@ void main() {
               baseName: 'int',
               isNullable: true,
             ),
-            name: 'field1',
-            offset: null)
+            name: 'field1')
       ],
     );
     final Root root = Root(
@@ -99,12 +99,10 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -114,8 +112,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -123,8 +120,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -144,57 +140,49 @@ void main() {
               baseName: 'bool',
               isNullable: true,
             ),
-            name: 'aBool',
-            offset: null),
+            name: 'aBool'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'int',
               isNullable: true,
             ),
-            name: 'aInt',
-            offset: null),
+            name: 'aInt'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'double',
               isNullable: true,
             ),
-            name: 'aDouble',
-            offset: null),
+            name: 'aDouble'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'aString',
-            offset: null),
+            name: 'aString'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'Uint8List',
               isNullable: true,
             ),
-            name: 'aUint8List',
-            offset: null),
+            name: 'aUint8List'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'Int32List',
               isNullable: true,
             ),
-            name: 'aInt32List',
-            offset: null),
+            name: 'aInt32List'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'Int64List',
               isNullable: true,
             ),
-            name: 'aInt64List',
-            offset: null),
+            name: 'aInt64List'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'Float64List',
               isNullable: true,
             ),
-            name: 'aFloat64List',
-            offset: null),
+            name: 'aFloat64List'),
       ]),
     ], enums: <Enum>[]);
 
@@ -223,12 +211,10 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -238,8 +224,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -247,8 +232,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -270,11 +254,9 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -284,8 +266,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -307,11 +288,9 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -321,8 +300,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -341,7 +319,6 @@ void main() {
           arguments: <NamedType>[],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -351,8 +328,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -371,7 +347,6 @@ void main() {
           arguments: <NamedType>[],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -381,8 +356,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -401,8 +375,7 @@ void main() {
               baseName: 'List',
               isNullable: true,
             ),
-            name: 'field1',
-            offset: null)
+            name: 'field1')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -421,8 +394,7 @@ void main() {
               baseName: 'Map',
               isNullable: true,
             ),
-            name: 'field1',
-            offset: null)
+            name: 'field1')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -442,8 +414,7 @@ void main() {
               baseName: 'Nested',
               isNullable: true,
             ),
-            name: 'nested',
-            offset: null)
+            name: 'nested')
       ],
     );
     final Class nestedClass = Class(
@@ -454,8 +425,7 @@ void main() {
               baseName: 'int',
               isNullable: true,
             ),
-            name: 'data',
-            offset: null)
+            name: 'data')
       ],
     );
     final Root root = Root(
@@ -488,8 +458,7 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: 'arg',
-                offset: null)
+                name: 'arg')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
@@ -503,8 +472,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -512,8 +480,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -542,8 +509,7 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
@@ -557,8 +523,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -566,8 +531,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -583,7 +547,8 @@ void main() {
       name: 'Enum1',
       members: <String>[
         'one',
-        'two',
+        'twoThreeFour',
+        'remoteDB',
       ],
     );
     final Class klass = Class(
@@ -594,8 +559,7 @@ void main() {
               baseName: 'Enum1',
               isNullable: true,
             ),
-            name: 'enum1',
-            offset: null),
+            name: 'enum1'),
       ],
     );
     final Root root = Root(
@@ -608,8 +572,9 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public enum Enum1'));
-    expect(code, contains('    one(0),'));
-    expect(code, contains('    two(1);'));
+    expect(code, contains('    ONE(0),'));
+    expect(code, contains('    TWO_THREE_FOUR(1),'));
+    expect(code, contains('    REMOTE_DB(2);'));
     expect(code, contains('private int index;'));
     expect(code, contains('private Enum1(final int index) {'));
     expect(code, contains('      this.index = index;'));
@@ -651,7 +616,7 @@ void main() {
             'Foo fooArg = args.get(0) == null ? null : Foo.values()[(int)args.get(0)];'));
   });
 
-  Iterable<String> _makeIterable(String string) sync* {
+  Iterable<String> makeIterable(String string) sync* {
     yield string;
   }
 
@@ -660,7 +625,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(
       className: 'Messages',
-      copyrightHeader: _makeIterable('hello world'),
+      copyrightHeader: makeIterable('hello world'),
     );
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
@@ -678,8 +643,7 @@ void main() {
                 typeArguments: <TypeDeclaration>[
                   TypeDeclaration(baseName: 'int', isNullable: true)
                 ]),
-            name: 'field1',
-            offset: null),
+            name: 'field1'),
       ],
     );
     final Root root = Root(
@@ -707,8 +671,7 @@ void main() {
                   TypeDeclaration(baseName: 'String', isNullable: true),
                   TypeDeclaration(baseName: 'String', isNullable: true),
                 ]),
-            name: 'field1',
-            offset: null),
+            name: 'field1'),
       ],
     );
     final Root root = Root(
@@ -739,8 +702,7 @@ void main() {
                         typeArguments: <TypeDeclaration>[
                           TypeDeclaration(baseName: 'int', isNullable: true)
                         ]),
-                    name: 'arg',
-                    offset: null)
+                    name: 'arg')
               ])
         ])
       ],
@@ -769,8 +731,7 @@ void main() {
                         typeArguments: <TypeDeclaration>[
                           TypeDeclaration(baseName: 'int', isNullable: true)
                         ]),
-                    name: 'arg',
-                    offset: null)
+                    name: 'arg')
               ])
         ])
       ],
@@ -878,7 +839,6 @@ void main() {
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
           ],
           returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -914,7 +874,6 @@ void main() {
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
           ],
           returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);

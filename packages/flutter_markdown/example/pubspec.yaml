@@ -9,10 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-dev_dependencies:
   flutter_markdown:
     path: ../
+  markdown: 5.0.0
+
+dev_dependencies:
   flutter_test:
     sdk: flutter
 

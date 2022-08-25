@@ -5,11 +5,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:multicast_dns/src/constants.dart';
-import 'package:multicast_dns/src/lookup_resolver.dart';
-import 'package:multicast_dns/src/native_protocol_client.dart';
-import 'package:multicast_dns/src/packet.dart';
-import 'package:multicast_dns/src/resource_record.dart';
+import 'src/constants.dart';
+import 'src/lookup_resolver.dart';
+import 'src/native_protocol_client.dart';
+import 'src/packet.dart';
+import 'src/resource_record.dart';
 
 export 'package:multicast_dns/src/resource_record.dart';
 

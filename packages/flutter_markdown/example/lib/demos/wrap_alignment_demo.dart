@@ -28,6 +28,8 @@ spacing parameter. The Markdown widget lays out block elements in a column using
 spacing parameter sets the height of the **SizedBox**.
 ''';
 
+// TODO(goderbauer): Restructure the examples to avoid this ignore, https://github.com/flutter/flutter/issues/110208.
+// ignore: avoid_implementing_value_types
 class WrapAlignmentDemo extends StatefulWidget implements MarkdownDemoWidget {
   const WrapAlignmentDemo({Key? key}) : super(key: key);
 
@@ -48,7 +50,7 @@ class WrapAlignmentDemo extends StatefulWidget implements MarkdownDemoWidget {
   Future<String> get notes => Future<String>.value(_notes);
 
   @override
-  _WrapAlignmentDemoState createState() => _WrapAlignmentDemoState();
+  State<WrapAlignmentDemo> createState() => _WrapAlignmentDemoState();
 }
 
 class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
