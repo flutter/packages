@@ -289,7 +289,7 @@ class _BuilderTestWidget extends StatelessWidget {
   _BuilderTestWidget({
     required this.routeConfiguration,
     required this.matches,
-  })  : builder = _routeBuilder(routeConfiguration);
+  }) : builder = _routeBuilder(routeConfiguration);
 
   final RouteConfiguration routeConfiguration;
   final RouteBuilder builder;
