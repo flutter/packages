@@ -74,6 +74,7 @@ still use `DynamicGridView.builder` that works the same as `GridView.builder`.
 The following are simple examples of how to use `DynamicGridView.wrap` and
 `DynamicGridView.builder` with the `SliverGridDelegateWithWrapping` delegate.
 
+<?code-excerpt "dynamic_grid_view_wrap.dart" (Example)?>
 ```dart
 final List<Widget> children = List.generate(
    250,
@@ -96,6 +97,7 @@ Here is the result of the code:
 
 <video src="assets/simple_wrap_demo.mov">
 
+<?code-excerpt "dynamic_grid_view_builder.dart (Example)"?>
 ```dart
 DynamicGridView.builder(
      gridDelegate: const SliverGridDelegateWithWrapping(
@@ -126,6 +128,7 @@ Using the Staggered layout is simple. It can be used with the
 like `SliverGridDelegateWithMaxCrossAxisExtent` and
 `SliverGridDelegateWithFixedCrossAxisCount`.
 
+<?code-excerpt "dynamic_grid_view_stagger.dart (Example)"?>
 ```dart
 DynamicGridView.stagger(
       crossAxisCount: 4,
