@@ -1,3 +1,7 @@
+## 4.3.0
+
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+
 ## 4.2.9
 
 * Updates text theme parameters to avoid deprecation issues.

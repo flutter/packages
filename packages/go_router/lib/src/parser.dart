@@ -113,6 +113,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         fullpath: uri.path,
         encodedParams: <String, String>{},
         queryParams: uri.queryParameters,
+        queryParametersAll: uri.queryParametersAll,
         extra: null,
         error: error,
         route: GoRoute(
