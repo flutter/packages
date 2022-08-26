@@ -44,7 +44,7 @@ class OpenContainerTransformDemo extends StatefulWidget {
   const OpenContainerTransformDemo({Key? key}) : super(key: key);
 
   @override
-  _OpenContainerTransformDemoState createState() {
+  State<OpenContainerTransformDemo> createState() {
     return _OpenContainerTransformDemoState();
   }
 }
@@ -54,10 +54,11 @@ class _OpenContainerTransformDemoState
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
-    if (isMarkedAsDone ?? false)
+    if (isMarkedAsDone ?? false) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Marked as done!'),
       ));
+    }
   }
 
   void _showSettingsBottomModalSheet(BuildContext context) {
@@ -464,7 +465,6 @@ class _InkWellOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      width: null,
       child: InkWell(
         onTap: openContainer,
         child: child,

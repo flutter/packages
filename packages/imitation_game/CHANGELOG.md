@@ -1,3 +1,7 @@
+## 0.0.2+1
+
+* Fixes lint warnings.
+
 ## 0.0.2
 
 * Migrate to null safety.

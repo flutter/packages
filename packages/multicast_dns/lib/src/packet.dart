@@ -6,8 +6,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:multicast_dns/src/constants.dart';
-import 'package:multicast_dns/src/resource_record.dart';
+import 'constants.dart';
+import 'resource_record.dart';
 
 // Offsets into the header. See https://tools.ietf.org/html/rfc1035.
 const int _kIdOffset = 0;

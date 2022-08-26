@@ -1,7 +1,8 @@
-## NEXT
+## 1.0.6
 
 * Temporarily lowers test coverage minimum to fix flutter roll.
-* Disable golden testing due to https://github.com/flutter/flutter/issues/106205
+* Disables golden testing due to https://github.com/flutter/flutter/issues/106205.
+* Fixes lint warnings.
 
 ## 1.0.5
 

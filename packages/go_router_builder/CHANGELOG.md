@@ -1,6 +1,10 @@
-## 1.0.9
+## 1.0.10
 
 * Replaces mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
+
+## 1.0.9
+
+* Fixes lint warnings.
 
 ## 1.0.8
 

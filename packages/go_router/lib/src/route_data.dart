@@ -78,7 +78,7 @@ abstract class GoRouteData {
           .replace(
             queryParameters:
                 // Avoid `?` in generated location if `queryParams` is empty
-                queryParams?.isNotEmpty == true ? queryParams : null,
+                queryParams?.isNotEmpty ?? false ? queryParams : null,
           )
           .toString();
 

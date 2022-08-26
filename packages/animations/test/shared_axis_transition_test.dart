@@ -596,9 +596,9 @@ void main() {
         child: Center(
           child: SharedAxisTransition(
             transitionType: SharedAxisTransitionType.horizontal,
-            child: const _StatefulTestWidget(name: 'Foo'),
             animation: animation,
             secondaryAnimation: secondaryAnimation,
+            child: const _StatefulTestWidget(name: 'Foo'),
           ),
         ),
       ));
@@ -1239,9 +1239,9 @@ void main() {
         child: Center(
           child: SharedAxisTransition(
             transitionType: SharedAxisTransitionType.vertical,
-            child: const _StatefulTestWidget(name: 'Foo'),
             animation: animation,
             secondaryAnimation: secondaryAnimation,
+            child: const _StatefulTestWidget(name: 'Foo'),
           ),
         ),
       ));
@@ -1775,9 +1775,9 @@ void main() {
         child: Center(
           child: SharedAxisTransition(
             transitionType: SharedAxisTransitionType.scaled,
-            child: const _StatefulTestWidget(name: 'Foo'),
             animation: animation,
             secondaryAnimation: secondaryAnimation,
+            child: const _StatefulTestWidget(name: 'Foo'),
           ),
         ),
       ));
