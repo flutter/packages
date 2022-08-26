@@ -152,7 +152,6 @@ Directory? get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR');
 Directory? getUserDirectory(String dirName) {
   final ProcessResult result = _processManager.runSync(
     <String>['xdg-user-dir', dirName],
-    includeParentEnvironment: true,
     stdoutEncoding: utf8,
   );
   final String path = (result.stdout as String).split('\n')[0];

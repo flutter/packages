@@ -1,8 +1,6 @@
 name: adaptive_scaffold_example
 description: Multiple examples of the usage of the AdaptiveScaffold widget and its lower level widgets.
-
-publish_to: none
-
+publish_to: 'none'
 version: 0.0.1
 
 environment:
@@ -14,11 +12,20 @@ dependencies:
     path: ../../adaptive_scaffold
   flutter:
     sdk: flutter
+  flutter_lints: ^2.0.0
 
 dev_dependencies:
+  build_runner: ^2.1.10
   flutter_test:
     sdk: flutter
 
 flutter:
   uses-material-design: true
-  
+
+  assets:
+    - images/potato.png
+    - images/habanero.png
+    - images/strawberry.png
+    - images/plum.png
+    - images/mushroom.png
+    - images/avocado.png

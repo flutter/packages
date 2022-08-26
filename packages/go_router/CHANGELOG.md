@@ -1,3 +1,8 @@
+## 4.2.9
+
+* Updates text theme parameters to avoid deprecation issues.
+* Fixes lint warnings.
+
 ## 4.2.8
 
 - Fixes namedLocation to return URIs without trailing question marks if there are no query parameters.

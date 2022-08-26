@@ -180,7 +180,7 @@ class Emulator {
       '-device', 'virtio-blk-pci,drive=vdisk',
       '-append',
       // TODO(chillers): Generate entropy mixin.
-      '\'TERM=xterm-256color kernel.serial=legacy kernel.entropy-mixin=660486b6b20b4ace3fb5c81b0002abf5271289185c6a5620707606c55b377562 kernel.halt-on-panic=true\'',
+      "'TERM=xterm-256color kernel.serial=legacy kernel.entropy-mixin=660486b6b20b4ace3fb5c81b0002abf5271289185c6a5620707606c55b377562 kernel.halt-on-panic=true'",
     ];
 
     await cli.start(aemuCommand);

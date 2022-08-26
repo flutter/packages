@@ -43,6 +43,8 @@ Since GitHub Flavored is the default extension set, it is the initial setting
 for the formatted Markdown view in the demo.
 """;
 
+// TODO(goderbauer): Restructure the examples to avoid this ignore, https://github.com/flutter/flutter/issues/110208.
+// ignore: avoid_implementing_value_types
 class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
   const BasicMarkdownDemo({Key? key}) : super(key: key);
 
@@ -63,7 +65,7 @@ class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
   Future<String> get notes => Future<String>.value(_notes);
 
   @override
-  _BasicMarkdownDemoState createState() => _BasicMarkdownDemoState();
+  State<BasicMarkdownDemo> createState() => _BasicMarkdownDemoState();
 }
 
 class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
@@ -139,22 +141,22 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
             children: <Widget>[
               Text(
                 'See the following link for more information:',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link text: $text',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link destination: $href',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link title: $title',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),

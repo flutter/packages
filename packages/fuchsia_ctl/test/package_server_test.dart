@@ -112,7 +112,6 @@ void main() {
 
     await server.serveRepo(
       repoPath,
-      port: 0,
       portFilePath: portFile.path,
     );
     expect(server.serving, true);

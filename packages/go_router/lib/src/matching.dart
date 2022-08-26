@@ -100,8 +100,7 @@ class RouteMatchList {
 /// An error that occurred during matching.
 class MatcherError extends Error {
   /// Constructs a [MatcherError].
-  MatcherError(String message, this.location)
-      : message = message + ': $location';
+  MatcherError(String message, this.location) : message = '$message: $location';
 
   /// The error message.
   final String message;

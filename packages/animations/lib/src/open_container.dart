@@ -261,7 +261,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   final Clip clipBehavior;
 
   @override
-  _OpenContainerState<T> createState() => _OpenContainerState<T>();
+  State<OpenContainer<T?>> createState() => _OpenContainerState<T>();
 }
 
 class _OpenContainerState<T> extends State<OpenContainer<T?>> {

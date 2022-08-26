@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:multicast_dns/src/resource_record.dart';
+import 'resource_record.dart';
 
 /// Class for maintaining state about pending mDNS requests.
 class PendingRequest extends LinkedListEntry<PendingRequest> {

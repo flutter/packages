@@ -111,13 +111,10 @@ class RedirectionError extends Error implements UnsupportedError {
   final Uri location;
 
   @override
-  String toString() =>
-      super.toString() +
-      ' ' +
-      <String>[
+  String toString() => '${super.toString()} ${<String>[
         ...matches.map(
             (RouteMatchList routeMatches) => routeMatches.location.toString()),
-      ].join(' => ');
+      ].join(' => ')}';
 }
 
 /// Adds the redirect to [redirects] if it is valid.

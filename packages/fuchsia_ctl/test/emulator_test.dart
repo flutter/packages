@@ -26,7 +26,7 @@ void main() {
   group('Emulator', () {
     setUp(() {
       mockCli = MockCommandLine();
-      fs = MemoryFileSystem(style: FileSystemStyle.posix);
+      fs = MemoryFileSystem();
       fs.file(aemuPath).createSync();
       fs.file(fuchsiaImagePath)
         ..createSync()

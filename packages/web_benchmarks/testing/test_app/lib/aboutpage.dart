@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 const ValueKey<String> backKey = ValueKey<String>('backKey');
 
 class AboutPage extends StatelessWidget {
-  const AboutPage({Key key}) : super(key: key);
+  const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
       body: Center(
         child: Text(
           'This is a sample app.',
-          style: Theme.of(context).textTheme.headline3,
+          style: Theme.of(context).textTheme.displaySmall,
         ),
       ),
     );

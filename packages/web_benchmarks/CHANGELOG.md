@@ -1,3 +1,17 @@
+## 0.1.0+1
+
+* Fixes lint warnings.
+
+## 0.1.0
+
+* Migrates to null safety.
+* **BREAKING CHANGES**:
+    * Required parameters are non-nullable.
+
+## 0.0.7+1
+
+* Updates text theme parameters to avoid deprecation issues.
+
 ## 0.0.7
 
 * Updates BlinkTraceEvents to match with changes in Chromium v89+

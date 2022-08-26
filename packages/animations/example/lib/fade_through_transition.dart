@@ -11,7 +11,7 @@ class FadeThroughTransitionDemo extends StatefulWidget {
   const FadeThroughTransitionDemo({Key? key}) : super(key: key);
 
   @override
-  _FadeThroughTransitionDemoState createState() =>
+  State<FadeThroughTransitionDemo> createState() =>
       _FadeThroughTransitionDemoState();
 }
 
@@ -96,11 +96,11 @@ class _ExampleCard extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         '123 photos',
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       Text(
                         '123 photos',
-                        style: Theme.of(context).textTheme.caption,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),

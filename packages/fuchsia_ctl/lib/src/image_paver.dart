@@ -26,7 +26,7 @@ class ImagePaver {
   const ImagePaver({
     this.processManager = const LocalProcessManager(),
     this.fs = const LocalFileSystem(),
-    this.tar = const SystemTar(processManager: LocalProcessManager()),
+    this.tar = const SystemTar(),
     this.sshKeyManagerProvider = SystemSshKeyManager.defaultProvider,
   })  : assert(processManager != null),
         assert(fs != null),

@@ -1,3 +1,7 @@
+## 2.0.7
+
+* Fixes lint warnings.
+
 ## 2.0.6
 
 * Drops support for Flutter <2.8.

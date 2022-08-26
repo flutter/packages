@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert' show json;
 import 'dart:io' as io;
 
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:process/process.dart';
 import 'package:shelf/shelf.dart';
@@ -47,12 +48,12 @@ class BenchmarkServer {
   /// If [headless] is true, runs Chrome without UI. In particular, this is
   /// useful in environments (e.g. CI) that doesn't have a display.
   BenchmarkServer({
-    @required this.benchmarkAppDirectory,
-    @required this.entryPoint,
-    @required this.useCanvasKit,
-    @required this.benchmarkServerPort,
-    @required this.chromeDebugPort,
-    @required this.headless,
+    required this.benchmarkAppDirectory,
+    required this.entryPoint,
+    required this.useCanvasKit,
+    required this.benchmarkServerPort,
+    required this.chromeDebugPort,
+    required this.headless,
   });
 
   final ProcessManager _processManager = const LocalProcessManager();
@@ -90,7 +91,7 @@ class BenchmarkServer {
 
     if (!_processManager.canRun('flutter')) {
       throw Exception(
-          'flutter executable is not runnable. Make sure it\'s in the PATH.');
+          "flutter executable is not runnable. Make sure it's in the PATH.");
     }
 
     final io.ProcessResult buildResult = await _processManager.run(
@@ -117,16 +118,16 @@ class BenchmarkServer {
         Completer<List<Map<String, dynamic>>>();
     final List<Map<String, dynamic>> collectedProfiles =
         <Map<String, dynamic>>[];
-    List<String> benchmarks;
-    Iterator<String> benchmarkIterator;
+    List<String>? benchmarks;
+    late Iterator<String> benchmarkIterator;
 
     // This future fixes a race condition between the web-page loading and
     // asking to run a benchmark, and us connecting to Chrome's DevTools port.
     // Sometime one wins. Other times, the other wins.
-    Future<Chrome> whenChromeIsReady;
-    Chrome chrome;
-    io.HttpServer server;
-    List<Map<String, dynamic>> latestPerformanceTrace;
+    Future<Chrome>? whenChromeIsReady;
+    Chrome? chrome;
+    late io.HttpServer server;
+    List<Map<String, dynamic>>? latestPerformanceTrace;
     Cascade cascade = Cascade();
 
     // Serves the static files built for the app (html, js, images, fonts, etc)
@@ -143,11 +144,11 @@ class BenchmarkServer {
         if (request.requestedUri.path.endsWith('/profile-data')) {
           final Map<String, dynamic> profile =
               json.decode(await request.readAsString());
-          final String benchmarkName = profile['name'];
+          final String? benchmarkName = profile['name'];
           if (benchmarkName != benchmarkIterator.current) {
             profileData.completeError(Exception(
               'Browser returned benchmark results from a wrong benchmark.\n'
-              'Requested to run bechmark ${benchmarkIterator.current}, but '
+              'Requested to run benchmark ${benchmarkIterator.current}, but '
               'got results for $benchmarkName.',
             ));
             server.close();
@@ -155,13 +156,13 @@ class BenchmarkServer {
 
           // Trace data is null when the benchmark is not frame-based, such as RawRecorder.
           if (latestPerformanceTrace != null) {
-            final BlinkTraceSummary traceSummary =
-                BlinkTraceSummary.fromJson(latestPerformanceTrace);
+            final BlinkTraceSummary? traceSummary =
+                BlinkTraceSummary.fromJson(latestPerformanceTrace!);
             profile['totalUiFrame.average'] =
-                traceSummary.averageTotalUIFrameTime.inMicroseconds;
+                traceSummary?.averageTotalUIFrameTime.inMicroseconds;
             profile['scoreKeys'] ??=
                 <dynamic>[]; // using dynamic for consistency with JSON
-            profile['scoreKeys'].add('totalUiFrame.average');
+            (profile['scoreKeys'] as List<dynamic>).add('totalUiFrame.average');
             latestPerformanceTrace = null;
           }
           collectedProfiles.add(profile);
@@ -169,12 +170,12 @@ class BenchmarkServer {
         } else if (request.requestedUri.path
             .endsWith('/start-performance-tracing')) {
           latestPerformanceTrace = null;
-          await chrome.beginRecordingPerformance(
+          await chrome!.beginRecordingPerformance(
               request.requestedUri.queryParameters['label']);
           return Response.ok('Started performance tracing');
         } else if (request.requestedUri.path
             .endsWith('/stop-performance-tracing')) {
-          latestPerformanceTrace = await chrome.endRecordingPerformance();
+          latestPerformanceTrace = await chrome!.endRecordingPerformance();
           return Response.ok('Stopped performance tracing');
         } else if (request.requestedUri.path.endsWith('/on-error')) {
           final Map<String, dynamic> errorDetails =
@@ -192,8 +193,9 @@ class BenchmarkServer {
         } else if (request.requestedUri.path.endsWith('/next-benchmark')) {
           if (benchmarks == null) {
             benchmarks =
-                (json.decode(await request.readAsString())).cast<String>();
-            benchmarkIterator = benchmarks.iterator;
+                (json.decode(await request.readAsString()) as List<dynamic>)
+                    .cast<String>();
+            benchmarkIterator = benchmarks!.iterator;
           }
           if (benchmarkIterator.moveNext()) {
             final String nextBenchmark = benchmarkIterator.current;
@@ -245,8 +247,6 @@ class BenchmarkServer {
       final ChromeOptions options = ChromeOptions(
         url: 'http://localhost:$benchmarkServerPort/index.html',
         userDataDirectory: userDataDir,
-        windowHeight: 1024,
-        windowWidth: 1024,
         headless: headless,
         debugPort: chromeDebugPort,
       );
@@ -273,17 +273,18 @@ class BenchmarkServer {
       for (final Map<String, dynamic> profile in profiles) {
         final String benchmarkName = profile['name'];
         if (benchmarkName.isEmpty) {
-          throw 'Benchmark name is empty';
+          throw StateError('Benchmark name is empty');
         }
 
         final List<String> scoreKeys = List<String>.from(profile['scoreKeys']);
         if (scoreKeys == null || scoreKeys.isEmpty) {
-          throw 'No score keys in benchmark "$benchmarkName"';
+          throw StateError('No score keys in benchmark "$benchmarkName"');
         }
         for (final String scoreKey in scoreKeys) {
           if (scoreKey == null || scoreKey.isEmpty) {
-            throw 'Score key is empty in benchmark "$benchmarkName". '
-                'Received [${scoreKeys.join(', ')}]';
+            throw StateError(
+                'Score key is empty in benchmark "$benchmarkName". '
+                'Received [${scoreKeys.join(', ')}]');
           }
         }
 
@@ -312,7 +313,7 @@ class BenchmarkServer {
         );
         await chrome?.whenExits;
       }
-      server?.close();
+      server.close();
     }
   }
 }

@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' show Directory, File;
+
+import 'package:path/path.dart' as path;
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/dart_generator.dart';
 import 'package:pigeon/generator_tools.dart';
@@ -17,8 +20,7 @@ void main() {
               baseName: 'dataType1',
               isNullable: true,
             ),
-            name: 'field1',
-            offset: null),
+            name: 'field1'),
       ],
     );
     final Root root = Root(
@@ -65,12 +67,10 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: 'input',
-                offset: null)
+                name: 'input')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -80,8 +80,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -89,8 +88,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -116,7 +114,6 @@ void main() {
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
           ],
           returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -144,7 +141,6 @@ void main() {
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
           ],
           returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -170,8 +166,7 @@ void main() {
                 baseName: 'String',
                 isNullable: true,
               ),
-              name: 'input',
-              offset: null)
+              name: 'input')
         ],
       ),
       Class(
@@ -182,8 +177,7 @@ void main() {
                 baseName: 'Input',
                 isNullable: true,
               ),
-              name: 'nested',
-              offset: null)
+              name: 'nested')
         ],
       )
     ], enums: <Enum>[]);
@@ -193,13 +187,13 @@ void main() {
     expect(
       code,
       contains(
-        'pigeonMap[\'nested\'] = nested?.encode()',
+        "pigeonMap['nested'] = nested?.encode()",
       ),
     );
     expect(
       code.replaceAll('\n', ' ').replaceAll('  ', ''),
       contains(
-        'nested: pigeonMap[\'nested\'] != null ? Input.decode(pigeonMap[\'nested\']!) : null',
+        "nested: pigeonMap['nested'] != null ? Input.decode(pigeonMap['nested']!) : null",
       ),
     );
   });
@@ -214,8 +208,7 @@ void main() {
                 baseName: 'String',
                 isNullable: false,
               ),
-              name: 'input',
-              offset: null)
+              name: 'input')
         ],
       ),
       Class(
@@ -226,8 +219,7 @@ void main() {
                 baseName: 'Input',
                 isNullable: false,
               ),
-              name: 'nested',
-              offset: null)
+              name: 'nested')
         ],
       )
     ], enums: <Enum>[]);
@@ -237,13 +229,13 @@ void main() {
     expect(
       code,
       contains(
-        'pigeonMap[\'nested\'] = nested.encode()',
+        "pigeonMap['nested'] = nested.encode()",
       ),
     );
     expect(
       code.replaceAll('\n', ' ').replaceAll('  ', ''),
       contains(
-        'nested: Input.decode(pigeonMap[\'nested\']!)',
+        "nested: Input.decode(pigeonMap['nested']!)",
       ),
     );
   });
@@ -259,12 +251,10 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: 'input',
-                offset: null)
+                name: 'input')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -274,8 +264,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -283,8 +272,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -306,11 +294,9 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -320,8 +306,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -342,11 +327,9 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -356,8 +339,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -378,7 +360,6 @@ void main() {
           arguments: <NamedType>[],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -388,8 +369,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -410,12 +390,10 @@ void main() {
                   baseName: 'EnumClass',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType:
               const TypeDeclaration(baseName: 'EnumClass', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -425,8 +403,7 @@ void main() {
               baseName: 'Enum',
               isNullable: true,
             ),
-            name: 'enum1',
-            offset: null)
+            name: 'enum1')
       ]),
     ], enums: <Enum>[
       Enum(
@@ -440,8 +417,8 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, contains('pigeonMap[\'enum1\'] = enum1?.index;'));
-    expect(code, contains('? Enum.values[pigeonMap[\'enum1\']! as int]'));
+    expect(code, contains("pigeonMap['enum1'] = enum1?.index;"));
+    expect(code, contains("? Enum.values[pigeonMap['enum1']! as int]"));
     expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
   });
 
@@ -480,12 +457,10 @@ void main() {
                   baseName: 'EnumClass',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType:
               const TypeDeclaration(baseName: 'EnumClass', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -495,8 +470,7 @@ void main() {
               baseName: 'Enum',
               isNullable: false,
             ),
-            name: 'enum1',
-            offset: null)
+            name: 'enum1')
       ]),
     ], enums: <Enum>[
       Enum(
@@ -510,8 +484,8 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, contains('pigeonMap[\'enum1\'] = enum1.index;'));
-    expect(code, contains('enum1: Enum.values[pigeonMap[\'enum1\']! as int]'));
+    expect(code, contains("pigeonMap['enum1'] = enum1.index;"));
+    expect(code, contains("enum1: Enum.values[pigeonMap['enum1']! as int]"));
   });
 
   test('host void argument', () {
@@ -522,7 +496,6 @@ void main() {
           arguments: <NamedType>[],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -532,8 +505,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -557,12 +529,10 @@ void main() {
                       baseName: 'Input',
                       isNullable: false,
                     ),
-                    name: '',
-                    offset: null)
+                    name: '')
               ],
               returnType:
                   const TypeDeclaration(baseName: 'Output', isNullable: false),
-              isAsynchronous: false,
             ),
             Method(
               name: 'voidReturner',
@@ -572,11 +542,9 @@ void main() {
                       baseName: 'Input',
                       isNullable: false,
                     ),
-                    name: '',
-                    offset: null)
+                    name: '')
               ],
               returnType: const TypeDeclaration.voidDeclaration(),
-              isAsynchronous: false,
             )
           ])
     ], classes: <Class>[
@@ -586,8 +554,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -595,27 +562,32 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer mainCodeSink = StringBuffer();
     final StringBuffer testCodeSink = StringBuffer();
     generateDart(const DartOptions(), root, mainCodeSink);
     final String mainCode = mainCodeSink.toString();
-    expect(mainCode, isNot(contains('import \'fo\\\'o.dart\';')));
+    expect(mainCode, isNot(contains(r"import 'fo\'o.dart';")));
     expect(mainCode, contains('class Api {'));
     expect(mainCode, isNot(contains('abstract class ApiMock')));
     expect(mainCode, isNot(contains('.ApiMock.doSomething')));
-    expect(mainCode, isNot(contains('\'${Keys.result}\': output')));
+    expect(mainCode, isNot(contains("'${Keys.result}': output")));
     expect(mainCode, isNot(contains('return <Object, Object>{};')));
-    generateTestDart(const DartOptions(), root, testCodeSink, "fo'o.dart");
+    generateTestDart(
+      const DartOptions(),
+      root,
+      testCodeSink,
+      dartOutPath: "fo'o.dart",
+      testOutPath: 'test.dart',
+    );
     final String testCode = testCodeSink.toString();
-    expect(testCode, contains('import \'fo\\\'o.dart\';'));
+    expect(testCode, contains(r"import 'fo\'o.dart';"));
     expect(testCode, isNot(contains('class Api {')));
     expect(testCode, contains('abstract class ApiMock'));
     expect(testCode, isNot(contains('.ApiMock.doSomething')));
-    expect(testCode, contains('\'${Keys.result}\': output'));
+    expect(testCode, contains("'${Keys.result}': output"));
     expect(testCode, contains('return <Object?, Object?>{};'));
   });
 
@@ -630,8 +602,7 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
@@ -645,8 +616,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -654,8 +624,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -678,8 +647,7 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
@@ -692,8 +660,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -701,8 +668,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -724,8 +690,7 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: '',
-                offset: null)
+                name: '')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
@@ -739,8 +704,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -748,8 +712,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -777,8 +740,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -787,7 +749,7 @@ void main() {
     expect(code, matches('channel.send[(]null[)]'));
   });
 
-  Iterable<String> _makeIterable(String string) sync* {
+  Iterable<String> makeIterable(String string) sync* {
     yield string;
   }
 
@@ -795,7 +757,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(
-      DartOptions(copyrightHeader: _makeIterable('hello world')),
+      DartOptions(copyrightHeader: makeIterable('hello world')),
       root,
       sink,
     );
@@ -814,8 +776,7 @@ void main() {
                 typeArguments: <TypeDeclaration>[
                   TypeDeclaration(baseName: 'int', isNullable: true)
                 ]),
-            name: 'field1',
-            offset: null),
+            name: 'field1'),
       ],
     );
     final Root root = Root(
@@ -842,8 +803,7 @@ void main() {
                   TypeDeclaration(baseName: 'String', isNullable: true),
                   TypeDeclaration(baseName: 'int', isNullable: true),
                 ]),
-            name: 'field1',
-            offset: null),
+            name: 'field1'),
       ],
     );
     final Root root = Root(
@@ -873,8 +833,7 @@ void main() {
                         typeArguments: <TypeDeclaration>[
                           TypeDeclaration(baseName: 'int', isNullable: true)
                         ]),
-                    name: 'arg',
-                    offset: null)
+                    name: 'arg')
               ])
         ])
       ],
@@ -902,8 +861,7 @@ void main() {
                         typeArguments: <TypeDeclaration>[
                           TypeDeclaration(baseName: 'int', isNullable: true)
                         ]),
-                    name: 'arg',
-                    offset: null)
+                    name: 'arg')
               ])
         ])
       ],
@@ -941,7 +899,7 @@ void main() {
     expect(
         code,
         contains(
-            'return (replyMap[\'result\'] as List<Object?>?)!.cast<int?>();'));
+            "return (replyMap['result'] as List<Object?>?)!.cast<int?>();"));
   });
 
   test('flutter generics argument non void return', () {
@@ -964,8 +922,7 @@ void main() {
                         typeArguments: <TypeDeclaration>[
                           TypeDeclaration(baseName: 'int', isNullable: true)
                         ]),
-                    name: 'foo',
-                    offset: null)
+                    name: 'foo')
               ])
         ])
       ],
@@ -1003,7 +960,7 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (replyMap[\'result\'] as int?);'));
+    expect(code, contains("return (replyMap['result'] as int?);"));
   });
 
   test('return nullable collection host', () {
@@ -1031,7 +988,7 @@ void main() {
     expect(
         code,
         contains(
-            'return (replyMap[\'result\'] as List<Object?>?)?.cast<int?>();'));
+            "return (replyMap['result'] as List<Object?>?)?.cast<int?>();"));
   });
 
   test('return nullable async host', () {
@@ -1055,7 +1012,7 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (replyMap[\'result\'] as int?);'));
+    expect(code, contains("return (replyMap['result'] as int?);"));
   });
 
   test('return nullable flutter', () {
@@ -1180,5 +1137,31 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('void doit(int? foo);'));
+  });
+
+  test('deduces package name', () {
+    final Directory tempDir = Directory.systemTemp.createTempSync('pigeon');
+    try {
+      final Directory foo = Directory(path.join(tempDir.path, 'lib', 'foo'));
+      foo.createSync(recursive: true);
+      final File pubspecFile = File(path.join(tempDir.path, 'pubspec.yaml'));
+      pubspecFile.writeAsStringSync('''
+name: foobar
+''');
+      final Root root =
+          Root(classes: <Class>[], apis: <Api>[], enums: <Enum>[]);
+      final StringBuffer sink = StringBuffer();
+      generateTestDart(
+        const DartOptions(),
+        root,
+        sink,
+        dartOutPath: path.join(foo.path, 'bar.dart'),
+        testOutPath: path.join(tempDir.path, 'test', 'bar_test.dart'),
+      );
+      final String code = sink.toString();
+      expect(code, contains("import 'package:foobar/foo/bar.dart';"));
+    } finally {
+      tempDir.deleteSync(recursive: true);
+    }
   });
 }
