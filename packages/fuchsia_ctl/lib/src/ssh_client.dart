@@ -38,13 +38,13 @@ class SshClient {
   /// This method is not intended for use outside of this library, except for
   /// in unit tests.
   @visibleForTesting
-  List<String> getSshArguments({
-    String identityFilePath,
-    String targetIp,
-    List<String> command = const <String>[],
+  List<String?> getSshArguments({
+    String? identityFilePath,
+    String? targetIp,
+    List<String?> command = const <String>[],
   }) {
     assert(command != null);
-    return <String>[
+    return <String?>[
       'ssh',
       '-o', 'CheckHostIP=no', //
       '-o', 'StrictHostKeyChecking=no',
@@ -68,13 +68,13 @@ class SshClient {
 
   /// Creates an interactive SSH session.
   Future<OperationResult> interactive(
-    String targetIp, {
-    @required String identityFilePath,
+    String? targetIp, {
+    required String? identityFilePath,
   }) async {
     final Process ssh = await processManager.start(getSshArguments(
       targetIp: targetIp,
       identityFilePath: identityFilePath,
-    ));
+    ) as List<Object>);
     ssh.stdout.transform(utf8.decoder).listen(stdout.writeln);
     ssh.stderr.transform(utf8.decoder).listen(stderr.writeln);
     stdin.pipe(ssh.stdin);
@@ -94,11 +94,11 @@ class SshClient {
   /// All arguments must not be null.
   Future<OperationResult> runCommand(
     String targetIp, {
-    @required String identityFilePath,
-    @required List<String> command,
+    required String identityFilePath,
+    required List<String?> command,
     Duration timeoutMs = defaultSshTimeoutMs,
-    String logFilePath,
-    FileSystem fs,
+    String? logFilePath,
+    FileSystem? fs,
   }) async {
     assert(targetIp != null);
     assert(identityFilePath != null);
@@ -111,8 +111,9 @@ class SshClient {
     // If no file is passed to this method we create a memoryfile to keep to
     // return the stdout in OperationResult.
     if (logToFile) {
-      fileSystem.file(logFilePath).existsSync() ??
-          fileSystem.file(logFilePath).deleteSync();
+      if (fileSystem.file(logFilePath).existsSync()) {
+        fileSystem.file(logFilePath).deleteSync();
+      }
       fileSystem.file(logFilePath).createSync();
       final IOSink data = fileSystem.file(logFilePath).openWrite();
       logger = PrintLogger(out: data);
@@ -125,7 +126,7 @@ class SshClient {
         identityFilePath: identityFilePath,
         targetIp: targetIp,
         command: command,
-      ),
+      ) as List<Object>,
     );
     final StreamSubscription<String> stdoutSubscription = process.stdout
         .transform(utf8.decoder)

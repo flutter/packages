@@ -18,9 +18,9 @@ abstract class Tar {
 
   /// Untars a tar file.
   Future<OperationResult> untar(
-    String src,
+    String? src,
     String destination, {
-    Duration timeoutMs,
+    Duration? timeoutMs,
   });
 }
 
@@ -45,15 +45,15 @@ class SystemTar implements Tar {
 
   @override
   Future<OperationResult> untar(
-    String src,
+    String? src,
     String destination, {
-    Duration timeoutMs = defaultTarTimeoutMs,
+    Duration? timeoutMs = defaultTarTimeoutMs,
   }) async {
     final ProcessResult result = await processManager.run(<String>[
       'tar',
-      '-xf', src, //
+      '-xf', src!, //
       '-C', destination,
-    ]).timeout(timeoutMs);
+    ]).timeout(timeoutMs!);
 
     return OperationResult.fromProcessResult(result);
   }

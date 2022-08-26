@@ -20,10 +20,10 @@ class CommandLine {
   final ProcessManager processManager;
 
   /// Mock value for use in tests.
-  final Stdout stdoutValue;
+  final Stdout? stdoutValue;
 
   /// Mock value for use in tests.
-  final Stdout stderrValue;
+  final Stdout? stderrValue;
 
   /// Current shells stdout to use.
   Stdout get shellStdout => stdoutValue ?? stdout;

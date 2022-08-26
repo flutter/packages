@@ -13,9 +13,9 @@ import 'operation_result.dart';
 
 /// Function signature for a [SshKeyManager] provider.
 typedef SshKeyManagerProvider = SshKeyManager Function({
-  ProcessManager processManager,
-  FileSystem fs,
-  String publicKeyPath,
+  ProcessManager? processManager,
+  FileSystem? fs,
+  String? publicKeyPath,
 });
 
 /// A wrapper for managing SSH key generation.
@@ -45,9 +45,9 @@ class SystemSshKeyManager implements SshKeyManager {
 
   /// Creates a static provider that returns a SystemSshKeyManager.
   static SshKeyManager defaultProvider({
-    ProcessManager processManager,
-    FileSystem fs,
-    String publicKeyPath,
+    ProcessManager? processManager,
+    FileSystem? fs,
+    String? publicKeyPath,
   }) {
     return SystemSshKeyManager(
       processManager: processManager ?? const LocalProcessManager(),
@@ -64,7 +64,7 @@ class SystemSshKeyManager implements SshKeyManager {
   final FileSystem fs;
 
   /// The [String] with the path to a public key.
-  final String pkeyPubPath;
+  final String? pkeyPubPath;
 
   /// Populates [authorizedKeys] file with the public key in [pKeyPub].
   Future<void> createAuthorizedKeys(File authorizedKeys, File pkeyPub) async {

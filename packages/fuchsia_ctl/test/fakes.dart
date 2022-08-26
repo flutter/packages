@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Pin to 2.9 until tests are migrated away from non-null safe mockito:
+// https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md
+// @dart=2.9
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';

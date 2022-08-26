@@ -46,8 +46,8 @@ abstract class Logger {
 class PrintLogger implements Logger {
   /// Creates a logger instance to print messages to standard output.
   PrintLogger({
-    IOSink out,
-    bool prependLogData,
+    IOSink? out,
+    bool? prependLogData,
     this.level = LogLevel.info,
   })  : out = out ?? stdout,
         prependLogData = prependLogData ?? true;
@@ -122,7 +122,7 @@ class PrintLogger implements Logger {
 
 /// Transforms a [message] with [level] to a string that contains the DateTime,
 /// level and message.
-String toLogString(String message, {LogLevel level}) {
+String toLogString(String message, {LogLevel? level}) {
   final StringBuffer buffer = StringBuffer();
   buffer.write(DateTime.now().toUtc().toIso8601String());
   buffer.write(': ');

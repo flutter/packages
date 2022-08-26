@@ -25,11 +25,11 @@ class FFX {
   /// The [ProcessManager] to use for launching the `ffx`tool.
   final ProcessManager processManager;
 
-  Future<String> _runFFXWithRetries(
-    String deviceName,
+  Future<String?> _runFFXWithRetries(
+    String? deviceName,
     int numTries,
     int sleepDelay, {
-    @required bool nullOk,
+    required bool nullOk,
   }) async {
     assert(numTries != null);
     assert(sleepDelay != null);
@@ -78,8 +78,8 @@ class FFX {
   /// The `nullOk` parameter must not be null. If true, this method will
   /// return null if it cannot find a device; otherwise, it will throw. The
   /// default value is false.
-  Future<String> getTargetAddress(
-    String deviceName, {
+  Future<String?> getTargetAddress(
+    String? deviceName, {
     int numTries = 75,
     int sleepDelay = 4,
     bool nullOk = false,

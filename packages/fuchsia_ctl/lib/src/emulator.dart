@@ -15,14 +15,14 @@ import 'ssh_key_manager.dart';
 class Emulator {
   /// Creates a new wrapper for the `emu` tool.
   Emulator({
-    @required this.aemuPath,
-    @required this.fuchsiaImagePath,
-    @required this.fuchsiaSdkPath,
+    required this.aemuPath,
+    required this.fuchsiaImagePath,
+    required this.fuchsiaSdkPath,
     this.fs = const LocalFileSystem(),
     this.cli = const CommandLine(),
-    @required this.qemuKernelPath,
-    @required this.sshKeyManager,
-    @required this.zbiPath,
+    required this.qemuKernelPath,
+    required this.sshKeyManager,
+    required this.zbiPath,
   })  : assert(cli != null),
         assert(fs != null);
 
@@ -68,11 +68,11 @@ class Emulator {
 
   /// FVM extended image of [fuchsiaImagePath] for running on FEMU.
   @visibleForTesting
-  String fvmImagePath;
+  String? fvmImagePath;
 
   /// [zbiPath] that is accessible with SSH using [sshPath] keys.
   @visibleForTesting
-  String signedZbiPath;
+  String? signedZbiPath;
 
   /// Update given Fuchsia assets to make them compatible with FEMU.
   ///
@@ -88,14 +88,14 @@ class Emulator {
     fvmImagePath = '$tmpPath/fvm.blk';
     signedZbiPath = '$tmpPath/fuchsia-ssh.zbi';
 
-    await _prepareFvmImage(fuchsiaImagePath, fvmImagePath);
-    await _signBootImage(zbiPath, signedZbiPath);
+    await _prepareFvmImage(fuchsiaImagePath, fvmImagePath!);
+    await _signBootImage(zbiPath, signedZbiPath!);
   }
 
   /// Double the size of [fuchsiaImagePath] to make space for the emulator
   /// to write back to it.
   Future<void> _prepareFvmImage(String fuchsiaImagePath, String fvmPath,
-      {String fvmExecutable}) async {
+      {String? fvmExecutable}) async {
     fvmExecutable ??= path.join(fuchsiaSdkPath, fvmToolPath);
 
     await cli.run(<String>['cp', fuchsiaImagePath, fvmPath]);
@@ -114,7 +114,7 @@ class Emulator {
   /// Signed [zbiPath] using [zbiExecutable] with [publicKeyPath] to
   /// create a bootloader image that is accessible from the host.
   Future<void> _signBootImage(String zbiPath, String signedZbiPath,
-      {String zbiExecutable}) async {
+      {String? zbiExecutable}) async {
     zbiExecutable ??= path.join(fuchsiaSdkPath, zbiToolPath);
 
     await sshKeyManager.createKeys();
@@ -145,9 +145,9 @@ class Emulator {
   /// [windowSize] is what AEMU will set its window size to. Defaults to
   /// [defaultWindowSize]. Expected to be in the format of "WIDTHxHEIGHT".
   Future<OperationResult> start(
-      {bool headless = false, String windowSize}) async {
-    assert(fvmImagePath != null && fs.isFileSync(fvmImagePath));
-    assert(signedZbiPath != null && fs.isFileSync(signedZbiPath));
+      {bool headless = false, String? windowSize}) async {
+    assert(fvmImagePath != null && fs.isFileSync(fvmImagePath!));
+    assert(signedZbiPath != null && fs.isFileSync(signedZbiPath!));
 
     final List<String> aemuCommand = <String>[
       aemuPath,
@@ -162,7 +162,7 @@ class Emulator {
       /// Anything after -fuchsia flag will be passed to QEMU
       '-fuchsia',
       '-kernel', qemuKernelPath,
-      '-initrd', signedZbiPath,
+      '-initrd', signedZbiPath!,
       '-m', '2048',
       '-serial', 'stdio',
       '-vga', 'none',

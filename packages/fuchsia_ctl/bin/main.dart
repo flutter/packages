@@ -12,7 +12,8 @@ import 'package:path/path.dart' as path;
 import 'package:retry/retry.dart';
 import 'package:uuid/uuid.dart';
 
-typedef AsyncResult = Future<OperationResult> Function(String, FFX, ArgResults);
+typedef AsyncResult = Future<OperationResult?> Function(
+    String?, FFX, ArgResults?);
 
 const Map<String, AsyncResult> commands = <String, AsyncResult>{
   'emu': emulator,
@@ -121,33 +122,33 @@ Future<void> main(List<String> args) async {
   }
 
   if (results['help']) {
-    stderr.writeln(parser.commands[results.command.name].usage);
+    stderr.writeln(parser.commands[results.command!.name!]!.usage);
     exit(0);
   }
 
-  final AsyncResult command = commands[results.command.name];
+  final AsyncResult command = commands[results.command!.name!]!;
   if (command == null) {
-    stderr.writeln('Unknown command ${results.command.name}.');
+    stderr.writeln('Unknown command ${results.command!.name}.');
     stderr.writeln(parser.usage);
     exit(-1);
   }
-  final OperationResult result = await command(
+  final OperationResult? result = await command(
     results['device-name'],
     FFX(results['ffx-path']),
     results.command,
   );
-  if (!result.success) {
+  if (result == null || !result.success) {
     exit(-1);
   }
 }
 
 Future<OperationResult> emulator(
-  String deviceName,
+  String? deviceName,
   FFX ffx,
-  ArgResults args,
+  ArgResults? args,
 ) async {
   final Emulator emulator = Emulator(
-    aemuPath: args['aemu'],
+    aemuPath: args!['aemu'],
     fuchsiaImagePath: args['image'],
     fuchsiaSdkPath: args['sdk'],
     qemuKernelPath: args['qemu-kernel'],
@@ -165,14 +166,14 @@ Future<OperationResult> emulator(
 }
 
 Future<OperationResult> ssh(
-  String deviceName,
+  String? deviceName,
   FFX ffx,
-  ArgResults args,
+  ArgResults? args,
 ) async {
   const SshClient sshClient = SshClient();
-  final String targetIp = await ffx.getTargetAddress(deviceName);
-  final String identityFile = args['identity-file'];
-  final String outputFile = args['log-file'];
+  final String targetIp = (await ffx.getTargetAddress(deviceName))!;
+  final String? identityFile = args!['identity-file'];
+  final String? outputFile = args['log-file'];
   if (args['interactive']) {
     return sshClient.interactive(
       targetIp,
@@ -181,7 +182,7 @@ Future<OperationResult> ssh(
   }
   final OperationResult result = await sshClient.runCommand(
     targetIp,
-    identityFilePath: identityFile,
+    identityFilePath: identityFile!,
     command: args['command'].split(' '),
     timeoutMs:
         Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
@@ -197,9 +198,9 @@ Future<OperationResult> ssh(
 }
 
 Future<OperationResult> pave(
-  String deviceName,
+  String? deviceName,
   FFX ffx,
-  ArgResults args,
+  ArgResults? args,
 ) async {
   const ImagePaver paver = ImagePaver();
   const RetryOptions r = RetryOptions(
@@ -208,7 +209,7 @@ Future<OperationResult> pave(
   );
   return r.retry(() async {
     final OperationResult result = await paver.pave(
-      args['image'],
+      args!['image'],
       deviceName,
       publicKeyPath: args['public-key'],
     );
@@ -220,12 +221,12 @@ Future<OperationResult> pave(
 }
 
 Future<OperationResult> pm(
-  String deviceName,
+  String? deviceName,
   FFX ffx,
-  ArgResults args,
+  ArgResults? args,
 ) async {
-  final PackageServer server = PackageServer(args['pm-path']);
-  switch (args.command.name) {
+  final PackageServer server = PackageServer(args!['pm-path']);
+  switch (args.command!.name) {
     case 'serve':
       await server.serveRepo(args['repo']);
       await Future<void>.delayed(const Duration(seconds: 15));
@@ -235,17 +236,17 @@ Future<OperationResult> pm(
     case 'publishRepo':
       return server.publishRepo(args['repo'], args['far']);
     default:
-      throw ArgumentError('Command ${args.command.name} unknown.');
+      throw ArgumentError('Command ${args.command!.name} unknown.');
   }
 }
 
 Future<OperationResult> pushPackages(
-  String deviceName,
+  String? deviceName,
   FFX ffx,
-  ArgResults args,
+  ArgResults? args,
 ) async {
-  final PackageServer server = PackageServer(args['pm-path']);
-  final String repoArchive = args['repoArchive'];
+  final PackageServer server = PackageServer(args!['pm-path']);
+  final String? repoArchive = args['repoArchive'];
   final List<String> packages = args['packages'];
   final String identityFile = args['identity-file'];
 
@@ -254,7 +255,7 @@ Future<OperationResult> pushPackages(
   final Directory repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
   const Tar tar = SystemTar();
   try {
-    final String targetIp = await ffx.getTargetAddress(deviceName);
+    final String targetIp = (await ffx.getTargetAddress(deviceName))!;
     final AmberCtl amberCtl = AmberCtl(targetIp, identityFile);
 
     stdout.writeln('Untaring $repoArchive to ${repo.path}');
@@ -269,7 +270,7 @@ Future<OperationResult> pushPackages(
     final String repositoryBase = path.join(repo.path, 'amber-files');
     stdout.writeln('Serving $repositoryBase to $targetIp');
     await server.serveRepo(repositoryBase, port: 0);
-    await amberCtl.addSrc(server.serverPort);
+    await amberCtl.addSrc(server.serverPort!);
 
     stdout.writeln('Pushing packages $packages to $targetIp');
     for (final String packageName in packages) {
@@ -290,20 +291,20 @@ Future<OperationResult> pushPackages(
   }
 }
 
-Future<OperationResult> test(
-  String deviceName,
+Future<OperationResult?> test(
+  String? deviceName,
   FFX ffx,
-  ArgResults args,
+  ArgResults? args,
 ) async {
   const FileSystem fs = LocalFileSystem();
-  final String identityFile = args['identity-file'];
+  final String identityFile = args!['identity-file'];
 
   //final PackageServer server = PackageServer(args['pm-path']);
   PackageServer server;
   const SshClient ssh = SshClient();
-  final List<String> farFiles = args['far'];
-  final String target = args['target'];
-  final String arguments = args['arguments'];
+  final List<String>? farFiles = args['far'];
+  final String? target = args['target'];
+  final String? arguments = args['arguments'];
   Directory repo;
   if (args['packages-directory'] == null) {
     final String uuid = const Uuid().v4();
@@ -323,9 +324,9 @@ Future<OperationResult> test(
   }
 
   try {
-    final String targetIp = await ffx.getTargetAddress(deviceName);
+    final String targetIp = (await ffx.getTargetAddress(deviceName))!;
     final AmberCtl amberCtl = AmberCtl(targetIp, identityFile);
-    OperationResult result;
+    OperationResult? result;
     stdout.writeln('Using ${repo.path} as repo to serve to $targetIp...');
     if (!repo.existsSync()) {
       repo.createSync(recursive: true);
@@ -336,9 +337,9 @@ Future<OperationResult> test(
       }
     }
     await server.serveRepo(repo.path, port: 0);
-    await amberCtl.addSrc(server.serverPort);
+    await amberCtl.addSrc(server.serverPort!);
 
-    for (final String farFile in farFiles) {
+    for (final String farFile in farFiles!) {
       result = await server.publishRepo(repo.path, farFile);
       if (!result.success) {
         stderr.writeln('Failed to publish repo at $repo with $farFiles.');
@@ -353,7 +354,7 @@ Future<OperationResult> test(
     final OperationResult testResult = await ssh.runCommand(
       targetIp,
       identityFilePath: identityFile,
-      command: <String>[
+      command: <String?>[
         'run',
         'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
         arguments
@@ -362,7 +363,7 @@ Future<OperationResult> test(
           Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
     );
     stdout.writeln('Test results (passed: ${testResult.success}):');
-    if (result.info != null) {
+    if (result!.info != null) {
       stdout.writeln(testResult.info);
     }
     if (result.error != null) {

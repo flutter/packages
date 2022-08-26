@@ -55,8 +55,8 @@ class ImagePaver {
   /// first discoverable device will be used.
   Future<OperationResult> pave(
     String imageTgzPath,
-    String deviceName, {
-    String publicKeyPath,
+    String? deviceName, {
+    String? publicKeyPath,
     bool verbose = true,
     Duration timeoutMs = defaultPaveTimeoutMs,
   }) async {
