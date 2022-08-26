@@ -13,7 +13,7 @@ extension GoRouterHelper on BuildContext {
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
   }) =>
       GoRouter.of(this)
           .namedLocation(name, params: params, queryParams: queryParams);
@@ -26,7 +26,7 @@ extension GoRouterHelper on BuildContext {
   void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
       GoRouter.of(this).goNamed(
@@ -44,7 +44,7 @@ extension GoRouterHelper on BuildContext {
   void pushNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
       GoRouter.of(this).pushNamed(
@@ -80,7 +80,7 @@ extension GoRouterHelper on BuildContext {
   void replaceNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
       GoRouter.of(this).replaceNamed(

@@ -45,13 +45,13 @@ class GoRouterNamedLocationSpy extends GoRouter {
 
   String? name;
   Map<String, String>? params;
-  Map<String, String>? queryParams;
+  Map<String, dynamic>? queryParams;
 
   @override
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
   }) {
     this.name = name;
     this.params = params;
@@ -78,14 +78,14 @@ class GoRouterGoNamedSpy extends GoRouter {
 
   String? name;
   Map<String, String>? params;
-  Map<String, String>? queryParams;
+  Map<String, dynamic>? queryParams;
   Object? extra;
 
   @override
   void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) {
     this.name = name;
@@ -113,14 +113,14 @@ class GoRouterPushNamedSpy extends GoRouter {
 
   String? name;
   Map<String, String>? params;
-  Map<String, String>? queryParams;
+  Map<String, dynamic>? queryParams;
   Object? extra;
 
   @override
   void pushNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) {
     this.name = name;
@@ -218,7 +218,12 @@ class PersonScreen extends DummyScreen {
 }
 
 class DummyScreen extends StatelessWidget {
-  const DummyScreen({super.key});
+  const DummyScreen({
+    this.queryParametersAll = const <String, dynamic>{},
+    super.key,
+  });
+
+  final Map<String, dynamic> queryParametersAll;
 
   @override
   Widget build(BuildContext context) => const Placeholder();

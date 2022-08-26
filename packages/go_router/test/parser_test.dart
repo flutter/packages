@@ -111,6 +111,39 @@ void main() {
         '/abc?q=1&g=2');
   });
 
+  test(
+      'GoRouteInformationParser can retrieve route by name with query parameters',
+      () async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Placeholder(),
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'abc',
+            name: 'routeName',
+            builder: (_, __) => const Placeholder(),
+          ),
+        ],
+      ),
+    ];
+
+    final RouteConfiguration configuration = RouteConfiguration(
+      routes: routes,
+      redirectLimit: 100,
+      topRedirect: (_) => null,
+    );
+
+    expect(
+      configuration
+          .namedLocation('routeName', queryParams: const <String, dynamic>{
+        'q1': 'v1',
+        'q2': <String>['v2', 'v3'],
+      }),
+      '/abc?q1=v1&q2=v2&q2=v3',
+    );
+  });
+
   test('GoRouteInformationParser returns error when unknown route', () async {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(

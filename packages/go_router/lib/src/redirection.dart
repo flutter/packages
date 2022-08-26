@@ -39,6 +39,7 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
         // sub-location to match route.redirect
         subloc: uri.path,
         queryParams: uri.queryParameters,
+        queryParametersAll: uri.queryParametersAll,
         extra: extra,
       ),
     );
@@ -81,6 +82,7 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
         extra: top.extra,
         params: top.decodedParams,
         queryParams: top.queryParams,
+        queryParametersAll: top.queryParametersAll,
       ),
     );
 
