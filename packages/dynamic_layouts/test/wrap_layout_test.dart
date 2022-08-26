@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets(
-      'DynamicGridViw generates children and checks if they are layed out',
+      'DynamicGridView generates children and checks if they are layed out',
       (WidgetTester tester) async {
     final List<Widget> children = List<Widget>.generate(
       10,
