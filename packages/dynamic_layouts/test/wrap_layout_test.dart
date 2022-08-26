@@ -98,7 +98,8 @@ void main() {
     expect(find.text('Item 3'), findsNothing);
   });
 
-  testWidgets('Test for DynamicGridView.wrap to scrollDirection Axis.horizontal',
+  testWidgets(
+      'Test for DynamicGridView.wrap to scrollDirection Axis.horizontal',
       (WidgetTester tester) async {
     final List<Widget> children = List<Widget>.generate(
       20,
@@ -316,36 +317,7 @@ void main() {
     // resets the screen to its original size after the test end
     addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
   });
-  // FIXIT(snat-s)
-  // testWidgets(
-  //     'Test if childMainAxisExtent is respected',
-  //     (WidgetTester tester) async {
-  //   final List<Widget> children = List<Widget>.generate(
-  //     10,
-  //     (int index) => Container(
-  //       height: index.isEven ? 50 : 150,
-  //       width: index.isEven ? 95 : 180,
-  //       child: Center(child: Text('Item $index')),
-  //     ),
-  //   );
-  //   await tester.pumpWidget(
-  //     MaterialApp(
-  //       home: Scaffold(
-  //         body: DynamicGridView.wrap(
-  //           childMainAxisExtent: 100,
-  //           children: children,
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  //   expect(find.text('Item 0'), findsOneWidget);
-  //   expect(tester.getSize(find.text('Item 0')), const Size(100, 95));
-  //   expect(find.text('Item 1'), findsOneWidget);
-  //   // expect(tester.getSize(find.text('Item 1')), const Size(100, 180));
-  //   // for (int i = 0; i < 10; i++) {
-  //   //   expect(find.text('Item $i'), findsOneWidget);
-  //   // }
-  // });
+  // TODO(snat-s): Test if childMainAxisExtent is respected
   // TODO(snat-s): 'Test wrap to see nothing affected if random elements are deleted'.
 }
 

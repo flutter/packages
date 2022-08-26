@@ -51,13 +51,14 @@ class DynamicGridView extends GridView {
     double crossAxisSpacing = 0.0,
     double childCrossAxisExtent = double.infinity,
     double childMainAxisExtent = double.infinity,
-  }) : super(gridDelegate: SliverGridDelegateWithWrapping(
-    mainAxisSpacing: mainAxisSpacing,
-    crossAxisSpacing: crossAxisSpacing,
-    childCrossAxisExtent: childCrossAxisExtent,
-    childMainAxisExtent: childMainAxisExtent,
-    scrollDirection: scrollDirection,
-  ));
+  }) : super(
+            gridDelegate: SliverGridDelegateWithWrapping(
+          mainAxisSpacing: mainAxisSpacing,
+          crossAxisSpacing: crossAxisSpacing,
+          childCrossAxisExtent: childCrossAxisExtent,
+          childMainAxisExtent: childMainAxisExtent,
+          scrollDirection: scrollDirection,
+        ));
 
   // TODO(DavBot09): DynamicGridView.stagger?
 
