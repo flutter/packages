@@ -75,7 +75,8 @@ abstract class DynamicSliverGridLayout extends SliverGridLayout {
   ///
   /// This is used to update the layout object after the child has laid out,
   /// allowing the layout pattern to adapt to the child's size.
-  DynamicSliverGridGeometry updateGeometryForChildIndex(int index, Size childSize);
+  DynamicSliverGridGeometry updateGeometryForChildIndex(
+      int index, Size childSize);
 
   /// Called by [RenderDynamicSliverGrid] to validate the layout pattern has
   /// filled the screen.
