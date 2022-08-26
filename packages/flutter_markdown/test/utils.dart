@@ -10,10 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-final TextTheme textTheme =
-    Typography.material2018(platform: TargetPlatform.android)
-        .black
-        .merge(const TextTheme(bodyMedium: TextStyle(fontSize: 12.0)));
+final TextTheme textTheme = Typography.material2018()
+    .black
+    .merge(const TextTheme(bodyMedium: TextStyle(fontSize: 12.0)));
 
 void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
   final List<Type> actual = widgets.map((Widget w) => w.runtimeType).toList();
@@ -182,7 +181,7 @@ class TestAssetBundle extends CachingAssetBundle {
       // verses 'flutter test test/*_test.dart'. Adjust the root directory
       // to access the assets directory.
       final io.Directory rootDirectory =
-          io.Directory.current.path.endsWith(io.Platform.pathSeparator + 'test')
+          io.Directory.current.path.endsWith('${io.Platform.pathSeparator}test')
               ? io.Directory.current.parent
               : io.Directory.current;
       final io.File file =
@@ -194,7 +193,7 @@ class TestAssetBundle extends CachingAssetBundle {
       }
       return asset;
     } else {
-      throw 'Unknown asset key: $key';
+      throw ArgumentError('Unknown asset key: $key');
     }
   }
 }

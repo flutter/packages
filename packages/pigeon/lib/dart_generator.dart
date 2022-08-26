@@ -118,7 +118,7 @@ String _makeGenericCastCall(TypeDeclaration type) {
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType field) =>
-    field.name.isEmpty ? 'arg$count' : 'arg_' + field.name;
+    field.name.isEmpty ? 'arg$count' : 'arg_${field.name}';
 
 /// Generates an argument name if one isn't defined.
 String _getArgumentName(int count, NamedType field) =>
@@ -199,12 +199,12 @@ final BinaryMessenger? _binaryMessenger;
             'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
         indent.nest(2, () {
           indent.writeln(
-            '\'$channelName\', codec, binaryMessenger: _binaryMessenger);',
+            "'$channelName', codec, binaryMessenger: _binaryMessenger);",
           );
         });
         final String returnType = _makeGenericTypeArguments(func.returnType);
         final String castCall = _makeGenericCastCall(func.returnType);
-        const String accessor = 'replyMap[\'${Keys.result}\']';
+        const String accessor = "replyMap['${Keys.result}']";
         final String nullHandler =
             func.returnType.isNullable ? (castCall.isEmpty ? '' : '?') : '!';
         final String returnStatement = func.returnType.isVoid
@@ -293,7 +293,7 @@ void _writeFlutterApi(
               : channelNameFunc(func);
           indent.nest(2, () {
             indent.writeln(
-              '\'$channelName\', codec, binaryMessenger: binaryMessenger);',
+              "'$channelName', codec, binaryMessenger: binaryMessenger);",
             );
           });
           final String messageHandlerSetter =
@@ -322,7 +322,7 @@ void _writeFlutterApi(
                 call = 'api.${func.name}()';
               } else {
                 indent.writeln(
-                  'assert(message != null, \'Argument for $channelName was null.\');',
+                  "assert(message != null, 'Argument for $channelName was null.');",
                 );
                 const String argsArray = 'args';
                 indent.writeln(
@@ -340,7 +340,7 @@ void _writeFlutterApi(
                       'final $argType? $argName = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
                   if (!arg.type.isNullable) {
                     indent.writeln(
-                        'assert($argName != null, \'Argument for $channelName was null, expected non-null $argType.\');');
+                        "assert($argName != null, 'Argument for $channelName was null, expected non-null $argType.');");
                   }
                 });
                 final Iterable<String> argNames =
@@ -365,7 +365,7 @@ void _writeFlutterApi(
                 }
                 const String returnExpression = 'output';
                 final String returnStatement = isMockHandler
-                    ? 'return <Object?, Object?>{\'${Keys.result}\': $returnExpression};'
+                    ? "return <Object?, Object?>{'${Keys.result}': $returnExpression};"
                     : 'return $returnExpression;';
                 indent.writeln(returnStatement);
               }
@@ -443,14 +443,14 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   }
 
   void writeImports() {
-    indent.writeln('import \'dart:async\';');
+    indent.writeln("import 'dart:async';");
     indent.writeln(
-      'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;',
+      "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
     );
     indent.addln('');
     indent.writeln(
-        'import \'package:flutter/foundation.dart\' show WriteBuffer, ReadBuffer;');
-    indent.writeln('import \'package:flutter/services.dart\';');
+        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
+    indent.writeln("import 'package:flutter/services.dart';");
   }
 
   void writeDataClass(Class klass) {
@@ -471,7 +471,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           'final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};',
         );
         for (final NamedType field in klass.fields) {
-          indent.write('pigeonMap[\'${field.name}\'] = ');
+          indent.write("pigeonMap['${field.name}'] = ");
           final String conditional = field.type.isNullable ? '?' : '';
           if (customClassNames.contains(field.type.baseName)) {
             indent.addln(
@@ -520,17 +520,17 @@ pigeonMap['${field.name}'] != null
           final String castCall = _makeGenericCastCall(field.type);
           final String castCallPrefix = field.type.isNullable ? '?' : '!';
           indent.add(
-            '(pigeonMap[\'${field.name}\'] as $genericType?)$castCallPrefix$castCall',
+            "(pigeonMap['${field.name}'] as $genericType?)$castCallPrefix$castCall",
           );
         } else {
           final String genericdType = _addGenericTypesNullable(field.type);
           if (field.type.isNullable) {
             indent.add(
-              'pigeonMap[\'${field.name}\'] as $genericdType',
+              "pigeonMap['${field.name}'] as $genericdType",
             );
           } else {
             indent.add(
-              'pigeonMap[\'${field.name}\']! as $genericdType',
+              "pigeonMap['${field.name}']! as $genericdType",
             );
           }
         }
@@ -630,7 +630,7 @@ String? _deducePackageName(String mainDartFile) {
 
   try {
     final String text = File(pubspecPath).readAsStringSync();
-    return (yaml.loadYaml(text) as Map<dynamic, dynamic>)['name'];
+    return (yaml.loadYaml(text) as Map<dynamic, dynamic>)['name'] as String?;
   } catch (_) {
     return null;
   }
@@ -663,14 +663,14 @@ void generateTestDart(
     '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import',
   );
   indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
-  indent.writeln('import \'dart:async\';');
+  indent.writeln("import 'dart:async';");
   indent.writeln(
-    'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;',
+    "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
   );
   indent.writeln(
-      'import \'package:flutter/foundation.dart\' show WriteBuffer, ReadBuffer;');
-  indent.writeln('import \'package:flutter/services.dart\';');
-  indent.writeln('import \'package:flutter_test/flutter_test.dart\';');
+      "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
+  indent.writeln("import 'package:flutter/services.dart';");
+  indent.writeln("import 'package:flutter_test/flutter_test.dart';");
   indent.writeln('');
   final String relativeDartPath =
       path.Context(style: path.Style.posix).relative(
@@ -684,7 +684,7 @@ void generateTestDart(
     // certain (older) versions of Dart.
     // TODO(gaaclarke): We should add a command-line parameter to override this import.
     indent.writeln(
-        'import \'${_escapeForDartSingleQuotedString(relativeDartPath)}\';');
+        "import '${_escapeForDartSingleQuotedString(relativeDartPath)}';");
   } else {
     final String path = relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
     indent.writeln("import 'package:$packageName/$path';");

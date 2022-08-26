@@ -9,7 +9,7 @@ import 'extensions.dart';
 /// Default error page implementation for WidgetsApp.
 class ErrorScreen extends StatelessWidget {
   /// Provide an exception to this page for it to be displayed.
-  const ErrorScreen(this.error, {Key? key}) : super(key: key);
+  const ErrorScreen(this.error, {super.key});
 
   /// The exception to be displayed.
   final Exception? error;
@@ -46,8 +46,7 @@ class _Button extends StatefulWidget {
   const _Button({
     required this.onPressed,
     required this.child,
-    Key? key,
-  }) : super(key: key);
+  });
 
   final VoidCallback onPressed;
 

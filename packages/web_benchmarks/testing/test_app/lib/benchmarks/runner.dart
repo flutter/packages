@@ -2,17 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web_benchmarks/client.dart';
 
 import '../aboutpage.dart' show backKey;
-import '../homepage.dart' show textKey, aboutPageKey;
+import '../homepage.dart' show aboutPageKey, textKey;
 import '../main.dart';
 
 /// A recorder that measures frame building durations.
 abstract class AppRecorder extends WidgetRecorder {
-  AppRecorder({@required this.benchmarkName}) : super(name: benchmarkName);
+  AppRecorder({required this.benchmarkName}) : super(name: benchmarkName);
 
   final String benchmarkName;
 
@@ -37,7 +39,7 @@ class ScrollRecorder extends AppRecorder {
   @override
   Future<void> automate() async {
     final ScrollableState scrollable =
-        Scrollable.of(find.byKey(textKey).evaluate().single);
+        Scrollable.of(find.byKey(textKey).evaluate().single)!;
     await scrollable.position.animateTo(
       30000,
       curve: Curves.linear,
