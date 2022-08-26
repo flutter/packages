@@ -37,7 +37,7 @@ Future<void> main(List<String> args) async {
             'If not specified, the first discoverable device will be used.')
     ..addOption('ffx-path',
         defaultsTo: './ffx', help: 'The path to the ffx executable.')
-    ..addFlag('help', defaultsTo: false, help: 'Prints help.');
+    ..addFlag('help', help: 'Prints help.');
 
   /// This is a blocking command and will run until exited.
   parser.addCommand('emu')
