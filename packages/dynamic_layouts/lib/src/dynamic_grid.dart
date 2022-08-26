@@ -7,6 +7,8 @@ import 'package:flutter/widgets.dart';
 import 'render_dynamic_grid.dart';
 import 'wrap_layout.dart';
 
+import 'staggered_layout.dart';
+
 /// A scrollable, 2D array of widgets.
 ///
 // TODO(all): Add more documentation & sample code
@@ -98,6 +100,42 @@ class DynamicGridView extends GridView {
         );
 
   // TODO(DavBot09): DynamicGridView.stagger?
+  DynamicGridView.staggered({
+    super.key,
+    super.scrollDirection,
+    super.reverse,
+    super.controller,
+    super.primary,
+    super.physics,
+    super.shrinkWrap,
+    super.padding,
+    super.children = const <Widget>[],
+    int? crossAxisCount,
+    double? maxCrossAxisExtent,
+    double mainAxisSpacing = 0.0,
+    double crossAxisSpacing = 0.0,
+    double childAspectRatio = 1.0,
+    super.cacheExtent,
+    super.dragStartBehavior,
+    super.keyboardDismissBehavior,
+    super.restorationId,
+    super.clipBehavior,
+  }) :  assert(crossAxisCount != null || maxCrossAxisExtent != null), 
+        assert(crossAxisCount == null || maxCrossAxisExtent == null), 
+        super(gridDelegate: crossAxisCount != null ? DynamicSliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: mainAxisSpacing,
+            crossAxisSpacing: crossAxisSpacing,
+            childAspectRatio: childAspectRatio,
+          )
+        :
+          DynamicSliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: maxCrossAxisExtent!,
+            mainAxisSpacing: mainAxisSpacing,
+            crossAxisSpacing: crossAxisSpacing,
+            childAspectRatio: childAspectRatio,
+          ),
+        );
 
   @override
   Widget buildChildLayout(BuildContext context) {
