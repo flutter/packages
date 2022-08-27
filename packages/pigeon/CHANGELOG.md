@@ -2,6 +2,10 @@
 
 * Adds experimental support for Kotlin generation.
 
+## 4.0.2
+
+* Fixes lint warnings.
+
 ## 4.0.1
 
 * Exposes `SwiftOptions`.

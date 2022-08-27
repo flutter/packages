@@ -2,12 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web_benchmarks/client.dart';
 
 import '../aboutpage.dart' show backKey;
-import '../homepage.dart' show textKey, aboutPageKey;
+import '../homepage.dart' show aboutPageKey, textKey;
 import '../main.dart';
 
 /// A recorder that measures frame building durations.

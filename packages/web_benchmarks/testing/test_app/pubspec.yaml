@@ -12,12 +12,10 @@ dependencies:
   cupertino_icons: ^0.1.3
   flutter:
     sdk: flutter
-  web_benchmarks:
-    path: ../../
-
-dev_dependencies:
   flutter_test:
     sdk: flutter
+  web_benchmarks:
+    path: ../../
 
 flutter:
   uses-material-design: true

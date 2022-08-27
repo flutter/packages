@@ -5,6 +5,8 @@
 // This file exists solely to host compiled excerpts for README.md, and is not
 // intended for use as an actual example application.
 
+// ignore_for_file: avoid_print
+
 // #docregion Encoding
 import 'dart:typed_data';
 import 'package:standard_message_codec/standard_message_codec.dart';

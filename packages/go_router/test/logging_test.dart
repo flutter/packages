@@ -9,11 +9,10 @@ import 'package:logging/logging.dart';
 void main() {
   // Reset the logger before each test.
   setUp(() {
-    setLogging(enabled: false);
+    setLogging();
   });
   test('setLogging enables log messages on the logger', () {
-    log.onRecord
-        .listen(expectAsync1<void, LogRecord>((LogRecord r) {}, count: 1));
+    log.onRecord.listen(expectAsync1<void, LogRecord>((LogRecord r) {}));
 
     setLogging(enabled: true);
     log.info('message');
@@ -23,7 +22,7 @@ void main() {
     log.onRecord
         .listen(expectAsync1<void, LogRecord>((LogRecord r) {}, count: 0));
 
-    setLogging(enabled: false);
+    setLogging();
     log.info('message');
   });
 }

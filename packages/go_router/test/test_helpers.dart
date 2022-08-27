@@ -4,8 +4,6 @@
 
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,18 +41,17 @@ Widget fakeNavigationBuilder(
     child;
 
 class GoRouterNamedLocationSpy extends GoRouter {
-  GoRouterNamedLocationSpy({required List<GoRoute> routes})
-      : super(routes: routes);
+  GoRouterNamedLocationSpy({required super.routes});
 
   String? name;
   Map<String, String>? params;
-  Map<String, String>? queryParams;
+  Map<String, dynamic>? queryParams;
 
   @override
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
   }) {
     this.name = name;
     this.params = params;
@@ -64,7 +61,7 @@ class GoRouterNamedLocationSpy extends GoRouter {
 }
 
 class GoRouterGoSpy extends GoRouter {
-  GoRouterGoSpy({required List<GoRoute> routes}) : super(routes: routes);
+  GoRouterGoSpy({required super.routes});
 
   String? myLocation;
   Object? extra;
@@ -77,18 +74,18 @@ class GoRouterGoSpy extends GoRouter {
 }
 
 class GoRouterGoNamedSpy extends GoRouter {
-  GoRouterGoNamedSpy({required List<GoRoute> routes}) : super(routes: routes);
+  GoRouterGoNamedSpy({required super.routes});
 
   String? name;
   Map<String, String>? params;
-  Map<String, String>? queryParams;
+  Map<String, dynamic>? queryParams;
   Object? extra;
 
   @override
   void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) {
     this.name = name;
@@ -99,7 +96,7 @@ class GoRouterGoNamedSpy extends GoRouter {
 }
 
 class GoRouterPushSpy extends GoRouter {
-  GoRouterPushSpy({required List<GoRoute> routes}) : super(routes: routes);
+  GoRouterPushSpy({required super.routes});
 
   String? myLocation;
   Object? extra;
@@ -112,18 +109,18 @@ class GoRouterPushSpy extends GoRouter {
 }
 
 class GoRouterPushNamedSpy extends GoRouter {
-  GoRouterPushNamedSpy({required List<GoRoute> routes}) : super(routes: routes);
+  GoRouterPushNamedSpy({required super.routes});
 
   String? name;
   Map<String, String>? params;
-  Map<String, String>? queryParams;
+  Map<String, dynamic>? queryParams;
   Object? extra;
 
   @override
   void pushNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) {
     this.name = name;
@@ -134,7 +131,7 @@ class GoRouterPushNamedSpy extends GoRouter {
 }
 
 class GoRouterPopSpy extends GoRouter {
-  GoRouterPopSpy({required List<GoRoute> routes}) : super(routes: routes);
+  GoRouterPopSpy({required super.routes});
 
   bool popped = false;
 
@@ -146,9 +143,8 @@ class GoRouterPopSpy extends GoRouter {
 
 class GoRouterRefreshStreamSpy extends GoRouterRefreshStream {
   GoRouterRefreshStreamSpy(
-    Stream<dynamic> stream,
-  )   : notifyCount = 0,
-        super(stream);
+    super.stream,
+  ) : notifyCount = 0;
 
   late int notifyCount;
 
@@ -173,7 +169,6 @@ Future<GoRouter> createRouter(
     redirectLimit: redirectLimit,
     errorBuilder: (BuildContext context, GoRouterState state) =>
         TestErrorScreen(state.error!),
-    debugLogDiagnostics: false,
   );
   await tester.pumpWidget(
     MaterialApp.router(
@@ -186,44 +181,49 @@ Future<GoRouter> createRouter(
 }
 
 class TestErrorScreen extends DummyScreen {
-  const TestErrorScreen(this.ex, {Key? key}) : super(key: key);
+  const TestErrorScreen(this.ex, {super.key});
   final Exception ex;
 }
 
 class HomeScreen extends DummyScreen {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 }
 
 class Page1Screen extends DummyScreen {
-  const Page1Screen({Key? key}) : super(key: key);
+  const Page1Screen({super.key});
 }
 
 class Page2Screen extends DummyScreen {
-  const Page2Screen({Key? key}) : super(key: key);
+  const Page2Screen({super.key});
 }
 
 class LoginScreen extends DummyScreen {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 }
 
 class FamilyScreen extends DummyScreen {
-  const FamilyScreen(this.fid, {Key? key}) : super(key: key);
+  const FamilyScreen(this.fid, {super.key});
   final String fid;
 }
 
 class FamiliesScreen extends DummyScreen {
-  const FamiliesScreen({required this.selectedFid, Key? key}) : super(key: key);
+  const FamiliesScreen({required this.selectedFid, super.key});
   final String selectedFid;
 }
 
 class PersonScreen extends DummyScreen {
-  const PersonScreen(this.fid, this.pid, {Key? key}) : super(key: key);
+  const PersonScreen(this.fid, this.pid, {super.key});
   final String fid;
   final String pid;
 }
 
 class DummyScreen extends StatelessWidget {
-  const DummyScreen({Key? key}) : super(key: key);
+  const DummyScreen({
+    this.queryParametersAll = const <String, dynamic>{},
+    super.key,
+  });
+
+  final Map<String, dynamic> queryParametersAll;
 
   @override
   Widget build(BuildContext context) => const Placeholder();
@@ -336,7 +336,7 @@ class DummyBuildContext implements BuildContext {
 }
 
 class DummyStatefulWidget extends StatefulWidget {
-  const DummyStatefulWidget({Key? key}) : super(key: key);
+  const DummyStatefulWidget({super.key});
 
   @override
   State<DummyStatefulWidget> createState() => DummyStatefulWidgetState();

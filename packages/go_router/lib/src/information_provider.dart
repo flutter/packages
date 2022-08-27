@@ -115,6 +115,5 @@ class GoRouteInformationProvider extends RouteInformationProvider
 /// in use with the [GoRouteInformationParser].
 class DebugGoRouteInformation extends RouteInformation {
   /// Creates a [DebugGoRouteInformation].
-  DebugGoRouteInformation({String? location, Object? state})
-      : super(location: location, state: state);
+  DebugGoRouteInformation({super.location, super.state});
 }

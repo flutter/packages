@@ -29,7 +29,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'doesn\'t convert & to &amp; when parsing',
+      "doesn't convert & to &amp; when parsing",
       (WidgetTester tester) async {
         await tester.pumpWidget(
           boilerplate(
@@ -41,7 +41,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'doesn\'t convert < to &lt; when parsing',
+      "doesn't convert < to &lt; when parsing",
       (WidgetTester tester) async {
         await tester.pumpWidget(
           boilerplate(
@@ -53,7 +53,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'doesn\'t convert existing HTML entities when parsing',
+      "doesn't convert existing HTML entities when parsing",
       (WidgetTester tester) async {
         await tester.pumpWidget(
           boilerplate(

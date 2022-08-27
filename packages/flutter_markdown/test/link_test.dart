@@ -702,7 +702,7 @@ void defineTests() {
       // Example 513b from GFM.
       'link title in single quotes',
       (WidgetTester tester) async {
-        const String data = '[link](/url \'title\')';
+        const String data = "[link](/url 'title')";
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -1202,7 +1202,7 @@ void defineTests() {
 
     testWidgets(
       // Example 531 from GFM.
-      'brackets that aren\'t part of links do not take precedence',
+      "brackets that aren't part of links do not take precedence",
       (WidgetTester tester) async {
         const String data = '*foo [bar* baz]';
         await tester.pumpWidget(

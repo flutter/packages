@@ -45,6 +45,8 @@ void main() {
         runFinished.catchError((dynamic e) {
           final AssertionError error = e as AssertionError;
           expect(error.message, 'Stop!');
+          // TODO(goderbauer): We should not be printing from a test.
+          // ignore: avoid_print
           print('${error.message}');
         });
         fakeAsync.elapse(const Duration(seconds: 20));

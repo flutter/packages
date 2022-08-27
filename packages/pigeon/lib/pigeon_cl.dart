@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'package:pigeon/pigeon_lib.dart';
+import 'pigeon_lib.dart';
 
 /// This is the main entrypoint for the command-line tool.  [args] are the
 /// commmand line arguments and there is an optional [packageConfig] to

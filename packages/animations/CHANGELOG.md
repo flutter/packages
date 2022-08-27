@@ -1,6 +1,7 @@
-## NEXT
+## 2.0.4
 
 * Updates text theme parameters to avoid deprecation issues.
+* Fixes lint warnings.
 
 ## 2.0.3
 * Updates for non-nullable bindings.

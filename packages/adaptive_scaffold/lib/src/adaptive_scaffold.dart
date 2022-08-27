@@ -357,7 +357,6 @@ class AdaptiveScaffold extends StatefulWidget {
         controller: ScrollController(),
         shrinkWrap: true,
         physics: const AlwaysScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
         slivers: <Widget>[
           SliverToBoxAdapter(
             child: Padding(
