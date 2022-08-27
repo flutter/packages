@@ -1,3 +1,7 @@
+## 0.0.1+2
+
+* Fixes lint warnings.
+
 ## 0.0.1+1
 
 * Fixes minimum version of `test` dependency.

@@ -16,8 +16,7 @@ void main() {
               baseName: 'dataType1',
               isNullable: true,
             ),
-            name: 'field1',
-            offset: null),
+            name: 'field1'),
       ],
     );
     final Root root = Root(

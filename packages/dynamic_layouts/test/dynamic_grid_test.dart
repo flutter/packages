@@ -16,7 +16,6 @@ void main() {
         home: Scaffold(
           body: DynamicGridView(
             gridDelegate: TestDelegate(crossAxisCount: 2),
-            children: const <Widget>[],
           ),
         ),
       ),
@@ -41,7 +40,7 @@ void main() {
 
     // Only the visible tiles have ben laid out.
     expect(find.text('Index 0'), findsOneWidget);
-    expect(tester.getTopLeft(find.text('Index 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Index 0')), Offset.zero);
     expect(find.text('Index 1'), findsOneWidget);
     expect(tester.getTopLeft(find.text('Index 1')), const Offset(50.0, 0.0));
     expect(find.text('Index 2'), findsOneWidget);
@@ -72,7 +71,7 @@ void main() {
 
     // Only the visible tiles have ben laid out, up to itemCount.
     expect(find.text('Index 0'), findsOneWidget);
-    expect(tester.getTopLeft(find.text('Index 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Index 0')), Offset.zero);
     expect(find.text('Index 1'), findsOneWidget);
     expect(tester.getTopLeft(find.text('Index 1')), const Offset(50.0, 0.0));
     expect(find.text('Index 2'), findsOneWidget);
@@ -100,7 +99,7 @@ void main() {
 
     // Only the visible tiles have ben laid out.
     expect(find.text('Index 0'), findsOneWidget);
-    expect(tester.getTopLeft(find.text('Index 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Index 0')), Offset.zero);
     expect(find.text('Index 1'), findsOneWidget);
     expect(tester.getTopLeft(find.text('Index 1')), const Offset(50.0, 0.0));
     expect(find.text('Index 2'), findsOneWidget);

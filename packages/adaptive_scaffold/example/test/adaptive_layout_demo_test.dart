@@ -84,7 +84,7 @@ void main() {
     expect(tester.getBottomLeft(bn), const Offset(0, 800));
     expect(tester.getBottomRight(bn), const Offset(400, 800));
     expect(tester.getTopRight(body), const Offset(400, 0));
-    expect(tester.getTopLeft(body), const Offset(0, 0));
+    expect(tester.getTopLeft(body), Offset.zero);
   });
 
   testWidgets('adaptive layout does not animate when animations off',

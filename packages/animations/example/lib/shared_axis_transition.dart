@@ -11,7 +11,7 @@ class SharedAxisTransitionDemo extends StatefulWidget {
   const SharedAxisTransitionDemo({Key? key}) : super(key: key);
 
   @override
-  _SharedAxisTransitionDemoState createState() {
+  State<SharedAxisTransitionDemo> createState() {
     return _SharedAxisTransitionDemoState();
   }
 }
@@ -43,7 +43,6 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
           children: <Widget>[
             Expanded(
               child: PageTransitionSwitcher(
-                duration: const Duration(milliseconds: 300),
                 reverse: !_isLoggedIn,
                 transitionBuilder: (
                   Widget child,
@@ -51,10 +50,10 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                   Animation<double> secondaryAnimation,
                 ) {
                   return SharedAxisTransition(
-                    child: child,
                     animation: animation,
                     secondaryAnimation: secondaryAnimation,
                     transitionType: _transitionType!,
+                    child: child,
                   );
                 },
                 child: _isLoggedIn ? _CoursePage() : _SignInPage(),

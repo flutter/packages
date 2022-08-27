@@ -8,12 +8,12 @@ const ValueKey<String> textKey = ValueKey<String>('textKey');
 const ValueKey<String> aboutPageKey = ValueKey<String>('aboutPageKey');
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
+  const HomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -63,7 +63,6 @@ class _HomePageState extends State<HomePage> {
                     elevation: 8,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text(
                           'Line $index',

@@ -1,6 +1,10 @@
-## 4.0.2
+## 4.0.3
 
 * Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
+## 4.0.2
+
+* Fixes lint warnings.
 
 ## 4.0.1
 

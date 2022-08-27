@@ -376,9 +376,9 @@ void main() {
       textDirection: TextDirection.ltr,
       child: Center(
         child: FadeThroughTransition(
-          child: const _StatefulTestWidget(name: 'Foo'),
           animation: animation,
           secondaryAnimation: secondaryAnimation,
+          child: const _StatefulTestWidget(name: 'Foo'),
         ),
       ),
     ));
