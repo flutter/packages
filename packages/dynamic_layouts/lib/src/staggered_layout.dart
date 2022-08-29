@@ -105,6 +105,9 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
     return true;
   }
 
+  /// The infinite extent in the main axis lets
+  /// [RenderDynamicSliverGrid.performLayout()] know that the child will decide
+  /// its own size in that axis.
   @override
   DynamicSliverGridGeometry getGeometryForChildIndex(int index) {
     return DynamicSliverGridGeometry(
@@ -115,6 +118,8 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
     );
   }
 
+  /// Returns an updated [DynamicSliverGridGeometry] with the actual size of
+  /// the child.
   @override
   DynamicSliverGridGeometry updateGeometryForChildIndex(
     int index,
@@ -273,6 +278,8 @@ class DynamicSliverGridDelegateWithFixedCrossAxisCount
 ///    tiles are positioned.
 class DynamicSliverGridDelegateWithMaxCrossAxisExtent
     extends SliverGridDelegateWithMaxCrossAxisExtent {
+  /// Creates a delegate that makes grid layouts with tiles that have a maximum
+  /// cross-axis extent and varying main axis size.
   /// Creates a delegate that makes grid layouts with tiles that have a maximum
   /// cross-axis extent and varying main axis size dependent on the child's
   /// corresponding finite extent.
