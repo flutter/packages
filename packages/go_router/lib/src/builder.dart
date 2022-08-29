@@ -56,10 +56,13 @@ class RouteBuilder {
     Key navigatorKey,
     bool routerNeglect,
   ) {
-    List<Page<dynamic>>? pages;
+    if (matches.isEmpty) {
+      return const SizedBox.shrink();
+    }
     Exception? error;
     final String location = matches.location.toString();
     final List<RouteMatch> matchesList = matches.matches;
+    List<Page<dynamic>>? pages;
     try {
       // build the stack of pages
       if (routerNeglect) {

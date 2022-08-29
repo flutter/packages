@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'path_utils.dart';
@@ -233,6 +234,10 @@ class GoRoute {
   ///
   /// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
   /// for a complete runnable example.
+  ///
+  /// If [BuildContext.dependOnInheritedWidgetOfExactType] is used during the
+  /// redirection (which is how `of` method is usually implemented), a refresh
+  /// will be triggered if the [InheritedWidget] changes.
   final List<GoRoute> routes;
 
   /// An optional redirect function for this route.
@@ -295,7 +300,9 @@ class GoRoute {
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(_pathParams, match);
 
-  static String? _noRedirection(GoRouterState state) => null;
+  static Future<String?> _noRedirection(
+          BuildContext context, GoRouterState state) =>
+      SynchronousFuture<String?>(null);
 
   static Widget _invalidBuilder(
     BuildContext context,

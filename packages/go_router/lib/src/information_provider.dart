@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'parser.dart';
@@ -96,18 +97,17 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   @override
-  Future<bool> didPushRouteInformation(
-      RouteInformation routeInformation) async {
+  Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
     assert(hasListeners);
     _platformReportsNewRouteInformation(routeInformation);
-    return true;
+    return SynchronousFuture<bool>(true);
   }
 
   @override
-  Future<bool> didPushRoute(String route) async {
+  Future<bool> didPushRoute(String route) {
     assert(hasListeners);
     _platformReportsNewRouteInformation(RouteInformation(location: route));
-    return true;
+    return SynchronousFuture<bool>(true);
   }
 }
 
@@ -115,5 +115,5 @@ class GoRouteInformationProvider extends RouteInformationProvider
 /// in use with the [GoRouteInformationParser].
 class DebugGoRouteInformation extends RouteInformation {
   /// Creates a [DebugGoRouteInformation].
-  DebugGoRouteInformation({super.location, super.state});
+  const DebugGoRouteInformation({super.location, super.state});
 }

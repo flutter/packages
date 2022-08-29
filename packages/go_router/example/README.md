@@ -23,9 +23,14 @@ An example to demonstrate how to navigate using named locations instead of URLs.
 ## [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart)
 `flutter run lib/redirection.dart`
 
-An example to demonstrate how to use redirect to handle a sign-in flow.
+An example to demonstrate how to use redirect to handle a synchronous sign-in flow.
 
-## [books app](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/books)
+## [Asynchronous Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/async_redirection.dart)
+`flutter run lib/async_redirection.dart`
+
+An example to demonstrate how to use handle a sign-in flow with a stream authentication service.
+
+## [Books app](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/books)
 `flutter run lib/books/main.dart`
 
 A fully fledged example that showcases various go_router APIs.

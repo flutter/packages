@@ -42,8 +42,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Set to true to disable creating history entries on the web.
   final bool routerNeglect;
 
-  final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
-
   RouteMatchList _matches = RouteMatchList.empty();
   final Map<String, int> _pushCounts = <String, int>{};
 
@@ -96,7 +94,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
-  GlobalKey<NavigatorState> get navigatorKey => _key;
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
@@ -116,6 +114,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
     _matches = configuration;
+    assert(_matches.isNotEmpty);
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
     return SynchronousFuture<void>(null);
