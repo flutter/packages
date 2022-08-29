@@ -24,9 +24,8 @@ Future<GoRouter> createGoRouter(WidgetTester tester) async {
     ],
   );
   await tester.pumpWidget(MaterialApp.router(
-      routeInformationProvider: goRouter.routeInformationProvider,
-      routeInformationParser: goRouter.routeInformationParser,
-      routerDelegate: goRouter.routerDelegate));
+    routerConfig: goRouter,
+  ));
   return goRouter;
 }
 
@@ -157,9 +156,7 @@ Future<GoRouter> createRouter(
   );
   await tester.pumpWidget(
     MaterialApp.router(
-      routeInformationProvider: goRouter.routeInformationProvider,
-      routeInformationParser: goRouter.routeInformationParser,
-      routerDelegate: goRouter.routerDelegate,
+      routerConfig: goRouter,
     ),
   );
   return goRouter;

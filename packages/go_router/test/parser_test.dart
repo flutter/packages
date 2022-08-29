@@ -24,9 +24,7 @@ void main() {
       redirect: redirect,
     );
     await tester.pumpWidget(MaterialApp.router(
-      routeInformationProvider: router.routeInformationProvider,
-      routeInformationParser: router.routeInformationParser,
-      routerDelegate: router.routerDelegate,
+      routerConfig: router,
     ));
     return router.routeInformationParser;
   }

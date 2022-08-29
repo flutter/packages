@@ -1,6 +1,10 @@
 ## 5.0.0
 
 - Fixes a bug where intermediate route redirect methods are not called.
+- GoRouter implements the RouterConfig interface, allowing you to call
+  MaterialApp.router(routerConfig: _myGoRouter) instead of passing
+  the RouterDelegate, RouteInformationParser, and RouteInformationProvider
+  fields.
 - **BREAKING CHANGE**
   - Redesigns redirection API, adds asynchronous feature, and adds build context to redirect.
   - Removes GoRouterRefreshStream

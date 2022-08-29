@@ -37,7 +37,9 @@ import 'typedefs.dart';
 ///  * [GoRoute], which provides APIs to define the routing table.
 ///  * [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example),
 ///    which contains examples for different routing scenarios.
-class GoRouter extends ChangeNotifier with NavigatorObserver {
+class GoRouter extends ChangeNotifier
+    with NavigatorObserver
+    implements RouterConfig<RouteMatchList> {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
   ///
@@ -57,7 +59,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
-  }) {
+  }) : backButtonDispatcher = RootBackButtonDispatcher() {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -99,6 +101,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         child: nav,
       ),
     );
+
     assert(() {
       log.info('setting initial location $initialLocation');
       return true;
@@ -110,15 +113,21 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   late final GoRouterDelegate _routerDelegate;
   late final GoRouteInformationProvider _routeInformationProvider;
 
+  @override
+  final BackButtonDispatcher backButtonDispatcher;
+
   /// The router delegate. Provide this to the MaterialApp or CupertinoApp's
   /// `.router()` constructor
+  @override
   GoRouterDelegate get routerDelegate => _routerDelegate;
 
   /// The route information provider used by [GoRouter].
+  @override
   GoRouteInformationProvider get routeInformationProvider =>
       _routeInformationProvider;
 
   /// The route information parser used by [GoRouter].
+  @override
   GoRouteInformationParser get routeInformationParser =>
       _routeInformationParser;
 
