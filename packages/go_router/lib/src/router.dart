@@ -59,7 +59,7 @@ class GoRouter extends ChangeNotifier
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
     String? restorationScopeId,
-    this.backButtonDispatcher,
+    BackButtonDispatcher? backButtonDispatcher,
   }) {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
@@ -99,6 +99,10 @@ class GoRouter extends ChangeNotifier
         child: nav,
       ),
     );
+
+    this.backButtonDispatcher =
+        backButtonDispatcher ?? RootBackButtonDispatcher();
+
     assert(() {
       log.info('setting initial location $initialLocation');
       return true;
@@ -111,7 +115,7 @@ class GoRouter extends ChangeNotifier
   late final GoRouteInformationProvider _routeInformationProvider;
 
   @override
-  final BackButtonDispatcher? backButtonDispatcher;
+  late final BackButtonDispatcher? backButtonDispatcher;
 
   /// The router delegate. Provide this to the MaterialApp or CupertinoApp's
   /// `.router()` constructor
