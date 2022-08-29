@@ -307,6 +307,10 @@ class GoRoute extends RouteBase {
   /// routes, also known as route guards. One canonical example is user
   /// authentication. See [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart)
   /// for a complete runnable example.
+  ///
+  /// If [BuildContext.dependOnInheritedWidgetOfExactType] is used during the
+  /// redirection (which is how `of` method is usually implemented), a
+  /// re-evaluation will be triggered if the [InheritedWidget] changes.
   final GoRouterRedirect? redirect;
 
   /// An optional key specifying which Navigator to display this route's screen

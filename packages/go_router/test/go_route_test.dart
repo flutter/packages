@@ -15,6 +15,6 @@ void main() {
   });
 
   test('does not throw when only redirect is provided', () {
-    GoRoute(path: '/', redirect: (_) => '/a');
+    GoRoute(path: '/', redirect: (_, __) => '/a');
   });
 }

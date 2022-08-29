@@ -50,7 +50,7 @@ void main() {
               ),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           );
@@ -71,7 +71,7 @@ void main() {
               ShellRoute(routes: shellRouteChildren),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           );
@@ -111,7 +111,7 @@ void main() {
               ),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           );
@@ -168,7 +168,7 @@ void main() {
             ),
           ],
           redirectLimit: 10,
-          topRedirect: (GoRouterState state) {
+          topRedirect: (BuildContext context, GoRouterState state) {
             return null;
           },
         );
@@ -217,7 +217,7 @@ void main() {
               ),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           ),
@@ -267,7 +267,7 @@ void main() {
             ),
           ],
           redirectLimit: 10,
-          topRedirect: (GoRouterState state) {
+          topRedirect: (BuildContext context, GoRouterState state) {
             return null;
           },
         );
@@ -325,7 +325,7 @@ void main() {
               ),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           ),
@@ -383,7 +383,7 @@ void main() {
           ),
         ],
         redirectLimit: 10,
-        topRedirect: (GoRouterState state) {
+        topRedirect: (BuildContext context, GoRouterState state) {
           return null;
         },
       );
@@ -410,7 +410,7 @@ void main() {
             ]),
           ],
           redirectLimit: 10,
-          topRedirect: (GoRouterState state) {
+          topRedirect: (BuildContext context, GoRouterState state) {
             return null;
           },
         );
@@ -439,7 +439,7 @@ void main() {
             ),
           ],
           redirectLimit: 10,
-          topRedirect: (GoRouterState state) {
+          topRedirect: (BuildContext context, GoRouterState state) {
             return null;
           },
         );

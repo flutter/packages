@@ -196,8 +196,7 @@ void main() {
     testWidgets('match top level route when location has trailing / (2)',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-            path: '/profile', builder: dummy, redirect: (_) => '/profile/foo'),
+        GoRoute(path: '/profile', builder: dummy, redirect: (_, __) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -212,8 +211,7 @@ void main() {
     testWidgets('match top level route when location has trailing / (3)',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-            path: '/profile', builder: dummy, redirect: (_) => '/profile/foo'),
+        GoRoute(path: '/profile', builder: dummy, redirect: (_, __) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -839,7 +837,7 @@ void main() {
         GoRoute(
           path: '/',
           builder: dummy,
-          redirect: (_) => '/family/f2',
+          redirect: (_, __) => '/family/f2',
         ),
         GoRoute(
           path: '/family/:fid',
@@ -940,8 +938,8 @@ void main() {
       ];
       bool redirected = false;
 
-      final GoRouter router =
-          await createRouter(routes, tester, redirect: (GoRouterState state) {
+      final GoRouter router = await createRouter(routes, tester,
+          redirect: (BuildContext context, GoRouterState state) {
         redirected = true;
         return state.subloc == '/login' ? null : '/login';
       });
@@ -986,7 +984,7 @@ void main() {
       final GoRouter router = await createRouter(
         routes,
         tester,
-        redirect: (GoRouterState state) =>
+        redirect: (BuildContext context, GoRouterState state) =>
             state.subloc == '/login' ? null : state.namedLocation('login'),
       );
       expect(router.location, '/login');
@@ -1003,7 +1001,7 @@ void main() {
               path: 'dummy',
               builder: (BuildContext context, GoRouterState state) =>
                   const DummyScreen(),
-              redirect: (GoRouterState state) => '/login',
+              redirect: (BuildContext context, GoRouterState state) => '/login',
             ),
             GoRoute(
               path: 'login',
@@ -1032,7 +1030,7 @@ void main() {
                 path: 'dummy',
                 builder: (BuildContext context, GoRouterState state) =>
                     const DummyScreen(),
-                redirect: (GoRouterState state) {
+                redirect: (BuildContext context, GoRouterState state) {
                   // should never be reached.
                   assert(false);
                   return '/dummy2';
@@ -1049,8 +1047,8 @@ void main() {
         ),
       ];
       bool redirected = false;
-      final GoRouter router =
-          await createRouter(routes, tester, redirect: (GoRouterState state) {
+      final GoRouter router = await createRouter(routes, tester,
+          redirect: (BuildContext context, GoRouterState state) {
         redirected = true;
         return state.subloc == '/login' ? null : '/login';
       });
@@ -1077,7 +1075,8 @@ void main() {
               path: 'dummy',
               builder: (BuildContext context, GoRouterState state) =>
                   const DummyScreen(),
-              redirect: (GoRouterState state) => state.namedLocation('login'),
+              redirect: (BuildContext context, GoRouterState state) =>
+                  state.namedLocation('login'),
             ),
             GoRoute(
               name: 'login',
@@ -1111,14 +1110,14 @@ void main() {
               path: 'dummy2',
               builder: (BuildContext context, GoRouterState state) =>
                   const DummyScreen(),
-              redirect: (GoRouterState state) => '/',
+              redirect: (BuildContext context, GoRouterState state) => '/',
             ),
           ],
         ),
       ];
 
       final GoRouter router = await createRouter(routes, tester,
-          redirect: (GoRouterState state) =>
+          redirect: (BuildContext context, GoRouterState state) =>
               state.subloc == '/dummy1' ? '/dummy2' : null);
       router.go('/dummy1');
       await tester.pump();
@@ -1127,11 +1126,12 @@ void main() {
 
     testWidgets('top-level redirect loop', (WidgetTester tester) async {
       final GoRouter router = await createRouter(<GoRoute>[], tester,
-          redirect: (GoRouterState state) => state.subloc == '/'
-              ? '/login'
-              : state.subloc == '/login'
-                  ? '/'
-                  : null);
+          redirect: (BuildContext context, GoRouterState state) =>
+              state.subloc == '/'
+                  ? '/login'
+                  : state.subloc == '/login'
+                      ? '/'
+                      : null);
 
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
@@ -1147,12 +1147,12 @@ void main() {
           GoRoute(
             path: '/',
             builder: dummy,
-            redirect: (GoRouterState state) => '/login',
+            redirect: (BuildContext context, GoRouterState state) => '/login',
           ),
           GoRoute(
             path: '/login',
             builder: dummy,
-            redirect: (GoRouterState state) => '/',
+            redirect: (BuildContext context, GoRouterState state) => '/',
           ),
         ],
         tester,
@@ -1172,11 +1172,11 @@ void main() {
           GoRoute(
             path: '/login',
             builder: dummy,
-            redirect: (GoRouterState state) => '/',
+            redirect: (BuildContext context, GoRouterState state) => '/',
           ),
         ],
         tester,
-        redirect: (GoRouterState state) =>
+        redirect: (BuildContext context, GoRouterState state) =>
             state.subloc == '/' ? '/login' : null,
       );
 
@@ -1193,11 +1193,12 @@ void main() {
       final GoRouter router = await createRouter(
         <GoRoute>[],
         tester,
-        redirect: (GoRouterState state) => state.subloc == '/'
-            ? '/login?from=${state.location}'
-            : state.subloc == '/login'
-                ? '/'
-                : null,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.subloc == '/'
+                ? '/login?from=${state.location}'
+                : state.subloc == '/login'
+                    ? '/'
+                    : null,
       );
 
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
@@ -1219,7 +1220,7 @@ void main() {
         GoRoute(
           path: '/dummy',
           builder: dummy,
-          redirect: (GoRouterState state) => '/',
+          redirect: (BuildContext context, GoRouterState state) => '/',
         ),
       ];
 
@@ -1249,7 +1250,7 @@ void main() {
         routes,
         tester,
         initialLocation: '/login?from=/',
-        redirect: (GoRouterState state) {
+        redirect: (BuildContext context, GoRouterState state) {
           expect(Uri.parse(state.location).queryParameters, isNotEmpty);
           expect(Uri.parse(state.subloc).queryParameters, isEmpty);
           expect(state.path, isNull);
@@ -1271,7 +1272,7 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/book/:bookId',
-          redirect: (GoRouterState state) {
+          redirect: (BuildContext context, GoRouterState state) {
             expect(state.location, loc);
             expect(state.subloc, loc);
             expect(state.path, '/book/:bookId');
@@ -1309,7 +1310,7 @@ void main() {
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person/:pid',
-                  redirect: (GoRouterState s) {
+                  redirect: (BuildContext context, GoRouterState s) {
                     expect(s.params['fid'], 'f2');
                     expect(s.params['pid'], 'p1');
                     return null;
@@ -1344,7 +1345,8 @@ void main() {
       final GoRouter router = await createRouter(
         <GoRoute>[],
         tester,
-        redirect: (GoRouterState state) => '/${state.location}+',
+        redirect: (BuildContext context, GoRouterState state) =>
+            '/${state.location}+',
         redirectLimit: 10,
       );
 
@@ -1373,7 +1375,7 @@ void main() {
               builder: (BuildContext context, GoRouterState state) {
                 return const LoginScreen();
               },
-              redirect: (GoRouterState state) {
+              redirect: (BuildContext context, GoRouterState state) {
                 isCallRouteRedirect = true;
                 expect(state.extra, isNotNull);
                 return null;
@@ -1387,7 +1389,7 @@ void main() {
       final GoRouter router = await createRouter(
         routes,
         tester,
-        redirect: (GoRouterState state) {
+        redirect: (BuildContext context, GoRouterState state) {
           if (state.location == '/login') {
             isCallTopRedirect = true;
             expect(state.extra, isNotNull);
@@ -1416,13 +1418,14 @@ void main() {
                 path: 'dummy',
                 builder: (BuildContext context, GoRouterState state) =>
                     const DummyScreen(),
-                redirect: (GoRouterState state) => '/other',
+                redirect: (BuildContext context, GoRouterState state) =>
+                    '/other',
                 routes: <GoRoute>[
                   GoRoute(
                     path: 'dummy2',
                     builder: (BuildContext context, GoRouterState state) =>
                         const DummyScreen(),
-                    redirect: (GoRouterState state) {
+                    redirect: (BuildContext context, GoRouterState state) {
                       assert(false);
                       return '/other2';
                     },
@@ -1485,7 +1488,7 @@ void main() {
         GoRoute(
           path: '/dummy',
           builder: dummy,
-          redirect: (GoRouterState state) => '/',
+          redirect: (BuildContext context, GoRouterState state) => '/',
         ),
       ];
 

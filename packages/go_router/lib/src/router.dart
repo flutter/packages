@@ -29,7 +29,9 @@ import 'typedefs.dart';
 ///
 /// The `redirect` does top-level redirection before the URIs are parsed by
 /// the `routes`. Consider using [GoRoute.redirect] for individual route
-/// redirection.
+/// redirection. If [BuildContext.dependOnInheritedWidgetOfExactType] is used
+/// during the redirection (which is how `of` methods are usually implemented),
+/// a re-evaluation will be triggered when the [InheritedWidget] changes.
 ///
 /// See also:
 ///  * [GoRoute], which provides APIs to define the routing table.
@@ -63,7 +65,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
     _routeConfiguration = RouteConfiguration(
       routes: routes,
-      topRedirect: redirect ?? (_) => null,
+      topRedirect: redirect ?? (_, __) => null,
       redirectLimit: redirectLimit,
       navigatorKey: navigatorKey,
     );
@@ -175,8 +177,12 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       return true;
     }());
     _routeInformationParser
-        .parseRouteInformation(
-            DebugGoRouteInformation(location: location, state: extra))
+        .parseRouteInformationWithDependencies(
+      DebugGoRouteInformation(location: location, state: extra),
+      // TODO(chunhtai): avoid accessing the context directly through global key.
+      // https://github.com/flutter/flutter/issues/99112
+      _routerDelegate.navigatorKey.currentContext!,
+    )
         .then<void>((RouteMatchList matches) {
       _routerDelegate.push(matches.last);
     });
@@ -203,8 +209,11 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// * [push] which pushes the location onto the page stack.
   void replace(String location, {Object? extra}) {
     routeInformationParser
-        .parseRouteInformation(
+        .parseRouteInformationWithDependencies(
       DebugGoRouteInformation(location: location, state: extra),
+      // TODO(chunhtai): avoid accessing the context directly through global key.
+      // https://github.com/flutter/flutter/issues/99112
+      _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matchList) {
       routerDelegate.replace(matchList.matches.last);

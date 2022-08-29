@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:meta/meta_meta.dart';
@@ -68,7 +70,7 @@ abstract class GoRouteData {
   /// [redirect].
   ///
   /// Corresponds to [GoRoute.redirect].
-  String? redirect() => null;
+  FutureOr<String?> redirect() => null;
 
   /// A helper function used by generated code.
   ///
@@ -108,7 +110,8 @@ abstract class GoRouteData {
     Page<void> pageBuilder(BuildContext context, GoRouterState state) =>
         factoryImpl(state).buildPageWithState(context, state);
 
-    String? redirect(GoRouterState state) => factoryImpl(state).redirect();
+    FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
+        factoryImpl(state).redirect();
 
     return GoRoute(
       path: path,
