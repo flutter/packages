@@ -22,7 +22,7 @@ class GoRouteMatch {
     required this.extra,
     required this.error,
     this.pageKey,
-  })  : fullUriString = _addQueryParams(location, queryParams),
+  })  : fullUriString = _addQueryParams(location, queryParametersAll),
         assert(Uri.parse(location).queryParameters.isEmpty),
         assert(Uri.parse(template).queryParameters.isEmpty),
         assert(() {

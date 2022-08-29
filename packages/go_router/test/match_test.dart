@@ -20,11 +20,10 @@ void main() {
         parentSubloc: '',
         fullpath: '/users/:userId',
         queryParams: <String, String>{
-          'foo': 'bar',
         },
         extra: const _Extra('foo'),
         queryParametersAll: <String, List<String>>{
-          'foo': <String>['bar'],
+          'bar': <String>['baz', 'biz'],
         },
       );
       if (match == null) {
@@ -34,12 +33,12 @@ void main() {
       expect(match.location, '/users/123');
       expect(match.template, '/users/:userId');
       expect(match.encodedParams['userId'], '123');
-      expect(match.queryParams['foo'], 'bar');
-      expect(match.queryParametersAll['foo'], <String>['bar']);
+      expect(match.queryParams['foo'], isNull);
+      expect(match.queryParametersAll['bar'], <String>['baz', 'biz']);
       expect(match.extra, const _Extra('foo'));
       expect(match.error, isNull);
       expect(match.pageKey, isNull);
-      expect(match.fullUriString, '/users/123?foo=bar');
+      expect(match.fullUriString, '/users/123?bar=baz&bar=biz');
     });
     test('subloc', () {
       final GoRoute route = GoRoute(
