@@ -74,13 +74,10 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: DynamicGridView.builder(
-              itemCount: children.length,
-              gridDelegate: const SliverGridDelegateWithWrapping(),
-              itemBuilder: (
-                BuildContext context,
-                int index,
-              ) =>
-                  children[index]),
+            itemCount: children.length,
+            gridDelegate: const SliverGridDelegateWithWrapping(),
+            itemBuilder: (BuildContext context, int index) => children[index],
+          ),
         ),
       ),
     );
@@ -143,11 +140,7 @@ void main() {
             reverse: true,
             itemCount: children.length,
             gridDelegate: const SliverGridDelegateWithWrapping(),
-            itemBuilder: (
-              BuildContext context,
-              int index,
-            ) =>
-                children[index],
+            itemBuilder: (BuildContext context, int index) => children[index],
           ),
         ),
       ),
@@ -221,6 +214,98 @@ void main() {
     expect(textField.focusNode!.hasFocus, isFalse);
   });
 
+  testWidgets('ChildMainAxisExtent & childCrossAxisExtent are respected',
+      (WidgetTester tester) async {
+    final List<Widget> children = List<Widget>.generate(
+      10,
+      (int index) => SizedBox(
+        key: Key(index.toString()),
+        child: Center(child: Text('Item $index')),
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DynamicGridView.builder(
+            gridDelegate: const SliverGridDelegateWithWrapping(
+              childMainAxisExtent: 150,
+              childCrossAxisExtent: 200,
+            ),
+            itemCount: children.length,
+            itemBuilder: (BuildContext context, int index) => children[index],
+          ),
+        ),
+      ),
+    );
+
+    for (int i = 0; i < 10; i++) {
+      final Size sizeOfCurrent = tester.getSize(find.byKey(Key('$i')));
+      expect(sizeOfCurrent.width, equals(200));
+      expect(sizeOfCurrent.height, equals(150));
+    }
+  });
+
+  testWidgets('ChildMainAxisExtent is respected', (WidgetTester tester) async {
+    final List<Widget> children = List<Widget>.generate(
+      10,
+      (int index) => SizedBox(
+        key: Key(index.toString()),
+        width: index.isEven ? 100 : 180,
+        child: Center(child: Text('Item $index')),
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DynamicGridView.builder(
+            gridDelegate: const SliverGridDelegateWithWrapping(
+              // TODO(snat-s): This test works with the cross and main axis backwards
+              childMainAxisExtent: 200,
+            ),
+            itemCount: children.length,
+            itemBuilder: (BuildContext context, int index) => children[index],
+          ),
+        ),
+      ),
+    );
+
+    for (int i = 0; i < 10; i++) {
+      final Size sizeOfCurrent = tester.getSize(find.byKey(Key('$i')));
+      expect(sizeOfCurrent.height, equals(200));
+    }
+  });
+
+  testWidgets('ChildCrossAxisExtent is respected', (WidgetTester tester) async {
+    final List<Widget> children = List<Widget>.generate(
+      10,
+      (int index) => SizedBox(
+        key: Key(index.toString()),
+        child: Center(child: Text('Item $index')),
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DynamicGridView.builder(
+            gridDelegate: const SliverGridDelegateWithWrapping(
+              childCrossAxisExtent: 150,
+            ),
+            itemCount: children.length,
+            itemBuilder: (BuildContext context, int index) => children[index],
+          ),
+        ),
+      ),
+    );
+
+    for (int i = 0; i < 10; i++) {
+      final Size sizeOfCurrent = tester.getSize(find.byKey(Key('$i')));
+      expect(sizeOfCurrent.width, equals(150));
+    }
+  });
+
   testWidgets('Test wrap in Axis.vertical direction',
       (WidgetTester tester) async {
     final List<Widget> children = List<Widget>.generate(
@@ -236,10 +321,10 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: DynamicGridView.builder(
-              itemCount: children.length,
-              gridDelegate: const SliverGridDelegateWithWrapping(),
-              itemBuilder: (BuildContext context, int index) =>
-                  children[index]),
+            itemCount: children.length,
+            gridDelegate: const SliverGridDelegateWithWrapping(),
+            itemBuilder: (BuildContext context, int index) => children[index],
+          ),
         ),
       ),
     );
@@ -282,7 +367,9 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: DynamicGridView.wrap(
-              scrollDirection: Axis.horizontal, children: children),
+            scrollDirection: Axis.horizontal,
+            children: children,
+          ),
         ),
       ),
     );
@@ -317,7 +404,6 @@ void main() {
     // resets the screen to its original size after the test end
     addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
   });
-  // TODO(snat-s): Test if childMainAxisExtent is respected
   // TODO(snat-s): 'Test wrap to see nothing affected if random elements are deleted'.
 }
 

@@ -37,14 +37,14 @@ class DynamicSliverGridGeometry extends SliverGridGeometry {
         crossAxisExtent.isInfinite ? 0.0 : crossAxisExtent;
 
     switch (constraints.axis) {
-      case Axis.horizontal:
+      case Axis.vertical:
         return BoxConstraints(
           minHeight: mainMinExtent,
           maxHeight: mainAxisExtent,
           minWidth: crossMinExtent,
           maxWidth: crossAxisExtent,
         );
-      case Axis.vertical:
+      case Axis.horizontal:
         return BoxConstraints(
           minHeight: crossMinExtent,
           maxHeight: crossAxisExtent,

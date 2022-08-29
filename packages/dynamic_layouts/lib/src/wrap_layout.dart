@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:dynamic_layouts/dynamic_layouts.dart';
 import 'package:flutter/rendering.dart';
+
+import '../dynamic_layouts.dart';
 
 // The model that tracks the current max size of the Sliver in the mainAxis and
 // tracks if there is still space on the crossAxis.
