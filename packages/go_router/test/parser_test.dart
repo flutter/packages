@@ -133,7 +133,8 @@ void main() {
     final RouteConfiguration configuration = RouteConfiguration(
       routes: routes,
       redirectLimit: 100,
-      topRedirect: (_) => null, navigatorKey: GlobalKey<NavigatorState>(),
+      topRedirect: (_) => null,
+      navigatorKey: GlobalKey<NavigatorState>(),
     );
 
     expect(

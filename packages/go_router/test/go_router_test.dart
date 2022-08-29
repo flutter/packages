@@ -2297,14 +2297,12 @@ void main() {
           );
 
           expect(router.canPop(), isTrue);
-          expect(
-              find.text('A Screen'), findsOneWidget);
+          expect(find.text('A Screen'), findsOneWidget);
           router.pop();
           await tester.pumpAndSettle();
           expect(find.text('A Screen'), findsNothing);
           expect(find.text('Shell'), findsNothing);
           expect(find.text('Home'), findsOneWidget);
-
         },
       );
     });

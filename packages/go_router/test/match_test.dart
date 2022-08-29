@@ -19,8 +19,7 @@ void main() {
         restLoc: '/users/123',
         parentSubloc: '',
         fullpath: '/users/:userId',
-        queryParams: <String, String>{
-        },
+        queryParams: <String, String>{},
         extra: const _Extra('foo'),
         queryParametersAll: <String, List<String>>{
           'bar': <String>['baz', 'biz'],
