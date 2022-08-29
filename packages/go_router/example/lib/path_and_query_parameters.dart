@@ -62,9 +62,7 @@ class App extends StatelessWidget {
   // add the login info into the tree as app state that can change over time
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationProvider: _router.routeInformationProvider,
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
+        routerConfig: _router,
         title: title,
         debugShowCheckedModeBanner: false,
       );

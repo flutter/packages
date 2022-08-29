@@ -135,4 +135,8 @@ class MockGoRouter extends GoRouter {
       Object? extra}) {
     latestPushedName = name;
   }
+
+  @override
+  // TODO: implement backButtonDispatcher
+  BackButtonDispatcher? get backButtonDispatcher => throw UnimplementedError();
 }
