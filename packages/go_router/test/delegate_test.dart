@@ -89,28 +89,6 @@ void main() {
     );
   });
 
-  group('canPop', () {
-    testWidgets(
-      'It should return false if there is only 1 match in the stack',
-      (WidgetTester tester) async {
-        final GoRouter goRouter = await createGoRouter(tester);
-
-        expect(goRouter.routerDelegate.matches.matches.length, 1);
-        expect(goRouter.routerDelegate.canPop(), false);
-      },
-    );
-    testWidgets(
-      'It should return true if there is more than 1 match in the stack',
-      (WidgetTester tester) async {
-        final GoRouter goRouter = await createGoRouter(tester)
-          ..push('/error');
-
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
-        expect(goRouter.routerDelegate.canPop(), true);
-      },
-    );
-  });
-
   group('replace', () {
     testWidgets(
       'It should replace the last match with the given one',

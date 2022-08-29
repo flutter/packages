@@ -1978,53 +1978,235 @@ void main() {
     });
   });
 
-  testWidgets('pop triggers pop on routerDelegate',
-      (WidgetTester tester) async {
-    final GoRouter router = await createGoRouter(tester)
-      ..push('/error');
-    router.routerDelegate.addListener(expectAsync0(() {}));
-    router.pop();
-    await tester.pump();
-  });
+  group('Imperative navigation', () {
+    testWidgets('pop triggers pop on routerDelegate',
+        (WidgetTester tester) async {
+      final GoRouter router = await createGoRouter(tester)
+        ..push('/error');
+      router.routerDelegate.addListener(expectAsync0(() {}));
+      router.pop();
+      await tester.pump();
+    });
 
-  testWidgets('didPush notifies listeners', (WidgetTester tester) async {
-    await createGoRouter(tester)
-      ..addListener(expectAsync0(() {}))
-      ..didPush(
-        MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
-        MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
-      );
-  });
+    testWidgets('didPush notifies listeners', (WidgetTester tester) async {
+      await createGoRouter(tester)
+        ..addListener(expectAsync0(() {}))
+        ..didPush(
+          MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
+          MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
+        );
+    });
 
-  testWidgets('didPop notifies listeners', (WidgetTester tester) async {
-    await createGoRouter(tester)
-      ..addListener(expectAsync0(() {}))
-      ..didPop(
-        MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
-        MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
-      );
-  });
+    testWidgets('didPop notifies listeners', (WidgetTester tester) async {
+      await createGoRouter(tester)
+        ..addListener(expectAsync0(() {}))
+        ..didPop(
+          MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
+          MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
+        );
+    });
 
-  testWidgets('didRemove notifies listeners', (WidgetTester tester) async {
-    await createGoRouter(tester)
-      ..addListener(expectAsync0(() {}))
-      ..didRemove(
-        MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
-        MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
-      );
-  });
+    testWidgets('didRemove notifies listeners', (WidgetTester tester) async {
+      await createGoRouter(tester)
+        ..addListener(expectAsync0(() {}))
+        ..didRemove(
+          MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
+          MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
+        );
+    });
 
-  testWidgets('didReplace notifies listeners', (WidgetTester tester) async {
-    await createGoRouter(tester)
-      ..addListener(expectAsync0(() {}))
-      ..didReplace(
-        newRoute: MaterialPageRoute<void>(
-          builder: (_) => const Text('Current route'),
-        ),
-        oldRoute: MaterialPageRoute<void>(
-          builder: (_) => const Text('Previous route'),
-        ),
+    testWidgets('didReplace notifies listeners', (WidgetTester tester) async {
+      await createGoRouter(tester)
+        ..addListener(expectAsync0(() {}))
+        ..didReplace(
+          newRoute: MaterialPageRoute<void>(
+            builder: (_) => const Text('Current route'),
+          ),
+          oldRoute: MaterialPageRoute<void>(
+            builder: (_) => const Text('Previous route'),
+          ),
+        );
+    });
+
+    group('canPop', () {
+      testWidgets(
+        'It should return false if Navigator.canPop() returns false.',
+        (WidgetTester tester) async {
+          final GlobalKey<NavigatorState> navigatorKey =
+              GlobalKey<NavigatorState>();
+          final GoRouter router = GoRouter(
+            initialLocation: '/',
+            navigatorKey: navigatorKey,
+            routes: <GoRoute>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext context, _) {
+                  return Scaffold(
+                    body: TextButton(
+                      onPressed: () async {
+                        navigatorKey.currentState!.push(
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) {
+                              return const Scaffold(
+                                body: Text('pageless route'),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text('Push'),
+                    ),
+                  );
+                },
+              ),
+              GoRoute(path: '/a', builder: (_, __) => const DummyScreen()),
+            ],
+          );
+
+          await tester.pumpWidget(
+            MaterialApp.router(
+                routeInformationProvider: router.routeInformationProvider,
+                routeInformationParser: router.routeInformationParser,
+                routerDelegate: router.routerDelegate),
+          );
+
+          expect(router.canPop(), false);
+
+          await tester.tap(find.text('Push'));
+          await tester.pumpAndSettle();
+
+          expect(
+              find.text('pageless route', skipOffstage: false), findsOneWidget);
+          expect(router.canPop(), true);
+        },
       );
+
+      testWidgets(
+        'It checks if ShellRoute navigators can pop',
+        (WidgetTester tester) async {
+          final GlobalKey<NavigatorState> shellNavigatorKey =
+              GlobalKey<NavigatorState>();
+          final GoRouter router = GoRouter(
+            initialLocation: '/a',
+            routes: <RouteBase>[
+              ShellRoute(
+                navigatorKey: shellNavigatorKey,
+                builder:
+                    (BuildContext context, GoRouterState state, Widget child) {
+                  return Scaffold(
+                    appBar: AppBar(title: const Text('Shell')),
+                    body: child,
+                  );
+                },
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: '/a',
+                    builder: (BuildContext context, _) {
+                      return Scaffold(
+                        body: TextButton(
+                          onPressed: () async {
+                            shellNavigatorKey.currentState!.push(
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) {
+                                  return const Scaffold(
+                                    body: Text('pageless route'),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: const Text('Push'),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(
+            MaterialApp.router(
+                routeInformationProvider: router.routeInformationProvider,
+                routeInformationParser: router.routeInformationParser,
+                routerDelegate: router.routerDelegate),
+          );
+
+          expect(router.canPop(), false);
+          expect(find.text('Push'), findsOneWidget);
+
+          await tester.tap(find.text('Push'));
+          await tester.pumpAndSettle();
+
+          expect(
+              find.text('pageless route', skipOffstage: false), findsOneWidget);
+          expect(router.canPop(), true);
+        },
+      );
+    });
+    group('pop', () {
+      testWidgets(
+        'Should pop ShellRoute if it only has one child match',
+        (WidgetTester tester) async {
+          final GlobalKey<NavigatorState> navigatorKey =
+              GlobalKey<NavigatorState>();
+          final GoRouter router = GoRouter(
+            initialLocation: '/a',
+            navigatorKey: navigatorKey,
+            routes: <GoRoute>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext context, _) {
+                  return const Scaffold(
+                    body: Text('Home'),
+                  );
+                },
+                routes: <RouteBase>[
+                  ShellRoute(
+                    builder: (BuildContext context, GoRouterState state,
+                        Widget child) {
+                      return Scaffold(
+                        body: Center(
+                          child: Column(
+                            children: <Widget>[
+                              const Text('Shell'),
+                              Expanded(child: child),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'a',
+                        builder: (_, __) => const Text('A Screen'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(
+            MaterialApp.router(
+                routeInformationProvider: router.routeInformationProvider,
+                routeInformationParser: router.routeInformationParser,
+                routerDelegate: router.routerDelegate),
+          );
+
+          expect(router.canPop(), isTrue);
+          expect(
+              find.text('A Screen'), findsOneWidget);
+          router.pop();
+          await tester.pumpAndSettle();
+          expect(find.text('A Screen'), findsNothing);
+          expect(find.text('Shell'), findsNothing);
+          expect(find.text('Home'), findsOneWidget);
+
+        },
+      );
+    });
   });
 
   testWidgets('uses navigatorBuilder when provided',

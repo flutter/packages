@@ -325,9 +325,11 @@ class RouteBuilder {
     if (route is GoRoute) {
       final GoRouterWidgetBuilder? builder = route.builder;
 
-      if (builder != null) {
-        return builder(context, state);
+      if (builder == null) {
+        throw RouteBuilderError('No routeBuilder provided to GoRoute: $route');
       }
+
+      return builder(context, state);
     } else if (route is ShellRoute) {
       if (childWidget == null) {
         throw RouteBuilderError(
@@ -335,9 +337,12 @@ class RouteBuilder {
       }
 
       final ShellRouteBuilder? builder = route.builder;
-      if (builder != null) {
-        return builder(context, state, childWidget);
+
+      if (builder == null) {
+        throw RouteBuilderError('No builder provided to ShellRoute: $route');
       }
+
+      return builder(context, state, childWidget);
     }
 
     throw UnimplementedError('Unsupported route type $route');

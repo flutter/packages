@@ -105,9 +105,24 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     notifyListeners();
   }
 
-  /// Returns `true` if there is more than 1 page on the stack.
+  /// Returns `true` if the active Navigator can pop.
   bool canPop() {
-    return _matchList.canPop();
+    // Loop through navigators in reverse and call canPop()
+    final int matchCount = _matchList.matches.length;
+    for (int i = matchCount - 1; i >= 0; i--) {
+      final GoRouteMatch match = _matchList.matches[i];
+      final RouteBase route = match.route;
+      if (route is ShellRoute) {
+        final NavigatorState? navigatorState = route.navigatorKey.currentState;
+        if (navigatorState != null) {
+          final bool canPopNavigator = navigatorState.canPop();
+          if (canPopNavigator) {
+            return true;
+          }
+        }
+      }
+    }
+    return navigatorKey.currentState?.canPop() ?? false;
   }
 
   /// Pop the top page off the GoRouter's page stack.

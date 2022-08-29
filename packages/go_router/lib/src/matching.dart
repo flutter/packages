@@ -70,14 +70,20 @@ class RouteMatchList {
   /// Removes the last match.
   void pop() {
     _matches.removeLast();
-    assert(
-        _matches.isNotEmpty,
-        'You have popped the last page off of the stack,'
-        ' there are no pages left to show');
+
+    _assertNotEmpty();
+
+    // Also pop ShellRoutes when there are no subsequent route matches
+    if (_matches.last.route is ShellRoute) {
+      _matches.removeLast();
+    }
+
+    _assertNotEmpty();
   }
 
   /// Returns true if [pop] can safely be called.
   bool canPop() {
+    // TODO(johnpryan): Call Navigator.canPop(). Deal with ShellRoute.
     return _matches.length > 1;
   }
 
@@ -95,6 +101,13 @@ class RouteMatchList {
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.first.error;
+
+  void _assertNotEmpty() {
+    assert(
+        _matches.isNotEmpty,
+        'You have popped the last page off of the stack,'
+        ' there are no pages left to show');
+  }
 }
 
 /// An error that occurred during matching.
@@ -168,12 +181,13 @@ List<GoRouteMatch> _getLocRouteRecursively({
         childRestLoc = restLoc;
         newParentSubLoc = parentSubloc;
       } else {
+        assert(loc.startsWith(match.location));
+        assert(restLoc.isNotEmpty);
+
         childRestLoc = loc
             .substring(match.location.length + (match.location == '/' ? 0 : 1));
         newParentSubLoc = match.location;
       }
-      assert(loc.startsWith(match.location));
-      assert(restLoc.isNotEmpty);
 
       final List<GoRouteMatch> subRouteMatch = _getLocRouteRecursively(
         loc: loc,
