@@ -212,13 +212,10 @@ class RouteBuilder {
         GoRouterState(
           configuration,
           location: uri.toString(),
-          // no name available at the top level
           name: null,
-          // trim the query params off the subloc to match route.redirect
           subloc: uri.path,
-          // pass along the query params because that's all we have right now
           queryParams: uri.queryParameters,
-          // pass along the error, if there is one
+          queryParametersAll: uri.queryParametersAll,
           error: exception,
         ),
         Navigator(
@@ -272,6 +269,7 @@ class RouteBuilder {
       params: params,
       error: match.error,
       queryParams: match.queryParams,
+      queryParametersAll: match.queryParametersAll,
       extra: match.extra,
       pageKey: match.pageKey,
     );
@@ -451,6 +449,7 @@ class RouteBuilder {
       subloc: uri.path,
       name: null,
       queryParams: uri.queryParameters,
+      queryParametersAll: uri.queryParametersAll,
       error: Exception(error),
     );
 

@@ -96,6 +96,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       template: match.template,
       encodedParams: match.encodedParams,
       queryParams: match.queryParams,
+      queryParametersAll: match.queryParametersAll,
       extra: match.extra,
       error: match.error,
       pageKey: pageKey,

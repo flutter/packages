@@ -23,6 +23,9 @@ void main() {
           'foo': 'bar',
         },
         extra: const _Extra('foo'),
+        queryParametersAll: <String, List<String>>{
+          'foo': <String>['bar'],
+        },
       );
       if (match == null) {
         fail('Null match');
@@ -32,6 +35,7 @@ void main() {
       expect(match.template, '/users/:userId');
       expect(match.encodedParams['userId'], '123');
       expect(match.queryParams['foo'], 'bar');
+      expect(match.queryParametersAll['foo'], <String>['bar']);
       expect(match.extra, const _Extra('foo'));
       expect(match.error, isNull);
       expect(match.pageKey, isNull);
@@ -49,6 +53,9 @@ void main() {
         fullpath: '/home/users/:userId',
         queryParams: <String, String>{
           'foo': 'bar',
+        },
+        queryParametersAll: <String, List<String>>{
+          'foo': <String>['bar'],
         },
         extra: const _Extra('foo'),
       );
@@ -77,6 +84,9 @@ void main() {
         queryParams: <String, String>{
           'foo': 'bar',
         },
+        queryParametersAll: <String, List<String>>{
+          'foo': <String>['bar'],
+        },
         extra: const _Extra('foo'),
       );
       if (match == null) {
@@ -104,5 +114,6 @@ class _Extra {
 
 Widget _builder(BuildContext context, GoRouterState state) =>
     const Placeholder();
+
 Widget _shellBuilder(BuildContext context, GoRouterState state, Widget child) =>
     const Placeholder();

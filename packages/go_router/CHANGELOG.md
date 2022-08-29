@@ -1,8 +1,12 @@
-## 4.3.0
+## 4.4.0
 
 - Adds ShellRoute for nested navigation support (flutter/flutter#99126)
 - Adds `parentNavigatorKey` to GoRoute, which specifies the Navigator to place that
   route's Page onto.
+
+## 4.3.0
+
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
 
 ## 4.2.9
 
