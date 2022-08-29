@@ -58,7 +58,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: DynamicGridView(
-              gridDelegate: DynamicSliverGridDelegateWithMaxCrossAxisExtent(
+              gridDelegate: const DynamicSliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 100),
               children: List<Widget>.generate(
                   50,
