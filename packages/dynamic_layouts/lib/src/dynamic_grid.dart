@@ -104,37 +104,25 @@ class DynamicGridView extends GridView {
     super.key,
     super.scrollDirection,
     super.reverse,
-    super.controller,
-    super.primary,
-    super.physics,
-    super.shrinkWrap,
-    super.padding,
     super.children = const <Widget>[],
     int? crossAxisCount,
     double? maxCrossAxisExtent,
     double mainAxisSpacing = 0.0,
     double crossAxisSpacing = 0.0,
-    double childAspectRatio = 1.0,
-    super.cacheExtent,
-    super.dragStartBehavior,
-    super.keyboardDismissBehavior,
-    super.restorationId,
-    super.clipBehavior,
-  }) :  assert(crossAxisCount != null || maxCrossAxisExtent != null), 
-        assert(crossAxisCount == null || maxCrossAxisExtent == null), 
-        super(gridDelegate: crossAxisCount != null ? DynamicSliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            mainAxisSpacing: mainAxisSpacing,
-            crossAxisSpacing: crossAxisSpacing,
-            childAspectRatio: childAspectRatio,
-          )
-        :
-          DynamicSliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: maxCrossAxisExtent!,
-            mainAxisSpacing: mainAxisSpacing,
-            crossAxisSpacing: crossAxisSpacing,
-            childAspectRatio: childAspectRatio,
-          ),
+  })  : assert(crossAxisCount != null || maxCrossAxisExtent != null),
+        assert(crossAxisCount == null || maxCrossAxisExtent == null),
+        super(
+          gridDelegate: crossAxisCount != null
+              ? DynamicSliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  mainAxisSpacing: mainAxisSpacing,
+                  crossAxisSpacing: crossAxisSpacing,
+                )
+              : DynamicSliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: maxCrossAxisExtent!,
+                  mainAxisSpacing: mainAxisSpacing,
+                  crossAxisSpacing: crossAxisSpacing,
+                ),
         );
 
   @override
