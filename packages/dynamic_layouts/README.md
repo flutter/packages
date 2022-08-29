@@ -13,8 +13,7 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-<!-- TODO(DavBot02): Put a short description of the package here that helps potential users
-know whether this package might be useful for them.-->
+A package that provides two dynamic grid layouts: wrap and staggered.
 
 ## Features
 This package provides support for multi sized tiles and different layouts.
@@ -54,8 +53,22 @@ This layout can be used with `DynamicGridView.wrap` and with
 
 ## Getting started
 
-<!-- TODO(DavBot02): List prerequisites and provide or point to information on how to start using the package. -->
+TODO: List prerequisites and provide or point to information on how to
+start using the package.
 
+### Depend on it
+
+Run this command with Flutter:
+```sh
+$ flutter pub add dynamic_layouts
+```
+### Import it
+
+Now in your Dart code, you can use:
+
+```dart
+import 'package:dynamic_layouts/dynamic_layouts.dart';
+```
 ## Usage
 
 Use `DynamicGridView`s to access this layouts.
@@ -87,7 +100,11 @@ like `SliverGridDelegateWithMaxCrossAxisExtent` and
 <!-- TODO(snat-s): Add a video of DynamicGrid.stagger -->
 
 ## Additional information
+This package was created in an attempt to recreate native scrolling layouts.
+The staggered layout is similar to Android's [StaggeredGridLayoutManager](https://developer.android.com/reference/androidx/recyclerview/widget/StaggeredGridLayoutManager), while the wrap layout
+emulates iOS' [UICollectionView](https://developer.apple.com/documentation/uikit/uicollectionview).
 
-<!-- TODO(DavBot02): Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more. -->
+The inner functionality of this package is exposed, meaning that other dynamic layouts
+can be created on top of it and added to the collection. If you want to contribute to
+this package, you can open a pull request in [Flutter Packages](https://github.com/flutter/packages)
+and add the tag "p: dynamic_layouts".
