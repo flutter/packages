@@ -171,7 +171,7 @@ class DynamicSliverGridDelegateWithFixedCrossAxisCount
   ///
   /// Only the [crossAxisCount] argument needs to be greater than zero. All of
   /// them must be not null.
-  DynamicSliverGridDelegateWithFixedCrossAxisCount({
+  const DynamicSliverGridDelegateWithFixedCrossAxisCount({
     required super.crossAxisCount,
     super.mainAxisSpacing = 0.0,
     super.crossAxisSpacing = 0.0,

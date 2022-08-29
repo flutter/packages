@@ -75,7 +75,6 @@ abstract class DynamicSliverGridLayout extends SliverGridLayout {
   ///
   /// This is used to update the layout object after the child has laid out,
   /// allowing the layout pattern to adapt to the child's size.
-  @override
   DynamicSliverGridGeometry updateGeometryForChildIndex(
     int index,
     Size childSize,
@@ -87,7 +86,6 @@ abstract class DynamicSliverGridLayout extends SliverGridLayout {
   /// A given child may have reached the target scroll offset of the current
   /// layout pass, but there may still be more children to lay out based on the
   /// pattern.
-  @override
   bool reachedTargetScrollOffset(double targetOffset);
 
   // These methods are not relevant to dynamic grid building, but extending the

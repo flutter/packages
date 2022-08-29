@@ -18,8 +18,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: DynamicGridView(
-              gridDelegate: DynamicSliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4),
+              gridDelegate:
+                  const DynamicSliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4),
               children: List<Widget>.generate(
                   50,
                   (int index) => SizedBox(
@@ -58,8 +59,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: DynamicGridView(
-              gridDelegate: const DynamicSliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 100),
+              gridDelegate:
+                  const DynamicSliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 100),
               children: List<Widget>.generate(
                   50,
                   (int index) => SizedBox(
@@ -239,8 +241,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: DynamicGridView.builder(
-              gridDelegate: DynamicSliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4),
+              gridDelegate:
+                  const DynamicSliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4),
               itemBuilder: (BuildContext context, int index) => SizedBox(
                 height: index % 2 * 50 + 20,
                 child: Text('Index $index'),
@@ -285,8 +288,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: DynamicGridView.builder(
-              gridDelegate: DynamicSliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4),
+              gridDelegate:
+                  const DynamicSliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4),
               itemBuilder: (BuildContext context, int index) => SizedBox(
                 height: index % 2 * 50 + 20,
                 child: Text('Index $index'),
