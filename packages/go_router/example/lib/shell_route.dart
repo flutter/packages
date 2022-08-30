@@ -57,15 +57,17 @@ class ShellRouteExampleApp extends StatelessWidget {
             ],
           ),
 
-          /// Displayed when the second item in the the bottom navigation bar is selected.
+          /// Displayed when the second item in the the bottom navigation bar is
+          /// selected.
           GoRoute(
             path: '/b',
             builder: (BuildContext context, GoRouterState state) {
               return const ScreenB();
             },
             routes: <RouteBase>[
-              /// Same as "/a/details", but displayed on the root Navigator.
-              /// This will cover both screen B and the application shell.
+              /// Same as "/a/details", but displayed on the root Navigator by
+              /// specifying [parentNavigatorKey]. This will cover both screen B
+              /// and the application shell.
               GoRoute(
                 path: 'details',
                 parentNavigatorKey: _rootNavigatorKey,
