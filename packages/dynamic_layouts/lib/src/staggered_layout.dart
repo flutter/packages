@@ -10,7 +10,7 @@ import 'base_grid_layout.dart';
 import 'render_dynamic_grid.dart';
 import 'wrap_layout.dart';
 
-//TODO: add SliverGridWrappingTileLayout when it lands
+//  TODO(DavBot02): add SliverGridWrappingTileLayout when it lands
 /// A [DynamicSliverGridLayout] that creates tiles with varying main axis
 /// sizes and fixed cross axis sizes, generating a staggered layout. The extent
 /// in the main axis will be defined by the child's size and must be finite.
@@ -116,8 +116,6 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
     );
   }
 
-  /// Returns an updated [DynamicSliverGridGeometry] with the actual size of
-  /// the child.
   @override
   DynamicSliverGridGeometry updateGeometryForChildIndex(
     int index,
