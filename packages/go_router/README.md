@@ -136,7 +136,7 @@ onTap: () => context.go('/page2')
 
 ## Nested Navigation
 
-The `ShellRoute` route type provdes a way to wrap all sub-routes with a UI shell.
+The `ShellRoute` route type provides a way to wrap all sub-routes with a UI shell.
 Under the hood, GoRouter places a Navigator in the widget tree, which is used
 to display matching sub-routes:
 
