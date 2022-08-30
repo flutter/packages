@@ -57,7 +57,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       return true;
     }());
     try {
-      late final RouteMatchList initialMatches;
+      late RouteMatchList initialMatches;
       try {
         initialMatches = matcher.findMatch(routeInformation.location!,
             extra: routeInformation.state);
