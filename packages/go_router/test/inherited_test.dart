@@ -137,5 +137,5 @@ class MockGoRouter extends GoRouter {
   }
 
   @override
-  BackButtonDispatcher? get backButtonDispatcher => throw UnimplementedError();
+  BackButtonDispatcher get backButtonDispatcher => RootBackButtonDispatcher();
 }
