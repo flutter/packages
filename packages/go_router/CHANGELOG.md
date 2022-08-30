@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum Flutter version to 2.10.
-
 ## 4.3.0
 
 - Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
