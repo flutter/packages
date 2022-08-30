@@ -9,6 +9,9 @@ enabled_branches:
   - main
 
 platform_properties:
+  linux:
+    properties:
+      os: Linux
   windows:
     properties:
       dependencies: >
