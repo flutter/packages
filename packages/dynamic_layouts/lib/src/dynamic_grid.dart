@@ -38,6 +38,43 @@ class DynamicGridView extends GridView {
   ///
   /// Uses a [SliverGridDelegateWithWrapping] as the [gridDelegate].
   ///
+  /// The following example shows how to use the DynamicGridView.wrap constructor.
+  ///
+  /// ```dart
+  /// DynamicGridView.wrap(
+  ///     mainAxisSpacing: 10,
+  ///     crossAxisSpacing: 20,
+  ///     children: [
+  ///         Container(
+  ///           height: 100,
+  ///           width: 200,
+  ///           color: Colors.amberAccent[100],
+  ///           child: const Center(child: Text('Item 1')
+  ///          ),
+  ///       ),
+  ///       Container(
+  ///           height: 50,
+  ///           width: 70,
+  ///           color: Colors.blue[100],
+  ///           child: const Center(child: Text('Item 2'),
+  ///          ),
+  ///       ),
+  ///       Container(
+  ///           height: 82,
+  ///           width: 300,
+  ///           color: Colors.pink[100],
+  ///           child: const Center(child: Text('Item 3'),
+  ///         ),
+  ///       ),
+  ///       Container(
+  ///           color: Colors.green[100],
+  ///           child: const Center(child: Text('Item 3'),
+  ///       ),
+  ///     ),
+  ///   ],
+  /// ),
+  /// ```
+  ///
   /// See also:
   ///
   ///  * [SliverGridDelegateWithWrapping] to see a more detailed explanation of
@@ -57,7 +94,6 @@ class DynamicGridView extends GridView {
           crossAxisSpacing: crossAxisSpacing,
           childCrossAxisExtent: childCrossAxisExtent,
           childMainAxisExtent: childMainAxisExtent,
-          scrollDirection: scrollDirection,
         ));
 
   // TODO(DavBot09): DynamicGridView.stagger?

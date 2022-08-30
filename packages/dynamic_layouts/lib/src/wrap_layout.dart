@@ -4,7 +4,7 @@
 
 import 'package:flutter/rendering.dart';
 
-import '../dynamic_layouts.dart';
+import 'base_grid_layout.dart';
 
 // The model that tracks the current max size of the Sliver in the mainAxis and
 // tracks if there is still space on the crossAxis.
@@ -15,30 +15,34 @@ class _RunMetrics {
     required this.scrollOffset,
   });
 
+  /// The biggest sliver size for the current run.
   double maxSliver;
+
+  /// The current size that has been used in the current run.
   double currentSizeUsed;
+
+  /// The scroll offset in the current run.
   double scrollOffset;
 }
 
-/// Controls the layout of tiles in a grid.
-/// A [SliverGridLayout] that uses dynamically sized tiles.
+/// A [DynamicSliverGridLayout] that uses dynamically sized tiles.
 ///
-/// Rather that providing a grid with a [SliverGridLayout] directly, you instead
+/// Rather that providing a grid with a [DynamicSliverGridLayout] directly, instead
 /// provide the grid a [SliverGridDelegate], which can compute a
-/// [SliverGridLayout] given the current [SliverConstraints].
+/// [DynamicSliverGridLayout] given the current [SliverConstraints].
 ///
 /// This layout is used by [SliverGridDelegateWithWrapping].
 ///
 /// See also:
 ///
 ///  * [SliverGridDelegateWithWrapping], which uses this layout.
-///  * [SliverGridLayout], which represents an arbitrary tile layout.
+///  * [DynamicSliverGridLayout], which represents an arbitrary dynamic tile layout.
 ///  * [DynamicSliverGridGeometry], which represents the size and position of a
 ///     single tile in a grid.
 ///  * [SliverGridDelegate.getLayout], which returns this object to describe the
 ///    delegate's layout.
-///  * RenderDynamicSliverGrid], which uses this class during its
-///    RenderDynamicSliverGrid.performLayout] method.
+///  * [RenderDynamicSliverGrid], which uses this class during its
+///    [RenderDynamicSliverGrid.performLayout] method.
 class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
   /// Creates a layout that uses dynamic sized and spaced tiles.
   ///
@@ -81,12 +85,12 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
 
   /// The model that is used internally to keep track of how much space is left
   /// and how much has been used.
-  final List<_RunMetrics> model = <_RunMetrics>[
+  final List<_RunMetrics> _model = <_RunMetrics>[
     _RunMetrics(maxSliver: 0.0, currentSizeUsed: 0.0, scrollOffset: 0.0)
   ];
 
-  // In this case the function getGeometryForChildIndex only works to get
-  // the geometry for the child, where the layout actually happens is in
+  // This method provides the initial constraints for the child to layout,
+  // and then it is updated with the final size later in
   // updateGeometryForChildIndex.
   @override
   DynamicSliverGridGeometry getGeometryForChildIndex(int index) {
@@ -100,9 +104,11 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
 
   @override
   DynamicSliverGridGeometry updateGeometryForChildIndex(
-      int index, Size childSize) {
-    final double scrollOffset = model.last.scrollOffset;
-    final double currentSizeUsed = model.last.currentSizeUsed;
+    int index,
+    Size childSize,
+  ) {
+    final double scrollOffset = _model.last.scrollOffset;
+    final double currentSizeUsed = _model.last.currentSizeUsed;
     late final double addedSize;
 
     switch (scrollDirection) {
@@ -114,49 +120,49 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
         break;
     }
 
-    if (addedSize > crossAxisExtent && model.last.currentSizeUsed > 0.0) {
+    if (addedSize > crossAxisExtent && _model.last.currentSizeUsed > 0.0) {
       switch (scrollDirection) {
         case Axis.vertical:
-          model.add(
+          _model.add(
             _RunMetrics(
               maxSliver: childSize.height + mainAxisSpacing,
               currentSizeUsed: childSize.width + crossAxisSpacing,
               scrollOffset:
-                  scrollOffset + model.last.maxSliver + mainAxisSpacing,
+                  scrollOffset + _model.last.maxSliver + mainAxisSpacing,
             ),
           );
           break;
         case Axis.horizontal:
-          model.add(
+          _model.add(
             _RunMetrics(
               maxSliver: childSize.width + crossAxisSpacing,
               currentSizeUsed: childSize.height + mainAxisSpacing,
               scrollOffset:
-                  scrollOffset + model.last.maxSliver + crossAxisSpacing,
+                  scrollOffset + _model.last.maxSliver + crossAxisSpacing,
             ),
           );
           break;
       }
 
       return DynamicSliverGridGeometry(
-        scrollOffset: model.last.scrollOffset,
+        scrollOffset: _model.last.scrollOffset,
         crossAxisOffset: 0.0,
         mainAxisExtent: childSize.height + mainAxisSpacing,
         crossAxisExtent: childSize.width + crossAxisSpacing,
       );
     } else {
-      model.last.currentSizeUsed = addedSize;
+      _model.last.currentSizeUsed = addedSize;
     }
 
     switch (scrollDirection) {
       case Axis.vertical:
-        if (childSize.height + mainAxisSpacing > model.last.maxSliver) {
-          model.last.maxSliver = childSize.height + mainAxisSpacing;
+        if (childSize.height + mainAxisSpacing > _model.last.maxSliver) {
+          _model.last.maxSliver = childSize.height + mainAxisSpacing;
         }
         break;
       case Axis.horizontal:
-        if (childSize.width + crossAxisSpacing > model.last.maxSliver) {
-          model.last.maxSliver = childSize.width + crossAxisSpacing;
+        if (childSize.width + crossAxisSpacing > _model.last.maxSliver) {
+          _model.last.maxSliver = childSize.width + crossAxisSpacing;
         }
         break;
     }
@@ -171,62 +177,58 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
 
   @override
   bool reachedTargetScrollOffset(double targetOffset) {
-    if (model.last.scrollOffset > targetOffset) {
-      return true;
-    }
-    return false;
+    return _model.last.scrollOffset > targetOffset;
   }
 }
 
-// TODO(snat-s): YourWrapDelegate extends SliverGridDelegate
-
-/// A [SliverGridDelegate] that makes it possible to create grids that wrap and
-/// have variably sized tiles.
+/// A [SliverGridDelegate] for creating grids that wrap variably sized tiles.
 ///
 /// For example, if the grid is vertical, this delegate will create a layout
 /// where the children are layed out until they fill the horizontal axis and then
-/// they pass to the second row. If the grid is horizontal, this delegate will
+/// they continue in the next row. If the grid is horizontal, this delegate will
 /// do the same but it will fill the vertical axis and will pass to another
 /// column until it finishes.
 ///
-/// This delegate creates grids with different sized tiles. But you
-/// can have equally sized tiles if you modify the `childCrossAxisExtent` and
-/// the `childMainAxisExtent` to be the same size.
+/// This delegate creates grids with different sized tiles. Tiles
+/// can have fixed dimensions if [childCrossAxisExtent] or
+/// [childMainAxisExtent] are provided.
 ///
 /// See also:
 ///  * [DynamicGridView.wrap], wich is a constructor to use this [SliverGridDelegate],
 ///    like `GridView.extent`.
 ///  * [DynamicGridView], which can use this delegate to control the layout of its
 ///    tiles.
-///  * RenderDynamicSliverGrid], which can use this delegate to control the
+///  * [RenderDynamicSliverGrid], which can use this delegate to control the
 ///    layout of its tiles.
 class SliverGridDelegateWithWrapping extends SliverGridDelegate {
-  /// Creates a delegate that makes dynamic grid layouts, the children Widgets
-  /// are the ones that decide their own size. Because the children decide their
-  /// own size the default values of `childMainAxisExtent` and
-  /// `childCrossAxisExtent` are set to [double.infinity].
-  /// If you only want to have the wrap, you can specify the `childCrossAxisExtent`
-  /// and the `childMainAxisExtent` to be the same size. Or only one of them to
+  /// Create a delegate that wraps variably sized tiles.
+  ///
+  /// The children widgets are provided with loose constraints, and if any of the
+  /// extent parameters are set, the children are given tight constraints.
+  /// The way that children are made to have loose constraints is by assigning
+  /// the value of [double.infinity] to [childMainAxisExtent] and
+  /// [childCrossAxisExtent].
+  /// To have same sized tiles with the wrapping, specify the [childCrossAxisExtent]
+  /// and the [childMainAxisExtent] to be the same size. Or only one of them to
   /// be of a certain size in one of the axis.
   const SliverGridDelegateWithWrapping({
     this.mainAxisSpacing = 0.0,
     this.crossAxisSpacing = 0.0,
     this.childCrossAxisExtent = double.infinity,
     this.childMainAxisExtent = double.infinity,
-    this.scrollDirection = Axis.vertical,
   })  : assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
         assert(crossAxisSpacing != null && crossAxisSpacing >= 0);
 
   /// The number of pixels from the leading edge of one tile to the trailing
   /// edge of the same tile in the main axis.
   ///
-  /// Defaults to [double.infinity].
+  /// Defaults to [double.infinity] to provide the child with loose constraints.
   final double childMainAxisExtent;
 
   /// The number of pixels from the leading edge of one tile to the trailing
   /// edge of the same tile in the cross axis.
   ///
-  /// Defaults to [double.infinity].
+  /// Defaults to [double.infinity] to provide the child with loose constraints.
   final double childCrossAxisExtent;
 
   /// The number of logical pixels between each child along the main axis.
@@ -238,11 +240,6 @@ class SliverGridDelegateWithWrapping extends SliverGridDelegate {
   ///
   /// Defaults to 0.0
   final double crossAxisSpacing;
-
-  /// The axis along which the scroll view scrolls.
-  ///
-  /// Defaults to [Axis.vertical].
-  final Axis scrollDirection;
 
   bool _debugAssertIsValid() {
     assert(mainAxisSpacing >= 0.0);
@@ -258,7 +255,7 @@ class SliverGridDelegateWithWrapping extends SliverGridDelegate {
       childCrossAxisExtent: childCrossAxisExtent,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
-      scrollDirection: scrollDirection,
+      scrollDirection: axisDirectionToAxis(constraints.axisDirection),
       crossAxisExtent: constraints.crossAxisExtent,
     );
   }

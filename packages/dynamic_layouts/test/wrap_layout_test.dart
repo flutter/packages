@@ -32,6 +32,8 @@ void main() {
     for (int i = 0; i < 10; i++) {
       expect(find.text('Item $i'), findsOneWidget);
     }
+    // expect(tester.getRect(find.text('Item 0')), const Rect.fromLTRB(5.5, 43.0, 89.5, 57.0));
+    // expect(tester.getRect(find.text('Item 1')), const Rect.fromLTRB(5.5, 43.0, 89.5, 57.0));
   });
 
   testWidgets(
@@ -120,6 +122,7 @@ void main() {
     for (int i = 0; i < 20; i++) {
       expect(find.text('Item $i'), findsOneWidget);
     }
+    tester.getRect(find.text('Item 0'));
   });
 
   testWidgets('Test DynamicGridView.builder for GridView.reverse to true',
@@ -261,7 +264,6 @@ void main() {
         home: Scaffold(
           body: DynamicGridView.builder(
             gridDelegate: const SliverGridDelegateWithWrapping(
-              // TODO(snat-s): This test works with the cross and main axis backwards
               childMainAxisExtent: 200,
             ),
             itemCount: children.length,
@@ -342,14 +344,14 @@ void main() {
     expect(find.text('Item 3'), findsOneWidget);
     expect(find.text('Item 4'), findsNothing);
     await tester.binding.setSurfaceSize(const Size(280, 100));
+    // resets the screen to its original size after the test end
+    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
     await tester.pumpAndSettle();
     expect(find.text('Item 0'), findsOneWidget);
     expect(find.text('Item 1'), findsOneWidget);
     expect(find.text('Item 2'), findsNothing);
     expect(find.text('Item 3'), findsNothing);
     expect(find.text('Item 4'), findsNothing);
-    // resets the screen to its original size after the test end
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
   });
 
   testWidgets('Test wrap in Axis.horizontal direction',
@@ -393,6 +395,8 @@ void main() {
     expect(find.text('Item 4'), findsOneWidget);
 
     await tester.binding.setSurfaceSize(const Size(560, 100));
+    // resets the screen to its original size after the test end
+    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
     await tester.pumpAndSettle();
 
     expect(find.text('Item 0'), findsOneWidget);
@@ -400,11 +404,46 @@ void main() {
     expect(find.text('Item 2'), findsOneWidget);
     expect(find.text('Item 3'), findsOneWidget);
     expect(find.text('Item 4'), findsNothing);
-
-    // resets the screen to its original size after the test end
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
   });
-  // TODO(snat-s): 'Test wrap to see nothing affected if random elements are deleted'.
+
+  testWidgets('Test wrap to see nothing affected if elements are deleted.',
+      (WidgetTester tester) async {
+    final List<Widget> children = List<Widget>.generate(
+      10,
+      (int index) => SizedBox(
+        height: index.isEven ? 100 : 50,
+        width: index.isEven ? 100 : 180,
+        child: Center(child: Text('Item $index')),
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DynamicGridView.wrap(
+            scrollDirection: Axis.horizontal,
+            children: children,
+          ),
+        ),
+      ),
+    );
+
+    // Check if they are in the tree
+    for (int i = 0; i < 10; i++) {
+      expect(find.text('Item $i'), findsOneWidget);
+    }
+
+    // Remove children
+    children.removeAt(8);
+    children.removeAt(0);
+    children.removeAt(3);
+    await tester.pumpAndSettle();
+
+    for (int i = 0; i < 10; i++) {
+      expect(find.text('Item $i'), findsOneWidget);
+    }
+    expect(find.text('Item 0'), findsNothing);
+  });
 }
 
 Widget textFieldBoilerplate({required Widget child}) {

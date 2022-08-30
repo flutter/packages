@@ -13,66 +13,59 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO(DavBot02): Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+<!-- TODO(DavBot02): Put a short description of the package here that helps potential users
+know whether this package might be useful for them.-->
 
 ## Features
-
-TODO(snat-s): List what your package can do. Maybe include images, gifs, or videos.
 This package provides support for multi sized tiles and different layouts.
-Currently the layouts that are implemented in this package are `Staggered` and
+Currently the layouts that are implemented in this package are `Stagger` and
 `Wrap`.
-
-You can have reversed and with horizontal Grids with this layouts.
 
 The following are some demos of how each of the grids look.
 
-A staggered grid demo:
+A stagger grid demo:
 
-<video src="assets/staggered_grid_demo.mov">
+<!-- TODO(snat-s): Add stagger video demo -->
 
 A wrap demo:
 
-<video src="assets/wrap_demo.mov">
+<!-- TODO(snat-s): Add wrap video demo -->
 
-### Staggered Features
+### Stagger Features
 
-Because `DynamicGridView` is a child class of `GridView` that gives you access
-to the `SliverGridDelegates` that are already implemented in the Flutter
-Framework like `SliverGridDelegateWithMaxCrossAxisExtent` and
+`DynamicGridView` is a subclass of `GridView` and gives access
+to the `SliverGridDelegate`s that are already implemented in the Flutter
+Framework. Some `SliverGridDelegate`s are `SliverGridDelegateWithMaxCrossAxisExtent` and
 `SliverGridDelegateWithFixedCrossAxisCount`. This layout can be used with
 `DynamicGridView.stagger`.
 
-
 ### Wrap Features
 
-The Wrap layout is able to do runs of different elements and adapt acordingly with
+The Wrap layout is able to do runs of different widgets and adapt accordingly with
 the sizes of the children. It can leave spacing with `mainAxisSpacing` and
 `crossAxisSpacing`.
 
-The possibility to only have one of the axis be a decided by the children is possible by
-changing the values of `childCrossAxisExtent` and `childMainAxisExtent`. This
-values by default are ignored, but if you change `childCrossAxisExtent` to be
-100 pixels, all of the children are going to be 100 pixels in the main axis.
-This layout can be used with `DynamicGridView.wrap`.
+Having different sizes in only one of the axis is possible by
+changing the values of `childCrossAxisExtent` and `childMainAxisExtent`. These
+values by default are ignored, but changing `childCrossAxisExtent` to be
+100 pixels, will make all of the children 100 pixels in the main axis.
+This layout can be used with `DynamicGridView.wrap` and with
+`DynamicGridView.builder` and `SliverGridDelegateWithWrapping` as the delegate.
 
 ## Getting started
 
-TODO(DavBot02): List prerequisites and provide or point to information on how to
-start using the package.
+<!-- TODO(DavBot02): List prerequisites and provide or point to information on how to start using the package. -->
 
 ## Usage
 
-In this package, we use `DynamicGridViews` that are a class that is inherited
-from the normal `GridView`. You can use this `DynamicGridView` with
-constructors that have the specific `SliverGridDelegate` like
-`DynamicGridView.wrap` or if you want to have a more efficient option you can
-still use `DynamicGridView.builder` that works the same as `GridView.builder`.
+Use `DynamicGridView`s to access this layouts.
+`DynamicGridView` has some constructors that have specific `SliverGridDelegate`s like
+`DynamicGridView.wrap` and `DynamicGridView.stagger`. For a more efficient option
+`DynamicGridView.builder` works the same as `GridView.builder`.
 
 ### Wrap
 
-The following are simple examples of how to use `DynamicGridView.wrap` and
-`DynamicGridView.builder` with the `SliverGridDelegateWithWrapping` delegate.
+The following is a simple examples of how to use `DynamicGridView.wrap`.
 
 <?code-excerpt "dynamic_grid_view_wrap.dart" (Example)?>
 ```dart
@@ -93,9 +86,8 @@ DynamicGridView.wrap(
 );
 ```
 
-Here is the result of the code:
-
-<video src="assets/simple_wrap_demo.mov">
+The following example uses `DynamicGridView.builder` with
+`SliverGridDelegateWithWrapping`.
 
 <?code-excerpt "dynamic_grid_view_builder.dart (Example)"?>
 ```dart
@@ -117,31 +109,42 @@ DynamicGridView.builder(
    ),
 ```
 
-Here is the result of the code:
+By using `childCrossAxisExtent` and `childMainAxisExtent` one of the axis
+can be limited to have a specific size and the other can be set to loose
+constraints.
 
-<video src="assets/wrap_demo_with_one_fixed_axis.mov">
+<?code-excerpt "wrapping_fixed_axis.dart" (Example)?>
+```dart
+DynamicGridView.builder(
+  gridDelegate: const SliverGridDelegateWithWrapping(
+    mainAxisSpacing: 20,
+    childMainAxisExtent: 250,
+  ),
+  itemBuilder: (BuildContext context, int index) {
+    return Container(
+      height: 200,
+      color: index.isEven ? Colors.amber : Colors.blue,
+      child: Center(
+        child: Text('$index'),
+      ),
+    );
+  },
+),
+```
 
-### Staggered
+### Stagger
 
-Using the Staggered layout is simple. It can be used with the
-`DynamicGridView.stagger` and you can still use the delegates from `GridView`
+Using the stagger layout is simple. It can be used with the constructor
+`DynamicGridView.stagger` and still use the delegates from `GridView`
 like `SliverGridDelegateWithMaxCrossAxisExtent` and
 `SliverGridDelegateWithFixedCrossAxisCount`.
 
-<?code-excerpt "dynamic_grid_view_stagger.dart (Example)"?>
-```dart
-DynamicGridView.stagger(
-      crossAxisCount: 4,
-      mainAxisSpacing: 10.0,
-      crossAxisSpacing: 10.0,
-      children: children,
-);
-```
+<!-- TODO(DavBot02): Add a code example of DynamicGrid.stagger -->
 
 <!-- TODO(snat-s): Add a video of DynamicGrid.stagger -->
 
 ## Additional information
 
-TODO(DavBot02): Tell users more about the package: where to find more information, how to
+<!-- TODO(DavBot02): Tell users more about the package: where to find more information, how to
 contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+from the package authors, and more. -->
