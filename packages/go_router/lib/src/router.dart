@@ -8,7 +8,6 @@ import 'configuration.dart';
 import 'delegate.dart';
 import 'information_provider.dart';
 import 'logging.dart';
-import 'match.dart';
 import 'matching.dart';
 import 'misc/inherited_router.dart';
 import 'parser.dart';
@@ -115,13 +114,16 @@ class GoRouter extends ChangeNotifier
 
   /// The router delegate. Provide this to the MaterialApp or CupertinoApp's
   /// `.router()` constructor
+  @override
   GoRouterDelegate get routerDelegate => _routerDelegate;
 
   /// The route information provider used by [GoRouter].
+  @override
   GoRouteInformationProvider get routeInformationProvider =>
       _routeInformationProvider;
 
   /// The route information parser used by [GoRouter].
+  @override
   GoRouteInformationParser get routeInformationParser =>
       _routeInformationParser;
 
