@@ -5,7 +5,6 @@
 import 'package:flutter/widgets.dart';
 
 import 'render_dynamic_grid.dart';
-import 'wrap_layout.dart';
 
 /// A scrollable, 2D array of widgets.
 ///
@@ -13,10 +12,13 @@ import 'wrap_layout.dart';
 class DynamicGridView extends GridView {
   /// Creates a scrollable, 2D array of widgets with a custom
   /// [SliverGridDelegate].
+  ///
+  // TODO(all): what other parameters should we add to these
+  // constructors, here, builder, etc.?
+  // + reverse
+  // + scrollDirection
   DynamicGridView({
     super.key,
-    super.scrollDirection,
-    super.reverse,
     required super.gridDelegate,
     // This creates a SliverChildListDelegate in the super class.
     super.children = const <Widget>[],
@@ -25,77 +27,13 @@ class DynamicGridView extends GridView {
   /// Creates a scrollable, 2D array of widgets that are created on demand.
   DynamicGridView.builder({
     super.key,
-    super.scrollDirection,
-    super.reverse,
     required super.gridDelegate,
     // This creates a SliverChildBuilderDelegate in the super class.
     required super.itemBuilder,
     super.itemCount,
   }) : super.builder();
 
-  /// Creates a scrollable, 2D array of widgets with tiles where each tile can
-  /// have its own size.
-  ///
-  /// Uses a [SliverGridDelegateWithWrapping] as the [gridDelegate].
-  ///
-  /// The following example shows how to use the DynamicGridView.wrap constructor.
-  ///
-  /// ```dart
-  /// DynamicGridView.wrap(
-  ///     mainAxisSpacing: 10,
-  ///     crossAxisSpacing: 20,
-  ///     children: [
-  ///         Container(
-  ///           height: 100,
-  ///           width: 200,
-  ///           color: Colors.amberAccent[100],
-  ///           child: const Center(child: Text('Item 1')
-  ///          ),
-  ///       ),
-  ///       Container(
-  ///           height: 50,
-  ///           width: 70,
-  ///           color: Colors.blue[100],
-  ///           child: const Center(child: Text('Item 2'),
-  ///          ),
-  ///       ),
-  ///       Container(
-  ///           height: 82,
-  ///           width: 300,
-  ///           color: Colors.pink[100],
-  ///           child: const Center(child: Text('Item 3'),
-  ///         ),
-  ///       ),
-  ///       Container(
-  ///           color: Colors.green[100],
-  ///           child: const Center(child: Text('Item 3'),
-  ///       ),
-  ///     ),
-  ///   ],
-  /// ),
-  /// ```
-  ///
-  /// See also:
-  ///
-  ///  * [SliverGridDelegateWithWrapping] to see a more detailed explanation of
-  ///    how the wrapping works.
-  DynamicGridView.wrap({
-    super.key,
-    super.scrollDirection,
-    super.reverse,
-    double mainAxisSpacing = 0.0,
-    double crossAxisSpacing = 0.0,
-    double childCrossAxisExtent = double.infinity,
-    double childMainAxisExtent = double.infinity,
-    super.children = const <Widget>[],
-  }) : super(
-          gridDelegate: SliverGridDelegateWithWrapping(
-            mainAxisSpacing: mainAxisSpacing,
-            crossAxisSpacing: crossAxisSpacing,
-            childCrossAxisExtent: childCrossAxisExtent,
-            childMainAxisExtent: childMainAxisExtent,
-          ),
-        );
+  // TODO(snat-s): DynamicGridView.wrap?
 
   // TODO(DavBot09): DynamicGridView.stagger?
 
