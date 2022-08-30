@@ -46,7 +46,8 @@ class ShellRouteExampleApp extends StatelessWidget {
               return const ScreenA();
             },
             routes: <RouteBase>[
-              /// The details screen to display stacked on the inner Navigator.
+              // The details screen to display stacked on the inner Navigator.
+              // This will cover screen A but not the application shell.
               GoRoute(
                 path: 'details',
                 builder: (BuildContext context, GoRouterState state) {
@@ -64,6 +65,7 @@ class ShellRouteExampleApp extends StatelessWidget {
             },
             routes: <RouteBase>[
               /// Same as "/a/details", but displayed on the root Navigator.
+              /// This will cover both screen B and the application shell.
               GoRoute(
                 path: 'details',
                 parentNavigatorKey: _rootNavigatorKey,
