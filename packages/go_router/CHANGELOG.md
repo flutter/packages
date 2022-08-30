@@ -1,7 +1,11 @@
-## 4.3.0
+## 4.4.0
 
 - Add `buildPageWithState` to `GoRouteData`.
 - `GoRouteData.buildPage` is now deprecated in favor of `GoRouteData.buildPageWithState`.
+
+## 4.3.0
+
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
 
 ## 4.2.9
 
