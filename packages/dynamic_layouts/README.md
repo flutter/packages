@@ -59,13 +59,13 @@ This layout can be used with `DynamicGridView.wrap` and with
 ## Usage
 
 Use `DynamicGridView`s to access this layouts.
-`DynamicGridView` has some constructors that have specific `SliverGridDelegate`s like
-`DynamicGridView.wrap` and `DynamicGridView.stagger`. For a more efficient option
-`DynamicGridView.builder` works the same as `GridView.builder`.
+`DynamicGridView` has some constructors that use  `SliverChildListDelegate` like
+`.wrap` and `.stagger`. For a more efficient option that uses `SliverChildBuilderDelegate` use
+`.builder`, it works the same as `GridView.builder`.
 
 ### Wrap
 
-The following is a simple examples of how to use `DynamicGridView.wrap`.
+The following are simple examples of how to use `DynamicGridView.wrap`.
 
 <?code-excerpt "dynamic_grid_view_wrap.dart" (Example)?>
 ```dart
@@ -109,7 +109,7 @@ DynamicGridView.builder(
    ),
 ```
 
-By using `childCrossAxisExtent` and `childMainAxisExtent` one of the axis
+By using `childCrossAxisExtent` and `childMainAxisExtent` the main axis
 can be limited to have a specific size and the other can be set to loose
 constraints.
 
