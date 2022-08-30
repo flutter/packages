@@ -12,8 +12,8 @@ void main() {
     const DynamicSliverGridGeometry geometry = DynamicSliverGridGeometry(
       scrollOffset: 0,
       crossAxisOffset: 0,
-      mainAxisExtent: 150.0,
-      crossAxisExtent: 50.0,
+      crossAxisExtent: 150.0,
+      mainAxisExtent: 50.0,
     );
 
     // Vertical
