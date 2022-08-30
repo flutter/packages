@@ -2,5 +2,3 @@
 
 # Exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
 - flutter_image
-# TODO(chunhtai): Remove fuchsia_ctl if possible https://github.com/flutter/flutter/issues/103991.
-- fuchsia_ctl
