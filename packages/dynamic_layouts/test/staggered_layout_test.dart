@@ -20,13 +20,15 @@ void main() {
             body: DynamicGridView(
               gridDelegate:
                   const DynamicSliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4),
+                crossAxisCount: 4,
+              ),
               children: List<Widget>.generate(
-                  50,
-                  (int index) => SizedBox(
-                        height: index % 2 * 20 + 20,
-                        child: Text('Index $index'),
-                      )),
+                50,
+                (int index) => SizedBox(
+                  height: index % 2 * 20 + 20,
+                  child: Text('Index $index'),
+                ),
+              ),
             ),
           ),
         ),
@@ -61,13 +63,15 @@ void main() {
             body: DynamicGridView(
               gridDelegate:
                   const DynamicSliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 100),
+                maxCrossAxisExtent: 100,
+              ),
               children: List<Widget>.generate(
-                  50,
-                  (int index) => SizedBox(
-                        height: index % 2 * 20 + 20,
-                        child: Text('Index $index'),
-                      )),
+                50,
+                (int index) => SizedBox(
+                  height: index % 2 * 20 + 20,
+                  child: Text('Index $index'),
+                ),
+              ),
             ),
           ),
         ),
@@ -101,11 +105,12 @@ void main() {
             body: DynamicGridView.staggered(
               crossAxisCount: 4,
               children: List<Widget>.generate(
-                  50,
-                  (int index) => SizedBox(
-                        height: index % 2 * 50 + 20,
-                        child: Text('Index $index'),
-                      )),
+                50,
+                (int index) => SizedBox(
+                  height: index % 2 * 50 + 20,
+                  child: Text('Index $index'),
+                ),
+              ),
             ),
           ),
         ),
@@ -123,7 +128,9 @@ void main() {
       expect(tester.getTopLeft(find.text('Index 4')), const Offset(0.0, 20.0));
       expect(find.text('Index 5'), findsOneWidget);
       expect(
-          tester.getTopLeft(find.text('Index 5')), const Offset(200.0, 20.0));
+        tester.getTopLeft(find.text('Index 5')),
+        const Offset(200.0, 20.0),
+      );
       expect(find.text('Index 6'), findsOneWidget);
       expect(tester.getTopLeft(find.text('Index 6')), const Offset(0.0, 40.0));
       expect(find.text('Index 7'), findsOneWidget);
@@ -146,11 +153,12 @@ void main() {
               crossAxisCount: 4,
               scrollDirection: Axis.horizontal,
               children: List<Widget>.generate(
-                  50,
-                  (int index) => SizedBox(
-                        width: index % 3 * 50 + 20,
-                        child: Text('Index $index'),
-                      )),
+                50,
+                (int index) => SizedBox(
+                  width: index % 3 * 50 + 20,
+                  child: Text('Index $index'),
+                ),
+              ),
             ),
           ),
         ),
@@ -168,12 +176,19 @@ void main() {
       expect(tester.getTopLeft(find.text('Index 4')), const Offset(20.0, 0.0));
       expect(find.text('Index 5'), findsOneWidget);
       expect(
-          tester.getTopLeft(find.text('Index 5')), const Offset(20.0, 375.0));
+        tester.getTopLeft(find.text('Index 5')),
+        const Offset(20.0, 375.0),
+      );
       expect(find.text('Index 6'), findsOneWidget);
       expect(
-          tester.getTopLeft(find.text('Index 6')), const Offset(70.0, 125.0));
+        tester.getTopLeft(find.text('Index 6')),
+        const Offset(70.0, 125.0),
+      );
       expect(find.text('Index 7'), findsOneWidget);
-      expect(tester.getTopLeft(find.text('Index 7')), const Offset(90.0, 0.0));
+      expect(
+        tester.getTopLeft(find.text('Index 7')),
+        const Offset(90.0, 0.0),
+      );
 
       expect(find.text('Index 47'), findsNothing);
       expect(find.text('Index 48'), findsNothing);
@@ -191,11 +206,12 @@ void main() {
               crossAxisCount: 4,
               reverse: true,
               children: List<Widget>.generate(
-                  50,
-                  (int index) => SizedBox(
-                        height: index % 3 * 50 + 20,
-                        child: Text('Index $index'),
-                      )),
+                50,
+                (int index) => SizedBox(
+                  height: index % 3 * 50 + 20,
+                  child: Text('Index $index'),
+                ),
+              ),
             ),
           ),
         ),
@@ -203,28 +219,44 @@ void main() {
 
       expect(find.text('Index 0'), findsOneWidget);
       expect(
-          tester.getBottomLeft(find.text('Index 0')), const Offset(0.0, 200.0));
+        tester.getBottomLeft(find.text('Index 0')),
+        const Offset(0.0, 200.0),
+      );
       expect(find.text('Index 1'), findsOneWidget);
-      expect(tester.getBottomLeft(find.text('Index 1')),
-          const Offset(150.0, 200.0));
+      expect(
+        tester.getBottomLeft(find.text('Index 1')),
+        const Offset(150.0, 200.0),
+      );
       expect(find.text('Index 2'), findsOneWidget);
-      expect(tester.getBottomLeft(find.text('Index 2')),
-          const Offset(300.0, 200.0));
+      expect(
+        tester.getBottomLeft(find.text('Index 2')),
+        const Offset(300.0, 200.0),
+      );
       expect(find.text('Index 3'), findsOneWidget);
-      expect(tester.getBottomLeft(find.text('Index 3')),
-          const Offset(450.0, 200.0));
+      expect(
+        tester.getBottomLeft(find.text('Index 3')),
+        const Offset(450.0, 200.0),
+      );
       expect(find.text('Index 4'), findsOneWidget);
       expect(
-          tester.getBottomLeft(find.text('Index 4')), const Offset(0.0, 180.0));
+        tester.getBottomLeft(find.text('Index 4')),
+        const Offset(0.0, 180.0),
+      );
       expect(find.text('Index 5'), findsOneWidget);
-      expect(tester.getBottomLeft(find.text('Index 5')),
-          const Offset(450.0, 180.0));
+      expect(
+        tester.getBottomLeft(find.text('Index 5')),
+        const Offset(450.0, 180.0),
+      );
       expect(find.text('Index 6'), findsOneWidget);
-      expect(tester.getBottomLeft(find.text('Index 6')),
-          const Offset(150.0, 130.0));
+      expect(
+        tester.getBottomLeft(find.text('Index 6')),
+        const Offset(150.0, 130.0),
+      );
       expect(find.text('Index 7'), findsOneWidget);
       expect(
-          tester.getBottomLeft(find.text('Index 7')), const Offset(0.0, 110.0));
+        tester.getBottomLeft(find.text('Index 7')),
+        const Offset(0.0, 110.0),
+      );
 
       expect(find.text('Index 47'), findsNothing);
       expect(find.text('Index 48'), findsNothing);
@@ -243,7 +275,8 @@ void main() {
             body: DynamicGridView.builder(
               gridDelegate:
                   const DynamicSliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4),
+                crossAxisCount: 4,
+              ),
               itemBuilder: (BuildContext context, int index) => SizedBox(
                 height: index % 2 * 50 + 20,
                 child: Text('Index $index'),
@@ -266,7 +299,9 @@ void main() {
       expect(tester.getTopLeft(find.text('Index 4')), const Offset(0.0, 20.0));
       expect(find.text('Index 5'), findsOneWidget);
       expect(
-          tester.getTopLeft(find.text('Index 5')), const Offset(200.0, 20.0));
+        tester.getTopLeft(find.text('Index 5')),
+        const Offset(200.0, 20.0),
+      );
       expect(find.text('Index 6'), findsOneWidget);
       expect(tester.getTopLeft(find.text('Index 6')), const Offset(0.0, 40.0));
       expect(find.text('Index 7'), findsOneWidget);
@@ -290,7 +325,8 @@ void main() {
             body: DynamicGridView.builder(
               gridDelegate:
                   const DynamicSliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4),
+                crossAxisCount: 4,
+              ),
               itemBuilder: (BuildContext context, int index) => SizedBox(
                 height: index % 2 * 50 + 20,
                 child: Text('Index $index'),
