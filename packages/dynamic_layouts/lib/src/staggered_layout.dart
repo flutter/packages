@@ -10,6 +10,7 @@ import 'base_grid_layout.dart';
 import 'render_dynamic_grid.dart';
 import 'wrap_layout.dart';
 
+//TODO: add SliverGridWrappingTileLayout when it lands
 /// A [DynamicSliverGridLayout] that creates tiles with varying main axis
 /// sizes and fixed cross axis sizes, generating a staggered layout. The extent
 /// in the main axis will be defined by the child's size and must be finite.
@@ -105,9 +106,6 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
     return true;
   }
 
-  /// The infinite extent in the main axis lets
-  /// [RenderDynamicSliverGrid.performLayout()] know that the child will decide
-  /// its own size in that axis.
   @override
   DynamicSliverGridGeometry getGeometryForChildIndex(int index) {
     return DynamicSliverGridGeometry(
@@ -182,6 +180,20 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
 /// );
 /// ```
 ///
+/// ```dart
+///    DynamicGridView(
+///      gridDelegate: const DynamicSliverGridDelegateWithFixedCrossAxisCount(
+///        crossAxisCount: 4,
+///      ),
+///      children: List<Widget>.generate(
+///        50,
+///        (int index) => SizedBox(
+///          height: index % 2 * 20 + 20,
+///          child: Text('Index $index'),
+///        ),
+///      ),
+///    ),
+///          ```
 /// See also:
 ///
 ///  * [DynamicSliverGridDelegateWithMaxCrossAxisExtent], which creates a
