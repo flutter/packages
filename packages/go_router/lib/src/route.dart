@@ -299,7 +299,8 @@ class GoRoute {
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(_pathParams, match);
 
-  static String? _noRedirection(BuildContext context, GoRouterState state) => null;
+  static String? _noRedirection(BuildContext context, GoRouterState state) =>
+      null;
 
   static Widget _invalidBuilder(
     BuildContext context,
