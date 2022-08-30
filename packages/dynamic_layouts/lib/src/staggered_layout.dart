@@ -9,7 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'base_grid_layout.dart';
 import 'render_dynamic_grid.dart';
 
-//TODO: add SliverGridWrappingTileLayout when it lands
+//  TODO(DavBot02): add SliverGridWrappingTileLayout when it lands
 /// A [DynamicSliverGridLayout] that creates tiles with varying main axis
 /// sizes and fixed cross axis sizes, generating a staggered layout. The extent
 /// in the main axis will be defined by the child's size and must be finite.
@@ -22,19 +22,21 @@ import 'render_dynamic_grid.dart';
 ///
 /// See also:
 ///
+///  * `SliverGridWrappingTileLayout`, a similar layout that allows tiles to be
+///    freely sized in the main and cross axis.
 ///  * [DynamicSliverGridDelegateWithMaxCrossAxisExtent], which creates
 ///    staggered layouts with a maximum extent in the cross axis.
 ///  * [DynamicSliverGridDelegateWithFixedCrossAxisCount], which creates
 ///    staggered layouts with a consistent amount of tiles in the cross axis.
-///  * `SliverGridWrappingTileLayout`, a similar layout that allows tiles to be
-///    freely sized in the main and cross axis.
-///  * [DynamicSliverGridGeometry], which represents the size and position of a
-///    single tile in a grid.
-///  * [RenderDynamicSliverGrid], which uses this class during its
-///    [RenderDynamicSliverGrid.performLayout] method.
+///  * [DynamicGridView.staggered], which uses these delegates to create
+///    staggered layouts.
+///  * [DynamicSliverGridGeometry], which establishes the position of a child
+///    and pass the child's desired proportions to a [DynamicSliverGridLayout].
+///  * [RenderDynamicSliverGrid], which is the sliver where the dynamic sized
+///    tiles are positioned.
 class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
-  /// Creates a layout with dynamic main axis extents and fixed cross axis
-  /// extents.
+  /// Creates a layout with dynamic main axis extents determined by the child's
+  /// size and fixed cross axis extents.
   ///
   /// All arguments must be not null. The [crossAxisCount] argument must be
   /// greater than zero. The [mainAxisSpacing], [crossAxisSpacing] and
@@ -47,13 +49,7 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
     required this.scrollDirection,
   })  : assert(crossAxisCount != null && crossAxisCount > 0),
         assert(crossAxisSpacing != null && crossAxisSpacing >= 0),
-        assert(childCrossAxisExtent != null && childCrossAxisExtent >= 0) {
-    //TODO: Modify how this works
-    for (int i = 0; i < crossAxisCount; i++) {
-      _scrollOffsetForMainAxis[i] = 0.0;
-      _mainAxisCount[i] = 0;
-    }
-  }
+        assert(childCrossAxisExtent != null && childCrossAxisExtent >= 0);
 
   /// The number of children in the cross axis.
   final int crossAxisCount;
@@ -73,28 +69,35 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
 
   /// The collection of scroll offsets for every row or column across the main
   /// axis. It includes the tiles' sizes and the spacing between them.
-  final Map<int, double> _scrollOffsetForMainAxis = <int, double>{};
+  final List<double> _scrollOffsetForMainAxis = <double>[];
 
   /// The amount of tiles in every row or column across the main axis.
-  final Map<int, int> _mainAxisCount = <int, int>{};
+  final List<int> _mainAxisCount = <int>[];
 
   /// Returns the row or column with the minimum extent for the next child to
   /// be layed out.
   int _getNextCrossAxisSlot() {
     int nextCrossAxisSlot = 0;
     double minScrollOffset = double.infinity;
-    _scrollOffsetForMainAxis.forEach((int mainAxisSeries, double scrollOffset) {
-      if (scrollOffset < minScrollOffset) {
-        nextCrossAxisSlot = mainAxisSeries;
-        minScrollOffset = scrollOffset;
+
+    if (_scrollOffsetForMainAxis.length < crossAxisCount) {
+      nextCrossAxisSlot = _scrollOffsetForMainAxis.length;
+      _scrollOffsetForMainAxis.add(0.0);
+      return nextCrossAxisSlot;
+    }
+
+    for (int i = 0; i < crossAxisCount; i++) {
+      if (_scrollOffsetForMainAxis[i] < minScrollOffset) {
+        nextCrossAxisSlot = i;
+        minScrollOffset = _scrollOffsetForMainAxis[i];
       }
-    });
+    }
     return nextCrossAxisSlot;
   }
 
   @override
   bool reachedTargetScrollOffset(double targetOffset) {
-    for (final double scrollOffset in _scrollOffsetForMainAxis.values) {
+    for (final double scrollOffset in _scrollOffsetForMainAxis) {
       if (scrollOffset < targetOffset) {
         return false;
       }
@@ -112,32 +115,36 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
     );
   }
 
-  /// Returns an updated [DynamicSliverGridGeometry] with the actual size of
-  /// the child.
   @override
   DynamicSliverGridGeometry updateGeometryForChildIndex(
     int index,
     Size childSize,
   ) {
     final int crossAxisSlot = _getNextCrossAxisSlot();
-    final double currentScrollOffset = _scrollOffsetForMainAxis[crossAxisSlot]!;
+    final double currentScrollOffset = _scrollOffsetForMainAxis[crossAxisSlot];
     final double childMainAxisExtent =
         scrollDirection == Axis.vertical ? childSize.height : childSize.width;
+    final double scrollOffset = currentScrollOffset +
+        (_mainAxisCount.length >= crossAxisCount
+                ? _mainAxisCount[crossAxisSlot]
+                : 0) *
+            mainAxisSpacing;
+    final double crossAxisOffset =
+        crossAxisSlot * (childCrossAxisExtent + crossAxisSpacing);
+    final double mainAxisExtent =
+        scrollDirection == Axis.vertical ? childSize.height : childSize.width;
     _scrollOffsetForMainAxis[crossAxisSlot] =
-        childMainAxisExtent + _scrollOffsetForMainAxis[crossAxisSlot]!;
+        childMainAxisExtent + _scrollOffsetForMainAxis[crossAxisSlot];
+    _mainAxisCount.length >= crossAxisCount
+        ? _mainAxisCount[crossAxisSlot] += 1
+        : _mainAxisCount.add(1);
 
-    final DynamicSliverGridGeometry sliverGridGeometry =
-        DynamicSliverGridGeometry(
-      scrollOffset: currentScrollOffset +
-          _mainAxisCount[crossAxisSlot]! * mainAxisSpacing,
-      crossAxisOffset:
-          crossAxisSlot * (childCrossAxisExtent + crossAxisSpacing),
-      mainAxisExtent:
-          scrollDirection == Axis.vertical ? childSize.height : childSize.width,
+    return DynamicSliverGridGeometry(
+      scrollOffset: scrollOffset,
+      crossAxisOffset: crossAxisOffset,
+      mainAxisExtent: mainAxisExtent,
       crossAxisExtent: childCrossAxisExtent,
     );
-    _mainAxisCount[crossAxisSlot] = _mainAxisCount[crossAxisSlot]! + 1;
-    return sliverGridGeometry;
   }
 }
 
@@ -156,19 +163,19 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
 /// constructor:
 ///
 /// ```dart
-///    DynamicGridView(
-///      gridDelegate: const DynamicSliverGridDelegateWithFixedCrossAxisCount(
-///        crossAxisCount: 4,
-///      ),
-///      children: List<Widget>.generate(
-///        50,
-///        (int index) => SizedBox(
-///          height: index % 2 * 20 + 20,
-///          child: Text('Index $index'),
-///        ),
-///      ),
-///    ),
-///          ```
+/// DynamicGridView(
+///   gridDelegate: const DynamicSliverGridDelegateWithFixedCrossAxisCount(
+///     crossAxisCount: 4,
+///   ),
+///   children: List<Widget>.generate(
+///     50,
+///     (int index) => SizedBox(
+///       height: index % 2 * 20 + 20,
+///       child: Text('Index $index'),
+///     ),
+///   ),
+/// );
+/// ```
 /// See also:
 ///
 ///  * [DynamicSliverGridDelegateWithMaxCrossAxisExtent], which creates a
@@ -235,23 +242,23 @@ class DynamicSliverGridDelegateWithFixedCrossAxisCount
 ///  * The extent evenly divides the cross-axis extent of the grid.
 ///  * The extent is at most [maxCrossAxisExtent].
 ///
-/// For example, if the grid is vertical, the grid is 500.0 pixels wide, and
-/// [maxCrossAxisExtent] is 150.0, this delegate will create a grid with 4
-/// columns that are 125.0 pixels wide.
+/// This sample code shows how to use it independently with a DynamicGridView
+/// constructor:
+///
 /// ```dart
-///    DynamicGridView(
-///      gridDelegate: const DynamicSliverGridDelegateWithMaxCrossAxisExtent(
-///        maxCrossAxisExtent: 100,
-///      ),
-///      children: List<Widget>.generate(
-///        50,
-///        (int index) => SizedBox(
-///          height: index % 2 * 20 + 20,
-///          child: Text('Index $index'),
-///        ),
-///      ),
-///    ),
-///          ```
+/// DynamicGridView(
+///   gridDelegate: const DynamicSliverGridDelegateWithMaxCrossAxisExtent(
+///     maxCrossAxisExtent: 100,
+///   ),
+///   children: List<Widget>.generate(
+///     50,
+///     (int index) => SizedBox(
+///       height: index % 2 * 20 + 20,
+///       child: Text('Index $index'),
+///     ),
+///   ),
+/// );
+/// ```
 ///
 /// See also:
 ///
@@ -266,7 +273,8 @@ class DynamicSliverGridDelegateWithFixedCrossAxisCount
 class DynamicSliverGridDelegateWithMaxCrossAxisExtent
     extends SliverGridDelegateWithMaxCrossAxisExtent {
   /// Creates a delegate that makes grid layouts with tiles that have a maximum
-  /// cross-axis extent and varying main axis size.
+  /// cross-axis extent and varying main axis size dependent on the child's
+  /// corresponding finite extent.
   ///
   /// Only the [maxCrossAxisExtent] argument needs to be greater than zero. All of
   /// them must be not null.
