@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'package:googleapis/storage/v1.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
 

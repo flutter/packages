@@ -4,9 +4,10 @@
 
 import 'dart:io';
 
-import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
+
+import '../fuchsia_ctl.dart';
 
 const SshClient _kSsh = SshClient();
 

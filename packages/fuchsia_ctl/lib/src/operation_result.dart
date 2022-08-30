@@ -24,7 +24,7 @@ class OperationResult {
     String info = '',
   }) {
     assert(info != null);
-    return OperationResult._(true, info: info, error: '');
+    return OperationResult._(true, info: info);
   }
 
   /// A failing operation result with a non-null but potentially empty error,

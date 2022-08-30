@@ -8,10 +8,10 @@ import 'dart:io';
 
 import 'package:file/file.dart';
 import 'package:file/local.dart';
-import 'package:fuchsia_ctl/src/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:process/process.dart';
 
+import 'logger.dart';
 import 'operation_result.dart';
 
 /// A client for running SSH based commands on a Fuchsia device.

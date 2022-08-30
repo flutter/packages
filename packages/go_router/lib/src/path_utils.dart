@@ -66,7 +66,7 @@ String _escapeGroup(String group, String name) {
 /// 2. Call [patternToPath] with the `pathParameters` from the first step and
 ///    the original `pattern` used for generating the [RegExp].
 String patternToPath(String pattern, Map<String, String> pathParameters) {
-  final StringBuffer buffer = StringBuffer('');
+  final StringBuffer buffer = StringBuffer();
   int start = 0;
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
     if (match.start > start) {

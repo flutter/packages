@@ -1,3 +1,8 @@
+## 0.0.25+1
+
+- Fixes lint warnings.
+
+
 ## 0.0.25
 
 - Fix `unnecessary_import` lint errors.

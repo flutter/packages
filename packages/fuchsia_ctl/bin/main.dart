@@ -182,7 +182,7 @@ Future<OperationResult> ssh(
   final OperationResult result = await sshClient.runCommand(
     targetIp,
     identityFilePath: identityFile,
-    command: args['command'].split(' '),
+    command: (args['command'] as String).split(' '),
     timeoutMs:
         Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
     logFilePath: outputFile,
@@ -203,7 +203,6 @@ Future<OperationResult> pave(
 ) async {
   const ImagePaver paver = ImagePaver();
   const RetryOptions r = RetryOptions(
-    maxDelay: Duration(seconds: 30),
     maxAttempts: 3,
   );
   return r.retry(() async {
@@ -268,7 +267,7 @@ Future<OperationResult> pushPackages(
 
     final String repositoryBase = path.join(repo.path, 'amber-files');
     stdout.writeln('Serving $repositoryBase to $targetIp');
-    await server.serveRepo(repositoryBase, port: 0);
+    await server.serveRepo(repositoryBase);
     await amberCtl.addSrc(server.serverPort);
 
     stdout.writeln('Pushing packages $packages to $targetIp');
@@ -335,7 +334,7 @@ Future<OperationResult> test(
         return result;
       }
     }
-    await server.serveRepo(repo.path, port: 0);
+    await server.serveRepo(repo.path);
     await amberCtl.addSrc(server.serverPort);
 
     for (final String farFile in farFiles) {

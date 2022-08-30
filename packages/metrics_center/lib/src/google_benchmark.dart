@@ -74,8 +74,9 @@ void _parseAnItem(
       try {
         rawValue = item[subResult] as num?;
       } catch (e) {
+        // ignore: avoid_print
         print(
-            '$subResult: ${item[subResult]} (${item[subResult].runtimeType}) is not a number');
+            '$subResult: ${item[subResult]} (${(item[subResult] as Object?).runtimeType}) is not a number');
         rethrow;
       }
 

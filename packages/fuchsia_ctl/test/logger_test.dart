@@ -43,7 +43,7 @@ void main() {
     final MemoryFileSystem fs = MemoryFileSystem();
     fs.file('log.txt').createSync();
     final IOSink data = fs.file('log.txt').openWrite();
-    final PrintLogger logger = PrintLogger(out: data, level: LogLevel.info);
+    final PrintLogger logger = PrintLogger(out: data);
     logger.debug('abc');
     logger.info('cdf');
     logger.warning('gh');

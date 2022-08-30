@@ -79,7 +79,7 @@ String encodeField(PropertyAccessorElement element) {
 }
 
 /// Gets the name of the `const` map generated to help encode [Enum] types.
-String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
+String enumMapName(InterfaceType type) => '_\$${type.element2.name}EnumMap';
 
 String _stateValueAccess(ParameterElement element) {
   if (element.isRequired) {

@@ -4,6 +4,8 @@
 
 // This file is hand-formatted.
 
+// ignore_for_file: avoid_dynamic_calls
+
 import 'dart:convert';
 import 'dart:typed_data';
 
