@@ -1,3 +1,7 @@
+## 4.3.1
+
+- Fix an issue where disabling logging clears the root logger's listeners
+
 ## 4.3.0
 
 - Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
