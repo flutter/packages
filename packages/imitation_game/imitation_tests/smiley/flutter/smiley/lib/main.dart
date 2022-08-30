@@ -24,7 +24,7 @@ Future<void> _sendResult(double result) async {
   final String measurementName =
       '${Platform.isAndroid ? "android_" : "ios_"}startup_time';
   final http.Response response = await http.post(
-    'http://$_hostIp',
+    Uri.http(_hostIp),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
