@@ -27,7 +27,7 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        redirect: (_) => '/none',
+        redirect: (_, __) => '/none',
       ),
       GoRoute(
         path: '/fade',

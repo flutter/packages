@@ -56,10 +56,15 @@ class RouteBuilder {
     Key navigatorKey,
     bool routerNeglect,
   ) {
-    List<Page<dynamic>>? pages;
+    if (matches.isEmpty) {
+      // The build method can be called before async redirect finishes. Build a
+      // empty box until then.
+      return const SizedBox.shrink();
+    }
     Exception? error;
     final String location = matches.location.toString();
     final List<RouteMatch> matchesList = matches.matches;
+    List<Page<dynamic>>? pages;
     try {
       // build the stack of pages
       if (routerNeglect) {
