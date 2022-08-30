@@ -228,7 +228,7 @@ class DetailsScreen extends StatelessWidget {
       body: Center(
         child: Text(
           'Details for $label',
-          style: Theme.of(context).textTheme.headline4,
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
     );
