@@ -1,3 +1,0 @@
-$ServiceURL https://chrome-infra-packages.appspot.com/
-
-dart/dart-sdk/${os}-${arch} stable
