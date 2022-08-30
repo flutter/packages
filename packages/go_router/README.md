@@ -163,6 +163,10 @@ final  _router = GoRouter(
             ),
           ],
         ),
+      ],
+    ),
+  ],
+);
 ```
 
 For more details, see the `ShellRoute` API documentation. For a complete
