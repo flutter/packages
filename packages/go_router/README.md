@@ -138,7 +138,7 @@ GoRouter(
 
 If the code depends on [BuildContext](https://api.flutter.dev/flutter/widgets/BuildContext-class.html)
 through the [dependOnInheritedWidgetOfExactType](https://api.flutter.dev/flutter/widgets/BuildContext/dependOnInheritedWidgetOfExactType.html)
-(which is how `of` method is usually implemented), the redirect will be called every time the [InheritedWidget](https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html)
+(which is how `of` methods are usually implemented), the redirect will be called every time the [InheritedWidget](https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html)
 updated.
 
 ### Top-level redirect

@@ -57,6 +57,8 @@ class RouteBuilder {
     bool routerNeglect,
   ) {
     if (matches.isEmpty) {
+      // The build method can be called before async redirect finishes. Build a
+      // empty box until then.
       return const SizedBox.shrink();
     }
     Exception? error;
