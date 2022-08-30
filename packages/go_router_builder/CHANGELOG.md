@@ -1,3 +1,7 @@
+## 1.0.10
+
+* Adds a lint ignore for deprecated member in the example. 
+
 ## 1.0.9
 
 * Fixes lint warnings.
