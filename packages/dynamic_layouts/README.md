@@ -47,8 +47,8 @@ the sizes of the children. It can leave spacing with `mainAxisSpacing` and
 
 Having different sizes in only one of the axis is possible by
 changing the values of `childCrossAxisExtent` and `childMainAxisExtent`. These
-values by default are ignored, but changing `childCrossAxisExtent` to be
-100 pixels, will make all of the children 100 pixels in the main axis.
+values by default are set to have loose constraints, but by giving `childCrossAxisExtent` a specific value like
+100 pixels, it will make all of the children 100 pixels in the main axis.
 This layout can be used with `DynamicGridView.wrap` and with
 `DynamicGridView.builder` and `SliverGridDelegateWithWrapping` as the delegate.
 
@@ -134,7 +134,7 @@ DynamicGridView.builder(
 
 ### Stagger
 
-Using the stagger layout is simple. It can be used with the constructor
+The `Stagger` layout can be used with the constructor
 `DynamicGridView.stagger` and still use the delegates from `GridView`
 like `SliverGridDelegateWithMaxCrossAxisExtent` and
 `SliverGridDelegateWithFixedCrossAxisCount`.

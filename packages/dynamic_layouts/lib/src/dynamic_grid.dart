@@ -83,18 +83,19 @@ class DynamicGridView extends GridView {
     super.key,
     super.scrollDirection,
     super.reverse,
-    super.children = const <Widget>[],
     double mainAxisSpacing = 0.0,
     double crossAxisSpacing = 0.0,
     double childCrossAxisExtent = double.infinity,
     double childMainAxisExtent = double.infinity,
+    super.children = const <Widget>[],
   }) : super(
-            gridDelegate: SliverGridDelegateWithWrapping(
-          mainAxisSpacing: mainAxisSpacing,
-          crossAxisSpacing: crossAxisSpacing,
-          childCrossAxisExtent: childCrossAxisExtent,
-          childMainAxisExtent: childMainAxisExtent,
-        ));
+          gridDelegate: SliverGridDelegateWithWrapping(
+            mainAxisSpacing: mainAxisSpacing,
+            crossAxisSpacing: crossAxisSpacing,
+            childCrossAxisExtent: childCrossAxisExtent,
+            childMainAxisExtent: childMainAxisExtent,
+          ),
+        );
 
   // TODO(DavBot09): DynamicGridView.stagger?
 
