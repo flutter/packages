@@ -267,7 +267,6 @@ void main() {
         (WidgetTester tester) async {
       tester.binding.window.physicalSizeTestValue = const Size(600, 1000);
       tester.binding.window.devicePixelRatioTestValue = 1.0;
-
       final List<Widget> children = List<Widget>.generate(
         50,
         (int index) => SizedBox(
@@ -285,7 +284,7 @@ void main() {
               stateSetter = setState;
               return DynamicGridView.staggered(
                 maxCrossAxisExtent: 150,
-                children: children,
+                children: <Widget>[...children],
               );
             }),
           ),
@@ -335,11 +334,11 @@ void main() {
       );
       expect(
         tester.getTopLeft(find.text('Index 28')),
-        const Offset(0.0, 420.0),
+        const Offset(150.0, 440.0),
       );
       expect(
         tester.getTopLeft(find.text('Index 33')),
-        const Offset(150.0, 540.0),
+        const Offset(0.0, 540.0),
       );
     });
   });
