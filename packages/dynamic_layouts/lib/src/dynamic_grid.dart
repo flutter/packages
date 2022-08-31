@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'render_dynamic_grid.dart';
+import 'staggered_layout.dart';
 import 'wrap_layout.dart';
 
 /// A scrollable, 2D array of widgets.
@@ -97,7 +98,58 @@ class DynamicGridView extends GridView {
           ),
         );
 
-  // TODO(DavBot09): DynamicGridView.stagger?
+  /// Creates a scrollable, 2D array of widgets where each tile's main axis
+  /// extent will be determined by the child's corresponding finite size and
+  /// the cross axis extent will be fixed, generating a staggered layout.
+  ///
+  /// Either a [crossAxisCount] or a [maxCrossAxisExtent] must be provided.
+  /// The constructor will then use a
+  /// [DynamicSliverGridDelegateWithFixedCrossAxisCount] or a
+  /// [DynamicSliverGridDelegateWithMaxCrossAxisExtent] as its [gridDelegate],
+  /// respectively.
+  ///
+  /// This sample code shows how to use the constructor with a
+  /// [maxCrossAxisExtent] and a simple layout:
+  ///
+  /// ```dart
+  /// DynamicGridView.staggered(
+  ///   maxCrossAxisExtent: 100,
+  ///   crossAxisSpacing: 2,
+  ///   mainAxisSpacing: 2,
+  ///   children: List.generate(
+  ///     50,
+  ///     (int index) => Container(
+  ///       height: index % 3 * 50 + 20,
+  ///       color: Colors.amber[index % 9 * 100],
+  ///       child: Center(child: Text("Index $index")),
+  ///     ),
+  ///   ),
+  /// );
+  /// ```
+  DynamicGridView.staggered({
+    super.key,
+    super.scrollDirection,
+    super.reverse,
+    int? crossAxisCount,
+    double? maxCrossAxisExtent,
+    double mainAxisSpacing = 0.0,
+    double crossAxisSpacing = 0.0,
+    super.children = const <Widget>[],
+  })  : assert(crossAxisCount != null || maxCrossAxisExtent != null),
+        assert(crossAxisCount == null || maxCrossAxisExtent == null),
+        super(
+          gridDelegate: crossAxisCount != null
+              ? DynamicSliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  mainAxisSpacing: mainAxisSpacing,
+                  crossAxisSpacing: crossAxisSpacing,
+                )
+              : DynamicSliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: maxCrossAxisExtent!,
+                  mainAxisSpacing: mainAxisSpacing,
+                  crossAxisSpacing: crossAxisSpacing,
+                ),
+        );
 
   @override
   Widget buildChildLayout(BuildContext context) {
