@@ -66,7 +66,7 @@ class Method extends Node {
         objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
     final String swiftFunctionStr =
         swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
-    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr swiftFuncton:$swiftFunctionStr)';
+    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr)';
   }
 }
 

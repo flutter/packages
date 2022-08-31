@@ -44,7 +44,8 @@ class SwiftOptions {
 String _getCodecName(Api api) => '${api.name}Codec';
 
 /// Returns a new [Method] using the swift function signature from [func],
-/// ie the name of function e the strings between the semicolons.
+/// i.e., the name of function and the strings between the semicolons.
+///
 /// Example:
 ///   _swiftMethod('@SwiftFunction('add(_:with:)') void add(int x, int y)')
 ///   will return 'void add(int _ x, int with y)'
