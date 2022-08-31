@@ -97,7 +97,7 @@ void main() {
       ),
     );
 
-    // Only the visible tiles have ben laid out.
+    // Only the visible tiles have been laid out.
     expect(find.text('Index 0'), findsOneWidget);
     expect(tester.getTopLeft(find.text('Index 0')), Offset.zero);
     expect(find.text('Index 1'), findsOneWidget);
