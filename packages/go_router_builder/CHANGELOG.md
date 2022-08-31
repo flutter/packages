@@ -1,3 +1,7 @@
+## 1.0.11
+
+* Replaces mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
+
 ## 1.0.10
 
 * Adds a lint ignore for deprecated member in the example. 
