@@ -1,4 +1,4 @@
-<?code-excerpt path-base="excerpts/packages/dynamic_layouts"?>
+<?code-excerpt path-base="excerpts/packages/staggered_layout_example"?>
 
 A package that provides two dynamic grid layouts: wrap and staggered.
 
