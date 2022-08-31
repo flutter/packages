@@ -285,6 +285,7 @@ base class instead of the `build` method:
 ```dart
 class MyMaterialRouteWithKey extends GoRouteData {
   static final _key = LocalKey('my-route-with-key');
+
   @override
   MaterialPage<void> buildPage(BuildContext context) =>
     MaterialPage<void>(
@@ -296,12 +297,12 @@ class MyMaterialRouteWithKey extends GoRouteData {
 
 ### Custom transitions
 
-Overriding the `buildPageWithState` method is also useful for custom transitions:
+Overriding the `buildPage` method is also useful for custom transitions:
 
 ```dart
 class FancyRoute extends GoRouteData {
   @override
-  MaterialPage<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) =>
     CustomTransitionPage<void>(
       key: state.pageKey,
       child: FancyPage(),
