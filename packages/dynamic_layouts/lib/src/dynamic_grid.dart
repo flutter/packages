@@ -100,15 +100,34 @@ class DynamicGridView extends GridView {
         );
 
   // TODO(DavBot09): DynamicGridView.stagger?
+  ///
+  /// This sample code shows how to use the constructor with a
+  /// [maxCrossAxisExtent] and a simple layout:
+  ///
+  /// ```dart
+  /// DynamicGridView.staggered(
+  ///   maxCrossAxisExtent: 100,
+  ///   crossAxisSpacing: 2,
+  ///   mainAxisSpacing: 2,
+  ///   children: List.generate(
+  ///     50,
+  ///     (int index) => Container(
+  ///       height: index % 3 * 50 + 20,
+  ///       color: Colors.amber[index % 9 * 100],
+  ///       child: Center(child: Text("Index $index")),
+  ///     ),
+  ///   ),
+  /// );
+  /// ```
   DynamicGridView.staggered({
     super.key,
     super.scrollDirection,
     super.reverse,
-    super.children = const <Widget>[],
     int? crossAxisCount,
     double? maxCrossAxisExtent,
     double mainAxisSpacing = 0.0,
     double crossAxisSpacing = 0.0,
+    super.children = const <Widget>[],
   })  : assert(crossAxisCount != null || maxCrossAxisExtent != null),
         assert(crossAxisCount == null || maxCrossAxisExtent == null),
         super(

@@ -100,7 +100,7 @@ like `SliverGridDelegateWithMaxCrossAxisExtent` and
 <!-- TODO(snat-s): Add a video of DynamicGrid.stagger -->
 
 ## Additional information
-This package was developed to recreate native scrolling layouts.
+
 The staggered layout is similar to Android's [StaggeredGridLayoutManager](https://developer.android.com/reference/androidx/recyclerview/widget/StaggeredGridLayoutManager), while the wrap layout
 emulates iOS' [UICollectionView](https://developer.apple.com/documentation/uikit/uicollectionview).
 

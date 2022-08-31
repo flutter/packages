@@ -159,7 +159,7 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
 /// with a fixed number of columns. If the grid is horizontal, this delegate
 /// will create a layout with a fixed number of rows.
 ///
-/// This sample code shows how to use it independently with a DynamicGridView
+/// This sample code shows how to use it independently with a [DynamicGridView]
 /// constructor:
 ///
 /// ```dart
@@ -176,6 +176,7 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
 ///   ),
 /// );
 /// ```
+///
 /// See also:
 ///
 ///  * [DynamicSliverGridDelegateWithMaxCrossAxisExtent], which creates a
@@ -189,8 +190,8 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
 ///    tiles are positioned.
 class DynamicSliverGridDelegateWithFixedCrossAxisCount
     extends SliverGridDelegateWithFixedCrossAxisCount {
-  /// Creates a delegate that makes grid layouts with a fixed number of tiles in
-  /// the cross axis and varying main axis size dependent on the child's
+  /// Creates a delegate that makes grid layouts with a fixed number of tiles
+  /// in the cross axis and varying main axis size dependent on the child's
   /// corresponding finite extent.
   ///
   /// Only the [crossAxisCount] argument needs to be greater than zero. All of
@@ -242,7 +243,7 @@ class DynamicSliverGridDelegateWithFixedCrossAxisCount
 ///  * The extent evenly divides the cross-axis extent of the grid.
 ///  * The extent is at most [maxCrossAxisExtent].
 ///
-/// This sample code shows how to use it independently with a DynamicGridView
+/// This sample code shows how to use it independently with a [DynamicGridView]
 /// constructor:
 ///
 /// ```dart
@@ -266,8 +267,8 @@ class DynamicSliverGridDelegateWithFixedCrossAxisCount
 ///    layout with a fixed number of tiles in the cross axis.
 ///  * [DynamicGridView], which can use this delegate to control the layout of
 ///    its tiles.
-///  * [DynamicSliverGridGeometry], which establishes the position of a child and
-///    pass the child's desired proportions to [DynamicSliverGridLayout].
+///  * [DynamicSliverGridGeometry], which establishes the position of a child
+///    and pass the child's desired proportions to [DynamicSliverGridLayout].
 ///  * [RenderDynamicSliverGrid], which is the sliver where the dynamic sized
 ///    tiles are positioned.
 class DynamicSliverGridDelegateWithMaxCrossAxisExtent
@@ -276,8 +277,8 @@ class DynamicSliverGridDelegateWithMaxCrossAxisExtent
   /// cross-axis extent and varying main axis size dependent on the child's
   /// corresponding finite extent.
   ///
-  /// Only the [maxCrossAxisExtent] argument needs to be greater than zero. All of
-  /// them must be not null.
+  /// Only the [maxCrossAxisExtent] argument needs to be greater than zero.
+  /// All of them must be not null.
   const DynamicSliverGridDelegateWithMaxCrossAxisExtent({
     required super.maxCrossAxisExtent,
     super.mainAxisSpacing = 0.0,

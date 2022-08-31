@@ -262,6 +262,86 @@ void main() {
       expect(find.text('Index 48'), findsNothing);
       expect(find.text('Index 49'), findsNothing);
     });
+
+    testWidgets('DynamicGridView.staggered deletes children appropriately',
+        (WidgetTester tester) async {
+      tester.binding.window.physicalSizeTestValue = const Size(600, 1000);
+      tester.binding.window.devicePixelRatioTestValue = 1.0;
+
+      final List<Widget> children = List<Widget>.generate(
+        50,
+        (int index) => SizedBox(
+          height: index % 3 * 50 + 20,
+          child: Text('Index $index'),
+        ),
+      );
+      late StateSetter stateSetter;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              stateSetter = setState;
+              return DynamicGridView.staggered(
+                maxCrossAxisExtent: 150,
+                children: children,
+              );
+            }),
+          ),
+        ),
+      );
+
+      expect(find.text('Index 0'), findsOneWidget);
+      expect(tester.getTopLeft(find.text('Index 0')), Offset.zero);
+      expect(find.text('Index 7'), findsOneWidget);
+      expect(tester.getTopLeft(find.text('Index 7')), const Offset(0.0, 90.0));
+      expect(find.text('Index 8'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Index 8')),
+        const Offset(150.0, 90.0),
+      );
+      expect(find.text('Index 27'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Index 27')),
+        const Offset(300.0, 420.0),
+      );
+      expect(find.text('Index 28'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Index 28')),
+        const Offset(300.0, 440.0),
+      );
+      expect(find.text('Index 32'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Index 32')),
+        const Offset(300.0, 510.0),
+      );
+      expect(find.text('Index 33'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Index 33')),
+        const Offset(150.0, 540.0),
+      );
+
+      stateSetter(() {
+        children.removeAt(0);
+      });
+
+      await tester.pump();
+      expect(find.text('Index 0'), findsNothing);
+
+      expect(
+        tester.getTopLeft(find.text('Index 8')),
+        const Offset(0.0, 90.0),
+      );
+      expect(
+        tester.getTopLeft(find.text('Index 28')),
+        const Offset(0.0, 420.0),
+      );
+      expect(
+        tester.getTopLeft(find.text('Index 33')),
+        const Offset(150.0, 540.0),
+      );
+    });
   });
   group('DynamicGridView.builder', () {
     testWidgets('DynamicGridView.builder works with a staggered layout',
