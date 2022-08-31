@@ -66,7 +66,7 @@ $ flutter pub add dynamic_layouts
 
 Now in your Dart code, you can use:
 
-```dart
+```
 import 'package:dynamic_layouts/dynamic_layouts.dart';
 ```
 ## Usage
