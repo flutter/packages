@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum Flutter version to 2.10.
-
 ## 2.0.7
 
 * Fixes lint warnings.
