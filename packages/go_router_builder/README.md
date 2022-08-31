@@ -279,15 +279,14 @@ of the page and the `restorationId` of the page.
 
 If you'd like to change how the page is created, e.g. to use a different page
 type, pass non-default parameters when creating the page (like a custom key) or
-access the `GoRouteState` object, you can override the `buildPageWithState`
-method of the base class instead of the `build` method:
+access the `GoRouteState` object, you can override the `buildPage` method of the
+base class instead of the `build` method:
 
 ```dart
 class MyMaterialRouteWithKey extends GoRouteData {
   static final _key = LocalKey('my-route-with-key');
-
   @override
-  MaterialPage<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+  MaterialPage<void> buildPage(BuildContext context) =>
     MaterialPage<void>(
       key: _key,
       child: MyPage(),
