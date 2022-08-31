@@ -34,7 +34,7 @@ void main() {
       expect(find.text('Item $i'), findsOneWidget);
     }
     // Check that the children are in the right position
-    expect(tester.getTopLeft(find.text('Item 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Item 0')), Offset.zero);
     expect(tester.getTopLeft(find.text('Item 1')), const Offset(95.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 2')), const Offset(275.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 3')), const Offset(370.0, 0.0));
@@ -70,7 +70,7 @@ void main() {
       expect(find.text('Item $i'), findsOneWidget);
     }
     // Check that the children are in the right position
-    expect(tester.getTopLeft(find.text('Item 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Item 0')), Offset.zero);
     expect(tester.getTopLeft(find.text('Item 1')), const Offset(95.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 2')), const Offset(275.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 3')), const Offset(370.0, 0.0));
@@ -108,7 +108,7 @@ void main() {
       expect(find.text('Item $i'), findsOneWidget);
     }
     // Check that the children are in the right position
-    expect(tester.getTopLeft(find.text('Item 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Item 0')), Offset.zero);
     expect(tester.getTopLeft(find.text('Item 1')), const Offset(95.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 2')), const Offset(275.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 3')), const Offset(370.0, 0.0));
@@ -458,7 +458,7 @@ void main() {
     expect(find.text('Item 8'), findsOneWidget);
 
     // See if the proper widgets are in the tree.
-    expect(tester.getTopLeft(find.text('Item 1')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Item 1')), Offset.zero);
     expect(tester.getTopLeft(find.text('Item 2')), const Offset(180.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 3')), const Offset(280.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 4')), const Offset(460.0, 0.0));
@@ -496,7 +496,7 @@ void main() {
     expect(find.text('Item 0'), findsOneWidget);
     expect(find.text('Item 1'), findsOneWidget);
     expect(find.text('Item 2'), findsOneWidget);
-    expect(tester.getTopLeft(find.text('Item 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Item 0')), Offset.zero);
     expect(tester.getTopLeft(find.text('Item 1')), const Offset(100.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 2')), const Offset(280.0, 0.0));
     expect(find.text('Item 3'), findsNothing);
@@ -512,7 +512,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Item 0'), findsOneWidget);
     expect(find.text('Item 1'), findsOneWidget);
-    expect(tester.getTopLeft(find.text('Item 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Item 0')), Offset.zero);
     expect(tester.getTopLeft(find.text('Item 1')), const Offset(100.0, 0.0));
     expect(find.text('Item 2'), findsNothing);
     expect(find.text('Item 3'), findsNothing);
@@ -547,7 +547,7 @@ void main() {
 
     expect(find.text('Item 0'), findsOneWidget);
     expect(find.text('Item 1'), findsOneWidget);
-    expect(tester.getTopLeft(find.text('Item 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Item 0')), Offset.zero);
     expect(tester.getTopLeft(find.text('Item 1')), const Offset(0.0, 100.0));
 
     expect(find.text('Item 2'), findsNothing);
@@ -562,7 +562,7 @@ void main() {
     expect(find.text('Item 3'), findsOneWidget);
     expect(find.text('Item 4'), findsOneWidget);
 
-    expect(tester.getTopLeft(find.text('Item 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Item 0')), Offset.zero);
     expect(tester.getTopLeft(find.text('Item 1')), const Offset(0.0, 100.0));
     expect(tester.getTopLeft(find.text('Item 2')), const Offset(0.0, 150.0));
     expect(tester.getTopLeft(find.text('Item 3')), const Offset(0.0, 250.0));
@@ -579,7 +579,7 @@ void main() {
     expect(find.text('Item 3'), findsOneWidget);
     expect(find.text('Item 4'), findsNothing);
 
-    expect(tester.getTopLeft(find.text('Item 0')), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.text('Item 0')), Offset.zero);
     expect(tester.getTopLeft(find.text('Item 1')), const Offset(100.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 2')), const Offset(280.0, 0.0));
     expect(tester.getTopLeft(find.text('Item 3')), const Offset(380.0, 0.0));
