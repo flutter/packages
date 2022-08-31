@@ -1,5 +1,3 @@
-<?code-excerpt path-base="excerpts/packages/staggered_layout_example"?>
-
 A package that provides two dynamic grid layouts: wrap and staggered.
 
 ## Features
@@ -53,8 +51,7 @@ $ flutter pub add dynamic_layouts
 
 Now in your Dart code, you can use:
 
-<?code-excerpt "main.dart (import)"?>
-```dart
+```sh
 import 'package:dynamic_layouts/dynamic_layouts.dart';
 ```
 ## Usage
