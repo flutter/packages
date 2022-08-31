@@ -55,6 +55,7 @@ Now in your Dart code, you can use:
 
 <?code-excerpt "main.dart (import)"?>
 ```dart
+import 'package:dynamic_layouts/dynamic_layouts.dart';
 ```
 ## Usage
 
