@@ -38,9 +38,6 @@ This layout can be used with `DynamicGridView.wrap` and with
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
 ### Depend on it
 
 Run this command with Flutter:
@@ -56,7 +53,7 @@ import 'package:dynamic_layouts/dynamic_layouts.dart';
 ```
 ## Usage
 
-Use `DynamicGridView`s to access this layouts.
+Use `DynamicGridView`s to access these layouts.
 `DynamicGridView` has some constructors that use  `SliverChildListDelegate` like
 `.wrap` and `.stagger`. For a more efficient option that uses `SliverChildBuilderDelegate` use
 `.builder`, it works the same as `GridView.builder`.

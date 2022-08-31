@@ -99,7 +99,15 @@ class DynamicGridView extends GridView {
           ),
         );
 
-  // TODO(DavBot09): DynamicGridView.stagger?
+  /// Creates a scrollable, 2D array of widgets where each tile's main axis
+  /// extent will be determined by the child's corresponding finite size and
+  /// the cross axis extent will be fixed, generating a staggered layout.
+  ///
+  /// Either a [crossAxisCount] or a [maxCrossAxisExtent] must be provided.
+  /// The constructor will then use a
+  /// [DynamicSliverGridDelegateWithFixedCrossAxisCount] or a
+  /// [DynamicSliverGridDelegateWithMaxCrossAxisExtent] as its [gridDelegate],
+  /// respectively.
   ///
   /// This sample code shows how to use the constructor with a
   /// [maxCrossAxisExtent] and a simple layout:

@@ -8,8 +8,7 @@ import 'package:flutter/rendering.dart';
 
 import 'base_grid_layout.dart';
 import 'render_dynamic_grid.dart';
-
-// TODO(DavBot02): add SliverGridWrappingTileLayout when it lands
+import 'wrap_layout.dart';
 
 /// A [DynamicSliverGridLayout] that creates tiles with varying main axis
 /// sizes and fixed cross axis sizes, generating a staggered layout. The extent
@@ -23,7 +22,7 @@ import 'render_dynamic_grid.dart';
 ///
 /// See also:
 ///
-///  * `SliverGridWrappingTileLayout`, a similar layout that allows tiles to be
+///  * [SliverGridWrappingTileLayout], a similar layout that allows tiles to be
 ///    freely sized in the main and cross axis.
 ///  * [DynamicSliverGridDelegateWithMaxCrossAxisExtent], which creates
 ///    staggered layouts with a maximum extent in the cross axis.
