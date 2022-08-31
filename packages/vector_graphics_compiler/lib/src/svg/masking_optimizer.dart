@@ -82,6 +82,18 @@ Path toVectorGraphicsPath(path_ops.Path path) {
       case path_ops.PathVerb.lineTo:
         newCommands.add(LineToCommand(points[index++], points[index++]));
         break;
+      case path_ops.PathVerb.quadTo:
+        final double cpX = points[index++];
+        final double cpY = points[index++];
+        newCommands.add(CubicToCommand(
+          cpX,
+          cpY,
+          cpX,
+          cpY,
+          points[index++],
+          points[index++],
+        ));
+        break;
       case path_ops.PathVerb.cubicTo:
         newCommands.add(CubicToCommand(
           points[index++],

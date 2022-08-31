@@ -57,6 +57,12 @@ enum PathVerb {
   /// A straight line from the current point to the specified point.
   lineTo,
 
+  /// A quadratic bezier curve from the current point.
+  ///
+  /// The next two points are the control point. The next two points after
+  /// that are the target point.
+  quadTo,
+
   /// A cubic bezier curve from the current point.
   ///
   /// The next two points are used as the first control point. The next two

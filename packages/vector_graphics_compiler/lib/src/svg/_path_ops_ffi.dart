@@ -63,6 +63,21 @@ class Path implements PathProxy {
         case PathVerb.lineTo:
           proxy.lineTo(points[index++], points[index++]);
           break;
+        case PathVerb.quadTo:
+          // TODO(dnfield): Avoid degree elevation?
+          // The binary format only supports cubics. Skia might have
+          // used a quad when combining paths somewhere though.
+          final double cpX = points[index++];
+          final double cpY = points[index++];
+          proxy.cubicTo(
+            cpX,
+            cpY,
+            cpX,
+            cpY,
+            points[index++],
+            points[index++],
+          );
+          break;
         case PathVerb.cubicTo:
           proxy.cubicTo(
             points[index++],
@@ -91,6 +106,7 @@ class Path implements PathProxy {
   static const Map<int, PathVerb> pathVerbDict = <int, PathVerb>{
     0: PathVerb.moveTo,
     1: PathVerb.lineTo,
+    2: PathVerb.quadTo,
     4: PathVerb.cubicTo,
     5: PathVerb.close
   };
