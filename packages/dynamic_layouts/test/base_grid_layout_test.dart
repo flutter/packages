@@ -32,7 +32,7 @@ void main() {
       cacheOrigin: 0.0,
     );
     BoxConstraints constraints = geometry.getBoxConstraints(sliverConstraints);
-    expect(constraints, BoxConstraints.tight(const Size(50.0, 150.0)));
+    expect(constraints, BoxConstraints.tight(const Size(150.0, 50.0)));
 
     // Horizontal
     sliverConstraints = const SliverConstraints(
@@ -50,7 +50,7 @@ void main() {
       cacheOrigin: 0.0,
     );
     constraints = geometry.getBoxConstraints(sliverConstraints);
-    expect(constraints, BoxConstraints.tight(const Size(150.0, 50.0)));
+    expect(constraints, BoxConstraints.tight(const Size(50.0, 150.0)));
   });
 
   test(
