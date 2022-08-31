@@ -8,7 +8,6 @@ import 'render_dynamic_grid.dart';
 import 'staggered_layout.dart';
 import 'wrap_layout.dart';
 
-
 /// A scrollable, 2D array of widgets.
 ///
 // TODO(all): Add more documentation & sample code
