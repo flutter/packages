@@ -176,6 +176,10 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
         image.dispose();
       }
       _images.clear();
+      for (final _PatternState pattern in _patterns.values) {
+        pattern.shader?.dispose();
+      }
+      _patterns.clear();
     }
   }
 
@@ -361,6 +365,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     );
 
     _patterns[currentPattern._patternId]!.shader = pattern;
+    image.dispose(); // kept alive by the shader.
   }
 
   @override
