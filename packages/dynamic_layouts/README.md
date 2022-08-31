@@ -67,70 +67,13 @@ Use `DynamicGridView`s to access this layouts.
 
 The following are simple examples of how to use `DynamicGridView.wrap`.
 
-<?code-excerpt "dynamic_grid_view_wrap.dart" (Example)?>
-```dart
-final List<Widget> children = List.generate(
-   250,
-   (index) => Container(
-     height: index.isEven ? 100 : 50,
-     width: index.isEven ? 95 : 180,
-     color: index.isEven ? Colors.red : Colors.blue,
-     child: Center(child: Text('Item $index')),
-   ),
- );
-
-DynamicGridView.wrap(
-     mainAxisSpacing: 10,
-     crossAxisSpacing: 20,
-     children: children,
-);
-```
-
 The following example uses `DynamicGridView.builder` with
 `SliverGridDelegateWithWrapping`.
-
-<?code-excerpt "dynamic_grid_view_builder.dart (Example)"?>
-```dart
-DynamicGridView.builder(
-     gridDelegate: const SliverGridDelegateWithWrapping(
-        mainAxisSpacing: 20,
-        childMainAxisExtent: 250,
-        childCrossAxisExtent: 50,
-     ),
-     itemBuilder: (BuildContext context, int index) {
-       return Container(
-         height: 200,
-         color: index.isEven ? Colors.amber : Colors.blue,
-         child: Center(
-           child: Text('$index'),
-         ),
-       );
-     },
-   ),
-```
 
 By using `childCrossAxisExtent` and `childMainAxisExtent` the main axis
 can be limited to have a specific size and the other can be set to loose
 constraints.
 
-<?code-excerpt "wrapping_fixed_axis.dart" (Example)?>
-```dart
-DynamicGridView.builder(
-  gridDelegate: const SliverGridDelegateWithWrapping(
-    mainAxisSpacing: 20,
-    childMainAxisExtent: 250,
-  ),
-  itemBuilder: (BuildContext context, int index) {
-    return Container(
-      height: 200,
-      color: index.isEven ? Colors.amber : Colors.blue,
-      child: Center(
-        child: Text('$index'),
-      ),
-    );
-  },
-),
-```
 
 ### Stagger
 
