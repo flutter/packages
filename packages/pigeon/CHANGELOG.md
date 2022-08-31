@@ -1,3 +1,7 @@
+## 4.0.3
+
+* [swift] Fixes void methods generated in Swift.
+
 ## 4.0.2
 
 * Fixes lint warnings.
