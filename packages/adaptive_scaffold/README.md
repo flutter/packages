@@ -74,7 +74,7 @@ animation should use AdaptiveLayout.
                 Container(color: const Color.fromARGB(255, 234, 158, 192)),
             // Override the default secondaryBody during the smallBreakpoint to be
             // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
-            // overridden.
+            // overriden.
             smallSecondaryBody: AdaptiveScaffold.emptyBuilder));
   }
 }
