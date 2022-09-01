@@ -22,9 +22,8 @@ Future<GoRouter> createGoRouter(WidgetTester tester) async {
     ],
   );
   await tester.pumpWidget(MaterialApp.router(
-      routeInformationProvider: goRouter.routeInformationProvider,
-      routeInformationParser: goRouter.routeInformationParser,
-      routerDelegate: goRouter.routerDelegate));
+    routerConfig: goRouter,
+  ));
   return goRouter;
 }
 
@@ -153,9 +152,7 @@ Future<GoRouter> createRouter(
   );
   await tester.pumpWidget(
     MaterialApp.router(
-      routeInformationProvider: goRouter.routeInformationProvider,
-      routeInformationParser: goRouter.routeInformationParser,
-      routerDelegate: goRouter.routerDelegate,
+      routerConfig: goRouter,
     ),
   );
   return goRouter;
@@ -163,6 +160,7 @@ Future<GoRouter> createRouter(
 
 class TestErrorScreen extends DummyScreen {
   const TestErrorScreen(this.ex, {super.key});
+
   final Exception ex;
 }
 
@@ -184,16 +182,19 @@ class LoginScreen extends DummyScreen {
 
 class FamilyScreen extends DummyScreen {
   const FamilyScreen(this.fid, {super.key});
+
   final String fid;
 }
 
 class FamiliesScreen extends DummyScreen {
   const FamiliesScreen({required this.selectedFid, super.key});
+
   final String selectedFid;
 }
 
 class PersonScreen extends DummyScreen {
   const PersonScreen(this.fid, this.pid, {super.key});
+
   final String fid;
   final String pid;
 }

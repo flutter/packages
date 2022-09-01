@@ -1836,9 +1836,7 @@ void main() {
           GoRouterNamedLocationSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationProvider: router.routeInformationProvider,
-          routeInformationParser: router.routeInformationParser,
-          routerDelegate: router.routerDelegate,
+          routerConfig: router,
           title: 'GoRouter Example',
         ),
       );
@@ -1856,9 +1854,7 @@ void main() {
       final GoRouterGoSpy router = GoRouterGoSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationProvider: router.routeInformationProvider,
-          routeInformationParser: router.routeInformationParser,
-          routerDelegate: router.routerDelegate,
+          routerConfig: router,
           title: 'GoRouter Example',
         ),
       );
@@ -1875,9 +1871,7 @@ void main() {
       final GoRouterGoNamedSpy router = GoRouterGoNamedSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationProvider: router.routeInformationProvider,
-          routeInformationParser: router.routeInformationParser,
-          routerDelegate: router.routerDelegate,
+          routerConfig: router,
           title: 'GoRouter Example',
         ),
       );
@@ -1898,9 +1892,7 @@ void main() {
       final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationProvider: router.routeInformationProvider,
-          routeInformationParser: router.routeInformationParser,
-          routerDelegate: router.routerDelegate,
+          routerConfig: router,
           title: 'GoRouter Example',
         ),
       );
@@ -1917,9 +1909,7 @@ void main() {
       final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationProvider: router.routeInformationProvider,
-          routeInformationParser: router.routeInformationParser,
-          routerDelegate: router.routerDelegate,
+          routerConfig: router,
           title: 'GoRouter Example',
         ),
       );
@@ -1939,9 +1929,7 @@ void main() {
       final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationProvider: router.routeInformationProvider,
-          routeInformationParser: router.routeInformationParser,
-          routerDelegate: router.routerDelegate,
+          routerConfig: router,
           title: 'GoRouter Example',
         ),
       );

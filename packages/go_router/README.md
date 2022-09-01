@@ -24,9 +24,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routeInformationProvider: _router.routeInformationProvider,
-      routeInformationParser: _router.routeInformationParser,
-      routerDelegate: _router.routerDelegate,
+      routerConfig: _router,
       title: 'GoRouter Example',
     );
   }
@@ -100,9 +98,7 @@ final GoRouter _router = GoRouter(
 );
 
 MaterialApp.router(
-  routeInformationProvider: _router.routeInformationProvider,
-  routeInformationParser: _router.routeInformationParser,
-  routerDelegate: _router.routerDelegate,
+  routerConfig: _router,
 );
 ```
 
