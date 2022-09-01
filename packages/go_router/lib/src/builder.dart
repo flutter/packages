@@ -136,7 +136,7 @@ class RouteBuilder {
     if (startIndex >= matchList.matches.length) {
       return;
     }
-    final GoRouteMatch match = matchList.matches[startIndex];
+    final RouteMatch match = matchList.matches[startIndex];
 
     if (match.error != null) {
       throw RouteBuilderError('Match error found during build phase',
@@ -208,7 +208,7 @@ class RouteBuilder {
   /// Helper method that builds a [GoRouterState] object for the given [match]
   /// and [params].
   @visibleForTesting
-  GoRouterState buildState(GoRouteMatch match, Map<String, String> params) {
+  GoRouterState buildState(RouteMatch match, Map<String, String> params) {
     final RouteBase route = match.route;
     String? name = '';
     String path = '';
@@ -234,7 +234,7 @@ class RouteBuilder {
 
   /// Builds a [Page] for [StackedRoute]
   Page<dynamic> buildPageForRoute(
-      BuildContext context, GoRouterState state, GoRouteMatch match,
+      BuildContext context, GoRouterState state, RouteMatch match,
       {Widget? child}) {
     final RouteBase route = match.route;
     Page<dynamic>? page;
@@ -267,9 +267,9 @@ class RouteBuilder {
             callRouteBuilder(context, state, match, childWidget: child));
   }
 
-  /// Calls the user-provided route builder from the [GoRouteMatch]'s [RouteBase].
+  /// Calls the user-provided route builder from the [RouteMatch]'s [RouteBase].
   Widget callRouteBuilder(
-      BuildContext context, GoRouterState state, GoRouteMatch match,
+      BuildContext context, GoRouterState state, RouteMatch match,
       {Widget? childWidget}) {
     final RouteBase route = match.route;
 

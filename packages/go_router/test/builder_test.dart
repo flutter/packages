@@ -28,8 +28,8 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
-        GoRouteMatch(
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        RouteMatch(
           route: config.routes.first as GoRoute,
           location: '/',
           template: '/',
@@ -67,8 +67,8 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
-        GoRouteMatch(
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        RouteMatch(
           route: config.routes.first,
           location: '/',
           template: '/',
@@ -109,8 +109,8 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
-        GoRouteMatch(
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        RouteMatch(
           route: config.routes.first as GoRoute,
           location: '/',
           template: '/',
@@ -164,8 +164,8 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
-        GoRouteMatch(
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        RouteMatch(
           route: config.routes.first,
           location: '',
           template: '',
@@ -175,7 +175,7 @@ void main() {
           extra: null,
           error: null,
         ),
-        GoRouteMatch(
+        RouteMatch(
           route: config.routes.first.routes.first,
           location: '/details',
           template: '/details',
@@ -234,8 +234,8 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<GoRouteMatch>[
-        GoRouteMatch(
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        RouteMatch(
           route: config.routes.first.routes.first as GoRoute,
           location: '/details',
           template: '/details',

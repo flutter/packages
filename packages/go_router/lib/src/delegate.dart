@@ -54,7 +54,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // and pop from that Navigator instead of the root.
     final int matchCount = _matchList.matches.length;
     for (int i = matchCount - 1; i >= 0; i--) {
-      final GoRouteMatch match = _matchList.matches[i];
+      final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
 
       // If this is a ShellRoute, then pop one of the subsequent GoRoutes, if
@@ -80,7 +80,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   /// Pushes the given location onto the page stack
-  void push(GoRouteMatch match) {
+  void push(RouteMatch match) {
     if (match.route is ShellRoute) {
       throw GoError('ShellRoutes cannot be pushed');
     }
@@ -90,7 +90,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     final int count = (_pushCounts[fullPath] ?? 0) + 1;
     _pushCounts[fullPath] = count;
     final ValueKey<String> pageKey = ValueKey<String>('$fullPath-p$count');
-    final GoRouteMatch newPageKeyMatch = GoRouteMatch(
+    final RouteMatch newPageKeyMatch = RouteMatch(
       route: match.route,
       location: match.location,
       template: match.template,
@@ -111,7 +111,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // Loop through navigators in reverse and call canPop()
     final int matchCount = _matchList.matches.length;
     for (int i = matchCount - 1; i >= 0; i--) {
-      final GoRouteMatch match = _matchList.matches[i];
+      final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
       if (route is ShellRoute) {
         final NavigatorState? navigatorState = route.navigatorKey.currentState;
@@ -136,7 +136,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
-  void replace(GoRouteMatch match) {
+  void replace(RouteMatch match) {
     _matchList.matches.last = match;
     notifyListeners();
   }

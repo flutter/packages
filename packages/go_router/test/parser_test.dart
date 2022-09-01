@@ -34,7 +34,7 @@ void main() {
 
     RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/'));
-    List<GoRouteMatch> matches = matchesObj.matches;
+    List<RouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matches[0].queryParams.isEmpty, isTrue);
     expect(matches[0].extra, isNull);
@@ -171,7 +171,7 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/def'));
-    final List<GoRouteMatch> matches = matchesObj.matches;
+    final List<RouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matches[0].queryParams.isEmpty, isTrue);
     expect(matches[0].extra, isNull);
@@ -205,7 +205,7 @@ void main() {
 
     final RouteMatchList matchesObj = await parser.parseRouteInformation(
         const RouteInformation(location: '/123/family/456'));
-    final List<GoRouteMatch> matches = matchesObj.matches;
+    final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matches[0].queryParams.isEmpty, isTrue);
@@ -253,7 +253,7 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/random/uri'));
-    final List<GoRouteMatch> matches = matchesObj.matches;
+    final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matches[0].fullUriString, '/');
@@ -294,7 +294,7 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/redirect'));
-    final List<GoRouteMatch> matches = matchesObj.matches;
+    final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matches[0].fullUriString, '/');
@@ -347,7 +347,7 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/abd'));
-    final List<GoRouteMatch> matches = matchesObj.matches;
+    final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(1));
     expect(matches.first.error, isNotNull);
@@ -392,7 +392,7 @@ void main() {
 
     final RouteMatchList matchesObj = await parser
         .parseRouteInformation(const RouteInformation(location: '/a'));
-    final List<GoRouteMatch> matches = matchesObj.matches;
+    final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(2));
     expect(matches.first.error, isNull);

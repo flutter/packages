@@ -8,13 +8,13 @@ import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
 
 void main() {
-  group('GoRouteMatch', () {
+  group('RouteMatch', () {
     test('simple', () {
       final GoRoute route = GoRoute(
         path: '/users/:userId',
         builder: _builder,
       );
-      final GoRouteMatch? match = GoRouteMatch.match(
+      final RouteMatch? match = RouteMatch.match(
         route: route,
         restLoc: '/users/123',
         parentSubloc: '',
@@ -44,7 +44,7 @@ void main() {
         path: 'users/:userId',
         builder: _builder,
       );
-      final GoRouteMatch? match = GoRouteMatch.match(
+      final RouteMatch? match = RouteMatch.match(
         route: route,
         restLoc: 'users/123',
         parentSubloc: '/home',
@@ -74,7 +74,7 @@ void main() {
       final ShellRoute route = ShellRoute(
         builder: _shellBuilder,
       );
-      final GoRouteMatch? match = GoRouteMatch.match(
+      final RouteMatch? match = RouteMatch.match(
         route: route,
         restLoc: 'users/123',
         parentSubloc: '/home',

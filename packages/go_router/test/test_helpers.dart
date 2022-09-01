@@ -236,7 +236,7 @@ class DummyScreen extends StatelessWidget {
 Widget dummy(BuildContext context, GoRouterState state) => const DummyScreen();
 
 extension Extension on GoRouter {
-  Page<dynamic> _pageFor(GoRouteMatch match) {
+  Page<dynamic> _pageFor(RouteMatch match) {
     final RouteMatchList matchList = routerDelegate.matches;
     final int i = matchList.matches.indexOf(match);
     final List<Page<dynamic>> pages = routerDelegate.builder
@@ -245,7 +245,7 @@ extension Extension on GoRouter {
     return pages[i];
   }
 
-  Widget screenFor(GoRouteMatch match) =>
+  Widget screenFor(RouteMatch match) =>
       (_pageFor(match) as MaterialPage<void>).child;
 }
 
