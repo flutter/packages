@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("Flutter Demo"),
+          title: const Text("Dynamic Layouts Example"),
         ),
         body: Container(),
       ),
