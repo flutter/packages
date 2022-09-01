@@ -37,14 +37,14 @@ class DynamicSliverGridGeometry extends SliverGridGeometry {
         crossAxisExtent.isInfinite ? 0.0 : crossAxisExtent;
 
     switch (constraints.axis) {
-      case Axis.horizontal:
+      case Axis.vertical:
         return BoxConstraints(
           minHeight: mainMinExtent,
           maxHeight: mainAxisExtent,
           minWidth: crossMinExtent,
           maxWidth: crossAxisExtent,
         );
-      case Axis.vertical:
+      case Axis.horizontal:
         return BoxConstraints(
           minHeight: crossMinExtent,
           maxHeight: crossAxisExtent,
@@ -68,14 +68,17 @@ abstract class DynamicSliverGridLayout extends SliverGridLayout {
   /// provide looser constraints to the child, whose size after layout can be
   /// reported back to the layout object in [updateGeometryForChildIndex].
   @override
-  SliverGridGeometry getGeometryForChildIndex(int index);
+  DynamicSliverGridGeometry getGeometryForChildIndex(int index);
 
   /// Update the size and position of the child with the given index,
   /// considering the size of the child after layout.
   ///
   /// This is used to update the layout object after the child has laid out,
   /// allowing the layout pattern to adapt to the child's size.
-  SliverGridGeometry updateGeometryForChildIndex(int index, Size childSize);
+  DynamicSliverGridGeometry updateGeometryForChildIndex(
+    int index,
+    Size childSize,
+  );
 
   /// Called by [RenderDynamicSliverGrid] to validate the layout pattern has
   /// filled the screen.

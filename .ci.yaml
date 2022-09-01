@@ -11,7 +11,6 @@ enabled_branches:
 platform_properties:
   linux:
     properties:
-      fuchsia_ctl_version: ""
       os: Linux
   windows:
     properties:
@@ -74,18 +73,6 @@ targets:
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
         ]
-
-  - name: Linux fuchsia_ctl
-    postsubmit: false
-    recipe: fuchsia_ctl
-    timeout: 90
-    properties:
-      add_recipes_cq: "true"
-    runIf:
-      - .ci.yaml
-      - .ci/
-      - packages/fuchsia_ctl/
-      - script/
 
   - name: Linux ci_yaml packages roller
     recipe: infra/ci_yaml
