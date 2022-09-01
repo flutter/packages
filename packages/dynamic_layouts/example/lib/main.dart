@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Dynamic Layouts Example"),
         ),
-        body: Container(),
+        body: const Text("Hello!"),
       ),
     );
   }
