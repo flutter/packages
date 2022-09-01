@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(const MyApp());
 }
-
+/// Main example
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  /// Main example
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -29,8 +30,10 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// The home page
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  /// The home page
+  const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -40,7 +43,7 @@ class MyHomePage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-
+  /// Title of the page
   final String title;
 
   @override
