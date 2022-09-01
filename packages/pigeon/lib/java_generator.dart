@@ -699,7 +699,7 @@ private static Map<String, Object> wrapError(Throwable exception) {
   indent.addln('');
   indent.writeln('/** Generated class from Pigeon. */');
   indent.writeln(
-      '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+      '@SuppressWarnings("all")');
   if (options.useGeneratedAnnotation ?? false) {
     indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
   }
