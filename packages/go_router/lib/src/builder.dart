@@ -300,7 +300,7 @@ class RouteBuilder {
       return builder(context, state);
     } else if (route is ShellRoute) {
       if (childWidget == null) {
-        throw RouteBuilderError(
+        throw RouteBuilderException(
             'Attempt to build ShellRoute without a child widget');
       }
 
@@ -313,7 +313,7 @@ class RouteBuilder {
       return builder(context, state, childWidget);
     }
 
-    throw UnimplementedError('Unsupported route type $route');
+    throw RouteBuilderException('Unsupported route type $route');
   }
 
   Page<void> Function({
