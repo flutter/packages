@@ -316,13 +316,7 @@ class RouteBuilder {
     throw RouteBuilderException('Unsupported route type $route');
   }
 
-  Page<void> Function({
-    required LocalKey key,
-    required String? name,
-    required Object? arguments,
-    required String restorationId,
-    required Widget child,
-  })? _pageBuilderForAppType;
+  _PageBuilderForAppType? _pageBuilderForAppType;
 
   Widget Function(
     BuildContext context,
@@ -438,6 +432,14 @@ class RouteBuilder {
           );
   }
 }
+
+typedef _PageBuilderForAppType = Page<void> Function({
+  required LocalKey key,
+  required String? name,
+  required Object? arguments,
+  required String restorationId,
+  required Widget child,
+});
 
 /// An error that occurred while building the app's UI based on the route
 /// matches.
