@@ -58,7 +58,7 @@ class RouteBuilder {
       return tryBuild(
           context, matchList, pop, routerNeglect, configuration.navigatorKey);
     } on RouteBuilderError catch (e) {
-      return buildErrorNavigator(
+      return _buildErrorNavigator(
           context,
           e,
           Uri.parse(matchList.location.toString()),
@@ -388,7 +388,7 @@ class RouteBuilder {
       );
 
   /// Builds a Navigator containing an error page.
-  Widget buildErrorNavigator(BuildContext context, RouteBuilderError e, Uri uri,
+  Widget _buildErrorNavigator(BuildContext context, RouteBuilderError e, Uri uri,
       VoidCallback pop, GlobalKey<NavigatorState> navigatorKey) {
     return _buildNavigator(
       pop,
