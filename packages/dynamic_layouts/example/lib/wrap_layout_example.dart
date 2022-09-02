@@ -30,7 +30,7 @@ class _WrapExampleState extends State<WrapExample> {
                 ? Colors.red[(index % 7 + 1) * 100]
                 : Colors.blue[(index % 7 + 1) * 100],
             child: Center(
-              child: Text("Index $index"),
+              child: Text('Index $index'),
             ),
           );
         },
