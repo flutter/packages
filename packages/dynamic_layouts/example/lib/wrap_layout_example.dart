@@ -5,15 +5,10 @@ import 'package:dynamic_layouts/dynamic_layouts.dart';
 import 'package:flutter/material.dart';
 
 /// The wrap example
-class WrapExample extends StatefulWidget {
+class WrapExample extends StatelessWidget {
   /// The constructor for the wrap example
   const WrapExample({super.key});
 
-  @override
-  State<WrapExample> createState() => _WrapExampleState();
-}
-
-class _WrapExampleState extends State<WrapExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
