@@ -53,7 +53,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // with a non-null parentNavigatorKey or a ShellRoute with a non-null parentNavigatorKey
     // and pop from that Navigator instead of the root.
     final int matchCount = _matchList.matches.length;
-    for (int i = matchCount - 1; i >= 0; i--) {
+    for (int i = matchCount - 1; i >= 0; i -= 1) {
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
 
@@ -110,7 +110,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   bool canPop() {
     // Loop through navigators in reverse and call canPop()
     final int matchCount = _matchList.matches.length;
-    for (int i = matchCount - 1; i >= 0; i--) {
+    for (int i = matchCount - 1; i >= 0; i -= 1) {
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
       if (route is ShellRoute) {
