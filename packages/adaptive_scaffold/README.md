@@ -1,12 +1,14 @@
 <?code-excerpt path-base="excerpts/packages/adaptive_scaffold_example"?>
 
-# Helper Widgets for Making Adaptive Layouts in Flutter (`AdaptiveScaffold`)
+# Adaptive Scaffold
 
-This package contains some helper widgets that make the process of developing
-adaptive layouts easier, especially with navigational elements.
+`AdaptiveScaffold` reacts to input from users, devices and screen elements and
+renders your Flutter application according to the
+[Material 3](https://m3.material.io/foundations/adaptive-design/overview)
+guidelines.
 
-To see examples of using these helper widgets to make a simple but common
-adaptive layout:
+To see examples of using these widgets to make a simple but common adaptive
+layout:
 
 ```bash
 cd example/
