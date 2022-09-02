@@ -187,7 +187,7 @@ void defineTests() {
 
   group('fitContent', () {
     testWidgets(
-      'Use maximum width when fitContent=false',
+      'uses maximum width when false',
       (WidgetTester tester) async {
         const String data = '- Foo\n- Bar';
 
@@ -210,7 +210,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'Use minimum width when fitContent=true',
+      'uses minimum width when true',
       (WidgetTester tester) async {
         const String data = '- Foo\n- Bar';
 
