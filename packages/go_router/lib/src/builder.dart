@@ -277,11 +277,11 @@ class RouteBuilder {
     // Return the result of the route's builder() or pageBuilder()
     return page ??
         buildPage(context, state,
-            callRouteBuilder(context, state, match, childWidget: child));
+            _callRouteBuilder(context, state, match, childWidget: child));
   }
 
   /// Calls the user-provided route builder from the [RouteMatch]'s [RouteBase].
-  Widget callRouteBuilder(
+  Widget _callRouteBuilder(
       BuildContext context, GoRouterState state, RouteMatch match,
       {Widget? childWidget}) {
     final RouteBase route = match.route;
