@@ -149,7 +149,7 @@ class RouteBuilder {
     };
     final GoRouterState state = buildState(match, newParams);
     if (route is GoRoute) {
-      final Page<dynamic> page = buildPageForRoute(context, state, match);
+      final Page<dynamic> page = _buildPageForRoute(context, state, match);
 
       // If this GoRoute is for a different Navigator, add it to the
       // list of out of scope pages
@@ -188,7 +188,7 @@ class RouteBuilder {
 
       // Build the Page for this route
       final Page<dynamic> page =
-          buildPageForRoute(context, state, match, child: child);
+          _buildPageForRoute(context, state, match, child: child);
 
       // Place the ShellRoute's Page onto the list for the parent navigator.
       keyToPages
@@ -246,7 +246,7 @@ class RouteBuilder {
   }
 
   /// Builds a [Page] for [StackedRoute]
-  Page<dynamic> buildPageForRoute(
+  Page<dynamic> _buildPageForRoute(
       BuildContext context, GoRouterState state, RouteMatch match,
       {Widget? child}) {
     final RouteBase route = match.route;
