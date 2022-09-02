@@ -265,7 +265,7 @@ class RouteBuilder {
           page = pageBuilder(context, state, child);
         }
       } else {
-        throw RouteBuilderError(
+        throw RouteBuilderException(
             'Expected a child widget when building a ShellRoute');
       }
     }
@@ -444,6 +444,24 @@ class RouteBuilder {
 class RouteBuilderError extends Error {
   /// Constructs a [RouteBuilderError].
   RouteBuilderError(this.message, {this.exception});
+
+  /// The error message.
+  final String message;
+
+  /// The exception that occurred.
+  final Exception? exception;
+
+  @override
+  String toString() {
+    return '$message ${exception ?? ""}';
+  }
+}
+
+/// An error that occurred while building the app's UI based on the route
+/// matches.
+class RouteBuilderException implements Exception {
+  /// Constructs a [RouteBuilderException].
+  RouteBuilderException(this.message, {this.exception});
 
   /// The error message.
   final String message;
