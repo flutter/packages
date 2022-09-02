@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:masonry_grid/masonry_grid.dart';
 
 import 'adaptive_layout.dart';
 import 'breakpoints.dart';
@@ -235,8 +234,7 @@ class AdaptiveScaffold extends StatefulWidget {
 
   /// Public helper method to be used for creating a [NavigationRailDestination] from
   /// a [NavigationDestination].
-  static NavigationRailDestination toRailDestination(
-      NavigationDestination destination) {
+  static NavigationRailDestination toRailDestination(NavigationDestination destination) {
     return NavigationRailDestination(
       label: Text(destination.label),
       icon: destination.icon,
@@ -260,8 +258,7 @@ class AdaptiveScaffold extends StatefulWidget {
     Widget? trailing,
     Function(int)? onDestinationSelected,
     IconThemeData selectedIconTheme = const IconThemeData(color: Colors.black),
-    IconThemeData unselectedIconTheme =
-        const IconThemeData(color: Colors.black),
+    IconThemeData unselectedIconTheme = const IconThemeData(color: Colors.black),
     TextStyle selectedLabelTextStyle = const TextStyle(color: Colors.black),
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
@@ -305,19 +302,19 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Public helper method to be used for creating a [BottomNavigationBar] from
   /// a list of [NavigationDestination]s.
   static Builder standardBottomNavigationBar(
-      {required List<NavigationDestination> destinations,
-      int currentIndex = 0,
-      double iconSize = 24}) {
+      {required List<NavigationDestination> destinations, int currentIndex = 0, double iconSize = 24}) {
     return Builder(
-        builder: (_) => BottomNavigationBar(
-            currentIndex: currentIndex,
-            iconSize: iconSize,
-            items: destinations
-                .map((NavigationDestination e) => _toBottomNavItem(e))
-                .toList()));
+      builder: (_) {
+        return BottomNavigationBar(
+          currentIndex: currentIndex,
+          iconSize: iconSize,
+          items: destinations.map((NavigationDestination e) => _toBottomNavItem(e)).toList(),
+        );
+      },
+    );
   }
 
-  /// Public helper method to be used for creating a [MasonryGrid] following m3
+  /// Public helper method to be used for creating a staggered grid following m3
   /// specs from a list of [Widget]s
   static Builder toMaterialGrid({
     List<Widget> thisWidgets = const <Widget>[],
@@ -361,10 +358,10 @@ class AdaptiveScaffold extends StatefulWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(thisMargin),
-              child: MasonryGrid(
-                column: itemColumns,
-                crossAxisSpacing: kMaterialGutterValue,
-                mainAxisSpacing: kMaterialGutterValue,
+              child: _BrickLayout(
+                columns: itemColumns,
+                columnSpacing: kMaterialGutterValue,
+                itemPadding: const EdgeInsets.only(bottom: kMaterialGutterValue),
                 children: thisWidgets,
               ),
             ),
@@ -441,7 +438,9 @@ class AdaptiveScaffold extends StatefulWidget {
   static Widget fadeOut(Widget child, Animation<double> animation) {
     return FadeTransition(
       opacity: CurvedAnimation(
-          parent: ReverseAnimation(animation), curve: Curves.easeInCubic),
+        parent: ReverseAnimation(animation),
+        curve: Curves.easeInCubic,
+      ),
       child: child,
     );
   }
@@ -464,17 +463,13 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Scaffold(
-        appBar: widget.drawerBreakpoint.isActive(context) && widget.useDrawer
-            ? widget.appBar ?? AppBar()
-            : null,
+        appBar: widget.drawerBreakpoint.isActive(context) && widget.useDrawer ? widget.appBar ?? AppBar() : null,
         drawer: widget.drawerBreakpoint.isActive(context) && widget.useDrawer
             ? Drawer(
                 child: NavigationRail(
                   extended: true,
                   selectedIndex: widget.selectedIndex,
-                  destinations: widget.destinations
-                      .map((_) => AdaptiveScaffold.toRailDestination(_))
-                      .toList(),
+                  destinations: widget.destinations.map((_) => AdaptiveScaffold.toRailDestination(_)).toList(),
                   onDestinationSelected: widget.onSelectedIndexChange,
                 ),
               )
@@ -483,8 +478,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           bodyOrientation: widget.bodyOrientation,
           bodyRatio: widget.bodyRatio,
           internalAnimations: widget.internalAnimations,
-          primaryNavigation: widget.destinations != null &&
-                  widget.selectedIndex != null
+          primaryNavigation: widget.destinations != null && widget.selectedIndex != null
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.mediumBreakpoint: SlotLayout.from(
@@ -492,9 +486,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                       builder: (_) => AdaptiveScaffold.standardNavigationRail(
                         width: widget.navigationRailWidth,
                         selectedIndex: widget.selectedIndex,
-                        destinations: widget.destinations
-                            .map((_) => AdaptiveScaffold.toRailDestination(_))
-                            .toList(),
+                        destinations: widget.destinations.map((_) => AdaptiveScaffold.toRailDestination(_)).toList(),
                         onDestinationSelected: widget.onSelectedIndexChange,
                       ),
                     ),
@@ -504,9 +496,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         width: widget.extendedNavigationRailWidth,
                         extended: true,
                         selectedIndex: widget.selectedIndex,
-                        destinations: widget.destinations
-                            .map((_) => AdaptiveScaffold.toRailDestination(_))
-                            .toList(),
+                        destinations: widget.destinations.map((_) => AdaptiveScaffold.toRailDestination(_)).toList(),
                         onDestinationSelected: widget.onSelectedIndexChange,
                       ),
                     ),
@@ -514,15 +504,12 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 )
               : null,
           bottomNavigation: widget.destinations != null &&
-                  (!widget.drawerBreakpoint.isActive(context) ||
-                      !widget.useDrawer)
+                  (!widget.drawerBreakpoint.isActive(context) || !widget.useDrawer)
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.smallBreakpoint: SlotLayout.from(
                       key: const Key('bottomNavigation'),
-                      builder: (_) =>
-                          AdaptiveScaffold.standardBottomNavigationBar(
-                              destinations: widget.destinations),
+                      builder: (_) => AdaptiveScaffold.standardBottomNavigationBar(destinations: widget.destinations),
                     ),
                   },
                 )
@@ -536,35 +523,32 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 builder: widget.body,
               ),
               if (widget.smallBody != null)
-                widget.smallBreakpoint:
-                    (widget.smallBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayout.from(
-                            key: const Key('smallBody'),
-                            inAnimation: AdaptiveScaffold.fadeIn,
-                            outAnimation: AdaptiveScaffold.fadeOut,
-                            builder: widget.smallBody,
-                          )
-                        : null,
+                widget.smallBreakpoint: (widget.smallBody != AdaptiveScaffold.emptyBuilder)
+                    ? SlotLayout.from(
+                        key: const Key('smallBody'),
+                        inAnimation: AdaptiveScaffold.fadeIn,
+                        outAnimation: AdaptiveScaffold.fadeOut,
+                        builder: widget.smallBody,
+                      )
+                    : null,
               if (widget.body != null)
-                widget.mediumBreakpoint:
-                    (widget.body != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayout.from(
-                            key: const Key('body'),
-                            inAnimation: AdaptiveScaffold.fadeIn,
-                            outAnimation: AdaptiveScaffold.fadeOut,
-                            builder: widget.body,
-                          )
-                        : null,
+                widget.mediumBreakpoint: (widget.body != AdaptiveScaffold.emptyBuilder)
+                    ? SlotLayout.from(
+                        key: const Key('body'),
+                        inAnimation: AdaptiveScaffold.fadeIn,
+                        outAnimation: AdaptiveScaffold.fadeOut,
+                        builder: widget.body,
+                      )
+                    : null,
               if (widget.largeBody != null)
-                widget.largeBreakpoint:
-                    (widget.largeBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayout.from(
-                            key: const Key('largeBody'),
-                            inAnimation: AdaptiveScaffold.fadeIn,
-                            outAnimation: AdaptiveScaffold.fadeOut,
-                            builder: widget.largeBody,
-                          )
-                        : null,
+                widget.largeBreakpoint: (widget.largeBody != AdaptiveScaffold.emptyBuilder)
+                    ? SlotLayout.from(
+                        key: const Key('largeBody'),
+                        inAnimation: AdaptiveScaffold.fadeIn,
+                        outAnimation: AdaptiveScaffold.fadeOut,
+                        builder: widget.largeBody,
+                      )
+                    : null,
             },
           ),
           secondaryBody: SlotLayout(
@@ -575,32 +559,29 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 builder: widget.secondaryBody,
               ),
               if (widget.smallSecondaryBody != null)
-                widget.smallBreakpoint:
-                    (widget.smallSecondaryBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayout.from(
-                            key: const Key('smallSBody'),
-                            outAnimation: AdaptiveScaffold.stayOnScreen,
-                            builder: widget.smallSecondaryBody,
-                          )
-                        : null,
+                widget.smallBreakpoint: (widget.smallSecondaryBody != AdaptiveScaffold.emptyBuilder)
+                    ? SlotLayout.from(
+                        key: const Key('smallSBody'),
+                        outAnimation: AdaptiveScaffold.stayOnScreen,
+                        builder: widget.smallSecondaryBody,
+                      )
+                    : null,
               if (widget.secondaryBody != null)
-                widget.mediumBreakpoint:
-                    (widget.secondaryBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayout.from(
-                            key: const Key('sBody'),
-                            outAnimation: AdaptiveScaffold.stayOnScreen,
-                            builder: widget.secondaryBody,
-                          )
-                        : null,
+                widget.mediumBreakpoint: (widget.secondaryBody != AdaptiveScaffold.emptyBuilder)
+                    ? SlotLayout.from(
+                        key: const Key('sBody'),
+                        outAnimation: AdaptiveScaffold.stayOnScreen,
+                        builder: widget.secondaryBody,
+                      )
+                    : null,
               if (widget.largeSecondaryBody != null)
-                widget.largeBreakpoint:
-                    (widget.largeSecondaryBody != AdaptiveScaffold.emptyBuilder)
-                        ? SlotLayout.from(
-                            key: const Key('largeSBody'),
-                            outAnimation: AdaptiveScaffold.stayOnScreen,
-                            builder: widget.largeSecondaryBody,
-                          )
-                        : null,
+                widget.largeBreakpoint: (widget.largeSecondaryBody != AdaptiveScaffold.emptyBuilder)
+                    ? SlotLayout.from(
+                        key: const Key('largeSBody'),
+                        outAnimation: AdaptiveScaffold.stayOnScreen,
+                        builder: widget.largeSecondaryBody,
+                      )
+                    : null,
             },
           ),
         ),
@@ -614,4 +595,96 @@ BottomNavigationBarItem _toBottomNavItem(NavigationDestination destination) {
     label: destination.label,
     icon: destination.icon,
   );
+}
+
+class _BrickLayout extends StatelessWidget {
+  const _BrickLayout({
+    this.columns = 1,
+    this.itemPadding = EdgeInsets.zero,
+    this.columnSpacing = 0,
+    required this.children,
+  });
+
+  final int columns;
+  final double columnSpacing;
+  final EdgeInsetsGeometry itemPadding;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    int i = -1;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Expanded(
+          child: CustomMultiChildLayout(
+            delegate: _BrickLayoutDelegate(
+              columns: columns,
+              columnSpacing: columnSpacing,
+              itemPadding: itemPadding,
+            ),
+            children: children
+                .map<Widget>(
+                  (Widget child) => LayoutId(id: i += 1, child: child),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BrickLayoutDelegate extends MultiChildLayoutDelegate {
+  _BrickLayoutDelegate({
+    this.columns = 1,
+    this.columnSpacing = 0,
+    this.itemPadding = EdgeInsets.zero,
+  });
+
+  final int columns;
+  final EdgeInsetsGeometry itemPadding;
+  final double columnSpacing;
+
+  @override
+  void performLayout(Size size) {
+    final BoxConstraints looseConstraints = BoxConstraints.loose(size);
+    final BoxConstraints fullWidthConstraints = looseConstraints.tighten(width: size.width);
+
+    final List<Size> childSizes = <Size>[];
+    int childCount = 0;
+    // Count how many children we have.
+    for (; hasChild(childCount); childCount += 1) {}
+    final BoxConstraints itemConstraints = BoxConstraints(
+      maxWidth: fullWidthConstraints.maxWidth / columns - columnSpacing / 2 - itemPadding.horizontal,
+    );
+
+    for (int i = 0; i < childCount; i += 1) {
+      childSizes.add(layoutChild(i, itemConstraints));
+    }
+
+    int columnIndex = 0;
+    int childId = 0;
+    final double totalColumnSpacing = columnSpacing * (columns - 1);
+    final double columnWidth = (size.width - totalColumnSpacing) / columns;
+    final double topPadding = itemPadding.resolve(TextDirection.ltr).top;
+    final List<double> columnUsage = List<double>.generate(columns, (int index) => topPadding);
+    for (final Size childSize in childSizes) {
+      positionChild(
+        childId,
+        Offset(
+          columnSpacing * columnIndex + columnWidth * columnIndex + (columnWidth - childSize.width) / 2,
+          columnUsage[columnIndex],
+        ),
+      );
+      columnUsage[columnIndex] += childSize.height + itemPadding.vertical;
+      columnIndex = (columnIndex + 1) % columns;
+      childId += 1;
+    }
+  }
+
+  @override
+  bool shouldRelayout(_BrickLayoutDelegate oldDelegate) {
+    return itemPadding != oldDelegate.itemPadding || columnSpacing != oldDelegate.columnSpacing;
+  }
 }

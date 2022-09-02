@@ -14,11 +14,13 @@ import 'package:flutter/material.dart';
 /// or adaptive_scaffold_demo.dart
 
 void main() {
-  runApp(const _MyApp());
+  runApp(const MyApp());
 }
 
-class _MyApp extends StatelessWidget {
-  const _MyApp({Key? key}) : super(key: key);
+/// The main application widget for this example.
+class MyApp extends StatelessWidget {
+  /// Creates a const main application widget.
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +40,13 @@ class _MyApp extends StatelessWidget {
 /// Creates an example mail page using [AdaptiveLayout].
 class MyHomePage extends StatefulWidget {
   /// Creates a const [MyHomePage].
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, ChangeNotifier {
   // A listener used for the controllers to reanimate the staggered animation of
   // the navigation elements.
   ValueNotifier<bool?> showGridView = ValueNotifier<bool?>(false);
@@ -62,42 +63,41 @@ class _MyHomePageState extends State<MyHomePage>
   int _navigationIndex = 0;
 
   // The controllers used for the staggered animation of the navigation elements.
-  late AnimationController _controller;
-  late AnimationController _controller1;
-  late AnimationController _controller2;
-  late AnimationController _controller3;
+  late AnimationController _inboxIconSlideController;
+  late AnimationController _articleIconSlideController;
+  late AnimationController _chatIconSlideController;
+  late AnimationController _videoIconSlideController;
   @override
   void initState() {
     showGridView.addListener(() {
-      Navigator.popUntil(
-          context, (Route<dynamic> route) => route.settings.name == '/');
-      _controller
+      Navigator.popUntil(context, (Route<dynamic> route) => route.settings.name == '/');
+      _inboxIconSlideController
         ..reset()
         ..forward();
-      _controller1
+      _articleIconSlideController
         ..reset()
         ..forward();
-      _controller2
+      _chatIconSlideController
         ..reset()
         ..forward();
-      _controller3
+      _videoIconSlideController
         ..reset()
         ..forward();
     });
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+    _inboxIconSlideController = AnimationController(
+      duration: const Duration(milliseconds: 100),
       vsync: this,
     )..forward();
-    _controller1 = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+    _articleIconSlideController = AnimationController(
+      duration: const Duration(milliseconds: 120),
       vsync: this,
     )..forward();
-    _controller2 = AnimationController(
-      duration: const Duration(milliseconds: 1400),
+    _chatIconSlideController = AnimationController(
+      duration: const Duration(milliseconds: 140),
       vsync: this,
     )..forward();
-    _controller3 = AnimationController(
-      duration: const Duration(milliseconds: 1600),
+    _videoIconSlideController = AnimationController(
+      duration: const Duration(milliseconds: 160),
       vsync: this,
     )..forward();
     super.initState();
@@ -105,10 +105,10 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void dispose() {
-    _controller.dispose();
-    _controller1.dispose();
-    _controller2.dispose();
-    _controller3.dispose();
+    _inboxIconSlideController.dispose();
+    _articleIconSlideController.dispose();
+    _chatIconSlideController.dispose();
+    _videoIconSlideController.dispose();
     super.dispose();
   }
 
@@ -121,17 +121,17 @@ class _MyHomePageState extends State<MyHomePage>
         const SizedBox(height: 10),
         Row(children: <Widget>[
           const SizedBox(width: 22),
-          Text('Folders',
-              style: TextStyle(fontSize: 13, color: Colors.grey[700]))
+          Text('Folders', style: TextStyle(fontSize: 13, color: Colors.grey[700]))
         ]),
         const SizedBox(height: 22),
         Row(
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
             const Text('Freelance', overflow: TextOverflow.ellipsis),
           ],
@@ -141,11 +141,12 @@ class _MyHomePageState extends State<MyHomePage>
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
-            const Text('Mortage', overflow: TextOverflow.ellipsis),
+            const Text('Mortgage', overflow: TextOverflow.ellipsis),
           ],
         ),
         const SizedBox(height: 16),
@@ -153,12 +154,12 @@ class _MyHomePageState extends State<MyHomePage>
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
-            const Flexible(
-                child: Text('Taxes', overflow: TextOverflow.ellipsis))
+            const Flexible(child: Text('Taxes', overflow: TextOverflow.ellipsis))
           ],
         ),
         const SizedBox(height: 16),
@@ -166,12 +167,12 @@ class _MyHomePageState extends State<MyHomePage>
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
-            const Flexible(
-                child: Text('Receipts', overflow: TextOverflow.ellipsis))
+            const Flexible(child: Text('Receipts', overflow: TextOverflow.ellipsis))
           ],
         ),
       ],
@@ -180,17 +181,10 @@ class _MyHomePageState extends State<MyHomePage>
     // These are the destinations used within the AdaptiveScaffold navigation
     // builders.
     const List<NavigationDestination> destinations = <NavigationDestination>[
-      NavigationDestination(
-          label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
-      NavigationDestination(
-          label: 'Articles',
-          icon: Icon(Icons.article_outlined, color: iconColor)),
-      NavigationDestination(
-          label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
-      NavigationDestination(
-          label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: iconColor))
+      NavigationDestination(label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
+      NavigationDestination(label: 'Articles', icon: Icon(Icons.article_outlined, color: iconColor)),
+      NavigationDestination(label: 'Chat', icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
+      NavigationDestination(label: 'Video', icon: Icon(Icons.video_call_outlined, color: iconColor))
     ];
 
     // Updating the listener value.
@@ -214,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage>
               builder: (_) {
                 return AdaptiveScaffold.standardNavigationRail(
                   // Usually it would be easier to use a builder from
-                  // AdaptiveScaffold for these types of navigations but this
+                  // AdaptiveScaffold for these types of navigation but this
                   // navigation has custom staggered item animations.
                   onDestinationSelected: (int index) {
                     setState(() {
@@ -223,30 +217,32 @@ class _MyHomePageState extends State<MyHomePage>
                   },
                   selectedIndex: _navigationIndex,
                   leading: ScaleTransition(
-                      scale: _controller1, child: const _MediumComposeIcon()),
+                    scale: _articleIconSlideController,
+                    child: const _MediumComposeIcon(),
+                  ),
                   backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                   destinations: <NavigationRailDestination>[
                     slideInNavigationItem(
                       begin: -1,
-                      controller: _controller,
+                      controller: _inboxIconSlideController,
                       icon: Icons.inbox,
                       label: 'Inbox',
                     ),
                     slideInNavigationItem(
                       begin: -2,
-                      controller: _controller1,
+                      controller: _articleIconSlideController,
                       icon: Icons.article_outlined,
                       label: 'Articles',
                     ),
                     slideInNavigationItem(
                       begin: -3,
-                      controller: _controller2,
+                      controller: _chatIconSlideController,
                       icon: Icons.chat_bubble_outline,
                       label: 'Chat',
                     ),
                     slideInNavigationItem(
                       begin: -4,
-                      controller: _controller3,
+                      controller: _videoIconSlideController,
                       icon: Icons.video_call_outlined,
                       label: 'Video',
                     )
@@ -255,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage>
               },
             ),
             Breakpoints.large: SlotLayout.from(
-              key: const Key('primaryNavigation1'),
+              key: const Key('Large primaryNavigation'),
               // The AdaptiveScaffold builder here greatly simplifies
               // navigational elements.
               builder: (_) => AdaptiveScaffold.standardNavigationRail(
@@ -268,9 +264,9 @@ class _MyHomePageState extends State<MyHomePage>
                 selectedIndex: _navigationIndex,
                 trailing: trailingNavRail,
                 extended: true,
-                destinations: destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
-                    .toList(),
+                destinations: destinations.map((_) {
+                  return AdaptiveScaffold.toRailDestination(_);
+                }).toList(),
               ),
             ),
           },
@@ -280,15 +276,16 @@ class _MyHomePageState extends State<MyHomePage>
             Breakpoints.standard: SlotLayout.from(
               key: const Key('body'),
               // The conditional here is for navigation screens. The first
-              // screen shows the main screen and every other screeen shows
+              // screen shows the main screen and every other screen shows
               //  ExamplePage.
               builder: (_) => (_navigationIndex == 0)
                   ? Padding(
                       padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
                       child: _ItemList(
-                          selected: selected,
-                          items: _allItems,
-                          selectCard: selectCard),
+                        selected: selected,
+                        items: _allItems,
+                        selectCard: selectCard,
+                      ),
                     )
                   : const _ExamplePage(),
             ),
@@ -301,7 +298,7 @@ class _MyHomePageState extends State<MyHomePage>
                     // This overrides the default behavior of the secondaryBody
                     // disappearing as it is animating out.
                     outAnimation: AdaptiveScaffold.stayOnScreen,
-                    key: const Key('sBody'),
+                    key: const Key('Secondary Body'),
                     builder: (_) => SafeArea(
                       child: _DetailTile(item: _allItems[selected ?? 0]),
                     ),
@@ -317,10 +314,8 @@ class _MyHomePageState extends State<MyHomePage>
               // default offset transition.
               outAnimation: AdaptiveScaffold.topToBottom,
               builder: (_) => BottomNavigationBarTheme(
-                data: const BottomNavigationBarThemeData(
-                    selectedItemColor: Colors.black),
-                child: AdaptiveScaffold.standardBottomNavigationBar(
-                    destinations: destinations),
+                data: const BottomNavigationBarThemeData(selectedItemColor: Colors.black),
+                child: AdaptiveScaffold.standardBottomNavigationBar(destinations: destinations),
               ),
             )
           },
@@ -351,9 +346,7 @@ class _MyHomePageState extends State<MyHomePage>
 }
 
 class _SmallComposeIcon extends StatelessWidget {
-  const _SmallComposeIcon({
-    Key? key,
-  }) : super(key: key);
+  const _SmallComposeIcon();
 
   @override
   Widget build(BuildContext context) {
@@ -378,9 +371,7 @@ class _SmallComposeIcon extends StatelessWidget {
 }
 
 class _MediumComposeIcon extends StatelessWidget {
-  const _MediumComposeIcon({
-    Key? key,
-  }) : super(key: key);
+  const _MediumComposeIcon();
 
   @override
   Widget build(BuildContext context) {
@@ -395,9 +386,7 @@ class _MediumComposeIcon extends StatelessWidget {
 }
 
 class _LargeComposeIcon extends StatelessWidget {
-  const _LargeComposeIcon({
-    Key? key,
-  }) : super(key: key);
+  const _LargeComposeIcon();
 
   @override
   Widget build(BuildContext context) {
@@ -409,8 +398,10 @@ class _LargeComposeIcon extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const <Widget>[
-              Text('REPLY',
-                  style: TextStyle(color: Colors.deepPurple, fontSize: 15)),
+              Text(
+                'REPLY',
+                style: TextStyle(color: Colors.deepPurple, fontSize: 15),
+              ),
               Icon(Icons.menu_open, size: 22)
             ],
           ),
@@ -455,11 +446,10 @@ typedef _CardSelectedCallback = void Function(int?);
 // ItemList creates the list of cards and the search bar.
 class _ItemList extends StatelessWidget {
   const _ItemList({
-    Key? key,
     required this.items,
     required this.selectCard,
     required this.selected,
-  }) : super(key: key);
+  });
 
   final List<_Item> items;
   final int? selected;
@@ -469,9 +459,7 @@ class _ItemList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-      floatingActionButton: Breakpoints.mediumAndUp.isActive(context)
-          ? null
-          : const _SmallComposeIcon(),
+      floatingActionButton: Breakpoints.mediumAndUp.isActive(context) ? null : const _SmallComposeIcon(),
       body: Column(
         children: <Widget>[
           Padding(
@@ -500,8 +488,7 @@ class _ItemList extends StatelessWidget {
                 ),
                 filled: true,
                 contentPadding: const EdgeInsets.all(25),
-                hintStyle:
-                    const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
+                hintStyle: const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
                 hintText: 'Search replies',
                 fillColor: Colors.white,
               ),
@@ -526,12 +513,11 @@ class _ItemList extends StatelessWidget {
 
 class _ItemListTile extends StatelessWidget {
   const _ItemListTile({
-    Key? key,
     required this.item,
     required this.email,
     required this.selectCard,
     required this.selected,
-  }) : super(key: key);
+  });
 
   final _Item item;
   final _Email email;
@@ -568,51 +554,53 @@ class _ItemListTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 18,
-                      child: Image.asset(
-                        email.image,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: CircleAvatar(
+                    radius: 18,
+                    child: Image.asset(
+                      email.image,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        email.sender,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        softWrap: false,
+                        overflow: TextOverflow.clip,
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(email.sender,
-                            style: Theme.of(context).textTheme.bodyLarge),
-                        const SizedBox(height: 3),
-                        Text('${email.time} ago',
-                            style: Theme.of(context).textTheme.bodySmall),
-                      ],
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      const SizedBox(height: 3),
+                      Text(
+                        '${email.time} ago',
+                        style: Theme.of(context).textTheme.bodySmall,
+                        softWrap: false,
+                        overflow: TextOverflow.clip,
                       ),
-                      child: Icon(Icons.star_outline, color: Colors.grey[500]),
+                    ],
+                  ),
+                  trailing: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
                     ),
-                  ],
+                    child: Icon(Icons.star_outline, color: Colors.grey[500]),
+                  ),
                 ),
                 const SizedBox(height: 13),
-                Text(item.title,
-                    style: Theme.of(context).textTheme.titleMedium),
+                Text(item.title, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 9),
                 Text(email.body.replaceRange(116, email.body.length, '...'),
                     style: Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 9),
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: (email.bodyImage != '')
-                      ? Image.asset(email.bodyImage)
-                      : Container(),
+                  child: (email.bodyImage != '') ? Image.asset(email.bodyImage) : Container(),
                 ),
               ],
             ),
@@ -624,10 +612,8 @@ class _ItemListTile extends StatelessWidget {
 }
 
 class _DetailTile extends StatelessWidget {
-  const _DetailTile({
-    required this.item,
-    Key? key,
-  }) : super(key: key);
+  const _DetailTile({required this.item});
+
   final _Item item;
 
   @override
@@ -638,79 +624,84 @@ class _DetailTile extends StatelessWidget {
         height: MediaQuery.of(context).size.height,
         child: Container(
           decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 245, 241, 248),
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+            color: Color.fromARGB(255, 245, 241, 248),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(item.title,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge),
-                                    const SizedBox(height: 7),
-                                    Text('${item.emails!.length} Messages',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall)
-                                  ],
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  item.title,
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                const SizedBox(height: 7),
+                                Text(
+                                  '${item.emails!.length} Messages',
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                                ),
+                                child: Icon(
+                                  Icons.restore_from_trash,
+                                  color: Colors.grey[600],
                                 ),
                               ),
-                            ),
-                            Container(
-                                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(15)),
-                                      ),
-                                      child: Icon(Icons.restore_from_trash,
-                                          color: Colors.grey[600]),
-                                    ),
-                                    const SizedBox(width: 15),
-                                    Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(15))),
-                                      child: Icon(Icons.more_vert,
-                                          color: Colors.grey[600]),
-                                    )
-                                  ],
-                                )),
-                          ]),
-                      const SizedBox(height: 20),
-                    ],
-                  )),
+                              const SizedBox(width: 15),
+                              Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                                ),
+                                child: Icon(Icons.more_vert, color: Colors.grey[600]),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: item.emails!.length,
                   itemBuilder: (BuildContext context, int index) {
                     final _Email thisEmail = item.emails![index];
                     return _EmailTile(
-                        sender: thisEmail.sender,
-                        time: thisEmail.time,
-                        senderIcon: thisEmail.image,
-                        recepients: thisEmail.recepients,
-                        body: thisEmail.body,
-                        bodyImage: thisEmail.bodyImage);
+                      sender: thisEmail.sender,
+                      time: thisEmail.time,
+                      senderIcon: thisEmail.image,
+                      recipients: thisEmail.recipients,
+                      body: thisEmail.body,
+                      bodyImage: thisEmail.bodyImage,
+                    );
                   },
                 ),
               ),
@@ -727,16 +718,15 @@ class _EmailTile extends StatelessWidget {
     required this.sender,
     required this.time,
     required this.senderIcon,
-    required this.recepients,
+    required this.recipients,
     required this.body,
     required this.bodyImage,
-    Key? key,
-  }) : super(key: key);
+  });
 
   final String sender;
   final String time;
   final String senderIcon;
-  final String recepients;
+  final String recipients;
   final String body;
   final String bodyImage;
 
@@ -746,8 +736,9 @@ class _EmailTile extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
       child: Container(
         decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -768,41 +759,35 @@ class _EmailTile extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(sender,
-                          style:
-                              TextStyle(color: Colors.grey[850], fontSize: 13)),
+                      Text(sender, style: TextStyle(color: Colors.grey[850], fontSize: 13)),
                       const SizedBox(height: 3),
-                      Text('$time ago',
-                          style: Theme.of(context).textTheme.bodySmall),
+                      Text('$time ago', style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 245, 241, 248),
-                        borderRadius: BorderRadius.all(Radius.circular(50))),
+                      color: Color.fromARGB(255, 245, 241, 248),
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                    ),
                     child: Icon(Icons.star_outline, color: Colors.grey[500]),
                   ),
                 ],
               ),
-              if (recepients != '')
+              if (recipients != '')
                 Column(children: <Widget>[
                   const SizedBox(height: 15),
-                  Text('To $recepients',
-                      style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                  Text('To $recipients', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
                 ])
               else
                 Container(),
               const SizedBox(height: 15),
-              Text(body,
-                  style: TextStyle(
-                      color: Colors.grey[700], height: 1.35, fontSize: 14.5)),
+              Text(body, style: TextStyle(color: Colors.grey[700], height: 1.35, fontSize: 14.5)),
               const SizedBox(height: 9),
               SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child:
-                      (bodyImage != '') ? Image.asset(bodyImage) : Container()),
+                  child: (bodyImage != '') ? Image.asset(bodyImage) : Container()),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -813,17 +798,16 @@ class _EmailTile extends StatelessWidget {
                       onPressed: () {},
                       style: ButtonStyle(
                         shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0)),
+                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                         ),
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color.fromARGB(255, 245, 241, 248)),
-                        side: MaterialStateProperty.all(const BorderSide(
-                            width: 0.0, color: Colors.transparent)),
+                          const Color.fromARGB(255, 245, 241, 248),
+                        ),
+                        side: MaterialStateProperty.all(
+                          const BorderSide(width: 0.0, color: Colors.transparent),
+                        ),
                       ),
-                      child: Text('Reply',
-                          style:
-                              TextStyle(color: Colors.grey[700], fontSize: 12)),
+                      child: Text('Reply', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
                     ),
                   ),
                   SizedBox(
@@ -832,13 +816,14 @@ class _EmailTile extends StatelessWidget {
                       onPressed: () {},
                       style: ButtonStyle(
                         shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0)),
+                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                         ),
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color.fromARGB(255, 245, 241, 248)),
-                        side: MaterialStateProperty.all(const BorderSide(
-                            width: 0.0, color: Colors.transparent)),
+                          const Color.fromARGB(255, 245, 241, 248),
+                        ),
+                        side: MaterialStateProperty.all(
+                          const BorderSide(width: 0.0, color: Colors.transparent),
+                        ),
                       ),
                       child: Text(
                         'Reply all',
@@ -868,14 +853,13 @@ class _ScreenArguments {
 }
 
 class _ExtractRouteArguments extends StatelessWidget {
-  const _ExtractRouteArguments({Key? key}) : super(key: key);
+  const _ExtractRouteArguments();
 
   static const String routeName = '/detailView';
 
   @override
   Widget build(BuildContext context) {
-    final _ScreenArguments args =
-        ModalRoute.of(context)!.settings.arguments! as _ScreenArguments;
+    final _ScreenArguments args = ModalRoute.of(context)!.settings.arguments! as _ScreenArguments;
 
     return _RouteDetailView(item: args.item, selectCard: args.selectCard);
   }
@@ -885,8 +869,7 @@ class _RouteDetailView extends StatelessWidget {
   const _RouteDetailView({
     required this.item,
     required this.selectCard,
-    Key? key,
-  }) : super(key: key);
+  });
 
   final _Item item;
   final _CardSelectedCallback selectCard;
@@ -900,8 +883,7 @@ class _RouteDetailView extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: TextButton(
               onPressed: () {
-                Navigator.popUntil(context,
-                    (Route<dynamic> route) => route.settings.name == '/');
+                Navigator.popUntil(context, (Route<dynamic> route) => route.settings.name == '/');
                 selectCard(null);
               },
               child: const Icon(Icons.arrow_back),
@@ -915,7 +897,7 @@ class _RouteDetailView extends StatelessWidget {
 }
 
 class _ExamplePage extends StatelessWidget {
-  const _ExamplePage({Key? key}) : super(key: key);
+  const _ExamplePage();
 
   @override
   Widget build(BuildContext context) {
@@ -936,7 +918,7 @@ class _Item {
 class _Email {
   const _Email({
     required this.sender,
-    required this.recepients,
+    required this.recipients,
     required this.image,
     required this.time,
     required this.body,
@@ -944,7 +926,7 @@ class _Email {
   });
 
   final String sender;
-  final String recepients;
+  final String recipients;
   final String image;
   final String time;
   final String body;
@@ -959,7 +941,7 @@ const List<_Item> _allItems = <_Item>[
     emails: <_Email>[
       _Email(
         sender: 'So Duri',
-        recepients: 'me, Ziad and Lily',
+        recipients: 'me, Ziad and Lily',
         image: 'images/strawberry.png',
         time: '20 min',
         body:
@@ -968,7 +950,7 @@ const List<_Item> _allItems = <_Item>[
       ),
       _Email(
           sender: 'Me',
-          recepients: 'me, Ziad, and Lily',
+          recipients: 'me, Ziad, and Lily',
           image: 'images/plum.png',
           time: '4 min',
           body:
@@ -976,7 +958,7 @@ const List<_Item> _allItems = <_Item>[
           bodyImage: ''),
       _Email(
           sender: 'Ziad Aouad',
-          recepients: 'me, Ziad and Lily',
+          recipients: 'me, Ziad and Lily',
           image: 'images/mushroom.png',
           time: '2 min',
           body:
@@ -994,7 +976,7 @@ const List<_Item> _allItems = <_Item>[
             'Curabitur tincidunt purus at vulputate mattis. Nam lectus urna, varius eget quam in, ultricies ultrices libero. Curabitur rutrum ultricies varius. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec vulputate auctor est, non semper velit eleifend sit amet.',
         image: 'images/potato.png',
         bodyImage: 'images/avocado.png',
-        recepients: '',
+        recipients: '',
       ),
     ],
   ),
@@ -1008,7 +990,7 @@ const List<_Item> _allItems = <_Item>[
             'Cras egestas ultricies elit, vitae interdum lorem aliquam et. Donec quis arcu a quam tempor rutrum vitae in lectus. Nullam elit nunc, lacinia sed luctus non, mollis id nulla. Morbi luctus turpis sapien, id molestie ante maximus vel. Vivamus sagittis consequat nisl nec placerat.',
         image: 'images/habanero.png',
         bodyImage: '',
-        recepients: '',
+        recipients: '',
       ),
     ],
   ),
