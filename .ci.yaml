@@ -76,3 +76,6 @@ targets:
 
   - name: Linux ci_yaml packages roller
     recipe: infra/ci_yaml
+    timeout: 30
+    runIf:
+      - .ci.yaml

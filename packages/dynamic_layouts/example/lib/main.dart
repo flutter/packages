@@ -1,6 +1,7 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 
 import 'wrap_layout_example.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
 }
 
 /// The home page
+
 class MyHomePage extends StatelessWidget {
   /// The home page constructor.
   const MyHomePage({super.key});
