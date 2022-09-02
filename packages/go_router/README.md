@@ -170,7 +170,9 @@ final  _router = GoRouter(
 ```
 
 For more details, see the `ShellRoute` API documentation. For a complete
-example, see the `shell_route.dart` sample in the example/ directory.
+example, see the 
+[ShellRoute sample](https://github.com/flutter/packages/tree/main/packages/go_router/example/lib/shell_route.dart)
+in the example/ directory.
 
 ### Still not sure how to proceed?
 See [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example) for complete runnable examples or visit [API documentation](https://pub.dev/documentation/go_router/latest/go_router/go_router-library.html)
