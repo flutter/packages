@@ -117,7 +117,7 @@ class RouteBuilder {
       return keyToPage[navigatorKey]!;
     } on RouteBuilderError catch (e) {
       return <Page<dynamic>>[
-        buildErrorPage(context, e, matchList.location),
+        _buildErrorPage(context, e, matchList.location),
       ];
     }
   }
@@ -393,14 +393,14 @@ class RouteBuilder {
     return _buildNavigator(
       pop,
       <Page<dynamic>>[
-        buildErrorPage(context, e, uri),
+        _buildErrorPage(context, e, uri),
       ],
       navigatorKey,
     );
   }
 
   /// Builds a an error page.
-  Page<void> buildErrorPage(
+  Page<void> _buildErrorPage(
     BuildContext context,
     RouteBuilderError error,
     Uri uri,
