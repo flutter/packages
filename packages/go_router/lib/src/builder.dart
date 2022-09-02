@@ -79,9 +79,6 @@ class RouteBuilder {
     bool routerNeglect,
     GlobalKey<NavigatorState> navigatorKey,
   ) {
-    final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>> keyToPages =
-        _buildKeyToPage(context, matchList, pop, routerNeglect, navigatorKey);
-    Uri.parse(matchList.location.toString());
     return builderWithNav(
       context,
       GoRouterState(
@@ -95,7 +92,7 @@ class RouteBuilder {
       ),
       _buildNavigator(
         pop,
-        keyToPages[navigatorKey]!,
+        buildPages(context, matchList, pop, routerNeglect, navigatorKey),
         navigatorKey,
         observers: observers,
       ),
@@ -106,32 +103,23 @@ class RouteBuilder {
   /// testing.
   @visibleForTesting
   List<Page<dynamic>> buildPages(
-      BuildContext context, RouteMatchList matchList) {
+      BuildContext context,
+      RouteMatchList matchList,
+      VoidCallback onPop,
+      bool routerNeglect,
+      GlobalKey<NavigatorState> navigatorKey) {
     try {
-      final GlobalKey<NavigatorState> navigatorKey =
-          GlobalKey<NavigatorState>();
       final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>> keyToPage =
-          _buildKeyToPage(context, matchList, () {}, false, navigatorKey);
+      <GlobalKey<NavigatorState>, List<Page<dynamic>>>{};
+      final Map<String, String> params = <String, String>{};
+      _buildRecursive(context, matchList, 0, onPop, routerNeglect, keyToPage,
+          params, navigatorKey);
       return keyToPage[navigatorKey]!;
     } on RouteBuilderError catch (e) {
       return <Page<dynamic>>[
         buildErrorPage(context, e, matchList.location),
       ];
     }
-  }
-
-  Map<GlobalKey<NavigatorState>, List<Page<dynamic>>> _buildKeyToPage(
-      BuildContext context,
-      RouteMatchList matchList,
-      VoidCallback onPop,
-      bool routerNeglect,
-      GlobalKey<NavigatorState> navigatorKey) {
-    final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>> keyToPage =
-        <GlobalKey<NavigatorState>, List<Page<dynamic>>>{};
-    final Map<String, String> params = <String, String>{};
-    _buildRecursive(context, matchList, 0, onPop, routerNeglect, keyToPage,
-        params, navigatorKey);
-    return keyToPage;
   }
 
   void _buildRecursive(

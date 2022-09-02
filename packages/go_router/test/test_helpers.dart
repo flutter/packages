@@ -186,6 +186,7 @@ Future<GoRouter> createRouter(
 
 class TestErrorScreen extends DummyScreen {
   const TestErrorScreen(this.ex, {super.key});
+
   final Exception ex;
 }
 
@@ -207,16 +208,19 @@ class LoginScreen extends DummyScreen {
 
 class FamilyScreen extends DummyScreen {
   const FamilyScreen(this.fid, {super.key});
+
   final String fid;
 }
 
 class FamiliesScreen extends DummyScreen {
   const FamiliesScreen({required this.selectedFid, super.key});
+
   final String selectedFid;
 }
 
 class PersonScreen extends DummyScreen {
   const PersonScreen(this.fid, this.pid, {super.key});
+
   final String fid;
   final String pid;
 }
@@ -235,12 +239,20 @@ class DummyScreen extends StatelessWidget {
 
 Widget dummy(BuildContext context, GoRouterState state) => const DummyScreen();
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 extension Extension on GoRouter {
   Page<dynamic> _pageFor(RouteMatch match) {
     final RouteMatchList matchList = routerDelegate.matches;
     final int i = matchList.matches.indexOf(match);
     final List<Page<dynamic>> pages = routerDelegate.builder
-        .buildPages(DummyBuildContext(), matchList)
+        .buildPages(
+          DummyBuildContext(),
+          matchList,
+          () {},
+          false,
+          navigatorKey,
+        )
         .toList();
     return pages[i];
   }
