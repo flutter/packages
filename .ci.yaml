@@ -76,3 +76,5 @@ targets:
 
   - name: Linux ci_yaml packages roller
     recipe: infra/ci_yaml
+    runIf:
+      - .ci.yaml
