@@ -60,8 +60,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       // If this is a ShellRoute, then pop one of the subsequent GoRoutes, if
       // there are any.
       if (route is ShellRoute && (matchCount - i) > 2) {
-        final NavigatorState? navigator = route.navigatorKey.currentState;
-        final bool didPop = await navigator?.maybePop() ?? false;
+        final NavigatorState navigator = route.navigatorKey.currentState!;
+        final bool didPop = await navigator.maybePop();
         if (didPop) {
           return didPop;
         }
