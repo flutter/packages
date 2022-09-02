@@ -80,27 +80,26 @@ class RouteBuilder {
     GlobalKey<NavigatorState> navigatorKey,
   ) {
     final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>> keyToPages =
-        <GlobalKey<NavigatorState>, List<Page<dynamic>>>{};
-    _buildRecursive(context, matchList, 0, pop, routerNeglect, keyToPages,
-        <String, String>{}, navigatorKey);
+        _buildKeyToPage(context, matchList, pop, routerNeglect, navigatorKey);
     Uri.parse(matchList.location.toString());
     return builderWithNav(
-        context,
-        GoRouterState(
-          configuration,
-          location: matchList.location.toString(),
-          name: null,
-          subloc: matchList.location.path,
-          queryParams: matchList.location.queryParameters,
-          queryParametersAll: matchList.location.queryParametersAll,
-          error: matchList.isError ? matchList.error : null,
-        ),
-        _buildNavigator(
-          pop,
-          keyToPages[navigatorKey]!,
-          navigatorKey,
-          observers: observers,
-        ));
+      context,
+      GoRouterState(
+        configuration,
+        location: matchList.location.toString(),
+        name: null,
+        subloc: matchList.location.path,
+        queryParams: matchList.location.queryParameters,
+        queryParametersAll: matchList.location.queryParametersAll,
+        error: matchList.isError ? matchList.error : null,
+      ),
+      _buildNavigator(
+        pop,
+        keyToPages[navigatorKey]!,
+        navigatorKey,
+        observers: observers,
+      ),
+    );
   }
 
   /// Returns the top-level pages instead of the root navigator. Used for
@@ -112,15 +111,27 @@ class RouteBuilder {
       final GlobalKey<NavigatorState> navigatorKey =
           GlobalKey<NavigatorState>();
       final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>> keyToPage =
-          <GlobalKey<NavigatorState>, List<Page<dynamic>>>{};
-      _buildRecursive(context, matchList, 0, () {}, false, keyToPage,
-          <String, String>{}, navigatorKey);
+          _buildKeyToPage(context, matchList, () {}, false, navigatorKey);
       return keyToPage[navigatorKey]!;
     } on RouteBuilderError catch (e) {
       return <Page<dynamic>>[
         buildErrorPage(context, e, matchList.location),
       ];
     }
+  }
+
+  Map<GlobalKey<NavigatorState>, List<Page<dynamic>>> _buildKeyToPage(
+      BuildContext context,
+      RouteMatchList matchList,
+      VoidCallback onPop,
+      bool routerNeglect,
+      GlobalKey<NavigatorState> navigatorKey) {
+    final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>> keyToPage =
+        <GlobalKey<NavigatorState>, List<Page<dynamic>>>{};
+    final Map<String, String> params = <String, String>{};
+    _buildRecursive(context, matchList, 0, onPop, routerNeglect, keyToPage,
+        params, navigatorKey);
+    return keyToPage;
   }
 
   void _buildRecursive(
