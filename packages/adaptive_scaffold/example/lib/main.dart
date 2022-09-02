@@ -46,7 +46,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, ChangeNotifier {
+class _MyHomePageState extends State<MyHomePage>
+    with TickerProviderStateMixin, ChangeNotifier {
   // A listener used for the controllers to reanimate the staggered animation of
   // the navigation elements.
   ValueNotifier<bool?> showGridView = ValueNotifier<bool?>(false);
@@ -70,7 +71,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
   @override
   void initState() {
     showGridView.addListener(() {
-      Navigator.popUntil(context, (Route<dynamic> route) => route.settings.name == '/');
+      Navigator.popUntil(
+          context, (Route<dynamic> route) => route.settings.name == '/');
       _inboxIconSlideController
         ..reset()
         ..forward();
@@ -121,7 +123,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
         const SizedBox(height: 10),
         Row(children: <Widget>[
           const SizedBox(width: 22),
-          Text('Folders', style: TextStyle(fontSize: 13, color: Colors.grey[700]))
+          Text('Folders',
+              style: TextStyle(fontSize: 13, color: Colors.grey[700]))
         ]),
         const SizedBox(height: 22),
         Row(
@@ -159,7 +162,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
               iconSize: 21,
             ),
             const SizedBox(width: 21),
-            const Flexible(child: Text('Taxes', overflow: TextOverflow.ellipsis))
+            const Flexible(
+                child: Text('Taxes', overflow: TextOverflow.ellipsis))
           ],
         ),
         const SizedBox(height: 16),
@@ -172,7 +176,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
               iconSize: 21,
             ),
             const SizedBox(width: 21),
-            const Flexible(child: Text('Receipts', overflow: TextOverflow.ellipsis))
+            const Flexible(
+                child: Text('Receipts', overflow: TextOverflow.ellipsis))
           ],
         ),
       ],
@@ -181,10 +186,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
     // These are the destinations used within the AdaptiveScaffold navigation
     // builders.
     const List<NavigationDestination> destinations = <NavigationDestination>[
-      NavigationDestination(label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
-      NavigationDestination(label: 'Articles', icon: Icon(Icons.article_outlined, color: iconColor)),
-      NavigationDestination(label: 'Chat', icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
-      NavigationDestination(label: 'Video', icon: Icon(Icons.video_call_outlined, color: iconColor))
+      NavigationDestination(
+          label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
+      NavigationDestination(
+          label: 'Articles',
+          icon: Icon(Icons.article_outlined, color: iconColor)),
+      NavigationDestination(
+          label: 'Chat',
+          icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
+      NavigationDestination(
+          label: 'Video',
+          icon: Icon(Icons.video_call_outlined, color: iconColor))
     ];
 
     // Updating the listener value.
@@ -314,8 +326,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin, 
               // default offset transition.
               outAnimation: AdaptiveScaffold.topToBottom,
               builder: (_) => BottomNavigationBarTheme(
-                data: const BottomNavigationBarThemeData(selectedItemColor: Colors.black),
-                child: AdaptiveScaffold.standardBottomNavigationBar(destinations: destinations),
+                data: const BottomNavigationBarThemeData(
+                    selectedItemColor: Colors.black),
+                child: AdaptiveScaffold.standardBottomNavigationBar(
+                    destinations: destinations),
               ),
             )
           },
@@ -459,7 +473,9 @@ class _ItemList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-      floatingActionButton: Breakpoints.mediumAndUp.isActive(context) ? null : const _SmallComposeIcon(),
+      floatingActionButton: Breakpoints.mediumAndUp.isActive(context)
+          ? null
+          : const _SmallComposeIcon(),
       body: Column(
         children: <Widget>[
           Padding(
@@ -488,7 +504,8 @@ class _ItemList extends StatelessWidget {
                 ),
                 filled: true,
                 contentPadding: const EdgeInsets.all(25),
-                hintStyle: const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
+                hintStyle:
+                    const TextStyle(color: Color.fromARGB(255, 135, 129, 138)),
                 hintText: 'Search replies',
                 fillColor: Colors.white,
               ),
@@ -593,14 +610,17 @@ class _ItemListTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 13),
-                Text(item.title, style: Theme.of(context).textTheme.titleMedium),
+                Text(item.title,
+                    style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 9),
                 Text(email.body.replaceRange(116, email.body.length, '...'),
                     style: Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 9),
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: (email.bodyImage != '') ? Image.asset(email.bodyImage) : Container(),
+                  child: (email.bodyImage != '')
+                      ? Image.asset(email.bodyImage)
+                      : Container(),
                 ),
               ],
             ),
@@ -664,7 +684,8 @@ class _DetailTile extends StatelessWidget {
                                 padding: const EdgeInsets.all(8.0),
                                 decoration: const BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15)),
                                 ),
                                 child: Icon(
                                   Icons.restore_from_trash,
@@ -676,9 +697,11 @@ class _DetailTile extends StatelessWidget {
                                 padding: const EdgeInsets.all(8.0),
                                 decoration: const BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15)),
                                 ),
-                                child: Icon(Icons.more_vert, color: Colors.grey[600]),
+                                child: Icon(Icons.more_vert,
+                                    color: Colors.grey[600]),
                               )
                             ],
                           ),
@@ -759,9 +782,12 @@ class _EmailTile extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(sender, style: TextStyle(color: Colors.grey[850], fontSize: 13)),
+                      Text(sender,
+                          style:
+                              TextStyle(color: Colors.grey[850], fontSize: 13)),
                       const SizedBox(height: 3),
-                      Text('$time ago', style: Theme.of(context).textTheme.bodySmall),
+                      Text('$time ago',
+                          style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
                   const Spacer(),
@@ -778,16 +804,20 @@ class _EmailTile extends StatelessWidget {
               if (recipients != '')
                 Column(children: <Widget>[
                   const SizedBox(height: 15),
-                  Text('To $recipients', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                  Text('To $recipients',
+                      style: TextStyle(color: Colors.grey[500], fontSize: 12)),
                 ])
               else
                 Container(),
               const SizedBox(height: 15),
-              Text(body, style: TextStyle(color: Colors.grey[700], height: 1.35, fontSize: 14.5)),
+              Text(body,
+                  style: TextStyle(
+                      color: Colors.grey[700], height: 1.35, fontSize: 14.5)),
               const SizedBox(height: 9),
               SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: (bodyImage != '') ? Image.asset(bodyImage) : Container()),
+                  child:
+                      (bodyImage != '') ? Image.asset(bodyImage) : Container()),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -798,16 +828,20 @@ class _EmailTile extends StatelessWidget {
                       onPressed: () {},
                       style: ButtonStyle(
                         shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
                         ),
                         backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromARGB(255, 245, 241, 248),
                         ),
                         side: MaterialStateProperty.all(
-                          const BorderSide(width: 0.0, color: Colors.transparent),
+                          const BorderSide(
+                              width: 0.0, color: Colors.transparent),
                         ),
                       ),
-                      child: Text('Reply', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
+                      child: Text('Reply',
+                          style:
+                              TextStyle(color: Colors.grey[700], fontSize: 12)),
                     ),
                   ),
                   SizedBox(
@@ -816,13 +850,15 @@ class _EmailTile extends StatelessWidget {
                       onPressed: () {},
                       style: ButtonStyle(
                         shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
                         ),
                         backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromARGB(255, 245, 241, 248),
                         ),
                         side: MaterialStateProperty.all(
-                          const BorderSide(width: 0.0, color: Colors.transparent),
+                          const BorderSide(
+                              width: 0.0, color: Colors.transparent),
                         ),
                       ),
                       child: Text(
@@ -859,7 +895,8 @@ class _ExtractRouteArguments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _ScreenArguments args = ModalRoute.of(context)!.settings.arguments! as _ScreenArguments;
+    final _ScreenArguments args =
+        ModalRoute.of(context)!.settings.arguments! as _ScreenArguments;
 
     return _RouteDetailView(item: args.item, selectCard: args.selectCard);
   }
@@ -883,7 +920,8 @@ class _RouteDetailView extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: TextButton(
               onPressed: () {
-                Navigator.popUntil(context, (Route<dynamic> route) => route.settings.name == '/');
+                Navigator.popUntil(context,
+                    (Route<dynamic> route) => route.settings.name == '/');
                 selectCard(null);
               },
               child: const Icon(Icons.arrow_back),

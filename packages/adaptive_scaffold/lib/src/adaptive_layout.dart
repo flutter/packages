@@ -197,10 +197,12 @@ class AdaptiveLayout extends StatefulWidget {
   State<AdaptiveLayout> createState() => _AdaptiveLayoutState();
 }
 
-class _AdaptiveLayoutState extends State<AdaptiveLayout> with TickerProviderStateMixin {
+class _AdaptiveLayoutState extends State<AdaptiveLayout>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
 
-  late Map<String, SlotLayoutConfig?> chosenWidgets = <String, SlotLayoutConfig?>{};
+  late Map<String, SlotLayoutConfig?> chosenWidgets =
+      <String, SlotLayoutConfig?>{};
   Map<String, Size?> slotSizes = <String, Size?>{};
 
   Map<String, ValueNotifier<Key?>> notifiers = <String, ValueNotifier<Key?>>{};
@@ -266,13 +268,15 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> with TickerProviderStat
       chosenWidgets.update(
         key,
         (SlotLayoutConfig? val) => val,
-        ifAbsent: () => SlotLayout.pickWidget(context, value?.config ?? <Breakpoint, SlotLayoutConfig?>{}),
+        ifAbsent: () => SlotLayout.pickWidget(
+            context, value?.config ?? <Breakpoint, SlotLayoutConfig?>{}),
       );
     });
     final List<Widget> entries = slots.entries
         .map((MapEntry<String, SlotLayout?> entry) {
           if (entry.value != null) {
-            return LayoutId(id: entry.key, child: entry.value ?? const SizedBox());
+            return LayoutId(
+                id: entry.key, child: entry.value ?? const SizedBox());
           }
         })
         .whereType<Widget>()
@@ -284,7 +288,8 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> with TickerProviderStat
 
     Rect? hinge;
     for (final DisplayFeature e in MediaQuery.of(context).displayFeatures) {
-      if (e.type == DisplayFeatureType.hinge || e.type == DisplayFeatureType.fold) {
+      if (e.type == DisplayFeatureType.hinge ||
+          e.type == DisplayFeatureType.fold) {
         if (e.bounds.left != 0) {
           hinge = e.bounds;
         }
@@ -349,7 +354,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
       if (isAnimating.contains(_SlotIds.secondaryBody.name)) {
         return internalAnimations
             ? Tween<double>(begin: begin, end: end)
-                .animate(CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic))
+                .animate(CurvedAnimation(
+                    parent: controller, curve: Curves.easeInOutCubic))
                 .value
             : end;
       }
@@ -489,7 +495,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
             double finalSBodySize;
             if (hinge != null) {
               finalBodySize = hinge!.left - leftMargin;
-              finalSBodySize = size.width - (hinge!.left + hingeWidth) - rightMargin;
+              finalSBodySize =
+                  size.width - (hinge!.left + hingeWidth) - rightMargin;
             } else if (bodyRatio != null) {
               finalBodySize = remainingWidth * bodyRatio!;
               finalSBodySize = remainingWidth * (1 - bodyRatio!);
@@ -501,7 +508,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
             currentBodySize = layoutChild(
               _SlotIds.body.name,
               BoxConstraints.tight(
-                Size(animatedSize(remainingWidth, finalBodySize), remainingHeight),
+                Size(animatedSize(remainingWidth, finalBodySize),
+                    remainingHeight),
               ),
             );
             layoutChild(
@@ -515,7 +523,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
             double finalBodySize;
             double finalSBodySize;
             if (hinge != null) {
-              finalBodySize = size.width - (hinge!.left + hingeWidth) - rightMargin;
+              finalBodySize =
+                  size.width - (hinge!.left + hingeWidth) - rightMargin;
               finalSBodySize = hinge!.left - leftMargin;
             } else if (bodyRatio != null) {
               finalBodySize = remainingWidth * bodyRatio!;
@@ -546,7 +555,9 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
                 remainingWidth,
                 animatedSize(
                   remainingHeight,
-                  bodyRatio == null ? halfHeight - topMargin : remainingHeight * bodyRatio!,
+                  bodyRatio == null
+                      ? halfHeight - topMargin
+                      : remainingHeight * bodyRatio!,
                 ),
               ),
             ),
@@ -556,26 +567,32 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
             BoxConstraints.tight(
               Size(
                 remainingWidth,
-                bodyRatio == null ? halfHeight - bottomMargin : remainingHeight * (1 - bodyRatio!),
+                bodyRatio == null
+                    ? halfHeight - bottomMargin
+                    : remainingHeight * (1 - bodyRatio!),
               ),
             ),
           );
         }
       }
       // Handle positioning for the body and secondaryBody.
-      if (bodyOrientation == Axis.horizontal && !textDirection && chosenWidgets[_SlotIds.secondaryBody.name] != null) {
+      if (bodyOrientation == Axis.horizontal &&
+          !textDirection &&
+          chosenWidgets[_SlotIds.secondaryBody.name] != null) {
         if (hinge != null) {
           positionChild(
             _SlotIds.body.name,
             Offset(currentSBodySize.width + leftMargin + hingeWidth, topMargin),
           );
-          positionChild(_SlotIds.secondaryBody.name, Offset(leftMargin, topMargin));
+          positionChild(
+              _SlotIds.secondaryBody.name, Offset(leftMargin, topMargin));
         } else {
           positionChild(
             _SlotIds.body.name,
             Offset(currentSBodySize.width + leftMargin, topMargin),
           );
-          positionChild(_SlotIds.secondaryBody.name, Offset(leftMargin, topMargin));
+          positionChild(
+              _SlotIds.secondaryBody.name, Offset(leftMargin, topMargin));
         }
       } else {
         positionChild(_SlotIds.body.name, Offset(leftMargin, topMargin));
@@ -583,7 +600,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
           if (hinge != null) {
             positionChild(
               _SlotIds.secondaryBody.name,
-              Offset(currentBodySize.width + leftMargin + hingeWidth, topMargin),
+              Offset(
+                  currentBodySize.width + leftMargin + hingeWidth, topMargin),
             );
           } else {
             positionChild(
@@ -619,7 +637,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
   void updateSize(String id, Size childSize) {
     if (slotSizes[id] == null || slotSizes[id] != childSize) {
       void listener(AnimationStatus status) {
-        if ((status == AnimationStatus.completed || status == AnimationStatus.dismissed) &&
+        if ((status == AnimationStatus.completed ||
+                status == AnimationStatus.dismissed) &&
             (slotSizes[id] == null || slotSizes[id] != childSize)) {
           slotSizes[id] = childSize;
         }

@@ -51,14 +51,17 @@ class MyHomePage extends StatelessWidget {
             // An option to override the default breakpoints used for small, medium,
             // and large.
             smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
-            mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
+            mediumBreakpoint:
+                const WidthPlatformBreakpoint(begin: 700, end: 1000),
             largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
             useDrawer: false,
             destinations: const <NavigationDestination>[
               NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
-              NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
+              NavigationDestination(
+                  icon: Icon(Icons.article), label: 'Articles'),
               NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
-              NavigationDestination(icon: Icon(Icons.video_call), label: 'Video')
+              NavigationDestination(
+                  icon: Icon(Icons.video_call), label: 'Video')
             ],
             body: (_) => GridView.count(crossAxisCount: 2, children: children),
             smallBody: (_) => ListView.builder(
@@ -66,7 +69,8 @@ class MyHomePage extends StatelessWidget {
                   itemBuilder: (_, int idx) => children[idx],
                 ),
             // Define a default secondaryBody.
-            secondaryBody: (_) => Container(color: const Color.fromARGB(255, 234, 158, 192)),
+            secondaryBody: (_) =>
+                Container(color: const Color.fromARGB(255, 234, 158, 192)),
             // Override the default secondaryBody during the smallBreakpoint to be
             // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
             // overridden.

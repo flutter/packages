@@ -549,7 +549,7 @@ class Markdown extends MarkdownWidget {
 
 /// Parse [task list items](https://github.github.com/gfm/#task-list-items-extension-).
 class TaskListSyntax extends md.InlineSyntax {
-  /// Creates a new instance.
+  /// Cretaes a new instance.
   TaskListSyntax() : super(_pattern);
 
   // FIXME: Waiting for dart-lang/markdown#269 to land

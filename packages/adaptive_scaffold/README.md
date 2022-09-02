@@ -39,16 +39,20 @@ animation should use AdaptiveLayout.
     final List<Widget> children = <Widget>[
       for (int i = 0; i < 10; i++)
         Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-                color: const Color.fromARGB(255, 255, 201, 197), height: 400))
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            color: const Color.fromARGB(255, 255, 201, 197),
+            height: 400,
+          ),
+        )
     ];
 
     return BottomNavigationBarTheme(
         data: const BottomNavigationBarThemeData(
-            unselectedItemColor: Colors.black,
-            selectedItemColor: Colors.black,
-            backgroundColor: Colors.white),
+          unselectedItemColor: Colors.black,
+          selectedItemColor: Colors.black,
+          backgroundColor: Colors.white,
+        ),
         child: AdaptiveScaffold(
             // An option to override the default breakpoints used for small, medium,
             // and large.
@@ -67,14 +71,15 @@ animation should use AdaptiveLayout.
             ],
             body: (_) => GridView.count(crossAxisCount: 2, children: children),
             smallBody: (_) => ListView.builder(
-                itemCount: children.length,
-                itemBuilder: (_, int idx) => children[idx]),
+                  itemCount: children.length,
+                  itemBuilder: (_, int idx) => children[idx],
+                ),
             // Define a default secondaryBody.
             secondaryBody: (_) =>
                 Container(color: const Color.fromARGB(255, 234, 158, 192)),
             // Override the default secondaryBody during the smallBreakpoint to be
             // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
-            // overriden.
+            // overridden.
             smallSecondaryBody: AdaptiveScaffold.emptyBuilder));
   }
 }
@@ -120,24 +125,26 @@ displayed and the entrance animation and exit animation.
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
-            key: const Key('pnav1'),
+            key: const Key('Primary Navigation'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
-                leading: const Icon(Icons.menu),
-                destinations: destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
-                    .toList()),
+              leading: const Icon(Icons.menu),
+              destinations: destinations
+                  .map((_) => AdaptiveScaffold.toRailDestination(_))
+                  .toList(),
+            ),
           ),
           Breakpoints.large: SlotLayout.from(
-            key: const Key('pn1'),
+            key: const Key('Primary Navigation 1'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               extended: true,
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const <Widget>[
-                  Text('REPLY',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 255, 201, 197))),
+                  Text(
+                    'REPLY',
+                    style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                  ),
                   Icon(Icons.menu_open)
                 ],
               ),
@@ -154,14 +161,14 @@ displayed and the entrance animation and exit animation.
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
-            key: const Key('body'),
+            key: const Key('Body'),
             builder: (_) => ListView.builder(
               itemCount: children.length,
               itemBuilder: (BuildContext context, int index) => children[index],
             ),
           ),
           Breakpoints.mediumAndUp: SlotLayout.from(
-            key: const Key('body1'),
+            key: const Key('Body 1'),
             builder: (_) =>
                 GridView.count(crossAxisCount: 2, children: children),
           )
@@ -172,14 +179,15 @@ displayed and the entrance animation and exit animation.
       bottomNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
-            key: const Key('bn'),
+            key: const Key('Bottom Navigation'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
             builder: (_) => BottomNavigationBarTheme(
-                data: const BottomNavigationBarThemeData(
-                    selectedItemColor: Colors.black),
-                child: AdaptiveScaffold.standardBottomNavigationBar(
-                    destinations: destinations)),
+              data: const BottomNavigationBarThemeData(
+                  selectedItemColor: Colors.black),
+              child: AdaptiveScaffold.standardBottomNavigationBar(
+                  destinations: destinations),
+            ),
           )
         },
       ),

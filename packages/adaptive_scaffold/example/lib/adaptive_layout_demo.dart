@@ -57,7 +57,10 @@ class MyHomePage extends StatelessWidget {
         Row(
           children: <Widget>[
             const SizedBox(width: 16),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.folder_copy_outlined), iconSize: 21),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
             const SizedBox(width: 21),
             const Text('Freelance'),
           ],
@@ -66,7 +69,10 @@ class MyHomePage extends StatelessWidget {
         Row(
           children: <Widget>[
             const SizedBox(width: 16),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.folder_copy_outlined), iconSize: 21),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
             const SizedBox(width: 21),
             const Text('Mortgage'),
           ],
@@ -75,18 +81,26 @@ class MyHomePage extends StatelessWidget {
         Row(
           children: <Widget>[
             const SizedBox(width: 16),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.folder_copy_outlined), iconSize: 21),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
             const SizedBox(width: 21),
-            const Flexible(child: Text('Taxes', overflow: TextOverflow.ellipsis)),
+            const Flexible(
+                child: Text('Taxes', overflow: TextOverflow.ellipsis)),
           ],
         ),
         const SizedBox(height: 12),
         Row(
           children: <Widget>[
             const SizedBox(width: 16),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.folder_copy_outlined), iconSize: 21),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.folder_copy_outlined),
+                iconSize: 21),
             const SizedBox(width: 21),
-            const Flexible(child: Text('Receipts', overflow: TextOverflow.ellipsis)),
+            const Flexible(
+                child: Text('Receipts', overflow: TextOverflow.ellipsis)),
           ],
         ),
       ],
@@ -126,7 +140,9 @@ class MyHomePage extends StatelessWidget {
             key: const Key('Primary Navigation'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               leading: const Icon(Icons.menu),
-              destinations: destinations.map((_) => AdaptiveScaffold.toRailDestination(_)).toList(),
+              destinations: destinations
+                  .map((_) => AdaptiveScaffold.toRailDestination(_))
+                  .toList(),
             ),
           ),
           Breakpoints.large: SlotLayout.from(
@@ -144,7 +160,9 @@ class MyHomePage extends StatelessWidget {
                   Icon(Icons.menu_open)
                 ],
               ),
-              destinations: destinations.map((_) => AdaptiveScaffold.toRailDestination(_)).toList(),
+              destinations: destinations
+                  .map((_) => AdaptiveScaffold.toRailDestination(_))
+                  .toList(),
               trailing: trailingNavRail,
             ),
           ),
@@ -163,7 +181,8 @@ class MyHomePage extends StatelessWidget {
           ),
           Breakpoints.mediumAndUp: SlotLayout.from(
             key: const Key('Body 1'),
-            builder: (_) => GridView.count(crossAxisCount: 2, children: children),
+            builder: (_) =>
+                GridView.count(crossAxisCount: 2, children: children),
           )
         },
       ),
@@ -176,8 +195,10 @@ class MyHomePage extends StatelessWidget {
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
             builder: (_) => BottomNavigationBarTheme(
-              data: const BottomNavigationBarThemeData(selectedItemColor: Colors.black),
-              child: AdaptiveScaffold.standardBottomNavigationBar(destinations: destinations),
+              data: const BottomNavigationBarThemeData(
+                  selectedItemColor: Colors.black),
+              child: AdaptiveScaffold.standardBottomNavigationBar(
+                  destinations: destinations),
             ),
           )
         },
