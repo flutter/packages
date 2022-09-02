@@ -218,7 +218,7 @@ void defineTests() {
           boilerplate(
             Column(
               children: const <Widget>[
-                MarkdownBody(fitContent: true, data: data),
+                MarkdownBody(data: data),
               ],
             ),
           ),
