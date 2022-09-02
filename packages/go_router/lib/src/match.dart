@@ -14,17 +14,17 @@ class RouteMatch {
   /// Constructor for [RouteMatch].
   RouteMatch({
     required this.route,
-    required this.location,
-    required this.template,
+    required this.subloc,
+    required this.fullpath,
     required this.encodedParams,
     required this.queryParams,
     required this.queryParametersAll,
     required this.extra,
     required this.error,
     this.pageKey,
-  })  : fullUriString = _addQueryParams(location, queryParametersAll),
-        assert(Uri.parse(location).queryParameters.isEmpty),
-        assert(Uri.parse(template).queryParameters.isEmpty),
+  })  : fullUriString = _addQueryParams(subloc, queryParametersAll),
+        assert(Uri.parse(subloc).queryParameters.isEmpty),
+        assert(Uri.parse(fullpath).queryParameters.isEmpty),
         assert(() {
           for (final MapEntry<String, String> p in encodedParams.entries) {
             assert(p.value == Uri.encodeComponent(Uri.decodeComponent(p.value)),
@@ -46,8 +46,8 @@ class RouteMatch {
     if (route is ShellRoute) {
       return RouteMatch(
         route: route,
-        location: restLoc,
-        template: '',
+        subloc: restLoc,
+        fullpath: '',
         encodedParams: <String, String>{},
         queryParams: queryParams,
         queryParametersAll: queryParametersAll,
@@ -70,8 +70,8 @@ class RouteMatch {
       final String subloc = concatenatePaths(parentSubloc, pathLoc);
       return RouteMatch(
         route: route,
-        location: subloc,
-        template: fullpath,
+        subloc: subloc,
+        fullpath: fullpath,
         encodedParams: encodedParams,
         queryParams: queryParams,
         queryParametersAll: queryParametersAll,
@@ -86,10 +86,10 @@ class RouteMatch {
   final RouteBase route;
 
   /// The matched location.
-  final String location; // e.g. /family/f2
+  final String subloc; // e.g. /family/f2
 
   /// The matched template.
-  final String template; // e.g. /family/:fid
+  final String fullpath; // e.g. /family/:fid
 
   /// Parameters for the matched route, URI-encoded.
   final Map<String, String> encodedParams;
@@ -154,5 +154,5 @@ class RouteMatch {
 
   /// For use by the Router architecture as part of the RouteMatch
   @override
-  String toString() => 'RouteMatch($template, $encodedParams)';
+  String toString() => 'RouteMatch($fullpath, $encodedParams)';
 }

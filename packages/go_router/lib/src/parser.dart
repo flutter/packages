@@ -109,8 +109,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     final Exception error = Exception(errorMessage);
     return RouteMatchList(<RouteMatch>[
       RouteMatch(
-        location: uri.path,
-        template: uri.path,
+        subloc: uri.path,
+        fullpath: uri.path,
         encodedParams: <String, String>{},
         queryParams: uri.queryParameters,
         queryParametersAll: uri.queryParametersAll,

@@ -127,7 +127,7 @@ void main() {
           reason: 'The last match should have been removed',
         );
         expect(
-          goRouter.routerDelegate.matches.last.template,
+          goRouter.routerDelegate.matches.last.fullpath,
           '/page-1',
           reason: 'The new location should have been pushed',
         );
@@ -182,7 +182,7 @@ void main() {
           goRouter.routerDelegate.matches.last,
           isA<RouteMatch>()
               .having(
-                (RouteMatch match) => match.template,
+                (RouteMatch match) => match.fullpath,
                 'match.fullpath',
                 '/page-1',
               )

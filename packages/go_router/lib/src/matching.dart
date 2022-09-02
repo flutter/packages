@@ -168,7 +168,7 @@ List<RouteMatch> _getLocRouteRecursively({
     }
 
     if (match.route is GoRoute &&
-        match.location.toLowerCase() == loc.toLowerCase()) {
+        match.subloc.toLowerCase() == loc.toLowerCase()) {
       // If it is a complete match, then return the matched route
       // NOTE: need a lower case match because subloc is canonicalized to match
       // the path case whereas the location can be of any case and still match
@@ -184,12 +184,12 @@ List<RouteMatch> _getLocRouteRecursively({
         childRestLoc = restLoc;
         newParentSubLoc = parentSubloc;
       } else {
-        assert(loc.startsWith(match.location));
+        assert(loc.startsWith(match.subloc));
         assert(restLoc.isNotEmpty);
 
         childRestLoc = loc
-            .substring(match.location.length + (match.location == '/' ? 0 : 1));
-        newParentSubLoc = match.location;
+            .substring(match.subloc.length + (match.subloc == '/' ? 0 : 1));
+        newParentSubLoc = match.subloc;
       }
 
       final List<RouteMatch> subRouteMatch = _getLocRouteRecursively(

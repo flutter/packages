@@ -232,10 +232,10 @@ class RouteBuilder {
     return GoRouterState(
       configuration,
       location: match.fullUriString,
-      subloc: match.location,
+      subloc: match.subloc,
       name: name,
       path: path,
-      fullpath: match.template,
+      fullpath: match.fullpath,
       params: params,
       error: match.error,
       queryParams: match.queryParams,

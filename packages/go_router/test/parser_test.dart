@@ -39,7 +39,7 @@ void main() {
     expect(matches[0].queryParams.isEmpty, isTrue);
     expect(matches[0].extra, isNull);
     expect(matches[0].fullUriString, '/');
-    expect(matches[0].location, '/');
+    expect(matches[0].subloc, '/');
     expect(matches[0].route, routes[0]);
 
     final Object extra = Object();
@@ -51,14 +51,14 @@ void main() {
     expect(matches[0].queryParams['def'], 'ghi');
     expect(matches[0].extra, extra);
     expect(matches[0].fullUriString, '/?def=ghi');
-    expect(matches[0].location, '/');
+    expect(matches[0].subloc, '/');
     expect(matches[0].route, routes[0]);
 
     expect(matches[1].queryParams.length, 1);
     expect(matches[1].queryParams['def'], 'ghi');
     expect(matches[1].extra, extra);
     expect(matches[1].fullUriString, '/abc?def=ghi');
-    expect(matches[1].location, '/abc');
+    expect(matches[1].subloc, '/abc');
     expect(matches[1].route, routes[0].routes[0]);
   });
 
@@ -176,7 +176,7 @@ void main() {
     expect(matches[0].queryParams.isEmpty, isTrue);
     expect(matches[0].extra, isNull);
     expect(matches[0].fullUriString, '/def');
-    expect(matches[0].location, '/def');
+    expect(matches[0].subloc, '/def');
     expect(matches[0].error!.toString(),
         'Exception: no routes for location: /def');
   });
@@ -211,12 +211,12 @@ void main() {
     expect(matches[0].queryParams.isEmpty, isTrue);
     expect(matches[0].extra, isNull);
     expect(matches[0].fullUriString, '/');
-    expect(matches[0].location, '/');
+    expect(matches[0].subloc, '/');
 
     expect(matches[1].queryParams.isEmpty, isTrue);
     expect(matches[1].extra, isNull);
     expect(matches[1].fullUriString, '/123/family/456');
-    expect(matches[1].location, '/123/family/456');
+    expect(matches[1].subloc, '/123/family/456');
     expect(matches[1].encodedParams.length, 2);
     expect(matches[1].encodedParams['uid'], '123');
     expect(matches[1].encodedParams['fid'], '456');
@@ -257,10 +257,10 @@ void main() {
 
     expect(matches.length, 2);
     expect(matches[0].fullUriString, '/');
-    expect(matches[0].location, '/');
+    expect(matches[0].subloc, '/');
 
     expect(matches[1].fullUriString, '/123/family/345');
-    expect(matches[1].location, '/123/family/345');
+    expect(matches[1].subloc, '/123/family/345');
   });
 
   test(
@@ -298,10 +298,10 @@ void main() {
 
     expect(matches.length, 2);
     expect(matches[0].fullUriString, '/');
-    expect(matches[0].location, '/');
+    expect(matches[0].subloc, '/');
 
     expect(matches[1].fullUriString, '/123/family/345');
-    expect(matches[1].location, '/123/family/345');
+    expect(matches[1].subloc, '/123/family/345');
   });
 
   test('GoRouteInformationParser throws an exception when route is malformed',

@@ -38,7 +38,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.template, '/');
+      expect(matches.first.fullpath, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
@@ -53,7 +53,7 @@ void main() {
       router.go('/');
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.template, '/');
+      expect(matches.first.fullpath, '/');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
@@ -132,7 +132,7 @@ void main() {
       router.go('/login');
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.location, '/login');
+      expect(matches.first.subloc, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
@@ -160,7 +160,7 @@ void main() {
       router.go('/login');
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.location, '/login');
+      expect(matches.first.subloc, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
@@ -183,7 +183,7 @@ void main() {
       router.go('/login/');
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.location, '/login');
+      expect(matches.first.subloc, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
@@ -199,7 +199,7 @@ void main() {
       router.go('/profile/');
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.location, '/profile/foo');
+      expect(matches.first.subloc, '/profile/foo');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
@@ -215,7 +215,7 @@ void main() {
       router.go('/profile/?bar=baz');
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.location, '/profile/foo');
+      expect(matches.first.subloc, '/profile/foo');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
@@ -239,9 +239,9 @@ void main() {
       router.go('/login');
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches.length, 2);
-      expect(matches.first.location, '/');
+      expect(matches.first.subloc, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
-      expect(matches[1].location, '/login');
+      expect(matches[1].subloc, '/login');
       expect(router.screenFor(matches[1]).runtimeType, LoginScreen);
     });
 
@@ -277,7 +277,7 @@ void main() {
       {
         final List<RouteMatch> matches = router.routerDelegate.matches.matches;
         expect(matches, hasLength(1));
-        expect(matches.first.template, '/');
+        expect(matches.first.fullpath, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
       }
 
@@ -285,9 +285,9 @@ void main() {
       {
         final List<RouteMatch> matches = router.routerDelegate.matches.matches;
         expect(matches.length, 2);
-        expect(matches.first.location, '/');
+        expect(matches.first.subloc, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
-        expect(matches[1].location, '/login');
+        expect(matches[1].subloc, '/login');
         expect(router.screenFor(matches[1]).runtimeType, LoginScreen);
       }
 
@@ -295,9 +295,9 @@ void main() {
       {
         final List<RouteMatch> matches = router.routerDelegate.matches.matches;
         expect(matches.length, 2);
-        expect(matches.first.location, '/');
+        expect(matches.first.subloc, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
-        expect(matches[1].location, '/family/f2');
+        expect(matches[1].subloc, '/family/f2');
         expect(router.screenFor(matches[1]).runtimeType, FamilyScreen);
       }
 
@@ -305,11 +305,11 @@ void main() {
       {
         final List<RouteMatch> matches = router.routerDelegate.matches.matches;
         expect(matches.length, 3);
-        expect(matches.first.location, '/');
+        expect(matches.first.subloc, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
-        expect(matches[1].location, '/family/f2');
+        expect(matches[1].subloc, '/family/f2');
         expect(router.screenFor(matches[1]).runtimeType, FamilyScreen);
-        expect(matches[2].location, '/family/f2/person/p1');
+        expect(matches[2].subloc, '/family/f2/person/p1');
         expect(router.screenFor(matches[2]).runtimeType, PersonScreen);
       }
     });
@@ -1486,7 +1486,7 @@ void main() {
       );
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.template, '/');
+      expect(matches.first.fullpath, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
@@ -1509,7 +1509,7 @@ void main() {
       await tester.pump();
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
       expect(matches, hasLength(1));
-      expect(matches.first.template, '/:id');
+      expect(matches.first.fullpath, '/:id');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 

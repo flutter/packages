@@ -86,14 +86,14 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     }
 
     // Remap the pageKey to allow any number of the same page on the stack
-    final String fullPath = match.template;
+    final String fullPath = match.fullpath;
     final int count = (_pushCounts[fullPath] ?? 0) + 1;
     _pushCounts[fullPath] = count;
     final ValueKey<String> pageKey = ValueKey<String>('$fullPath-p$count');
     final RouteMatch newPageKeyMatch = RouteMatch(
       route: match.route,
-      location: match.location,
-      template: match.template,
+      subloc: match.subloc,
+      fullpath: match.fullpath,
       encodedParams: match.encodedParams,
       queryParams: match.queryParams,
       queryParametersAll: match.queryParametersAll,

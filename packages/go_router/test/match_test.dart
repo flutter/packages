@@ -29,8 +29,8 @@ void main() {
         fail('Null match');
       }
       expect(match.route, route);
-      expect(match.location, '/users/123');
-      expect(match.template, '/users/:userId');
+      expect(match.subloc, '/users/123');
+      expect(match.fullpath, '/users/:userId');
       expect(match.encodedParams['userId'], '123');
       expect(match.queryParams['foo'], isNull);
       expect(match.queryParametersAll['bar'], <String>['baz', 'biz']);
@@ -61,8 +61,8 @@ void main() {
         fail('Null match');
       }
       expect(match.route, route);
-      expect(match.location, '/home/users/123');
-      expect(match.template, '/home/users/:userId');
+      expect(match.subloc, '/home/users/123');
+      expect(match.fullpath, '/home/users/:userId');
       expect(match.encodedParams['userId'], '123');
       expect(match.queryParams['foo'], 'bar');
       expect(match.extra, const _Extra('foo'));
