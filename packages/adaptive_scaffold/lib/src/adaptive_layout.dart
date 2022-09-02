@@ -50,16 +50,16 @@ enum _SlotIds {
 ///   primaryNavigation: SlotLayout(
 ///     config: {
 ///       Breakpoints.small: SlotLayout.from(
-///         key: const Key('Small Primary Navigation'),
+///         key: const Key('Primary Navigation Small'),
 ///         builder: (_) => const SizedBox.shrink(),
 ///       ),
 ///       Breakpoints.medium: SlotLayout.from(
 ///         inAnimation: leftOutIn,
-///         key: const Key('Medium Primary Navigation'),
+///         key: const Key('Primary Navigation Medium'),
 ///         builder: (_) => AdaptiveScaffold.toNavigationRail(destinations: destinations),
 ///       ),
 ///       Breakpoints.large: SlotLayout.from(
-///         key: const Key('Large Primary Navigation'),
+///         key: const Key('Primary Navigation Large'),
 ///         inAnimation: leftOutIn,
 ///         builder: (_) => AdaptiveScaffold.toNavigationRail(extended: true, destinations: destinations),
 ///       ),
@@ -68,14 +68,14 @@ enum _SlotIds {
 ///   body: SlotLayout(
 ///     config: {
 ///       Breakpoints.small: SlotLayout.from(
-///         key: const Key('Small Body'),
+///         key: const Key('Body Small'),
 ///         builder: (_) => ListView.builder(
 ///           itemCount: children.length,
 ///           itemBuilder: (_, idx) => children[idx]
 ///         ),
 ///       ),
 ///       Breakpoints.medium: SlotLayout.from(
-///         key: const Key('Medium Body'),
+///         key: const Key('Body Medium'),
 ///         builder: (_) => GridView.count(
 ///           crossAxisCount: 2,
 ///           children: children
@@ -86,7 +86,7 @@ enum _SlotIds {
 ///   bottomNavigation: SlotLayout(
 ///     config: {
 ///       Breakpoints.small: SlotLayout.from(
-///         key: const Key('Small Bottom Navigation'),
+///         key: const Key('Bottom Navigation Small'),
 ///         inAnimation: bottomToTop,
 ///         builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
 ///       ),
