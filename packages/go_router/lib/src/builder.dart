@@ -57,7 +57,7 @@ class RouteBuilder {
     try {
       return tryBuild(
           context, matchList, pop, routerNeglect, configuration.navigatorKey);
-    } on RouteBuilderError catch (e) {
+    } on _RouteBuilderError catch (e) {
       return _buildErrorNavigator(
           context,
           e,
@@ -70,7 +70,7 @@ class RouteBuilder {
   /// Builds the top-level Navigator by invoking the build method on each
   /// matching route.
   ///
-  /// Throws a [RouteBuilderError].
+  /// Throws a [_RouteBuilderError].
   @visibleForTesting
   Widget tryBuild(
     BuildContext context,
@@ -115,7 +115,7 @@ class RouteBuilder {
       _buildRecursive(context, matchList, 0, onPop, routerNeglect, keyToPage,
           params, navigatorKey);
       return keyToPage[navigatorKey]!;
-    } on RouteBuilderError catch (e) {
+    } on _RouteBuilderError catch (e) {
       return <Page<dynamic>>[
         _buildErrorPage(context, e, matchList.location),
       ];
@@ -138,7 +138,7 @@ class RouteBuilder {
     final RouteMatch match = matchList.matches[startIndex];
 
     if (match.error != null) {
-      throw RouteBuilderError('Match error found during build phase',
+      throw _RouteBuilderError('Match error found during build phase',
           exception: match.error);
     }
 
@@ -265,7 +265,7 @@ class RouteBuilder {
           page = pageBuilder(context, state, child);
         }
       } else {
-        throw RouteBuilderException(
+        throw _RouteBuilderException(
             'Expected a child widget when building a ShellRoute');
       }
     }
@@ -287,33 +287,33 @@ class RouteBuilder {
     final RouteBase route = match.route;
 
     if (route == null) {
-      throw RouteBuilderError('No route found for match: $match');
+      throw _RouteBuilderError('No route found for match: $match');
     }
 
     if (route is GoRoute) {
       final GoRouterWidgetBuilder? builder = route.builder;
 
       if (builder == null) {
-        throw RouteBuilderError('No routeBuilder provided to GoRoute: $route');
+        throw _RouteBuilderError('No routeBuilder provided to GoRoute: $route');
       }
 
       return builder(context, state);
     } else if (route is ShellRoute) {
       if (childWidget == null) {
-        throw RouteBuilderException(
+        throw _RouteBuilderException(
             'Attempt to build ShellRoute without a child widget');
       }
 
       final ShellRouteBuilder? builder = route.builder;
 
       if (builder == null) {
-        throw RouteBuilderError('No builder provided to ShellRoute: $route');
+        throw _RouteBuilderError('No builder provided to ShellRoute: $route');
       }
 
       return builder(context, state, childWidget);
     }
 
-    throw RouteBuilderException('Unsupported route type $route');
+    throw _RouteBuilderException('Unsupported route type $route');
   }
 
   _PageBuilderForAppType? _pageBuilderForAppType;
@@ -388,7 +388,7 @@ class RouteBuilder {
       );
 
   /// Builds a Navigator containing an error page.
-  Widget _buildErrorNavigator(BuildContext context, RouteBuilderError e, Uri uri,
+  Widget _buildErrorNavigator(BuildContext context, _RouteBuilderError e, Uri uri,
       VoidCallback pop, GlobalKey<NavigatorState> navigatorKey) {
     return _buildNavigator(
       pop,
@@ -402,7 +402,7 @@ class RouteBuilder {
   /// Builds a an error page.
   Page<void> _buildErrorPage(
     BuildContext context,
-    RouteBuilderError error,
+    _RouteBuilderError error,
     Uri uri,
   ) {
     final GoRouterState state = GoRouterState(
@@ -443,9 +443,9 @@ typedef _PageBuilderForAppType = Page<void> Function({
 
 /// An error that occurred while building the app's UI based on the route
 /// matches.
-class RouteBuilderError extends Error {
-  /// Constructs a [RouteBuilderError].
-  RouteBuilderError(this.message, {this.exception});
+class _RouteBuilderError extends Error {
+  /// Constructs a [_RouteBuilderError].
+  _RouteBuilderError(this.message, {this.exception});
 
   /// The error message.
   final String message;
@@ -461,9 +461,9 @@ class RouteBuilderError extends Error {
 
 /// An error that occurred while building the app's UI based on the route
 /// matches.
-class RouteBuilderException implements Exception {
-  /// Constructs a [RouteBuilderException].
-  RouteBuilderException(this.message, {this.exception});
+class _RouteBuilderException implements Exception {
+  /// Constructs a [_RouteBuilderException].
+  _RouteBuilderException(this.message, {this.exception});
 
   /// The error message.
   final String message;
