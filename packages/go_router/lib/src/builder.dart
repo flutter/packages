@@ -110,7 +110,7 @@ class RouteBuilder {
       GlobalKey<NavigatorState> navigatorKey) {
     try {
       final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>> keyToPage =
-      <GlobalKey<NavigatorState>, List<Page<dynamic>>>{};
+          <GlobalKey<NavigatorState>, List<Page<dynamic>>>{};
       final Map<String, String> params = <String, String>{};
       _buildRecursive(context, matchList, 0, onPop, routerNeglect, keyToPage,
           params, navigatorKey);
@@ -159,27 +159,41 @@ class RouteBuilder {
       keyToPages.putIfAbsent(goRouteNavKey, () => <Page<dynamic>>[]).add(page);
 
       _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
-          keyToPages, newParams, goRouteNavKey);
+          keyToPages, newParams, navigatorKey);
     } else if (route is ShellRoute) {
-      final Map<GlobalKey<NavigatorState>, List<Page<dynamic>>>
-          keyToPagesForSubRoutes =
-          <GlobalKey<NavigatorState>, List<Page<dynamic>>>{};
-      _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
-          keyToPagesForSubRoutes, newParams, route.navigatorKey);
-      final Widget child = _buildNavigator(
-          pop,
-          keyToPagesForSubRoutes[route.navigatorKey] ?? <Page<dynamic>>[],
-          route.navigatorKey);
+      // The key for the Navigator that will display this ShellRoute's page.
+      final GlobalKey<NavigatorState> parentNavigatorKey = navigatorKey;
 
+      // The key to provide to the ShellRoute's Navigator.
+      final GlobalKey<NavigatorState> shellNavigatorKey = route.navigatorKey;
+
+      // Add an entry for the parent navigator if none exists.
+      keyToPages.putIfAbsent(parentNavigatorKey, () => <Page<dynamic>>[]);
+
+      // Add an entry for the shell route's navigator
+      keyToPages.putIfAbsent(shellNavigatorKey, () => <Page<dynamic>>[]);
+
+      // Calling _buildRecursive can result in adding pages to the
+      // parentNavigatorKey entry's list. Store the current length so
+      // that the page for this ShellRoute is placed at the right index.
+      final int shellPageIdx = keyToPages[parentNavigatorKey]!.length;
+
+      // Build the remaining pages
+      _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
+          keyToPages, newParams, shellNavigatorKey);
+
+      // Build the Navigator
+      final Widget child = _buildNavigator(
+          pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey);
+
+      // Build the Page for this route
       final Page<dynamic> page =
           buildPageForRoute(context, state, match, child: child);
-      keyToPages.putIfAbsent(navigatorKey, () => <Page<dynamic>>[]).add(page);
-      // Have to merge the pages...
-      for (final GlobalKey<NavigatorState> key in keyToPagesForSubRoutes.keys) {
-        keyToPages
-            .putIfAbsent(key, () => <Page<dynamic>>[])
-            .addAll(keyToPagesForSubRoutes[key]!);
-      }
+
+      // Place the ShellRoute's Page onto the list for the parent navigator.
+      keyToPages
+          .putIfAbsent(parentNavigatorKey, () => <Page<dynamic>>[])
+          .insert(shellPageIdx, page);
     }
   }
 
