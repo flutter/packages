@@ -216,14 +216,21 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawVertices(Float32List vertices, Uint16List? indices, int? paintId) {
-    final ui.Vertices vextexData =
-        ui.Vertices.raw(ui.VertexMode.triangles, vertices, indices: indices);
+    final ui.Vertices vertexData = ui.Vertices.raw(
+      ui.VertexMode.triangles,
+      vertices,
+      indices: indices,
+    );
     ui.Paint? paint;
     if (paintId != null) {
       paint = _paints[paintId];
     }
     _canvas.drawVertices(
-        vextexData, ui.BlendMode.srcOver, paint ?? _emptyPaint);
+      vertexData,
+      ui.BlendMode.srcOver,
+      paint ?? _emptyPaint,
+    );
+    vertexData.dispose();
   }
 
   @override
