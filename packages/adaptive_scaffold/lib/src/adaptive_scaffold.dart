@@ -157,7 +157,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// The default displayed secondaryBody.
   final WidgetBuilder? secondaryBody;
 
-  /// Widget to be displayed in the seconaryBody slot at the smallest
+  /// Widget to be displayed in the secondaryBody slot at the smallest
   /// breakpoint.
   ///
   /// If nothing is entered for this property, then the default [secondaryBody]
