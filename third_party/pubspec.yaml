@@ -1,6 +1,7 @@
 name: flutter_svg
 description: An SVG rendering and widget library for Flutter, which allows painting and displaying Scalable Vector Graphics 1.1 files.
-homepage: https://github.com/dnfield/flutter_svg
+repository: https://github.com/dnfield/flutter_svg
+issue_tracker: https://github.com/dnfield/flutter_svg/issues
 version: 1.1.4
 
 dependencies:
