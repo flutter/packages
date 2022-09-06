@@ -7,9 +7,9 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 
+import '../flutter_markdown.dart';
 import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
 
 /// Signature for callbacks used by [MarkdownWidget] when the user taps a link.
@@ -271,7 +271,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   Widget build(BuildContext context, List<Widget>? children);
 
   @override
-  _MarkdownWidgetState createState() => _MarkdownWidgetState();
+  State<MarkdownWidget> createState() => _MarkdownWidgetState();
 }
 
 class _MarkdownWidgetState extends State<MarkdownWidget>
@@ -348,8 +348,9 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
     final List<GestureRecognizer> localRecognizers =
         List<GestureRecognizer>.from(_recognizers);
     _recognizers.clear();
-    for (final GestureRecognizer recognizer in localRecognizers)
+    for (final GestureRecognizer recognizer in localRecognizers) {
       recognizer.dispose();
+    }
   }
 
   @override

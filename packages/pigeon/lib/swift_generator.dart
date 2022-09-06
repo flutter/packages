@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/functional.dart';
-
 import 'ast.dart';
+import 'functional.dart';
 import 'generator_tools.dart';
 
 /// Options that control how Swift code will be generated.
@@ -243,7 +242,7 @@ String _getArgumentName(int count, NamedType argument) =>
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType argument) =>
-    _getArgumentName(count, argument) + 'Arg';
+    '${_getArgumentName(count, argument)}Arg';
 
 String _camelCase(String text) {
   final String pascal = text.split('_').map((String part) {
@@ -407,7 +406,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
       root.enums.map((Enum x) => x.name).toSet();
   final Indent indent = Indent(sink);
 
-  HostDatatype _getHostDatatype(NamedType field) {
+  HostDatatype getHostDatatype(NamedType field) {
     return getFieldHostDatatype(field, root.classes, root.enums,
         (TypeDeclaration x) => _swiftTypeForBuiltinDartType(x));
   }
@@ -454,7 +453,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
         indent.write('return ');
         indent.scoped('[', ']', () {
           for (final NamedType field in klass.fields) {
-            final HostDatatype hostDatatype = _getHostDatatype(field);
+            final HostDatatype hostDatatype = getHostDatatype(field);
             String toWriteValue = '';
             final String fieldName = field.name;
             final String nullsafe = field.type.isNullable ? '?' : '';
@@ -483,7 +482,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
 
       indent.scoped('{', '}', () {
         for (final NamedType field in klass.fields) {
-          final HostDatatype hostDatatype = _getHostDatatype(field);
+          final HostDatatype hostDatatype = getHostDatatype(field);
 
           final String mapValue = 'map["${field.name}"]';
           final String fieldType = _swiftTypeForDartType(field.type);

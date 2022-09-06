@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert' show json;
 import 'dart:io' as io;
@@ -89,7 +91,7 @@ class BenchmarkServer {
 
     if (!_processManager.canRun('flutter')) {
       throw Exception(
-          'flutter executable is not runnable. Make sure it\'s in the PATH.');
+          "flutter executable is not runnable. Make sure it's in the PATH.");
     }
 
     final io.ProcessResult buildResult = await _processManager.run(
@@ -160,7 +162,7 @@ class BenchmarkServer {
                 traceSummary?.averageTotalUIFrameTime.inMicroseconds;
             profile['scoreKeys'] ??=
                 <dynamic>[]; // using dynamic for consistency with JSON
-            profile['scoreKeys'].add('totalUiFrame.average');
+            (profile['scoreKeys'] as List<dynamic>).add('totalUiFrame.average');
             latestPerformanceTrace = null;
           }
           collectedProfiles.add(profile);
@@ -191,7 +193,8 @@ class BenchmarkServer {
         } else if (request.requestedUri.path.endsWith('/next-benchmark')) {
           if (benchmarks == null) {
             benchmarks =
-                (json.decode(await request.readAsString())).cast<String>();
+                (json.decode(await request.readAsString()) as List<dynamic>)
+                    .cast<String>();
             benchmarkIterator = benchmarks!.iterator;
           }
           if (benchmarkIterator.moveNext()) {
@@ -244,8 +247,6 @@ class BenchmarkServer {
       final ChromeOptions options = ChromeOptions(
         url: 'http://localhost:$benchmarkServerPort/index.html',
         userDataDirectory: userDataDir,
-        windowHeight: 1024,
-        windowWidth: 1024,
         headless: headless,
         debugPort: chromeDebugPort,
       );
@@ -272,17 +273,18 @@ class BenchmarkServer {
       for (final Map<String, dynamic> profile in profiles) {
         final String benchmarkName = profile['name'];
         if (benchmarkName.isEmpty) {
-          throw 'Benchmark name is empty';
+          throw StateError('Benchmark name is empty');
         }
 
         final List<String> scoreKeys = List<String>.from(profile['scoreKeys']);
         if (scoreKeys == null || scoreKeys.isEmpty) {
-          throw 'No score keys in benchmark "$benchmarkName"';
+          throw StateError('No score keys in benchmark "$benchmarkName"');
         }
         for (final String scoreKey in scoreKeys) {
           if (scoreKey == null || scoreKey.isEmpty) {
-            throw 'Score key is empty in benchmark "$benchmarkName". '
-                'Received [${scoreKeys.join(', ')}]';
+            throw StateError(
+                'Score key is empty in benchmark "$benchmarkName". '
+                'Received [${scoreKeys.join(', ')}]');
           }
         }
 

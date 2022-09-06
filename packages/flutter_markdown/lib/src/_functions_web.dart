@@ -63,7 +63,7 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
           MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
       break;
     case MarkdownStyleSheetBaseTheme.material:
-    default:
+    default: // ignore: no_default_cases
       result = MarkdownStyleSheet.fromTheme(Theme.of(context));
   }
 

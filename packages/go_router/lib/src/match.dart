@@ -18,10 +18,11 @@ class RouteMatch {
     required this.fullpath,
     required this.encodedParams,
     required this.queryParams,
+    required this.queryParametersAll,
     required this.extra,
     required this.error,
     this.pageKey,
-  })  : fullUriString = _addQueryParams(subloc, queryParams),
+  })  : fullUriString = _addQueryParams(subloc, queryParametersAll),
         assert(subloc.startsWith('/')),
         assert(Uri.parse(subloc).queryParameters.isEmpty),
         assert(fullpath.startsWith('/')),
@@ -41,6 +42,7 @@ class RouteMatch {
     required String parentSubloc, // e.g. /family/f2
     required String fullpath, // e.g. /family/:fid/person/:pid
     required Map<String, String> queryParams,
+    required Map<String, List<String>> queryParametersAll,
     required Object? extra,
   }) {
     assert(!route.path.contains('//'));
@@ -59,6 +61,7 @@ class RouteMatch {
       fullpath: fullpath,
       encodedParams: encodedParams,
       queryParams: queryParams,
+      queryParametersAll: queryParametersAll,
       extra: extra,
       error: null,
     );
@@ -76,8 +79,34 @@ class RouteMatch {
   /// Parameters for the matched route, URI-encoded.
   final Map<String, String> encodedParams;
 
-  /// Query parameters for the matched route.
+  /// The URI query split into a map according to the rules specified for FORM
+  /// post in the [HTML 4.01 specification section
+  /// 17.13.4](https://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4
+  /// "HTML 4.01 section 17.13.4").
+  ///
+  /// If a key occurs more than once in the query string, it is mapped to an
+  /// arbitrary choice of possible value.
+  ///
+  /// If the request is `a/b/?q1=v1&q2=v2&q2=v3`, then [queryParameter] will be
+  /// `{q1: 'v1', q2: 'v2'}`.
+  ///
+  /// See also
+  /// * [queryParametersAll] that can provide a map that maps keys to all of
+  ///   their values.
   final Map<String, String> queryParams;
+
+  /// Returns the URI query split into a map according to the rules specified
+  /// for FORM post in the [HTML 4.01 specification section
+  /// 17.13.4](https://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4
+  /// "HTML 4.01 section 17.13.4").
+  ///
+  /// Keys are mapped to lists of their values. If a key occurs only once, its
+  /// value is a singleton list. If a key occurs with no value, the empty string
+  /// is used as the value for that occurrence.
+  ///
+  /// If the request is `a/b/?q1=v1&q2=v2&q2=v3`, then [queryParameterAll] with
+  /// be `{q1: ['v1'], q2: ['v2', 'v3']}`.
+  final Map<String, List<String>> queryParametersAll;
 
   /// An extra object to pass along with the navigation.
   final Object? extra;
@@ -91,12 +120,14 @@ class RouteMatch {
   /// The full uri string
   final String fullUriString; // e.g. /family/12?query=14
 
-  static String _addQueryParams(String loc, Map<String, String> queryParams) {
+  static String _addQueryParams(
+      String loc, Map<String, dynamic> queryParametersAll) {
     final Uri uri = Uri.parse(loc);
     assert(uri.queryParameters.isEmpty);
     return Uri(
             path: uri.path,
-            queryParameters: queryParams.isEmpty ? null : queryParams)
+            queryParameters:
+                queryParametersAll.isEmpty ? null : queryParametersAll)
         .toString();
   }
 

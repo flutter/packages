@@ -306,7 +306,7 @@ String _getArgumentName(int count, NamedType argument) =>
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType argument) =>
-    _getArgumentName(count, argument) + 'Arg';
+    '${_getArgumentName(count, argument)}Arg';
 
 /// Writes the code for a flutter [Api], [api].
 /// Example:
@@ -503,7 +503,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     indent.writeln('import java.util.HashMap;');
   }
 
-  String _camelToSnake(String camelCase) {
+  String camelToSnake(String camelCase) {
     final RegExp regex = RegExp('([a-z])([A-Z]+)');
     return camelCase
         .replaceAllMapped(regex, (Match m) => '${m[1]}_${m[2]}')
@@ -516,7 +516,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       int index = 0;
       for (final String member in anEnum.members) {
         indent.writeln(
-            '${_camelToSnake(member)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
+            '${camelToSnake(member)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
         index++;
       }
       indent.writeln('');

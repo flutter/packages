@@ -1,3 +1,7 @@
+## 0.6.10+5
+
+* Fixes lint warnings.
+
 ## 0.6.10+4
 
 * Updates text theme parameters to avoid deprecation issues.

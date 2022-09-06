@@ -65,7 +65,7 @@ class _ExampleState extends State<Example> {
         FlutterError.reportError(FlutterErrorDetails(exception: e, stack: stack));
       }
     }
-    print('Fetching: $urlPrefix/$nextFile');
+    print('Fetching: $urlPrefix/$nextFile'); // ignore: avoid_print
     final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse('$urlPrefix/$nextFile'))).close();
     await currentFile.writeAsBytes(await client.expand((List<int> chunk) => chunk).toList());
     await settingsFile.writeAsString(nextFile);

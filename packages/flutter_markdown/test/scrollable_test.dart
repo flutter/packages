@@ -15,7 +15,7 @@ void defineTests() {
       'code block',
       (WidgetTester tester) async {
         const String data =
-            '```\nvoid main() {\n  print(\'Hello World!\');\n}\n```';
+            "```\nvoid main() {\n  print('Hello World!');\n}\n```";
 
         await tester.pumpWidget(
           boilerplate(

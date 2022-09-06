@@ -136,6 +136,6 @@ class FakeProcessManager extends Fake implements ProcessManager {
     Encoding stdoutEncoding = systemEncoding,
     Encoding stderrEncoding = systemEncoding,
   }) {
-    return ProcessResult(0, 0, expected[command[1]]!, '');
+    return ProcessResult(0, 0, expected[command[1]], '');
   }
 }
