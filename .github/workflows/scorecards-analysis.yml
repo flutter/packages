@@ -1,9 +1,8 @@
 name: Scorecards supply-chain security
 on:
-  # Only the default branch is supported.
-  branch_protection_rule:
   push:
-    branches: [ main ]
+    branches:
+    - main
 
 # Declare default permissions as read only.
 permissions: read-all

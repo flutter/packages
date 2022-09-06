@@ -22,9 +22,6 @@
 'p: flutter_template_images':
   - packages/flutter_template_images/**/*
 
-'p: fuchsia_ctl':
-  - packages/fuchsia_ctl/**/*
-
 'p: go_router':
   - packages/go_router/**/*
 

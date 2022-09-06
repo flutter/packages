@@ -38,7 +38,7 @@ void main() {
       ),
     );
 
-    // Only the visible tiles have ben laid out.
+    // Only the visible tiles have been laid out.
     expect(find.text('Index 0'), findsOneWidget);
     expect(tester.getTopLeft(find.text('Index 0')), Offset.zero);
     expect(find.text('Index 1'), findsOneWidget);
@@ -69,7 +69,7 @@ void main() {
       ),
     );
 
-    // Only the visible tiles have ben laid out, up to itemCount.
+    // Only the visible tiles have been laid out, up to itemCount.
     expect(find.text('Index 0'), findsOneWidget);
     expect(tester.getTopLeft(find.text('Index 0')), Offset.zero);
     expect(find.text('Index 1'), findsOneWidget);
@@ -97,7 +97,7 @@ void main() {
       ),
     );
 
-    // Only the visible tiles have ben laid out.
+    // Only the visible tiles have been laid out.
     expect(find.text('Index 0'), findsOneWidget);
     expect(tester.getTopLeft(find.text('Index 0')), Offset.zero);
     expect(find.text('Index 1'), findsOneWidget);
@@ -119,9 +119,9 @@ class TestSimpleLayout extends DynamicSliverGridLayout {
   static const double childExtent = 50.0;
 
   @override
-  SliverGridGeometry getGeometryForChildIndex(int index) {
+  DynamicSliverGridGeometry getGeometryForChildIndex(int index) {
     final double crossAxisStart = (index % crossAxisCount) * childExtent;
-    return SliverGridGeometry(
+    return DynamicSliverGridGeometry(
       scrollOffset: (index ~/ crossAxisCount) * childExtent,
       crossAxisOffset: crossAxisStart,
       mainAxisExtent: childExtent,
@@ -133,7 +133,10 @@ class TestSimpleLayout extends DynamicSliverGridLayout {
   bool reachedTargetScrollOffset(double targetOffset) => true;
 
   @override
-  SliverGridGeometry updateGeometryForChildIndex(int index, Size childSize) {
+  DynamicSliverGridGeometry updateGeometryForChildIndex(
+    int index,
+    Size childSize,
+  ) {
     return getGeometryForChildIndex(index);
   }
 }
@@ -142,7 +145,7 @@ class TestDelegate extends SliverGridDelegateWithFixedCrossAxisCount {
   TestDelegate({required super.crossAxisCount});
 
   @override
-  SliverGridLayout getLayout(SliverConstraints constraints) {
+  DynamicSliverGridLayout getLayout(SliverConstraints constraints) {
     return TestSimpleLayout(crossAxisCount: crossAxisCount);
   }
 }
