@@ -54,7 +54,6 @@ This is what the temporary generated code that the _PigeonIsolate_ executes
 looks like (see [State Diagram](#state-diagram)):
 
 ```dart
-@dart = 2.12
 import 'path/to/supplied/pigeon/file.dart'
 import 'dart:io';
 import 'dart:isolate';
