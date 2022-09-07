@@ -33,6 +33,7 @@ class Method extends Node {
     this.offset,
     this.objcSelector = '',
     this.taskQueueType = TaskQueueType.serial,
+    this.documentationComments,
   });
 
   /// The name of the method.
@@ -56,11 +57,14 @@ class Method extends Node {
   /// Specifies how handlers are dispatched with respect to threading.
   TaskQueueType taskQueueType;
 
+  /// Any attached docummentation comments on the method.
+  List<String>? documentationComments;
+
   @override
   String toString() {
     final String objcSelectorStr =
         objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
-    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr)';
+    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr documentationComments:$documentationComments)';
   }
 }
 
@@ -72,6 +76,7 @@ class Api extends Node {
     required this.location,
     required this.methods,
     this.dartHostTestHandler,
+    this.documentationComments,
   });
 
   /// The name of the API.
@@ -86,9 +91,12 @@ class Api extends Node {
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
 
+  /// Any attached docummentation comments on the api.
+  List<String>? documentationComments;
+
   @override
   String toString() {
-    return '(Api name:$name location:$location methods:$methods)';
+    return '(Api name:$name location:$location methods:$methods documentationComments:$documentationComments)';
   }
 }
 
@@ -156,7 +164,12 @@ class TypeDeclaration {
 /// Represents a named entity that has a type.
 class NamedType extends Node {
   /// Parametric constructor for [NamedType].
-  NamedType({required this.name, required this.type, this.offset});
+  NamedType({
+    required this.name,
+    required this.type,
+    this.offset,
+    this.documentationComments,
+  });
 
   /// The name of the entity.
   String name;
@@ -167,9 +180,12 @@ class NamedType extends Node {
   /// The offset in the source file where the [NamedType] appears.
   int? offset;
 
+  /// Comments documenting the NamedType
+  List<String>? documentationComments;
+
   @override
   String toString() {
-    return '(NamedType name:$name type:$type)';
+    return '(NamedType name:$name type:$type documentationComments:$documentationComments)';
   }
 }
 
@@ -179,6 +195,7 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
+    this.documentationComments,
   });
 
   /// The name of the class.
@@ -187,19 +204,19 @@ class Class extends Node {
   /// All the fields contained in the class.
   List<NamedType> fields;
 
+  /// List of documentation comments
+  List<String>? documentationComments;
+
   @override
   String toString() {
-    return '(Class name:$name fields:$fields)';
+    return '(Class name:$name fields:$fields documentationComments:$documentationComments)';
   }
 }
 
 /// Represents a Enum.
 class Enum extends Node {
   /// Parametric constructor for [Enum].
-  Enum({
-    required this.name,
-    required this.members,
-  });
+  Enum({required this.name, required this.members, this.documentationComments});
 
   /// The name of the enum.
   String name;
@@ -207,9 +224,12 @@ class Enum extends Node {
   /// All of the members of the enum.
   List<String> members;
 
+  /// List of documentation comments
+  List<String>? documentationComments;
+
   @override
   String toString() {
-    return '(Enum name:$name members:$members)';
+    return '(Enum name:$name members:$members documentationComments:$documentationComments)';
   }
 }
 

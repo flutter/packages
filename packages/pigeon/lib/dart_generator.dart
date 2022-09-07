@@ -154,6 +154,9 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   _writeCodec(indent, codecName, api, root);
   indent.addln('');
   bool first = true;
+  api.documentationComments?.forEach((String documentationComment) {
+    indent.write('/// $documentationComment');
+  });
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.format('''
@@ -173,6 +176,9 @@ final BinaryMessenger? _binaryMessenger;
       } else {
         first = false;
       }
+      func.documentationComments?.forEach((String documentationComment) {
+        indent.write('/// $documentationComment');
+      });
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
@@ -264,11 +270,17 @@ void _writeFlutterApi(
   assert(api.location == ApiLocation.flutter);
   final String codecName = _getCodecName(api);
   _writeCodec(indent, codecName, api, root);
+  api.documentationComments?.forEach((String documentationComment) {
+    indent.write('/// $documentationComment');
+  });
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.writeln('static const MessageCodec<Object?> codec = $codecName();');
     indent.addln('');
     for (final Method func in api.methods) {
+      func.documentationComments?.forEach((String documentationComment) {
+        indent.write('/// $documentationComment');
+      });
       final bool isAsync = func.isAsynchronous;
       final String returnType = isAsync
           ? 'Future<${_addGenericTypesNullable(func.returnType)}>'
@@ -433,6 +445,9 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   void writeEnums() {
     for (final Enum anEnum in root.enums) {
       indent.writeln('');
+      anEnum.documentationComments?.forEach((String documentationComment) {
+        indent.write('/// $documentationComment');
+      });
       indent.write('enum ${anEnum.name} ');
       indent.scoped('{', '}', () {
         for (final String member in anEnum.members) {
@@ -455,6 +470,9 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
 
   void writeDataClass(Class klass) {
     void writeConstructor() {
+      klass.documentationComments?.forEach((String documentationComment) {
+        indent.write('/// $documentationComment');
+      });
       indent.write(klass.name);
       indent.scoped('({', '});', () {
         for (final NamedType field in klass.fields) {
@@ -696,6 +714,7 @@ void generateTestDart(
         methods: api.methods,
         location: ApiLocation.flutter,
         dartHostTestHandler: api.dartHostTestHandler,
+        documentationComments: api.documentationComments,
       );
       indent.writeln('');
       _writeFlutterApi(

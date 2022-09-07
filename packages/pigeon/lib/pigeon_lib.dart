@@ -17,6 +17,7 @@ import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
 import 'package:analyzer/dart/ast/syntactic_entity.dart'
     as dart_ast_syntactic_entity;
+import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
@@ -866,16 +867,29 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           location: ApiLocation.host,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
+          documentationComments: node.documentationComment?.tokens
+              .map((Token e) => e.toString().split('/// ')[1])
+              .toList(),
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
         _currentApi = Api(
           name: node.name2.lexeme,
           location: ApiLocation.flutter,
           methods: <Method>[],
+          documentationComments: node.documentationComment?.tokens
+              .map((Token e) => e.toString().split('/// ')[1])
+              .toList(),
         );
       }
     } else {
-      _currentClass = Class(name: node.name2.lexeme, fields: <NamedType>[]);
+      print(node.name2.lexeme);
+      _currentClass = Class(
+        name: node.name2.lexeme,
+        fields: <NamedType>[],
+        documentationComments: node.documentationComment?.tokens
+            .map((Token e) => e.toString().split('/// ')[1])
+            .toList(),
+      );
     }
 
     node.visitChildren(this);
@@ -952,6 +966,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final TaskQueueType taskQueueType =
         _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
             TaskQueueType.serial;
+    final List<String>? documentationComments = node
+        .documentationComment?.tokens
+        .map((Token e) => e.toString().split('/// ')[1])
+        .toList();
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
@@ -968,7 +986,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
           offset: node.offset,
-          taskQueueType: taskQueueType));
+          taskQueueType: taskQueueType,
+          documentationComments: documentationComments));
     } else if (_currentClass != null) {
       _errors.add(Error(
           message:
@@ -982,10 +1001,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
     _enums.add(Enum(
-        name: node.name2.lexeme,
-        members: node.constants
-            .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
-            .toList()));
+      name: node.name2.lexeme,
+      members: node.constants
+          .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
+          .toList(),
+      documentationComments: node.documentationComment?.tokens
+          .map((Token e) => e.toString().split('/// ')[1])
+          .toList(),
+    ));
     node.visitChildren(this);
     return null;
   }
@@ -1026,12 +1049,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           _currentClass!.fields.add(NamedType(
-              type: TypeDeclaration(
-                  baseName: type.name.name,
-                  isNullable: type.question != null,
-                  typeArguments: typeAnnotationsToTypeArguments(typeArguments)),
-              name: node.fields.variables[0].name2.lexeme,
-              offset: node.offset));
+            type: TypeDeclaration(
+              baseName: type.name.name,
+              isNullable: type.question != null,
+              typeArguments: typeAnnotationsToTypeArguments(typeArguments),
+            ),
+            name: node.fields.variables[0].name2.lexeme,
+            offset: node.offset,
+            documentationComments: node.documentationComment?.tokens
+                .map((Token e) => e.toString().split('/// ')[1])
+                .toList(),
+          ));
         }
       } else {
         _errors.add(Error(
