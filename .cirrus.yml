@@ -62,7 +62,7 @@ task:
     zone: us-central1-a
     namespace: default
     cpu: 4
-    memory: 8G
+    memory: 12G
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
     ### Platform-agnostic tasks ###
