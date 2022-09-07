@@ -155,7 +155,7 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   indent.addln('');
   bool first = true;
   api.documentationComments?.forEach((String documentationComment) {
-    indent.write('/// $documentationComment');
+    indent.writeln('/// $documentationComment');
   });
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
@@ -177,7 +177,7 @@ final BinaryMessenger? _binaryMessenger;
         first = false;
       }
       func.documentationComments?.forEach((String documentationComment) {
-        indent.write('/// $documentationComment');
+        indent.writeln('/// $documentationComment');
       });
       String argSignature = '';
       String sendArgument = 'null';
@@ -271,7 +271,7 @@ void _writeFlutterApi(
   final String codecName = _getCodecName(api);
   _writeCodec(indent, codecName, api, root);
   api.documentationComments?.forEach((String documentationComment) {
-    indent.write('/// $documentationComment');
+    indent.writeln('/// $documentationComment');
   });
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
@@ -279,7 +279,7 @@ void _writeFlutterApi(
     indent.addln('');
     for (final Method func in api.methods) {
       func.documentationComments?.forEach((String documentationComment) {
-        indent.write('/// $documentationComment');
+        indent.writeln('/// $documentationComment');
       });
       final bool isAsync = func.isAsynchronous;
       final String returnType = isAsync
@@ -446,7 +446,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     for (final Enum anEnum in root.enums) {
       indent.writeln('');
       anEnum.documentationComments?.forEach((String documentationComment) {
-        indent.write('/// $documentationComment');
+        indent.writeln('/// $documentationComment');
       });
       indent.write('enum ${anEnum.name} ');
       indent.scoped('{', '}', () {
@@ -470,9 +470,6 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
 
   void writeDataClass(Class klass) {
     void writeConstructor() {
-      klass.documentationComments?.forEach((String documentationComment) {
-        indent.write('/// $documentationComment');
-      });
       indent.write(klass.name);
       indent.scoped('({', '});', () {
         for (final NamedType field in klass.fields) {
@@ -573,11 +570,17 @@ pigeonMap['${field.name}'] != null
       });
     }
 
+    klass.documentationComments?.forEach((String documentationComment) {
+      indent.writeln('/// $documentationComment');
+    });
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       writeConstructor();
       indent.addln('');
       for (final NamedType field in klass.fields) {
+        field.documentationComments?.forEach((String documentationComment) {
+          indent.writeln('/// $documentationComment');
+        });
         final String datatype = _addGenericTypesNullable(field.type);
         indent.writeln('$datatype ${field.name};');
       }
