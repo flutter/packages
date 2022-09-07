@@ -269,6 +269,8 @@ void main() {
     final String code = sink.toString();
     expect(code, isNot(matches('.*doSomething(.*) ->')));
     expect(code, matches('doSomething(.*)'));
+    expect(code, isNot(matches(r'reply\(nil\)')));
+    expect(code, matches(r'reply\(wrapResult\(nil\)\)'));
   });
 
   test('gen flutter void return api', () {
