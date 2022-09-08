@@ -11,6 +11,89 @@ import 'path_utils.dart';
 import 'typedefs.dart';
 
 /// The base class for [GoRoute] and [ShellRoute].
+///
+/// Routes are defined in a tree such that parent routes must match the
+/// current location for their child route to be considered a match. For
+/// example the location "/home/user/12" matches with parent route "/home" and
+/// child route "user/:userId".
+///
+/// To create sub-routes for a route, provide them as a [GoRoute] list
+/// with the sub routes.
+///
+/// For example these routes:
+/// ```
+/// /         => HomePage()
+///   family/f1 => FamilyPage('f1')
+///     person/p2 => PersonPage('f1', 'p2') ← showing this page, Back pops ↑
+/// ```
+///
+/// Can be represented as:
+///
+/// ```
+/// final GoRouter _router = GoRouter(
+///   routes: <GoRoute>[
+///     GoRoute(
+///       path: '/',
+///       pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
+///         key: state.pageKey,
+///         child: HomePage(families: Families.data),
+///       ),
+///       routes: <GoRoute>[
+///         GoRoute(
+///           path: 'family/:fid',
+///           pageBuilder: (BuildContext context, GoRouterState state) {
+///             final Family family = Families.family(state.params['fid']!);
+///             return MaterialPage<void>(
+///               key: state.pageKey,
+///               child: FamilyPage(family: family),
+///             );
+///           },
+///           routes: <GoRoute>[
+///             GoRoute(
+///               path: 'person/:pid',
+///               pageBuilder: (BuildContext context, GoRouterState state) {
+///                 final Family family = Families.family(state.params['fid']!);
+///                 final Person person = family.person(state.params['pid']!);
+///                 return MaterialPage<void>(
+///                   key: state.pageKey,
+///                   child: PersonPage(family: family, person: person),
+///                 );
+///               },
+///             ),
+///           ],
+///         ),
+///       ],
+///     ),
+///   ],
+/// );
+///
+/// If there are multiple routes that match the location, the first match is used.
+/// To make predefined routes to take precedence over dynamic routes eg. '/:id'
+/// consider adding the dynamic route at the end of the routes
+/// For example:
+/// ```
+/// final GoRouter _router = GoRouter(
+///   routes: <GoRoute>[
+///     GoRoute(
+///       path: '/',
+///       redirect: (_) => '/family/${Families.data[0].id}',
+///     ),
+///     GoRoute(
+///       path: '/family',
+///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
+///     ),
+///     GoRoute(
+///       path: '/:username',
+///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
+///     ),
+///   ],
+/// );
+/// ```
+/// In the above example, if /family route is matched, it will be used.
+/// else /:username route will be used.
+///
+/// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
+/// for a complete runnable example.
 @immutable
 abstract class RouteBase {
   const RouteBase._({
@@ -18,89 +101,6 @@ abstract class RouteBase {
   });
 
   /// The list of child routes associated with this route.
-  ///
-  /// Routes are defined in a tree such that parent routes must match the
-  /// current location for their child route to be considered a match. For
-  /// example the location "/home/user/12" matches with parent route "/home" and
-  /// child route "user/:userId".
-  ///
-  /// To create sub-routes for a route, provide them as a [GoRoute] list
-  /// with the sub routes.
-  ///
-  /// For example these routes:
-  /// ```
-  /// /         => HomePage()
-  ///   family/f1 => FamilyPage('f1')
-  ///     person/p2 => PersonPage('f1', 'p2') ← showing this page, Back pops ↑
-  /// ```
-  ///
-  /// Can be represented as:
-  ///
-  /// ```
-  /// final GoRouter _router = GoRouter(
-  ///   routes: <GoRoute>[
-  ///     GoRoute(
-  ///       path: '/',
-  ///       pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
-  ///         key: state.pageKey,
-  ///         child: HomePage(families: Families.data),
-  ///       ),
-  ///       routes: <GoRoute>[
-  ///         GoRoute(
-  ///           path: 'family/:fid',
-  ///           pageBuilder: (BuildContext context, GoRouterState state) {
-  ///             final Family family = Families.family(state.params['fid']!);
-  ///             return MaterialPage<void>(
-  ///               key: state.pageKey,
-  ///               child: FamilyPage(family: family),
-  ///             );
-  ///           },
-  ///           routes: <GoRoute>[
-  ///             GoRoute(
-  ///               path: 'person/:pid',
-  ///               pageBuilder: (BuildContext context, GoRouterState state) {
-  ///                 final Family family = Families.family(state.params['fid']!);
-  ///                 final Person person = family.person(state.params['pid']!);
-  ///                 return MaterialPage<void>(
-  ///                   key: state.pageKey,
-  ///                   child: PersonPage(family: family, person: person),
-  ///                 );
-  ///               },
-  ///             ),
-  ///           ],
-  ///         ),
-  ///       ],
-  ///     ),
-  ///   ],
-  /// );
-  ///
-  /// If there are multiple routes that match the location, the first match is used.
-  /// To make predefined routes to take precedence over dynamic routes eg. '/:id'
-  /// consider adding the dynamic route at the end of the routes
-  /// For example:
-  /// ```
-  /// final GoRouter _router = GoRouter(
-  ///   routes: <GoRoute>[
-  ///     GoRoute(
-  ///       path: '/',
-  ///       redirect: (_) => '/family/${Families.data[0].id}',
-  ///     ),
-  ///     GoRoute(
-  ///       path: '/family',
-  ///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
-  ///     ),
-  ///     GoRoute(
-  ///       path: '/:username',
-  ///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
-  ///     ),
-  ///   ],
-  /// );
-  /// ```
-  /// In the above example, if /family route is matched, it will be used.
-  /// else /:username route will be used.
-  ///
-  /// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
-  /// for a complete runnable example.
   final List<RouteBase> routes;
 }
 
