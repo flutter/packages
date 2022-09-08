@@ -1,3 +1,7 @@
+## 4.4.1
+
+- Fix an issue where disabling logging clears the root logger's listeners
+
 ## 4.4.0
 
 - Adds `buildPageWithState` to `GoRouteData`.
