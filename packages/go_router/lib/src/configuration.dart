@@ -147,6 +147,10 @@ class RouteConfiguration {
         if (route.routes.isNotEmpty) {
           _cacheNameToPath(fullPath, route.routes);
         }
+      } else if (route is ShellRoute) {
+        if (route.routes.isNotEmpty) {
+          _cacheNameToPath(parentFullPath, route.routes);
+        }
       }
     }
   }
