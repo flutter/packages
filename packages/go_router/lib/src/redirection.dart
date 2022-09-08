@@ -71,7 +71,15 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
     if (top == null) {
       break;
     }
-    final String? topRouteLocation = (top.route as GoRoute).redirect(
+
+    final RouteBase topRoute = top.route;
+    if (topRoute is! GoRoute) {
+      throw RedirectionException(
+          'Last RouteMatch should contain a GoRoute, but was ${topRoute.runtimeType}',
+          [matches],
+          uri);
+    }
+    final String? topRouteLocation = topRoute.redirect(
       GoRouterState(
         configuration,
         location: currentMatches.location.toString(),
@@ -102,6 +110,27 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
 class RedirectionError extends Error implements UnsupportedError {
   /// RedirectionError constructor.
   RedirectionError(this.message, this.matches, this.location);
+
+  /// The matches that were found while processing redirects.
+  final List<RouteMatchList> matches;
+
+  @override
+  final String message;
+
+  /// The location that was originally navigated to, before redirection began.
+  final Uri location;
+
+  @override
+  String toString() => '${super.toString()} ${<String>[
+        ...matches.map(
+            (RouteMatchList routeMatches) => routeMatches.location.toString()),
+      ].join(' => ')}';
+}
+
+/// A configuration exception detected while processing redirects.
+class RedirectionException implements Exception {
+  /// RedirectionException constructor.
+  RedirectionException(this.message, this.matches, this.location);
 
   /// The matches that were found while processing redirects.
   final List<RouteMatchList> matches;
