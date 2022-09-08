@@ -498,6 +498,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       paragraph,
       ui.Offset(textConfig.dx, textConfig.dy - paragraph.alphabeticBaseline),
     );
+    paragraph.dispose();
     if (textConfig.transform != null) {
       _canvas.restore();
     }
