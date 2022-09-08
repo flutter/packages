@@ -114,7 +114,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
   final String apiName = api.name;
 
   indent.writeln(
-      '/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/');
+      '/** Generated interface from Pigeon that represents a handler of messages from Flutter. */');
   indent.write('interface $apiName ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
@@ -258,7 +258,7 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
-      '/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.*/');
+      '/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */');
   final String apiName = api.name;
   indent.writeln('@Suppress("UNCHECKED_CAST")');
   indent.write('class $apiName(private val binaryMessenger: BinaryMessenger) ');
@@ -332,8 +332,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // longs in Pigeon with Kotlin.
     if (type.baseName == 'int') {
       return '$value.let { if (it is Int) it.toLong() else it as$castUnwrap Long }';
-    } else
+    } else {
       return '$value as$castUnwrap ${_kotlinTypeForDartType(type)}';
+    }
   }
 }
 
@@ -345,20 +346,22 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 
 String _kotlinTypeForBuiltinGenericDartType(TypeDeclaration type) {
   if (type.typeArguments.isEmpty) {
-    if (type.baseName == 'List') {
-      return 'List<Any?>';
-    } else if (type.baseName == 'Map') {
-      return 'Map<Any, Any?>';
-    } else {
-      return 'Any';
+    switch (type.baseName) {
+      case 'List':
+        return 'List<Any?>';
+      case 'Map':
+        return 'Map<Any, Any?>';
+      default:
+        return 'Any';
     }
   } else {
-    if (type.baseName == 'List') {
-      return 'List<${_nullsafeKotlinTypeForDartType(type.typeArguments.first)}>';
-    } else if (type.baseName == 'Map') {
-      return 'Map<${_nullsafeKotlinTypeForDartType(type.typeArguments.first)}, ${_nullsafeKotlinTypeForDartType(type.typeArguments.last)}>';
-    } else {
-      return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
+    switch (type.baseName) {
+      case 'List':
+        return 'List<${_nullsafeKotlinTypeForDartType(type.typeArguments.first)}>';
+      case 'Map':
+        return 'Map<${_nullsafeKotlinTypeForDartType(type.typeArguments.first)}, ${_nullsafeKotlinTypeForDartType(type.typeArguments.last)}>';
+      default:
+        return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
     }
   }
 }
