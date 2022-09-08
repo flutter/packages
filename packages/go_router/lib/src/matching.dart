@@ -72,14 +72,14 @@ class RouteMatchList {
   void pop() {
     _matches.removeLast();
 
-    _assertNotEmpty();
+    _debugAssertNotEmpty();
 
     // Also pop ShellRoutes when there are no subsequent route matches
     if (_matches.last.route is ShellRoute) {
       _matches.removeLast();
     }
 
-    _assertNotEmpty();
+    _debugAssertNotEmpty();
   }
 
   /// Returns true if [pop] can safely be called.
@@ -103,7 +103,7 @@ class RouteMatchList {
   /// Returns the error that this match intends to display.
   Exception? get error => matches.first.error;
 
-  void _assertNotEmpty() {
+  void _debugAssertNotEmpty() {
     assert(
         _matches.isNotEmpty,
         'You have popped the last page off of the stack,'
