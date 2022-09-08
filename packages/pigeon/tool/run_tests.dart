@@ -9,7 +9,7 @@
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Process, Platform, exit, stderr, stdout;
+import 'dart:io' show File, exit, Process, Platform, stderr, stdout;
 import 'dart:math';
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
