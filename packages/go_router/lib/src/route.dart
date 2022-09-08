@@ -318,9 +318,11 @@ class GoRoute extends RouteBase {
       const SizedBox.shrink();
 }
 
-/// A route that displays a UI shell around the matching child route. Builds
-/// a new Navigator that is used to display any matching sub-routes, instead
-/// of placing them on the root Navigator.
+/// A route that displays a UI shell around the matching child route.
+///
+/// When a ShellRoute is added to the list of routes on GoRouter or GoRoute, a
+/// new Navigator that is used to display any matching sub-routes, instead of
+/// placing them on the root Navigator.
 ///
 /// To display a child route on a different Navigator, provide it with a
 /// [parentNavigatorKey] that matches the key provided to either the [GoRouter] or
