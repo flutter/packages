@@ -127,7 +127,7 @@ displayed and the entrance animation and exit animation.
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
-            key: const Key('Primary Navigation'),
+            key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               leading: const Icon(Icons.menu),
               destinations: destinations
@@ -136,7 +136,7 @@ displayed and the entrance animation and exit animation.
             ),
           ),
           Breakpoints.large: SlotLayout.from(
-            key: const Key('Primary Navigation 1'),
+            key: const Key('Primary Navigation Large'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               extended: true,
@@ -163,14 +163,14 @@ displayed and the entrance animation and exit animation.
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
-            key: const Key('Body'),
+            key: const Key('Body Small'),
             builder: (_) => ListView.builder(
               itemCount: children.length,
               itemBuilder: (BuildContext context, int index) => children[index],
             ),
           ),
           Breakpoints.mediumAndUp: SlotLayout.from(
-            key: const Key('Body 1'),
+            key: const Key('Body Medium'),
             builder: (_) =>
                 GridView.count(crossAxisCount: 2, children: children),
           )
@@ -181,7 +181,7 @@ displayed and the entrance animation and exit animation.
       bottomNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
-            key: const Key('Bottom Navigation'),
+            key: const Key('Bottom Navigation Small'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
             builder: (_) => BottomNavigationBarTheme(
