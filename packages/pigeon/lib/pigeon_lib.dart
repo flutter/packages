@@ -868,7 +868,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
           documentationComments: node.documentationComment?.tokens
-              .map((Token e) => e.toString().split('/// ')[1])
+              .map((Token e) => e.toString().substring(4))
               .toList(),
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
@@ -877,7 +877,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           location: ApiLocation.flutter,
           methods: <Method>[],
           documentationComments: node.documentationComment?.tokens
-              .map((Token e) => e.toString().split('/// ')[1])
+              .map((Token e) => e.toString().substring(4))
               .toList(),
         );
       }
@@ -887,7 +887,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         name: node.name2.lexeme,
         fields: <NamedType>[],
         documentationComments: node.documentationComment?.tokens
-            .map((Token e) => e.toString().split('/// ')[1])
+            .map((Token e) => e.toString().substring(4))
             .toList(),
       );
     }
@@ -968,7 +968,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             TaskQueueType.serial;
     final List<String>? documentationComments = node
         .documentationComment?.tokens
-        .map((Token e) => e.toString().split('/// ')[1])
+        .map((Token e) => e.toString().substring(4))
         .toList();
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
@@ -1006,7 +1006,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
           .toList(),
       documentationComments: node.documentationComment?.tokens
-          .map((Token e) => e.toString().split('/// ')[1])
+          .map((Token e) => e.toString().substring(4))
           .toList(),
     ));
     node.visitChildren(this);
@@ -1057,7 +1057,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             name: node.fields.variables[0].name2.lexeme,
             offset: node.offset,
             documentationComments: node.documentationComment?.tokens
-                .map((Token e) => e.toString().split('/// ')[1])
+                .map((Token e) => e.toString().substring(4))
                 .toList(),
           ));
         }
