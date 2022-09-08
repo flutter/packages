@@ -183,9 +183,8 @@ task:
     - name: android-platform_tests
       env:
         matrix:
-          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 3"
-          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 3"
-          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 3"
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 2"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 2"
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
