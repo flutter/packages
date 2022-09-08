@@ -7,21 +7,11 @@ import 'package:go_router/src/logging.dart';
 import 'package:logging/logging.dart';
 
 void main() {
-  // Reset the logger before each test.
-  setUp(() {
-    setLogging();
-  });
-  test('setLogging enables log messages on the logger', () {
-    log.onRecord.listen(expectAsync1<void, LogRecord>((LogRecord r) {}));
-
+  test('setLogging does not clear listeners', () {
+    log.onRecord
+        .listen(expectAsync1<void, LogRecord>((LogRecord r) {}, count: 2));
     setLogging(enabled: true);
     log.info('message');
-  });
-
-  test('setLogging disables log messages on the logger', () {
-    log.onRecord
-        .listen(expectAsync1<void, LogRecord>((LogRecord r) {}, count: 0));
-
     setLogging();
     log.info('message');
   });
