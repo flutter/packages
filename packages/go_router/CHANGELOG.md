@@ -1,8 +1,13 @@
-## 4.4.0
+## 4.5.0
 
 - Adds ShellRoute for nested navigation support (flutter/flutter#99126)
 - Adds `parentNavigatorKey` to GoRoute, which specifies the Navigator to place that
   route's Page onto.
+  
+## 4.4.0
+
+- Adds `buildPageWithState` to `GoRouteData`.
+- `GoRouteData.buildPage` is now deprecated in favor of `GoRouteData.buildPageWithState`.
 
 ## 4.3.0
 
