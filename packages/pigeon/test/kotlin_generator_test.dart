@@ -601,7 +601,7 @@ void main() {
     expect(code, contains('TWO(1)'));
   });
 
-  Iterable<String> _makeIterable(String string) sync* {
+  Iterable<String> makeIterable(String string) sync* {
     yield string;
   }
 
@@ -609,7 +609,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final KotlinOptions swiftOptions = KotlinOptions(
-      copyrightHeader: _makeIterable('hello world'),
+      copyrightHeader: makeIterable('hello world'),
     );
     generateKotlin(swiftOptions, root, sink);
     final String code = sink.toString();

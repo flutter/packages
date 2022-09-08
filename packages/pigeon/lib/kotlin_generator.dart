@@ -406,7 +406,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
       root.enums.map((Enum x) => x.name).toSet();
   final Indent indent = Indent(sink);
 
-  HostDatatype _getHostDatatype(NamedType field) {
+  HostDatatype getHostDatatype(NamedType field) {
     return getFieldHostDatatype(field, root.classes, root.enums,
         (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
   }
@@ -472,7 +472,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
         indent.writeln('val map = mutableMapOf<String, Any?>()');
 
         for (final NamedType field in klass.fields) {
-          final HostDatatype hostDatatype = _getHostDatatype(field);
+          final HostDatatype hostDatatype = getHostDatatype(field);
           String toWriteValue = '';
           final String fieldName = field.name;
           final String prefix = field.type.isNullable ? 'it' : fieldName;
@@ -508,7 +508,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
 
         indent.scoped('{', '}', () {
           for (final NamedType field in klass.fields) {
-            final HostDatatype hostDatatype = _getHostDatatype(field);
+            final HostDatatype hostDatatype = getHostDatatype(field);
 
             // The StandardMessageCodec can give us [Integer, Long] for
             // a Dart 'int'.  To keep things simple we just use 64bit
