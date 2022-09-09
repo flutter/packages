@@ -761,8 +761,6 @@ class MarkdownBuilder implements md.NodeVisitor {
         break;
       case 'li':
         break;
-      case 'li':
-        break;
     }
     return WrapAlignment.start;
   }
