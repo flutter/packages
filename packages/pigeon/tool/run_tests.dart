@@ -9,7 +9,16 @@
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Platform, Process, exit, stderr, stdout;
+import 'dart:io'
+    show
+        Directory,
+        File,
+        Platform,
+        Process,
+        ProcessResult,
+        exit,
+        stderr,
+        stdout;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 import 'package:pigeon/functional.dart';
@@ -49,6 +58,9 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'ios_swift_unittests': _TestInfo(
       function: _runIosSwiftUnitTests,
       description: 'Unit tests on generated Swift code.'),
+  'mac_swift_unittests': _TestInfo(
+      function: _runMacOSSwiftUnitTests,
+      description: 'Unit tests on generated Swift code on macOS.'),
   'mock_handler_tests': _TestInfo(
       function: _runMockHandlerTests,
       description: 'Unit tests on generated Dart mock handler code.'),
@@ -188,6 +200,31 @@ Future<int> _runIosE2eTests() async {
 
 Future<int> _runIosUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
+}
+
+Future<int> _runMacOSSwiftUnitTests() async {
+  const String macosSwiftUnitTestsPath =
+      './platform_tests/macos_swift_unit_tests';
+  final int generateCode = await _runPigeon(
+    input: '$macosSwiftUnitTestsPath/pigeons/messages.dart',
+    iosSwiftOut: '$macosSwiftUnitTestsPath/macos/Classes/messages.g.swift',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+  final Directory oldCwd = Directory.current;
+  try {
+    Directory.current = Directory('$macosSwiftUnitTestsPath/macos');
+    final ProcessResult lintResult =
+        Process.runSync('pod', <String>['lib', 'lint']);
+    if (lintResult.exitCode != 0) {
+      return lintResult.exitCode;
+    }
+  } finally {
+    Directory.current = oldCwd;
+  }
+
+  return 0;
 }
 
 Future<int> _runIosSwiftUnitTests() async {

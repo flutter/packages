@@ -421,7 +421,15 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
 
   void writeImports() {
     indent.writeln('import Foundation');
-    indent.writeln('import Flutter');
+    indent.format('''
+#if os(iOS)
+import Flutter
+#elseif os(macOS)
+import FlutterMacOS
+#else
+#error("Unsupported platform.")
+#endif
+''');
   }
 
   void writeEnum(Enum anEnum) {
