@@ -11,6 +11,12 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('Colors', () {
+    final SvgParser parser = SvgParser('', const SvgTheme(), 'test_key', true);
+    expect(parser.parseColor('null'), null);
+    expect(parser.parseColor('red'), const Color.fromARGB(255, 255, 0, 0));
+  });
+
   test('Multiple matrix translates', () {
     final AffineMatrix expected = AffineMatrix.identity
         .translated(0.338957, 0.010104)
