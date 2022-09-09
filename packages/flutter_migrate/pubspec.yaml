@@ -1,0 +1,30 @@
+name: flutter_migrate
+description: A tool to migrate legacy flutter projects to modern versions.
+version: 0.0.1
+repository: https://github.com/flutter/packages/tree/main/packages/flutter_migrate
+
+environment:
+  sdk: '>=2.19.0-76.0.dev <3.0.0'
+
+dependencies:
+  args: 2.3.1
+  convert: 3.0.2
+  flutter_tools:
+    git:
+      url: https://github.com/flutter/flutter.git
+      ref: 58ec4839159ea24eafe200d9c1ff41e35f720fa0
+      path: packages/flutter_tools/
+  intl: 0.17.0
+  meta: 1.8.0
+  path: ^1.8.0
+  process: 4.2.4
+  test_api: 0.4.13
+  test_core: 0.4.17
+  vm_service: 9.3.0
+  yaml: 3.1.1
+
+dev_dependencies:
+  collection: 1.16.0
+  file: 6.1.4
+  lints: ^2.0.0
+  test: ^1.16.0
