@@ -1,3 +1,7 @@
+## 4.0.3
+
+* Adds documentation comment support for all currently supported languages.
+
 ## 4.0.2
 
 * Fixes lint warnings.
