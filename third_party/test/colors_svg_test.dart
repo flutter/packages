@@ -48,7 +48,8 @@ void main() {
         testSvgParserState.theme.currentColor);
     expect(testSvgParserState.parseColor('currentcolor'),
         testSvgParserState.theme.currentColor);
-    expect(
-        () => testSvgParserState.parseColor('invalid name'), throwsStateError);
+
+    expect(testSvgParserState.parseColor('invalid name'), null);
+    expect(testSvgParserState.parseColor('null'), null);
   });
 }

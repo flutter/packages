@@ -1,5 +1,9 @@
 # CHANGES
 
+## 1.1.5
+
+- More permissive about color strings.
+
 ## 1.1.4
 
 - Handle default image width/height properly.

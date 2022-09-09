@@ -1195,7 +1195,8 @@ BAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" x="1ex" y="0.5ex" width="2ex" height="1.5ex" /
     final DrawableRoot root = await parser.parse(svgStr);
 
     expect(root.children.length, 1);
-    final DrawableRasterImage image = root.children.first as DrawableRasterImage;
+    final DrawableRasterImage image =
+        root.children.first as DrawableRasterImage;
     expect(image.size!.width, image.image.width);
     expect(image.size!.height, image.image.height);
   });

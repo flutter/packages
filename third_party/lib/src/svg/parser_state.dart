@@ -792,7 +792,7 @@ class SvgParserState {
     this.theme,
     this._key,
     this._warningsAsErrors,
-  )
+  )   
   // ignore: unnecessary_null_comparison
   : assert(events != null),
         _eventIterator = events.iterator;
@@ -1796,7 +1796,11 @@ class SvgParserState {
       return namedColor;
     }
 
-    throw StateError('Could not parse "$colorString" as a color.');
+    // This is an error, but browsers are permissive here, so we can be too.
+    // See for example https://github.com/dnfield/flutter_svg/issues/764 - a
+    // user may be working with a network based SVG that uses the string "null"
+    // which is not part of the specification.
+    return null;
   }
 }
 
