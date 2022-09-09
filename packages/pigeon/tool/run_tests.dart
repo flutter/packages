@@ -2,12 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Script for executing the Pigeon tests
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Process, Platform, exit, stderr, stdout;
+import 'dart:io' show File, Platform, Process, exit, stderr, stdout;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 import 'package:pigeon/functional.dart';
@@ -34,7 +36,7 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
       description: 'Compilation tests on generated Dart code.'),
   'dart_unittests': _TestInfo(
       function: _runDartUnitTests,
-      description: 'Unit tests on and analysis on Pigeon\'s implementation.'),
+      description: "Unit tests on and analysis on Pigeon's implementation."),
   'flutter_unittests': _TestInfo(
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
@@ -121,7 +123,6 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
     input: 'pigeons/message.dart',
     dartOut: messagePath,
     dartTestOut: messageTestPath,
-    streamOutput: true,
   );
   if (generateTestCode != 0) {
     return generateTestCode;
@@ -400,7 +401,7 @@ Future<void> main(List<String> args) async {
     print('available tests:');
     for (final MapEntry<String, _TestInfo> info in _tests.entries) {
       final int tabCount = (4 - info.key.length / 8).toInt();
-      final String tabs = repeat('\t', tabCount).join('');
+      final String tabs = repeat('\t', tabCount).join();
       print('${info.key}$tabs- ${info.value.description}');
     }
     exit(0);

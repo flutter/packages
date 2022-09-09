@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_dynamic_calls
+
 import 'dart:convert';
 
 import 'package:gcloud/storage.dart';
@@ -82,8 +84,9 @@ class SkiaPerfPoint extends MetricPoint {
     final String? name = p.tags[kNameKey];
 
     if (githubRepo == null || gitHash == null || name == null) {
-      throw '$kGithubRepoKey, $kGitRevisionKey, $kNameKey must be set in'
-          ' the tags of $p.';
+      throw StateError(
+          '$kGithubRepoKey, $kGitRevisionKey, $kNameKey must be set in'
+          ' the tags of $p.');
     }
 
     final String subResult = p.tags[kSubResultKey] ?? kSkiaPerfValueKey;
@@ -382,7 +385,7 @@ class SkiaPerfDestination extends MetricDestination {
     final Storage storage = Storage(client, projectId);
     final String bucketName = isTesting ? kTestBucketName : kBucketName;
     if (!await storage.bucketExists(bucketName)) {
-      throw 'Bucket $bucketName does not exist.';
+      throw StateError('Bucket $bucketName does not exist.');
     }
     final SkiaPerfGcsAdaptor adaptor =
         SkiaPerfGcsAdaptor(storage.bucket(bucketName));

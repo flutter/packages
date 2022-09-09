@@ -225,7 +225,6 @@ class _MyHomePageState extends State<MyHomePage>
                   leading: ScaleTransition(
                       scale: _controller1, child: const _MediumComposeIcon()),
                   backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                  labelType: NavigationRailLabelType.none,
                   destinations: <NavigationRailDestination>[
                     slideInNavigationItem(
                       begin: -1,
@@ -288,7 +287,7 @@ class _MyHomePageState extends State<MyHomePage>
                       padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
                       child: _ItemList(
                           selected: selected,
-                          items: allItems,
+                          items: _allItems,
                           selectCard: selectCard),
                     )
                   : const _ExamplePage(),
@@ -304,7 +303,7 @@ class _MyHomePageState extends State<MyHomePage>
                     outAnimation: AdaptiveScaffold.stayOnScreen,
                     key: const Key('sBody'),
                     builder: (_) => SafeArea(
-                      child: _DetailTile(item: allItems[selected ?? 0]),
+                      child: _DetailTile(item: _allItems[selected ?? 0]),
                     ),
                   )
                 },
@@ -451,6 +450,8 @@ class _LargeComposeIcon extends StatelessWidget {
   }
 }
 
+typedef _CardSelectedCallback = void Function(int?);
+
 // ItemList creates the list of cards and the search bar.
 class _ItemList extends StatelessWidget {
   const _ItemList({
@@ -462,7 +463,7 @@ class _ItemList extends StatelessWidget {
 
   final List<_Item> items;
   final int? selected;
-  final Function selectCard;
+  final _CardSelectedCallback selectCard;
 
   @override
   Widget build(BuildContext context) {
@@ -535,7 +536,7 @@ class _ItemListTile extends StatelessWidget {
   final _Item item;
   final _Email email;
   final int? selected;
-  final Function selectCard;
+  final _CardSelectedCallback selectCard;
 
   @override
   Widget build(BuildContext context) {
@@ -545,19 +546,19 @@ class _ItemListTile extends StatelessWidget {
         // than large screens.
         // Small screens open a modal with the detail view while large screens
         // simply show the details on the secondaryBody.
-        selectCard(allItems.indexOf(item));
+        selectCard(_allItems.indexOf(item));
         if (!Breakpoints.mediumAndUp.isActive(context)) {
           Navigator.of(context).pushNamed(_ExtractRouteArguments.routeName,
               arguments: _ScreenArguments(item: item, selectCard: selectCard));
         } else {
-          selectCard(allItems.indexOf(item));
+          selectCard(_allItems.indexOf(item));
         }
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-            color: selected == allItems.indexOf(item)
+            color: selected == _allItems.indexOf(item)
                 ? const Color.fromARGB(255, 234, 222, 255)
                 : const Color.fromARGB(255, 243, 237, 247),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -863,7 +864,7 @@ class _ScreenArguments {
     required this.selectCard,
   });
   final _Item item;
-  final Function selectCard;
+  final _CardSelectedCallback selectCard;
 }
 
 class _ExtractRouteArguments extends StatelessWidget {
@@ -888,7 +889,7 @@ class _RouteDetailView extends StatelessWidget {
   }) : super(key: key);
 
   final _Item item;
-  final Function selectCard;
+  final _CardSelectedCallback selectCard;
 
   @override
   Widget build(BuildContext context) {
@@ -952,7 +953,7 @@ class _Email {
 
 /// List of items, each representing a thread of emails which will populate
 /// the different layouts.
-const List<_Item> allItems = <_Item>[
+const List<_Item> _allItems = <_Item>[
   _Item(
     title: 'Dinner Club',
     emails: <_Email>[

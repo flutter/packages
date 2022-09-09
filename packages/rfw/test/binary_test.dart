@@ -450,7 +450,7 @@ void main() {
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
     expect(value.widgets.first.initialState, isNotNull);
-    expect(value.widgets.first.initialState!, hasLength(1));
+    expect(value.widgets.first.initialState, hasLength(1));
     expect(value.widgets.first.initialState!['b'], false);
     expect(value.widgets.first.root, isA<ConstructorCall>());
     expect((value.widgets.first.root as ConstructorCall).name, 'c');

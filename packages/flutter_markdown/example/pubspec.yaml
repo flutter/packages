@@ -4,15 +4,16 @@ publish_to: none
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
-  flutter: ">=1.17.0"
+  flutter: ">=2.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
-
-dev_dependencies:
   flutter_markdown:
     path: ../
+  markdown: 5.0.0
+
+dev_dependencies:
   flutter_test:
     sdk: flutter
 

@@ -74,32 +74,32 @@ void main() {
   });
 
   test('concatenatePaths', () {
-    void _verify(String pathA, String pathB, String expected) {
+    void verify(String pathA, String pathB, String expected) {
       final String result = concatenatePaths(pathA, pathB);
       expect(result, expected);
     }
 
-    void _verifyThrows(String pathA, String pathB) {
+    void verifyThrows(String pathA, String pathB) {
       expect(
           () => concatenatePaths(pathA, pathB), throwsA(isA<AssertionError>()));
     }
 
-    _verify('/a', 'b/c', '/a/b/c');
-    _verify('/', 'b', '/b');
-    _verifyThrows('/a', '/b');
-    _verifyThrows('/a', '/');
-    _verifyThrows('/', '/');
-    _verifyThrows('/', '');
-    _verifyThrows('', '');
+    verify('/a', 'b/c', '/a/b/c');
+    verify('/', 'b', '/b');
+    verifyThrows('/a', '/b');
+    verifyThrows('/a', '/');
+    verifyThrows('/', '/');
+    verifyThrows('/', '');
+    verifyThrows('', '');
   });
 
   test('canonicalUri', () {
-    void _verify(String path, String expected) =>
+    void verify(String path, String expected) =>
         expect(canonicalUri(path), expected);
-    _verify('/a', '/a');
-    _verify('/a/', '/a');
-    _verify('/', '/');
-    _verify('/a/b/', '/a/b');
+    verify('/a', '/a');
+    verify('/a/', '/a');
+    verify('/', '/');
+    verify('/a/b/', '/a/b');
 
     expect(() => canonicalUri('::::'), throwsA(isA<FormatException>()));
     expect(() => canonicalUri(''), throwsA(anything));

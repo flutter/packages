@@ -7,8 +7,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
-import 'package:multicast_dns/src/constants.dart';
-import 'package:multicast_dns/src/packet.dart';
+import 'constants.dart';
+import 'packet.dart';
 
 /// Enumeration of support resource record types.
 abstract class ResourceRecordType {

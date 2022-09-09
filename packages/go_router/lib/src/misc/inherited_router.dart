@@ -14,10 +14,10 @@ import '../router.dart';
 class InheritedGoRouter extends InheritedWidget {
   /// Default constructor for the inherited go router.
   const InheritedGoRouter({
-    required Widget child,
+    required super.child,
     required this.goRouter,
-    Key? key,
-  }) : super(child: child, key: key);
+    super.key,
+  });
 
   /// The [GoRouter] that is made available to the widget tree.
   final GoRouter goRouter;
