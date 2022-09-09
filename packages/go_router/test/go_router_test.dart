@@ -530,6 +530,75 @@ void main() {
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B'), findsNothing);
     });
+
+    testWidgets('Handles the Android back button correctly with ShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+
+      final List<RouteBase> routes = <RouteBase>[
+        ShellRoute(
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('Shell')),
+              body: child,
+            );
+          },
+          routes: <GoRoute>[
+            GoRoute(
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen A'),
+                );
+              },
+              routes: <GoRoute>[
+                GoRoute(
+                  path: 'b',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const Scaffold(
+                      body: Text('Screen B'),
+                    );
+                  },
+                  routes: <GoRoute>[
+                    GoRoute(
+                      path: 'c',
+                      parentNavigatorKey: rootNavigatorKey,
+                      builder: (BuildContext context, GoRouterState state) {
+                        return const Scaffold(
+                          body: Text('Screen C'),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester,
+          initialLocation: '/a/b/c', navigatorKey: rootNavigatorKey);
+      expect(find.text('Shell'), findsNothing);
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen C'), findsOneWidget);
+
+      await simulateAndroidBackButton();
+      await tester.pumpAndSettle();
+      expect(find.text('Shell'), findsOneWidget);
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(find.text('Screen C'), findsNothing);
+
+      await simulateAndroidBackButton();
+      await tester.pumpAndSettle();
+      expect(find.text('Shell'), findsOneWidget);
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen C'), findsNothing);
+    });
   });
 
   group('named routes', () {
