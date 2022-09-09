@@ -55,10 +55,18 @@ void main() {
       final RouteConfiguration config = RouteConfiguration(
         routes: <RouteBase>[
           ShellRoute(
-            builder: (BuildContext context, GoRouterState state, Widget child) {
-              return _DetailsScreen();
-            },
-          ),
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                return _DetailsScreen();
+              },
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return _DetailsScreen();
+                  },
+                ),
+              ]),
         ],
         redirectLimit: 10,
         topRedirect: (GoRouterState state) {
@@ -150,7 +158,7 @@ void main() {
             navigatorKey: shellNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
-                path: 'details',
+                path: '/details',
                 builder: (BuildContext context, GoRouterState state) {
                   return _DetailsScreen();
                 },

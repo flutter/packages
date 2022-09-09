@@ -73,6 +73,12 @@ void main() {
     test('ShellRoute has a unique pageKey', () {
       final ShellRoute route = ShellRoute(
         builder: _shellBuilder,
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/users/:userId',
+            builder: _builder,
+          ),
+        ],
       );
       final RouteMatch? match = RouteMatch.match(
         route: route,

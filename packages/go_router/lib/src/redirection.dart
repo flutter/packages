@@ -76,7 +76,7 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
     if (topRoute is! GoRoute) {
       throw RedirectionException(
           'Last RouteMatch should contain a GoRoute, but was ${topRoute.runtimeType}',
-          [matches],
+          <RouteMatchList>[matches],
           uri);
     }
     final String? topRouteLocation = topRoute.redirect(
@@ -135,7 +135,7 @@ class RedirectionException implements Exception {
   /// The matches that were found while processing redirects.
   final List<RouteMatchList> matches;
 
-  @override
+  /// The message for this exception.
   final String message;
 
   /// The location that was originally navigated to, before redirection began.

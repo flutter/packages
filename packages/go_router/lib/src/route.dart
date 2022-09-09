@@ -420,7 +420,8 @@ class ShellRoute extends RouteBase {
     this.pageBuilder,
     super.routes,
     GlobalKey<NavigatorState>? navigatorKey,
-  })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
+  })  : assert(routes.isNotEmpty),
+        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._();
 
   /// The widget builder for a shell route.
