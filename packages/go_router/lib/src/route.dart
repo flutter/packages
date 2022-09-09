@@ -325,8 +325,64 @@ class GoRoute extends RouteBase {
 /// placing them on the root Navigator.
 ///
 /// To display a child route on a different Navigator, provide it with a
-/// [parentNavigatorKey] that matches the key provided to either the [GoRouter] or
-/// [ShellRoute] constructor.
+/// [parentNavigatorKey] that matches the key provided to either the [GoRouter]
+/// or [ShellRoute] constructor. In this example, the _rootNavigator key is
+/// passed to the /b/details route so that it displays on the root Navigator
+/// instead of the ShellRoute's Navigator:
+///
+/// ```
+/// final GlobalKey<NavigatorState> _rootNavigatorKey =
+//     GlobalKey<NavigatorState>();
+///
+///   final GoRouter _router = GoRouter(
+///     navigatorKey: _rootNavigatorKey,
+///     initialLocation: '/a',
+///     routes: [
+///       ShellRoute(
+///         navigatorKey: _shellNavigatorKey,
+///         builder: (context, state, child) {
+///           return ScaffoldWithNavBar(child: child);
+///         },
+///         routes: [
+///           // This screen is displayed on the ShellRoute's Navigator.
+///           GoRoute(
+///             path: '/a',
+///             builder: (context, state) {
+///               return const ScreenA();
+///             },
+///             routes: <RouteBase>[
+///               // This screen is displayed on the ShellRoute's Navigator.
+///               GoRoute(
+///                 path: 'details',
+///                 builder: (BuildContext context, GoRouterState state) {
+///                   return const DetailsScreen(label: 'A');
+///                 },
+///               ),
+///             ],
+///           ),
+///           // Displayed ShellRoute's Navigator.
+///           GoRoute(
+///             path: '/b',
+///             builder: (BuildContext context, GoRouterState state) {
+///               return const ScreenB();
+///             },
+///             routes: <RouteBase>[
+///               // Displayed on the root Navigator by specifying the
+///               // [parentNavigatorKey].
+///               GoRoute(
+///                 path: 'details',
+///                 parentNavigatorKey: _rootNavigatorKey,
+///                 builder: (BuildContext context, GoRouterState state) {
+///                   return const DetailsScreen(label: 'B');
+///                 },
+///               ),
+///             ],
+///           ),
+///         ],
+///       ),
+///     ],
+///   );
+/// ```
 ///
 /// The widget built by the matching sub-route becomes the child parameter
 /// of the [builder].
