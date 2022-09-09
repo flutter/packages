@@ -195,6 +195,9 @@ void _writeClassDeclarations(
     Indent indent, List<Class> classes, List<Enum> enums, String? prefix) {
   final List<String> enumNames = enums.map((Enum x) => x.name).toList();
   for (final Class klass in classes) {
+    klass.documentationComments?.forEach((String documentationComment) {
+      indent.writeln('/// $documentationComment');
+    });
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
     if (klass.fields.isNotEmpty) {
       if (klass.fields
@@ -217,6 +220,9 @@ void _writeClassDeclarations(
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
+      field.documentationComments?.forEach((String documentationComment) {
+        indent.writeln('/// $documentationComment');
+      });
       if (enumNames.contains(field.type.baseName)) {
         propertyType = 'assign';
       } else {
@@ -415,6 +421,9 @@ String _makeObjcSignature({
 void _writeHostApiDeclaration(
     Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
+  api.documentationComments?.forEach((String documentationComment) {
+    indent.writeln('/// $documentationComment');
+  });
   indent.writeln('@protocol $apiName');
   for (final Method func in api.methods) {
     final _ObjcPtr returnTypeName =
@@ -445,6 +454,9 @@ void _writeHostApiDeclaration(
         !func.isAsynchronous) {
       indent.writeln('/// @return `nil` only when `error != nil`.');
     }
+    func.documentationComments?.forEach((String documentationComment) {
+      indent.writeln('/// $documentationComment');
+    });
     final String signature = _makeObjcSignature(
       func: func,
       options: options,
@@ -473,6 +485,9 @@ void _writeHostApiDeclaration(
 void _writeFlutterApiDeclaration(
     Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
+  api.documentationComments?.forEach((String documentationComment) {
+    indent.writeln('/// $documentationComment');
+  });
   indent.writeln('@interface $apiName : NSObject');
   indent.writeln(
       '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
@@ -518,6 +533,9 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   void writeEnum(Enum anEnum) {
     final String enumName = _className(options.prefix, anEnum.name);
+    anEnum.documentationComments?.forEach((String documentationComment) {
+      indent.writeln('/// $documentationComment');
+    });
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.scoped('{', '};', () {
       int index = 0;
