@@ -138,6 +138,9 @@ void _writeHostApi(Indent indent, Api api, Root root) {
 
   indent.writeln(
       '/// Generated protocol from Pigeon that represents a handler of messages from Flutter.');
+  api.documentationComments?.forEach((String documentationComment) {
+    indent.writeln('/// $documentationComment');
+  });
   indent.write('protocol $apiName ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
@@ -156,6 +159,9 @@ void _writeHostApi(Indent indent, Api api, Root root) {
       final String returnType = method.returnType.isVoid
           ? ''
           : _nullsafeSwiftTypeForDartType(method.returnType);
+      method.documentationComments?.forEach((String documentationComment) {
+        indent.writeln('/// $documentationComment');
+      });
       if (method.isAsynchronous) {
         argSignature.add('completion: @escaping ($returnType) -> Void');
         indent.writeln('func ${method.name}(${argSignature.join(', ')})');
@@ -425,6 +431,9 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   }
 
   void writeEnum(Enum anEnum) {
+    anEnum.documentationComments?.forEach((String documentationComment) {
+      indent.writeln('/// $documentationComment');
+    });
     indent.write('enum ${anEnum.name}: Int ');
     indent.scoped('{', '}', () {
       // We use explicit indexing here as use of the ordinal() method is
@@ -441,6 +450,9 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
 
   void writeDataClass(Class klass) {
     void writeField(NamedType field) {
+      field.documentationComments?.forEach((String documentationComment) {
+        indent.writeln('/// $documentationComment');
+      });
       indent.write(
           'var ${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
       final String defaultNil = field.type.isNullable ? ' = nil' : '';
@@ -536,6 +548,9 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
 
     indent.writeln(
         '/// Generated class from Pigeon that represents data sent in messages.');
+    klass.documentationComments?.forEach((String documentationComment) {
+      indent.writeln('/// $documentationComment');
+    });
     indent.write('struct ${klass.name} ');
     indent.scoped('{', '}', () {
       klass.fields.forEach(writeField);
