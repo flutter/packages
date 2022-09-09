@@ -1,3 +1,8 @@
+## 0.6.10+5
+
+* Removed print logged when not handling hr for alignment.
+* Removed print logged when not handling li for alignment.
+
 ## 0.6.10+4
 
 * Updates text theme parameters to avoid deprecation issues.
