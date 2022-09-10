@@ -1824,6 +1824,40 @@ void main() {
       expect(_getOpacity(tester, 'Closed'), 1.0);
     },
   );
+
+  // Regression test for https://github.com/flutter/flutter/issues/111347.
+  testWidgets(
+    "OpenContainer's closedBuilder widget has shadow when useMaterial3 is true",
+    (WidgetTester tester) async {
+      final Widget openContainer = MaterialApp(
+        theme: ThemeData(
+          shadowColor: Colors.red,
+          useMaterial3: true,
+        ),
+        home: OpenContainer(
+          closedBuilder: (BuildContext context, VoidCallback action) {
+            return GestureDetector(
+              onTap: action,
+              child: const Text('Closed'),
+            );
+          },
+          openBuilder: (BuildContext context, VoidCallback action) {
+            return GestureDetector(
+              onTap: action,
+              child: const Text('Open'),
+            );
+          },
+        ),
+      );
+      await tester.pumpWidget(openContainer);
+
+      final Material material = tester.widget(
+        find.byType(Material, skipOffstage: false),
+      );
+
+      expect(material.shadowColor, Colors.red);
+    },
+  );
 }
 
 Color _getScrimColor(WidgetTester tester) {
