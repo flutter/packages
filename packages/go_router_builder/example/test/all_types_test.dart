@@ -9,7 +9,7 @@ import 'package:go_router_builder_example/all_types.dart';
 import 'package:go_router_builder_example/shared/data.dart';
 
 void main() {
-  testWidgets('Validate extra logic walkthrough', (WidgetTester tester) async {
+  testWidgets('Test typed route navigation', (WidgetTester tester) async {
     await tester.pumpWidget(AllTypesApp());
 
     final ScaffoldState scaffoldState =
