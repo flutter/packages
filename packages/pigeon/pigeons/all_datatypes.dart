@@ -13,9 +13,9 @@ class Everything {
   Int32List? a4ByteArray;
   Int64List? a8ByteArray;
   Float64List? aFloatArray;
-  // ignore: always_specify_types
+  // ignore: always_specify_types, strict_raw_type
   List? aList;
-  // ignore: always_specify_types
+  // ignore: always_specify_types, strict_raw_type
   Map? aMap;
   List<List<bool?>?>? nestedList;
   Map<String?, String?>? mapWithAnnotations;

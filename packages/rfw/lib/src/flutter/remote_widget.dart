@@ -57,7 +57,7 @@ class RemoteWidget extends StatefulWidget {
   final RemoteEventHandler? onEvent;
 
   @override
-  _RemoteWidgetState createState() => _RemoteWidgetState();
+  State<RemoteWidget> createState() => _RemoteWidgetState();
 }
 
 class _RemoteWidgetState extends State<RemoteWidget> {

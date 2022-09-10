@@ -100,7 +100,7 @@ class SignInDemoState extends State<SignInDemo> {
     try {
       await _googleSignIn.signIn();
     } catch (error) {
-      print(error);
+      print(error); // ignore: avoid_print
     }
   }
 
@@ -122,12 +122,12 @@ class SignInDemoState extends State<SignInDemo> {
           const Text('Signed in successfully.'),
           Text(_contactText),
           ElevatedButton(
-            child: const Text('SIGN OUT'),
             onPressed: _handleSignOut,
+            child: const Text('SIGN OUT'),
           ),
           ElevatedButton(
-            child: const Text('REFRESH'),
             onPressed: _handleGetContact,
+            child: const Text('REFRESH'),
           ),
         ],
       );
@@ -137,8 +137,8 @@ class SignInDemoState extends State<SignInDemo> {
         children: <Widget>[
           const Text('You are not currently signed in.'),
           ElevatedButton(
-            child: const Text('SIGN IN'),
             onPressed: _handleSignIn,
+            child: const Text('SIGN IN'),
           ),
         ],
       );

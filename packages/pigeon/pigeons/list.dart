@@ -5,7 +5,7 @@
 import 'package:pigeon/pigeon.dart';
 
 class TestMessage {
-  // ignore: always_specify_types
+  // ignore: always_specify_types, strict_raw_type
   List? testList;
 }
 

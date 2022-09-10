@@ -65,11 +65,11 @@ class DropdownMenu<T> extends StatelessWidget {
               items: <DropdownMenuItem<T>>[
                 for (String item in items.keys)
                   DropdownMenuItem<T>(
+                    value: items[item],
                     child: Container(
                       padding: const EdgeInsets.only(left: 4),
                       child: Text(item),
                     ),
-                    value: items[item],
                   ),
               ],
               onChanged: (T? value) => onChanged!(value),

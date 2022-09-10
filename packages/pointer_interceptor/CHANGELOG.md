@@ -1,3 +1,7 @@
+## 0.9.3+3
+
+* Fixes lint warnings.
+
 ## 0.9.3+2
 
 * (Temporarily) helps tests introduced in prior version to pass in `stable`.

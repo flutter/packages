@@ -9,7 +9,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '4.0.1';
+const String pigeonVersion = '4.0.2';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -37,9 +37,7 @@ class Indent {
   String get newline {
     if (debugGenerators) {
       final List<String> frames = StackTrace.current.toString().split('\n');
-      return ' //' +
-          frames.firstWhere((String x) => x.contains('_generator.dart')) +
-          '\n';
+      return ' //${frames.firstWhere((String x) => x.contains('_generator.dart'))}\n';
     } else {
       return '\n';
     }
@@ -119,7 +117,7 @@ class Indent {
   /// indentation will be incremented by the given amount.
   void nest(int count, Function func) {
     inc(count);
-    func();
+    func(); // ignore: avoid_dynamic_calls
     dec(count);
   }
 
@@ -423,7 +421,7 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
   if (sortedNames.length > maxCustomClassesPerApi) {
     throw Exception(
-        'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
+        "Pigeon doesn't support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.");
   }
   for (final String name in sortedNames) {
     yield EnumeratedClass(name, enumeration);

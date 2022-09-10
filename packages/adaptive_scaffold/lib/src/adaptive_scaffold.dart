@@ -157,7 +157,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// The default displayed secondaryBody.
   final WidgetBuilder? secondaryBody;
 
-  /// Widget to be displayed in the seconaryBody slot at the smallest
+  /// Widget to be displayed in the secondaryBody slot at the largest
   /// breakpoint.
   ///
   /// If nothing is entered for this property, then the default [secondaryBody]
@@ -357,7 +357,6 @@ class AdaptiveScaffold extends StatefulWidget {
         controller: ScrollController(),
         shrinkWrap: true,
         physics: const AlwaysScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
         slivers: <Widget>[
           SliverToBoxAdapter(
             child: Padding(

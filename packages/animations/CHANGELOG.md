@@ -2,6 +2,7 @@
 
 * Fixes shadow when Material 3 is enabled.
 * Updates text theme parameters to avoid deprecation issues.
+* Fixes lint warnings.
 
 ## 2.0.3
 * Updates for non-nullable bindings.

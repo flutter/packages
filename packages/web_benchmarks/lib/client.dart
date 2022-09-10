@@ -73,7 +73,7 @@ Future<void> _runBenchmark(String? benchmarkName) async {
         await _client.sendProfileData(profile);
       } else {
         _printResultsToScreen(profile);
-        print(profile);
+        print(profile); // ignore: avoid_print
       }
     },
     zoneSpecification: ZoneSpecification(
@@ -133,14 +133,14 @@ void _fallbackToManual(String error) {
 
 /// Visualizes results on the Web page for manual inspection.
 void _printResultsToScreen(Profile profile) {
-  final html.BodyElement _body = html.document.body!;
+  final html.BodyElement body = html.document.body!;
 
-  _body.innerHtml = '<h2>${profile.name}</h2>';
+  body.innerHtml = '<h2>${profile.name}</h2>';
 
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
-    _body.appendHtml('<h2>$scoreKey</h2>');
-    _body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    _body.append(TimeseriesVisualization(timeseries).render());
+    body.appendHtml('<h2>$scoreKey</h2>');
+    body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
+    body.append(TimeseriesVisualization(timeseries).render());
   });
 }
 

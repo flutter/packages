@@ -81,13 +81,13 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
   'AboutListTile': (BuildContext context, DataSource source) {
     return AboutListTile(
       icon: source.optionalChild(['icon']),
-      child: source.optionalChild(['child']),
       applicationName: source.v<String>(['applicationName']),
       applicationVersion: source.v<String>(['applicationVersion']),
       applicationIcon: source.optionalChild(['applicationIcon']),
       applicationLegalese: source.v<String>(['applicationLegalese']),
       aboutBoxChildren: source.childList(['aboutBoxChildren']),
       dense: source.v<bool>(['dense']),
+      child: source.optionalChild(['child']),
     );
   },
 
@@ -142,8 +142,8 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       borderOnForeground: source.v<bool>(['borderOnForeground']) ?? true,
       margin: ArgumentDecoders.edgeInsets(source, ['margin']),
       clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
-      child: source.optionalChild(['child']),
       semanticContainer: source.v<bool>(['semanticContainer']) ?? true,
+      child: source.optionalChild(['child']),
     );
   },
 
@@ -202,7 +202,6 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
   'FloatingActionButton': (BuildContext context, DataSource source) {
     // not implemented: mouseCursor, focusNode
     return FloatingActionButton(
-      child: source.child(['child']),
       tooltip: source.v<String>(['tooltip']),
       foregroundColor: ArgumentDecoders.color(source, ['foregroundColor']),
       backgroundColor: ArgumentDecoders.color(source, ['backgroundColor']),
@@ -223,6 +222,7 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       materialTapTargetSize: ArgumentDecoders.enumValue<MaterialTapTargetSize>(MaterialTapTargetSize.values, source, ['materialTapTargetSize']),
       isExtended: source.v<bool>(['isExtended']) ?? false,
       enableFeedback: source.v<bool>(['enableFeedback']),
+      child: source.child(['child']),
     );
   },
 
