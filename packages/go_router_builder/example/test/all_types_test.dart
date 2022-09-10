@@ -77,8 +77,11 @@ void main() {
     ).go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('StringRoute'), findsOneWidget);
-    expect(find.text('Param: Tytire tu patulae recubans sub tegmine fagi.'), findsOneWidget);
-    expect(find.text('Query param: Tytire tu patulae recubans sub tegmine fagi.'), findsOneWidget);
+    expect(find.text('Param: Tytire tu patulae recubans sub tegmine fagi.'),
+        findsOneWidget);
+    expect(
+        find.text('Query param: Tytire tu patulae recubans sub tegmine fagi.'),
+        findsOneWidget);
 
     EnumRoute(
       requiredEnumFieldField: PersonDetails.favoriteFood,
@@ -87,7 +90,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('EnumRoute'), findsOneWidget);
     expect(find.text('Param: PersonDetails.favoriteFood'), findsOneWidget);
-    expect(find.text('Query param: PersonDetails.favoriteSport'), findsOneWidget);
+    expect(
+        find.text('Query param: PersonDetails.favoriteSport'), findsOneWidget);
 
     EnhancedEnumRoute(
       requiredEnumFieldField: SportDetails.football,

@@ -20,7 +20,8 @@ part 'all_types.g.dart';
   TypedGoRoute<NumRoute>(path: 'num-route/:requiredNumField'),
   TypedGoRoute<DoubleRoute>(path: 'double-route/:requiredDoubleField'),
   TypedGoRoute<EnumRoute>(path: 'enum-route/:requiredEnumFieldField'),
-  TypedGoRoute<EnhancedEnumRoute>(path: 'enhanced-enum-route/:requiredEnumFieldField'),
+  TypedGoRoute<EnhancedEnumRoute>(
+      path: 'enhanced-enum-route/:requiredEnumFieldField'),
   TypedGoRoute<StringRoute>(path: 'string-route/:requiredStringFieldField'),
   TypedGoRoute<UriRoute>(path: 'uri-route/:requiredUriFieldField'),
 ])
@@ -30,9 +31,9 @@ class AllTypesBaseRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<void>(
-    dataTitle: 'Root',
-    param: null,
-  );
+        dataTitle: 'Root',
+        param: null,
+      );
 }
 
 class BigIntRoute extends GoRouteData {
@@ -46,10 +47,10 @@ class BigIntRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<BigInt>(
-    dataTitle: 'BigIntRoute',
-    param: requiredBigIntField,
-    queryParam: bigIntField,
-  );
+        dataTitle: 'BigIntRoute',
+        param: requiredBigIntField,
+        queryParam: bigIntField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('BigIntRoute'),
@@ -69,10 +70,10 @@ class BoolRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<bool>(
-    dataTitle: 'BoolRoute',
-    param: requiredBoolField,
-    queryParam: boolField,
-  );
+        dataTitle: 'BoolRoute',
+        param: requiredBoolField,
+        queryParam: boolField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('BoolRoute'),
@@ -92,10 +93,10 @@ class DateTimeRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<DateTime>(
-    dataTitle: 'DateTimeRoute',
-    param: requiredDateTimeField,
-    queryParam: dateTimeField,
-  );
+        dataTitle: 'DateTimeRoute',
+        param: requiredDateTimeField,
+        queryParam: dateTimeField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('DateTimeRoute'),
@@ -115,10 +116,10 @@ class DoubleRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<double>(
-    dataTitle: 'DoubleRoute',
-    param: requiredDoubleField,
-    queryParam: doubleField,
-  );
+        dataTitle: 'DoubleRoute',
+        param: requiredDoubleField,
+        queryParam: doubleField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('DoubleRoute'),
@@ -138,10 +139,10 @@ class IntRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<int>(
-    dataTitle: 'IntRoute',
-    param: requiredIntField,
-    queryParam: intField,
-  );
+        dataTitle: 'IntRoute',
+        param: requiredIntField,
+        queryParam: intField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('IntRoute'),
@@ -161,10 +162,10 @@ class NumRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<num>(
-    dataTitle: 'NumRoute',
-    param: requiredNumField,
-    queryParam: numField,
-  );
+        dataTitle: 'NumRoute',
+        param: requiredNumField,
+        queryParam: numField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('NumRoute'),
@@ -184,10 +185,10 @@ class EnumRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<PersonDetails>(
-    dataTitle: 'EnumRoute',
-    param: requiredEnumFieldField,
-    queryParam: enumFieldField,
-  );
+        dataTitle: 'EnumRoute',
+        param: requiredEnumFieldField,
+        queryParam: enumFieldField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('EnumRoute'),
@@ -207,10 +208,10 @@ class EnhancedEnumRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<SportDetails>(
-    dataTitle: 'EnhancedEnumRoute',
-    param: requiredEnumFieldField,
-    queryParam: enumFieldField,
-  );
+        dataTitle: 'EnhancedEnumRoute',
+        param: requiredEnumFieldField,
+        queryParam: enumFieldField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('EnhancedEnumRoute'),
@@ -230,10 +231,10 @@ class StringRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<String>(
-    dataTitle: 'StringRoute',
-    param: requiredStringFieldField,
-    queryParam: stringFieldField,
-  );
+        dataTitle: 'StringRoute',
+        param: requiredStringFieldField,
+        queryParam: stringFieldField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('StringRoute'),
@@ -253,10 +254,10 @@ class UriRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<Uri>(
-    dataTitle: 'UriRoute',
-    param: requiredUriFieldField,
-    queryParam: uriFieldField,
-  );
+        dataTitle: 'UriRoute',
+        param: requiredUriFieldField,
+        queryParam: uriFieldField,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: Text('UriRoute'),
@@ -278,9 +279,9 @@ class BasePage<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: Text('Go router typed routes'),
-    ),
+        appBar: AppBar(
+          title: Text('Go router typed routes'),
+        ),
         drawer: Drawer(
             child: ListView(
           children: [
@@ -309,7 +310,7 @@ class BasePage<T> extends StatelessWidget {
               numField: -2.71828,
             ).drawerTile(context),
             StringRoute(
-              requiredStringFieldField:r'$!/#bob%%20',
+              requiredStringFieldField: r'$!/#bob%%20',
               stringFieldField: r'$!/#bob%%20',
             ).drawerTile(context),
             EnumRoute(
