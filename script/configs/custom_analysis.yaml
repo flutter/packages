@@ -15,5 +15,6 @@
 - rfw/example
 # Disables docs requirements, as it is test code.
 - web_benchmarks/testing/test_app
-# Uses analysis options derived from the flutter_tools
+# flutter_migrate depends on flutter_tools boilerplate, disables dependency
+# rules.
 - flutter_migrate
