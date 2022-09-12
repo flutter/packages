@@ -1,5 +1,6 @@
 ## NEXT
 
+- Updates minimum Flutter version to 2.10.
 - Updates package description.
 
 ## 1.1.1

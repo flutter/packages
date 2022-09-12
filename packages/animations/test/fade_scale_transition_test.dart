@@ -20,7 +20,6 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: const FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return const _FlutterLogoModal();
                       },
@@ -52,7 +51,6 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: const FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _FlutterLogoModal(key: key);
                       },
@@ -120,7 +118,6 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: const FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _FlutterLogoModal(key: key);
                       },
@@ -185,7 +182,6 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: const FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _FlutterLogoModal(key: key);
                       },
@@ -286,8 +282,6 @@ void main() {
                       onPressed: () {
                         showModal<void>(
                           context: context,
-                          configuration:
-                              const FadeScaleTransitionConfiguration(),
                           builder: (BuildContext context) {
                             return _FlutterLogoModal(
                               key: topKey,

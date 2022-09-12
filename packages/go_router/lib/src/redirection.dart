@@ -39,6 +39,7 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
         // sub-location to match route.redirect
         subloc: uri.path,
         queryParams: uri.queryParameters,
+        queryParametersAll: uri.queryParametersAll,
         extra: extra,
       ),
     );
@@ -78,8 +79,10 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
         name: top.route.name,
         path: top.route.path,
         fullpath: top.fullpath,
+        extra: top.extra,
         params: top.decodedParams,
         queryParams: top.queryParams,
+        queryParametersAll: top.queryParametersAll,
       ),
     );
 
@@ -110,13 +113,10 @@ class RedirectionError extends Error implements UnsupportedError {
   final Uri location;
 
   @override
-  String toString() =>
-      super.toString() +
-      ' ' +
-      <String>[
+  String toString() => '${super.toString()} ${<String>[
         ...matches.map(
             (RouteMatchList routeMatches) => routeMatches.location.toString()),
-      ].join(' => ');
+      ].join(' => ')}';
 }
 
 /// Adds the redirect to [redirects] if it is valid.

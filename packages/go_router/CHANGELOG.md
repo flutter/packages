@@ -1,3 +1,46 @@
+## 4.4.1
+
+- Fix an issue where disabling logging clears the root logger's listeners
+
+## 4.4.0
+
+- Adds `buildPageWithState` to `GoRouteData`.
+- `GoRouteData.buildPage` is now deprecated in favor of `GoRouteData.buildPageWithState`.
+
+## 4.3.0
+
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+
+## 4.2.9
+
+* Updates text theme parameters to avoid deprecation issues.
+* Fixes lint warnings.
+
+## 4.2.8
+
+- Fixes namedLocation to return URIs without trailing question marks if there are no query parameters.
+- Cleans up examples.
+
+## 4.2.7
+
+- Updates README.
+
+## 4.2.6
+
+- Fixes rendering issues in the README.
+
+## 4.2.5
+
+- Fixes a bug where calling extra parameter is always null in route level redirect callback
+
+## 4.2.4
+
+- Rewrites Readme and examples.
+
+## 4.2.3
+
+- Fixes a bug where the ValueKey to be the same when a page was pushed multiple times.
+
 ## 4.2.2
 
 - Fixes a bug where go_router_builder wasn't detecting annotations.

@@ -31,6 +31,7 @@ class RouteMatcher {
       parentFullpath: '',
       parentSubloc: '',
       queryParams: uri.queryParameters,
+      queryParametersAll: uri.queryParametersAll,
       extra: extra,
     );
 
@@ -100,8 +101,7 @@ class RouteMatchList {
 /// An error that occurred during matching.
 class MatcherError extends Error {
   /// Constructs a [MatcherError].
-  MatcherError(String message, this.location)
-      : message = message + ': $location';
+  MatcherError(String message, this.location) : message = '$message: $location';
 
   /// The error message.
   final String message;
@@ -122,6 +122,7 @@ List<RouteMatch> _getLocRouteRecursively({
   required List<GoRoute> routes,
   required String parentFullpath,
   required Map<String, String> queryParams,
+  required Map<String, List<String>> queryParametersAll,
   required Object? extra,
 }) {
   bool debugGatherAllMatches = false;
@@ -139,6 +140,7 @@ List<RouteMatch> _getLocRouteRecursively({
       parentSubloc: parentSubloc,
       fullpath: fullpath,
       queryParams: queryParams,
+      queryParametersAll: queryParametersAll,
       extra: extra,
     );
 
@@ -167,6 +169,7 @@ List<RouteMatch> _getLocRouteRecursively({
         routes: route.routes,
         parentFullpath: fullpath,
         queryParams: queryParams,
+        queryParametersAll: queryParametersAll,
         extra: extra,
       ).toList();
 

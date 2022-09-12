@@ -19,12 +19,10 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: 'input',
-                offset: null)
+                name: 'input')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -34,8 +32,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -43,8 +40,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     {
@@ -79,12 +75,10 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: 'someInput',
-                offset: null)
+                name: 'someInput')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -94,8 +88,7 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'inputField',
-            offset: null)
+            name: 'inputField')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -103,8 +96,7 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'outputField',
-            offset: null)
+            name: 'outputField')
       ])
     ], enums: <Enum>[]);
     {
@@ -144,11 +136,9 @@ void main() {
                   baseName: 'int',
                   isNullable: false,
                 ),
-                name: 'someInput',
-                offset: null)
+                name: 'someInput')
           ],
           returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -186,11 +176,9 @@ void main() {
                   baseName: 'int',
                   isNullable: false,
                 ),
-                name: 'someInput',
-                offset: null)
+                name: 'someInput')
           ],
           returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -224,12 +212,10 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: 'input',
-                offset: null)
+                name: 'input')
           ],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -239,8 +225,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'input',
-            offset: null)
+            name: 'input')
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
@@ -248,8 +233,7 @@ void main() {
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'output',
-            offset: null)
+            name: 'output')
       ])
     ], enums: <Enum>[]);
     {
@@ -279,11 +263,9 @@ void main() {
                   baseName: 'String',
                   isNullable: true,
                 ),
-                name: 'input',
-                offset: null)
+                name: 'input')
           ],
           returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -332,11 +314,9 @@ void main() {
                   baseName: 'String',
                   isNullable: true,
                 ),
-                name: 'input',
-                offset: null)
+                name: 'input')
           ],
           returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -367,11 +347,9 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: 'someInput',
-                offset: null)
+                name: 'someInput')
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -381,8 +359,7 @@ void main() {
               baseName: 'bool',
               isNullable: true,
             ),
-            name: 'nestedValue',
-            offset: null),
+            name: 'nestedValue'),
       ]),
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
@@ -390,29 +367,25 @@ void main() {
               baseName: 'bool',
               isNullable: true,
             ),
-            name: 'nullableBool',
-            offset: null),
+            name: 'nullableBool'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'int',
               isNullable: true,
             ),
-            name: 'nullableInt',
-            offset: null),
+            name: 'nullableInt'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
-            name: 'nullableString',
-            offset: null),
+            name: 'nullableString'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'Nested',
               isNullable: true,
             ),
-            name: 'nullableNested',
-            offset: null),
+            name: 'nullableNested'),
       ]),
     ], enums: <Enum>[]);
     {
@@ -506,11 +479,9 @@ void main() {
                   baseName: 'Input',
                   isNullable: false,
                 ),
-                name: 'someInput',
-                offset: null)
+                name: 'someInput')
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -520,8 +491,7 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'nestedValue',
-            offset: null),
+            name: 'nestedValue'),
       ]),
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
@@ -529,29 +499,25 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'nonNullableBool',
-            offset: null),
+            name: 'nonNullableBool'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'int',
               isNullable: false,
             ),
-            name: 'nonNullableInt',
-            offset: null),
+            name: 'nonNullableInt'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'String',
               isNullable: false,
             ),
-            name: 'nonNullableString',
-            offset: null),
+            name: 'nonNullableString'),
         NamedType(
             type: const TypeDeclaration(
               baseName: 'Nested',
               isNullable: false,
             ),
-            name: 'nonNullableNested',
-            offset: null),
+            name: 'nonNullableNested'),
       ]),
     ], enums: <Enum>[]);
     {
@@ -615,7 +581,6 @@ void main() {
             baseName: 'bool',
             isNullable: true,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnNullableInt',
@@ -624,7 +589,6 @@ void main() {
             baseName: 'int',
             isNullable: true,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnNullableString',
@@ -633,7 +597,6 @@ void main() {
             baseName: 'String',
             isNullable: true,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnNullableList',
@@ -648,7 +611,6 @@ void main() {
             ],
             isNullable: true,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnNullableMap',
@@ -667,7 +629,6 @@ void main() {
             ],
             isNullable: true,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnNullableDataClass',
@@ -676,7 +637,6 @@ void main() {
             baseName: 'ReturnData',
             isNullable: true,
           ),
-          isAsynchronous: false,
         ),
       ])
     ], classes: <Class>[
@@ -686,8 +646,7 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'aValue',
-            offset: null),
+            name: 'aValue'),
       ]),
     ], enums: <Enum>[]);
     {
@@ -727,7 +686,6 @@ void main() {
             baseName: 'bool',
             isNullable: false,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnInt',
@@ -736,7 +694,6 @@ void main() {
             baseName: 'int',
             isNullable: false,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnString',
@@ -745,7 +702,6 @@ void main() {
             baseName: 'String',
             isNullable: false,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnList',
@@ -760,7 +716,6 @@ void main() {
             ],
             isNullable: false,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnMap',
@@ -779,7 +734,6 @@ void main() {
             ],
             isNullable: false,
           ),
-          isAsynchronous: false,
         ),
         Method(
           name: 'returnDataClass',
@@ -788,7 +742,6 @@ void main() {
             baseName: 'ReturnData',
             isNullable: false,
           ),
-          isAsynchronous: false,
         ),
       ])
     ], classes: <Class>[
@@ -798,8 +751,7 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'aValue',
-            offset: null),
+            name: 'aValue'),
       ]),
     ], enums: <Enum>[]);
     {
@@ -866,7 +818,6 @@ void main() {
                 )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         ),
       ])
     ], classes: <Class>[
@@ -876,8 +827,7 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'aValue',
-            offset: null),
+            name: 'aValue'),
       ]),
     ], enums: <Enum>[]);
     {
@@ -986,7 +936,6 @@ void main() {
                 )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         ),
       ])
     ], classes: <Class>[
@@ -996,8 +945,7 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'aValue',
-            offset: null),
+            name: 'aValue'),
       ]),
     ], enums: <Enum>[]);
     {
@@ -1064,7 +1012,6 @@ void main() {
                 )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         ),
       ])
     ], classes: <Class>[], enums: <Enum>[]);

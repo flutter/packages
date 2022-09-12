@@ -6,7 +6,9 @@ import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
 import 'pigeon_lib.dart';
 
-final Function _listEquals = const ListEquality<dynamic>().equals;
+typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
+
+final _ListEquals _listEquals = const ListEquality<dynamic>().equals;
 
 /// Enum that represents where an [Api] is located, on the host or Flutter.
 enum ApiLocation {

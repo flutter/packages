@@ -14,37 +14,37 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerOne, color: const Color(0x00000000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(key: containerOne, color: const Color(0x00000000)),
       ),
     );
 
-    Map<Key, double> _primaryAnimation =
+    Map<Key, double> primaryAnimation =
         _getPrimaryAnimation(<Key>[containerOne], tester);
-    Map<Key, double> _secondaryAnimation =
+    Map<Key, double> secondaryAnimation =
         _getSecondaryAnimation(<Key>[containerOne], tester);
-    expect(_primaryAnimation[containerOne], equals(1.0));
-    expect(_secondaryAnimation[containerOne], equals(0.0));
+    expect(primaryAnimation[containerOne], equals(1.0));
+    expect(secondaryAnimation[containerOne], equals(0.0));
 
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerTwo, color: const Color(0xff000000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(key: containerTwo, color: const Color(0xff000000)),
       ),
     );
     await tester.pump(const Duration(milliseconds: 40));
 
-    _primaryAnimation =
+    primaryAnimation =
         _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
-    _secondaryAnimation =
+    secondaryAnimation =
         _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
     // Secondary is running for outgoing widget.
-    expect(_primaryAnimation[containerOne], equals(1.0));
-    expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.4));
+    expect(primaryAnimation[containerOne], equals(1.0));
+    expect(secondaryAnimation[containerOne], moreOrLessEquals(0.4));
     // Primary is running for incoming widget.
-    expect(_primaryAnimation[containerTwo], moreOrLessEquals(0.4));
-    expect(_secondaryAnimation[containerTwo], equals(0.0));
+    expect(primaryAnimation[containerTwo], moreOrLessEquals(0.4));
+    expect(secondaryAnimation[containerTwo], equals(0.0));
 
     // Container one is underneath container two
     final Container container = tester.firstWidget(find.byType(Container));
@@ -53,22 +53,22 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerThree, color: const Color(0xffff0000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(key: containerThree, color: const Color(0xffff0000)),
       ),
     );
     await tester.pump(const Duration(milliseconds: 20));
 
-    _primaryAnimation = _getPrimaryAnimation(
+    primaryAnimation = _getPrimaryAnimation(
         <Key>[containerOne, containerTwo, containerThree], tester);
-    _secondaryAnimation = _getSecondaryAnimation(
+    secondaryAnimation = _getSecondaryAnimation(
         <Key>[containerOne, containerTwo, containerThree], tester);
-    expect(_primaryAnimation[containerOne], equals(1.0));
-    expect(_secondaryAnimation[containerOne], equals(0.6));
-    expect(_primaryAnimation[containerTwo], equals(0.6));
-    expect(_secondaryAnimation[containerTwo], moreOrLessEquals(0.2));
-    expect(_primaryAnimation[containerThree], moreOrLessEquals(0.2));
-    expect(_secondaryAnimation[containerThree], equals(0.0));
+    expect(primaryAnimation[containerOne], equals(1.0));
+    expect(secondaryAnimation[containerOne], equals(0.6));
+    expect(primaryAnimation[containerTwo], equals(0.6));
+    expect(secondaryAnimation[containerTwo], moreOrLessEquals(0.2));
+    expect(primaryAnimation[containerThree], moreOrLessEquals(0.2));
+    expect(secondaryAnimation[containerThree], equals(0.0));
     await tester.pumpAndSettle();
   });
 
@@ -80,39 +80,39 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerOne, color: const Color(0x00000000)),
         transitionBuilder: _transitionBuilder,
         reverse: true,
+        child: Container(key: containerOne, color: const Color(0x00000000)),
       ),
     );
 
-    Map<Key, double> _primaryAnimation =
+    Map<Key, double> primaryAnimation =
         _getPrimaryAnimation(<Key>[containerOne], tester);
-    Map<Key, double> _secondaryAnimation =
+    Map<Key, double> secondaryAnimation =
         _getSecondaryAnimation(<Key>[containerOne], tester);
-    expect(_primaryAnimation[containerOne], equals(1.0));
-    expect(_secondaryAnimation[containerOne], equals(0.0));
+    expect(primaryAnimation[containerOne], equals(1.0));
+    expect(secondaryAnimation[containerOne], equals(0.0));
 
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerTwo, color: const Color(0xff000000)),
         transitionBuilder: _transitionBuilder,
         reverse: true,
+        child: Container(key: containerTwo, color: const Color(0xff000000)),
       ),
     );
     await tester.pump(const Duration(milliseconds: 40));
 
-    _primaryAnimation =
+    primaryAnimation =
         _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
-    _secondaryAnimation =
+    secondaryAnimation =
         _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
     // Primary is running forward for outgoing widget.
-    expect(_primaryAnimation[containerOne], moreOrLessEquals(0.6));
-    expect(_secondaryAnimation[containerOne], equals(0.0));
+    expect(primaryAnimation[containerOne], moreOrLessEquals(0.6));
+    expect(secondaryAnimation[containerOne], equals(0.0));
     // Secondary is running forward for incoming widget.
-    expect(_primaryAnimation[containerTwo], equals(1.0));
-    expect(_secondaryAnimation[containerTwo], moreOrLessEquals(0.6));
+    expect(primaryAnimation[containerTwo], equals(1.0));
+    expect(secondaryAnimation[containerTwo], moreOrLessEquals(0.6));
 
     // Container two two is underneath container one.
     final Container container = tester.firstWidget(find.byType(Container));
@@ -121,23 +121,23 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerThree, color: const Color(0xffff0000)),
         transitionBuilder: _transitionBuilder,
         reverse: true,
+        child: Container(key: containerThree, color: const Color(0xffff0000)),
       ),
     );
     await tester.pump(const Duration(milliseconds: 20));
 
-    _primaryAnimation = _getPrimaryAnimation(
+    primaryAnimation = _getPrimaryAnimation(
         <Key>[containerOne, containerTwo, containerThree], tester);
-    _secondaryAnimation = _getSecondaryAnimation(
+    secondaryAnimation = _getSecondaryAnimation(
         <Key>[containerOne, containerTwo, containerThree], tester);
-    expect(_primaryAnimation[containerOne], equals(0.4));
-    expect(_secondaryAnimation[containerOne], equals(0.0));
-    expect(_primaryAnimation[containerTwo], equals(0.8));
-    expect(_secondaryAnimation[containerTwo], equals(0.4));
-    expect(_primaryAnimation[containerThree], equals(1.0));
-    expect(_secondaryAnimation[containerThree], equals(0.8));
+    expect(primaryAnimation[containerOne], equals(0.4));
+    expect(secondaryAnimation[containerOne], equals(0.0));
+    expect(primaryAnimation[containerTwo], equals(0.8));
+    expect(secondaryAnimation[containerTwo], equals(0.4));
+    expect(primaryAnimation[containerThree], equals(1.0));
+    expect(secondaryAnimation[containerThree], equals(0.8));
     await tester.pumpAndSettle();
   });
 
@@ -148,56 +148,56 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerOne, color: const Color(0x00000000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(key: containerOne, color: const Color(0x00000000)),
       ),
     );
 
-    Map<Key, double> _primaryAnimation =
+    Map<Key, double> primaryAnimation =
         _getPrimaryAnimation(<Key>[containerOne], tester);
-    Map<Key, double> _secondaryAnimation =
+    Map<Key, double> secondaryAnimation =
         _getSecondaryAnimation(<Key>[containerOne], tester);
-    expect(_primaryAnimation[containerOne], equals(1.0));
-    expect(_secondaryAnimation[containerOne], equals(0.0));
+    expect(primaryAnimation[containerOne], equals(1.0));
+    expect(secondaryAnimation[containerOne], equals(0.0));
 
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerTwo, color: const Color(0xff000000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(key: containerTwo, color: const Color(0xff000000)),
       ),
     );
     await tester.pump(const Duration(milliseconds: 40));
 
-    _primaryAnimation =
+    primaryAnimation =
         _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
-    _secondaryAnimation =
+    secondaryAnimation =
         _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
-    expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.4));
-    expect(_primaryAnimation[containerOne], equals(1.0));
-    expect(_secondaryAnimation[containerTwo], equals(0.0));
-    expect(_primaryAnimation[containerTwo], moreOrLessEquals(0.4));
+    expect(secondaryAnimation[containerOne], moreOrLessEquals(0.4));
+    expect(primaryAnimation[containerOne], equals(1.0));
+    expect(secondaryAnimation[containerTwo], equals(0.0));
+    expect(primaryAnimation[containerTwo], moreOrLessEquals(0.4));
 
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerThree, color: const Color(0xffff0000)),
         transitionBuilder: _transitionBuilder,
         reverse: true,
+        child: Container(key: containerThree, color: const Color(0xffff0000)),
       ),
     );
     await tester.pump(const Duration(milliseconds: 20));
 
-    _primaryAnimation = _getPrimaryAnimation(
+    primaryAnimation = _getPrimaryAnimation(
         <Key>[containerOne, containerTwo, containerThree], tester);
-    _secondaryAnimation = _getSecondaryAnimation(
+    secondaryAnimation = _getSecondaryAnimation(
         <Key>[containerOne, containerTwo, containerThree], tester);
-    expect(_secondaryAnimation[containerOne], equals(0.6));
-    expect(_primaryAnimation[containerOne], equals(1.0));
-    expect(_secondaryAnimation[containerTwo], equals(0.0));
-    expect(_primaryAnimation[containerTwo], moreOrLessEquals(0.2));
-    expect(_secondaryAnimation[containerThree], equals(0.8));
-    expect(_primaryAnimation[containerThree], equals(1.0));
+    expect(secondaryAnimation[containerOne], equals(0.6));
+    expect(primaryAnimation[containerOne], equals(1.0));
+    expect(secondaryAnimation[containerTwo], equals(0.0));
+    expect(primaryAnimation[containerTwo], moreOrLessEquals(0.2));
+    expect(secondaryAnimation[containerThree], equals(0.8));
+    expect(primaryAnimation[containerThree], equals(1.0));
     await tester.pumpAndSettle();
   });
 
@@ -208,39 +208,39 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerOne, color: const Color(0x00000000)),
         transitionBuilder: _transitionBuilder,
         reverse: true,
+        child: Container(key: containerOne, color: const Color(0x00000000)),
       ),
     );
 
-    Map<Key, double> _primaryAnimation =
+    Map<Key, double> primaryAnimation =
         _getPrimaryAnimation(<Key>[containerOne], tester);
-    Map<Key, double> _secondaryAnimation =
+    Map<Key, double> secondaryAnimation =
         _getSecondaryAnimation(<Key>[containerOne], tester);
-    expect(_primaryAnimation[containerOne], equals(1.0));
-    expect(_secondaryAnimation[containerOne], equals(0.0));
+    expect(primaryAnimation[containerOne], equals(1.0));
+    expect(secondaryAnimation[containerOne], equals(0.0));
 
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerTwo, color: const Color(0xff000000)),
         transitionBuilder: _transitionBuilder,
         reverse: true,
+        child: Container(key: containerTwo, color: const Color(0xff000000)),
       ),
     );
     await tester.pump(const Duration(milliseconds: 40));
 
-    _primaryAnimation =
+    primaryAnimation =
         _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
-    _secondaryAnimation =
+    secondaryAnimation =
         _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
     // Primary is running in reverse for outgoing widget.
-    expect(_primaryAnimation[containerOne], moreOrLessEquals(0.6));
-    expect(_secondaryAnimation[containerOne], equals(0.0));
+    expect(primaryAnimation[containerOne], moreOrLessEquals(0.6));
+    expect(secondaryAnimation[containerOne], equals(0.0));
     // Secondary is running in reverse for incoming widget.
-    expect(_primaryAnimation[containerTwo], equals(1.0));
-    expect(_secondaryAnimation[containerTwo], moreOrLessEquals(0.6));
+    expect(primaryAnimation[containerTwo], equals(1.0));
+    expect(secondaryAnimation[containerTwo], moreOrLessEquals(0.6));
 
     // Container two is underneath container one.
     final Container container = tester.firstWidget(find.byType(Container));
@@ -249,9 +249,8 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: containerThree, color: const Color(0xffff0000)),
         transitionBuilder: _transitionBuilder,
-        reverse: false,
+        child: Container(key: containerThree, color: const Color(0xffff0000)),
       ),
     );
     await tester.pump(const Duration(milliseconds: 20));
@@ -262,16 +261,16 @@ void main() {
     // it should now be exiting underneath container three. Container three's
     // primary animation should be running forwards since it is entering above
     // container two.
-    _primaryAnimation = _getPrimaryAnimation(
+    primaryAnimation = _getPrimaryAnimation(
         <Key>[containerOne, containerTwo, containerThree], tester);
-    _secondaryAnimation = _getSecondaryAnimation(
+    secondaryAnimation = _getSecondaryAnimation(
         <Key>[containerOne, containerTwo, containerThree], tester);
-    expect(_primaryAnimation[containerOne], equals(0.4));
-    expect(_secondaryAnimation[containerOne], equals(0.0));
-    expect(_primaryAnimation[containerTwo], equals(1.0));
-    expect(_secondaryAnimation[containerTwo], equals(0.8));
-    expect(_primaryAnimation[containerThree], moreOrLessEquals(0.2));
-    expect(_secondaryAnimation[containerThree], equals(0.0));
+    expect(primaryAnimation[containerOne], equals(0.4));
+    expect(secondaryAnimation[containerOne], equals(0.0));
+    expect(primaryAnimation[containerTwo], equals(1.0));
+    expect(secondaryAnimation[containerTwo], equals(0.8));
+    expect(primaryAnimation[containerThree], moreOrLessEquals(0.2));
+    expect(secondaryAnimation[containerThree], equals(0.0));
     await tester.pumpAndSettle();
   });
 
@@ -285,9 +284,9 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(color: const Color(0x00000000)),
         transitionBuilder: _transitionBuilder,
         layoutBuilder: newLayoutBuilder,
+        child: Container(color: const Color(0x00000000)),
       ),
     );
 
@@ -299,8 +298,8 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(color: const Color(0x00000000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(color: const Color(0x00000000)),
       ),
     );
 
@@ -314,8 +313,8 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(color: const Color(0xff000000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(color: const Color(0xff000000)),
       ),
     );
 
@@ -333,7 +332,6 @@ void main() {
     await tester.pumpWidget(
       const PageTransitionSwitcher(
         duration: Duration(milliseconds: 100),
-        child: null,
         transitionBuilder: _transitionBuilder,
       ),
     );
@@ -344,8 +342,8 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(color: const Color(0xff000000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(color: const Color(0xff000000)),
       ),
     );
 
@@ -361,7 +359,6 @@ void main() {
     await tester.pumpWidget(
       const PageTransitionSwitcher(
         duration: Duration(milliseconds: 100),
-        child: null,
         transitionBuilder: _transitionBuilder,
       ),
     );
@@ -381,16 +378,16 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: UniqueKey(), color: const Color(0xff000000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(key: UniqueKey(), color: const Color(0xff000000)),
       ),
     );
 
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: Container(key: UniqueKey(), color: const Color(0xff000000)),
         transitionBuilder: _transitionBuilder,
+        child: Container(key: UniqueKey(), color: const Color(0xff000000)),
       ),
     );
     await tester.pump(const Duration(milliseconds: 50));
@@ -405,8 +402,7 @@ void main() {
 
     // Change the widget tree in the middle of the animation.
     await tester.pumpWidget(Container(color: const Color(0xffff0000)));
-    expect(await tester.pumpAndSettle(const Duration(milliseconds: 100)),
-        equals(1));
+    expect(await tester.pumpAndSettle(), equals(1));
   });
 
   testWidgets("doesn't reset state of the children in transitions.",
@@ -420,42 +416,42 @@ void main() {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: StatefulTestWidget(key: statefulOne),
         transitionBuilder: _transitionBuilder,
+        child: StatefulTestWidget(key: statefulOne),
       ),
     );
 
-    Map<Key, double> _primaryAnimation =
+    Map<Key, double> primaryAnimation =
         _getPrimaryAnimation(<Key>[statefulOne], tester);
-    Map<Key, double> _secondaryAnimation =
+    Map<Key, double> secondaryAnimation =
         _getSecondaryAnimation(<Key>[statefulOne], tester);
-    expect(_primaryAnimation[statefulOne], equals(1.0));
-    expect(_secondaryAnimation[statefulOne], equals(0.0));
+    expect(primaryAnimation[statefulOne], equals(1.0));
+    expect(secondaryAnimation[statefulOne], equals(0.0));
     expect(StatefulTestWidgetState.generation, equals(1));
 
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: StatefulTestWidget(key: statefulTwo),
         transitionBuilder: _transitionBuilder,
+        child: StatefulTestWidget(key: statefulTwo),
       ),
     );
 
     await tester.pump(const Duration(milliseconds: 50));
     expect(find.byType(FadeTransition), findsNWidgets(2));
-    _primaryAnimation =
+    primaryAnimation =
         _getPrimaryAnimation(<Key>[statefulOne, statefulTwo], tester);
-    _secondaryAnimation =
+    secondaryAnimation =
         _getSecondaryAnimation(<Key>[statefulOne, statefulTwo], tester);
-    expect(_primaryAnimation[statefulTwo], equals(0.5));
-    expect(_secondaryAnimation[statefulTwo], equals(0.0));
+    expect(primaryAnimation[statefulTwo], equals(0.5));
+    expect(secondaryAnimation[statefulTwo], equals(0.0));
     expect(StatefulTestWidgetState.generation, equals(2));
 
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: StatefulTestWidget(key: statefulThree),
         transitionBuilder: _transitionBuilder,
+        child: StatefulTestWidget(key: statefulThree),
       ),
     );
 
@@ -473,8 +469,8 @@ void main() {
           textDirection: TextDirection.rtl,
           child: PageTransitionSwitcher(
             duration: const Duration(milliseconds: 100),
-            child: child,
             transitionBuilder: _transitionBuilder,
+            child: child,
           ),
         ),
       );
@@ -511,8 +507,8 @@ void main() {
         textDirection: TextDirection.ltr,
         child: PageTransitionSwitcher(
           duration: const Duration(milliseconds: 100),
+          transitionBuilder: _transitionBuilder,
           child: Container(key: containerOne, color: const Color(0xFFFF0000)),
-          transitionBuilder: _transitionBuilder,
         ),
       ),
     );
@@ -524,8 +520,8 @@ void main() {
         textDirection: TextDirection.ltr,
         child: PageTransitionSwitcher(
           duration: const Duration(milliseconds: 100),
+          transitionBuilder: _transitionBuilder,
           child: Container(key: containerTwo, color: const Color(0xFF00FF00)),
-          transitionBuilder: _transitionBuilder,
         ),
       ),
     );
@@ -537,8 +533,8 @@ void main() {
         textDirection: TextDirection.ltr,
         child: PageTransitionSwitcher(
           duration: const Duration(milliseconds: 100),
-          child: Container(key: containerThree, color: const Color(0xFF0000FF)),
           transitionBuilder: _transitionBuilder,
+          child: Container(key: containerThree, color: const Color(0xFF0000FF)),
         ),
       ),
     );
@@ -569,8 +565,8 @@ void main() {
         textDirection: TextDirection.ltr,
         child: PageTransitionSwitcher(
           duration: const Duration(milliseconds: 100),
-          child: Container(key: containerThree, color: const Color(0x00000000)),
           transitionBuilder: newTransitionBuilder,
+          child: Container(key: containerThree, color: const Color(0x00000000)),
         ),
       ),
     );

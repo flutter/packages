@@ -22,7 +22,6 @@ void defineTests() {
               alignment: Alignment.bottomCenter,
               child: MarkdownBody(
                 data: 'This is a [link](https://flutter.dev/)',
-                shrinkWrap: true,
               ),
             ),
           ],

@@ -1,3 +1,16 @@
+## 1.0.10
+
+* Adds a lint ignore for deprecated member in the example. 
+
+## 1.0.9
+
+* Fixes lint warnings.
+
+## 1.0.8
+
+* Updates `analyzer` to 4.4.0.
+* Removes the usage of deprecated API in `analyzer`.
+
 ## 1.0.7
 
 * Supports newer versions of `analyzer`.

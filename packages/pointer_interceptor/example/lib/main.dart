@@ -70,7 +70,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -205,7 +205,7 @@ class HtmlElement extends StatelessWidget {
   const HtmlElement({Key? key, required this.onClick}) : super(key: key);
 
   /// A function to run when the element is clicked
-  final Function onClick;
+  final VoidCallback onClick;
 
   @override
   Widget build(BuildContext context) {

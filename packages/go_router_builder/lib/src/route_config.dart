@@ -44,7 +44,7 @@ class RouteConfig {
   /// Creates a new [RouteConfig] represented the annotation data in [reader].
   factory RouteConfig.fromAnnotation(
     ConstantReader reader,
-    ClassElement element,
+    InterfaceElement element,
   ) {
     final RouteConfig definition =
         RouteConfig._fromAnnotation(reader, element, null);
@@ -62,7 +62,7 @@ class RouteConfig {
 
   factory RouteConfig._fromAnnotation(
     ConstantReader reader,
-    ClassElement element,
+    InterfaceElement element,
     RouteConfig? parent,
   ) {
     assert(!reader.isNull, 'reader should not be null');
@@ -88,7 +88,7 @@ class RouteConfig {
     }
 
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
-    final ClassElement classElement = typeParamType.element;
+    final InterfaceElement classElement = typeParamType.element2;
 
     final RouteConfig value = RouteConfig._(path, classElement, parent);
 
@@ -100,7 +100,7 @@ class RouteConfig {
 
   final List<RouteConfig> _children = <RouteConfig>[];
   final String _path;
-  final ClassElement _routeDataClass;
+  final InterfaceElement _routeDataClass;
   final RouteConfig? _parent;
 
   /// Generates all of the members that correspond to `this`.
@@ -219,7 +219,7 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
         'Token ($e) of type ${e.runtimeType} is not supported.',
       );
     });
-    return "'${pathItems.join('')}'";
+    return "'${pathItems.join()}'";
   }
 
   late final Set<String> _pathParams = Set<String>.unmodifiable(_parsedPath
@@ -249,7 +249,7 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
     final String routesBit = _children.isEmpty
         ? ''
         : '''
-routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join('')}],
+routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
 ''';
 
     return '''
@@ -363,11 +363,11 @@ GoRouteData.\$route(
 String _enumMapConst(InterfaceType type) {
   assert(type.isEnum);
 
-  final String enumName = type.element.name;
+  final String enumName = type.element2.name;
 
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
-  for (final FieldElement enumField in type.element.fields
+  for (final FieldElement enumField in type.element2.fields
       .where((FieldElement element) => !element.isSynthetic)) {
     buffer.writeln(
       '$enumName.${enumField.name}: ${escapeDartString(enumField.name.kebab)},',

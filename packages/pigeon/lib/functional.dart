@@ -32,7 +32,7 @@ Iterable<V> map2<T, U, V>(
     yield func(itt.current, itu.current);
   }
   if (itu.moveNext() || itt.moveNext()) {
-    throw ArgumentError('Iterables aren\'t of equal length.');
+    throw ArgumentError("Iterables aren't of equal length.");
   }
 }
 
@@ -47,7 +47,7 @@ Iterable<V> map3<T, U, V, W>(Iterable<T> ts, Iterable<U> us, Iterable<W> ws,
     yield func(itt.current, itu.current, itw.current);
   }
   if (itu.moveNext() || itt.moveNext() || itw.moveNext()) {
-    throw ArgumentError('Iterables aren\'t of equal length.');
+    throw ArgumentError("Iterables aren't of equal length.");
   }
 }
 
