@@ -52,6 +52,27 @@ void main() {
       throwsAssertionError,
     );
   });
+
+  test('throws when ShellRoute has no children', () {
+    final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>();
+    expect(
+      () {
+        RouteConfiguration(
+          navigatorKey: root,
+          routes: <RouteBase>[
+            ShellRoute(
+              routes: <RouteBase>[],
+            ),
+          ],
+          redirectLimit: 10,
+          topRedirect: (GoRouterState state) {
+            return null;
+          },
+        );
+      },
+      throwsAssertionError,
+    );
+  });
 }
 
 class _MockScreen extends StatelessWidget {
