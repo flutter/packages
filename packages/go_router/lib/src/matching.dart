@@ -187,8 +187,8 @@ List<RouteMatch> _getLocRouteRecursively({
         assert(loc.startsWith(match.subloc));
         assert(restLoc.isNotEmpty);
 
-        childRestLoc = loc
-            .substring(match.subloc.length + (match.subloc == '/' ? 0 : 1));
+        childRestLoc =
+            loc.substring(match.subloc.length + (match.subloc == '/' ? 0 : 1));
         newParentSubLoc = match.subloc;
       }
 

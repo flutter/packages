@@ -62,4 +62,4 @@ class _MockScreen extends StatelessWidget {
 }
 
 Widget _mockScreenBuilder(BuildContext context, GoRouterState state) =>
-    const _MockScreen();
+    _MockScreen(key: state.pageKey);

@@ -388,8 +388,8 @@ class RouteBuilder {
       );
 
   /// Builds a Navigator containing an error page.
-  Widget _buildErrorNavigator(BuildContext context, _RouteBuilderError e, Uri uri,
-      VoidCallback pop, GlobalKey<NavigatorState> navigatorKey) {
+  Widget _buildErrorNavigator(BuildContext context, _RouteBuilderError e,
+      Uri uri, VoidCallback pop, GlobalKey<NavigatorState> navigatorKey) {
     return _buildNavigator(
       pop,
       <Page<dynamic>>[
