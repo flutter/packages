@@ -1,4 +1,4 @@
-### Flutter Migrate
+# Flutter Migrate
 
 ## Overview
 
@@ -17,7 +17,7 @@ Projects that contain heavy modifications to the project's platform directories 
 `android/`, `ios/`, `linux/`) may result in many conflicts.
 
 Currently, only full Flutter apps are supported. This tool will not work properly with
-plugins, add-to-app, or non-flutter packages.
+plugins, or add-to-app Flutter apps.
 
 The project must be a git repository with no uncommitted changes. Git is used to revert
 any migrations that are broken.
