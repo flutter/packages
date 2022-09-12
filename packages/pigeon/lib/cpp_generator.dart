@@ -736,8 +736,19 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 
 void _writeFlutterApiHeader(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
-  indent.writeln(
-      '/* Generated class from Pigeon that represents Flutter messages that can be called from C++. */');
+
+  const String generatedMessage =
+      'Generated class from Pigeon that represents Flutter messages that can be called from C++.';
+  if (api.documentationComments != null) {
+    indent.writeln(openDoc);
+    indent.writeln(generatedMessage);
+    api.documentationComments?.forEach((String documentationComment) {
+      indent.writeln(documentationComment);
+    });
+    indent.writeln(closeDoc);
+  } else {
+    indent.writeln('$openDoc $generatedMessage $closeDoc');
+  }
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' private:', '', () {
@@ -752,6 +763,19 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
             ? 'void'
             : _nullSafeCppTypeForDartType(func.returnType);
         final String callback = 'std::function<void($returnType)>&& callback';
+        if (func.documentationComments != null) {
+          if (func.documentationComments!.length > 1) {
+            indent.writeln(openDoc);
+            func.documentationComments?.forEach((String documentationComment) {
+              indent.writeln(documentationComment);
+            });
+            indent.writeln(closeDoc);
+          } else if (func.documentationComments!.length == 1) {
+            final String documentationComment =
+                func.documentationComments!.first;
+            indent.writeln('$openDoc $documentationComment $closeDoc');
+          }
+        }
         if (func.arguments.isEmpty) {
           indent.writeln('void ${func.name}($callback);');
         } else {
