@@ -1,3 +1,8 @@
+## 0.6.10+6
+
+* Removes print logged when not handling hr for alignment.
+* Removes print logged when not handling li for alignment.
+
 ## 0.6.10+5
 
 * Fixes lint warnings.
