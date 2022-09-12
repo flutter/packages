@@ -1,3 +1,7 @@
+## 4.0.3
+
+* [swift] Makes swift output work on macOS.
+
 ## 4.0.2
 
 * Fixes lint warnings.
