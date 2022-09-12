@@ -546,8 +546,8 @@ class Markdown extends MarkdownWidget {
 }
 
 /// Parse [task list items](https://github.github.com/gfm/#task-list-items-extension-).
-/// This class is no longer used as Markdown now supports checkbox syntax natively
-/// FIXME: Remove class entirely at some point in the future.
+///
+/// This class is no longer used as Markdown now supports checkbox syntax natively.
 @Deprecated(
     'Use [OrderedListWithCheckBoxSyntax] or [UnorderedListWithCheckBoxSyntax]')
 class TaskListSyntax extends md.InlineSyntax {
