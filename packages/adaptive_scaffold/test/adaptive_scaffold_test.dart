@@ -7,6 +7,121 @@ import 'package:adaptive_scaffold/src/breakpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+void main() {
+  testWidgets('adaptive scaffold lays out slots as expected',
+      (WidgetTester tester) async {
+    final Finder smallBody = find.byKey(const Key('smallBody'));
+    final Finder body = find.byKey(const Key('body'));
+    final Finder largeBody = find.byKey(const Key('largeBody'));
+    final Finder smallSBody = find.byKey(const Key('smallSBody'));
+    final Finder sBody = find.byKey(const Key('sBody'));
+    final Finder largeSBody = find.byKey(const Key('largeSBody'));
+    final Finder bottomNav = find.byKey(const Key('bottomNavigation'));
+    final Finder primaryNav = find.byKey(const Key('primaryNavigation'));
+    final Finder primaryNav1 = find.byKey(const Key('primaryNavigation1'));
+
+    await tester.pumpWidget(await scaffold(width: 300, tester: tester));
+    await tester.pumpAndSettle();
+
+    expect(smallBody, findsOneWidget);
+    expect(smallSBody, findsOneWidget);
+    expect(bottomNav, findsOneWidget);
+    expect(primaryNav, findsNothing);
+
+    expect(tester.getTopLeft(smallBody), Offset.zero);
+    expect(tester.getTopLeft(smallSBody), const Offset(150, 0));
+    expect(tester.getTopLeft(bottomNav), const Offset(0, 744));
+
+    await tester.pumpWidget(await scaffold(width: 900, tester: tester));
+    await tester.pumpAndSettle();
+
+    expect(smallBody, findsNothing);
+    expect(body, findsOneWidget);
+    expect(smallSBody, findsNothing);
+    expect(sBody, findsOneWidget);
+    expect(bottomNav, findsNothing);
+    expect(primaryNav, findsOneWidget);
+
+    expect(tester.getTopLeft(body), const Offset(88, 0));
+    expect(tester.getTopLeft(sBody), const Offset(450, 0));
+    expect(tester.getTopLeft(primaryNav), Offset.zero);
+    expect(tester.getBottomRight(primaryNav), const Offset(88, 800));
+
+    await tester.pumpWidget(await scaffold(width: 1100, tester: tester));
+    await tester.pumpAndSettle();
+
+    expect(body, findsNothing);
+    expect(largeBody, findsOneWidget);
+    expect(sBody, findsNothing);
+    expect(largeSBody, findsOneWidget);
+    expect(primaryNav, findsNothing);
+    expect(primaryNav1, findsOneWidget);
+
+    expect(tester.getTopLeft(largeBody), const Offset(208, 0));
+    expect(tester.getTopLeft(largeSBody), const Offset(550, 0));
+    expect(tester.getTopLeft(primaryNav1), Offset.zero);
+    expect(tester.getBottomRight(primaryNav1), const Offset(208, 800));
+  });
+
+  testWidgets('adaptive scaffold animations work correctly',
+      (WidgetTester tester) async {
+    final Finder b = find.byKey(const Key('body'));
+    final Finder sBody = find.byKey(const Key('sBody'));
+
+    await tester.pumpWidget(await scaffold(width: 400, tester: tester));
+    await tester.pumpWidget(await scaffold(width: 800, tester: tester));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+
+    expect(tester.getTopLeft(b), const Offset(17.6, 0));
+    expect(tester.getBottomRight(b),
+        offsetMoreOrLessEquals(const Offset(778.2, 755.2), epsilon: 1.0));
+    expect(tester.getTopLeft(sBody),
+        offsetMoreOrLessEquals(const Offset(778.2, 0), epsilon: 1.0));
+    expect(tester.getBottomRight(sBody),
+        offsetMoreOrLessEquals(const Offset(1178.2, 755.2), epsilon: 1.0));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(tester.getTopLeft(b), const Offset(70.4, 0));
+    expect(tester.getBottomRight(b),
+        offsetMoreOrLessEquals(const Offset(416.0, 788.8), epsilon: 1.0));
+    expect(tester.getTopLeft(sBody),
+        offsetMoreOrLessEquals(const Offset(416, 0), epsilon: 1.0));
+    expect(tester.getBottomRight(sBody),
+        offsetMoreOrLessEquals(const Offset(816, 788.8), epsilon: 1.0));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+
+    expect(tester.getTopLeft(b), const Offset(88.0, 0));
+    expect(tester.getBottomRight(b), const Offset(400, 800));
+    expect(tester.getTopLeft(sBody), const Offset(400, 0));
+    expect(tester.getBottomRight(sBody), const Offset(800, 800));
+  });
+
+  testWidgets('adaptive scaffold animations can be disabled',
+      (WidgetTester tester) async {
+    final Finder b = find.byKey(const Key('body'));
+    final Finder sBody = find.byKey(const Key('sBody'));
+
+    await tester.pumpWidget(
+        await scaffold(width: 400, tester: tester, animations: false));
+    await tester.pumpWidget(
+        await scaffold(width: 800, tester: tester, animations: false));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+
+    expect(tester.getTopLeft(b), const Offset(88.0, 0));
+    expect(tester.getBottomRight(b), const Offset(400, 800));
+    expect(tester.getTopLeft(sBody), const Offset(400, 0));
+    expect(tester.getBottomRight(sBody), const Offset(800, 800));
+  });
+}
+
 class TestBreakpoint0 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
@@ -67,117 +182,4 @@ Future<MaterialApp> scaffold({
       ),
     ),
   );
-}
-
-void main() {
-  testWidgets('adaptive scaffold lays out slots as expected',
-      (WidgetTester tester) async {
-    final Finder smallBody = find.byKey(const Key('smallBody'));
-    final Finder body = find.byKey(const Key('body'));
-    final Finder largeBody = find.byKey(const Key('largeBody'));
-    final Finder smallSBody = find.byKey(const Key('smallSBody'));
-    final Finder sBody = find.byKey(const Key('sBody'));
-    final Finder largeSBody = find.byKey(const Key('largeSBody'));
-    final Finder bnav = find.byKey(const Key('bottomNavigation'));
-    final Finder pnav = find.byKey(const Key('primaryNavigation'));
-    final Finder pnav1 = find.byKey(const Key('primaryNavigation1'));
-
-    await tester.pumpWidget(await scaffold(width: 300, tester: tester));
-    await tester.pumpAndSettle();
-
-    expect(smallBody, findsOneWidget);
-    expect(smallSBody, findsOneWidget);
-    expect(bnav, findsOneWidget);
-    expect(pnav, findsNothing);
-
-    expect(tester.getTopLeft(smallBody), Offset.zero);
-    expect(tester.getTopLeft(smallSBody), const Offset(150, 0));
-    expect(tester.getTopLeft(bnav), const Offset(0, 744));
-
-    await tester.pumpWidget(await scaffold(width: 900, tester: tester));
-    await tester.pumpAndSettle();
-
-    expect(smallBody, findsNothing);
-    expect(body, findsOneWidget);
-    expect(smallSBody, findsNothing);
-    expect(sBody, findsOneWidget);
-    expect(bnav, findsNothing);
-    expect(pnav, findsOneWidget);
-
-    expect(tester.getTopLeft(body), const Offset(88, 0));
-    expect(tester.getTopLeft(sBody), const Offset(450, 0));
-    expect(tester.getTopLeft(pnav), Offset.zero);
-    expect(tester.getBottomRight(pnav), const Offset(88, 800));
-
-    await tester.pumpWidget(await scaffold(width: 1100, tester: tester));
-    await tester.pumpAndSettle();
-
-    expect(body, findsNothing);
-    expect(largeBody, findsOneWidget);
-    expect(sBody, findsNothing);
-    expect(largeSBody, findsOneWidget);
-    expect(pnav, findsNothing);
-    expect(pnav1, findsOneWidget);
-
-    expect(tester.getTopLeft(largeBody), const Offset(208, 0));
-    expect(tester.getTopLeft(largeSBody), const Offset(550, 0));
-    expect(tester.getTopLeft(pnav1), Offset.zero);
-    expect(tester.getBottomRight(pnav1), const Offset(208, 800));
-  });
-  testWidgets('adaptive scaffold animations work correctly',
-      (WidgetTester tester) async {
-    final Finder b = find.byKey(const Key('body'));
-    final Finder sBody = find.byKey(const Key('sBody'));
-
-    await tester.pumpWidget(await scaffold(width: 400, tester: tester));
-    await tester.pumpWidget(await scaffold(width: 800, tester: tester));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
-
-    expect(tester.getTopLeft(b), const Offset(17.6, 0));
-    expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(778.2, 755.2), epsilon: 1.0));
-    expect(tester.getTopLeft(sBody),
-        offsetMoreOrLessEquals(const Offset(778.2, 0), epsilon: 1.0));
-    expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(1178.2, 755.2), epsilon: 1.0));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 600));
-
-    expect(tester.getTopLeft(b), const Offset(70.4, 0));
-    expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(416.0, 788.8), epsilon: 1.0));
-    expect(tester.getTopLeft(sBody),
-        offsetMoreOrLessEquals(const Offset(416, 0), epsilon: 1.0));
-    expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(816, 788.8), epsilon: 1.0));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
-
-    expect(tester.getTopLeft(b), const Offset(88.0, 0));
-    expect(tester.getBottomRight(b), const Offset(400, 800));
-    expect(tester.getTopLeft(sBody), const Offset(400, 0));
-    expect(tester.getBottomRight(sBody), const Offset(800, 800));
-  });
-  testWidgets('adaptive scaffold animations can be disabled',
-      (WidgetTester tester) async {
-    final Finder b = find.byKey(const Key('body'));
-    final Finder sBody = find.byKey(const Key('sBody'));
-
-    await tester.pumpWidget(
-        await scaffold(width: 400, tester: tester, animations: false));
-    await tester.pumpWidget(
-        await scaffold(width: 800, tester: tester, animations: false));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
-
-    expect(tester.getTopLeft(b), const Offset(88.0, 0));
-    expect(tester.getBottomRight(b), const Offset(400, 800));
-    expect(tester.getTopLeft(sBody), const Offset(400, 0));
-    expect(tester.getBottomRight(sBody), const Offset(800, 800));
-  });
 }
