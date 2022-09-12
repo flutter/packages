@@ -41,6 +41,29 @@ class RouteConfiguration {
         }
       }
     }
+
+    final List<GlobalKey<NavigatorState>> keys = <GlobalKey<NavigatorState>>[];
+    keys.add(navigatorKey);
+    void checkRoutes(List<RouteBase> routes) {
+      for (final RouteBase route in routes) {
+        if (route is GoRoute &&
+            route.parentNavigatorKey != null &&
+            !keys.contains(route.parentNavigatorKey)) {
+          throw RouteConfigurationError(
+              'parentNavigatorKey ${route.parentNavigatorKey} must refer to'
+              " an ancestor ShellRoute's navigatorKey or GoRouter's"
+              ' navigatorKey');
+        } else if (route is ShellRoute && route.navigatorKey != null) {
+          keys.add(route.navigatorKey);
+          checkRoutes(route.routes);
+          keys.remove(route.navigatorKey);
+        } else if (route is GoRoute) {
+          checkRoutes(route.routes);
+        }
+      }
+    }
+
+    checkRoutes(routes);
   }
 
   /// The list of top level routes used by [GoRouterDelegate].
