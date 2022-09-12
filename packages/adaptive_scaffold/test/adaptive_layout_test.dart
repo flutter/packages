@@ -159,7 +159,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
-  });
+    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // https://github.com/flutter/flutter/pull/107476
+  }, skip: true);
 
   // This test reflects the behavior of the internal animations of both the body
   // and secondary body and also the navigational items. This is reflected in
@@ -214,7 +216,9 @@ void main() {
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
     expect(
         tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
-  });
+  // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+  // https://github.com/flutter/flutter/pull/107476
+  }, skip: true);
 
   testWidgets('adaptive layout does not animate when animations off',
       (WidgetTester tester) async {
@@ -233,7 +237,9 @@ void main() {
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
     expect(
         tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
-  });
+  // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+  // https://github.com/flutter/flutter/pull/107476
+  }, skip: true);
 }
 
 class TestBreakpoint0 extends Breakpoint {
