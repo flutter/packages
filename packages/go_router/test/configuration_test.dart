@@ -49,7 +49,7 @@ void main() {
           },
         );
       },
-      throwsA(isA<RouteConfigurationError>()),
+      throwsAssertionError,
     );
   });
 }

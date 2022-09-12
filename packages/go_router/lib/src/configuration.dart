@@ -30,12 +30,12 @@ class RouteConfiguration {
 
     for (final RouteBase route in routes) {
       if (route is GoRoute && !route.path.startsWith('/')) {
-        throw RouteConfigurationError(
+        assert(route.path.startsWith('/'),
             'top-level path must start with "/": ${route.path}');
       } else if (route is ShellRoute) {
         for (final RouteBase route in routes) {
-          if (route is GoRoute && !route.path.startsWith('/')) {
-            throw RouteConfigurationError(
+          if (route is GoRoute) {
+            assert(route.path.startsWith('/'),
                 'top-level path must start with "/": ${route.path}');
           }
         }
@@ -46,10 +46,9 @@ class RouteConfiguration {
     keys.add(navigatorKey);
     void checkRoutes(List<RouteBase> routes) {
       for (final RouteBase route in routes) {
-        if (route is GoRoute &&
-            route.parentNavigatorKey != null &&
-            !keys.contains(route.parentNavigatorKey)) {
-          throw RouteConfigurationError(
+        if (route is GoRoute && route.parentNavigatorKey != null) {
+          assert(
+              keys.contains(route.parentNavigatorKey),
               'parentNavigatorKey ${route.parentNavigatorKey} must refer to'
               " an ancestor ShellRoute's navigatorKey or GoRouter's"
               ' navigatorKey');
@@ -177,16 +176,4 @@ class RouteConfiguration {
       }
     }
   }
-}
-
-/// Thrown when the [RouteConfiguration] is invalid.
-class RouteConfigurationError extends Error {
-  /// [RouteConfigurationError] constructor.
-  RouteConfigurationError(this.message);
-
-  /// The error message.
-  final String message;
-
-  @override
-  String toString() => 'Route configuration error: $message';
 }
