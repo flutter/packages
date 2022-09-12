@@ -216,8 +216,8 @@ void main() {
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
     expect(
         tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
-  // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
-  // https://github.com/flutter/flutter/pull/107476
+    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // https://github.com/flutter/flutter/pull/107476
   }, skip: true);
 
   testWidgets('adaptive layout does not animate when animations off',
@@ -237,8 +237,8 @@ void main() {
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
     expect(
         tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
-  // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
-  // https://github.com/flutter/flutter/pull/107476
+    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // https://github.com/flutter/flutter/pull/107476
   }, skip: true);
 }
 
