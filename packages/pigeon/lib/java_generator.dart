@@ -359,7 +359,6 @@ void _writeFlutterApi(Indent indent, Api api) {
   } else {
     indent.writeln('$openDoc $generatedMessage $closeDoc');
   }
-  indent.writeln('/** */');
   indent.write('public static class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.writeln('private final BinaryMessenger binaryMessenger;');
@@ -383,6 +382,18 @@ static MessageCodec<Object> getCodec() {
           ? 'Void'
           : _javaTypeForDartType(func.returnType);
       String sendArgument;
+      if (func.documentationComments != null) {
+        if (func.documentationComments!.length > 1) {
+          indent.writeln(openDoc);
+          func.documentationComments?.forEach((String documentationComment) {
+            indent.writeln(documentationComment);
+          });
+          indent.writeln(closeDoc);
+        } else if (func.documentationComments!.length == 1) {
+          final String documentationComment = func.documentationComments!.first;
+          indent.writeln('$openDoc $documentationComment $closeDoc');
+        }
+      }
       if (func.arguments.isEmpty) {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
