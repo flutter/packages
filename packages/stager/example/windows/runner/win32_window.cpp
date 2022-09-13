@@ -102,8 +102,7 @@ Win32Window::~Win32Window() {
   Destroy();
 }
 
-bool Win32Window::CreateAndShow(const std::wstring& title,
-                                const Point& origin,
+bool Win32Window::CreateAndShow(const std::wstring& title, const Point& origin,
                                 const Size& size) {
   Destroy();
 
