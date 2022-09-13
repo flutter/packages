@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:example/shared/api.dart';
 import 'package:example/shared/post.dart';
 import 'package:example/shared/posts_list/posts_list.dart';
