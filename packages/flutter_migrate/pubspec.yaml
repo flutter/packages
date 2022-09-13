@@ -9,11 +9,6 @@ environment:
   sdk: '>=2.18.0 <3.0.0'
 
 dependencies:
-  args: 2.3.1
-  flutter_tools:
-    git:
-      url: https://github.com/flutter/flutter.git
-      ref: 58ec4839159ea24eafe200d9c1ff41e35f720fa0
-      path: packages/flutter_tools/
+  args: ^2.3.1
 
 dev_dependencies:
