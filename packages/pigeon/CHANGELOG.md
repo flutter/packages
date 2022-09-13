@@ -1,6 +1,10 @@
-## 4.0.3
+## 4.0.4
 
 * Adds documentation comment support for all currently supported languages.
+
+## 4.0.3
+
+* [swift] Makes swift output work on macOS.
 
 ## 4.0.2
 

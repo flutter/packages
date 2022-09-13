@@ -8,6 +8,240 @@ import 'package:adaptive_scaffold/src/slot_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+void main() {
+  testWidgets(
+      'slot layout displays correct item of config based on screen width',
+      (WidgetTester tester) async {
+    MediaQuery slot(double width) {
+      return MediaQuery(
+        data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+            .copyWith(size: Size(width, 800)),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: SlotLayout(
+            config: <Breakpoint, SlotLayoutConfig>{
+              TestBreakpoint0(): SlotLayout.from(
+                  key: const Key('0'), builder: (_) => const SizedBox()),
+              TestBreakpoint400(): SlotLayout.from(
+                  key: const Key('400'), builder: (_) => const SizedBox()),
+              TestBreakpoint800(): SlotLayout.from(
+                  key: const Key('800'), builder: (_) => const SizedBox()),
+            },
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(slot(300));
+    expect(find.byKey(const Key('0')), findsOneWidget);
+    expect(find.byKey(const Key('400')), findsNothing);
+    expect(find.byKey(const Key('800')), findsNothing);
+
+    await tester.pumpWidget(slot(500));
+    expect(find.byKey(const Key('0')), findsNothing);
+    expect(find.byKey(const Key('400')), findsOneWidget);
+    expect(find.byKey(const Key('800')), findsNothing);
+
+    await tester.pumpWidget(slot(1000));
+    expect(find.byKey(const Key('0')), findsNothing);
+    expect(find.byKey(const Key('400')), findsNothing);
+    expect(find.byKey(const Key('800')), findsOneWidget);
+  });
+
+  testWidgets('adaptive layout displays children in correct places',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(await layout(width: 400, tester: tester));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(topNavigation), Offset.zero);
+    expect(tester.getTopLeft(secondaryNavigation), const Offset(390, 10));
+    expect(tester.getTopLeft(primaryNavigation), const Offset(0, 10));
+    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 790));
+    expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(200, 790));
+    expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
+    expect(
+        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
+  });
+
+  testWidgets('adaptive layout correct layout when body vertical',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+        await layout(width: 400, tester: tester, orientation: Axis.vertical));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(topNavigation), Offset.zero);
+    expect(tester.getTopLeft(secondaryNavigation), const Offset(390, 10));
+    expect(tester.getTopLeft(primaryNavigation), const Offset(0, 10));
+    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 790));
+    expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(390, 400));
+    expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(10, 400));
+    expect(
+        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
+  });
+
+  testWidgets('adaptive layout correct layout when rtl',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(await layout(
+        width: 400, tester: tester, directionality: TextDirection.rtl));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(topNavigation), Offset.zero);
+    expect(tester.getTopLeft(secondaryNavigation), const Offset(0, 10));
+    expect(tester.getTopLeft(primaryNavigation), const Offset(390, 10));
+    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 790));
+    expect(tester.getTopLeft(testBreakpoint), const Offset(200, 10));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(390, 790));
+    expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(10, 10));
+    expect(
+        tester.getBottomRight(secondaryTestBreakpoint), const Offset(200, 790));
+  });
+
+  testWidgets('adaptive layout correct layout when body ratio not default',
+      (WidgetTester tester) async {
+    await tester
+        .pumpWidget(await layout(width: 400, tester: tester, bodyRatio: 1 / 3));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(topNavigation), Offset.zero);
+    expect(tester.getTopLeft(secondaryNavigation), const Offset(390, 10));
+    expect(tester.getTopLeft(primaryNavigation), const Offset(0, 10));
+    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 790));
+    expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint),
+        offsetMoreOrLessEquals(const Offset(136.7, 790), epsilon: 1.0));
+    expect(tester.getTopLeft(secondaryTestBreakpoint),
+        offsetMoreOrLessEquals(const Offset(136.7, 10), epsilon: 1.0));
+    expect(
+        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
+  });
+
+  final Finder begin = find.byKey(const Key('0'));
+  final Finder end = find.byKey(const Key('400'));
+  Finder slideIn(String key) => find.byKey(Key('in-${Key(key)}'));
+  Finder slideOut(String key) => find.byKey(Key('out-${Key(key)}'));
+  testWidgets(
+      'slot layout properly switches between items with the appropriate animation',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(slot(300));
+    expect(begin, findsOneWidget);
+    expect(end, findsNothing);
+
+    await tester.pumpWidget(slot(500));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
+        const Offset(-0.5, 0));
+    expect(tester.widget<SlideTransition>(slideIn('400')).position.value,
+        const Offset(-0.5, 0));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
+        const Offset(-1.0, 0));
+    expect(tester.widget<SlideTransition>(slideIn('400')).position.value,
+        Offset.zero);
+
+    await tester.pumpAndSettle();
+    expect(begin, findsNothing);
+    expect(end, findsOneWidget);
+  });
+  testWidgets('slot layout can tolerate rapid changes in breakpoints',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(slot(300));
+    expect(begin, findsOneWidget);
+    expect(end, findsNothing);
+
+    await tester.pumpWidget(slot(500));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
+        offsetMoreOrLessEquals(const Offset(-0.1, 0), epsilon: 0.05));
+    expect(tester.widget<SlideTransition>(slideIn('400')).position.value,
+        offsetMoreOrLessEquals(const Offset(-0.9, 0), epsilon: 0.05));
+    await tester.pumpWidget(slot(300));
+    await tester.pumpAndSettle();
+    expect(begin, findsOneWidget);
+    expect(end, findsNothing);
+    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // https://github.com/flutter/flutter/pull/107476
+  }, skip: true);
+
+  // This test reflects the behavior of the internal animations of both the body
+  // and secondary body and also the navigational items. This is reflected in
+  // the changes in LTRB offsets from all sides instead of just LR for the body
+  // animations.
+  testWidgets('adaptive layout handles internal animations correctly',
+      (WidgetTester tester) async {
+    final Finder testBreakpoint = find.byKey(const Key('Test Breakpoint'));
+    final Finder secondaryTestBreakpoint =
+        find.byKey(const Key('Secondary Test Breakpoint'));
+
+    await tester.pumpWidget(await layout(width: 400, tester: tester));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.getTopLeft(testBreakpoint), const Offset(1, 1));
+    expect(tester.getBottomRight(testBreakpoint),
+        offsetMoreOrLessEquals(const Offset(395.8, 799), epsilon: 1.0));
+    expect(tester.getTopLeft(secondaryTestBreakpoint),
+        offsetMoreOrLessEquals(const Offset(395.8, 1.0), epsilon: 1.0));
+    expect(tester.getBottomRight(secondaryTestBreakpoint),
+        offsetMoreOrLessEquals(const Offset(594.8, 799.0), epsilon: 1.0));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(tester.getTopLeft(testBreakpoint), const Offset(5, 5));
+    expect(tester.getBottomRight(testBreakpoint),
+        offsetMoreOrLessEquals(const Offset(294.2, 795), epsilon: 1.0));
+    expect(tester.getTopLeft(secondaryTestBreakpoint),
+        offsetMoreOrLessEquals(const Offset(294.2, 5.0), epsilon: 1.0));
+    expect(tester.getBottomRight(secondaryTestBreakpoint),
+        offsetMoreOrLessEquals(const Offset(489.2, 795.0), epsilon: 1.0));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(tester.getTopLeft(testBreakpoint), const Offset(9, 9));
+    expect(tester.getBottomRight(testBreakpoint),
+        offsetMoreOrLessEquals(const Offset(201.7, 791), epsilon: 1.0));
+    expect(tester.getTopLeft(secondaryTestBreakpoint),
+        offsetMoreOrLessEquals(const Offset(201.7, 9.0), epsilon: 1.0));
+    expect(tester.getBottomRight(secondaryTestBreakpoint),
+        offsetMoreOrLessEquals(const Offset(392.7, 791), epsilon: 1.0));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(200, 790));
+    expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
+    expect(
+        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
+    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // https://github.com/flutter/flutter/pull/107476
+  }, skip: true);
+
+  testWidgets('adaptive layout does not animate when animations off',
+      (WidgetTester tester) async {
+    final Finder testBreakpoint = find.byKey(const Key('Test Breakpoint'));
+    final Finder secondaryTestBreakpoint =
+        find.byKey(const Key('Secondary Test Breakpoint'));
+
+    await tester.pumpWidget(
+        await layout(width: 400, tester: tester, animations: false));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(200, 790));
+    expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
+    expect(
+        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
+    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // https://github.com/flutter/flutter/pull/107476
+  }, skip: true);
+}
+
 class TestBreakpoint0 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
@@ -29,12 +263,16 @@ class TestBreakpoint800 extends Breakpoint {
   }
 }
 
-final Finder tnav = find.byKey(const Key('tnav'));
-final Finder snav = find.byKey(const Key('snav'));
-final Finder pnav = find.byKey(const Key('pnav'));
-final Finder bnav = find.byKey(const Key('bnav'));
-final Finder b = find.byKey(const Key('b'));
-final Finder sb = find.byKey(const Key('sb'));
+final Finder topNavigation = find.byKey(const Key('Top Navigation'));
+final Finder secondaryNavigation =
+    find.byKey(const Key('Secondary Navigation Small'));
+final Finder primaryNavigation =
+    find.byKey(const Key('Primary Navigation Small'));
+final Finder bottomNavigation =
+    find.byKey(const Key('Bottom Navigation Small'));
+final Finder testBreakpoint = find.byKey(const Key('Test Breakpoint'));
+final Finder secondaryTestBreakpoint =
+    find.byKey(const Key('Secondary Test Breakpoint'));
 
 Widget on(BuildContext _) {
   return const SizedBox(width: 10, height: 10);
@@ -59,38 +297,38 @@ Future<MediaQuery> layout({
         internalAnimations: animations,
         primaryNavigation: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig>{
-            TestBreakpoint0():
-                SlotLayout.from(key: const Key('pnav'), builder: on),
-            TestBreakpoint400():
-                SlotLayout.from(key: const Key('pnav1'), builder: on),
-            TestBreakpoint800():
-                SlotLayout.from(key: const Key('pnav2'), builder: on),
+            TestBreakpoint0(): SlotLayout.from(
+                key: const Key('Primary Navigation Small'), builder: on),
+            TestBreakpoint400(): SlotLayout.from(
+                key: const Key('Primary Navigation Medium'), builder: on),
+            TestBreakpoint800(): SlotLayout.from(
+                key: const Key('Primary Navigation Large'), builder: on),
           },
         ),
         secondaryNavigation: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig>{
-            TestBreakpoint0():
-                SlotLayout.from(key: const Key('snav'), builder: on),
-            TestBreakpoint400():
-                SlotLayout.from(key: const Key('snav1'), builder: on),
-            TestBreakpoint800():
-                SlotLayout.from(key: const Key('snav2'), builder: on),
+            TestBreakpoint0(): SlotLayout.from(
+                key: const Key('Secondary Navigation Small'), builder: on),
+            TestBreakpoint400(): SlotLayout.from(
+                key: const Key('Secondary Navigation Medium'), builder: on),
+            TestBreakpoint800(): SlotLayout.from(
+                key: const Key('Secondary Navigation Large'), builder: on),
           },
         ),
         topNavigation: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig>{
             TestBreakpoint0():
-                SlotLayout.from(key: const Key('tnav'), builder: on),
+                SlotLayout.from(key: const Key('Top Navigation'), builder: on),
             TestBreakpoint400():
-                SlotLayout.from(key: const Key('tnav1'), builder: on),
+                SlotLayout.from(key: const Key('Top Navigation1'), builder: on),
             TestBreakpoint800():
-                SlotLayout.from(key: const Key('tnav2'), builder: on),
+                SlotLayout.from(key: const Key('Top Navigation2'), builder: on),
           },
         ),
         bottomNavigation: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig>{
-            TestBreakpoint0():
-                SlotLayout.from(key: const Key('bnav'), builder: on),
+            TestBreakpoint0(): SlotLayout.from(
+                key: const Key('Bottom Navigation Small'), builder: on),
             TestBreakpoint400():
                 SlotLayout.from(key: const Key('bnav1'), builder: on),
             TestBreakpoint800():
@@ -100,15 +338,15 @@ Future<MediaQuery> layout({
         body: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig>{
             TestBreakpoint0(): SlotLayout.from(
-              key: const Key('b'),
+              key: const Key('Test Breakpoint'),
               builder: (_) => Container(color: Colors.red),
             ),
             TestBreakpoint400(): SlotLayout.from(
-              key: const Key('b1'),
+              key: const Key('Test Breakpoint 1'),
               builder: (_) => Container(color: Colors.red),
             ),
             TestBreakpoint800(): SlotLayout.from(
-              key: const Key('b2'),
+              key: const Key('Test Breakpoint 2'),
               builder: (_) => Container(color: Colors.red),
             ),
           },
@@ -116,15 +354,15 @@ Future<MediaQuery> layout({
         secondaryBody: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig>{
             TestBreakpoint0(): SlotLayout.from(
-              key: const Key('sb'),
+              key: const Key('Secondary Test Breakpoint'),
               builder: (_) => Container(color: Colors.blue),
             ),
             TestBreakpoint400(): SlotLayout.from(
-              key: const Key('sb1'),
+              key: const Key('Secondary Test Breakpoint 1'),
               builder: (_) => Container(color: Colors.blue),
             ),
             TestBreakpoint800(): SlotLayout.from(
-              key: const Key('sb2'),
+              key: const Key('Secondary Test Breakpoint 2'),
               builder: (_) => Container(color: Colors.blue),
             ),
           },
@@ -181,227 +419,3 @@ MediaQuery slot(double width) {
     ),
   );
 }
-
-void main() {
-  testWidgets(
-      'slot layout dislays correct item of config based on screen width',
-      (WidgetTester tester) async {
-    MediaQuery slot(double width) {
-      return MediaQuery(
-        data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-            .copyWith(size: Size(width, 800)),
-        child: Directionality(
-          textDirection: TextDirection.ltr,
-          child: SlotLayout(
-            config: <Breakpoint, SlotLayoutConfig>{
-              TestBreakpoint0(): SlotLayout.from(
-                  key: const Key('0'), builder: (_) => const SizedBox()),
-              TestBreakpoint400(): SlotLayout.from(
-                  key: const Key('400'), builder: (_) => const SizedBox()),
-              TestBreakpoint800(): SlotLayout.from(
-                  key: const Key('800'), builder: (_) => const SizedBox()),
-            },
-          ),
-        ),
-      );
-    }
-
-    await tester.pumpWidget(slot(300));
-    expect(find.byKey(const Key('0')), findsOneWidget);
-    expect(find.byKey(const Key('400')), findsNothing);
-    expect(find.byKey(const Key('800')), findsNothing);
-
-    await tester.pumpWidget(slot(500));
-    expect(find.byKey(const Key('0')), findsNothing);
-    expect(find.byKey(const Key('400')), findsOneWidget);
-    expect(find.byKey(const Key('800')), findsNothing);
-
-    await tester.pumpWidget(slot(1000));
-    expect(find.byKey(const Key('0')), findsNothing);
-    expect(find.byKey(const Key('400')), findsNothing);
-    expect(find.byKey(const Key('800')), findsOneWidget);
-  });
-
-  testWidgets('adaptive layout displays children in correct places',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(await layout(width: 400, tester: tester));
-    await tester.pumpAndSettle();
-    expect(tester.getTopLeft(tnav), Offset.zero);
-    expect(tester.getTopLeft(snav), const Offset(390, 10));
-    expect(tester.getTopLeft(pnav), const Offset(0, 10));
-    expect(tester.getTopLeft(bnav), const Offset(0, 790));
-    expect(tester.getTopLeft(b), const Offset(10, 10));
-    expect(tester.getBottomRight(b), const Offset(200, 790));
-    expect(tester.getTopLeft(sb), const Offset(200, 10));
-    expect(tester.getBottomRight(sb), const Offset(390, 790));
-  });
-
-  testWidgets('adaptive layout correct layout when body vertical',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-        await layout(width: 400, tester: tester, orientation: Axis.vertical));
-    await tester.pumpAndSettle();
-    expect(tester.getTopLeft(tnav), Offset.zero);
-    expect(tester.getTopLeft(snav), const Offset(390, 10));
-    expect(tester.getTopLeft(pnav), const Offset(0, 10));
-    expect(tester.getTopLeft(bnav), const Offset(0, 790));
-    expect(tester.getTopLeft(b), const Offset(10, 10));
-    expect(tester.getBottomRight(b), const Offset(390, 400));
-    expect(tester.getTopLeft(sb), const Offset(10, 400));
-    expect(tester.getBottomRight(sb), const Offset(390, 790));
-  });
-
-  testWidgets('adaptive layout correct layout when rtl',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(await layout(
-        width: 400, tester: tester, directionality: TextDirection.rtl));
-    await tester.pumpAndSettle();
-    expect(tester.getTopLeft(tnav), Offset.zero);
-    expect(tester.getTopLeft(snav), const Offset(0, 10));
-    expect(tester.getTopLeft(pnav), const Offset(390, 10));
-    expect(tester.getTopLeft(bnav), const Offset(0, 790));
-    expect(tester.getTopLeft(b), const Offset(200, 10));
-    expect(tester.getBottomRight(b), const Offset(390, 790));
-    expect(tester.getTopLeft(sb), const Offset(10, 10));
-    expect(tester.getBottomRight(sb), const Offset(200, 790));
-  });
-
-  testWidgets('adaptive layout correct layout when body ratio not default',
-      (WidgetTester tester) async {
-    await tester
-        .pumpWidget(await layout(width: 400, tester: tester, bodyRatio: 1 / 3));
-    await tester.pumpAndSettle();
-    expect(tester.getTopLeft(tnav), Offset.zero);
-    expect(tester.getTopLeft(snav), const Offset(390, 10));
-    expect(tester.getTopLeft(pnav), const Offset(0, 10));
-    expect(tester.getTopLeft(bnav), const Offset(0, 790));
-    expect(tester.getTopLeft(b), const Offset(10, 10));
-    expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(136.7, 790), epsilon: 1.0));
-    expect(tester.getTopLeft(sb),
-        offsetMoreOrLessEquals(const Offset(136.7, 10), epsilon: 1.0));
-    expect(tester.getBottomRight(sb), const Offset(390, 790));
-  });
-
-  final Finder begin = find.byKey(const Key('0'));
-  final Finder end = find.byKey(const Key('400'));
-  Finder slideIn(String key) => find.byKey(Key('in-${Key(key)}'));
-  Finder slideOut(String key) => find.byKey(Key('out-${Key(key)}'));
-  testWidgets(
-      'slot layout properly switches between items with the appropriate animation',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(slot(300));
-    expect(begin, findsOneWidget);
-    expect(end, findsNothing);
-
-    await tester.pumpWidget(slot(500));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
-        const Offset(-0.5, 0));
-    expect(tester.widget<SlideTransition>(slideIn('400')).position.value,
-        const Offset(-0.5, 0));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
-        const Offset(-1.0, 0));
-    expect(tester.widget<SlideTransition>(slideIn('400')).position.value,
-        Offset.zero);
-
-    await tester.pumpAndSettle();
-    expect(begin, findsNothing);
-    expect(end, findsOneWidget);
-  });
-  testWidgets('slot layout can tolerate rapid changes in breakpoints',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(slot(300));
-    expect(begin, findsOneWidget);
-    expect(end, findsNothing);
-
-    await tester.pumpWidget(slot(500));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
-        offsetMoreOrLessEquals(const Offset(-0.1, 0), epsilon: 0.05));
-    expect(tester.widget<SlideTransition>(slideIn('400')).position.value,
-        offsetMoreOrLessEquals(const Offset(-0.9, 0), epsilon: 0.05));
-    await tester.pumpWidget(slot(300));
-    await tester.pumpAndSettle();
-    expect(begin, findsOneWidget);
-    expect(end, findsNothing);
-  }, skip: true);
-
-  // This test reflects the behavior of the internal animations of both the body
-  // and secondary body and also the navigational items. This is reflected in
-  // the changes in LTRB offsets from all sides instead of just LR for the body
-  // animations.
-  testWidgets('adaptive layout handles internal animations correctly',
-      (WidgetTester tester) async {
-    final Finder b = find.byKey(const Key('b'));
-    final Finder sb = find.byKey(const Key('sb'));
-
-    await tester.pumpWidget(await layout(width: 400, tester: tester));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-
-    expect(tester.getTopLeft(b), const Offset(1, 1));
-    expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(395.8, 799), epsilon: 1.0));
-    expect(tester.getTopLeft(sb),
-        offsetMoreOrLessEquals(const Offset(395.8, 1.0), epsilon: 1.0));
-    expect(tester.getBottomRight(sb),
-        offsetMoreOrLessEquals(const Offset(594.8, 799.0), epsilon: 1.0));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-
-    expect(tester.getTopLeft(b), const Offset(5, 5));
-    expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(294.2, 795), epsilon: 1.0));
-    expect(tester.getTopLeft(sb),
-        offsetMoreOrLessEquals(const Offset(294.2, 5.0), epsilon: 1.0));
-    expect(tester.getBottomRight(sb),
-        offsetMoreOrLessEquals(const Offset(489.2, 795.0), epsilon: 1.0));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-
-    expect(tester.getTopLeft(b), const Offset(9, 9));
-    expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(201.7, 791), epsilon: 1.0));
-    expect(tester.getTopLeft(sb),
-        offsetMoreOrLessEquals(const Offset(201.7, 9.0), epsilon: 1.0));
-    expect(tester.getBottomRight(sb),
-        offsetMoreOrLessEquals(const Offset(392.7, 791), epsilon: 1.0));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-
-    expect(tester.getTopLeft(b), const Offset(10, 10));
-    expect(tester.getBottomRight(b), const Offset(200, 790));
-    expect(tester.getTopLeft(sb), const Offset(200, 10));
-    expect(tester.getBottomRight(sb), const Offset(390, 790));
-  }, skip: true);
-
-  testWidgets('adaptive layout does not animate when animations off',
-      (WidgetTester tester) async {
-    final Finder b = find.byKey(const Key('b'));
-    final Finder sb = find.byKey(const Key('sb'));
-
-    await tester.pumpWidget(
-        await layout(width: 400, tester: tester, animations: false));
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-
-    expect(tester.getTopLeft(b), const Offset(10, 10));
-    expect(tester.getBottomRight(b), const Offset(200, 790));
-    expect(tester.getTopLeft(sb), const Offset(200, 10));
-    expect(tester.getBottomRight(sb), const Offset(390, 790));
-  }, skip: true);
-}
-// Some animation related tests are temporarily disabled while waiting for the
-// roll to packages to be fixed.
-// TODO(serenabehera): remove the skip: true from the tests once they properly
-// pass.
