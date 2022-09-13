@@ -758,14 +758,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       case 'pre':
         return styleSheet.codeblockAlign;
       case 'hr':
-        // TODO(goderbauer): We shouldn't be printing here, https://github.com/flutter/flutter/issues/110209
-        // ignore: avoid_print
-        print('Markdown did not handle hr for alignment');
         break;
       case 'li':
-        // TODO(goderbauer): We shouldn't be printing here, https://github.com/flutter/flutter/issues/110209
-        // ignore: avoid_print
-        print('Markdown did not handle li for alignment');
         break;
     }
     return WrapAlignment.start;

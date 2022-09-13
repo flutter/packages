@@ -79,8 +79,8 @@ class WidthPlatformBreakpoint extends Breakpoint {
   /// no lower bound.
   final double? begin;
 
-  /// The end width dp value. If left null then the [Breakpoint] will have
-  /// no upper bound.
+  /// The end width dp value. If left null then the [Breakpoint] will have no
+  /// upper bound.
   final double? end;
 
   /// A Set of [TargetPlatform]s that the [Breakpoint] will be active on. If
@@ -112,8 +112,8 @@ class WidthPlatformBreakpoint extends Breakpoint {
 /// Override this class by defining `isActive` to fetch the screen property
 /// (usually `MediaQuery.of`) and return true if the condition is met.
 ///
-/// Breakpoints do not need to be exclusive because they are tested in order with
-/// the last Breakpoint active taking priority.
+/// Breakpoints do not need to be exclusive because they are tested in order
+/// with the last Breakpoint active taking priority.
 ///
 /// If the condition is only based on the screen width and/or the device type,
 /// use [WidthPlatformBreakpoint] to define the [Breakpoint].
@@ -123,7 +123,7 @@ class WidthPlatformBreakpoint extends Breakpoint {
 ///  * [SlotLayout.config], which uses breakpoints to dictate the layout of the
 ///    screen.
 abstract class Breakpoint {
-  /// Returns a [Breakpoint].
+  /// Returns a const [Breakpoint].
   const Breakpoint();
 
   /// A method that returns true based on conditions related to the context of

@@ -18,23 +18,24 @@ enum _SlotIds {
 
 /// Layout an app that adapts to different screens using predefined slots.
 ///
-/// This widget separates the app window into predefined sections called "slots".
-/// It lays out the app using the following kinds of slots (in order):
+/// This widget separates the app window into predefined sections called
+/// "slots". It lays out the app using the following kinds of slots (in order):
 ///
 ///  * [topNavigation], full width at the top. Must have defined size.
 ///  * [bottomNavigation], full width at the bottom. Must have defined size.
-///  * [primaryNavigation], displayed on the beginning side of the app window from
-///   the bottom of [topNavigation] to the top of [bottomNavigation]. Must have
-///   defined size.
-///  * [secondaryNavigation], displayed on the end side of the app window from the
-///   bottom of [topNavigation] to the top of [bottomNavigation]. Must have defined
-///   size.
+///  * [primaryNavigation], displayed on the beginning side of the app window
+///    from the bottom of [topNavigation] to the top of [bottomNavigation]. Must
+///    have defined size.
+///  * [secondaryNavigation], displayed on the end side of the app window from
+///    the bottom of [topNavigation] to the top of [bottomNavigation]. Must have
+///    defined size.
 ///  * [body], first panel; fills the remaining space from the beginning side.
-///   The main view should have flexible size (like a container).
-///  * [secondaryBody], second panel; fills the remaining space from the end side.
-///   The use of this property is common in apps that have a main view and a detail
-///   view. The main view should have flexible size (like a Container). This
-///   provides some automatic functionality with foldable screens.
+///    The main view should have flexible size (like a container).
+///  * [secondaryBody], second panel; fills the remaining space from the end
+///    side. The use of this property is common in apps that have a main view
+///    and a detail view. The main view should have flexible size (like a
+///    Container). This provides some automatic functionality with foldable
+///    screens.
 ///
 /// Slots can display differently under different screen conditions (such as
 /// different widths), and each slot is defined with a [SlotLayout], which maps
@@ -48,14 +49,17 @@ enum _SlotIds {
 /// AdaptiveLayout(
 ///   primaryNavigation: SlotLayout(
 ///     config: {
-///       Breakpoints.small: SlotLayout.from(key: const Key('pnav'), builder: (_) => const SizedBox.shrink()),
+///       Breakpoints.small: SlotLayout.from(
+///         key: const Key('Primary Navigation Small'),
+///         builder: (_) => const SizedBox.shrink(),
+///       ),
 ///       Breakpoints.medium: SlotLayout.from(
 ///         inAnimation: leftOutIn,
-///         key: const Key('pnav1'),
+///         key: const Key('Primary Navigation Medium'),
 ///         builder: (_) => AdaptiveScaffold.toNavigationRail(destinations: destinations),
 ///       ),
 ///       Breakpoints.large: SlotLayout.from(
-///         key: const Key('pnav2'),
+///         key: const Key('Primary Navigation Large'),
 ///         inAnimation: leftOutIn,
 ///         builder: (_) => AdaptiveScaffold.toNavigationRail(extended: true, destinations: destinations),
 ///       ),
@@ -64,14 +68,14 @@ enum _SlotIds {
 ///   body: SlotLayout(
 ///     config: {
 ///       Breakpoints.small: SlotLayout.from(
-///         key: const Key('body'),
+///         key: const Key('Body Small'),
 ///         builder: (_) => ListView.builder(
 ///           itemCount: children.length,
 ///           itemBuilder: (_, idx) => children[idx]
 ///         ),
 ///       ),
 ///       Breakpoints.medium: SlotLayout.from(
-///         key: const Key('body1'),
+///         key: const Key('Body Medium'),
 ///         builder: (_) => GridView.count(
 ///           crossAxisCount: 2,
 ///           children: children
@@ -82,7 +86,7 @@ enum _SlotIds {
 ///   bottomNavigation: SlotLayout(
 ///     config: {
 ///       Breakpoints.small: SlotLayout.from(
-///         key: const Key('botnav'),
+///         key: const Key('Bottom Navigation Small'),
 ///         inAnimation: bottomToTop,
 ///         builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
 ///       ),
@@ -94,14 +98,14 @@ enum _SlotIds {
 /// See also:
 ///
 ///  * [SlotLayout], which handles the actual switching and animations between
-///   elements based on [Breakpoint]s.
+///    elements based on [Breakpoint]s.
 ///  * [SlotLayout.from], which holds information regarding the actual Widgets
-///   and the desired way to animate between switches. Often used within
-/// [SlotLayout].
+///    and the desired way to animate between switches. Often used within
+///    [SlotLayout].
 ///  * [AdaptiveScaffold], which provides a more friendly API with less
-///   customizability. and holds a preset of animations and helper builders.
+///    customizability. and holds a preset of animations and helper builders.
 ///  * [Design Doc](https://flutter.dev/go/adaptive-layout-foldables).
-///  * [Material Design 3 Specifications] (https://m3.material.io/foundations/adaptive-design/overview).
+///  * [Material Design 3 Specifications](https://m3.material.io/foundations/adaptive-design/overview).
 class AdaptiveLayout extends StatefulWidget {
   /// Creates a const [AdaptiveLayout] widget.
   const AdaptiveLayout({
@@ -122,9 +126,10 @@ class AdaptiveLayout extends StatefulWidget {
   /// The beginning side means the right when the ambient [Directionality] is
   /// [TextDirection.rtl] and on the left when it is [TextDirection.ltr].
   ///
-  /// If the content is a flexibly sized Widget like [Container], wrap the content
-  /// in a [SizedBox] or limit its size (width and height) by another method. See
-  /// the builder in [AdaptiveScaffold.standardNavigationRail] for an example.
+  /// If the content is a flexibly sized Widget like [Container], wrap the
+  /// content in a [SizedBox] or limit its size (width and height) by another
+  /// method. See the builder in [AdaptiveScaffold.standardNavigationRail] for
+  /// an example.
   final SlotLayout? primaryNavigation;
 
   /// The slot placed on the end side of the app window.
@@ -132,23 +137,26 @@ class AdaptiveLayout extends StatefulWidget {
   /// The end side means the right when the ambient [Directionality] is
   /// [TextDirection.ltr] and on the left when it is [TextDirection.rtl].
   ///
-  /// If the content is a flexibly sized Widget like [Container], wrap the content
-  /// in a [SizedBox] or limit its size (width and height) by another method. See
-  /// the builder in [AdaptiveScaffold.standardNavigationRail] for an example.
+  /// If the content is a flexibly sized Widget like [Container], wrap the
+  /// content in a [SizedBox] or limit its size (width and height) by another
+  /// method. See the builder in [AdaptiveScaffold.standardNavigationRail] for
+  /// an example.
   final SlotLayout? secondaryNavigation;
 
   /// The slot placed on the top part of the app window.
   ///
-  /// If the content is a flexibly sized Widget like [Container], wrap the content
-  /// in a [SizedBox] or limit its size (width and height) by another method. See
-  /// the builder in [AdaptiveScaffold.standardNavigationRail] for an example.
+  /// If the content is a flexibly sized Widget like [Container], wrap the
+  /// content in a [SizedBox] or limit its size (width and height) by another
+  /// method. See the builder in [AdaptiveScaffold.standardNavigationRail] for
+  /// an example.
   final SlotLayout? topNavigation;
 
   /// The slot placed on the bottom part of the app window.
   ///
-  /// If the content is a flexibly sized Widget like [Container], wrap the content
-  /// in a [SizedBox] or limit its size (width and height) by another method. See
-  /// the builder in [AdaptiveScaffold.standardNavigationRail] for an example.
+  /// If the content is a flexibly sized Widget like [Container], wrap the
+  /// content in a [SizedBox] or limit its size (width and height) by another
+  /// method. See the builder in [AdaptiveScaffold.standardNavigationRail] for
+  /// an example.
   final SlotLayout? bottomNavigation;
 
   /// The slot that fills the rest of the space in the center.
@@ -306,7 +314,8 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
   }
 }
 
-/// The delegate responsible for laying out the slots in their correct positions.
+/// The delegate responsible for laying out the slots in their correct
+/// positions.
 class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
   _AdaptiveLayoutDelegate({
     required this.slots,
@@ -339,7 +348,8 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     double rightMargin = 0;
     double bottomMargin = 0;
 
-    // An animation that is used as either a width or height value on the Size for the body/secondaryBody.
+    // An animation that is used as either a width or height value on the Size
+    // for the body/secondaryBody.
     double animatedSize(double begin, double end) {
       if (isAnimating.contains(_SlotIds.secondaryBody.name)) {
         return internalAnimations
@@ -353,63 +363,76 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     }
 
     if (hasChild(_SlotIds.topNavigation.name)) {
-      final Size childSize =
-          layoutChild(_SlotIds.topNavigation.name, BoxConstraints.loose(size));
+      final Size childSize = layoutChild(
+        _SlotIds.topNavigation.name,
+        BoxConstraints.loose(size),
+      );
       // Trigger the animation if the new size is different from the old size.
       updateSize(_SlotIds.topNavigation.name, childSize);
-      // Tween not the actual size, but the size that is used in the margins so the offsets can be animated.
+      // Tween not the actual size, but the size that is used in the margins so
+      // the offsets can be animated.
       final Size currentSize = Tween<Size>(
-              begin: slotSizes[_SlotIds.topNavigation.name] ?? Size.zero,
-              end: childSize)
-          .animate(controller)
-          .value;
+        begin: slotSizes[_SlotIds.topNavigation.name] ?? Size.zero,
+        end: childSize,
+      ).animate(controller).value;
       positionChild(_SlotIds.topNavigation.name, Offset.zero);
       topMargin += currentSize.height;
     }
     if (hasChild(_SlotIds.bottomNavigation.name)) {
       final Size childSize = layoutChild(
-          _SlotIds.bottomNavigation.name, BoxConstraints.loose(size));
+        _SlotIds.bottomNavigation.name,
+        BoxConstraints.loose(size),
+      );
       updateSize(_SlotIds.bottomNavigation.name, childSize);
       final Size currentSize = Tween<Size>(
-              begin: slotSizes[_SlotIds.bottomNavigation.name] ?? Size.zero,
-              end: childSize)
-          .animate(controller)
-          .value;
-      positionChild(_SlotIds.bottomNavigation.name,
-          Offset(0, size.height - currentSize.height));
+        begin: slotSizes[_SlotIds.bottomNavigation.name] ?? Size.zero,
+        end: childSize,
+      ).animate(controller).value;
+      positionChild(
+        _SlotIds.bottomNavigation.name,
+        Offset(0, size.height - currentSize.height),
+      );
       bottomMargin += currentSize.height;
     }
     if (hasChild(_SlotIds.primaryNavigation.name)) {
       final Size childSize = layoutChild(
-          _SlotIds.primaryNavigation.name, BoxConstraints.loose(size));
+        _SlotIds.primaryNavigation.name,
+        BoxConstraints.loose(size),
+      );
       updateSize(_SlotIds.primaryNavigation.name, childSize);
       final Size currentSize = Tween<Size>(
-              begin: slotSizes[_SlotIds.primaryNavigation.name] ?? Size.zero,
-              end: childSize)
-          .animate(controller)
-          .value;
+        begin: slotSizes[_SlotIds.primaryNavigation.name] ?? Size.zero,
+        end: childSize,
+      ).animate(controller).value;
       if (textDirection) {
         positionChild(
-            _SlotIds.primaryNavigation.name, Offset(leftMargin, topMargin));
+          _SlotIds.primaryNavigation.name,
+          Offset(leftMargin, topMargin),
+        );
         leftMargin += currentSize.width;
       } else {
-        positionChild(_SlotIds.primaryNavigation.name,
-            Offset(size.width - currentSize.width, topMargin));
+        positionChild(
+          _SlotIds.primaryNavigation.name,
+          Offset(size.width - currentSize.width, topMargin),
+        );
         rightMargin += currentSize.width;
       }
     }
     if (hasChild(_SlotIds.secondaryNavigation.name)) {
       final Size childSize = layoutChild(
-          _SlotIds.secondaryNavigation.name, BoxConstraints.loose(size));
+        _SlotIds.secondaryNavigation.name,
+        BoxConstraints.loose(size),
+      );
       updateSize(_SlotIds.secondaryNavigation.name, childSize);
       final Size currentSize = Tween<Size>(
-              begin: slotSizes[_SlotIds.secondaryNavigation.name] ?? Size.zero,
-              end: childSize)
-          .animate(controller)
-          .value;
+        begin: slotSizes[_SlotIds.secondaryNavigation.name] ?? Size.zero,
+        end: childSize,
+      ).animate(controller).value;
       if (textDirection) {
-        positionChild(_SlotIds.secondaryNavigation.name,
-            Offset(size.width - currentSize.width, topMargin));
+        positionChild(
+          _SlotIds.secondaryNavigation.name,
+          Offset(size.width - currentSize.width, topMargin),
+        );
         rightMargin += currentSize.width;
       } else {
         positionChild(_SlotIds.secondaryNavigation.name, Offset(0, topMargin));
@@ -429,8 +452,12 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
       if (chosenWidgets[_SlotIds.secondaryBody.name] == null ||
           chosenWidgets[_SlotIds.secondaryBody.name]!.builder == null) {
         if (!textDirection) {
-          currentBodySize = layoutChild(_SlotIds.body.name,
-              BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
+          currentBodySize = layoutChild(
+            _SlotIds.body.name,
+            BoxConstraints.tight(
+              Size(remainingWidth, remainingHeight),
+            ),
+          );
         } else if (bodyOrientation == Axis.horizontal) {
           double beginWidth;
           if (bodyRatio == null) {
@@ -439,9 +466,11 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
             beginWidth = remainingWidth * bodyRatio!;
           }
           currentBodySize = layoutChild(
-              _SlotIds.body.name,
-              BoxConstraints.tight(Size(
-                  animatedSize(beginWidth, remainingWidth), remainingHeight)));
+            _SlotIds.body.name,
+            BoxConstraints.tight(
+              Size(animatedSize(beginWidth, remainingWidth), remainingHeight),
+            ),
+          );
         } else {
           double beginHeight;
           if (bodyRatio == null) {
@@ -450,9 +479,11 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
             beginHeight = remainingHeight * bodyRatio!;
           }
           currentBodySize = layoutChild(
-              _SlotIds.body.name,
-              BoxConstraints.tight(Size(
-                  remainingWidth, animatedSize(beginHeight, remainingHeight))));
+            _SlotIds.body.name,
+            BoxConstraints.tight(
+              Size(remainingWidth, animatedSize(beginHeight, remainingHeight)),
+            ),
+          );
         }
         layoutChild(_SlotIds.secondaryBody.name, BoxConstraints.loose(size));
       } else {
@@ -475,12 +506,18 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
             }
 
             currentBodySize = layoutChild(
-                _SlotIds.body.name,
-                BoxConstraints.tight(Size(
-                    animatedSize(remainingWidth, finalBodySize),
-                    remainingHeight)));
-            layoutChild(_SlotIds.secondaryBody.name,
-                BoxConstraints.tight(Size(finalSBodySize, remainingHeight)));
+              _SlotIds.body.name,
+              BoxConstraints.tight(
+                Size(animatedSize(remainingWidth, finalBodySize),
+                    remainingHeight),
+              ),
+            );
+            layoutChild(
+              _SlotIds.secondaryBody.name,
+              BoxConstraints.tight(
+                Size(finalSBodySize, remainingHeight),
+              ),
+            );
           } else {
             // Take this path if the textDirection is RTL.
             double finalBodySize;
@@ -497,11 +534,17 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
               finalSBodySize = halfWidth - leftMargin;
             }
             currentSBodySize = layoutChild(
-                _SlotIds.secondaryBody.name,
-                BoxConstraints.tight(
-                    Size(animatedSize(0, finalSBodySize), remainingHeight)));
-            layoutChild(_SlotIds.body.name,
-                BoxConstraints.tight(Size(finalBodySize, remainingHeight)));
+              _SlotIds.secondaryBody.name,
+              BoxConstraints.tight(
+                Size(animatedSize(0, finalSBodySize), remainingHeight),
+              ),
+            );
+            layoutChild(
+              _SlotIds.body.name,
+              BoxConstraints.tight(
+                Size(finalBodySize, remainingHeight),
+              ),
+            );
           }
         } else {
           // Take this path if the body and secondaryBody are laid out vertically.
@@ -538,14 +581,16 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
           chosenWidgets[_SlotIds.secondaryBody.name] != null) {
         if (hinge != null) {
           positionChild(
-              _SlotIds.body.name,
-              Offset(
-                  currentSBodySize.width + leftMargin + hingeWidth, topMargin));
+            _SlotIds.body.name,
+            Offset(currentSBodySize.width + leftMargin + hingeWidth, topMargin),
+          );
           positionChild(
               _SlotIds.secondaryBody.name, Offset(leftMargin, topMargin));
         } else {
-          positionChild(_SlotIds.body.name,
-              Offset(currentSBodySize.width + leftMargin, topMargin));
+          positionChild(
+            _SlotIds.body.name,
+            Offset(currentSBodySize.width + leftMargin, topMargin),
+          );
           positionChild(
               _SlotIds.secondaryBody.name, Offset(leftMargin, topMargin));
         }
@@ -554,25 +599,38 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
         if (bodyOrientation == Axis.horizontal) {
           if (hinge != null) {
             positionChild(
-                _SlotIds.secondaryBody.name,
-                Offset(currentBodySize.width + leftMargin + hingeWidth,
-                    topMargin));
+              _SlotIds.secondaryBody.name,
+              Offset(
+                  currentBodySize.width + leftMargin + hingeWidth, topMargin),
+            );
           } else {
-            positionChild(_SlotIds.secondaryBody.name,
-                Offset(currentBodySize.width + leftMargin, topMargin));
+            positionChild(
+              _SlotIds.secondaryBody.name,
+              Offset(currentBodySize.width + leftMargin, topMargin),
+            );
           }
         } else {
-          positionChild(_SlotIds.secondaryBody.name,
-              Offset(leftMargin, topMargin + currentBodySize.height));
+          positionChild(
+            _SlotIds.secondaryBody.name,
+            Offset(leftMargin, topMargin + currentBodySize.height),
+          );
         }
       }
     } else if (hasChild(_SlotIds.body.name)) {
-      layoutChild(_SlotIds.body.name,
-          BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
+      layoutChild(
+        _SlotIds.body.name,
+        BoxConstraints.tight(
+          Size(remainingWidth, remainingHeight),
+        ),
+      );
       positionChild(_SlotIds.body.name, Offset(leftMargin, topMargin));
     } else if (hasChild(_SlotIds.secondaryBody.name)) {
-      layoutChild(_SlotIds.secondaryBody.name,
-          BoxConstraints.tight(Size(remainingWidth, remainingHeight)));
+      layoutChild(
+        _SlotIds.secondaryBody.name,
+        BoxConstraints.tight(
+          Size(remainingWidth, remainingHeight),
+        ),
+      );
     }
   }
 
