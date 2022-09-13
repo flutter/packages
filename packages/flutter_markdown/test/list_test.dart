@@ -5,6 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markdown/markdown.dart'
+    show indicatorForCheckedCheckBox, indicatorForUncheckedCheckBox;
 import 'utils.dart';
 
 void main() => defineTests();
@@ -129,9 +131,9 @@ void defineTests() {
 
         expectTextStrings(widgets, <String>[
           String.fromCharCode(Icons.check_box.codePoint),
-          'Item 1',
+          '${indicatorForCheckedCheckBox}Item 1',
           String.fromCharCode(Icons.check_box_outline_blank.codePoint),
-          'Item 2',
+          '${indicatorForUncheckedCheckBox}Item 2',
         ]);
       },
     );
@@ -177,9 +179,9 @@ void defineTests() {
 
         expectTextStrings(widgets, <String>[
           'true',
-          'Item 1',
+          '${indicatorForCheckedCheckBox}Item 1',
           'false',
-          'Item 2',
+          '${indicatorForUncheckedCheckBox}Item 2',
         ]);
       },
     );

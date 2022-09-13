@@ -310,8 +310,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
 
     final md.Document document = md.Document(
       blockSyntaxes: widget.blockSyntaxes,
-      inlineSyntaxes: (widget.inlineSyntaxes ?? <md.InlineSyntax>[])
-        ..add(TaskListSyntax()),
+      inlineSyntaxes: widget.inlineSyntaxes,
       extensionSet: widget.extensionSet ?? md.ExtensionSet.gitHubFlavored,
       encodeHtml: false,
     );
@@ -548,11 +547,16 @@ class Markdown extends MarkdownWidget {
 }
 
 /// Parse [task list items](https://github.github.com/gfm/#task-list-items-extension-).
+///
+/// This class is no longer used as Markdown now supports checkbox syntax natively.
+@Deprecated(
+    'Use [OrderedListWithCheckBoxSyntax] or [UnorderedListWithCheckBoxSyntax]')
 class TaskListSyntax extends md.InlineSyntax {
-  /// Cretaes a new instance.
+  /// Creates a new instance.
+  @Deprecated(
+      'Use [OrderedListWithCheckBoxSyntax] or [UnorderedListWithCheckBoxSyntax]')
   TaskListSyntax() : super(_pattern);
 
-  // FIXME: Waiting for dart-lang/markdown#269 to land
   static const String _pattern = r'^ *\[([ xX])\] +';
 
   @override
