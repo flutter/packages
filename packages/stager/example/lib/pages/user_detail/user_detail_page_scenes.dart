@@ -4,8 +4,6 @@
 
 import 'dart:async';
 
-import 'package:example/pages/posts_list/posts_list_page_scenes.mocks.dart';
-import 'package:example/pages/user_detail/user_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +12,8 @@ import 'package:stager/stager.dart';
 import '../../shared/api.dart';
 import '../../shared/post.dart';
 import '../../shared/user.dart';
+import '../posts_list/posts_list_page_scenes.mocks.dart';
+import 'user_detail_page.dart';
 
 abstract class UserDetailPageScene extends Scene {
   late MockApi mockApi;
@@ -46,7 +46,7 @@ class LoadingUserDetailPageScene extends UserDetailPageScene {
   Future<void> setUp() async {
     await super.setUp();
     when(mockApi.fetchPosts(user: user)).thenAnswer((_) {
-      final completer = Completer<List<Post>>();
+      final Completer<List<Post>> completer = Completer<List<Post>>();
       return completer.future;
     });
   }
@@ -60,7 +60,9 @@ class ErrorUserDetailPageScene extends UserDetailPageScene {
   Future<void> setUp() async {
     await super.setUp();
     when(mockApi.fetchPosts(user: user)).thenAnswer(
-      (_) async => Future.error(Exception('on no!')),
+      (_) async => Future<List<Post>>.error(
+        Exception('on no!'),
+      ),
     );
   }
 }

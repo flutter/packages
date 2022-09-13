@@ -36,6 +36,7 @@ abstract class BasePostsListScene extends Scene {
   }
 }
 
+/// A Scene showing the [PostsListPage] with no [Post]s.
 class EmptyListScene extends BasePostsListScene {
   @override
   String get title => 'Empty List';
@@ -47,6 +48,7 @@ class EmptyListScene extends BasePostsListScene {
   }
 }
 
+/// A Scene showing the [PostsListPage] with [Post]s.
 class WithPostsScene extends BasePostsListScene {
   @override
   String get title => 'With Posts';
@@ -58,6 +60,7 @@ class WithPostsScene extends BasePostsListScene {
   }
 }
 
+/// A Scene showing the [PostsListPage] in a loading state.
 class LoadingScene extends BasePostsListScene {
   @override
   String get title => 'Loading';
@@ -65,11 +68,12 @@ class LoadingScene extends BasePostsListScene {
   @override
   Future<void> setUp() async {
     await super.setUp();
-    final completer = Completer<List<Post>>();
+    final Completer<List<Post>> completer = Completer<List<Post>>();
     when(mockApi.fetchPosts()).thenAnswer((_) async => completer.future);
   }
 }
 
+/// A Scene showing the [PostsListPage] in a error state.
 class ErrorScene extends BasePostsListScene {
   @override
   String get title => 'Error';
@@ -77,6 +81,8 @@ class ErrorScene extends BasePostsListScene {
   @override
   Future<void> setUp() async {
     await super.setUp();
-    when(mockApi.fetchPosts()).thenAnswer((_) => Future.error(Exception()));
+    when(mockApi.fetchPosts()).thenAnswer(
+      (_) => Future<List<Post>>.error(Exception()),
+    );
   }
 }

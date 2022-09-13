@@ -2,15 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:example/shared/posts_list/posts_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../shared/api.dart';
 import '../../shared/post.dart';
+import '../../shared/posts_list/posts_list.dart';
 
 /// Shows a timeline view of all [Post]s.
 class PostsListPage extends StatefulWidget {
+  /// Creates a [PostsListPage].
   const PostsListPage({super.key});
 
   @override

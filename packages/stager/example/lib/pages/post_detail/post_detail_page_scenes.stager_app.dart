@@ -8,19 +8,20 @@
 // StagerAppGenerator
 // **************************************************************************
 
-import 'post_detail_page_scenes.dart';
-
 import 'package:stager/stager.dart';
 
+import 'post_detail_page_scenes.dart';
+
 void main() {
-  final scenes = [
+  final List<Scene> scenes = <Scene>[
     PostDetailPageScene(),
   ];
 
   if (const String.fromEnvironment('Scene').isNotEmpty) {
-    const sceneName = String.fromEnvironment('Scene');
-    final scene = scenes.firstWhere((scene) => scene.title == sceneName);
-    runStagerApp(scenes: [scene]);
+    const String sceneName = String.fromEnvironment('Scene');
+    final Scene scene =
+        scenes.firstWhere((Scene scene) => scene.title == sceneName);
+    runStagerApp(scenes: <Scene>[scene]);
   } else {
     runStagerApp(scenes: scenes);
   }

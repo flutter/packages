@@ -12,12 +12,14 @@ void main() {
   runApp(const MyApp());
 }
 
+/// The main app.
 class MyApp extends StatelessWidget {
+  /// Creates a [MyApp].
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Provider.value(
+    return Provider<Api>.value(
       value: Api(),
       child: MaterialApp(
         title: 'Flutter Demo',
