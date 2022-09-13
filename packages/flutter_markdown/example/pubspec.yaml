@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
   flutter_markdown:
     path: ../
-  markdown: 5.0.0
+  markdown: ^6.0.0
 
 dev_dependencies:
   flutter_test:

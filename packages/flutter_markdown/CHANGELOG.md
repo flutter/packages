@@ -1,3 +1,9 @@
+## 0.6.11
+
+* Deprecates and removes use of `TaskListSyntax` as new markdown package supports checkboxes natively.
+  Consider using `OrderedListWithCheckBoxSyntax` or `UnorderedListWithCheckBoxSyntax` as a replacement.
+* Changes `_buildCheckbox()` to inspect state of checkbox input element by existence of `'checked'` attribute.
+
 ## 0.6.10+6
 
 * Removes print logged when not handling hr for alignment.
