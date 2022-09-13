@@ -191,7 +191,9 @@ void _writeHostApi(Indent indent, Api api, Root root) {
       for (final Method method in api.methods) {
         final String channelName = makeChannelName(api, method);
         final String varChannelName = '${method.name}Channel';
-
+        method.documentationComments?.forEach((String documentationComment) {
+          indent.writeln('/// $documentationComment');
+        });
         indent.writeln(
             'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
         indent.write('if let api = api ');
@@ -268,6 +270,9 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
       '/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.');
+  api.documentationComments?.forEach((String documentationComment) {
+    indent.writeln('/// $documentationComment');
+  });
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
@@ -286,6 +291,9 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
           ? ''
           : _nullsafeSwiftTypeForDartType(func.returnType);
       String sendArgument;
+      func.documentationComments?.forEach((String documentationComment) {
+        indent.writeln('/// $documentationComment');
+      });
       if (func.arguments.isEmpty) {
         indent.write(
             'func ${func.name}(completion: @escaping ($returnType) -> Void) ');
