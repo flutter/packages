@@ -21,7 +21,7 @@ class StagerAppGenerator extends Generator {
         .whereType<ClassElement>()
         .where(
           (ClassElement classElement) => classElement.allSupertypes.any(
-            (InterfaceType supertype) => supertype.element.name == 'Scene',
+            (InterfaceType supertype) => supertype.element2.name == 'Scene',
           ),
         )
         .where(
