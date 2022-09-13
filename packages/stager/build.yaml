@@ -1,0 +1,14 @@
+targets:
+  $default:
+    builders:
+      stager|stagerAppBuilder:
+        generate_for:
+          - example/**.dart
+
+builders:
+  stagerAppBuilder:
+    import: "package:stager/builder.dart"
+    builder_factories: ["buildStagerApp"]
+    build_extensions: {".dart": [".stager_app.dart"]}
+    build_to: source
+    auto_apply: dependents
