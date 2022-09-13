@@ -4,8 +4,8 @@
 # This file should be version controlled.
 
 version:
-  revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
-  channel: sliverQuickDocumentationFix
+  revision: 4f9d92fbbdf072a70a70d2179a9f87392b94104c
+  channel: stable
 
 project_type: app
 
@@ -13,11 +13,11 @@ project_type: app
 migration:
   platforms:
     - platform: root
-      create_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
-      base_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+      create_revision: 4f9d92fbbdf072a70a70d2179a9f87392b94104c
+      base_revision: 4f9d92fbbdf072a70a70d2179a9f87392b94104c
     - platform: windows
-      create_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
-      base_revision: 57f2ff0d286c95e6c2385abc29efc9e2d298797c
+      create_revision: 4f9d92fbbdf072a70a70d2179a9f87392b94104c
+      base_revision: 4f9d92fbbdf072a70a70d2179a9f87392b94104c
 
   # User provided section
 
