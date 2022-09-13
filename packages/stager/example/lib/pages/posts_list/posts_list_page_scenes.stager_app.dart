@@ -13,7 +13,7 @@ import 'package:stager/stager.dart';
 import 'posts_list_page_scenes.dart';
 
 void main() {
-  final List<Scene> scenes = [
+  final List<Scene> scenes = <Scene>[
     EmptyListScene(),
     WithPostsScene(),
     LoadingScene(),

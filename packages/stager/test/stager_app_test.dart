@@ -8,7 +8,7 @@ import 'package:stager/src/scene_container.dart';
 import 'package:stager/stager.dart';
 
 void main() {
-  final List<Scene> scenes = [
+  final List<Scene> scenes = <Scene>[
     ButtonScene(),
     TextScene(),
   ];

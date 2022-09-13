@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:example/shared/api.dart';
-import 'package:example/shared/post.dart';
-import 'package:example/shared/posts_list/posts_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../shared/api.dart';
+import '../../shared/post.dart';
+import '../../shared/posts_list/posts_list.dart';
 import '../../shared/user.dart';
 
 /// A page for a single [User].
@@ -43,7 +43,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
         ),
       ),
       body: Column(
-        children: [
+        children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(10),
             child: Text(

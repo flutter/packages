@@ -48,7 +48,7 @@ class EmptyListScene extends BasePostsListScene {
   @override
   Future<void> setUp() async {
     await super.setUp();
-    when(mockApi.fetchPosts()).thenAnswer((_) async => []);
+    when(mockApi.fetchPosts()).thenAnswer((_) async => <Post>[]);
   }
 }
 

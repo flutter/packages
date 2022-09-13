@@ -11,7 +11,7 @@ import 'scene_container.dart';
 /// the Scene before displaying it.
 class SceneList extends StatefulWidget {
   /// Creates a [SceneList] widget.
-  SceneList({super.key, required this.scenes});
+  const SceneList({super.key, required this.scenes});
 
   /// The list of [Scene]s displayed by this widget.
   final List<Scene> scenes;
@@ -38,6 +38,10 @@ class _SceneListState extends State<SceneList> {
             title: Text(widget.scenes[index].title),
             onTap: () async {
               await scene.setUp();
+              if (!mounted) {
+                return;
+              }
+
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (_) => SceneContainer(

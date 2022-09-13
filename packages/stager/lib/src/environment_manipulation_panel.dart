@@ -56,7 +56,7 @@ class _EnvironmentManipulationPanelState
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Row(
-              children: [
+              children: <Widget>[
                 if (Navigator.of(context).canPop())
                   IconButton(
                     onPressed: () =>
