@@ -495,6 +495,9 @@ void _writeFlutterApiDeclaration(
     final _ObjcPtr returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
+    func.documentationComments?.forEach((String documentationComment) {
+      indent.writeln('/// $documentationComment');
+    });
     indent.writeln('${_makeObjcSignature(
       func: func,
       options: options,
@@ -742,6 +745,9 @@ void _writeHostApiSource(
   indent.scoped('{', '}', () {
     for (final Method func in api.methods) {
       indent.write('');
+      func.documentationComments?.forEach((String documentationComment) {
+        indent.writeln('/// $documentationComment');
+      });
       indent.scoped('{', '}', () {
         String? taskQueue;
         if (func.taskQueueType != TaskQueueType.serial) {
