@@ -8,13 +8,13 @@ import 'package:stager/src/scene_container.dart';
 import 'package:stager/stager.dart';
 
 void main() {
-  final scenes = [
+  final List<Scene> scenes = [
     ButtonScene(),
     TextScene(),
   ];
 
   testWidgets('Displays a list of Scenes', (WidgetTester tester) async {
-    final stagerApp = StagerApp(scenes: scenes);
+    final StagerApp stagerApp = StagerApp(scenes: scenes);
     await tester.pumpWidget(stagerApp);
     await tester.pumpAndSettle();
     expect(find.text('Text'), findsOneWidget);
@@ -23,7 +23,7 @@ void main() {
 
   testWidgets('Displays a back button after navigating to a Scene',
       (WidgetTester tester) async {
-    final stagerApp = StagerApp(scenes: scenes);
+    final StagerApp stagerApp = StagerApp(scenes: scenes);
     await tester.pumpWidget(stagerApp);
     await tester.pumpAndSettle();
 
@@ -58,6 +58,6 @@ class ButtonScene extends Scene {
   @override
   Widget build() => ElevatedButton(
         onPressed: () {},
-        child: Text('My Button'),
+        child: const Text('My Button'),
       );
 }

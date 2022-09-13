@@ -8,19 +8,9 @@ import 'package:flutter/material.dart';
 
 /// Detects long press gestures with a configurable [numberOfTouches].
 class MultiTouchLongPressGestureDetector extends StatefulWidget {
-  /// How long the user must hold down before the gesture is detected.
-  ///
-  /// Defaults to 1 second;
-  final Duration longPressDelay;
-
-  /// How many fingers are required to trigger this gesture
-  final int numberOfTouches;
-
-  /// Executed when the multi-touch long press gesture has been recognized.
-  final VoidCallback onGestureDetected;
-
-  final Widget child;
-
+  /// Creates a [MultiTouchLongPressGestureDetector] with the given
+  /// [longPressDelay]. If no [longPressDelay] is specified, it defaults to 1
+  /// second.
   const MultiTouchLongPressGestureDetector({
     super.key,
     this.longPressDelay = const Duration(seconds: 1),
@@ -33,6 +23,20 @@ class MultiTouchLongPressGestureDetector extends StatefulWidget {
             'LongPressGestureRecognizer to recognize a single-touch long '
             'press.');
 
+  /// How long the user must hold down before the gesture is detected.
+  ///
+  /// Defaults to 1 second;
+  final Duration longPressDelay;
+
+  /// How many fingers are required to trigger this gesture
+  final int numberOfTouches;
+
+  /// Executed when the multi-touch long press gesture has been recognized.
+  final VoidCallback onGestureDetected;
+
+  /// The Widget that will respond to gestures.
+  final Widget child;
+
   @override
   State<MultiTouchLongPressGestureDetector> createState() =>
       _MultiTouchLongPressGestureDetectorState();
@@ -43,8 +47,8 @@ class _MultiTouchLongPressGestureDetectorState
   Completer<bool>? _gestureHoldCompleter;
 
   Future<void> _tryToRecognizeGesture() async {
-    _gestureHoldCompleter = Completer();
-    await Future.delayed(widget.longPressDelay);
+    _gestureHoldCompleter = Completer<bool>();
+    await Future<void>.delayed(widget.longPressDelay);
     if (_gestureHoldCompleter != null && !_gestureHoldCompleter!.isCompleted) {
       widget.onGestureDetected();
       _gestureHoldCompleter?.complete(true);
@@ -56,7 +60,7 @@ class _MultiTouchLongPressGestureDetectorState
     return GestureDetector(
       // Scaling callbacks are used as a way to retrieve the number of fingers
       // the user is using.
-      onScaleStart: (details) {
+      onScaleStart: (ScaleStartDetails details) {
         if (details.pointerCount != widget.numberOfTouches) {
           return;
         }

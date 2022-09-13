@@ -13,14 +13,19 @@ import 'package:flutter/material.dart';
 /// consuming the [MediaQuery] and [ThemeData.platform] for the environment
 /// manipulation feature to work properly.
 class EnvironmentAwareApp extends StatelessWidget {
-  final Widget home;
-  final Iterable<LocalizationsDelegate<dynamic>>? localizationsDelegates;
-
+  /// Creates an [EnvironmentAwareApp] with the provided [home].
   const EnvironmentAwareApp({
     super.key,
     required this.home,
     this.localizationsDelegates,
   });
+
+  /// The widget wrapped by this app.
+  final Widget home;
+
+  /// Optional list of [LocalizationsDelegate]s, forwarded to the wrapped
+  /// [MaterialApp].
+  final Iterable<LocalizationsDelegate<dynamic>>? localizationsDelegates;
 
   @override
   Widget build(BuildContext context) {

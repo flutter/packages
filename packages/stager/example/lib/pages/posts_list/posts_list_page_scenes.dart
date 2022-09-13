@@ -14,10 +14,14 @@ import '../../shared/api.dart';
 import '../../shared/post.dart';
 import 'posts_list_page.dart';
 
+@GenerateMocks(<Type>[Api])
 import 'posts_list_page_scenes.mocks.dart';
 
-@GenerateMocks([Api])
+/// Defines a shared build method used by subclasses and a [MockApi] subclasses
+/// can use to control the behavior of the [PostsListPage].
 abstract class BasePostsListScene extends Scene {
+  /// A mock dependency of [PostsListPage]. Mock the value of [Api.fetchPosts]
+  /// to put the staged [PostsListPage] into different states.
   late MockApi mockApi;
 
   @override

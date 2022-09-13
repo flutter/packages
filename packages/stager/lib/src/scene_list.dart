@@ -10,9 +10,11 @@ import 'scene_container.dart';
 /// A [ListView] showing available [Scenes]. Tapping on a Scene name will setUp
 /// the Scene before displaying it.
 class SceneList extends StatefulWidget {
-  final List<Scene> scenes;
-
+  /// Creates a [SceneList] widget.
   SceneList({super.key, required this.scenes});
+
+  /// The list of [Scene]s displayed by this widget.
+  final List<Scene> scenes;
 
   @override
   State<SceneList> createState() => _SceneListState();
@@ -30,14 +32,14 @@ class _SceneListState extends State<SceneList> {
     return Scaffold(
       appBar: AppBar(title: const Text('Scenes')),
       body: ListView.separated(
-        itemBuilder: (context, index) {
-          final scene = widget.scenes[index];
+        itemBuilder: (BuildContext context, int index) {
+          final Scene scene = widget.scenes[index];
           return ListTile(
             title: Text(widget.scenes[index].title),
             onTap: () async {
               await scene.setUp();
               Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (_) => SceneContainer(
                     child: scene.build(),
                   ),

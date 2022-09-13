@@ -74,7 +74,7 @@ class EmptyUserDetailPageScene extends UserDetailPageScene {
   @override
   Future<void> setUp() async {
     await super.setUp();
-    when(mockApi.fetchPosts(user: user)).thenAnswer((_) async => []);
+    when(mockApi.fetchPosts(user: user)).thenAnswer((_) async => <Post>[]);
   }
 }
 

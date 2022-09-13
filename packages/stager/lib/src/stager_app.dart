@@ -17,9 +17,11 @@ void runStagerApp({required List<Scene> scenes}) =>
 /// If only one Scene is provided, that Scene will be shown as though it had
 /// been navigated to from a list of Scenes.
 class StagerApp extends StatefulWidget {
-  final List<Scene> scenes;
+  /// Creates a [StagerApp] with the given [scenes].
+  const StagerApp({super.key, required this.scenes});
 
-  StagerApp({super.key, required this.scenes});
+  /// The [Scene]s being displayed by this app.
+  final List<Scene> scenes;
 
   @override
   State<StagerApp> createState() => _StagerAppState();
@@ -36,17 +38,17 @@ class _StagerAppState extends State<StagerApp> {
     if (_isSingleScene) {
       _sceneSetUpFuture = widget.scenes.first.setUp();
     } else {
-      _sceneSetUpFuture = Future.value();
+      _sceneSetUpFuture = Future<void>.value();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<void>(
       future: _sceneSetUpFuture,
-      builder: (context, snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }

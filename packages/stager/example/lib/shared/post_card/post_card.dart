@@ -8,10 +8,14 @@ import '../post.dart';
 
 /// A [Card] that displays a single [Post], intended to be used in a list.
 class PostCard extends StatelessWidget {
-  final Post post;
-  final VoidCallback? onTap;
-
+  /// Creates a tappable [PostCard] displaying [post].
   const PostCard({super.key, required this.post, this.onTap});
+
+  /// The post being displayed.
+  final Post post;
+
+  /// Executed when this [PostCard] is tapped.
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +26,9 @@ class PostCard extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: <Widget>[
               Row(
-                children: [
+                children: <Widget>[
                   Text(post.author.handle),
                   const Spacer(),
                   Text('${post.time}'),
@@ -33,7 +37,7 @@ class PostCard extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 post.text,
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ],
           ),

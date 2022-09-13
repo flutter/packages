@@ -6,11 +6,7 @@ import 'user.dart';
 
 /// A single tweet-like entry.
 class Post {
-  final int id;
-  final String text;
-  final User author;
-  final DateTime time;
-
+  /// Creates a [Post].
   Post({
     required this.id,
     required this.text,
@@ -18,9 +14,24 @@ class Post {
     required this.time,
   });
 
-  static List<Post> fakePosts({User? user}) => List.generate(
+  /// The id of this post.
+  final int id;
+
+  /// The content of this post.
+  final String text;
+
+  /// The author of this post.
+  final User author;
+
+  /// When this post was created.
+  final DateTime time;
+
+  /// Generates a List of [Post]s. If [user] is specified, all posts will have
+  /// that user as an author. If no [user] is specified, each [Post] will have a
+  /// distinct fake [User] as its author.
+  static List<Post> fakePosts({User? user}) => List<Post>.generate(
         20,
-        (index) => Post(
+        (int index) => Post(
           id: index + 1,
           text: 'Post ${index + 1}',
           author: user ?? User.fakeUser(id: index + 1),

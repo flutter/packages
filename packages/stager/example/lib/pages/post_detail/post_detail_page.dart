@@ -20,12 +20,12 @@ class PostDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Post'),
-        actions: [
+        actions: <PopupMenuButton<int>>[
           PopupMenuButton<int>(
             onSelected: (_) {
               final NavigatorState navigatorstate = Navigator.of(context);
               navigatorstate.push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (BuildContext context) =>
                       UserDetailPage(user: post.author),
                 ),
