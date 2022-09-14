@@ -8,10 +8,10 @@ environment:
   flutter: ">=3.0.0"
 
 dependencies:
-  flutter_adaptive_scaffold:
-    path: ../../flutter_adaptive_scaffold
   flutter:
     sdk: flutter
+  flutter_adaptive_scaffold:
+    path: ..
   flutter_lints: ^2.0.0
 
 dev_dependencies:
