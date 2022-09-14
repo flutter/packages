@@ -195,37 +195,20 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
     {String? testFriend}) {
   indent.addln('');
 
-  const String generatedMessage =
-      'Generated class from Pigeon that represents data sent in messages.';
-  if (klass.documentationComments != null) {
-    indent.writeln(openDoc);
-    indent.writeln(generatedMessage);
-    klass.documentationComments?.forEach((String documentationComment) {
-      indent.writeln(documentationComment);
-    });
-    indent.writeln(closeDoc);
-  } else {
-    indent.writeln('$openDoc $generatedMessage $closeDoc');
-  }
+  const List<String> generatedMessages = <String>[
+    'Generated class from Pigeon that represents data sent in messages.'
+  ];
+
+  addDocumentationComments(indent, klass.documentationComments, openDoc,
+      closeDoc, generatedMessages);
 
   indent.write('class ${klass.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
       indent.writeln('${klass.name}();');
       for (final NamedType field in klass.fields) {
-        if (field.documentationComments != null) {
-          if (field.documentationComments!.length > 1) {
-            indent.writeln(openDoc);
-            field.documentationComments?.forEach((String documentationComment) {
-              indent.writeln(documentationComment);
-            });
-            indent.writeln(closeDoc);
-          } else if (field.documentationComments!.length == 1) {
-            final String documentationComment =
-                field.documentationComments!.first;
-            indent.writeln('$openDoc $documentationComment $closeDoc');
-          }
-        }
+        addDocumentationComments(indent, field.documentationComments, openDoc,
+            closeDoc, generatedMessages);
         final HostDatatype baseDatatype = getFieldHostDatatype(
             field,
             root.classes,
@@ -429,18 +412,11 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
 void _writeHostApiHeader(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
 
-  const String generatedMessage =
-      'Generated interface from Pigeon that represents a handler of messages from Flutter.';
-  if (api.documentationComments != null) {
-    indent.writeln(openDoc);
-    indent.writeln(generatedMessage);
-    api.documentationComments?.forEach((String documentationComment) {
-      indent.writeln(documentationComment);
-    });
-    indent.writeln(closeDoc);
-  } else {
-    indent.writeln('$openDoc $generatedMessage $closeDoc');
-  }
+  const List<String> generatedMessages = <String>[
+    'Generated interface from Pigeon that represents a handler of messages from Flutter.'
+  ];
+  addDocumentationComments(
+      indent, api.documentationComments, openDoc, closeDoc, generatedMessages);
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
@@ -474,20 +450,8 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
           }));
         }
 
-        if (method.documentationComments != null) {
-          if (method.documentationComments!.length > 1) {
-            indent.writeln(openDoc);
-            method.documentationComments
-                ?.forEach((String documentationComment) {
-              indent.writeln(documentationComment);
-            });
-            indent.writeln(closeDoc);
-          } else if (method.documentationComments!.length == 1) {
-            final String documentationComment =
-                method.documentationComments!.first;
-            indent.writeln('$openDoc $documentationComment $closeDoc');
-          }
-        }
+        addDocumentationComments(
+            indent, method.documentationComments, openDoc, closeDoc);
 
         if (method.isAsynchronous) {
           argSignature.add('std::function<void($returnTypeName reply)> result');
@@ -737,18 +701,11 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 void _writeFlutterApiHeader(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
 
-  const String generatedMessage =
-      'Generated class from Pigeon that represents Flutter messages that can be called from C++.';
-  if (api.documentationComments != null) {
-    indent.writeln(openDoc);
-    indent.writeln(generatedMessage);
-    api.documentationComments?.forEach((String documentationComment) {
-      indent.writeln(documentationComment);
-    });
-    indent.writeln(closeDoc);
-  } else {
-    indent.writeln('$openDoc $generatedMessage $closeDoc');
-  }
+  const List<String> generatedMessages = <String>[
+    'Generated class from Pigeon that represents Flutter messages that can be called from C++.'
+  ];
+  addDocumentationComments(
+      indent, api.documentationComments, openDoc, closeDoc, generatedMessages);
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' private:', '', () {
@@ -763,19 +720,8 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
             ? 'void'
             : _nullSafeCppTypeForDartType(func.returnType);
         final String callback = 'std::function<void($returnType)>&& callback';
-        if (func.documentationComments != null) {
-          if (func.documentationComments!.length > 1) {
-            indent.writeln(openDoc);
-            func.documentationComments?.forEach((String documentationComment) {
-              indent.writeln(documentationComment);
-            });
-            indent.writeln(closeDoc);
-          } else if (func.documentationComments!.length == 1) {
-            final String documentationComment =
-                func.documentationComments!.first;
-            indent.writeln('$openDoc $documentationComment $closeDoc');
-          }
-        }
+        addDocumentationComments(
+            indent, func.documentationComments, openDoc, closeDoc);
         if (func.arguments.isEmpty) {
           indent.writeln('void ${func.name}($callback);');
         } else {
@@ -1109,18 +1055,8 @@ void generateCppHeader(
 
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
-    if (anEnum.documentationComments != null) {
-      if (anEnum.documentationComments!.length > 1) {
-        indent.writeln(openDoc);
-        anEnum.documentationComments?.forEach((String documentationComment) {
-          indent.writeln(documentationComment);
-        });
-        indent.writeln(closeDoc);
-      } else if (anEnum.documentationComments!.length == 1) {
-        final String documentationComment = anEnum.documentationComments!.first;
-        indent.writeln('$openDoc $documentationComment $closeDoc');
-      }
-    }
+    addDocumentationComments(
+        indent, anEnum.documentationComments, openDoc, closeDoc);
     indent.write('enum class ${anEnum.name} ');
     indent.scoped('{', '};', () {
       int index = 0;
