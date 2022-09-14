@@ -1,4 +1,4 @@
-<?code-excerpt path-base="excerpts/packages/adaptive_scaffold_example"?>
+<?code-excerpt path-base="excerpts/packages/flutter_adaptive_scaffold_example"?>
 
 # Adaptive Scaffold
 
