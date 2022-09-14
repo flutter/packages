@@ -1,0 +1,11 @@
+targets:
+  $default:
+    sources:
+      include: [example/**]
+      exclude:
+        - '**/.*/**'
+        - '**/build/**'
+    builders:
+      code_excerpter|code_excerpter:
+        enabled: true
+

@@ -14,6 +14,7 @@ import '../../shared/api.dart';
 import '../../shared/post.dart';
 import 'posts_list_page.dart';
 
+// #docregion PostsListPageScene
 @GenerateMocks(<Type>[Api])
 import 'posts_list_page_scenes.mocks.dart';
 
@@ -51,6 +52,7 @@ class EmptyListScene extends BasePostsListScene {
     when(mockApi.fetchPosts()).thenAnswer((_) async => <Post>[]);
   }
 }
+// #enddocregion PostsListPageScene
 
 /// A Scene showing the [PostsListPage] with [Post]s.
 class WithPostsScene extends BasePostsListScene {

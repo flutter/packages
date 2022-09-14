@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:example/pages/posts_list/posts_list_page_scenes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stager/stager.dart';
+import 'package:stager_example/pages/posts_list/posts_list_page_scenes.dart';
 
 void main() {
   testWidgets('shows a loading state', (WidgetTester tester) async {
@@ -23,6 +23,7 @@ void main() {
     expect(find.text('Error'), findsOneWidget);
   });
 
+  // #docregion EmptySceneTest
   testWidgets('shows an empty state', (WidgetTester tester) async {
     final Scene scene = EmptyListScene();
     await scene.setUp();
@@ -30,6 +31,7 @@ void main() {
     await tester.pump();
     expect(find.text('No posts'), findsOneWidget);
   });
+  // #enddocregion EmptySceneTest
 
   testWidgets('shows posts', (WidgetTester tester) async {
     final Scene scene = WithPostsScene();

@@ -8,6 +8,7 @@ import '../../pages/post_detail/post_detail_page.dart';
 import '../post.dart';
 import '../post_card/post_card.dart';
 
+// #docregion PostsList
 /// A [ListView] of [PostCard]s
 class PostsList extends StatefulWidget {
   /// Creates a [PostsList] displaying [posts].
@@ -72,3 +73,4 @@ class _PostsListState extends State<PostsList> {
     );
   }
 }
+// #enddocregion PostsList

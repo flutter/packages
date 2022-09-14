@@ -1,3 +1,5 @@
+<?code-excerpt path-base="excerpts/packages/stager_example"?>
+
 # Stager
 
 Stager enables rapid Flutter development and encourages good architectural practices by allowing developers quickly launch and develop isolated portions of an app.
@@ -53,64 +55,69 @@ to "fake" those states.
 
 Imagine you have the following widget buried deep in your application:
 
+<?code-excerpt "shared/posts_list/posts_list.dart (PostsList)"?>
 ```dart
+/// A [ListView] of [PostCard]s
 class PostsList extends StatefulWidget {
-  const PostsList({super.key});
+  /// Creates a [PostsList] displaying [posts].
+  ///
+  /// [postsFuture] will be set to the value of [posts].
+  PostsList({
+    Key? key,
+    required List<Post> posts,
+  }) : this.fromFuture(key: key, Future<List<Post>>.value(posts));
+
+  /// Creates a [PostsList] with a Future that resolves to a list of [Post]s.
+  const PostsList.fromFuture(this.postsFuture, {super.key});
+
+  /// The Future that resolves to the list of [Post]s this widget will display.
+  final Future<List<Post>> postsFuture;
 
   @override
   State<PostsList> createState() => _PostsListState();
 }
 
 class _PostsListState extends State<PostsList> {
-  late Future<List<Post>> _fetchPostsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    // The Api dependency is injected here by package:provider.
-    _fetchPostsFuture = Provider.of<Api>(context, listen: false).fetchPosts();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Posts'),
-      ),
-      body: FutureBuilder(
-        future: _fetchPostsFuture,
-        builder: (context, snapshot) {
-          // If we're waiting for the Future to complete, show a loading state.
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          // If the Future has an error, show an error state.
-          if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error'),
-            );
-          }
-
-          // If the Future completed successfully but there are no posts, show an empty state.
-          final posts = snapshot.data;
-          if (posts == null || posts.isEmpty) {
-            return const Center(
-              child: Text('No posts'),
-            );
-          }
-
-          // If we have posts, show them in a ListView.
-          return ListView.builder(
-            itemBuilder: (context, index) => PostCard(
-              post: posts[index],
-            ),
-            itemCount: posts.length,
+    return FutureBuilder<List<Post>>(
+      future: widget.postsFuture,
+      builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
           );
-        },
-      ),
+        }
+
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text('Error'),
+          );
+        }
+
+        final List<Post>? posts = snapshot.data;
+        if (posts == null || posts.isEmpty) {
+          return const Center(
+            child: Text('No posts'),
+          );
+        }
+
+        return ListView.builder(
+          itemBuilder: (BuildContext context, int index) => PostCard(
+            post: posts[index],
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => PostDetailPage(
+                    post: posts[index],
+                  ),
+                ),
+              );
+            },
+          ),
+          itemCount: posts.length,
+        );
+      },
     );
   }
 }
@@ -128,24 +135,43 @@ Scenes present a better way to do this.
 
 We can create a Scene for each state we want to show. For example, a Scene showing the empty state might look something like:
 
+<?code-excerpt "pages/posts_list/posts_list_page_scenes.dart (PostsListPageScene)"?>
 ```dart
-class FakeApi implements Api {
-  @override
-  Future<List<Post>> fetchPosts() async => [];
-}
+@GenerateMocks(<Type>[Api])
+import 'posts_list_page_scenes.mocks.dart';
 
-class EmptyScene extends Scene {
-  @override
-  String get title => 'No Posts';
+/// Defines a shared build method used by subclasses and a [MockApi] subclasses
+/// can use to control the behavior of the [PostsListPage].
+abstract class BasePostsListScene extends Scene {
+  /// A mock dependency of [PostsListPage]. Mock the value of [Api.fetchPosts]
+  /// to put the staged [PostsListPage] into different states.
+  late MockApi mockApi;
 
   @override
   Widget build() {
-    return MaterialApp(
+    return EnvironmentAwareApp(
       home: Provider<Api>.value(
-        value: FakeApi(),
-        child: const PostsList(),
+        value: mockApi,
+        child: const PostsListPage(),
       ),
     );
+  }
+
+  @override
+  Future<void> setUp() async {
+    mockApi = MockApi();
+  }
+}
+
+/// A Scene showing the [PostsListPage] with no [Post]s.
+class EmptyListScene extends BasePostsListScene {
+  @override
+  String get title => 'Empty List';
+
+  @override
+  Future<void> setUp() async {
+    await super.setUp();
+    when(mockApi.fetchPosts()).thenAnswer((_) async => <Post>[]);
   }
 }
 ```
@@ -162,19 +188,23 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 This will generate a `my_scenes.stager_app.dart` file, which contains a `main` function that creates your Scenes and launches a StagerApp. For the above Scene, it would look something like:
 
+<?code-excerpt "pages/posts_list/posts_list_scenes.stager_app.dart (StagerMain)"?>
 ```dart
-Future<void> main() async {
-  final scenes = [
-    EmptyScene(),
+void main() {
+  final List<Scene> scenes = <Scene>[
+    EmptyListScene(),
+    WithPostsScene(),
+    LoadingScene(),
+    ErrorScene(),
   ];
 
   if (const String.fromEnvironment('Scene').isNotEmpty) {
-    const sceneName = String.fromEnvironment('Scene');
-    final scene = scenes.firstWhere((scene) => scene.title == sceneName);
-    await scene.setUp();
-    runApp(StagerApp(scenes: [scene]));
+    const String sceneName = String.fromEnvironment('Scene');
+    final Scene scene =
+        scenes.firstWhere((Scene scene) => scene.title == sceneName);
+    runStagerApp(scenes: <Scene>[scene]);
   } else {
-    runApp(StagerApp(scenes: scenes));
+    runStagerApp(scenes: scenes);
   }
 }
 ```
@@ -195,13 +225,6 @@ flutter run -t path/to/my_scenes.stager_app.dart --dart-define='Scene=No Posts'
 
 You may notice that these names are very similar to Flutter testing functions. This is intentional – Scenes are very easy to reuse in tests. Writing Scenes for your widgets can be a great way to start writing widget tests or to expand your widget test coverage. A widget test using a Scene can be as simple as:
 
+<?code-excerpt "../test/pages/posts_list_page_test.dart (EmptySceneTest)"?>
 ```dart
-testWidgets('shows an empty state', (WidgetTester tester) async {
-  final scene = EmptyListScene();
-  await scene.setUp();
-
-  await tester.pumpWidget(scene.build());
-
-  expect(find.text('No posts'), findsOneWidget);
-});
 ```

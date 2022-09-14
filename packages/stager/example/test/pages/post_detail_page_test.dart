@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:example/pages/posts_list/posts_list_page_scenes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stager/stager.dart';
+import 'package:stager_example/pages/posts_list/posts_list_page_scenes.dart';
 
 void main() {
   testWidgets('shows a loading state', (WidgetTester tester) async {

@@ -12,6 +12,7 @@ import 'package:stager/stager.dart';
 
 import 'posts_list_page_scenes.dart';
 
+// #docregion StagerMain
 void main() {
   final List<Scene> scenes = <Scene>[
     EmptyListScene(),
@@ -29,3 +30,4 @@ void main() {
     runStagerApp(scenes: scenes);
   }
 }
+// #enddocregion StagerMain

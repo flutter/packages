@@ -1,5 +1,5 @@
-name: example
-description: A new Flutter project.
+name: stager_example
+description: Demonstrates the Stager package.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
