@@ -1,3 +1,7 @@
+## 0.6.12
+
+* Markdown Lists now take into account `fitContent` instead of always expanding to the maximum horizontally ([flutter/flutter#108976](https://github.com/flutter/flutter/issues/108976)).
+
 ## 0.6.11
 
 * Deprecates and removes use of `TaskListSyntax` as new markdown package supports checkboxes natively.
