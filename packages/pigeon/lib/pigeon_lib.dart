@@ -867,18 +867,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           location: ApiLocation.host,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
-          documentationComments: node.documentationComment?.tokens
-              .map((Token e) => e.toString().substring(4))
-              .toList(),
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
         _currentApi = Api(
           name: node.name2.lexeme,
           location: ApiLocation.flutter,
           methods: <Method>[],
-          documentationComments: node.documentationComment?.tokens
-              .map((Token e) => e.toString().substring(4))
-              .toList(),
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
         );
       }
     } else {
@@ -886,14 +884,19 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       _currentClass = Class(
         name: node.name2.lexeme,
         fields: <NamedType>[],
-        documentationComments: node.documentationComment?.tokens
-            .map((Token e) => e.toString().substring(4))
-            .toList(),
+        documentationComments:
+            _documentationCommentsParser(node.documentationComment?.tokens),
       );
     }
 
     node.visitChildren(this);
     return null;
+  }
+
+  /// Converts Token's to Strings and removes documentation comment symbol.
+  List<String> _documentationCommentsParser(List<Token>? comments) {
+    return comments?.map((Token e) => e.toString().substring(4)).toList() ??
+        <String>[];
   }
 
   NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
@@ -966,16 +969,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final TaskQueueType taskQueueType =
         _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
             TaskQueueType.serial;
-    final List<String>? documentationComments = node
-        .documentationComment?.tokens
-        .map((Token e) => e.toString().substring(4))
-        .toList();
+
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
       final dart_ast.SimpleIdentifier returnTypeIdentifier =
           getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
-      _currentApi!.methods.add(Method(
+      _currentApi!.methods.add(
+        Method(
           name: node.name2.lexeme,
           returnType: TypeDeclaration(
               baseName: returnTypeIdentifier.name,
@@ -987,7 +988,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           objcSelector: objcSelector,
           offset: node.offset,
           taskQueueType: taskQueueType,
-          documentationComments: documentationComments));
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        ),
+      );
     } else if (_currentClass != null) {
       _errors.add(Error(
           message:
@@ -1005,9 +1009,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       members: node.constants
           .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
           .toList(),
-      documentationComments: node.documentationComment?.tokens
-          .map((Token e) => e.toString().substring(4))
-          .toList(),
+      documentationComments:
+          _documentationCommentsParser(node.documentationComment?.tokens),
     ));
     node.visitChildren(this);
     return null;
@@ -1056,9 +1059,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             ),
             name: node.fields.variables[0].name2.lexeme,
             offset: node.offset,
-            documentationComments: node.documentationComment?.tokens
-                .map((Token e) => e.toString().substring(4))
-                .toList(),
+            documentationComments:
+                _documentationCommentsParser(node.documentationComment?.tokens),
           ));
         }
       } else {

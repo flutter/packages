@@ -33,7 +33,7 @@ class Method extends Node {
     this.offset,
     this.objcSelector = '',
     this.taskQueueType = TaskQueueType.serial,
-    this.documentationComments,
+    this.documentationComments = const <String>[],
   });
 
   /// The name of the method.
@@ -58,7 +58,7 @@ class Method extends Node {
   TaskQueueType taskQueueType;
 
   /// List of documentation comments, seperated by line.
-  List<String>? documentationComments;
+  List<String> documentationComments;
 
   @override
   String toString() {
@@ -76,7 +76,7 @@ class Api extends Node {
     required this.location,
     required this.methods,
     this.dartHostTestHandler,
-    this.documentationComments,
+    this.documentationComments = const <String>[],
   });
 
   /// The name of the API.
@@ -92,7 +92,7 @@ class Api extends Node {
   String? dartHostTestHandler;
 
   /// List of documentation comments, seperated by line.
-  List<String>? documentationComments;
+  List<String> documentationComments;
 
   @override
   String toString() {
@@ -168,7 +168,7 @@ class NamedType extends Node {
     required this.name,
     required this.type,
     this.offset,
-    this.documentationComments,
+    this.documentationComments = const <String>[],
   });
 
   /// The name of the entity.
@@ -181,7 +181,7 @@ class NamedType extends Node {
   int? offset;
 
   /// List of documentation comments, seperated by line.
-  List<String>? documentationComments;
+  List<String> documentationComments;
 
   @override
   String toString() {
@@ -195,7 +195,7 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
-    this.documentationComments,
+    this.documentationComments = const <String>[],
   });
 
   /// The name of the class.
@@ -205,7 +205,7 @@ class Class extends Node {
   List<NamedType> fields;
 
   /// List of documentation comments, seperated by line.
-  List<String>? documentationComments;
+  List<String> documentationComments;
 
   @override
   String toString() {
@@ -216,7 +216,11 @@ class Class extends Node {
 /// Represents a Enum.
 class Enum extends Node {
   /// Parametric constructor for [Enum].
-  Enum({required this.name, required this.members, this.documentationComments});
+  Enum({
+    required this.name,
+    required this.members,
+    this.documentationComments = const <String>[],
+  });
 
   /// The name of the enum.
   String name;
@@ -225,7 +229,7 @@ class Enum extends Node {
   List<String> members;
 
   /// List of documentation comments, seperated by line.
-  List<String>? documentationComments;
+  List<String> documentationComments;
 
   @override
   String toString() {
