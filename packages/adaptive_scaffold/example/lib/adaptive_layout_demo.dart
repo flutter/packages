@@ -6,11 +6,13 @@ import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const _MyApp());
+  runApp(const MyApp());
 }
 
-class _MyApp extends StatelessWidget {
-  const _MyApp({Key? key}) : super(key: key);
+/// The main application widget for this example.
+class MyApp extends StatelessWidget {
+  /// Creates a const main application widget.
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class _MyApp extends StatelessWidget {
 /// [AdaptiveLayout].
 class MyHomePage extends StatelessWidget {
   /// Creates a const [MyHomePage].
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +74,7 @@ class MyHomePage extends StatelessWidget {
                 icon: const Icon(Icons.folder_copy_outlined),
                 iconSize: 21),
             const SizedBox(width: 21),
-            const Text('Mortage'),
+            const Text('Mortgage'),
           ],
         ),
         const SizedBox(height: 12),
@@ -107,16 +109,21 @@ class MyHomePage extends StatelessWidget {
     // Define the list of destinations to be used within the app.
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
-          label: 'Inbox', icon: Icon(Icons.inbox, color: Colors.black)),
+        label: 'Inbox',
+        icon: Icon(Icons.inbox, color: Colors.black),
+      ),
       NavigationDestination(
-          label: 'Articles',
-          icon: Icon(Icons.article_outlined, color: Colors.black)),
+        label: 'Articles',
+        icon: Icon(Icons.article_outlined, color: Colors.black),
+      ),
       NavigationDestination(
-          label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline, color: Colors.black)),
+        label: 'Chat',
+        icon: Icon(Icons.chat_bubble_outline, color: Colors.black),
+      ),
       NavigationDestination(
-          label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: Colors.black)),
+        label: 'Video',
+        icon: Icon(Icons.video_call_outlined, color: Colors.black),
+      ),
     ];
 
     // #docregion Example
@@ -130,24 +137,26 @@ class MyHomePage extends StatelessWidget {
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
-            key: const Key('pnav1'),
+            key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
-                leading: const Icon(Icons.menu),
-                destinations: destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
-                    .toList()),
+              leading: const Icon(Icons.menu),
+              destinations: destinations
+                  .map((_) => AdaptiveScaffold.toRailDestination(_))
+                  .toList(),
+            ),
           ),
           Breakpoints.large: SlotLayout.from(
-            key: const Key('pn1'),
+            key: const Key('Primary Navigation Large'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               extended: true,
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const <Widget>[
-                  Text('REPLY',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 255, 201, 197))),
+                  Text(
+                    'REPLY',
+                    style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                  ),
                   Icon(Icons.menu_open)
                 ],
               ),
@@ -164,14 +173,14 @@ class MyHomePage extends StatelessWidget {
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
-            key: const Key('body'),
+            key: const Key('Body Small'),
             builder: (_) => ListView.builder(
               itemCount: children.length,
               itemBuilder: (BuildContext context, int index) => children[index],
             ),
           ),
           Breakpoints.mediumAndUp: SlotLayout.from(
-            key: const Key('body1'),
+            key: const Key('Body Medium'),
             builder: (_) =>
                 GridView.count(crossAxisCount: 2, children: children),
           )
@@ -182,14 +191,15 @@ class MyHomePage extends StatelessWidget {
       bottomNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
-            key: const Key('bn'),
+            key: const Key('Bottom Navigation Small'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
             builder: (_) => BottomNavigationBarTheme(
-                data: const BottomNavigationBarThemeData(
-                    selectedItemColor: Colors.black),
-                child: AdaptiveScaffold.standardBottomNavigationBar(
-                    destinations: destinations)),
+              data: const BottomNavigationBarThemeData(
+                  selectedItemColor: Colors.black),
+              child: AdaptiveScaffold.standardBottomNavigationBar(
+                  destinations: destinations),
+            ),
           )
         },
       ),

@@ -1,18 +1,37 @@
 <?code-excerpt path-base="excerpts/packages/adaptive_scaffold_example"?>
 
-# Helper Widgets for Making Adaptive Layouts in Flutter (AdaptiveScaffold)
+# Adaptive Scaffold
 
-This package contains some helper widgets that make the process of developing adaptive layouts easier, especially with navigational elements.
+`AdaptiveScaffold` reacts to input from users, devices and screen elements and
+renders your Flutter application according to the
+[Material 3](https://m3.material.io/foundations/adaptive-design/overview)
+guidelines.
 
-To see examples of using these helper widgets to make a simple but common adaptive layout:
+To see examples of using these widgets to make a simple but common adaptive
+layout:
 
 ```bash
 cd example/
 flutter run --release
 ```
-## AdaptiveScaffold:
-AdaptiveScaffold implements the basic visual layout structure for Material Design 3 that adapts to a variety of screens. It provides a preset of layout, including positions and animations, by handling macro changes in navigational elements and bodies based on the current features of the screen, namely screen width and platform. For example, the navigational elements would be a BottomNavigationBar on a small mobile device and a NavigationRail on larger devices. The body is the primary screen that takes up the space left by the navigational elements. The secondaryBody acts as an option to split the space between two panes for purposes such as having a detail view. There is some automatic functionality with foldables to handle the split between panels properly. AdaptiveScaffold is much simpler to use but is not the best if you would like high customizability. Apps that would like more refined layout and/or animation should use AdaptiveLayout.
-### Example Usage:
+
+## AdaptiveScaffold
+
+AdaptiveScaffold implements the basic visual layout structure for Material
+Design 3 that adapts to a variety of screens. It provides a preset of layout,
+including positions and animations, by handling macro changes in navigational
+elements and bodies based on the current features of the screen, namely screen
+width and platform. For example, the navigational elements would be a
+BottomNavigationBar on a small mobile device and a NavigationRail on larger
+devices. The body is the primary screen that takes up the space left by the
+navigational elements. The secondaryBody acts as an option to split the space
+between two panes for purposes such as having a detail view. There is some
+automatic functionality with foldables to handle the split between panels
+properly. AdaptiveScaffold is much simpler to use but is not the best if you
+would like high customizability. Apps that would like more refined layout and/or
+animation should use AdaptiveLayout.
+
+### Example Usage
 
 <?code-excerpt "adaptive_scaffold_demo.dart (Example)"?>
 ```dart
@@ -22,16 +41,20 @@ AdaptiveScaffold implements the basic visual layout structure for Material Desig
     final List<Widget> children = <Widget>[
       for (int i = 0; i < 10; i++)
         Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-                color: const Color.fromARGB(255, 255, 201, 197), height: 400))
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            color: const Color.fromARGB(255, 255, 201, 197),
+            height: 400,
+          ),
+        )
     ];
 
     return BottomNavigationBarTheme(
         data: const BottomNavigationBarThemeData(
-            unselectedItemColor: Colors.black,
-            selectedItemColor: Colors.black,
-            backgroundColor: Colors.white),
+          unselectedItemColor: Colors.black,
+          selectedItemColor: Colors.black,
+          backgroundColor: Colors.white,
+        ),
         child: AdaptiveScaffold(
             // An option to override the default breakpoints used for small, medium,
             // and large.
@@ -50,29 +73,47 @@ AdaptiveScaffold implements the basic visual layout structure for Material Desig
             ],
             body: (_) => GridView.count(crossAxisCount: 2, children: children),
             smallBody: (_) => ListView.builder(
-                itemCount: children.length,
-                itemBuilder: (_, int idx) => children[idx]),
+                  itemCount: children.length,
+                  itemBuilder: (_, int idx) => children[idx],
+                ),
             // Define a default secondaryBody.
             secondaryBody: (_) =>
                 Container(color: const Color.fromARGB(255, 234, 158, 192)),
             // Override the default secondaryBody during the smallBreakpoint to be
             // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
-            // overriden.
+            // overridden.
             smallSecondaryBody: AdaptiveScaffold.emptyBuilder));
   }
 }
 ```
 
 ## The Background Widget Suite
-These are the set of widgets that are used on a lower level and offer more customizability at a cost of more lines of code.
-#### AdaptiveLayout:
+
+These are the set of widgets that are used on a lower level and offer more
+customizability at a cost of more lines of code.
+
+### AdaptiveLayout
+
 !["AdaptiveLayout's Assigned Slots Displayed on Screen"](example/demo_files/screenSlots.png)
-AdaptiveLayout is the top-level widget class that arranges the layout of the slots and their animation, similar to Scaffold. It takes in several LayoutSlots and returns an appropriate layout based on the diagram above. AdaptiveScaffold is built upon AdaptiveLayout internally but abstracts some of the complexity with presets based on the Material 3 Design specification.
-#### SlotLayout:
-SlotLayout handles the adaptivity or the changes between widgets at certain Breakpoints. It also holds the logic for animating between breakpoints. It takes SlotLayoutConfigs mapped to Breakpoints in a config and displays a widget based on that information.
-#### SlotLayout.from:
-SlotLayout.from creates a SlotLayoutConfig holds the actual widget to be displayed and the entrance animation and exit animation.
-### Example Usage:
+AdaptiveLayout is the top-level widget class that arranges the layout of the
+slots and their animation, similar to Scaffold. It takes in several LayoutSlots
+and returns an appropriate layout based on the diagram above. AdaptiveScaffold
+is built upon AdaptiveLayout internally but abstracts some of the complexity
+with presets based on the Material 3 Design specification.
+
+### SlotLayout
+
+SlotLayout handles the adaptivity or the changes between widgets at certain
+Breakpoints. It also holds the logic for animating between breakpoints. It takes
+SlotLayoutConfigs mapped to Breakpoints in a config and displays a widget based
+on that information.
+
+### SlotLayout.from
+
+SlotLayout.from creates a SlotLayoutConfig holds the actual widget to be
+displayed and the entrance animation and exit animation.
+
+### Example Usage
 
 <?code-excerpt "adaptive_layout_demo.dart (Example)"?>
 ```dart
@@ -86,24 +127,26 @@ SlotLayout.from creates a SlotLayoutConfig holds the actual widget to be display
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.medium: SlotLayout.from(
             inAnimation: AdaptiveScaffold.leftOutIn,
-            key: const Key('pnav1'),
+            key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
-                leading: const Icon(Icons.menu),
-                destinations: destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
-                    .toList()),
+              leading: const Icon(Icons.menu),
+              destinations: destinations
+                  .map((_) => AdaptiveScaffold.toRailDestination(_))
+                  .toList(),
+            ),
           ),
           Breakpoints.large: SlotLayout.from(
-            key: const Key('pn1'),
+            key: const Key('Primary Navigation Large'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               extended: true,
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const <Widget>[
-                  Text('REPLY',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 255, 201, 197))),
+                  Text(
+                    'REPLY',
+                    style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                  ),
                   Icon(Icons.menu_open)
                 ],
               ),
@@ -120,14 +163,14 @@ SlotLayout.from creates a SlotLayoutConfig holds the actual widget to be display
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
-            key: const Key('body'),
+            key: const Key('Body Small'),
             builder: (_) => ListView.builder(
               itemCount: children.length,
               itemBuilder: (BuildContext context, int index) => children[index],
             ),
           ),
           Breakpoints.mediumAndUp: SlotLayout.from(
-            key: const Key('body1'),
+            key: const Key('Body Medium'),
             builder: (_) =>
                 GridView.count(crossAxisCount: 2, children: children),
           )
@@ -138,14 +181,15 @@ SlotLayout.from creates a SlotLayoutConfig holds the actual widget to be display
       bottomNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
-            key: const Key('bn'),
+            key: const Key('Bottom Navigation Small'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
             builder: (_) => BottomNavigationBarTheme(
-                data: const BottomNavigationBarThemeData(
-                    selectedItemColor: Colors.black),
-                child: AdaptiveScaffold.standardBottomNavigationBar(
-                    destinations: destinations)),
+              data: const BottomNavigationBarThemeData(
+                  selectedItemColor: Colors.black),
+              child: AdaptiveScaffold.standardBottomNavigationBar(
+                  destinations: destinations),
+            ),
           )
         },
       ),
@@ -153,9 +197,11 @@ SlotLayout.from creates a SlotLayoutConfig holds the actual widget to be display
   }
 }
 ```
-##
+
 Both of the examples shown here produce the same output:
 !["Example of a display made with AdaptiveScaffold"](example/demo_files/adaptiveScaffold.gif)
 
 ## Additional information
-You can find more information on this package and its usage in the public [design doc](https://docs.google.com/document/d/1qhrpTWYs5f67X8v32NCCNTRMIjSrVHuaMEFAul-Q_Ms/edit?usp=sharing).
+
+You can find more information on this package and its usage in the public
+[design doc](https://docs.google.com/document/d/1qhrpTWYs5f67X8v32NCCNTRMIjSrVHuaMEFAul-Q_Ms/edit?usp=sharing).

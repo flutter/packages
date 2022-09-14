@@ -12,7 +12,8 @@ import 'state.dart';
 /// Baseclass for supporting
 /// [typed routing](https://gorouter.dev/typed-routing).
 ///
-/// Subclasses must override one of [build], [buildPage], or [redirect].
+/// Subclasses must override one of [build], [buildPageWithState], or
+/// [redirect].
 abstract class GoRouteData {
   /// Allows subclasses to have `const` constructors.
   ///
@@ -21,28 +22,50 @@ abstract class GoRouteData {
 
   /// Creates the [Widget] for `this` route.
   ///
-  /// Subclasses must override one of [build], [buildPage], or [redirect].
+  /// Subclasses must override one of [build], [buildPageWithState], or
+  /// [redirect].
   ///
   /// Corresponds to [GoRoute.builder].
   Widget build(BuildContext context) => throw UnimplementedError(
-        'One of `build` or `buildPage` must be implemented.',
+        'One of `build` or `buildPageWithState` must be implemented.',
       );
 
   /// A page builder for this route.
   ///
   /// Subclasses can override this function to provide a custom [Page].
   ///
-  /// Subclasses must override one of [build], [buildPage], or [redirect].
+  /// Subclasses must override one of [build], [buildPageWithState] or
+  /// [redirect].
   ///
   /// Corresponds to [GoRoute.pageBuilder].
   ///
   /// By default, returns a [Page] instance that is ignored, causing a default
   /// [Page] implementation to be used with the results of [build].
+  @Deprecated(
+    'This method has been deprecated in favor of buildPageWithState. '
+    'This feature was deprecated after v4.3.0.',
+  )
   Page<void> buildPage(BuildContext context) => const NoOpPage();
+
+  /// A page builder for this route with [GoRouterState].
+  ///
+  /// Subclasses can override this function to provide a custom [Page].
+  ///
+  /// Subclasses must override one of [build], [buildPageWithState] or
+  /// [redirect].
+  ///
+  /// Corresponds to [GoRoute.pageBuilder].
+  ///
+  /// By default, returns a [Page] instance that is ignored, causing a default
+  /// [Page] implementation to be used with the results of [build].
+  Page<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+      // ignore: deprecated_member_use_from_same_package
+      buildPage(context);
 
   /// An optional redirect function for this route.
   ///
-  /// Subclasses must override one of [build], [buildPage], or [redirect].
+  /// Subclasses must override one of [build], [buildPageWithState], or
+  /// [redirect].
   ///
   /// Corresponds to [GoRoute.redirect].
   String? redirect() => null;
@@ -83,7 +106,7 @@ abstract class GoRouteData {
         factoryImpl(state).build(context);
 
     Page<void> pageBuilder(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).buildPage(context);
+        factoryImpl(state).buildPageWithState(context, state);
 
     String? redirect(GoRouterState state) => factoryImpl(state).redirect();
 

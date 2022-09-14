@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final Finder body = find.byKey(const Key('body'));
-  final Finder bn = find.byKey(const Key('bn'));
+  final Finder body = find.byKey(const Key('Body Small'));
+  final Finder bottomNavigation =
+      find.byKey(const Key('Bottom Navigation Small'));
 
   Future<void> updateScreen(double width, WidgetTester tester) async {
     await tester.binding.setSurfaceSize(Size(width, 800));
@@ -23,21 +24,21 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('dislays correct item of config based on screen width',
+  testWidgets('displays correct item of config based on screen width',
       (WidgetTester tester) async {
     await updateScreen(300, tester);
-    expect(find.byKey(const Key('body')), findsOneWidget);
-    expect(find.byKey(const Key('pnav')), findsNothing);
-    expect(find.byKey(const Key('bn')), findsOneWidget);
-    expect(find.byKey(const Key('body1')), findsNothing);
-    expect(find.byKey(const Key('pn1')), findsNothing);
+    expect(find.byKey(const Key('Body Small')), findsOneWidget);
+    expect(find.byKey(const Key('Primary Navigation Medium')), findsNothing);
+    expect(find.byKey(const Key('Bottom Navigation Small')), findsOneWidget);
+    expect(find.byKey(const Key('Body Medium')), findsNothing);
+    expect(find.byKey(const Key('Primary Navigation Large')), findsNothing);
 
     await updateScreen(700, tester);
-    expect(find.byKey(const Key('body')), findsNothing);
-    expect(find.byKey(const Key('bn')), findsNothing);
-    expect(find.byKey(const Key('body1')), findsOneWidget);
-    expect(find.byKey(const Key('pnav1')), findsOneWidget);
-    expect(find.byKey(const Key('pn1')), findsNothing);
+    expect(find.byKey(const Key('Body')), findsNothing);
+    expect(find.byKey(const Key('Bottom Navigation Small')), findsNothing);
+    expect(find.byKey(const Key('Body Medium')), findsOneWidget);
+    expect(find.byKey(const Key('Primary Navigation Medium')), findsOneWidget);
+    expect(find.byKey(const Key('Primary Navigation Large')), findsNothing);
   });
 
   testWidgets(
@@ -47,7 +48,7 @@ void main() {
     final BuildContext context = tester.element(find.byType(MaterialApp));
 
     // Bottom Navigation Bar
-    final Finder findKey = find.byKey(const Key('bn'));
+    final Finder findKey = find.byKey(const Key('Bottom Navigation Small'));
     final SlotLayoutConfig slotLayoutConfig =
         tester.firstWidget<SlotLayoutConfig>(findKey);
     final WidgetBuilder? widgetBuilder = slotLayoutConfig.builder;
@@ -65,7 +66,7 @@ void main() {
     await updateScreen(620, tester);
     final BuildContext context = tester.element(find.byType(AdaptiveLayout));
 
-    final Finder findKey = find.byKey(const Key('pnav1'));
+    final Finder findKey = find.byKey(const Key('Primary Navigation Medium'));
     final SlotLayoutConfig slotLayoutConfig =
         tester.firstWidget<SlotLayoutConfig>(findKey);
     final WidgetBuilder? widgetBuilder = slotLayoutConfig.builder;
@@ -81,18 +82,18 @@ void main() {
   testWidgets('adaptive layout displays children in correct places',
       (WidgetTester tester) async {
     await updateScreen(400, tester);
-    expect(tester.getBottomLeft(bn), const Offset(0, 800));
-    expect(tester.getBottomRight(bn), const Offset(400, 800));
+    expect(tester.getBottomLeft(bottomNavigation), const Offset(0, 800));
+    expect(tester.getBottomRight(bottomNavigation), const Offset(400, 800));
     expect(tester.getTopRight(body), const Offset(400, 0));
     expect(tester.getTopLeft(body), Offset.zero);
   });
 
   testWidgets('adaptive layout does not animate when animations off',
       (WidgetTester tester) async {
-    final Finder b = find.byKey(const Key('body1'));
+    final Finder bodyMedium = find.byKey(const Key('Body Medium'));
     await updateScreen(690, tester);
 
-    expect(tester.getTopLeft(b), const Offset(88, 0));
-    expect(tester.getBottomRight(b), const Offset(690, 800));
+    expect(tester.getTopLeft(bodyMedium), const Offset(88, 0));
+    expect(tester.getBottomRight(bodyMedium), const Offset(690, 800));
   });
 }

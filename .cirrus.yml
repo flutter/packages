@@ -62,7 +62,7 @@ task:
     zone: us-central1-a
     namespace: default
     cpu: 4
-    memory: 8G
+    memory: 12G
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
     ### Platform-agnostic tasks ###
@@ -182,6 +182,9 @@ task:
     ### Android tasks ###
     - name: android-platform_tests
       env:
+        matrix:
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 2"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 2"
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"

@@ -386,7 +386,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           Widget bullet;
           final dynamic el = element.children![0];
           if (el is md.Element && el.attributes['type'] == 'checkbox') {
-            final bool val = el.attributes['checked'] != 'false';
+            final bool val = el.attributes.containsKey('checked');
             bullet = _buildCheckbox(val);
           } else {
             bullet = _buildBullet(_listIndents.last);
@@ -762,14 +762,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       case 'pre':
         return styleSheet.codeblockAlign;
       case 'hr':
-        // TODO(goderbauer): We shouldn't be printing here, https://github.com/flutter/flutter/issues/110209
-        // ignore: avoid_print
-        print('Markdown did not handle hr for alignment');
         break;
       case 'li':
-        // TODO(goderbauer): We shouldn't be printing here, https://github.com/flutter/flutter/issues/110209
-        // ignore: avoid_print
-        print('Markdown did not handle li for alignment');
         break;
     }
     return WrapAlignment.start;
