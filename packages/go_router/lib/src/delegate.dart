@@ -49,19 +49,23 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   @override
   Future<bool> popRoute() async {
-    // Iterate backwards through the RouteMatchList until seeing a GoRoute
-    // with a non-null parentNavigatorKey or a ShellRoute with a non-null parentNavigatorKey
-    // and pop from that Navigator instead of the root.
+    // Iterate backwards through the RouteMatchList until seeing a GoRoute with
+    // a non-null parentNavigatorKey or a ShellRoute with a non-null
+    // parentNavigatorKey and pop from that Navigator instead of the root.
     final int matchCount = _matchList.matches.length;
     for (int i = matchCount - 1; i >= 0; i -= 1) {
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
 
-      // If this is a ShellRoute, then pop one of the subsequent GoRoutes, if
-      // there are any.
-      if (route is ShellRoute && (matchCount - i) > 2) {
-        final NavigatorState navigator = route.navigatorKey.currentState!;
-        final bool didPop = await navigator.maybePop();
+      if (route is GoRoute && route.parentNavigatorKey != null) {
+        final bool didPop =
+            await route.parentNavigatorKey!.currentState!.maybePop();
+        // It should not be possible for a GoRoute with parentNavigatorKey to be
+        // the only page, so maybePop should never return false in this case.
+        assert(didPop);
+        return didPop;
+      } else if (route is ShellRoute) {
+        final bool didPop = await route.navigatorKey.currentState!.maybePop();
         if (didPop) {
           return didPop;
         }
@@ -113,13 +117,17 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     for (int i = matchCount - 1; i >= 0; i -= 1) {
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
-      if (route is ShellRoute) {
-        final NavigatorState? navigatorState = route.navigatorKey.currentState;
-        if (navigatorState != null) {
-          final bool canPopNavigator = navigatorState.canPop();
-          if (canPopNavigator) {
-            return true;
-          }
+      if (route is GoRoute && route.parentNavigatorKey != null) {
+        final bool canPop = route.parentNavigatorKey!.currentState!.canPop();
+        // Similar to popRoute, it should not be possible for a GoRoute with
+        // parentNavigatorKey to be the only page, so canPop should return true
+        // in this case.
+        assert(canPop);
+        return canPop;
+      } else if (route is ShellRoute) {
+        final bool canPop = route.navigatorKey.currentState!.canPop();
+        if (canPop) {
+          return canPop;
         }
       }
     }
