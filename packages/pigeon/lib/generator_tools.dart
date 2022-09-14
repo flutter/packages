@@ -435,36 +435,28 @@ bool isEnum(Root root, TypeDeclaration type) =>
 
 /// Formats documentation comments and adds them to current Indent.
 void addDocumentationComments(Indent indent, List<String> comments, String open,
-    [String? close, List<String>? additionalComments]) {
+    [List<String>? additionalComments]) {
   if (comments.isEmpty && additionalComments == null) {
     return;
   }
   if (comments.length > 1 ||
       (comments.isNotEmpty && additionalComments != null) ||
       (additionalComments != null && additionalComments.length > 1)) {
-    bool addSymbolOnNextLine = true;
-    if (close != null) {
-      indent.writeln(open);
-      addSymbolOnNextLine = false;
-    }
     if (additionalComments != null) {
       for (final String line in additionalComments) {
         indent.writeln(
-          '${addSymbolOnNextLine ? '$open ' : ''}$line',
+          '$open $line',
         );
       }
     }
     for (final String line in comments) {
       indent.writeln(
-        '${addSymbolOnNextLine ? '$open ' : ''}$line',
+        '$open $line',
       );
-    }
-    if (close != null) {
-      indent.writeln(close);
     }
   } else {
     indent.writeln(
-      '$open ${comments.isNotEmpty ? comments.first : ''}${additionalComments?.first ?? ''} ${close ?? ''}',
+      '$open ${comments.isNotEmpty ? comments.first : ''}${additionalComments?.first ?? ''}',
     );
   }
 }

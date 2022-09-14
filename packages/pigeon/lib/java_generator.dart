@@ -290,7 +290,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
     'Generated interface from Pigeon that represents a handler of messages from Flutter.'
   ];
   addDocumentationComments(
-      indent, api.documentationComments, openDoc, null, generatedMessages);
+      indent, api.documentationComments, openDoc, generatedMessages);
 
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
@@ -335,7 +335,7 @@ void _writeFlutterApi(Indent indent, Api api) {
     'Generated class from Pigeon that represents Flutter messages that can be called from Java.'
   ];
   addDocumentationComments(
-      indent, api.documentationComments, openDoc, null, generatedMessages);
+      indent, api.documentationComments, openDoc, generatedMessages);
 
   indent.write('public static class ${api.name} ');
   indent.scoped('{', '}', () {
@@ -560,7 +560,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
       final String nullability =
           field.type.isNullable ? '@Nullable' : '@NonNull';
-      addDocumentationComments(indent, klass.documentationComments, openDoc);
+      addDocumentationComments(indent, field.documentationComments, openDoc);
 
       indent.writeln(
           'private $nullability ${hostDatatype.datatype} ${field.name};');
@@ -664,7 +664,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       'Generated class from Pigeon that represents data sent in messages.'
     ];
     addDocumentationComments(
-        indent, klass.documentationComments, openDoc, null, generatedMessages);
+        indent, klass.documentationComments, openDoc, generatedMessages);
 
     indent.write('public static class ${klass.name} ');
     indent.scoped('{', '}', () {

@@ -143,7 +143,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
     'Generated protocol from Pigeon that represents a handler of messages from Flutter.'
   ];
   addDocumentationComments(
-      indent, api.documentationComments, openDoc, null, generatedComments);
+      indent, api.documentationComments, openDoc, generatedComments);
 
   indent.write('protocol $apiName ');
   indent.scoped('{', '}', () {
@@ -274,7 +274,7 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
     'Generated class from Pigeon that represents Flutter messages that can be called from Swift.'
   ];
   addDocumentationComments(
-      indent, api.documentationComments, openDoc, null, generatedComments);
+      indent, api.documentationComments, openDoc, generatedComments);
 
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
@@ -566,7 +566,7 @@ import FlutterMacOS
       '/// Generated class from Pigeon that represents data sent in messages.'
     ];
     addDocumentationComments(
-        indent, klass.documentationComments, openDoc, null, generatedComments);
+        indent, klass.documentationComments, openDoc, generatedComments);
 
     indent.write('struct ${klass.name} ');
     indent.scoped('{', '}', () {
