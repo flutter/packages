@@ -57,7 +57,7 @@ class Method extends Node {
   /// Specifies how handlers are dispatched with respect to threading.
   TaskQueueType taskQueueType;
 
-  /// Any attached docummentation comments on the method.
+  /// List of documentation comments, seperated by line.
   List<String>? documentationComments;
 
   @override
@@ -91,7 +91,7 @@ class Api extends Node {
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
 
-  /// Any attached docummentation comments on the api.
+  /// List of documentation comments, seperated by line.
   List<String>? documentationComments;
 
   @override
@@ -180,7 +180,7 @@ class NamedType extends Node {
   /// The offset in the source file where the [NamedType] appears.
   int? offset;
 
-  /// Comments documenting the NamedType
+  /// List of documentation comments, seperated by line.
   List<String>? documentationComments;
 
   @override
@@ -204,7 +204,7 @@ class Class extends Node {
   /// All the fields contained in the class.
   List<NamedType> fields;
 
-  /// List of documentation comments
+  /// List of documentation comments, seperated by line.
   List<String>? documentationComments;
 
   @override
@@ -224,7 +224,7 @@ class Enum extends Node {
   /// All of the members of the enum.
   List<String> members;
 
-  /// List of documentation comments
+  /// List of documentation comments, seperated by line.
   List<String>? documentationComments;
 
   @override
