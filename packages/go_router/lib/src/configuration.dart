@@ -42,27 +42,55 @@ class RouteConfiguration {
       }
     }
 
+    // Check that each parentNavigatorKey refers to either a ShellRoute's
+    // navigatorKey or the root navigator key.
     final List<GlobalKey<NavigatorState>> keys = <GlobalKey<NavigatorState>>[];
+    final List<GlobalKey<NavigatorState>> parentKeys =
+        <GlobalKey<NavigatorState>>[];
     keys.add(navigatorKey);
-    void checkRoutes(List<RouteBase> routes) {
+    void checkParentNavigatorKeys(
+        List<RouteBase> routes, List<GlobalKey<NavigatorState>> parentKeys) {
       for (final RouteBase route in routes) {
-        if (route is GoRoute && route.parentNavigatorKey != null) {
-          assert(
-              keys.contains(route.parentNavigatorKey),
-              'parentNavigatorKey ${route.parentNavigatorKey} must refer to'
-              " an ancestor ShellRoute's navigatorKey or GoRouter's"
-              ' navigatorKey');
+        if (route is GoRoute) {
+          final GlobalKey<NavigatorState>? parentKey = route.parentNavigatorKey;
+          if (parentKey != null) {
+            // Verify that the root navigator or a ShellRoute ancestor has a
+            // matching navigator key.
+            assert(
+                keys.contains(parentKey),
+                'parentNavigatorKey $parentKey must refer to'
+                " an ancestor ShellRoute's navigatorKey or GoRouter's"
+                ' navigatorKey');
+
+            // Verify that between each GoRoute with a parentNavigatorKey and the
+            // ancestor ShellRoute or root navigator with that key, there are no
+            // GoRoutes with other parentNavigatorKeys defined. For example:
+            //
+            // GoRouter(navigatorKey: root)
+            //   ShellRoute(navigatorKey: shell)
+            //     GoRoute('b' parentNavigatorKey: root)
+            //       GoRoute('c' parentNavigatorKey: shell)
+            if (parentKeys.isNotEmpty) {
+              assert(
+                  parentKeys.last == parentKey,
+                  'Ancestor GoRoutes cannot '
+                  'have a different parentNavigatorKey than child GoRoutes.');
+            }
+
+            checkParentNavigatorKeys(route.routes,
+                <GlobalKey<NavigatorState>>[...parentKeys, parentKey]);
+          } else {
+            checkParentNavigatorKeys(route.routes, parentKeys);
+          }
         } else if (route is ShellRoute && route.navigatorKey != null) {
           keys.add(route.navigatorKey);
-          checkRoutes(route.routes);
+          checkParentNavigatorKeys(route.routes, <GlobalKey<NavigatorState>>[]);
           keys.remove(route.navigatorKey);
-        } else if (route is GoRoute) {
-          checkRoutes(route.routes);
         }
       }
     }
 
-    checkRoutes(routes);
+    checkParentNavigatorKeys(routes, parentKeys);
   }
 
   /// The list of top level routes used by [GoRouterDelegate].

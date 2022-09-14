@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/widgets.dart';
+
 import 'configuration.dart';
 import 'match.dart';
 import 'path_utils.dart';
@@ -75,7 +77,7 @@ class RouteMatchList {
     _debugAssertNotEmpty();
 
     // Also pop ShellRoutes when there are no subsequent route matches
-    if (_matches.last.route is ShellRoute) {
+    while(_matches.isNotEmpty && _matches.last.route is ShellRoute) {
       _matches.removeLast();
     }
 
