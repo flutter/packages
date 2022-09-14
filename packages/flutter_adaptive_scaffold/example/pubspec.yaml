@@ -1,4 +1,4 @@
-name: adaptive_scaffold_example
+name: flutter_adaptive_scaffold_example
 description: Multiple examples of the usage of the AdaptiveScaffold widget and its lower level widgets.
 publish_to: 'none'
 version: 0.0.1
@@ -8,10 +8,10 @@ environment:
   flutter: ">=3.0.0"
 
 dependencies:
-  adaptive_scaffold:
-    path: ../../adaptive_scaffold
   flutter:
     sdk: flutter
+  flutter_adaptive_scaffold:
+    path: ..
   flutter_lints: ^2.0.0
 
 dev_dependencies:
