@@ -75,7 +75,7 @@ class RouteMatchList {
     _debugAssertNotEmpty();
 
     // Also pop ShellRoutes when there are no subsequent route matches
-    while(_matches.isNotEmpty && _matches.last.route is ShellRoute) {
+    while (_matches.isNotEmpty && _matches.last.route is ShellRoute) {
       _matches.removeLast();
     }
 
