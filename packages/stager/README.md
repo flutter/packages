@@ -225,6 +225,13 @@ flutter run -t path/to/my_scenes.stager_app.dart --dart-define='Scene=No Posts'
 
 You may notice that these names are very similar to Flutter testing functions. This is intentional – Scenes are very easy to reuse in tests. Writing Scenes for your widgets can be a great way to start writing widget tests or to expand your widget test coverage. A widget test using a Scene can be as simple as:
 
-<?code-excerpt "../test/pages/posts_list_page_test.dart (EmptySceneTest)"?>
+<?code-excerpt "../../test/pages/posts_list_page_test.dart (EmptySceneTest)"?>
 ```dart
+testWidgets('shows an empty state', (WidgetTester tester) async {
+  final Scene scene = EmptyListScene();
+  await scene.setUp();
+  await tester.pumpWidget(scene.build());
+  await tester.pump();
+  expect(find.text('No posts'), findsOneWidget);
+});
 ```
