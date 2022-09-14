@@ -161,4 +161,24 @@ void main() {
       DrawCommand(DrawCommandType.restore),
     ]);
   });
+
+  test('Preserves fill type changes', () async {
+    const String svg = '''
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#a)">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.99 0C4.47 0 0 4.48 0 10s4.47 10 9.99 10C15.52 20 20 15.52 20 10S15.52 0 9.99 0zM11 11V5H9v6h2zm0 4v-2H9v2h2zm-9-5c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8-8 3.58-8 8z" fill="black" />
+    </g>
+    <defs>
+        <clipPath id="a">
+            <path fill="#fff" d="M0 0h20v20H0z" />
+        </clipPath>
+    </defs>
+</svg>''';
+    final VectorInstructions instructions = await parse(svg);
+
+    expect(
+      instructions.paths.single.fillType,
+      PathFillType.evenOdd,
+    );
+  });
 }

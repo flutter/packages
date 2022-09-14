@@ -21,9 +21,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/tiger.bin # ghostscript tiger
-
 
 # Comment out before publishing
 dependency_overrides:

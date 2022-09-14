@@ -1220,51 +1220,59 @@ List<Path> groupMaskForMaskingOptimizer = <Path>[
 
 /// Excpected groupMask result when [MaskingOptimizer] is applied
 List<Path> blendsAndMasksForMaskingOptimizer = <Path>[
-  Path(commands: const <PathCommand>[
-    MoveToCommand(50.0, 0.0),
-    CubicToCommand(77.5957512247, 0.0, 100.0, 22.4042487753, 100.0, 50.0),
-    CubicToCommand(100.0, 77.5957512247, 77.5957512247, 100.0, 50.0, 100.0),
-    CubicToCommand(22.4042487753, 100.0, 0.0, 77.5957512247, 0.0, 50.0),
-    CubicToCommand(0.0, 22.4042487753, 22.4042487753, 0.0, 50.0, 0.0),
-    CloseCommand()
-  ]),
-  Path(commands: const <PathCommand>[
-    MoveToCommand(90.0, 50.0),
-    CubicToCommand(
-        90.0, 27.923398971557617, 72.07659912109375, 10.0, 50.0, 10.0),
-    CubicToCommand(
-        27.923398971557617, 10.0, 10.0, 27.923398971557617, 10.0, 50.0),
-    CubicToCommand(
-        10.0, 72.07659912109375, 27.923398971557617, 90.0, 50.0, 90.0),
-    CubicToCommand(
-        72.07659912109375, 90.0, 90.0, 72.07659912109375, 90.0, 50.0),
-    CloseCommand()
-  ]),
+  Path(
+    commands: const <PathCommand>[
+      MoveToCommand(50.0, 0.0),
+      CubicToCommand(77.5957512247, 0.0, 100.0, 22.4042487753, 100.0, 50.0),
+      CubicToCommand(100.0, 77.5957512247, 77.5957512247, 100.0, 50.0, 100.0),
+      CubicToCommand(22.4042487753, 100.0, 0.0, 77.5957512247, 0.0, 50.0),
+      CubicToCommand(0.0, 22.4042487753, 22.4042487753, 0.0, 50.0, 0.0),
+      CloseCommand(),
+    ],
+  ),
+  Path(
+    fillType: PathFillType.evenOdd,
+    commands: const <PathCommand>[
+      MoveToCommand(90.0, 50.0),
+      CubicToCommand(
+          90.0, 27.923398971557617, 72.07659912109375, 10.0, 50.0, 10.0),
+      CubicToCommand(
+          27.923398971557617, 10.0, 10.0, 27.923398971557617, 10.0, 50.0),
+      CubicToCommand(
+          10.0, 72.07659912109375, 27.923398971557617, 90.0, 50.0, 90.0),
+      CubicToCommand(
+          72.07659912109375, 90.0, 90.0, 72.07659912109375, 90.0, 50.0),
+      CloseCommand(),
+    ],
+  ),
 ];
 
 /// Expected basicClips result when [Clipping Optimizer] is applied
 
 List<Path> basicClipsForClippingOptimzer = <Path>[
-  Path(commands: const <PathCommand>[
-    MoveToCommand(50.0, 30.0),
-    CubicToCommand(
-        50.0, 18.961700439453125, 41.038299560546875, 10.0, 30.0, 10.0),
-    CubicToCommand(
-        18.961700439453125, 10.0, 10.0, 18.961700439453125, 10.0, 30.0),
-    CubicToCommand(
-        10.0, 41.038299560546875, 18.961700439453125, 50.0, 30.0, 50.0),
-    CubicToCommand(
-        41.038299560546875, 50.0, 50.0, 41.038299560546875, 50.0, 30.0),
-    CloseCommand(),
-    MoveToCommand(90.0, 70.0),
-    CubicToCommand(
-        90.0, 58.961700439453125, 81.03829956054688, 50.0, 70.0, 50.0),
-    CubicToCommand(
-        58.961700439453125, 50.0, 50.0, 58.961700439453125, 50.0, 70.0),
-    CubicToCommand(
-        50.0, 81.03829956054688, 58.961700439453125, 90.0, 70.0, 90.0),
-    CubicToCommand(
-        81.03829956054688, 90.0, 90.0, 81.03829956054688, 90.0, 70.0),
-    CloseCommand()
-  ]),
+  Path(
+    fillType: PathFillType.evenOdd,
+    commands: const <PathCommand>[
+      MoveToCommand(50.0, 30.0),
+      CubicToCommand(
+          50.0, 18.961700439453125, 41.038299560546875, 10.0, 30.0, 10.0),
+      CubicToCommand(
+          18.961700439453125, 10.0, 10.0, 18.961700439453125, 10.0, 30.0),
+      CubicToCommand(
+          10.0, 41.038299560546875, 18.961700439453125, 50.0, 30.0, 50.0),
+      CubicToCommand(
+          41.038299560546875, 50.0, 50.0, 41.038299560546875, 50.0, 30.0),
+      CloseCommand(),
+      MoveToCommand(90.0, 70.0),
+      CubicToCommand(
+          90.0, 58.961700439453125, 81.03829956054688, 50.0, 70.0, 50.0),
+      CubicToCommand(
+          58.961700439453125, 50.0, 50.0, 58.961700439453125, 50.0, 70.0),
+      CubicToCommand(
+          50.0, 81.03829956054688, 58.961700439453125, 90.0, 70.0, 90.0),
+      CubicToCommand(
+          81.03829956054688, 90.0, 90.0, 81.03829956054688, 90.0, 70.0),
+      CloseCommand()
+    ],
+  ),
 ];

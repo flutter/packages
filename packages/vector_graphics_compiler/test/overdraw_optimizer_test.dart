@@ -92,6 +92,7 @@ void main() {
 
     expect(instructions.paths, <Path>[
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(367.0, 221.5),
           LineToCommand(99.0, 221.5),
@@ -139,6 +140,7 @@ void main() {
 
     expect(instructions.paths, <Path>[
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(343.0, 240.5),
           LineToCommand(88.0, 240.5),
@@ -155,6 +157,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(484.0, 63.5),
           LineToCommand(343.0, 63.5),
@@ -171,6 +174,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(343.0, 240.5),
           LineToCommand(484.0, 240.5),
@@ -201,6 +205,7 @@ void main() {
 
     expect(instructions.paths, <Path>[
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(343.0, 240.5),
           LineToCommand(88.0, 240.5),
@@ -248,6 +253,7 @@ void main() {
 
     expect(instructions.paths, <Path>[
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(343.0, 240.5),
           LineToCommand(88.0, 240.5),
@@ -264,6 +270,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(484.0, 63.5),
           LineToCommand(343.0, 63.5),
@@ -280,6 +287,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(343.0, 240.5),
           LineToCommand(484.0, 240.5),
@@ -337,6 +345,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(150.0, 100.0),
           LineToCommand(100.0, 100.0),
@@ -352,6 +361,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(200.0, 50.0),
           CubicToCommand(
@@ -366,6 +376,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(400.0, 50.0),
           CubicToCommand(
@@ -379,8 +390,11 @@ void main() {
           CloseCommand()
         ],
       ),
-      Path(),
       Path(
+        fillType: PathFillType.evenOdd,
+      ),
+      Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(600.0, 50.0),
           CubicToCommand(
@@ -395,6 +409,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(800.0, 50.0),
           CubicToCommand(
@@ -409,6 +424,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(1000.0, 50.0),
           CubicToCommand(
@@ -423,6 +439,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(200.0000457763672, 203.1529998779297),
           CubicToCommand(194.55233764648438, 201.1146697998047,
@@ -441,6 +458,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(217.5, 200.0),
           CubicToCommand(
@@ -455,6 +473,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(382.5, 200.0),
           CubicToCommand(410.09576416015625, 200.0, 432.5, 222.4042510986328,
@@ -469,6 +488,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(417.5, 200.0),
           CubicToCommand(445.09576416015625, 200.0, 467.5, 222.4042510986328,
@@ -483,6 +503,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(582.5, 200.0),
           CubicToCommand(
@@ -497,6 +518,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(617.5, 200.0),
           CubicToCommand(
@@ -511,6 +533,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(817.5, 200.0),
           CubicToCommand(
@@ -525,6 +548,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(782.5, 200.0),
           CubicToCommand(
@@ -539,6 +563,7 @@ void main() {
         ],
       ),
       Path(
+        fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[
           MoveToCommand(982.5, 200.0),
           CubicToCommand(1010.0957641601562, 200.0, 1032.5, 222.4042510986328,
