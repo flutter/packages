@@ -1139,6 +1139,7 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
+      // This regex finds the comment only between the open and close comment block
       expect(
           RegExp('(?<=\\/\\*\\*.*?)$comment(?=.*?\\*\\/)', dotAll: true)
               .hasMatch(code),
