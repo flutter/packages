@@ -186,9 +186,9 @@ To generate the `StagerApp`, run:
 flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
-This will generate a `my_scenes.stager_app.dart` file, which contains a `main` function that creates your Scenes and launches a StagerApp. For the above Scene, it would look something like:
+This will generate a `my_scenes.stager_app.g.dart` file, which contains a `main` function that creates your Scenes and launches a StagerApp. For the above Scene, it would look something like:
 
-<?code-excerpt "pages/posts_list/posts_list_scenes.stager_app.dart (StagerMain)"?>
+<?code-excerpt "pages/posts_list/posts_list_scenes.g.stager_app.dart (StagerMain)"?>
 ```dart
 void main() {
   final List<Scene> scenes = <Scene>[
@@ -212,13 +212,13 @@ void main() {
 This can be run using:
 
 ```bash
-flutter run -t path/to/my_scenes.stager_app.dart
+flutter run -t path/to/my_scenes.stager_app.g.dart
 ```
 
 You can launch to a specific scene by providing the name of the scene as an argument:
 
 ```bash
-flutter run -t path/to/my_scenes.stager_app.dart --dart-define='Scene=No Posts'
+flutter run -t path/to/my_scenes.stager_app.g.dart --dart-define='Scene=No Posts'
 ```
 
 ## Testing

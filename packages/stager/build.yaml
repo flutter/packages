@@ -9,6 +9,6 @@ builders:
   stagerAppBuilder:
     import: "package:stager/builder.dart"
     builder_factories: ["buildStagerApp"]
-    build_extensions: {".dart": [".stager_app.dart"]}
+    build_extensions: {".dart": [".stager_app.g.dart"]}
     build_to: source
     auto_apply: dependents

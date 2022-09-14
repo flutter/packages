@@ -11,5 +11,5 @@ import 'src/stager_app_generator.dart';
 /// with a [StagerApp] displaying all titled [Scene]s.
 Builder buildStagerApp(BuilderOptions options) => LibraryBuilder(
       StagerAppGenerator(),
-      generatedExtension: '.stager_app.dart',
+      generatedExtension: '.stager_app.g.dart',
     );
