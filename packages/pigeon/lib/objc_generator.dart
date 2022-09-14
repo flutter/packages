@@ -7,6 +7,9 @@ import 'functional.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show Error, TaskQueueType;
 
+/// Documentation comment open symbol.
+const String openDoc = '///';
+
 /// Options that control how Objective-C code will be generated.
 class ObjcOptions {
   /// Parametric constructor for ObjcOptions.
@@ -195,9 +198,8 @@ void _writeClassDeclarations(
     Indent indent, List<Class> classes, List<Enum> enums, String? prefix) {
   final List<String> enumNames = enums.map((Enum x) => x.name).toList();
   for (final Class klass in classes) {
-    klass.documentationComments?.forEach((String documentationComment) {
-      indent.writeln('/// $documentationComment');
-    });
+    addDocumentationComments(indent, klass.documentationComments, openDoc);
+
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
     if (klass.fields.isNotEmpty) {
       if (klass.fields
@@ -220,9 +222,7 @@ void _writeClassDeclarations(
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
-      field.documentationComments?.forEach((String documentationComment) {
-        indent.writeln('/// $documentationComment');
-      });
+      addDocumentationComments(indent, field.documentationComments, openDoc);
       if (enumNames.contains(field.type.baseName)) {
         propertyType = 'assign';
       } else {
@@ -421,9 +421,8 @@ String _makeObjcSignature({
 void _writeHostApiDeclaration(
     Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
-  api.documentationComments?.forEach((String documentationComment) {
-    indent.writeln('/// $documentationComment');
-  });
+  addDocumentationComments(indent, api.documentationComments, openDoc);
+
   indent.writeln('@protocol $apiName');
   for (final Method func in api.methods) {
     final _ObjcPtr returnTypeName =
@@ -454,9 +453,8 @@ void _writeHostApiDeclaration(
         !func.isAsynchronous) {
       indent.writeln('/// @return `nil` only when `error != nil`.');
     }
-    func.documentationComments?.forEach((String documentationComment) {
-      indent.writeln('/// $documentationComment');
-    });
+    addDocumentationComments(indent, func.documentationComments, openDoc);
+
     final String signature = _makeObjcSignature(
       func: func,
       options: options,
@@ -485,9 +483,8 @@ void _writeHostApiDeclaration(
 void _writeFlutterApiDeclaration(
     Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
-  api.documentationComments?.forEach((String documentationComment) {
-    indent.writeln('/// $documentationComment');
-  });
+  addDocumentationComments(indent, api.documentationComments, openDoc);
+
   indent.writeln('@interface $apiName : NSObject');
   indent.writeln(
       '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
@@ -495,9 +492,8 @@ void _writeFlutterApiDeclaration(
     final _ObjcPtr returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
-    func.documentationComments?.forEach((String documentationComment) {
-      indent.writeln('/// $documentationComment');
-    });
+    addDocumentationComments(indent, func.documentationComments, openDoc);
+
     indent.writeln('${_makeObjcSignature(
       func: func,
       options: options,
@@ -536,9 +532,8 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   void writeEnum(Enum anEnum) {
     final String enumName = _className(options.prefix, anEnum.name);
-    anEnum.documentationComments?.forEach((String documentationComment) {
-      indent.writeln('/// $documentationComment');
-    });
+    addDocumentationComments(indent, anEnum.documentationComments, openDoc);
+
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.scoped('{', '};', () {
       int index = 0;
@@ -745,9 +740,8 @@ void _writeHostApiSource(
   indent.scoped('{', '}', () {
     for (final Method func in api.methods) {
       indent.write('');
-      func.documentationComments?.forEach((String documentationComment) {
-        indent.writeln('/// $documentationComment');
-      });
+      addDocumentationComments(indent, func.documentationComments, openDoc);
+
       indent.scoped('{', '}', () {
         String? taskQueue;
         if (func.taskQueueType != TaskQueueType.serial) {
