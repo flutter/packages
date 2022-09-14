@@ -188,8 +188,18 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 This will generate a `my_scenes.stager_app.g.dart` file, which contains a `main` function that creates your Scenes and launches a StagerApp. For the above Scene, it would look something like:
 
-<?code-excerpt "pages/posts_list/posts_list_scenes.stager_app.g.dart (StagerMain)"?>
+<?code-excerpt "pages/posts_list/posts_list_page_scenes.stager_app.g.dart"?>
 ```dart
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// StagerAppGenerator
+// **************************************************************************
+
+import 'package:stager/stager.dart';
+
+import 'posts_list_page_scenes.dart';
+
 void main() {
   final List<Scene> scenes = <Scene>[
     EmptyListScene(),
