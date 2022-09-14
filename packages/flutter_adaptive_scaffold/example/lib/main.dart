@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:adaptive_scaffold/adaptive_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 
 /// A more functional demo of the usage of the adaptive layout helper widgets.
 /// Specifically, it is built using an [AdaptiveLayout] and uses static helpers
