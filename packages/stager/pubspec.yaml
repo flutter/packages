@@ -9,7 +9,7 @@ environment:
   flutter: ">=1.16.0"
 
 dependencies:
-  analyzer: ^4.2.0
+  analyzer: ^4.7.0
   build: ^2.3.0
   flutter:
     sdk: flutter
