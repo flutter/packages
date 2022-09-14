@@ -1119,7 +1119,7 @@ void main() {
     generateCppHeader('foo', const CppOptions(), root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
-      expect(code, contains(comment));
+      expect(code, contains('/// $comment'));
     }
   });
 }

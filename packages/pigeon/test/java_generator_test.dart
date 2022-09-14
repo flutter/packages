@@ -1139,7 +1139,10 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
-      expect(code, contains(comment));
+      expect(
+          RegExp('(?<=\\/\\*\\*.*?)$comment(?=.*?\\*\\/)', dotAll: true)
+              .hasMatch(code),
+          true);
     }
   });
 }
