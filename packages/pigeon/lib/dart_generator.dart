@@ -11,6 +11,9 @@ import 'ast.dart';
 import 'functional.dart';
 import 'generator_tools.dart';
 
+/// Documentation comment open symbol.
+const String openDoc = '///';
+
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
@@ -154,9 +157,7 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   _writeCodec(indent, codecName, api, root);
   indent.addln('');
   bool first = true;
-  api.documentationComments?.forEach((String documentationComment) {
-    indent.writeln('/// $documentationComment');
-  });
+  addDocumentationComments(indent, api.documentationComments, openDoc);
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.format('''
@@ -176,9 +177,7 @@ final BinaryMessenger? _binaryMessenger;
       } else {
         first = false;
       }
-      func.documentationComments?.forEach((String documentationComment) {
-        indent.writeln('/// $documentationComment');
-      });
+      addDocumentationComments(indent, func.documentationComments, openDoc);
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
@@ -270,17 +269,15 @@ void _writeFlutterApi(
   assert(api.location == ApiLocation.flutter);
   final String codecName = _getCodecName(api);
   _writeCodec(indent, codecName, api, root);
-  api.documentationComments?.forEach((String documentationComment) {
-    indent.writeln('/// $documentationComment');
-  });
+  addDocumentationComments(indent, api.documentationComments, openDoc);
+
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.writeln('static const MessageCodec<Object?> codec = $codecName();');
     indent.addln('');
     for (final Method func in api.methods) {
-      func.documentationComments?.forEach((String documentationComment) {
-        indent.writeln('/// $documentationComment');
-      });
+      addDocumentationComments(indent, func.documentationComments, openDoc);
+
       final bool isAsync = func.isAsynchronous;
       final String returnType = isAsync
           ? 'Future<${_addGenericTypesNullable(func.returnType)}>'
@@ -445,9 +442,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   void writeEnums() {
     for (final Enum anEnum in root.enums) {
       indent.writeln('');
-      anEnum.documentationComments?.forEach((String documentationComment) {
-        indent.writeln('/// $documentationComment');
-      });
+      addDocumentationComments(indent, anEnum.documentationComments, openDoc);
       indent.write('enum ${anEnum.name} ');
       indent.scoped('{', '}', () {
         for (final String member in anEnum.members) {
@@ -570,17 +565,15 @@ pigeonMap['${field.name}'] != null
       });
     }
 
-    klass.documentationComments?.forEach((String documentationComment) {
-      indent.writeln('/// $documentationComment');
-    });
+    addDocumentationComments(indent, klass.documentationComments, openDoc);
+
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       writeConstructor();
       indent.addln('');
       for (final NamedType field in klass.fields) {
-        field.documentationComments?.forEach((String documentationComment) {
-          indent.writeln('/// $documentationComment');
-        });
+        addDocumentationComments(indent, field.documentationComments, openDoc);
+
         final String datatype = _addGenericTypesNullable(field.type);
         indent.writeln('$datatype ${field.name};');
       }
