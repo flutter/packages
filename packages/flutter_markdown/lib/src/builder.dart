@@ -392,6 +392,7 @@ class MarkdownBuilder implements md.NodeVisitor {
             bullet = _buildBullet(_listIndents.last);
           }
           child = Row(
+            mainAxisSize: fitContent ? MainAxisSize.min : MainAxisSize.max,
             textBaseline: listItemCrossAxisAlignment ==
                     MarkdownListItemCrossAxisAlignment.start
                 ? null
@@ -407,7 +408,10 @@ class MarkdownBuilder implements md.NodeVisitor {
                     styleSheet.listBulletPadding!.right,
                 child: bullet,
               ),
-              Expanded(child: child)
+              Flexible(
+                fit: fitContent ? FlexFit.loose : FlexFit.tight,
+                child: child,
+              )
             ],
           );
         }
