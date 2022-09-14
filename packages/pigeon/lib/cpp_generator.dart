@@ -10,9 +10,6 @@ import 'pigeon_lib.dart' show Error;
 /// Documentation open symbol.
 const String openDoc = '///';
 
-// /// Documentation close symbol.
-// const String null = '*/';
-
 /// Options that control how C++ code will be generated.
 class CppOptions {
   /// Creates a [CppOptions] object
@@ -200,15 +197,15 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
   ];
 
   addDocumentationComments(
-      indent, klass.documentationComments, openDoc, generatedMessages);
+      indent, klass.documentationComments, openDoc, null, generatedMessages);
 
   indent.write('class ${klass.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
       indent.writeln('${klass.name}();');
       for (final NamedType field in klass.fields) {
-        addDocumentationComments(
-            indent, field.documentationComments, openDoc, generatedMessages);
+        addDocumentationComments(indent, field.documentationComments, openDoc,
+            null, generatedMessages);
         final HostDatatype baseDatatype = getFieldHostDatatype(
             field,
             root.classes,
@@ -416,7 +413,7 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
     'Generated interface from Pigeon that represents a handler of messages from Flutter.'
   ];
   addDocumentationComments(
-      indent, api.documentationComments, openDoc, generatedMessages);
+      indent, api.documentationComments, openDoc, null, generatedMessages);
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
@@ -704,7 +701,7 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
     'Generated class from Pigeon that represents Flutter messages that can be called from C++.'
   ];
   addDocumentationComments(
-      indent, api.documentationComments, openDoc, generatedMessages);
+      indent, api.documentationComments, openDoc, null, generatedMessages);
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' private:', '', () {
