@@ -8,7 +8,7 @@ import 'package:stager/src/scene_container.dart';
 import 'package:stager/stager.dart';
 
 void main() {
-  final List<Scene> scenes = <Scene>[
+  final List<StagerScene> scenes = <StagerScene>[
     ButtonScene(),
     TextScene(),
   ];
@@ -43,7 +43,7 @@ void main() {
   });
 }
 
-class TextScene extends Scene {
+class TextScene extends StagerScene {
   @override
   String get title => 'Text';
 
@@ -51,7 +51,7 @@ class TextScene extends Scene {
   Widget build() => const Text('Text Scene');
 }
 
-class ButtonScene extends Scene {
+class ButtonScene extends StagerScene {
   @override
   String get title => 'Button';
 

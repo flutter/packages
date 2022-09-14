@@ -16,7 +16,7 @@ import '../posts_list/posts_list_page_scenes.mocks.dart';
 import 'user_detail_page.dart';
 
 /// A Scene demonstrating the [UserDetailPage].
-abstract class UserDetailPageScene extends Scene {
+abstract class UserDetailPageScene extends StagerScene {
   /// A mock dependency of [UserDetailPage]. Mock the value of [Api.fetchPosts]
   /// to put the staged [UserDetailPage] into different states.
   late MockApi mockApi;

@@ -16,7 +16,7 @@ import 'package:flutter/widgets.dart';
 ///
 /// ```
 /// @GenerateMocks([Api])
-/// abstract class BasePostsListScene extends Scene {
+/// abstract class BasePostsListScene extends StagerScene {
 ///   late MockApi mockApi;
 ///
 ///   @override
@@ -58,7 +58,7 @@ import 'package:flutter/widgets.dart';
 /// }
 /// ```
 ///
-abstract class Scene {
+abstract class StagerScene {
   /// This Scene's name in the [StagerApp]'s list of scenes.
   ///
   /// Scenes without a [title] will not be displayed in the [StagerApp]'s list

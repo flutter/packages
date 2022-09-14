@@ -10,7 +10,7 @@ import '../user.dart';
 import 'post_card.dart';
 
 /// A Scene showing a single [PostCard] widget with a fake [Post].
-class PostCardScene extends Scene {
+class PostCardScene extends StagerScene {
   @override
   String get title => 'Single Card';
 
@@ -24,7 +24,7 @@ class PostCardScene extends Scene {
 }
 
 /// A Scene showing a [PostsList] with fake [Post]s.
-class PostsListScene extends Scene {
+class PostsListScene extends StagerScene {
   /// The posts being shown in this scene.
   final List<Post> posts = <Post>[
     Post(

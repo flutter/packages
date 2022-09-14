@@ -9,16 +9,16 @@ import 'package:stager/stager.dart';
 import 'post_card_scenes.dart';
 
 void main() {
-  final List<Scene> scenes = <Scene>[
+  final List<StagerScene> scenes = <StagerScene>[
     PostCardScene(),
     PostsListScene(),
   ];
 
   if (const String.fromEnvironment('Scene').isNotEmpty) {
     const String sceneName = String.fromEnvironment('Scene');
-    final Scene scene =
-        scenes.firstWhere((Scene scene) => scene.title == sceneName);
-    runStagerApp(scenes: <Scene>[scene]);
+    final StagerScene scene =
+        scenes.firstWhere((StagerScene scene) => scene.title == sceneName);
+    runStagerApp(scenes: <StagerScene>[scene]);
   } else {
     runStagerApp(scenes: scenes);
   }

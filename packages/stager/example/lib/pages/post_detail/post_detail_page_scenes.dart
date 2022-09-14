@@ -9,7 +9,7 @@ import '../../shared/post.dart';
 import 'post_detail_page.dart';
 
 /// A scene demonstrating a [PostDetailPage] with content.
-class PostDetailPageScene extends Scene {
+class PostDetailPageScene extends StagerScene {
   @override
   String get title => 'Post Detail';
 

@@ -9,14 +9,14 @@ import 'package:stager_example/pages/user_detail/user_detail_page_scenes.dart';
 
 void main() {
   testWidgets('shows a loading state', (WidgetTester tester) async {
-    final Scene scene = LoadingUserDetailPageScene();
+    final StagerScene scene = LoadingUserDetailPageScene();
     await scene.setUp();
     await tester.pumpWidget(scene.build());
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
   testWidgets('shows an error state', (WidgetTester tester) async {
-    final Scene scene = ErrorUserDetailPageScene();
+    final StagerScene scene = ErrorUserDetailPageScene();
     await scene.setUp();
     await tester.pumpWidget(scene.build());
     await tester.pump();
@@ -24,7 +24,7 @@ void main() {
   });
 
   testWidgets('shows an empty state', (WidgetTester tester) async {
-    final Scene scene = EmptyUserDetailPageScene();
+    final StagerScene scene = EmptyUserDetailPageScene();
     await scene.setUp();
     await tester.pumpWidget(scene.build());
     await tester.pump();
@@ -32,7 +32,7 @@ void main() {
   });
 
   testWidgets('shows posts', (WidgetTester tester) async {
-    final Scene scene = WithPostsUserDetailPageScene();
+    final StagerScene scene = WithPostsUserDetailPageScene();
     await scene.setUp();
     await tester.pumpWidget(scene.build());
     await tester.pump();

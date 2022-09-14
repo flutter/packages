@@ -20,7 +20,7 @@ import 'posts_list_page_scenes.mocks.dart';
 
 /// Defines a shared build method used by subclasses and a [MockApi] subclasses
 /// can use to control the behavior of the [PostsListPage].
-abstract class BasePostsListScene extends Scene {
+abstract class BasePostsListScene extends StagerScene {
   /// A mock dependency of [PostsListPage]. Mock the value of [Api.fetchPosts]
   /// to put the staged [PostsListPage] into different states.
   late MockApi mockApi;

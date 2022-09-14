@@ -17,19 +17,19 @@ A Stager app for a ListView displaying forum-style posts:
 
 ## Concepts
 
-### Scene
+### StagerScene
 
-The most important class in Stager is the Scene class. A Scene is a simple, self-contained unit of UI. Scenes make it easy to focus on a single widget or page to greatly increase development velocity by isolating them from the rest of your app and allowing fine control of dependencies.
+The most important class in Stager is the StagerScene class. A StagerScene is a simple, self-contained unit of UI. StagerScenes make it easy to focus on a single widget or page to greatly increase development velocity by isolating them from the rest of your app and allowing fine control of dependencies.
 
-A Scene has three parts:
+A StagerScene has three parts:
 
 #### `title`
 
-The name of the Scene.
+The name of the StagerScene.
 
 #### `setUp`
 
-A function that is called once before the Scene is displayed. This will generally be where you configure your widget's dependencies.
+A function that is called once before the StagerScene is displayed. This will generally be where you configure your widget's dependencies.
 
 #### `build`
 
@@ -37,7 +37,7 @@ A function that constructs your widget.
 
 ### StagerApp
 
-A StagerApp displays a list of Scenes, allow the user to select from all available Scenes. Because Scenes can contain their own Navigators, the StagerApp overlays a back button on top of the Scenes.
+A StagerApp displays a list of StagerScenes, allow the user to select from all available StagerScenes. Because StagerScenes can contain their own Navigators, the StagerApp overlays a back button on top of the StagerScenes.
 
 ## Demo
 
@@ -45,7 +45,7 @@ See the example directory for a demo that highlights some of the useful things S
 
 1. The ability to alter environment settings (dark/light mode, text size, etc.) that would otherwise require
 a trip to the Settings app or require booting up another emulator/simulator or device.
-1. The ability to reuse Scenes in widget tests. If you aren't already writing widget tests, Scenes make it **very** easy
+1. The ability to reuse StagerScenes in widget tests. If you aren't already writing widget tests, StagerScenes make it **very** easy
 to start.
 1. The ability to quickly move between different states (empty, loading, etc.) without having to make changes to app code
 to "fake" those states.
@@ -142,7 +142,7 @@ import 'posts_list_page_scenes.mocks.dart';
 
 /// Defines a shared build method used by subclasses and a [MockApi] subclasses
 /// can use to control the behavior of the [PostsListPage].
-abstract class BasePostsListScene extends Scene {
+abstract class BasePostsListScene extends StagerScene {
   /// A mock dependency of [PostsListPage]. Mock the value of [Api.fetchPosts]
   /// to put the staged [PostsListPage] into different states.
   late MockApi mockApi;
@@ -201,7 +201,7 @@ import 'package:stager/stager.dart';
 import 'posts_list_page_scenes.dart';
 
 void main() {
-  final List<Scene> scenes = <Scene>[
+  final List<StagerScene> scenes = <StagerScene>[
     EmptyListScene(),
     WithPostsScene(),
     LoadingScene(),
@@ -210,9 +210,9 @@ void main() {
 
   if (const String.fromEnvironment('Scene').isNotEmpty) {
     const String sceneName = String.fromEnvironment('Scene');
-    final Scene scene =
-        scenes.firstWhere((Scene scene) => scene.title == sceneName);
-    runStagerApp(scenes: <Scene>[scene]);
+    final StagerScene scene =
+        scenes.firstWhere((StagerScene scene) => scene.title == sceneName);
+    runStagerApp(scenes: <StagerScene>[scene]);
   } else {
     runStagerApp(scenes: scenes);
   }
@@ -238,7 +238,7 @@ You may notice that these names are very similar to Flutter testing functions. T
 <?code-excerpt "../../test/pages/posts_list_page_test.dart (EmptySceneTest)"?>
 ```dart
 testWidgets('shows an empty state', (WidgetTester tester) async {
-  final Scene scene = EmptyListScene();
+  final StagerScene scene = EmptyListScene();
   await scene.setUp();
   await tester.pumpWidget(scene.build());
   await tester.pump();

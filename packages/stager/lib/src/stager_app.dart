@@ -4,15 +4,15 @@
 
 import 'package:flutter/material.dart';
 
-import 'scene.dart';
 import 'scene_container.dart';
 import 'scene_list.dart';
+import 'stager_scene.dart';
 
 /// A convenience method to run [scenes] in a [StagerApp].
-void runStagerApp({required List<Scene> scenes}) =>
+void runStagerApp({required List<StagerScene> scenes}) =>
     runApp(StagerApp(scenes: scenes));
 
-/// A simple app that displays a list of [Scene]s and navigates to them on tap.
+/// A simple app that displays a list of [StagerScene]s and navigates to them on tap.
 ///
 /// If only one Scene is provided, that Scene will be shown as though it had
 /// been navigated to from a list of Scenes.
@@ -20,8 +20,8 @@ class StagerApp extends StatefulWidget {
   /// Creates a [StagerApp] with the given [scenes].
   const StagerApp({super.key, required this.scenes});
 
-  /// The [Scene]s being displayed by this app.
-  final List<Scene> scenes;
+  /// The [StagerScene]s being displayed by this app.
+  final List<StagerScene> scenes;
 
   @override
   State<StagerApp> createState() => _StagerAppState();
