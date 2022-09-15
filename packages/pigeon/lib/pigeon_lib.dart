@@ -880,7 +880,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
       }
     } else {
-      print(node.name2.lexeme);
       _currentClass = Class(
         name: node.name2.lexeme,
         fields: <NamedType>[],
