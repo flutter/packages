@@ -208,7 +208,7 @@ void main() {
                                 builder: _mockScreenBuilder,
                                 routes: <RouteBase>[
                                   GoRoute(
-                                    path: 'b',
+                                    path: 'c',
                                     builder: _mockScreenBuilder,
                                     parentNavigatorKey: shell,
                                   ),
@@ -233,6 +233,61 @@ void main() {
       },
     );
   });
+
+  test(
+    'Does not throw with valid parentNavigatorKey configuration',
+    () {
+      final GlobalKey<NavigatorState> root =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> shell =
+          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final GlobalKey<NavigatorState> shell2 =
+          GlobalKey<NavigatorState>(debugLabel: 'shell2');
+      RouteConfiguration(
+        navigatorKey: root,
+        routes: <RouteBase>[
+          ShellRoute(
+            navigatorKey: shell,
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/',
+                builder: _mockScreenBuilder,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'a',
+                    builder: _mockScreenBuilder,
+                    parentNavigatorKey: root,
+                    routes: <RouteBase>[
+                      ShellRoute(
+                        navigatorKey: shell2,
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'b',
+                            builder: _mockScreenBuilder,
+                            routes: <RouteBase>[
+                              GoRoute(
+                                path: 'b',
+                                builder: _mockScreenBuilder,
+                                parentNavigatorKey: shell2,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+        redirectLimit: 10,
+        topRedirect: (GoRouterState state) {
+          return null;
+        },
+      );
+    },
+  );
 
   test('throws when ShellRoute contains a ShellRoute', () {
     final GlobalKey<NavigatorState> root =
