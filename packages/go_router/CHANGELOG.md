@@ -1,6 +1,29 @@
+## 4.4.1
+
+- Fix an issue where disabling logging clears the root logger's listeners
+
+## 4.4.0
+
+- Adds `buildPageWithState` to `GoRouteData`.
+- `GoRouteData.buildPage` is now deprecated in favor of `GoRouteData.buildPageWithState`.
+
+## 4.3.0
+
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+
+## 4.2.9
+
+* Updates text theme parameters to avoid deprecation issues.
+* Fixes lint warnings.
+
+## 4.2.8
+
+- Fixes namedLocation to return URIs without trailing question marks if there are no query parameters.
+- Cleans up examples.
+
 ## 4.2.7
 
-- Update README
+- Updates README.
 
 ## 4.2.6
 

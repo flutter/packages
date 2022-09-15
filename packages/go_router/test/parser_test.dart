@@ -92,12 +92,56 @@ void main() {
       topRedirect: (_) => null,
     );
 
-    expect(configuration.namedLocation('lowercase'), '/abc?');
-    expect(configuration.namedLocation('LOWERCASE'), '/abc?');
-    expect(configuration.namedLocation('camelCase'), '/efg?');
-    expect(configuration.namedLocation('camelcase'), '/efg?');
-    expect(configuration.namedLocation('snake_case'), '/hij?');
-    expect(configuration.namedLocation('SNAKE_CASE'), '/hij?');
+    expect(configuration.namedLocation('lowercase'), '/abc');
+    expect(configuration.namedLocation('LOWERCASE'), '/abc');
+    expect(configuration.namedLocation('camelCase'), '/efg');
+    expect(configuration.namedLocation('camelcase'), '/efg');
+    expect(configuration.namedLocation('snake_case'), '/hij');
+    expect(configuration.namedLocation('SNAKE_CASE'), '/hij');
+
+    // With query parameters
+    expect(configuration.namedLocation('lowercase'), '/abc');
+    expect(
+        configuration.namedLocation('lowercase',
+            queryParams: const <String, String>{'q': '1'}),
+        '/abc?q=1');
+    expect(
+        configuration.namedLocation('lowercase',
+            queryParams: const <String, String>{'q': '1', 'g': '2'}),
+        '/abc?q=1&g=2');
+  });
+
+  test(
+      'GoRouteInformationParser can retrieve route by name with query parameters',
+      () async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Placeholder(),
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'abc',
+            name: 'routeName',
+            builder: (_, __) => const Placeholder(),
+          ),
+        ],
+      ),
+    ];
+
+    final RouteConfiguration configuration = RouteConfiguration(
+      routes: routes,
+      redirectLimit: 100,
+      topRedirect: (_) => null,
+    );
+
+    expect(
+      configuration
+          .namedLocation('routeName', queryParams: const <String, dynamic>{
+        'q1': 'v1',
+        'q2': <String>['v2', 'v3'],
+      }),
+      '/abc?q1=v1&q2=v2&q2=v3',
+    );
   });
 
   test('GoRouteInformationParser returns error when unknown route', () async {

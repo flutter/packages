@@ -8,6 +8,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
 
 # The tool expects to be run from the repo root.
+# PACKAGE_SHARDING is (optionally) set from Cirrus. See .cirrus.yml
 cd "$REPO_DIR"
-dart pub global run flutter_plugin_tools "$@" --packages-for-branch \
-  --log-timing $BUILD_SHARDING
+dart pub global run flutter_plugin_tools "$@" \
+  --packages-for-branch \
+  --log-timing \
+  $PACKAGE_SHARDING

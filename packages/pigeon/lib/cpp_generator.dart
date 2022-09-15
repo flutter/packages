@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/functional.dart';
-
 import 'ast.dart';
+import 'functional.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show Error;
 
@@ -576,7 +575,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 });
               }
 
-              String _wrapResponse(String reply, TypeDeclaration returnType) {
+              String wrapResponse(String reply, TypeDeclaration returnType) {
                 String elseBody = '';
                 final String ifCondition;
                 final String errorGetter;
@@ -637,7 +636,7 @@ $prefix\t}${indent.newline}''';
               if (method.isAsynchronous) {
                 methodArgument.add(
                   '[&wrapped, &reply]($returnTypeName&& output) {${indent.newline}'
-                  '${_wrapResponse('\treply(wrapped);${indent.newline}', method.returnType)}'
+                  '${wrapResponse('\treply(wrapped);${indent.newline}', method.returnType)}'
                   '}',
                 );
               }
@@ -647,7 +646,7 @@ $prefix\t}${indent.newline}''';
                 indent.format('$call;');
               } else {
                 indent.writeln('$returnTypeName output = $call;');
-                indent.format(_wrapResponse('', method.returnType));
+                indent.format(wrapResponse('', method.returnType));
               }
             });
             indent.write('catch (const std::exception& exception) ');
@@ -676,7 +675,7 @@ String _getArgumentName(int count, NamedType argument) =>
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType argument) =>
-    _getArgumentName(count, argument) + '_arg';
+    '${_getArgumentName(count, argument)}_arg';
 
 void _writeFlutterApiHeader(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
@@ -953,10 +952,11 @@ String _nullSafeCppTypeForDartType(TypeDeclaration type,
   } else {
     String typeName = _baseCppTypeForDartType(type);
     if (_isReferenceType(typeName)) {
-      if (considerReference)
+      if (considerReference) {
         typeName = 'const $typeName&';
-      else
+      } else {
         typeName = 'std::unique_ptr<$typeName>';
+      }
     }
     return typeName;
   }
@@ -970,7 +970,7 @@ String _getGuardName(String? headerFileName, String? namespace) {
   if (namespace != null) {
     guardName += '${namespace.toUpperCase()}_';
   }
-  return guardName + 'H_';
+  return '${guardName}H_';
 }
 
 void _writeSystemHeaderIncludeBlock(Indent indent, List<String> headers) {
@@ -1147,7 +1147,7 @@ List<Error> validateCpp(CppOptions options, Root root) {
           // TODO(gaaclarke): Add line number and filename.
           result.add(Error(
               message:
-                  'Nullable enum types aren\'t supported in C++ arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name}).'));
+                  "Nullable enum types aren't supported in C++ arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name})."));
         }
       }
     }

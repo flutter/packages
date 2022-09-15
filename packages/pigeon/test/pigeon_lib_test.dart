@@ -34,7 +34,7 @@ void main() {
   /// Creates a temporary file named [filename] then calls [callback] with a
   /// [File] representing that temporary directory.  The file will be deleted
   /// after the [callback] is executed.
-  void _withTempFile(String filename, void Function(File) callback) {
+  void withTempFile(String filename, void Function(File) callback) {
     final Directory dir = Directory.systemTemp.createTempSync();
     final String path = '${dir.path}/$filename';
     final File file = File(path);
@@ -46,10 +46,10 @@ void main() {
     }
   }
 
-  ParseResults _parseSource(String source) {
+  ParseResults parseSource(String source) {
     final Pigeon dartle = Pigeon.setup();
     ParseResults? results;
-    _withTempFile('source.dart', (File file) {
+    withTempFile('source.dart', (File file) {
       file.writeAsStringSync(source);
       results = dartle.parseFile(file.path);
     });
@@ -142,7 +142,7 @@ abstract class Api1 {
   Output1 doit(Input1 input);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(0));
     final Root root = parseResult.root;
     expect(root.classes.length, equals(2));
@@ -189,7 +189,7 @@ abstract class Api {
   InvalidDatatype foo();
 }
 ''';
-    final ParseResults results = _parseSource(source);
+    final ParseResults results = parseSource(source);
     expect(results.errors.length, 1);
     expect(results.errors[0].message, contains('InvalidDatatype'));
     expect(results.errors[0].message, contains('dynamic'));
@@ -211,7 +211,7 @@ abstract class Api {
   ClassWithEnum foo();
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.classes.length, equals(1));
     expect(results.root.classes[0].name, equals('ClassWithEnum'));
@@ -237,7 +237,7 @@ abstract class ApiTwoMethods {
   Output1 method2(Input1 input);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].methods.length, equals(2));
@@ -260,7 +260,7 @@ abstract class Api {
   Nested foo();
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.classes.length, equals(2));
     final Class nested =
@@ -285,7 +285,7 @@ abstract class AFlutterApi {
   Output1 doit(Input1 input);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].name, equals('AFlutterApi'));
@@ -303,7 +303,7 @@ abstract class VoidApi {
   void doit(Input1 input);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
@@ -322,7 +322,7 @@ abstract class VoidArgApi {
   Output1 doit();
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
@@ -343,7 +343,7 @@ abstract class ApiWithMockDartClass {
   Output1 doit();
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].dartHostTestHandler,
@@ -365,7 +365,7 @@ abstract class NestorApi {
   Nestor getit();
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     final List<String> classNames =
@@ -473,7 +473,7 @@ abstract class NestedEnumApi {
   void method(NestedEnum3 foo);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(0));
     expect(parseResult.root.apis.length, 1);
     expect(parseResult.root.classes.length, 3);
@@ -495,7 +495,7 @@ abstract class NotificationsHostApi {
   void doit(Foo foo);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.classes.length, 2);
     final Class foo =
@@ -506,7 +506,7 @@ abstract class NotificationsHostApi {
 
   test('test compilation error', () {
     const String code = 'Hello\n';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, greaterThanOrEqualTo(1));
     expect(results.errors[0].lineNumber, 1);
   });
@@ -523,7 +523,7 @@ abstract class Api {
   Foo doit(Foo foo);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Method'));
@@ -540,7 +540,7 @@ abstract class Api {
   Foo doit(Foo foo);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 2);
     expect(results.errors[0].message, contains('Initialization'));
@@ -558,7 +558,7 @@ abstract class Api {
   Foo doit(Foo foo);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 7);
     expect(results.errors[0].message, contains('Field'));
@@ -576,7 +576,7 @@ abstract class Api {
   Foo doit(Foo foo);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
   });
 
@@ -592,7 +592,7 @@ abstract class Api {
   Foo doit(Foo foo);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Constructor'));
@@ -610,7 +610,7 @@ abstract class Api {
   Foo doit(Foo foo);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Constructor'));
@@ -628,22 +628,22 @@ abstract class Api {
   Foo doit(Foo foo);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 7);
     expect(results.errors[0].message, contains('Constructor'));
   });
 
   test('test invalid import', () {
-    const String code = 'import \'foo.dart\';\n';
-    final ParseResults results = _parseSource(code);
+    const String code = "import 'foo.dart';\n";
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, greaterThanOrEqualTo(1));
     expect(results.errors[0].lineNumber, 1);
   });
 
   test('test valid import', () {
-    const String code = 'import \'package:pigeon/pigeon.dart\';\n';
-    final ParseResults parseResults = _parseSource(code);
+    const String code = "import 'package:pigeon/pigeon.dart';\n";
+    final ParseResults parseResults = parseSource(code);
     expect(parseResults.errors.length, 0);
   });
 
@@ -659,7 +659,7 @@ abstract class WithStaticFieldApi {
   void doit(WithStaticField withTemplate);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(1));
     expect(parseResult.errors[0].message, contains('static field'));
     expect(parseResult.errors[0].lineNumber, isNotNull);
@@ -676,7 +676,7 @@ abstract class Api {
   void doit(Foo foo);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(0));
     final NamedType field = parseResult.root.classes[0].fields[0];
     expect(field.type.typeArguments.length, 1);
@@ -694,7 +694,7 @@ abstract class Api {
   void doit(Foo foo);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(0));
     final NamedType field = parseResult.root.classes[0].fields[0];
     expect(field.type.typeArguments.length, 1);
@@ -713,7 +713,7 @@ abstract class Api {
   void doit(Foo foo);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(1));
     expect(parseResult.errors[0].message,
         contains('Generic type arguments must be nullable'));
@@ -733,7 +733,7 @@ abstract class Api {
   void doit(Foo foo);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(0));
   });
 
@@ -751,7 +751,7 @@ abstract class Api {
   void doit(Foo foo);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(1));
     expect(parseResult.errors[0].message, contains('Enums'));
   });
@@ -770,7 +770,7 @@ abstract class Api {
   Foo doit();
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(1));
     expect(parseResult.errors[0].message, contains('Enums'));
   });
@@ -782,7 +782,7 @@ abstract class Api {
   List<double?> doit();
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(parseResult.root.apis[0].methods[0].returnType.baseName, 'List');
     expect(
         parseResult
@@ -801,7 +801,7 @@ abstract class Api {
   void doit(int x, List<double?> value);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     expect(
         parseResult.root.apis[0].methods[0].arguments[1].type.baseName, 'List');
     expect(
@@ -825,7 +825,7 @@ abstract class Api {
   void doit(Foo foo);
 }
 ''';
-    final ParseResults parseResult = _parseSource(code);
+    final ParseResults parseResult = parseSource(code);
     final NamedType field = parseResult.root.classes[0].fields[0];
     expect(field.type.typeArguments.length, 2);
     expect(field.type.typeArguments[0].baseName, 'String');
@@ -843,7 +843,7 @@ abstract class Api {
   void method(Input input1, Input input2);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].methods[0].name, equals('method'));
@@ -857,7 +857,7 @@ abstract class Api {
   void method(x);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message,
@@ -872,7 +872,7 @@ abstract class Api {
   void subtract(int x, int y);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].methods.length, equals(1));
@@ -888,7 +888,7 @@ abstract class Api {
   void subtract(int x, int y);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message,
@@ -903,7 +903,7 @@ abstract class Api {
   void initialize();
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].methods.length, equals(1));
@@ -934,7 +934,7 @@ abstract class Api {
   List<Foo?> grabAll();
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.classes.length, 1);
     expect(results.root.classes[0].name, 'Foo');
@@ -951,7 +951,7 @@ abstract class Api {
   void storeAll(List<Foo?> foos);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.classes.length, 1);
     expect(results.root.classes[0].name, 'Foo');
@@ -973,7 +973,7 @@ abstract class Api {
   void storeAll(List<Foo?> foos);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.classes.length, 2);
     expect(
@@ -995,7 +995,7 @@ abstract class Api {
   void storeAll(List<Foo?> foos);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Unknown type: Foo'));
@@ -1008,7 +1008,7 @@ abstract class Api {
   void storeAll(List<Object?> foos);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
   });
 
@@ -1030,7 +1030,7 @@ abstract class HostApiBridge {
   void sendMessage(Message message);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
   });
 
@@ -1052,7 +1052,7 @@ abstract class HostApiBridge {
   void sendMessage(Message message);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.root.enums.length, 1);
     expect(results.root.enums[0].name, 'MessageKey');
   });
@@ -1067,7 +1067,7 @@ class Message {
 }
 ''';
 
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
     expect(options.javaOptions!.copyrightHeader, <String>['A', 'Header']);
   });
@@ -1082,7 +1082,7 @@ class Message {
 }
 ''';
 
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
     expect(options.dartOptions!.copyrightHeader, <String>['A', 'Header']);
   });
@@ -1097,7 +1097,7 @@ class Message {
 }
 ''';
 
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
     expect(options.objcOptions!.copyrightHeader, <String>['A', 'Header']);
   });
@@ -1110,7 +1110,7 @@ abstract class Api {
 }
 ''';
 
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis[0].methods[0].returnType.isNullable, isTrue);
   });
@@ -1122,7 +1122,7 @@ abstract class Api {
   void calc(int? value);
 }
 ''';
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(
         results.root.apis[0].methods[0].arguments[0].type.isNullable, isTrue);
@@ -1137,7 +1137,7 @@ abstract class Api {
 }
 ''';
 
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis[0].methods[0].taskQueueType,
         equals(TaskQueueType.serialBackgroundThread));
@@ -1151,7 +1151,7 @@ abstract class Api {
 }
 ''';
 
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis[0].methods[0].taskQueueType,
         equals(TaskQueueType.serial));
@@ -1166,7 +1166,7 @@ abstract class Api {
 }
 ''';
 
-    final ParseResults results = _parseSource(code);
+    final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].message,
         contains('Unsupported TaskQueue specification'));
@@ -1174,7 +1174,7 @@ abstract class Api {
 
   test('generator validation', () async {
     final Completer<void> completer = Completer<void>();
-    _withTempFile('foo.dart', (File input) async {
+    withTempFile('foo.dart', (File input) async {
       final _ValidatorGenerator generator = _ValidatorGenerator(stdout);
       final int result = await Pigeon.run(<String>['--input', input.path],
           generators: <Generator>[generator]);
@@ -1187,7 +1187,7 @@ abstract class Api {
 
   test('generator validation skipped', () async {
     final Completer<void> completer = Completer<void>();
-    _withTempFile('foo.dart', (File input) async {
+    withTempFile('foo.dart', (File input) async {
       final _ValidatorGenerator generator = _ValidatorGenerator(null);
       final int result = await Pigeon.run(
           <String>['--input', input.path, '--dart_out', 'foo.dart'],

@@ -93,6 +93,7 @@ class RouteBuilder {
             subloc: uri.path,
             name: null,
             queryParams: uri.queryParameters,
+            queryParametersAll: uri.queryParametersAll,
             error: error,
           ),
         ),
@@ -121,6 +122,7 @@ class RouteBuilder {
         subloc: uri.path,
         // pass along the query params 'cuz that's all we have right now
         queryParams: uri.queryParameters,
+        queryParametersAll: uri.queryParametersAll,
         // pass along the error, if there is one
         error: error,
       ),
@@ -186,6 +188,7 @@ class RouteBuilder {
         params: params,
         error: match.error,
         queryParams: match.queryParams,
+        queryParametersAll: match.queryParametersAll,
         extra: match.extra,
         pageKey: match.pageKey, // push() remaps the page key for uniqueness
       );

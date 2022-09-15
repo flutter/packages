@@ -1,5 +1,6 @@
 ## 0.3.3+2
 
+* Fixes lint warnings in tests.
 * Dartdoc correction for `readAsBytes` and `readAsString`.
 
 ## 0.3.3+1
