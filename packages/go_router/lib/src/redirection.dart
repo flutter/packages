@@ -124,27 +124,6 @@ class RedirectionError extends Error implements UnsupportedError {
       ].join(' => ')}';
 }
 
-/// A configuration exception detected while processing redirects.
-class RedirectionException implements Exception {
-  /// RedirectionException constructor.
-  RedirectionException(this.message, this.matches, this.location);
-
-  /// The matches that were found while processing redirects.
-  final List<RouteMatchList> matches;
-
-  /// The message for this exception.
-  final String message;
-
-  /// The location that was originally navigated to, before redirection began.
-  final Uri location;
-
-  @override
-  String toString() => '${super.toString()} ${<String>[
-        ...matches.map(
-            (RouteMatchList routeMatches) => routeMatches.location.toString()),
-      ].join(' => ')}';
-}
-
 /// Adds the redirect to [redirects] if it is valid.
 void _addRedirect(List<RouteMatchList> redirects, RouteMatchList newMatch,
     Uri prevLocation, int redirectLimit) {
