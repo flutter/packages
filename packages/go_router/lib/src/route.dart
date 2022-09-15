@@ -291,7 +291,9 @@ class GoRoute extends RouteBase {
   final GoRouterRedirect redirect;
 
   /// An optional key specifying which Navigator to display this route's screen
-  /// onto. Specifying the root Navigator will stack this route onto that
+  /// onto.
+  ///
+  /// Specifying the root Navigator will stack this route onto that
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
