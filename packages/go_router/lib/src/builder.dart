@@ -260,13 +260,9 @@ class RouteBuilder {
       }
     } else if (route is ShellRoute) {
       final ShellRoutePageBuilder? pageBuilder = route.pageBuilder;
-      if (child != null) {
-        if (pageBuilder != null) {
-          page = pageBuilder(context, state, child);
-        }
-      } else {
-        throw _RouteBuilderException(
-            'Expected a child widget when building a ShellRoute');
+      assert(child != null, 'ShellRoute must contain a child route');
+      if (pageBuilder != null) {
+        page = pageBuilder(context, state, child!);
       }
     }
 
