@@ -23,10 +23,7 @@ class RouteConfiguration {
   }) {
     _cacheNameToPath('', routes);
 
-    assert(() {
-      log.info(_debugKnownRoutes());
-      return true;
-    }());
+    log.info(_debugKnownRoutes());
 
     for (final RouteBase route in routes) {
       if (route is GoRoute && !route.path.startsWith('/')) {
