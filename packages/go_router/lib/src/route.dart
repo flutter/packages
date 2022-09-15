@@ -427,6 +427,10 @@ class ShellRoute extends RouteBase {
         super._();
 
   /// The widget builder for a shell route.
+  ///
+  /// Similar to GoRoute builder, but with an additional child parameter. This
+  /// child parameter is the Widget built by calling the matching sub-route's
+  /// builder.
   final ShellRouteBuilder? builder;
 
   /// The page builder for a shell route.
