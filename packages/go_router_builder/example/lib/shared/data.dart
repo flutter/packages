@@ -45,17 +45,17 @@ enum SportDetails {
   ),
   ;
 
-  final String imageUrl;
-  final int playerPerTeam;
-  final String? accessory;
-  final bool hasNet;
-
   const SportDetails({
     required this.accessory,
     required this.hasNet,
     required this.imageUrl,
     required this.playerPerTeam,
   });
+
+  final String imageUrl;
+  final int playerPerTeam;
+  final String? accessory;
+  final bool hasNet;
 }
 
 /// sample Person class

@@ -33,8 +33,8 @@ void main() {
     expect(find.text('Param: false'), findsOneWidget);
     expect(find.text('Query param: true'), findsOneWidget);
 
-    final param = DateTime.now();
-    final query = DateTime(2017, 9, 7, 17, 30);
+    final DateTime param = DateTime.now();
+    final DateTime query = DateTime(2017, 9, 7, 17, 30);
     DateTimeRoute(
       requiredDateTimeField: param,
       dateTimeField: query,

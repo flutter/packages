@@ -11,7 +11,7 @@ import 'shared/data.dart';
 
 part 'all_types.g.dart';
 
-@TypedGoRoute<AllTypesBaseRoute>(path: '/', routes: [
+@TypedGoRoute<AllTypesBaseRoute>(path: '/', routes: <TypedGoRoute<GoRouteData>>[
   TypedGoRoute<BigIntRoute>(path: 'big-int-route/:requiredBigIntField'),
   TypedGoRoute<BoolRoute>(path: 'bool-route/:requiredBoolField'),
   TypedGoRoute<DateTimeRoute>(path: 'date-time-route/:requiredDateTimeField'),
@@ -30,20 +30,20 @@ class AllTypesBaseRoute extends GoRouteData {
   const AllTypesBaseRoute();
 
   @override
-  Widget build(BuildContext context) => BasePage<void>(
+  Widget build(BuildContext context) => const BasePage<void>(
         dataTitle: 'Root',
         param: null,
       );
 }
 
 class BigIntRoute extends GoRouteData {
-  final BigInt requiredBigIntField;
-  final BigInt? bigIntField;
-
   BigIntRoute({
     required this.requiredBigIntField,
     this.bigIntField,
   });
+
+  final BigInt requiredBigIntField;
+  final BigInt? bigIntField;
 
   @override
   Widget build(BuildContext context) => BasePage<BigInt>(
@@ -53,20 +53,20 @@ class BigIntRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('BigIntRoute'),
+        title: const Text('BigIntRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class BoolRoute extends GoRouteData {
-  final bool requiredBoolField;
-  final bool? boolField;
-
   BoolRoute({
     required this.requiredBoolField,
     this.boolField,
   });
+
+  final bool requiredBoolField;
+  final bool? boolField;
 
   @override
   Widget build(BuildContext context) => BasePage<bool>(
@@ -76,20 +76,20 @@ class BoolRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('BoolRoute'),
+        title: const Text('BoolRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class DateTimeRoute extends GoRouteData {
-  final DateTime requiredDateTimeField;
-  final DateTime? dateTimeField;
-
   DateTimeRoute({
     required this.requiredDateTimeField,
     this.dateTimeField,
   });
+
+  final DateTime requiredDateTimeField;
+  final DateTime? dateTimeField;
 
   @override
   Widget build(BuildContext context) => BasePage<DateTime>(
@@ -99,20 +99,20 @@ class DateTimeRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('DateTimeRoute'),
+        title: const Text('DateTimeRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class DoubleRoute extends GoRouteData {
-  final double requiredDoubleField;
-  final double? doubleField;
-
   DoubleRoute({
     required this.requiredDoubleField,
     this.doubleField,
   });
+
+  final double requiredDoubleField;
+  final double? doubleField;
 
   @override
   Widget build(BuildContext context) => BasePage<double>(
@@ -122,20 +122,20 @@ class DoubleRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('DoubleRoute'),
+        title: const Text('DoubleRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class IntRoute extends GoRouteData {
-  final int requiredIntField;
-  final int? intField;
-
   IntRoute({
     required this.requiredIntField,
     this.intField,
   });
+
+  final int requiredIntField;
+  final int? intField;
 
   @override
   Widget build(BuildContext context) => BasePage<int>(
@@ -145,20 +145,20 @@ class IntRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('IntRoute'),
+        title: const Text('IntRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class NumRoute extends GoRouteData {
-  final num requiredNumField;
-  final num? numField;
-
   NumRoute({
     required this.requiredNumField,
     this.numField,
   });
+
+  final num requiredNumField;
+  final num? numField;
 
   @override
   Widget build(BuildContext context) => BasePage<num>(
@@ -168,20 +168,20 @@ class NumRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('NumRoute'),
+        title: const Text('NumRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class EnumRoute extends GoRouteData {
-  final PersonDetails requiredEnumFieldField;
-  final PersonDetails? enumFieldField;
-
   EnumRoute({
     required this.requiredEnumFieldField,
     this.enumFieldField,
   });
+
+  final PersonDetails requiredEnumFieldField;
+  final PersonDetails? enumFieldField;
 
   @override
   Widget build(BuildContext context) => BasePage<PersonDetails>(
@@ -191,20 +191,20 @@ class EnumRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('EnumRoute'),
+        title: const Text('EnumRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class EnhancedEnumRoute extends GoRouteData {
-  final SportDetails requiredEnumFieldField;
-  final SportDetails? enumFieldField;
-
   EnhancedEnumRoute({
     required this.requiredEnumFieldField,
     this.enumFieldField,
   });
+
+  final SportDetails requiredEnumFieldField;
+  final SportDetails? enumFieldField;
 
   @override
   Widget build(BuildContext context) => BasePage<SportDetails>(
@@ -214,20 +214,20 @@ class EnhancedEnumRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('EnhancedEnumRoute'),
+        title: const Text('EnhancedEnumRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class StringRoute extends GoRouteData {
-  final String requiredStringFieldField;
-  final String? stringFieldField;
-
   StringRoute({
     required this.requiredStringFieldField,
     this.stringFieldField,
   });
+
+  final String requiredStringFieldField;
+  final String? stringFieldField;
 
   @override
   Widget build(BuildContext context) => BasePage<String>(
@@ -237,20 +237,20 @@ class StringRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('StringRoute'),
+        title: const Text('StringRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class UriRoute extends GoRouteData {
-  final Uri requiredUriFieldField;
-  final Uri? uriFieldField;
-
   UriRoute({
     required this.requiredUriFieldField,
     this.uriFieldField,
   });
+
+  final Uri requiredUriFieldField;
+  final Uri? uriFieldField;
 
   @override
   Widget build(BuildContext context) => BasePage<Uri>(
@@ -260,31 +260,32 @@ class UriRoute extends GoRouteData {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: Text('UriRoute'),
+        title: const Text('UriRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
 }
 
 class BasePage<T> extends StatelessWidget {
+  const BasePage({
+    required this.dataTitle,
+    required this.param,
+    this.queryParam,
+    super.key,
+  });
+
   final String dataTitle;
   final T param;
   final T? queryParam;
 
-  BasePage({
-    required this.dataTitle,
-    required this.param,
-    this.queryParam,
-  });
-
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Go router typed routes'),
+          title: const Text('Go router typed routes'),
         ),
         drawer: Drawer(
             child: ListView(
-          children: [
+          children: <Widget>[
             BigIntRoute(
               requiredBigIntField: BigInt.two,
               bigIntField: BigInt.zero,
@@ -294,7 +295,7 @@ class BasePage<T> extends StatelessWidget {
               boolField: false,
             ).drawerTile(context),
             DateTimeRoute(
-              requiredDateTimeField: DateTime(1970, 1, 1),
+              requiredDateTimeField: DateTime(1970),
               dateTimeField: DateTime(0),
             ).drawerTile(context),
             DoubleRoute(
@@ -345,7 +346,7 @@ class BasePage<T> extends StatelessWidget {
 void main() => runApp(AllTypesApp());
 
 class AllTypesApp extends StatelessWidget {
-  AllTypesApp({Key? key}) : super(key: key);
+  AllTypesApp({super.key});
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
@@ -357,6 +358,6 @@ class AllTypesApp extends StatelessWidget {
   late final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,
     routes: $appRoutes,
-    initialLocation: AllTypesBaseRoute().location,
+    initialLocation: const AllTypesBaseRoute().location,
   );
 }
