@@ -82,12 +82,6 @@ class RouteMatchList {
     _debugAssertNotEmpty();
   }
 
-  /// Returns true if [pop] can safely be called.
-  bool canPop() {
-    // TODO(johnpryan): Call Navigator.canPop(). Deal with ShellRoute.
-    return _matches.length > 1;
-  }
-
   /// An optional object provided by the app during navigation.
   Object? get extra => _matches.last.extra;
 
