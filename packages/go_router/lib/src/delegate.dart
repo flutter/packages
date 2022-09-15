@@ -11,6 +11,7 @@ import 'builder.dart';
 import 'configuration.dart';
 import 'match.dart';
 import 'matching.dart';
+import 'misc/errors.dart';
 import 'typedefs.dart';
 
 /// GoRouter implementation of [RouterDelegate].
@@ -180,16 +181,4 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // synchronously and remove unwanted initial animations on deep-linking
     return SynchronousFuture<void>(null);
   }
-}
-
-/// Thrown when [GoRouter] is used incorrectly.
-class GoError extends Error {
-  /// Constructs a [GoError]
-  GoError(this.message);
-
-  /// The error message.
-  final String message;
-
-  @override
-  String toString() => 'GoError: $message';
 }
