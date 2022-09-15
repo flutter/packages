@@ -490,45 +490,45 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           bodyRatio: widget.bodyRatio,
           internalAnimations: widget.internalAnimations,
           primaryNavigation: SlotLayout(
-                  config: <Breakpoint, SlotLayoutConfig>{
-                    widget.mediumBreakpoint: SlotLayout.from(
-                      key: const Key('primaryNavigation'),
-                      builder: (_) => AdaptiveScaffold.standardNavigationRail(
-                        width: widget.navigationRailWidth,
-                        selectedIndex: widget.selectedIndex,
-                        destinations: widget.destinations
-                            .map((_) => AdaptiveScaffold.toRailDestination(_))
-                            .toList(),
-                        onDestinationSelected: widget.onSelectedIndexChange,
-                      ),
-                    ),
-                    widget.largeBreakpoint: SlotLayout.from(
-                      key: const Key('primaryNavigation1'),
-                      builder: (_) => AdaptiveScaffold.standardNavigationRail(
-                        width: widget.extendedNavigationRailWidth,
-                        extended: true,
-                        selectedIndex: widget.selectedIndex,
-                        destinations: widget.destinations
-                            .map((_) => AdaptiveScaffold.toRailDestination(_))
-                            .toList(),
-                        onDestinationSelected: widget.onSelectedIndexChange,
-                      ),
-                    ),
-                  },
+            config: <Breakpoint, SlotLayoutConfig>{
+              widget.mediumBreakpoint: SlotLayout.from(
+                key: const Key('primaryNavigation'),
+                builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  width: widget.navigationRailWidth,
+                  selectedIndex: widget.selectedIndex,
+                  destinations: widget.destinations
+                      .map((_) => AdaptiveScaffold.toRailDestination(_))
+                      .toList(),
+                  onDestinationSelected: widget.onSelectedIndexChange,
                 ),
-          bottomNavigation: !widget.drawerBreakpoint.isActive(context)
-                         || !widget.useDrawer
-              ? SlotLayout(
-                  config: <Breakpoint, SlotLayoutConfig>{
-                    widget.smallBreakpoint: SlotLayout.from(
-                      key: const Key('bottomNavigation'),
-                      builder: (_) =>
-                          AdaptiveScaffold.standardBottomNavigationBar(
-                              destinations: widget.destinations),
-                    ),
-                  },
-                )
-              : null,
+              ),
+              widget.largeBreakpoint: SlotLayout.from(
+                key: const Key('primaryNavigation1'),
+                builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  width: widget.extendedNavigationRailWidth,
+                  extended: true,
+                  selectedIndex: widget.selectedIndex,
+                  destinations: widget.destinations
+                      .map((_) => AdaptiveScaffold.toRailDestination(_))
+                      .toList(),
+                  onDestinationSelected: widget.onSelectedIndexChange,
+                ),
+              ),
+            },
+          ),
+          bottomNavigation:
+              !widget.drawerBreakpoint.isActive(context) || !widget.useDrawer
+                  ? SlotLayout(
+                      config: <Breakpoint, SlotLayoutConfig>{
+                        widget.smallBreakpoint: SlotLayout.from(
+                          key: const Key('bottomNavigation'),
+                          builder: (_) =>
+                              AdaptiveScaffold.standardBottomNavigationBar(
+                                  destinations: widget.destinations),
+                        ),
+                      },
+                    )
+                  : null,
           body: SlotLayout(
             config: <Breakpoint, SlotLayoutConfig?>{
               Breakpoints.standard: SlotLayout.from(
