@@ -138,15 +138,27 @@ void main() {
                 GoRoute(
                   path: '/',
                   builder: _mockScreenBuilder,
-                  parentNavigatorKey: root,
                   routes: <RouteBase>[
-                    ShellRoute(
-                      navigatorKey: shell2,
+                    GoRoute(
+                      path: 'a',
+                      parentNavigatorKey: root,
+                      builder: _mockScreenBuilder,
                       routes: <RouteBase>[
-                        GoRoute(
-                          path: 'a',
-                          builder: _mockScreenBuilder,
-                          parentNavigatorKey: shell,
+                        ShellRoute(
+                          navigatorKey: shell2,
+                          routes: <RouteBase>[
+                            GoRoute(
+                              path: 'b',
+                              builder: _mockScreenBuilder,
+                              routes: <RouteBase>[
+                                GoRoute(
+                                  path: 'b',
+                                  builder: _mockScreenBuilder,
+                                  parentNavigatorKey: shell,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -161,6 +173,64 @@ void main() {
           },
         );
       },
+    );
+  });
+
+  test('throws when ShellRoute contains a ShellRoute', () {
+    final GlobalKey<NavigatorState> root =
+        GlobalKey<NavigatorState>(debugLabel: 'root');
+    expect(
+      () {
+        RouteConfiguration(
+          navigatorKey: root,
+          routes: <RouteBase>[
+            ShellRoute(routes: <RouteBase>[
+              ShellRoute(
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/a',
+                    builder: _mockScreenBuilder,
+                  ),
+                ],
+              ),
+            ]),
+          ],
+          redirectLimit: 10,
+          topRedirect: (GoRouterState state) {
+            return null;
+          },
+        );
+      },
+      throwsAssertionError,
+    );
+  });
+
+  test('throws when ShellRoute contains a GoRoute with a parentNavigatorKey',
+      () {
+    final GlobalKey<NavigatorState> root =
+        GlobalKey<NavigatorState>(debugLabel: 'root');
+    expect(
+      () {
+        RouteConfiguration(
+          navigatorKey: root,
+          routes: <RouteBase>[
+            ShellRoute(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: _mockScreenBuilder,
+                  parentNavigatorKey: root,
+                ),
+              ],
+            ),
+          ],
+          redirectLimit: 10,
+          topRedirect: (GoRouterState state) {
+            return null;
+          },
+        );
+      },
+      throwsAssertionError,
     );
   });
 }

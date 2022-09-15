@@ -226,12 +226,20 @@ void main() {
             navigatorKey: shellNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
-                path: '/details',
+                path: '/a',
                 builder: (BuildContext context, GoRouterState state) {
                   return _DetailsScreen();
                 },
-                // This screen should stack onto the root navigator.
-                parentNavigatorKey: rootNavigatorKey,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'details',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return _DetailsScreen();
+                    },
+                    // This screen should stack onto the root navigator.
+                    parentNavigatorKey: rootNavigatorKey,
+                  ),
+                ],
               ),
             ],
           ),
@@ -245,8 +253,8 @@ void main() {
       final RouteMatchList matches = RouteMatchList(<RouteMatch>[
         RouteMatch(
           route: config.routes.first.routes.first as GoRoute,
-          subloc: '/details',
-          fullpath: '/details',
+          subloc: '/a/details',
+          fullpath: '/a/details',
           encodedParams: <String, String>{},
           queryParams: <String, String>{},
           queryParametersAll: <String, List<String>>{},
