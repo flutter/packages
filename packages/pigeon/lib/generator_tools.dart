@@ -435,7 +435,7 @@ bool isEnum(Root root, TypeDeclaration type) =>
 
 /// Formats documentation comments and adds them to current Indent.
 void addDocumentationComments(Indent indent, List<String> comments, String open,
-    [String? close, List<String>? additionalComments]) {
+    {String? close, List<String>? additionalComments}) {
   if (comments.isEmpty && additionalComments == null) {
     return;
   }

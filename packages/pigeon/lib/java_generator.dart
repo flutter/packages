@@ -165,8 +165,8 @@ void _writeHostApi(Indent indent, Api api, Root root) {
           : _javaTypeForDartType(method.returnType);
       argSignature.add('Result<$resultType> result');
     }
-    addDocumentationComments(
-        indent, method.documentationComments, openDoc, closeDoc);
+    addDocumentationComments(indent, method.documentationComments, openDoc,
+        close: closeDoc);
 
     indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
   }
@@ -290,8 +290,8 @@ Result<$returnType> $resultName = new Result<$returnType>() {
   const List<String> generatedMessages = <String>[
     'Generated interface from Pigeon that represents a handler of messages from Flutter.'
   ];
-  addDocumentationComments(
-      indent, api.documentationComments, openDoc, closeDoc, generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, openDoc,
+      close: closeDoc, additionalComments: generatedMessages);
 
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
@@ -335,8 +335,8 @@ void _writeFlutterApi(Indent indent, Api api) {
   const List<String> generatedMessages = <String>[
     'Generated class from Pigeon that represents Flutter messages that can be called from Java.'
   ];
-  addDocumentationComments(
-      indent, api.documentationComments, openDoc, closeDoc, generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, openDoc,
+      close: closeDoc, additionalComments: generatedMessages);
 
   indent.write('public static class ${api.name} ');
   indent.scoped('{', '}', () {
@@ -361,8 +361,8 @@ static MessageCodec<Object> getCodec() {
           ? 'Void'
           : _javaTypeForDartType(func.returnType);
       String sendArgument;
-      addDocumentationComments(
-          indent, func.documentationComments, openDoc, closeDoc);
+      addDocumentationComments(indent, func.documentationComments, openDoc,
+          close: closeDoc);
       if (func.arguments.isEmpty) {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
@@ -530,8 +530,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   }
 
   void writeEnum(Enum anEnum) {
-    addDocumentationComments(
-        indent, anEnum.documentationComments, openDoc, closeDoc);
+    addDocumentationComments(indent, anEnum.documentationComments, openDoc,
+        close: closeDoc);
 
     indent.write('public enum ${anEnum.name} ');
     indent.scoped('{', '}', () {
@@ -563,8 +563,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
       final String nullability =
           field.type.isNullable ? '@Nullable' : '@NonNull';
-      addDocumentationComments(
-          indent, field.documentationComments, openDoc, closeDoc);
+      addDocumentationComments(indent, field.documentationComments, openDoc,
+          close: closeDoc);
 
       indent.writeln(
           'private $nullability ${hostDatatype.datatype} ${field.name};');
@@ -668,7 +668,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       'Generated class from Pigeon that represents data sent in messages.'
     ];
     addDocumentationComments(indent, klass.documentationComments, openDoc,
-        closeDoc, generatedMessages);
+        close: closeDoc, additionalComments: generatedMessages);
 
     indent.write('public static class ${klass.name} ');
     indent.scoped('{', '}', () {

@@ -196,8 +196,8 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
     'Generated class from Pigeon that represents data sent in messages.'
   ];
 
-  addDocumentationComments(
-      indent, klass.documentationComments, openDoc, null, generatedMessages);
+  addDocumentationComments(indent, klass.documentationComments, openDoc,
+      additionalComments: generatedMessages);
 
   indent.write('class ${klass.name} ');
   indent.scoped('{', '};', () {
@@ -205,7 +205,7 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
       indent.writeln('${klass.name}();');
       for (final NamedType field in klass.fields) {
         addDocumentationComments(indent, field.documentationComments, openDoc,
-            null, generatedMessages);
+            additionalComments: generatedMessages);
         final HostDatatype baseDatatype = getFieldHostDatatype(
             field,
             root.classes,
@@ -412,8 +412,8 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
   const List<String> generatedMessages = <String>[
     'Generated interface from Pigeon that represents a handler of messages from Flutter.'
   ];
-  addDocumentationComments(
-      indent, api.documentationComments, openDoc, null, generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, openDoc,
+      additionalComments: generatedMessages);
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
@@ -700,8 +700,8 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
   const List<String> generatedMessages = <String>[
     'Generated class from Pigeon that represents Flutter messages that can be called from C++.'
   ];
-  addDocumentationComments(
-      indent, api.documentationComments, openDoc, null, generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, openDoc,
+      additionalComments: generatedMessages);
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' private:', '', () {
