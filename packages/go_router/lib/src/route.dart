@@ -434,6 +434,10 @@ class ShellRoute extends RouteBase {
   final ShellRouteBuilder? builder;
 
   /// The page builder for a shell route.
+  ///
+  /// Similar to GoRoute pageBuilder, but with an additional child parameter.
+  /// This child parameter is the Widget built by calling the matching
+  /// sub-route's builder.
   final ShellRoutePageBuilder? pageBuilder;
 
   /// The [GlobalKey] to be used by the [Navigator] built for this route.
