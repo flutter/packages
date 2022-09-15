@@ -59,17 +59,13 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       final RouteBase route = match.route;
 
       if (route is GoRoute && route.parentNavigatorKey != null) {
-        final bool didPop =
-            await route.parentNavigatorKey!.currentState!.maybePop();
         // It should not be possible for a GoRoute with parentNavigatorKey to be
         // the only page, so maybePop should never return false in this case.
-        assert(didPop);
-        return didPop;
+        assert(await route.parentNavigatorKey!.currentState!.maybePop());
+        return true;
       } else if (route is ShellRoute) {
-        final bool didPop = await route.navigatorKey.currentState!.maybePop();
-        if (didPop) {
-          return didPop;
-        }
+        assert(await route.navigatorKey.currentState!.maybePop());
+        return true;
       }
     }
 
