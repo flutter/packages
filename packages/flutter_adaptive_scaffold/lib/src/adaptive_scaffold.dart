@@ -489,9 +489,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           bodyOrientation: widget.bodyOrientation,
           bodyRatio: widget.bodyRatio,
           internalAnimations: widget.internalAnimations,
-          primaryNavigation: widget.destinations != null &&
-                  widget.selectedIndex != null
-              ? SlotLayout(
+          primaryNavigation: SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.mediumBreakpoint: SlotLayout.from(
                       key: const Key('primaryNavigation'),
@@ -517,11 +515,9 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                       ),
                     ),
                   },
-                )
-              : null,
-          bottomNavigation: widget.destinations != null &&
-                  (!widget.drawerBreakpoint.isActive(context) ||
-                      !widget.useDrawer)
+                ),
+          bottomNavigation: !widget.drawerBreakpoint.isActive(context)
+                         || !widget.useDrawer
               ? SlotLayout(
                   config: <Breakpoint, SlotLayoutConfig>{
                     widget.smallBreakpoint: SlotLayout.from(
