@@ -142,6 +142,7 @@ void main() {
                     GoRoute(
                       path: 'a',
                       builder: _mockScreenBuilder,
+                      parentNavigatorKey: root,
                       routes: <RouteBase>[
                         ShellRoute(
                           navigatorKey: shell2,
@@ -153,7 +154,7 @@ void main() {
                                 GoRoute(
                                   path: 'b',
                                   builder: _mockScreenBuilder,
-                                  parentNavigatorKey: shell,
+                                  parentNavigatorKey: shell2,
                                 ),
                               ],
                             ),
@@ -210,7 +211,7 @@ void main() {
                                   GoRoute(
                                     path: 'c',
                                     builder: _mockScreenBuilder,
-                                    parentNavigatorKey: shell,
+                                    parentNavigatorKey: shell2,
                                   ),
                                 ],
                               ),
