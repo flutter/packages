@@ -130,13 +130,13 @@ class PersonDetailsRoute extends GoRouteData {
   final int? $extra;
 
   @override
-  // ignore: deprecated_member_use_from_same_package
-  Page<void> buildPage(BuildContext context) {
+  Page<void> buildPageWithState(BuildContext context, GoRouterState state) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
 
     return MaterialPage<Object>(
       fullscreenDialog: true,
+      key: state.pageKey,
       child: PersonDetailsPage(
         family: family,
         person: person,
