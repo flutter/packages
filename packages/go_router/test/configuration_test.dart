@@ -141,7 +141,6 @@ void main() {
                   routes: <RouteBase>[
                     GoRoute(
                       path: 'a',
-                      parentNavigatorKey: root,
                       builder: _mockScreenBuilder,
                       routes: <RouteBase>[
                         ShellRoute(
@@ -171,6 +170,65 @@ void main() {
           topRedirect: (GoRouterState state) {
             return null;
           },
+        );
+      },
+    );
+    test(
+      'throws when a GoRoute with a different parentNavigatorKey '
+      'exists between a GoRoute with a parentNavigatorKey and '
+      'its ShellRoute ancestor',
+      () {
+        final GlobalKey<NavigatorState> root =
+            GlobalKey<NavigatorState>(debugLabel: 'root');
+        final GlobalKey<NavigatorState> shell =
+            GlobalKey<NavigatorState>(debugLabel: 'shell');
+        final GlobalKey<NavigatorState> shell2 =
+            GlobalKey<NavigatorState>(debugLabel: 'shell2');
+        expect(
+          () => RouteConfiguration(
+            navigatorKey: root,
+            routes: <RouteBase>[
+              ShellRoute(
+                navigatorKey: shell,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/',
+                    builder: _mockScreenBuilder,
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'a',
+                        parentNavigatorKey: root,
+                        builder: _mockScreenBuilder,
+                        routes: <RouteBase>[
+                          ShellRoute(
+                            navigatorKey: shell2,
+                            routes: <RouteBase>[
+                              GoRoute(
+                                path: 'b',
+                                builder: _mockScreenBuilder,
+                                routes: <RouteBase>[
+                                  GoRoute(
+                                    path: 'b',
+                                    builder: _mockScreenBuilder,
+                                    parentNavigatorKey: shell,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+            redirectLimit: 10,
+            topRedirect: (GoRouterState state) {
+              return null;
+            },
+          ),
+          throwsAssertionError,
         );
       },
     );

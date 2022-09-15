@@ -84,8 +84,7 @@ class RouteConfiguration {
             }
           } else if (route is ShellRoute && route.navigatorKey != null) {
             keys.add(route.navigatorKey);
-            checkParentNavigatorKeys(
-                route.routes, <GlobalKey<NavigatorState>>[]);
+            checkParentNavigatorKeys(route.routes, parentKeys);
             keys.remove(route.navigatorKey);
           }
         }
