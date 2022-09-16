@@ -1,3 +1,9 @@
+## 4.5.0
+
+- Adds ShellRoute for nested navigation support (flutter/flutter#99126)
+- Adds `parentNavigatorKey` to GoRoute, which specifies the Navigator to place that
+  route's Page onto.
+
 ## 4.4.1
 
 - Fix an issue where disabling logging clears the root logger's listeners
