@@ -182,8 +182,6 @@ void main() {
             GlobalKey<NavigatorState>(debugLabel: 'root');
         final GlobalKey<NavigatorState> shell =
             GlobalKey<NavigatorState>(debugLabel: 'shell');
-        final GlobalKey<NavigatorState> shell2 =
-            GlobalKey<NavigatorState>(debugLabel: 'shell2');
         expect(
           () => RouteConfiguration(
             navigatorKey: root,
