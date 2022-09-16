@@ -350,6 +350,11 @@ class DummyBuildContext implements BuildContext {
 
   @override
   Widget get widget => throw UnimplementedError();
+
+  @override
+  // TODO(bparrishMines): Remove once this parameter is available on Flutter stable.
+  // ignore: override_on_non_overriding_member
+  bool get mounted => throw UnimplementedError();
 }
 
 class DummyStatefulWidget extends StatefulWidget {
