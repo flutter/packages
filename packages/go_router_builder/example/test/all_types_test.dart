@@ -72,8 +72,8 @@ void main() {
     expect(find.text('Query param: -987.32'), findsOneWidget);
 
     StringRoute(
-      requiredStringFieldField: r'Tytire tu patulae recubans sub tegmine fagi.',
-      stringFieldField: r'Tytire tu patulae recubans sub tegmine fagi.',
+      requiredStringField: r'Tytire tu patulae recubans sub tegmine fagi.',
+      stringField: r'Tytire tu patulae recubans sub tegmine fagi.',
     ).go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('StringRoute'), findsOneWidget);
@@ -84,8 +84,8 @@ void main() {
         findsOneWidget);
 
     EnumRoute(
-      requiredEnumFieldField: PersonDetails.favoriteFood,
-      enumFieldField: PersonDetails.favoriteSport,
+      requiredEnumField: PersonDetails.favoriteFood,
+      enumField: PersonDetails.favoriteSport,
     ).go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('EnumRoute'), findsOneWidget);
@@ -94,8 +94,8 @@ void main() {
         find.text('Query param: PersonDetails.favoriteSport'), findsOneWidget);
 
     EnhancedEnumRoute(
-      requiredEnumFieldField: SportDetails.football,
-      enumFieldField: SportDetails.hockey,
+      requiredEnumField: SportDetails.football,
+      enumField: SportDetails.hockey,
     ).go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('EnhancedEnumRoute'), findsOneWidget);
@@ -103,8 +103,8 @@ void main() {
     expect(find.text('Query param: SportDetails.hockey'), findsOneWidget);
 
     UriRoute(
-      requiredUriFieldField: Uri.parse('https://dart.dev'),
-      uriFieldField: Uri.parse('https://dart.dev'),
+      requiredUriField: Uri.parse('https://dart.dev'),
+      uriField: Uri.parse('https://dart.dev'),
     ).go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('UriRoute'), findsOneWidget);

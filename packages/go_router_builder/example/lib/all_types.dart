@@ -19,11 +19,11 @@ part 'all_types.g.dart';
   TypedGoRoute<IntRoute>(path: 'int-route/:requiredIntField'),
   TypedGoRoute<NumRoute>(path: 'num-route/:requiredNumField'),
   TypedGoRoute<DoubleRoute>(path: 'double-route/:requiredDoubleField'),
-  TypedGoRoute<EnumRoute>(path: 'enum-route/:requiredEnumFieldField'),
+  TypedGoRoute<EnumRoute>(path: 'enum-route/:requiredEnumField'),
   TypedGoRoute<EnhancedEnumRoute>(
-      path: 'enhanced-enum-route/:requiredEnumFieldField'),
-  TypedGoRoute<StringRoute>(path: 'string-route/:requiredStringFieldField'),
-  TypedGoRoute<UriRoute>(path: 'uri-route/:requiredUriFieldField'),
+      path: 'enhanced-enum-route/:requiredEnumField'),
+  TypedGoRoute<StringRoute>(path: 'string-route/:requiredStringField'),
+  TypedGoRoute<UriRoute>(path: 'uri-route/:requiredUriField'),
 ])
 @immutable
 class AllTypesBaseRoute extends GoRouteData {
@@ -176,18 +176,18 @@ class NumRoute extends GoRouteData {
 
 class EnumRoute extends GoRouteData {
   EnumRoute({
-    required this.requiredEnumFieldField,
-    this.enumFieldField,
+    required this.requiredEnumField,
+    this.enumField,
   });
 
-  final PersonDetails requiredEnumFieldField;
-  final PersonDetails? enumFieldField;
+  final PersonDetails requiredEnumField;
+  final PersonDetails? enumField;
 
   @override
   Widget build(BuildContext context) => BasePage<PersonDetails>(
         dataTitle: 'EnumRoute',
-        param: requiredEnumFieldField,
-        queryParam: enumFieldField,
+        param: requiredEnumField,
+        queryParam: enumField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -199,18 +199,18 @@ class EnumRoute extends GoRouteData {
 
 class EnhancedEnumRoute extends GoRouteData {
   EnhancedEnumRoute({
-    required this.requiredEnumFieldField,
-    this.enumFieldField,
+    required this.requiredEnumField,
+    this.enumField,
   });
 
-  final SportDetails requiredEnumFieldField;
-  final SportDetails? enumFieldField;
+  final SportDetails requiredEnumField;
+  final SportDetails? enumField;
 
   @override
   Widget build(BuildContext context) => BasePage<SportDetails>(
         dataTitle: 'EnhancedEnumRoute',
-        param: requiredEnumFieldField,
-        queryParam: enumFieldField,
+        param: requiredEnumField,
+        queryParam: enumField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -222,18 +222,18 @@ class EnhancedEnumRoute extends GoRouteData {
 
 class StringRoute extends GoRouteData {
   StringRoute({
-    required this.requiredStringFieldField,
-    this.stringFieldField,
+    required this.requiredStringField,
+    this.stringField,
   });
 
-  final String requiredStringFieldField;
-  final String? stringFieldField;
+  final String requiredStringField;
+  final String? stringField;
 
   @override
   Widget build(BuildContext context) => BasePage<String>(
         dataTitle: 'StringRoute',
-        param: requiredStringFieldField,
-        queryParam: stringFieldField,
+        param: requiredStringField,
+        queryParam: stringField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -245,18 +245,18 @@ class StringRoute extends GoRouteData {
 
 class UriRoute extends GoRouteData {
   UriRoute({
-    required this.requiredUriFieldField,
-    this.uriFieldField,
+    required this.requiredUriField,
+    this.uriField,
   });
 
-  final Uri requiredUriFieldField;
-  final Uri? uriFieldField;
+  final Uri requiredUriField;
+  final Uri? uriField;
 
   @override
   Widget build(BuildContext context) => BasePage<Uri>(
         dataTitle: 'UriRoute',
-        param: requiredUriFieldField,
-        queryParam: uriFieldField,
+        param: requiredUriField,
+        queryParam: uriField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -311,20 +311,20 @@ class BasePage<T> extends StatelessWidget {
               numField: -2.71828,
             ).drawerTile(context),
             StringRoute(
-              requiredStringFieldField: r'$!/#bob%%20',
-              stringFieldField: r'$!/#bob%%20',
+              requiredStringField: r'$!/#bob%%20',
+              stringField: r'$!/#bob%%20',
             ).drawerTile(context),
             EnumRoute(
-              requiredEnumFieldField: PersonDetails.favoriteSport,
-              enumFieldField: PersonDetails.favoriteFood,
+              requiredEnumField: PersonDetails.favoriteSport,
+              enumField: PersonDetails.favoriteFood,
             ).drawerTile(context),
             EnhancedEnumRoute(
-              requiredEnumFieldField: SportDetails.football,
-              enumFieldField: SportDetails.volleyball,
+              requiredEnumField: SportDetails.football,
+              enumField: SportDetails.volleyball,
             ).drawerTile(context),
             UriRoute(
-              requiredUriFieldField: Uri.parse('https://dart.dev'),
-              uriFieldField: Uri.parse('https://dart.dev'),
+              requiredUriField: Uri.parse('https://dart.dev'),
+              uriField: Uri.parse('https://dart.dev'),
             ).drawerTile(context),
           ],
         )),
