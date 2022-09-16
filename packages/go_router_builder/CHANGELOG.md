@@ -1,3 +1,7 @@
+## 1.0.12
+
+* Adds support for enhanced enums. [#105876](https://github.com/flutter/flutter/issues/105876).
+
 ## 1.0.11
 
 * Replaces mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.

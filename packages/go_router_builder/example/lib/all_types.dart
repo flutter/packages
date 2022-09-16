@@ -11,150 +11,353 @@ import 'shared/data.dart';
 
 part 'all_types.g.dart';
 
-@TypedGoRoute<AllTypesRoute>(
-  path: '/:requiredBigIntField/:requiredBoolField/:requiredDateTimeField'
-      '/:requiredDoubleField/:requiredEnumField/:requiredIntField'
-      '/:requiredNumField/:requiredStringField/:requiredUriField',
-)
+@TypedGoRoute<AllTypesBaseRoute>(path: '/', routes: <TypedGoRoute<GoRouteData>>[
+  TypedGoRoute<BigIntRoute>(path: 'big-int-route/:requiredBigIntField'),
+  TypedGoRoute<BoolRoute>(path: 'bool-route/:requiredBoolField'),
+  TypedGoRoute<DateTimeRoute>(path: 'date-time-route/:requiredDateTimeField'),
+  TypedGoRoute<DoubleRoute>(path: 'double-route/:requiredDoubleField'),
+  TypedGoRoute<IntRoute>(path: 'int-route/:requiredIntField'),
+  TypedGoRoute<NumRoute>(path: 'num-route/:requiredNumField'),
+  TypedGoRoute<DoubleRoute>(path: 'double-route/:requiredDoubleField'),
+  TypedGoRoute<EnumRoute>(path: 'enum-route/:requiredEnumField'),
+  TypedGoRoute<EnhancedEnumRoute>(
+      path: 'enhanced-enum-route/:requiredEnumField'),
+  TypedGoRoute<StringRoute>(path: 'string-route/:requiredStringField'),
+  TypedGoRoute<UriRoute>(path: 'uri-route/:requiredUriField'),
+])
 @immutable
-class AllTypesRoute extends GoRouteData {
-  const AllTypesRoute({
+class AllTypesBaseRoute extends GoRouteData {
+  const AllTypesBaseRoute();
+
+  @override
+  Widget build(BuildContext context) => const BasePage<void>(
+        dataTitle: 'Root',
+        param: null,
+      );
+}
+
+class BigIntRoute extends GoRouteData {
+  BigIntRoute({
     required this.requiredBigIntField,
-    required this.requiredBoolField,
-    required this.requiredDateTimeField,
-    required this.requiredDoubleField,
-    required this.requiredEnumField,
-    required this.requiredIntField,
-    required this.requiredNumField,
-    required this.requiredStringField,
-    required this.requiredUriField,
     this.bigIntField,
-    this.boolField,
-    this.dateTimeField,
-    this.doubleField,
-    this.enumField,
-    this.intField,
-    this.numField,
-    this.stringField,
-    this.uriField,
   });
 
   final BigInt requiredBigIntField;
-  final bool requiredBoolField;
-  final DateTime requiredDateTimeField;
-  final double requiredDoubleField;
-  final PersonDetails requiredEnumField;
-  final int requiredIntField;
-  final num requiredNumField;
-  final String requiredStringField;
-  final Uri requiredUriField;
-
   final BigInt? bigIntField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<BigInt>(
+        dataTitle: 'BigIntRoute',
+        param: requiredBigIntField,
+        queryParam: bigIntField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('BigIntRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class BoolRoute extends GoRouteData {
+  BoolRoute({
+    required this.requiredBoolField,
+    this.boolField,
+  });
+
+  final bool requiredBoolField;
   final bool? boolField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<bool>(
+        dataTitle: 'BoolRoute',
+        param: requiredBoolField,
+        queryParam: boolField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('BoolRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class DateTimeRoute extends GoRouteData {
+  DateTimeRoute({
+    required this.requiredDateTimeField,
+    this.dateTimeField,
+  });
+
+  final DateTime requiredDateTimeField;
   final DateTime? dateTimeField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<DateTime>(
+        dataTitle: 'DateTimeRoute',
+        param: requiredDateTimeField,
+        queryParam: dateTimeField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('DateTimeRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class DoubleRoute extends GoRouteData {
+  DoubleRoute({
+    required this.requiredDoubleField,
+    this.doubleField,
+  });
+
+  final double requiredDoubleField;
   final double? doubleField;
-  final PersonDetails? enumField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<double>(
+        dataTitle: 'DoubleRoute',
+        param: requiredDoubleField,
+        queryParam: doubleField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('DoubleRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class IntRoute extends GoRouteData {
+  IntRoute({
+    required this.requiredIntField,
+    this.intField,
+  });
+
+  final int requiredIntField;
   final int? intField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<int>(
+        dataTitle: 'IntRoute',
+        param: requiredIntField,
+        queryParam: intField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('IntRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class NumRoute extends GoRouteData {
+  NumRoute({
+    required this.requiredNumField,
+    this.numField,
+  });
+
+  final num requiredNumField;
   final num? numField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<num>(
+        dataTitle: 'NumRoute',
+        param: requiredNumField,
+        queryParam: numField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('NumRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class EnumRoute extends GoRouteData {
+  EnumRoute({
+    required this.requiredEnumField,
+    this.enumField,
+  });
+
+  final PersonDetails requiredEnumField;
+  final PersonDetails? enumField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<PersonDetails>(
+        dataTitle: 'EnumRoute',
+        param: requiredEnumField,
+        queryParam: enumField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('EnumRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class EnhancedEnumRoute extends GoRouteData {
+  EnhancedEnumRoute({
+    required this.requiredEnumField,
+    this.enumField,
+  });
+
+  final SportDetails requiredEnumField;
+  final SportDetails? enumField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<SportDetails>(
+        dataTitle: 'EnhancedEnumRoute',
+        param: requiredEnumField,
+        queryParam: enumField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('EnhancedEnumRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class StringRoute extends GoRouteData {
+  StringRoute({
+    required this.requiredStringField,
+    this.stringField,
+  });
+
+  final String requiredStringField;
   final String? stringField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<String>(
+        dataTitle: 'StringRoute',
+        param: requiredStringField,
+        queryParam: stringField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('StringRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class UriRoute extends GoRouteData {
+  UriRoute({
+    required this.requiredUriField,
+    this.uriField,
+  });
+
+  final Uri requiredUriField;
   final Uri? uriField;
 
   @override
+  Widget build(BuildContext context) => BasePage<Uri>(
+        dataTitle: 'UriRoute',
+        param: requiredUriField,
+        queryParam: uriField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('UriRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class BasePage<T> extends StatelessWidget {
+  const BasePage({
+    required this.dataTitle,
+    required this.param,
+    this.queryParam,
+    super.key,
+  });
+
+  final String dataTitle;
+  final T param;
+  final T? queryParam;
+
+  @override
   Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Go router typed routes'),
+        ),
+        drawer: Drawer(
+            child: ListView(
+          children: <Widget>[
+            BigIntRoute(
+              requiredBigIntField: BigInt.two,
+              bigIntField: BigInt.zero,
+            ).drawerTile(context),
+            BoolRoute(
+              requiredBoolField: true,
+              boolField: false,
+            ).drawerTile(context),
+            DateTimeRoute(
+              requiredDateTimeField: DateTime(1970),
+              dateTimeField: DateTime(0),
+            ).drawerTile(context),
+            DoubleRoute(
+              requiredDoubleField: 3.14,
+              doubleField: -3.14,
+            ).drawerTile(context),
+            IntRoute(
+              requiredIntField: 42,
+              intField: -42,
+            ).drawerTile(context),
+            NumRoute(
+              requiredNumField: 2.71828,
+              numField: -2.71828,
+            ).drawerTile(context),
+            StringRoute(
+              requiredStringField: r'$!/#bob%%20',
+              stringField: r'$!/#bob%%20',
+            ).drawerTile(context),
+            EnumRoute(
+              requiredEnumField: PersonDetails.favoriteSport,
+              enumField: PersonDetails.favoriteFood,
+            ).drawerTile(context),
+            EnhancedEnumRoute(
+              requiredEnumField: SportDetails.football,
+              enumField: SportDetails.volleyball,
+            ).drawerTile(context),
+            UriRoute(
+              requiredUriField: Uri.parse('https://dart.dev'),
+              uriField: Uri.parse('https://dart.dev'),
+            ).drawerTile(context),
+          ],
+        )),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Text('built!'),
-              SelectableText(location),
+              const Text('Built!'),
+              Text(dataTitle),
+              Text('Param: $param'),
+              Text('Query param: $queryParam'),
+              SelectableText(GoRouter.of(context).location),
             ],
           ),
         ),
       );
-
-  @override
-  int get hashCode => Object.hashAll(_items);
-
-  @override
-  bool operator ==(Object other) {
-    if (other is AllTypesRoute) {
-      final List<Object?> mine = _items;
-      final List<Object?> theirs = other._items;
-      for (int i = 0; i < mine.length; i++) {
-        if (mine[i] != theirs[i]) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  List<Object?> get _items => <Object?>[
-        requiredBigIntField,
-        requiredBoolField,
-        requiredDateTimeField,
-        requiredDoubleField,
-        requiredEnumField,
-        requiredIntField,
-        requiredNumField,
-        requiredStringField,
-        requiredUriField,
-        bigIntField,
-        boolField,
-        dateTimeField,
-        doubleField,
-        enumField,
-        intField,
-        numField,
-        stringField,
-        uriField,
-      ];
 }
 
 void main() => runApp(AllTypesApp());
 
 class AllTypesApp extends StatelessWidget {
-  AllTypesApp({Key? key}) : super(key: key);
+  AllTypesApp({super.key});
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
         routeInformationParser: _router.routeInformationParser,
         routerDelegate: _router.routerDelegate,
+        routeInformationProvider: _router.routeInformationProvider,
       );
 
   late final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,
     routes: $appRoutes,
-
-    // redirect to the login page if the user is not logged in
-    redirect: (GoRouterState state) {
-      if (state.location == '/') {
-        final String location = AllTypesRoute(
-          requiredBigIntField: BigInt.two,
-          requiredBoolField: true,
-          requiredDateTimeField: DateTime.now(),
-          requiredDoubleField: 3.14,
-          requiredEnumField: PersonDetails.favoriteSport,
-          requiredIntField: -42,
-          requiredNumField: 3.15,
-          requiredStringField: r'$!/#bob%%20',
-          requiredUriField: Uri.parse('https://dart.dev'),
-          bigIntField: BigInt.zero,
-          boolField: false,
-          dateTimeField: DateTime(0),
-          doubleField: 3.14,
-          enumField: PersonDetails.favoriteSport,
-          intField: -42,
-          numField: 3.15,
-          stringField: r'$!/#bob%%20',
-          uriField: Uri.parse('https://dart.dev'),
-        ).location;
-
-        return location;
-      }
-
-      // no need to redirect at all
-      return null;
-    },
+    initialLocation: const AllTypesBaseRoute().location,
   );
 }
