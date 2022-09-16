@@ -56,9 +56,14 @@ class RouteConfiguration {
                   'parentNavigatorKey $parentKey must refer to'
                   " an ancestor ShellRoute's navigatorKey or GoRouter's"
                   ' navigatorKey');
+
               checkParentNavigatorKeys(
                 route.routes,
-                <GlobalKey<NavigatorState>>[],
+                <GlobalKey<NavigatorState>>[
+                  // Once a parentNavigatorKey is used, only the navigator keys
+                  // above it can be used.
+                  ...allowedKeys.sublist(0, allowedKeys.indexOf(parentKey)),
+                ],
               );
             } else {
               checkParentNavigatorKeys(
