@@ -211,7 +211,7 @@ void main() {
                                   GoRoute(
                                     path: 'c',
                                     builder: _mockScreenBuilder,
-                                    parentNavigatorKey: shell2,
+                                    parentNavigatorKey: shell,
                                   ),
                                 ],
                               ),
