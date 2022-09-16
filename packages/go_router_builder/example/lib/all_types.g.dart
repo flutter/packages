@@ -45,19 +45,19 @@ GoRoute get $allTypesBaseRoute => GoRouteData.$route(
           factory: $DoubleRouteExtension._fromState,
         ),
         GoRouteData.$route(
-          path: 'enum-route/:requiredEnumFieldField',
+          path: 'enum-route/:requiredEnumField',
           factory: $EnumRouteExtension._fromState,
         ),
         GoRouteData.$route(
-          path: 'enhanced-enum-route/:requiredEnumFieldField',
+          path: 'enhanced-enum-route/:requiredEnumField',
           factory: $EnhancedEnumRouteExtension._fromState,
         ),
         GoRouteData.$route(
-          path: 'string-route/:requiredStringFieldField',
+          path: 'string-route/:requiredStringField',
           factory: $StringRouteExtension._fromState,
         ),
         GoRouteData.$route(
-          path: 'uri-route/:requiredUriFieldField',
+          path: 'uri-route/:requiredUriField',
           factory: $UriRouteExtension._fromState,
         ),
       ],
@@ -192,17 +192,17 @@ extension $NumRouteExtension on NumRoute {
 
 extension $EnumRouteExtension on EnumRoute {
   static EnumRoute _fromState(GoRouterState state) => EnumRoute(
-        requiredEnumFieldField: _$PersonDetailsEnumMap
-            ._$fromName(state.params['requiredEnumFieldField']!),
-        enumFieldField: _$convertMapValue('enum-field-field', state.queryParams,
-            _$PersonDetailsEnumMap._$fromName),
+        requiredEnumField: _$PersonDetailsEnumMap
+            ._$fromName(state.params['requiredEnumField']!),
+        enumField: _$convertMapValue(
+            'enum-field', state.queryParams, _$PersonDetailsEnumMap._$fromName),
       );
 
   String get location => GoRouteData.$location(
-        '/enum-route/${Uri.encodeComponent(_$PersonDetailsEnumMap[requiredEnumFieldField]!)}',
+        '/enum-route/${Uri.encodeComponent(_$PersonDetailsEnumMap[requiredEnumField]!)}',
         queryParams: {
-          if (enumFieldField != null)
-            'enum-field-field': _$PersonDetailsEnumMap[enumFieldField!]!,
+          if (enumField != null)
+            'enum-field': _$PersonDetailsEnumMap[enumField!]!,
         },
       );
 
@@ -213,17 +213,17 @@ extension $EnumRouteExtension on EnumRoute {
 
 extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
   static EnhancedEnumRoute _fromState(GoRouterState state) => EnhancedEnumRoute(
-        requiredEnumFieldField: _$SportDetailsEnumMap
-            ._$fromName(state.params['requiredEnumFieldField']!),
-        enumFieldField: _$convertMapValue('enum-field-field', state.queryParams,
-            _$SportDetailsEnumMap._$fromName),
+        requiredEnumField: _$SportDetailsEnumMap
+            ._$fromName(state.params['requiredEnumField']!),
+        enumField: _$convertMapValue(
+            'enum-field', state.queryParams, _$SportDetailsEnumMap._$fromName),
       );
 
   String get location => GoRouteData.$location(
-        '/enhanced-enum-route/${Uri.encodeComponent(_$SportDetailsEnumMap[requiredEnumFieldField]!)}',
+        '/enhanced-enum-route/${Uri.encodeComponent(_$SportDetailsEnumMap[requiredEnumField]!)}',
         queryParams: {
-          if (enumFieldField != null)
-            'enum-field-field': _$SportDetailsEnumMap[enumFieldField!]!,
+          if (enumField != null)
+            'enum-field': _$SportDetailsEnumMap[enumField!]!,
         },
       );
 
@@ -234,14 +234,14 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
 
 extension $StringRouteExtension on StringRoute {
   static StringRoute _fromState(GoRouterState state) => StringRoute(
-        requiredStringFieldField: state.params['requiredStringFieldField']!,
-        stringFieldField: state.queryParams['string-field-field'],
+        requiredStringField: state.params['requiredStringField']!,
+        stringField: state.queryParams['string-field'],
       );
 
   String get location => GoRouteData.$location(
-        '/string-route/${Uri.encodeComponent(requiredStringFieldField)}',
+        '/string-route/${Uri.encodeComponent(requiredStringField)}',
         queryParams: {
-          if (stringFieldField != null) 'string-field-field': stringFieldField!,
+          if (stringField != null) 'string-field': stringField!,
         },
       );
 
@@ -252,17 +252,14 @@ extension $StringRouteExtension on StringRoute {
 
 extension $UriRouteExtension on UriRoute {
   static UriRoute _fromState(GoRouterState state) => UriRoute(
-        requiredUriFieldField:
-            Uri.parse(state.params['requiredUriFieldField']!),
-        uriFieldField:
-            _$convertMapValue('uri-field-field', state.queryParams, Uri.parse),
+        requiredUriField: Uri.parse(state.params['requiredUriField']!),
+        uriField: _$convertMapValue('uri-field', state.queryParams, Uri.parse),
       );
 
   String get location => GoRouteData.$location(
-        '/uri-route/${Uri.encodeComponent(requiredUriFieldField.toString())}',
+        '/uri-route/${Uri.encodeComponent(requiredUriField.toString())}',
         queryParams: {
-          if (uriFieldField != null)
-            'uri-field-field': uriFieldField!.toString(),
+          if (uriField != null) 'uri-field': uriField!.toString(),
         },
       );
 
