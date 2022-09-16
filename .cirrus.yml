@@ -246,7 +246,7 @@ task:
           CHANNEL: "stable"
       create_simulator_script:
         - xcrun simctl list
-        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16 | xargs xcrun simctl boot
+        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-0 | xargs xcrun simctl boot
       build_script:
         - ./script/tool_runner.sh build-examples --ios
       native_test_script:
