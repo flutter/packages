@@ -415,8 +415,9 @@ void main() {
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
-    final RouteMatchList matchesObj = await parser
-        .parseRouteInformationWithDependencies(const DebugGoRouteInformation(location: '/a'), context);
+    final RouteMatchList matchesObj =
+        await parser.parseRouteInformationWithDependencies(
+            const DebugGoRouteInformation(location: '/a'), context);
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(2));

@@ -218,6 +218,7 @@ See [examples](https://github.com/flutter/packages/tree/main/packages/go_router/
 - [Migrating to 2.5](https://flutter.dev/go/go-router-v2-5-breaking-changes)
 - [Migrating to 3.0](https://flutter.dev/go/go-router-v3-breaking-changes)
 - [Migrating to 4.0](https://flutter.dev/go/go-router-v4-breaking-changes)
+- [Migrating to 5.0](https://flutter.dev/go/go-router-v5-breaking-changes)
 
 ## Changelog
 

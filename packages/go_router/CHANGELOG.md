@@ -10,6 +10,7 @@
   - Removes GoRouterRefreshStream
   - Removes navigatorBuilder
   - Removes urlPathStrategy
+- [go_router v5 migration guide](https://flutter.dev/go/go-router-v5-breaking-changes)
 
 ## 4.5.1
 

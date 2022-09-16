@@ -153,26 +153,13 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       unit_test_script:
-        # TODO(chunhtai): remove go_router exception once
-        # https://github.com/flutter/flutter/issues/110047 is resolved.
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
-        - else
-        -   ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml,go_router
-        - fi
+        - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
       pathified_unit_test_script:
         # Run tests with path-based dependencies to ensure that publishing
         # the changes won't break tests of other packages in the respository
         # that depend on it.
-        #
-        # TODO(chunhtai): remove go_router exception once
-        # https://github.com/flutter/flutter/issues/110047 is resolved.
         - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   dart pub global run flutter_plugin_tools test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
-        - else
-        -   dart pub global run flutter_plugin_tools test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml,go_router
-        - fi
+        - dart pub global run flutter_plugin_tools test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
       depends_on:
         - format+analyze
     - name: linux-custom_package_tests
@@ -204,14 +191,7 @@ task:
       build_script:
         # extension_google_sign_in_as_googleapis_auth is currently not building, see
         # https://github.com/flutter/flutter/issues/89301
-        #
-        # TODO(chunhtai): remove go_router exception once
-        # https://github.com/flutter/flutter/issues/110047 is resolved.
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
-        - else
-        -   ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth,go_router
-        - fi
+        - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
       native_unit_test_scipt:
         - ./script/tool_runner.sh native-test --android --no-integration
       depends_on:
@@ -226,13 +206,7 @@ task:
       chromedriver_background_script:
         - $CHROMEDRIVER_EXECUTABLE --port=4444
       build_script:
-        # TODO(chunhtai): remove go_router exception once
-        # https://github.com/flutter/flutter/issues/110047 is resolved.
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh build-examples --web
-        - else
-        -   ./script/tool_runner.sh build-examples --web --exclude=go_router
-        - fi
+        - ./script/tool_runner.sh build-examples --web
       drive_script:
         - ./script/tool_runner.sh drive-examples --web
     - name: web_benchmarks_test
@@ -255,13 +229,7 @@ task:
           CHANNEL: "stable"
       build_script:
         - flutter config --enable-linux-desktop
-        # TODO(chunhtai): remove go_router exception once
-        # https://github.com/flutter/flutter/issues/110047 is resolved.
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh build-examples --linux
-        - else
-        -   ./script/tool_runner.sh build-examples --linux --exclude=go_router
-        - fi
+        - ./script/tool_runner.sh build-examples --linux
       native_test_script:
         - ./script/tool_runner.sh native-test --linux --no-integration
 
@@ -269,7 +237,7 @@ task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   << : *MACOS_TEMPLATE
   matrix:
-   ### iOS tasks ###
+    ### iOS tasks ###
     - name: ios-platform_tests
       env:
         PATH: $PATH:/usr/local/bin
@@ -280,13 +248,7 @@ task:
         - xcrun simctl list
         - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-0 | xargs xcrun simctl boot
       build_script:
-        # TODO(chunhtai): remove go_router exception once
-        # https://github.com/flutter/flutter/issues/110047 is resolved.
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh build-examples --ios
-        - else
-        -   ./script/tool_runner.sh build-examples --ios --exclude=go_router
-        - fi
+        - ./script/tool_runner.sh build-examples --ios
       native_test_script:
         - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 13,OS=latest"
     - name: macos-custom_package_tests
@@ -315,12 +277,6 @@ task:
         PATH: $PATH:/usr/local/bin
       build_script:
         - flutter config --enable-macos-desktop
-        # TODO(chunhtai): remove go_router exception once
-        # https://github.com/flutter/flutter/issues/110047 is resolved.
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh build-examples --macos
-        - else
-        -   ./script/tool_runner.sh build-examples --macos --exclude=go_router
-        - fi
+        - ./script/tool_runner.sh build-examples --macos
       native_test_script:
         - ./script/tool_runner.sh native-test --macos
