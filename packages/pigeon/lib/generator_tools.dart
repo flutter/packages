@@ -434,37 +434,40 @@ bool isEnum(Root root, TypeDeclaration type) =>
     root.enums.map((Enum e) => e.name).contains(type.baseName);
 
 /// Formats documentation comments and adds them to current Indent.
-void addDocumentationComments(Indent indent, List<String> comments, String open,
-    {String? close, List<String>? additionalComments}) {
-  if (comments.isEmpty && additionalComments == null) {
-    return;
-  }
-  if (comments.length > 1 ||
-      (comments.isNotEmpty && additionalComments != null) ||
-      (additionalComments != null && additionalComments.length > 1)) {
-    bool addSymbolOnNextLine = true;
-    if (close != null) {
-      indent.writeln(open);
-      addSymbolOnNextLine = false;
+///
+/// The [comments] list is meant for comments written in the input dart file.
+/// The [additionalComments] list is meant for comments added by the generators.
+/// Include white space for all tokens when called, no assumptions are made.
+void addDocumentationComments(
+  Indent indent,
+  List<String> comments,
+  String openCommentToken, {
+  String closeCommentToken = '',
+  List<String> additionalComments = const <String>[],
+  String blockContinuationToken = '',
+}) {
+  final List<String> allComments = <String>[
+    ...comments,
+    if (comments.isNotEmpty && additionalComments.isNotEmpty) '',
+    ...additionalComments,
+  ];
+  if (allComments.length > 1) {
+    if (closeCommentToken != '') {
+      indent.writeln(openCommentToken);
+      openCommentToken =
+          blockContinuationToken != '' ? blockContinuationToken : '';
     }
-    if (additionalComments != null) {
-      for (final String line in additionalComments) {
-        indent.writeln(
-          '${addSymbolOnNextLine ? '$open ' : ''}$line',
-        );
-      }
-    }
-    for (final String line in comments) {
+    for (final String line in allComments) {
       indent.writeln(
-        '${addSymbolOnNextLine ? '$open ' : ''}$line',
+        '$openCommentToken$line',
       );
     }
-    if (close != null) {
-      indent.writeln(close);
+    if (closeCommentToken != '') {
+      indent.writeln(closeCommentToken);
     }
-  } else {
+  } else if (allComments.length == 1) {
     indent.writeln(
-      '$open ${comments.isNotEmpty ? comments.first : ''}${additionalComments?.first ?? ''} ${close ?? ''}',
+      '$openCommentToken${allComments.first}$closeCommentToken',
     );
   }
 }

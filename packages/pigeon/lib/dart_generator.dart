@@ -12,7 +12,7 @@ import 'functional.dart';
 import 'generator_tools.dart';
 
 /// Documentation comment open symbol.
-const String _docCommentPrefix = '///';
+const String _docCommentPrefix = '/// ';
 
 /// Options that control how Dart code will be generated.
 class DartOptions {

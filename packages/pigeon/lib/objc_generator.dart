@@ -8,7 +8,7 @@ import 'generator_tools.dart';
 import 'pigeon_lib.dart' show Error, TaskQueueType;
 
 /// Documentation comment open symbol.
-const String _docCommentPrefix = '///';
+const String _docCommentPrefix = '/// ';
 
 /// Options that control how Objective-C code will be generated.
 class ObjcOptions {
@@ -207,7 +207,7 @@ void _writeClassDeclarations(
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
-            '/// `init` unavailable to enforce nonnull fields, see the `make` class method.');
+            '$_docCommentPrefix`init` unavailable to enforce nonnull fields, see the `make` class method.');
         indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
       }
       _writeInitializerDeclaration(indent, klass, classes, enums, prefix);
@@ -454,7 +454,8 @@ void _writeHostApiDeclaration(
     if (!func.returnType.isNullable &&
         !func.returnType.isVoid &&
         !func.isAsynchronous) {
-      indent.writeln('/// @return `nil` only when `error != nil`.');
+      indent
+          .writeln('$_docCommentPrefix@return `nil` only when `error != nil`.');
     }
     addDocumentationComments(
         indent, func.documentationComments, _docCommentPrefix);
@@ -576,7 +577,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   for (final Api api in root.apis) {
     indent.writeln(
-        '/// The codec used by ${_className(options.prefix, api.name)}.');
+        '${_docCommentPrefix}The codec used by ${_className(options.prefix, api.name)}.');
     indent.writeln(
         'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void);');
     indent.addln('');

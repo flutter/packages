@@ -7,7 +7,7 @@ import 'functional.dart';
 import 'generator_tools.dart';
 
 /// Documentation comment open symbol.
-const String _docCommentPrefix = '///';
+const String _docCommentPrefix = '/// ';
 
 /// Options that control how Swift code will be generated.
 class SwiftOptions {
@@ -180,15 +180,15 @@ void _writeHostApi(Indent indent, Api api, Root root) {
 
   indent.addln('');
   indent.writeln(
-      '/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
+      '${_docCommentPrefix}Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
   indent.write('class ${apiName}Setup ');
   indent.scoped('{', '}', () {
     final String codecName = _getCodecName(api);
-    indent.writeln('/// The codec used by $apiName.');
+    indent.writeln('${_docCommentPrefix}The codec used by $apiName.');
     indent.writeln(
         'static var codec: FlutterStandardMessageCodec { $codecName.shared }');
     indent.writeln(
-        '/// Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
+        '${_docCommentPrefix}Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
     indent.write(
         'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
     indent.scoped('{', '}', () {
@@ -568,7 +568,7 @@ import FlutterMacOS
     }
 
     const List<String> generatedComments = <String>[
-      '/// Generated class from Pigeon that represents data sent in messages.'
+      'Generated class from Pigeon that represents data sent in messages.'
     ];
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentPrefix,
@@ -619,7 +619,7 @@ import FlutterMacOS
   indent.addln('');
   writeImports();
   indent.addln('');
-  indent.writeln('/// Generated class from Pigeon.');
+  indent.writeln('${_docCommentPrefix}Generated class from Pigeon.');
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
     writeEnum(anEnum);

@@ -8,7 +8,7 @@ import 'generator_tools.dart';
 import 'pigeon_lib.dart' show Error;
 
 /// Documentation open symbol.
-const String _commentPrefix = '//';
+const String _commentPrefix = '// ';
 
 /// Options that control how C++ code will be generated.
 class CppOptions {
@@ -273,7 +273,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
       root.enums.map((Enum x) => x.name).toSet();
 
   indent.addln('');
-  indent.writeln('$_commentPrefix ${klass.name}');
+  indent.writeln('$_commentPrefix${klass.name}');
   indent.addln('');
 
   // Getters and setters.
@@ -461,10 +461,10 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
         }
       }
       indent.addln('');
-      indent.writeln('$_commentPrefix The codec used by ${api.name}.');
+      indent.writeln('${_commentPrefix}The codec used by ${api.name}.');
       indent.writeln('static const flutter::StandardMessageCodec& GetCodec();');
       indent.writeln(
-          '$_commentPrefix Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
+          '${_commentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
       indent.writeln(
           'static void SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api);');
       indent.writeln(
@@ -489,7 +489,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
 }
 ''');
   indent.writeln(
-      '$_commentPrefix Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
+      '${_commentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
   indent.write(
       'void ${api.name}::SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api) ');
   indent.scoped('{', '}', () {
@@ -740,7 +740,7 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
 void _writeFlutterApiSource(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
-      '$_commentPrefix Generated class from Pigeon that represents Flutter messages that can be called from C++.');
+      '${_commentPrefix}Generated class from Pigeon that represents Flutter messages that can be called from C++.');
   indent.write(
       '${api.name}::${api.name}(flutter::BinaryMessenger* binary_messenger) ');
   indent.scoped('{', '}', () {
@@ -1011,10 +1011,10 @@ void generateCppHeader(
     String? headerFileName, CppOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '$_commentPrefix ');
+    addLines(indent, options.copyrightHeader!, linePrefix: _commentPrefix);
   }
-  indent.writeln('$_commentPrefix $generatedCodeWarning');
-  indent.writeln('$_commentPrefix $seeAlsoWarning');
+  indent.writeln('$_commentPrefix$generatedCodeWarning');
+  indent.writeln('$_commentPrefix$seeAlsoWarning');
   indent.addln('');
   final String guardName = _getGuardName(headerFileName, options.namespace);
   indent.writeln('#ifndef $guardName');
@@ -1049,7 +1049,7 @@ void generateCppHeader(
   }
 
   indent.addln('');
-  indent.writeln('$_commentPrefix Generated class from Pigeon.');
+  indent.writeln('${_commentPrefix}Generated class from Pigeon.');
 
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
@@ -1099,10 +1099,10 @@ void generateCppHeader(
 void generateCppSource(CppOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '$_commentPrefix ');
+    addLines(indent, options.copyrightHeader!, linePrefix: _commentPrefix);
   }
-  indent.writeln('$_commentPrefix $generatedCodeWarning');
-  indent.writeln('$_commentPrefix $seeAlsoWarning');
+  indent.writeln('$_commentPrefix$generatedCodeWarning');
+  indent.writeln('$_commentPrefix$seeAlsoWarning');
   indent.addln('');
   indent.addln('#undef _HAS_EXCEPTIONS');
   indent.addln('');
