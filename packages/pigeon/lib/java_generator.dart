@@ -8,10 +8,10 @@ import 'generator_tools.dart';
 import 'pigeon_lib.dart' show TaskQueueType;
 
 /// Documentation open symbol.
-const String openDoc = '/**';
+const String _docCommentPrefix = '/**';
 
 /// Documentation close symbol.
-const String closeDoc = '*/';
+const String _docCommentSuffix = '*/';
 
 /// Options that control how Java code will be generated.
 class JavaOptions {
@@ -165,8 +165,9 @@ void _writeHostApi(Indent indent, Api api, Root root) {
           : _javaTypeForDartType(method.returnType);
       argSignature.add('Result<$resultType> result');
     }
-    addDocumentationComments(indent, method.documentationComments, openDoc,
-        close: closeDoc);
+    addDocumentationComments(
+        indent, method.documentationComments, _docCommentPrefix,
+        close: _docCommentSuffix);
 
     indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
   }
@@ -290,8 +291,8 @@ Result<$returnType> $resultName = new Result<$returnType>() {
   const List<String> generatedMessages = <String>[
     'Generated interface from Pigeon that represents a handler of messages from Flutter.'
   ];
-  addDocumentationComments(indent, api.documentationComments, openDoc,
-      close: closeDoc, additionalComments: generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, _docCommentPrefix,
+      close: _docCommentSuffix, additionalComments: generatedMessages);
 
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
@@ -335,8 +336,8 @@ void _writeFlutterApi(Indent indent, Api api) {
   const List<String> generatedMessages = <String>[
     'Generated class from Pigeon that represents Flutter messages that can be called from Java.'
   ];
-  addDocumentationComments(indent, api.documentationComments, openDoc,
-      close: closeDoc, additionalComments: generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, _docCommentPrefix,
+      close: _docCommentSuffix, additionalComments: generatedMessages);
 
   indent.write('public static class ${api.name} ');
   indent.scoped('{', '}', () {
@@ -361,8 +362,9 @@ static MessageCodec<Object> getCodec() {
           ? 'Void'
           : _javaTypeForDartType(func.returnType);
       String sendArgument;
-      addDocumentationComments(indent, func.documentationComments, openDoc,
-          close: closeDoc);
+      addDocumentationComments(
+          indent, func.documentationComments, _docCommentPrefix,
+          close: _docCommentSuffix);
       if (func.arguments.isEmpty) {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
@@ -530,8 +532,9 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   }
 
   void writeEnum(Enum anEnum) {
-    addDocumentationComments(indent, anEnum.documentationComments, openDoc,
-        close: closeDoc);
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentPrefix,
+        close: _docCommentSuffix);
 
     indent.write('public enum ${anEnum.name} ');
     indent.scoped('{', '}', () {
@@ -563,8 +566,9 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
       final String nullability =
           field.type.isNullable ? '@Nullable' : '@NonNull';
-      addDocumentationComments(indent, field.documentationComments, openDoc,
-          close: closeDoc);
+      addDocumentationComments(
+          indent, field.documentationComments, _docCommentPrefix,
+          close: _docCommentSuffix);
 
       indent.writeln(
           'private $nullability ${hostDatatype.datatype} ${field.name};');
@@ -667,8 +671,9 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     const List<String> generatedMessages = <String>[
       'Generated class from Pigeon that represents data sent in messages.'
     ];
-    addDocumentationComments(indent, klass.documentationComments, openDoc,
-        close: closeDoc, additionalComments: generatedMessages);
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentPrefix,
+        close: _docCommentSuffix, additionalComments: generatedMessages);
 
     indent.write('public static class ${klass.name} ');
     indent.scoped('{', '}', () {

@@ -17,7 +17,9 @@ import 'package:pigeon/pigeon.dart';
   ),
 ))
 
-/// This comment is to test enum documentation comments.
+/// This comment is to test class documentation comments.
+///
+/// This comment also tests multiple line comments.
 enum MessageRequestState {
   pending,
   success,
@@ -25,6 +27,8 @@ enum MessageRequestState {
 }
 
 /// This comment is to test class documentation comments.
+///
+/// This comment also tests multiple line comments.
 class MessageSearchRequest {
   /// This comment is to test field documentation comments.
   String? query;
@@ -38,8 +42,9 @@ class MessageSearchRequest {
 
 /// This comment is to test class documentation comments.
 class MessageSearchReply {
-  /// This comment is to test field documentation comments.
-  String? result;
+  /// This comment is to test field documentation comments./// This comment is to test class documentation comments.
+  ///
+  /// This comment also tests multiple line comments.  String? result;
 
   /// This comment is to test field documentation comments.
   String? error;
@@ -50,9 +55,13 @@ class MessageSearchReply {
 
 @HostApi(dartHostTestHandler: 'TestHostApi')
 
-/// This comment is to test api documentation comments.
+/// This comment is to test class documentation comments.
+///
+/// This comment also tests multiple line comments.
 abstract class MessageApi {
-  /// This comment is to test method documentation comments.
+  /// This comment is to test class documentation comments.
+  ///
+  /// This comment also tests multiple line comments.
   void initialize();
 
   /// This comment is to test method documentation comments.
@@ -69,7 +78,9 @@ class MessageNested {
 
 /// This comment is to test api documentation comments.
 abstract class MessageNestedApi {
-  /// This comment is to test method documentation comments.
+  /// This comment is to test class documentation comments.
+  ///
+  /// This comment also tests multiple line comments.
   MessageSearchReply search(MessageNested nested);
 }
 

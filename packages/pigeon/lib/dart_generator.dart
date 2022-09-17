@@ -12,7 +12,7 @@ import 'functional.dart';
 import 'generator_tools.dart';
 
 /// Documentation comment open symbol.
-const String openDoc = '///';
+const String _docCommentPrefix = '///';
 
 /// Options that control how Dart code will be generated.
 class DartOptions {
@@ -157,7 +157,8 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   _writeCodec(indent, codecName, api, root);
   indent.addln('');
   bool first = true;
-  addDocumentationComments(indent, api.documentationComments, openDoc);
+  addDocumentationComments(
+      indent, api.documentationComments, _docCommentPrefix);
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.format('''
@@ -177,7 +178,8 @@ final BinaryMessenger? _binaryMessenger;
       } else {
         first = false;
       }
-      addDocumentationComments(indent, func.documentationComments, openDoc);
+      addDocumentationComments(
+          indent, func.documentationComments, _docCommentPrefix);
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
@@ -269,14 +271,16 @@ void _writeFlutterApi(
   assert(api.location == ApiLocation.flutter);
   final String codecName = _getCodecName(api);
   _writeCodec(indent, codecName, api, root);
-  addDocumentationComments(indent, api.documentationComments, openDoc);
+  addDocumentationComments(
+      indent, api.documentationComments, _docCommentPrefix);
 
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.writeln('static const MessageCodec<Object?> codec = $codecName();');
     indent.addln('');
     for (final Method func in api.methods) {
-      addDocumentationComments(indent, func.documentationComments, openDoc);
+      addDocumentationComments(
+          indent, func.documentationComments, _docCommentPrefix);
 
       final bool isAsync = func.isAsynchronous;
       final String returnType = isAsync
@@ -442,7 +446,8 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   void writeEnums() {
     for (final Enum anEnum in root.enums) {
       indent.writeln('');
-      addDocumentationComments(indent, anEnum.documentationComments, openDoc);
+      addDocumentationComments(
+          indent, anEnum.documentationComments, _docCommentPrefix);
       indent.write('enum ${anEnum.name} ');
       indent.scoped('{', '}', () {
         for (final String member in anEnum.members) {
@@ -565,14 +570,16 @@ pigeonMap['${field.name}'] != null
       });
     }
 
-    addDocumentationComments(indent, klass.documentationComments, openDoc);
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentPrefix);
 
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       writeConstructor();
       indent.addln('');
       for (final NamedType field in klass.fields) {
-        addDocumentationComments(indent, field.documentationComments, openDoc);
+        addDocumentationComments(
+            indent, field.documentationComments, _docCommentPrefix);
 
         final String datatype = _addGenericTypesNullable(field.type);
         indent.writeln('$datatype ${field.name};');

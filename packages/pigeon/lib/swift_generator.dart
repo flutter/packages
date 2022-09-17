@@ -7,7 +7,7 @@ import 'functional.dart';
 import 'generator_tools.dart';
 
 /// Documentation comment open symbol.
-const String openDoc = '///';
+const String _docCommentPrefix = '///';
 
 /// Options that control how Swift code will be generated.
 class SwiftOptions {
@@ -142,7 +142,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
   const List<String> generatedComments = <String>[
     'Generated protocol from Pigeon that represents a handler of messages from Flutter.'
   ];
-  addDocumentationComments(indent, api.documentationComments, openDoc,
+  addDocumentationComments(indent, api.documentationComments, _docCommentPrefix,
       additionalComments: generatedComments);
 
   indent.write('protocol $apiName ');
@@ -163,7 +163,8 @@ void _writeHostApi(Indent indent, Api api, Root root) {
       final String returnType = method.returnType.isVoid
           ? ''
           : _nullsafeSwiftTypeForDartType(method.returnType);
-      addDocumentationComments(indent, method.documentationComments, openDoc);
+      addDocumentationComments(
+          indent, method.documentationComments, _docCommentPrefix);
 
       if (method.isAsynchronous) {
         argSignature.add('completion: @escaping ($returnType) -> Void');
@@ -194,7 +195,8 @@ void _writeHostApi(Indent indent, Api api, Root root) {
       for (final Method method in api.methods) {
         final String channelName = makeChannelName(api, method);
         final String varChannelName = '${method.name}Channel';
-        addDocumentationComments(indent, method.documentationComments, openDoc);
+        addDocumentationComments(
+            indent, method.documentationComments, _docCommentPrefix);
 
         indent.writeln(
             'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
@@ -273,7 +275,7 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
   const List<String> generatedComments = <String>[
     'Generated class from Pigeon that represents Flutter messages that can be called from Swift.'
   ];
-  addDocumentationComments(indent, api.documentationComments, openDoc,
+  addDocumentationComments(indent, api.documentationComments, _docCommentPrefix,
       additionalComments: generatedComments);
 
   indent.write('class ${api.name} ');
@@ -294,7 +296,8 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
           ? ''
           : _nullsafeSwiftTypeForDartType(func.returnType);
       String sendArgument;
-      addDocumentationComments(indent, func.documentationComments, openDoc);
+      addDocumentationComments(
+          indent, func.documentationComments, _docCommentPrefix);
 
       if (func.arguments.isEmpty) {
         indent.write(
@@ -449,7 +452,8 @@ import FlutterMacOS
   }
 
   void writeEnum(Enum anEnum) {
-    addDocumentationComments(indent, anEnum.documentationComments, openDoc);
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentPrefix);
 
     indent.write('enum ${anEnum.name}: Int ');
     indent.scoped('{', '}', () {
@@ -467,7 +471,8 @@ import FlutterMacOS
 
   void writeDataClass(Class klass) {
     void writeField(NamedType field) {
-      addDocumentationComments(indent, field.documentationComments, openDoc);
+      addDocumentationComments(
+          indent, field.documentationComments, _docCommentPrefix);
 
       indent.write(
           'var ${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
@@ -565,7 +570,8 @@ import FlutterMacOS
     const List<String> generatedComments = <String>[
       '/// Generated class from Pigeon that represents data sent in messages.'
     ];
-    addDocumentationComments(indent, klass.documentationComments, openDoc,
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentPrefix,
         additionalComments: generatedComments);
 
     indent.write('struct ${klass.name} ');
