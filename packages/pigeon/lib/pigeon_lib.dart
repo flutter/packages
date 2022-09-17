@@ -894,7 +894,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   /// Converts Token's to Strings and removes documentation comment symbol.
   List<String> _documentationCommentsParser(List<Token>? comments) {
-    return comments?.map((Token e) => e.toString().substring(4)).toList() ??
+    return comments
+            ?.map((Token line) =>
+                line.length > 4 ? line.toString().substring(4) : '')
+            .toList() ??
         <String>[];
   }
 
