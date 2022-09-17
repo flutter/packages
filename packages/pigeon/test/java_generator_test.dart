@@ -1141,7 +1141,8 @@ void main() {
     for (final String comment in comments) {
       // This regex finds the comment only between the open and close comment block
       expect(
-          RegExp('(?<=/**.*?)$comment(?=.*?*/)', dotAll: true).hasMatch(code),
+          RegExp(r'(?<=\/\*\*.*?)' + comment + r'(?=.*?\*\/)', dotAll: true)
+              .hasMatch(code),
           true);
     }
   });
