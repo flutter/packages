@@ -3,15 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
+import 'matching.dart';
 import 'path_utils.dart';
 import 'route.dart';
 
-/// Each RouteMatch instance represents an instance of a GoRoute for a specific
-/// portion of a location.
+///  An instance of a GoRoute plus information about the current location.
 class RouteMatch {
-  /// Constructor for [RouteMatch], each instance represents an instance of a
-  /// [GoRoute] for a specific portion of a location.
+  /// Constructor for [RouteMatch].
   RouteMatch({
     required this.route,
     required this.subloc,
@@ -23,9 +23,7 @@ class RouteMatch {
     required this.error,
     this.pageKey,
   })  : fullUriString = _addQueryParams(subloc, queryParametersAll),
-        assert(subloc.startsWith('/')),
         assert(Uri.parse(subloc).queryParameters.isEmpty),
-        assert(fullpath.startsWith('/')),
         assert(Uri.parse(fullpath).queryParameters.isEmpty),
         assert(() {
           for (final MapEntry<String, String> p in encodedParams.entries) {
@@ -37,7 +35,7 @@ class RouteMatch {
 
   // ignore: public_member_api_docs
   static RouteMatch? match({
-    required GoRoute route,
+    required RouteBase route,
     required String restLoc, // e.g. person/p1
     required String parentSubloc, // e.g. /family/f2
     required String fullpath, // e.g. /family/:fid/person/:pid
@@ -45,35 +43,52 @@ class RouteMatch {
     required Map<String, List<String>> queryParametersAll,
     required Object? extra,
   }) {
-    assert(!route.path.contains('//'));
+    if (route is ShellRoute) {
+      return RouteMatch(
+        route: route,
+        subloc: restLoc,
+        fullpath: '',
+        encodedParams: <String, String>{},
+        queryParams: queryParams,
+        queryParametersAll: queryParametersAll,
+        extra: extra,
+        error: null,
+        // Provide a unique pageKey to ensure that the page for this ShellRoute is
+        // reused.
+        pageKey: ValueKey<String>(route.hashCode.toString()),
+      );
+    } else if (route is GoRoute) {
+      assert(!route.path.contains('//'));
 
-    final RegExpMatch? match = route.matchPatternAsPrefix(restLoc);
-    if (match == null) {
-      return null;
+      final RegExpMatch? match = route.matchPatternAsPrefix(restLoc);
+      if (match == null) {
+        return null;
+      }
+
+      final Map<String, String> encodedParams = route.extractPathParams(match);
+      final String pathLoc = patternToPath(route.path, encodedParams);
+      final String subloc = concatenatePaths(parentSubloc, pathLoc);
+      return RouteMatch(
+        route: route,
+        subloc: subloc,
+        fullpath: fullpath,
+        encodedParams: encodedParams,
+        queryParams: queryParams,
+        queryParametersAll: queryParametersAll,
+        extra: extra,
+        error: null,
+      );
     }
-
-    final Map<String, String> encodedParams = route.extractPathParams(match);
-    final String pathLoc = patternToPath(route.path, encodedParams);
-    final String subloc = concatenatePaths(parentSubloc, pathLoc);
-    return RouteMatch(
-      route: route,
-      subloc: subloc,
-      fullpath: fullpath,
-      encodedParams: encodedParams,
-      queryParams: queryParams,
-      queryParametersAll: queryParametersAll,
-      extra: extra,
-      error: null,
-    );
+    throw MatcherError('Unexpected route type: $route', restLoc);
   }
 
   /// The matched route.
-  final GoRoute route;
+  final RouteBase route;
 
-  /// Matched sub-location.
+  /// The matched location.
   final String subloc; // e.g. /family/f2
 
-  /// Matched full path.
+  /// The matched template.
   final String fullpath; // e.g. /family/:fid
 
   /// Parameters for the matched route, URI-encoded.

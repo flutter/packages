@@ -24,13 +24,12 @@ class GoRouterState {
     this.extra,
     this.error,
     ValueKey<String>? pageKey,
-  })  : pageKey = pageKey ??
+  }) : pageKey = pageKey ??
             ValueKey<String>(error != null
                 ? 'error'
                 : fullpath != null && fullpath.isNotEmpty
                     ? fullpath
-                    : subloc),
-        assert((path ?? '').isEmpty == (fullpath ?? '').isEmpty);
+                    : subloc);
 
   // TODO(johnpryan): remove once namedLocation is removed from go_router.
   // See https://github.com/flutter/flutter/issues/107729

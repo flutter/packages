@@ -28,6 +28,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -90,6 +91,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       topRedirect: (_) => null,
+      navigatorKey: GlobalKey<NavigatorState>(),
     );
 
     expect(configuration.namedLocation('lowercase'), '/abc');
@@ -132,6 +134,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       topRedirect: (_) => null,
+      navigatorKey: GlobalKey<NavigatorState>(),
     );
 
     expect(
@@ -162,6 +165,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -195,6 +199,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -242,6 +247,7 @@ void main() {
           }
           return null;
         },
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -282,6 +288,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -310,6 +317,7 @@ void main() {
         routes: routes,
         redirectLimit: 100,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -333,6 +341,7 @@ void main() {
         routes: routes,
         redirectLimit: 5,
         topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
 
@@ -342,5 +351,50 @@ void main() {
 
     expect(matches, hasLength(1));
     expect(matches.first.error, isNotNull);
+  });
+
+  test('Creates a match for ShellRoute', () async {
+    final List<RouteBase> routes = <RouteBase>[
+      ShellRoute(
+        builder: (BuildContext context, GoRouterState state, Widget child) {
+          return Scaffold(
+            body: child,
+          );
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/a',
+            builder: (BuildContext context, GoRouterState state) {
+              return const Scaffold(
+                body: Text('Screen A'),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/b',
+            builder: (BuildContext context, GoRouterState state) {
+              return const Scaffold(
+                body: Text('Screen B'),
+              );
+            },
+          ),
+        ],
+      ),
+    ];
+    final GoRouteInformationParser parser = GoRouteInformationParser(
+      configuration: RouteConfiguration(
+        routes: routes,
+        redirectLimit: 5,
+        topRedirect: (_) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
+      ),
+    );
+
+    final RouteMatchList matchesObj = await parser
+        .parseRouteInformation(const RouteInformation(location: '/a'));
+    final List<RouteMatch> matches = matchesObj.matches;
+
+    expect(matches, hasLength(2));
+    expect(matches.first.error, isNull);
   });
 }

@@ -95,6 +95,7 @@ void main() {
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester);
 
+        await tester.pumpAndSettle();
         expect(goRouter.routerDelegate.matches.matches.length, 1);
         expect(goRouter.routerDelegate.canPop(), false);
       },
@@ -103,8 +104,9 @@ void main() {
       'It should return true if there is more than 1 match in the stack',
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester)
-          ..push('/error');
+          ..push('/a');
 
+        await tester.pumpAndSettle();
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(goRouter.routerDelegate.canPop(), true);
       },
@@ -209,7 +211,7 @@ void main() {
                 '/page-1',
               )
               .having(
-                (RouteMatch match) => match.route.name,
+                (RouteMatch match) => (match.route as GoRoute).name,
                 'match.route.name',
                 'page1',
               ),
