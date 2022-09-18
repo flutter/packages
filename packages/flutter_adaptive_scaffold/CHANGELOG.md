@@ -1,6 +1,6 @@
 ## 0.0.6
 
-* Change type of `appBar` parameter from `AppBar` to `PreferredSizeWidget`
+* Change type of `appBar` parameter from `AppBar?` to `PreferredSizeWidget?`
 
 ## 0.0.5
 
