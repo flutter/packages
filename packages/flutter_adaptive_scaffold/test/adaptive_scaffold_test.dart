@@ -146,7 +146,7 @@ void main() {
   );
 }
 
-/// A [PreferredSizeWidget] that does nothing to ensure that
+/// An empty widget that implements [PreferredSizeWidget] to ensure that
 /// [PreferredSizeWidget] is used as [AdaptiveScaffold.appBar] parameter instead
 /// of [AppBar].
 class PreferredSizeWidgetImpl extends StatelessWidget
