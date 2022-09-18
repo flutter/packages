@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_adaptive_scaffold/src/adaptive_scaffold.dart';
 import 'package:flutter_adaptive_scaffold/src/breakpoints.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -130,7 +129,7 @@ void main() {
 
   // Regression test for https://github.com/flutter/flutter/issues/111008
   testWidgets(
-    'appBar parameter should be a PreferredSizeWidget',
+    'appBar parameter should have the type PreferredSizeWidget',
     (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
         home: MediaQuery(
