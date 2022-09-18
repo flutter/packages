@@ -50,7 +50,6 @@ class MyHomePage extends StatelessWidget {
         child: AdaptiveScaffold(
             // An option to override the default breakpoints used for small, medium,
             // and large.
-            appBar: AppBar(title: const Text('Adaptive Scaffold Example')),
             smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
             mediumBreakpoint:
                 const WidthPlatformBreakpoint(begin: 700, end: 1000),
