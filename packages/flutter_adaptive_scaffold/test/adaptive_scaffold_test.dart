@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_adaptive_scaffold/src/adaptive_scaffold.dart';
 import 'package:flutter_adaptive_scaffold/src/breakpoints.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -127,6 +128,30 @@ void main() {
     expect(tester.getBottomRight(sBody), const Offset(800, 800));
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/111008
+  testWidgets(
+    'appBar parameter should be a PreferredSizeWidget',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(500, 800)),
+          child: AdaptiveScaffold(
+            drawerBreakpoint: TestBreakpoint0(),
+            internalAnimations: false,
+            destinations: const <NavigationDestination>[
+              NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+              NavigationDestination(
+                  icon: Icon(Icons.video_call), label: 'Video'),
+            ],
+            appBar: const PreferredSizeWidgetImpl(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(PreferredSizeWidgetImpl), findsOneWidget);
+    },
+  );
+
   // The goal of this test is to run through each of the navigation elements
   // and test whether tapping on that element will update the selected index
   // globally
@@ -168,6 +193,22 @@ void main() {
       expect(selectedIndex, state.index);
     });
   });
+}
+
+/// An empty widget that implements [PreferredSizeWidget] to ensure that
+/// [PreferredSizeWidget] is used as [AdaptiveScaffold.appBar] parameter instead
+/// of [AppBar].
+class PreferredSizeWidgetImpl extends StatelessWidget
+    implements PreferredSizeWidget {
+  const PreferredSizeWidgetImpl({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Size get preferredSize => const Size(200, 200);
 }
 
 class TestBreakpoint0 extends Breakpoint {
