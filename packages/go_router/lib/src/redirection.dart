@@ -77,8 +77,11 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
     assert(topRoute is GoRoute,
         'Last RouteMatch should contain a GoRoute, but was ${topRoute.runtimeType}');
     final GoRoute topGoRoute = topRoute as GoRoute;
-    final GoRouterRedirect redirect =
-        topGoRoute.redirect ?? (GoRouterState? state) => null;
+    final GoRouterRedirect? redirect = topGoRoute.redirect;
+    if (redirect == null) {
+      break;
+    }
+
     final String? topRouteLocation = redirect(
       GoRouterState(
         configuration,
