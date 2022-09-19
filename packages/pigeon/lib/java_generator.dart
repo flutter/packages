@@ -8,13 +8,21 @@ import 'generator_tools.dart';
 import 'pigeon_lib.dart' show TaskQueueType;
 
 /// Documentation open symbol.
-const String _docCommentPrefix = '/** ';
+const String _docCommentPrefix = '/**';
 
 /// Documentation continuation symbol.
 const String _docCommentContinuation = ' * ';
 
 /// Documentation close symbol.
 const String _docCommentSuffix = ' */';
+
+/// Documentation comment spec.
+const DocumentCommentSpecification _docCommentSpec =
+    DocumentCommentSpecification(
+  _docCommentPrefix,
+  closeCommentToken: _docCommentSuffix,
+  blockContinuationToken: _docCommentContinuation,
+);
 
 /// Options that control how Java code will be generated.
 class JavaOptions {
@@ -169,9 +177,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
       argSignature.add('Result<$resultType> result');
     }
     addDocumentationComments(
-        indent, method.documentationComments, _docCommentPrefix,
-        closeCommentToken: _docCommentSuffix,
-        blockContinuationToken: _docCommentContinuation);
+        indent, method.documentationComments, _docCommentSpec);
 
     indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
   }
@@ -295,10 +301,8 @@ Result<$returnType> $resultName = new Result<$returnType>() {
   const List<String> generatedMessages = <String>[
     'Generated interface from Pigeon that represents a handler of messages from Flutter.'
   ];
-  addDocumentationComments(indent, api.documentationComments, _docCommentPrefix,
-      closeCommentToken: _docCommentSuffix,
-      blockContinuationToken: _docCommentContinuation,
-      additionalComments: generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+      generatorComments: generatedMessages);
 
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
@@ -342,10 +346,8 @@ void _writeFlutterApi(Indent indent, Api api) {
   const List<String> generatedMessages = <String>[
     'Generated class from Pigeon that represents Flutter messages that can be called from Java.'
   ];
-  addDocumentationComments(indent, api.documentationComments, _docCommentPrefix,
-      closeCommentToken: _docCommentSuffix,
-      blockContinuationToken: _docCommentContinuation,
-      additionalComments: generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+      generatorComments: generatedMessages);
 
   indent.write('public static class ${api.name} ');
   indent.scoped('{', '}', () {
@@ -371,9 +373,7 @@ static MessageCodec<Object> getCodec() {
           : _javaTypeForDartType(func.returnType);
       String sendArgument;
       addDocumentationComments(
-          indent, func.documentationComments, _docCommentPrefix,
-          closeCommentToken: _docCommentSuffix,
-          blockContinuationToken: _docCommentContinuation);
+          indent, func.documentationComments, _docCommentSpec);
       if (func.arguments.isEmpty) {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
@@ -542,9 +542,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
   void writeEnum(Enum anEnum) {
     addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentPrefix,
-        closeCommentToken: _docCommentSuffix,
-        blockContinuationToken: _docCommentContinuation);
+        indent, anEnum.documentationComments, _docCommentSpec);
 
     indent.write('public enum ${anEnum.name} ');
     indent.scoped('{', '}', () {
@@ -577,9 +575,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       final String nullability =
           field.type.isNullable ? '@Nullable' : '@NonNull';
       addDocumentationComments(
-          indent, field.documentationComments, _docCommentPrefix,
-          closeCommentToken: _docCommentSuffix,
-          blockContinuationToken: _docCommentContinuation);
+          indent, field.documentationComments, _docCommentSpec);
 
       indent.writeln(
           'private $nullability ${hostDatatype.datatype} ${field.name};');
@@ -683,10 +679,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       'Generated class from Pigeon that represents data sent in messages.'
     ];
     addDocumentationComments(
-        indent, klass.documentationComments, _docCommentPrefix,
-        closeCommentToken: _docCommentSuffix,
-        blockContinuationToken: _docCommentContinuation,
-        additionalComments: generatedMessages);
+        indent, klass.documentationComments, _docCommentSpec,
+        generatorComments: generatedMessages);
 
     indent.write('public static class ${klass.name} ');
     indent.scoped('{', '}', () {

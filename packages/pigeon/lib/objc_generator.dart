@@ -8,7 +8,11 @@ import 'generator_tools.dart';
 import 'pigeon_lib.dart' show Error, TaskQueueType;
 
 /// Documentation comment open symbol.
-const String _docCommentPrefix = '/// ';
+const String _docCommentPrefix = '///';
+
+/// Documentation comment spec.
+const DocumentCommentSpecification _docCommentSpec =
+    DocumentCommentSpecification(_docCommentPrefix);
 
 /// Options that control how Objective-C code will be generated.
 class ObjcOptions {
@@ -199,7 +203,7 @@ void _writeClassDeclarations(
   final List<String> enumNames = enums.map((Enum x) => x.name).toList();
   for (final Class klass in classes) {
     addDocumentationComments(
-        indent, klass.documentationComments, _docCommentPrefix);
+        indent, klass.documentationComments, _docCommentSpec);
 
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
     if (klass.fields.isNotEmpty) {
@@ -224,7 +228,7 @@ void _writeClassDeclarations(
               : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
       addDocumentationComments(
-          indent, field.documentationComments, _docCommentPrefix);
+          indent, field.documentationComments, _docCommentSpec);
       if (enumNames.contains(field.type.baseName)) {
         propertyType = 'assign';
       } else {
@@ -423,8 +427,7 @@ String _makeObjcSignature({
 void _writeHostApiDeclaration(
     Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
-  addDocumentationComments(
-      indent, api.documentationComments, _docCommentPrefix);
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
 
   indent.writeln('@protocol $apiName');
   for (final Method func in api.methods) {
@@ -458,7 +461,7 @@ void _writeHostApiDeclaration(
           .writeln('$_docCommentPrefix@return `nil` only when `error != nil`.');
     }
     addDocumentationComments(
-        indent, func.documentationComments, _docCommentPrefix);
+        indent, func.documentationComments, _docCommentSpec);
 
     final String signature = _makeObjcSignature(
       func: func,
@@ -488,8 +491,7 @@ void _writeHostApiDeclaration(
 void _writeFlutterApiDeclaration(
     Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
-  addDocumentationComments(
-      indent, api.documentationComments, _docCommentPrefix);
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
 
   indent.writeln('@interface $apiName : NSObject');
   indent.writeln(
@@ -499,7 +501,7 @@ void _writeFlutterApiDeclaration(
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
     addDocumentationComments(
-        indent, func.documentationComments, _docCommentPrefix);
+        indent, func.documentationComments, _docCommentSpec);
 
     indent.writeln('${_makeObjcSignature(
       func: func,
@@ -540,7 +542,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   void writeEnum(Enum anEnum) {
     final String enumName = _className(options.prefix, anEnum.name);
     addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentPrefix);
+        indent, anEnum.documentationComments, _docCommentSpec);
 
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.scoped('{', '};', () {
@@ -749,7 +751,7 @@ void _writeHostApiSource(
     for (final Method func in api.methods) {
       indent.write('');
       addDocumentationComments(
-          indent, func.documentationComments, _docCommentPrefix);
+          indent, func.documentationComments, _docCommentSpec);
 
       indent.scoped('{', '}', () {
         String? taskQueue;

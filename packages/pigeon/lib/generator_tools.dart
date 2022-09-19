@@ -433,41 +433,58 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
 bool isEnum(Root root, TypeDeclaration type) =>
     root.enums.map((Enum e) => e.name).contains(type.baseName);
 
+/// Describes how to format a document comment.
+class DocumentCommentSpecification {
+  /// Constructor for [DocumentationCommentSpecification]
+  const DocumentCommentSpecification(
+    this.openCommentToken, {
+    this.closeCommentToken = '',
+    this.blockContinuationToken = '',
+  });
+
+  /// Token that represents the open symbol for a documentation comment.
+  final String openCommentToken;
+
+  /// Token that represents the closing symbol for a documentation comment.
+  final String closeCommentToken;
+
+  /// Token that represents the continuation symbol for a block of documentation comments.
+  final String blockContinuationToken;
+}
+
 /// Formats documentation comments and adds them to current Indent.
 ///
 /// The [comments] list is meant for comments written in the input dart file.
-/// The [additionalComments] list is meant for comments added by the generators.
+/// The [generatorComments] list is meant for comments added by the generators.
 /// Include white space for all tokens when called, no assumptions are made.
 void addDocumentationComments(
   Indent indent,
   List<String> comments,
-  String openCommentToken, {
-  String closeCommentToken = '',
-  List<String> additionalComments = const <String>[],
-  String blockContinuationToken = '',
+  DocumentCommentSpecification commentSpec, {
+  List<String> generatorComments = const <String>[],
 }) {
   final List<String> allComments = <String>[
     ...comments,
-    if (comments.isNotEmpty && additionalComments.isNotEmpty) '',
-    ...additionalComments,
+    if (comments.isNotEmpty && generatorComments.isNotEmpty) '',
+    ...generatorComments,
   ];
+  String currentLineOpenToken = commentSpec.openCommentToken;
   if (allComments.length > 1) {
-    if (closeCommentToken != '') {
-      indent.writeln(openCommentToken);
-      openCommentToken =
-          blockContinuationToken != '' ? blockContinuationToken : '';
+    if (commentSpec.closeCommentToken != '') {
+      indent.writeln(commentSpec.openCommentToken);
+      currentLineOpenToken = commentSpec.blockContinuationToken;
     }
     for (final String line in allComments) {
       indent.writeln(
-        '$openCommentToken$line',
+        '$currentLineOpenToken$line',
       );
     }
-    if (closeCommentToken != '') {
-      indent.writeln(closeCommentToken);
+    if (commentSpec.closeCommentToken != '') {
+      indent.writeln(commentSpec.closeCommentToken);
     }
   } else if (allComments.length == 1) {
     indent.writeln(
-      '$openCommentToken${allComments.first}$closeCommentToken',
+      '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
     );
   }
 }

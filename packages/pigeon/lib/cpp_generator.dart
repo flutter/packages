@@ -7,8 +7,12 @@ import 'functional.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show Error;
 
-/// Documentation open symbol.
-const String _commentPrefix = '// ';
+/// General comment opening token.
+const String _commentPrefix = '//';
+
+/// Documentation comment spec.
+const DocumentCommentSpecification _docCommentSpec =
+    DocumentCommentSpecification(_commentPrefix);
 
 /// Options that control how C++ code will be generated.
 class CppOptions {
@@ -196,8 +200,8 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
     'Generated class from Pigeon that represents data sent in messages.'
   ];
 
-  addDocumentationComments(indent, klass.documentationComments, _commentPrefix,
-      additionalComments: generatedMessages);
+  addDocumentationComments(indent, klass.documentationComments, _docCommentSpec,
+      generatorComments: generatedMessages);
 
   indent.write('class ${klass.name} ');
   indent.scoped('{', '};', () {
@@ -205,8 +209,8 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
       indent.writeln('${klass.name}();');
       for (final NamedType field in klass.fields) {
         addDocumentationComments(
-            indent, field.documentationComments, _commentPrefix,
-            additionalComments: generatedMessages);
+            indent, field.documentationComments, _docCommentSpec,
+            generatorComments: generatedMessages);
         final HostDatatype baseDatatype = getFieldHostDatatype(
             field,
             root.classes,
@@ -413,8 +417,8 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
   const List<String> generatedMessages = <String>[
     'Generated interface from Pigeon that represents a handler of messages from Flutter.'
   ];
-  addDocumentationComments(indent, api.documentationComments, _commentPrefix,
-      additionalComments: generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+      generatorComments: generatedMessages);
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
@@ -449,7 +453,7 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
         }
 
         addDocumentationComments(
-            indent, method.documentationComments, _commentPrefix);
+            indent, method.documentationComments, _docCommentSpec);
 
         if (method.isAsynchronous) {
           argSignature.add('std::function<void($returnTypeName reply)> result');
@@ -702,8 +706,8 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
   const List<String> generatedMessages = <String>[
     'Generated class from Pigeon that represents Flutter messages that can be called from C++.'
   ];
-  addDocumentationComments(indent, api.documentationComments, _commentPrefix,
-      additionalComments: generatedMessages);
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+      generatorComments: generatedMessages);
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
     indent.scoped(' private:', '', () {
@@ -719,7 +723,7 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
             : _nullSafeCppTypeForDartType(func.returnType);
         final String callback = 'std::function<void($returnType)>&& callback';
         addDocumentationComments(
-            indent, func.documentationComments, _commentPrefix);
+            indent, func.documentationComments, _docCommentSpec);
         if (func.arguments.isEmpty) {
           indent.writeln('void ${func.name}($callback);');
         } else {
@@ -1054,7 +1058,7 @@ void generateCppHeader(
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
     addDocumentationComments(
-        indent, anEnum.documentationComments, _commentPrefix);
+        indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
     indent.scoped('{', '};', () {
       int index = 0;
