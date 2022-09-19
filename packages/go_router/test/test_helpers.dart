@@ -11,12 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/matching.dart';
-import 'package:go_router/src/typedefs.dart';
 
-Future<GoRouter> createGoRouter(
-  WidgetTester tester, {
-  GoRouterNavigatorBuilder? navigatorBuilder,
-}) async {
+Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final GoRouter goRouter = GoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
@@ -26,12 +22,10 @@ Future<GoRouter> createGoRouter(
         builder: (_, __) => TestErrorScreen(TestFailure('Exception')),
       ),
     ],
-    navigatorBuilder: navigatorBuilder,
   );
   await tester.pumpWidget(MaterialApp.router(
-      routeInformationProvider: goRouter.routeInformationProvider,
-      routeInformationParser: goRouter.routeInformationParser,
-      routerDelegate: goRouter.routerDelegate));
+    routerConfig: goRouter,
+  ));
   return goRouter;
 }
 
@@ -143,20 +137,6 @@ class GoRouterPopSpy extends GoRouter {
   }
 }
 
-class GoRouterRefreshStreamSpy extends GoRouterRefreshStream {
-  GoRouterRefreshStreamSpy(
-    super.stream,
-  ) : notifyCount = 0;
-
-  late int notifyCount;
-
-  @override
-  void notifyListeners() {
-    notifyCount++;
-    super.notifyListeners();
-  }
-}
-
 Future<GoRouter> createRouter(
   List<RouteBase> routes,
   WidgetTester tester, {
@@ -176,9 +156,7 @@ Future<GoRouter> createRouter(
   );
   await tester.pumpWidget(
     MaterialApp.router(
-      routeInformationProvider: goRouter.routeInformationProvider,
-      routeInformationParser: goRouter.routeInformationParser,
-      routerDelegate: goRouter.routerDelegate,
+      routerConfig: goRouter,
     ),
   );
   return goRouter;

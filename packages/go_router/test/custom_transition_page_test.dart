@@ -24,9 +24,7 @@ void main() {
     );
     await tester.pumpWidget(
       MaterialApp.router(
-        routeInformationProvider: router.routeInformationProvider,
-        routeInformationParser: router.routeInformationParser,
-        routerDelegate: router.routerDelegate,
+        routerConfig: router,
         title: 'GoRouter Example',
       ),
     );

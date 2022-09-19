@@ -51,9 +51,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) => ChangeNotifierProvider<LoginInfo>.value(
         value: _loginInfo,
         child: MaterialApp.router(
-          routeInformationProvider: _router.routeInformationProvider,
-          routeInformationParser: _router.routeInformationParser,
-          routerDelegate: _router.routerDelegate,
+          routerConfig: _router,
           title: title,
           debugShowCheckedModeBanner: false,
         ),
@@ -74,7 +72,7 @@ class App extends StatelessWidget {
     ],
 
     // redirect to the login page if the user is not logged in
-    redirect: (GoRouterState state) {
+    redirect: (BuildContext context, GoRouterState state) {
       // if the user is not logged in, they need to login
       final bool loggedIn = _loginInfo.loggedIn;
       final bool loggingIn = state.subloc == '/login';
