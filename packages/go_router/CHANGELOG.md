@@ -1,3 +1,8 @@
+## 4.5.1
+
+- Fixes an issue where GoRoutes with only a redirect were disallowed
+  (flutter/flutter#111763)
+
 ## 4.5.0
 
 - Adds ShellRoute for nested navigation support (flutter/flutter#99126)

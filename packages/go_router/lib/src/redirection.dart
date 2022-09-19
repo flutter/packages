@@ -6,6 +6,7 @@ import 'configuration.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
+import 'typedefs.dart';
 
 /// A GoRouter redirector function.
 // TODO(johnpryan): make redirector async
@@ -76,7 +77,12 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
     assert(topRoute is GoRoute,
         'Last RouteMatch should contain a GoRoute, but was ${topRoute.runtimeType}');
     final GoRoute topGoRoute = topRoute as GoRoute;
-    final String? topRouteLocation = topGoRoute.redirect(
+    final GoRouterRedirect? redirect = topGoRoute.redirect;
+    if (redirect == null) {
+      break;
+    }
+
+    final String? topRouteLocation = redirect(
       GoRouterState(
         configuration,
         location: currentMatches.location.toString(),

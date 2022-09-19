@@ -124,17 +124,12 @@ class GoRoute extends RouteBase {
     this.builder,
     this.pageBuilder,
     this.parentNavigatorKey,
-    this.redirect = _emptyRedirect,
+    this.redirect,
     List<RouteBase> routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
-        assert(!(builder == null && pageBuilder == null),
-            'builder or pageBuilder must be provided'),
-        assert(
-            pageBuilder != null ||
-                builder != _invalidBuilder ||
-                redirect != _noRedirection,
-            'GoRoute builder parameter not set\n'),
+        assert(pageBuilder != null || builder != null || redirect != null,
+            'builder, pageBuilder, or redirect must be provided'),
         super._(
           routes: routes,
         ) {
@@ -288,7 +283,7 @@ class GoRoute extends RouteBase {
   /// routes, also known as route guards. One canonical example is user
   /// authentication. See [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart)
   /// for a complete runnable example.
-  final GoRouterRedirect redirect;
+  final GoRouterRedirect? redirect;
 
   /// An optional key specifying which Navigator to display this route's screen
   /// onto.
@@ -305,19 +300,9 @@ class GoRoute extends RouteBase {
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(_pathParams, match);
 
-  static String? _emptyRedirect(GoRouterState state) => null;
-
   final List<String> _pathParams = <String>[];
 
   late final RegExp _pathRE;
-
-  static String? _noRedirection(GoRouterState state) => null;
-
-  static Widget _invalidBuilder(
-    BuildContext context,
-    GoRouterState state,
-  ) =>
-      const SizedBox.shrink();
 }
 
 /// A route that displays a UI shell around the matching child route.
