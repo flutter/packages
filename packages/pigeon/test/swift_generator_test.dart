@@ -950,11 +950,11 @@ void main() {
 
   test('transfers documentation comments', () {
     final List<String> comments = <String>[
-      'api comment',
-      'api method comment',
-      'class comment',
-      'class field comment',
-      'enum comment',
+      ' api comment',
+      ' api method comment',
+      ' class comment',
+      ' class field comment',
+      ' enum comment',
     ];
     int count = 0;
 

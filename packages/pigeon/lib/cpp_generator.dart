@@ -197,7 +197,7 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
   indent.addln('');
 
   const List<String> generatedMessages = <String>[
-    'Generated class from Pigeon that represents data sent in messages.'
+    ' Generated class from Pigeon that represents data sent in messages.'
   ];
 
   addDocumentationComments(indent, klass.documentationComments, _docCommentSpec,
@@ -209,8 +209,7 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
       indent.writeln('${klass.name}();');
       for (final NamedType field in klass.fields) {
         addDocumentationComments(
-            indent, field.documentationComments, _docCommentSpec,
-            generatorComments: generatedMessages);
+            indent, field.documentationComments, _docCommentSpec);
         final HostDatatype baseDatatype = getFieldHostDatatype(
             field,
             root.classes,
@@ -277,7 +276,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
       root.enums.map((Enum x) => x.name).toSet();
 
   indent.addln('');
-  indent.writeln('$_commentPrefix${klass.name}');
+  indent.writeln('$_commentPrefix ${klass.name}');
   indent.addln('');
 
   // Getters and setters.
@@ -368,9 +367,9 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
     for (final NamedType field in klass.fields) {
       final String instanceVariableName = _makeInstanceVariableName(field);
       final String pointerFieldName =
-          '${_pointerPrefix}_${_makeVariableName(field)}';
+          '${_pointerPrefix} _${_makeVariableName(field)}';
       final String encodableFieldName =
-          '${_encodablePrefix}_${_makeVariableName(field)}';
+          '${_encodablePrefix} _${_makeVariableName(field)}';
       indent.writeln(
           'auto& $encodableFieldName = map.at(flutter::EncodableValue("${field.name}"));');
       if (rootEnumNameSet.contains(field.type.baseName)) {
@@ -415,7 +414,7 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
 
   const List<String> generatedMessages = <String>[
-    'Generated interface from Pigeon that represents a handler of messages from Flutter.'
+    ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
   ];
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
       generatorComments: generatedMessages);
@@ -465,10 +464,10 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
         }
       }
       indent.addln('');
-      indent.writeln('${_commentPrefix}The codec used by ${api.name}.');
+      indent.writeln('$_commentPrefix The codec used by ${api.name}.');
       indent.writeln('static const flutter::StandardMessageCodec& GetCodec();');
       indent.writeln(
-          '${_commentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
+          '$_commentPrefix Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
       indent.writeln(
           'static void SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api);');
       indent.writeln(
@@ -493,7 +492,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
 }
 ''');
   indent.writeln(
-      '${_commentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
+      '$_commentPrefix Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
   indent.write(
       'void ${api.name}::SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api) ');
   indent.scoped('{', '}', () {
@@ -580,7 +579,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                   final String argName = _getSafeArgumentName(index, arg);
 
                   final String encodableArgName =
-                      '${_encodablePrefix}_$argName';
+                      '${_encodablePrefix} _$argName';
                   indent.writeln(
                       'const auto& $encodableArgName = args.at($index);');
                   if (!arg.type.isNullable) {
@@ -704,7 +703,7 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
 
   const List<String> generatedMessages = <String>[
-    'Generated class from Pigeon that represents Flutter messages that can be called from C++.'
+    ' Generated class from Pigeon that represents Flutter messages that can be called from C++.'
   ];
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
       generatorComments: generatedMessages);
@@ -744,7 +743,7 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
 void _writeFlutterApiSource(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
-      '${_commentPrefix}Generated class from Pigeon that represents Flutter messages that can be called from C++.');
+      '$_commentPrefix Generated class from Pigeon that represents Flutter messages that can be called from C++.');
   indent.write(
       '${api.name}::${api.name}(flutter::BinaryMessenger* binary_messenger) ');
   indent.scoped('{', '}', () {
@@ -809,7 +808,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           } else {
             indent.writeln('$returnTypeName $output{};');
           }
-          const String pointerVariable = '${_pointerPrefix}_$output';
+          const String pointerVariable = '${_pointerPrefix} _$output';
           if (func.returnType.baseName == 'int') {
             indent.format('''
 if (const int32_t* $pointerVariable = std::get_if<int32_t>(&args))
@@ -1017,8 +1016,8 @@ void generateCppHeader(
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: _commentPrefix);
   }
-  indent.writeln('$_commentPrefix$generatedCodeWarning');
-  indent.writeln('$_commentPrefix$seeAlsoWarning');
+  indent.writeln('$_commentPrefix $generatedCodeWarning');
+  indent.writeln('$_commentPrefix $seeAlsoWarning');
   indent.addln('');
   final String guardName = _getGuardName(headerFileName, options.namespace);
   indent.writeln('#ifndef $guardName');
@@ -1053,7 +1052,7 @@ void generateCppHeader(
   }
 
   indent.addln('');
-  indent.writeln('${_commentPrefix}Generated class from Pigeon.');
+  indent.writeln('$_commentPrefix Generated class from Pigeon.');
 
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
@@ -1105,8 +1104,8 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: _commentPrefix);
   }
-  indent.writeln('$_commentPrefix$generatedCodeWarning');
-  indent.writeln('$_commentPrefix$seeAlsoWarning');
+  indent.writeln('$_commentPrefix $generatedCodeWarning');
+  indent.writeln('$_commentPrefix $seeAlsoWarning');
   indent.addln('');
   indent.addln('#undef _HAS_EXCEPTIONS');
   indent.addln('');

@@ -211,7 +211,7 @@ void _writeClassDeclarations(
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
-            '$_docCommentPrefix`init` unavailable to enforce nonnull fields, see the `make` class method.');
+            '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.');
         indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
       }
       _writeInitializerDeclaration(indent, klass, classes, enums, prefix);
@@ -457,8 +457,8 @@ void _writeHostApiDeclaration(
     if (!func.returnType.isNullable &&
         !func.returnType.isVoid &&
         !func.isAsynchronous) {
-      indent
-          .writeln('$_docCommentPrefix@return `nil` only when `error != nil`.');
+      indent.writeln(
+          '$_docCommentPrefix @return `nil` only when `error != nil`.');
     }
     addDocumentationComments(
         indent, func.documentationComments, _docCommentSpec);

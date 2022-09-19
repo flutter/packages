@@ -184,15 +184,15 @@ void _writeHostApi(Indent indent, Api api, Root root) {
 
   indent.addln('');
   indent.writeln(
-      '${_docCommentPrefix}Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
+      '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
   indent.write('class ${apiName}Setup ');
   indent.scoped('{', '}', () {
     final String codecName = _getCodecName(api);
-    indent.writeln('${_docCommentPrefix}The codec used by $apiName.');
+    indent.writeln('$_docCommentPrefix The codec used by $apiName.');
     indent.writeln(
         'static var codec: FlutterStandardMessageCodec { $codecName.shared }');
     indent.writeln(
-        '${_docCommentPrefix}Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
+        '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
     indent.write(
         'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
     indent.scoped('{', '}', () {
@@ -623,7 +623,7 @@ import FlutterMacOS
   indent.addln('');
   writeImports();
   indent.addln('');
-  indent.writeln('${_docCommentPrefix}Generated class from Pigeon.');
+  indent.writeln('$_docCommentPrefix Generated class from Pigeon.');
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
     writeEnum(anEnum);

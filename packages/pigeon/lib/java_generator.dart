@@ -299,7 +299,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
   }
 
   const List<String> generatedMessages = <String>[
-    'Generated interface from Pigeon that represents a handler of messages from Flutter.'
+    ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
   ];
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
       generatorComments: generatedMessages);
@@ -344,7 +344,7 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   const List<String> generatedMessages = <String>[
-    'Generated class from Pigeon that represents Flutter messages that can be called from Java.'
+    ' Generated class from Pigeon that represents Flutter messages that can be called from Java.'
   ];
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
       generatorComments: generatedMessages);
@@ -676,7 +676,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     }
 
     const List<String> generatedMessages = <String>[
-      'Generated class from Pigeon that represents data sent in messages.'
+      ' Generated class from Pigeon that represents data sent in messages.'
     ];
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,
