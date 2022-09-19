@@ -58,6 +58,10 @@ class Method extends Node {
   TaskQueueType taskQueueType;
 
   /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
   List<String> documentationComments;
 
   @override
@@ -92,6 +96,10 @@ class Api extends Node {
   String? dartHostTestHandler;
 
   /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
   List<String> documentationComments;
 
   @override
@@ -181,6 +189,10 @@ class NamedType extends Node {
   int? offset;
 
   /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
   List<String> documentationComments;
 
   @override
@@ -205,6 +217,10 @@ class Class extends Node {
   List<NamedType> fields;
 
   /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
   List<String> documentationComments;
 
   @override
@@ -229,6 +245,10 @@ class Enum extends Node {
   List<String> members;
 
   /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
   List<String> documentationComments;
 
   @override

@@ -11,7 +11,7 @@ import 'pigeon_lib.dart' show TaskQueueType;
 const String _docCommentPrefix = '/**';
 
 /// Documentation continuation symbol.
-const String _docCommentContinuation = ' * ';
+const String _docCommentContinuation = ' *';
 
 /// Documentation close symbol.
 const String _docCommentSuffix = ' */';
