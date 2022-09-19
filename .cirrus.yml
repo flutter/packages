@@ -76,7 +76,7 @@ task:
           # Run analysis with path-based dependencies to ensure that publishing
           # the changes won't break analysis of other packages in the respository
           # that depend on it.
-          - ./script/tool_runner.sh make-deps-path-based  --target-dependencies-with-non-breaking-updates 
+          - ./script/tool_runner.sh make-deps-path-based  --target-dependencies-with-non-breaking-updates
           # This uses --run-on-dirty-packages rather than --packages-for-branch
           # since only the packages changed by 'make-deps-path-based' need to be
           # checked.
@@ -237,7 +237,7 @@ task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   << : *MACOS_TEMPLATE
   matrix:
-   ### iOS tasks ###
+    ### iOS tasks ###
     - name: ios-platform_tests
       env:
         PATH: $PATH:/usr/local/bin

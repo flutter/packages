@@ -54,6 +54,11 @@ class RouteBuilder {
     VoidCallback pop,
     bool routerNeglect,
   ) {
+    if (matchList.isEmpty) {
+      // The build method can be called before async redirect finishes. Build a
+      // empty box until then.
+      return const SizedBox.shrink();
+    }
     try {
       return tryBuild(
           context, matchList, pop, routerNeglect, configuration.navigatorKey);

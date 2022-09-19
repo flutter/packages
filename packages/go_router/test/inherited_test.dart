@@ -135,4 +135,7 @@ class MockGoRouter extends GoRouter {
       Object? extra}) {
     latestPushedName = name;
   }
+
+  @override
+  BackButtonDispatcher get backButtonDispatcher => RootBackButtonDispatcher();
 }
