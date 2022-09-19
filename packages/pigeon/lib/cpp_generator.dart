@@ -1014,7 +1014,7 @@ void generateCppHeader(
     String? headerFileName, CppOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: _commentPrefix);
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
   }
   indent.writeln('$_commentPrefix $generatedCodeWarning');
   indent.writeln('$_commentPrefix $seeAlsoWarning');
@@ -1102,7 +1102,7 @@ void generateCppHeader(
 void generateCppSource(CppOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: _commentPrefix);
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
   }
   indent.writeln('$_commentPrefix $generatedCodeWarning');
   indent.writeln('$_commentPrefix $seeAlsoWarning');
