@@ -327,7 +327,7 @@ class GoRoute extends RouteBase {
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(_pathParams, match);
-  
+
   final List<String> _pathParams = <String>[];
 
   late final RegExp _pathRE;
