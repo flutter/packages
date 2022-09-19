@@ -1069,4 +1069,81 @@ void main() {
     expect(code,
         isNot(contains('@javax.annotation.Generated("dev.flutter.pigeon")')));
   });
+
+  test('transfers documentation comments', () {
+    final List<String> comments = <String>[
+      ' api comment',
+      ' api method comment',
+      ' class comment',
+      ' class field comment',
+      ' enum comment',
+    ];
+    int count = 0;
+
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'api',
+          location: ApiLocation.flutter,
+          documentationComments: <String>[comments[count++]],
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              documentationComments: <String>[comments[count++]],
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[
+        Class(
+          name: 'class',
+          documentationComments: <String>[comments[count++]],
+          fields: <NamedType>[
+            NamedType(
+              documentationComments: <String>[comments[count++]],
+              type: const TypeDeclaration(
+                  baseName: 'Map',
+                  isNullable: true,
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'int', isNullable: true),
+                  ]),
+              name: 'field1',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'enum',
+          documentationComments: <String>[comments[count++]],
+          members: <String>[
+            'one',
+            'two',
+          ],
+        ),
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    for (final String comment in comments) {
+      // This regex finds the comment only between the open and close comment block
+      expect(
+          RegExp(r'(?<=\/\*\*.*?)' + comment + r'(?=.*?\*\/)', dotAll: true)
+              .hasMatch(code),
+          true);
+    }
+  });
 }
