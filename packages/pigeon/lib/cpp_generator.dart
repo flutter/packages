@@ -367,9 +367,9 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
     for (final NamedType field in klass.fields) {
       final String instanceVariableName = _makeInstanceVariableName(field);
       final String pointerFieldName =
-          '${_pointerPrefix} _${_makeVariableName(field)}';
+          '${_pointerPrefix}_${_makeVariableName(field)}';
       final String encodableFieldName =
-          '${_encodablePrefix} _${_makeVariableName(field)}';
+          '${_encodablePrefix}_${_makeVariableName(field)}';
       indent.writeln(
           'auto& $encodableFieldName = map.at(flutter::EncodableValue("${field.name}"));');
       if (rootEnumNameSet.contains(field.type.baseName)) {
@@ -579,7 +579,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                   final String argName = _getSafeArgumentName(index, arg);
 
                   final String encodableArgName =
-                      '${_encodablePrefix} _$argName';
+                      '${_encodablePrefix}_$argName';
                   indent.writeln(
                       'const auto& $encodableArgName = args.at($index);');
                   if (!arg.type.isNullable) {
@@ -808,7 +808,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           } else {
             indent.writeln('$returnTypeName $output{};');
           }
-          const String pointerVariable = '${_pointerPrefix} _$output';
+          const String pointerVariable = '${_pointerPrefix}_$output';
           if (func.returnType.baseName == 'int') {
             indent.format('''
 if (const int32_t* $pointerVariable = std::get_if<int32_t>(&args))
