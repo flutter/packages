@@ -344,7 +344,7 @@ void main() {
             routes: <RouteBase>[
               ShellRoute(
                 builder: _mockShellBuilder,
-                routes: [
+                routes: <GoRoute>[
                   GoRoute(
                     path: '/a',
                     builder: _mockScreenBuilder,
