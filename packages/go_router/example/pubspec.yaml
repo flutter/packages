@@ -23,7 +23,6 @@ dependencies:
   url_launcher: ^6.0.7
 
 dev_dependencies:
-  all_lint_rules_community: ^0.0.4
   flutter_test:
     sdk: flutter
 

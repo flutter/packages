@@ -1,3 +1,5 @@
+## NEXT
+
 ## 5.0.0
 
 - Fixes a bug where intermediate route redirect methods are not called.
