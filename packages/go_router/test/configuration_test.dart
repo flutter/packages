@@ -337,10 +337,6 @@ void main() {
         () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shell =
-          GlobalKey<NavigatorState>(debugLabel: 'shell');
-      final GlobalKey<NavigatorState> shell2 =
-          GlobalKey<NavigatorState>(debugLabel: 'shell2');
       RouteConfiguration(
         routes: <RouteBase>[
           ShellRoute(
