@@ -1,10 +1,14 @@
+## 1.0.13
+
+* Support the latest `package:analyzer`.
+
 ## 1.0.12
 
 * Adds support for enhanced enums. [#105876](https://github.com/flutter/flutter/issues/105876).
 
 ## 1.0.11
 
-* Replaces mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
+* Replace mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
 
 ## 1.0.10
 
