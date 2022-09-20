@@ -2,6 +2,10 @@
 
 ## 5.0.0
 
+- Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981)
+
+## 5.0.0
+
 - Fixes a bug where intermediate route redirect methods are not called.
 - GoRouter implements the RouterConfig interface, allowing you to call
   MaterialApp.router(routerConfig: _myGoRouter) instead of passing
