@@ -227,8 +227,9 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final NetworkImageWithRetry typedOther = other;
-    return url == typedOther.url && scale == typedOther.scale;
+    return other is NetworkImageWithRetry &&
+        url == other.url &&
+        scale == other.scale;
   }
 
   @override

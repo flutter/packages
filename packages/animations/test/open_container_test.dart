@@ -1623,7 +1623,7 @@ void main() {
     expect(material.clipBehavior, Clip.none);
   });
 
-  Widget _createRootNavigatorTest({
+  Widget createRootNavigatorTest({
     required Key appKey,
     required Key nestedNavigatorKey,
     required bool useRootNavigator,
@@ -1671,7 +1671,7 @@ void main() {
     const Key appKey = Key('App');
     const Key nestedNavigatorKey = Key('Nested Navigator');
 
-    await tester.pumpWidget(_createRootNavigatorTest(
+    await tester.pumpWidget(createRootNavigatorTest(
         appKey: appKey,
         nestedNavigatorKey: nestedNavigatorKey,
         useRootNavigator: false));
@@ -1694,7 +1694,7 @@ void main() {
     const Key appKey = Key('App');
     const Key nestedNavigatorKey = Key('Nested Navigator');
 
-    await tester.pumpWidget(_createRootNavigatorTest(
+    await tester.pumpWidget(createRootNavigatorTest(
         appKey: appKey,
         nestedNavigatorKey: nestedNavigatorKey,
         useRootNavigator: true));
@@ -1717,7 +1717,7 @@ void main() {
     const Key appKey = Key('App');
     const Key nestedNavigatorKey = Key('Nested Navigator');
 
-    await tester.pumpWidget(_createRootNavigatorTest(
+    await tester.pumpWidget(createRootNavigatorTest(
         appKey: appKey,
         nestedNavigatorKey: nestedNavigatorKey,
         useRootNavigator: false));
@@ -1734,7 +1734,7 @@ void main() {
     const Key appKey = Key('App');
     const Key nestedNavigatorKey = Key('Nested Navigator');
 
-    await tester.pumpWidget(_createRootNavigatorTest(
+    await tester.pumpWidget(createRootNavigatorTest(
         appKey: appKey,
         nestedNavigatorKey: nestedNavigatorKey,
         useRootNavigator: true));
@@ -1787,7 +1787,7 @@ void main() {
 
   // Regression test for https://github.com/flutter/flutter/issues/72238.
   testWidgets(
-    'OpenContainer\'s source widget is visible in closed container route if '
+    "OpenContainer's source widget is visible in closed container route if "
     'open container route is pushed from not using the OpenContainer itself',
     (WidgetTester tester) async {
       final Widget openContainer = OpenContainer(

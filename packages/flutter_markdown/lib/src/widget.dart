@@ -7,9 +7,9 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 
+import '../flutter_markdown.dart';
 import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
 
 /// Signature for callbacks used by [MarkdownWidget] when the user taps a link.
@@ -271,7 +271,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   Widget build(BuildContext context, List<Widget>? children);
 
   @override
-  _MarkdownWidgetState createState() => _MarkdownWidgetState();
+  State<MarkdownWidget> createState() => _MarkdownWidgetState();
 }
 
 class _MarkdownWidgetState extends State<MarkdownWidget>
@@ -310,8 +310,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
 
     final md.Document document = md.Document(
       blockSyntaxes: widget.blockSyntaxes,
-      inlineSyntaxes: (widget.inlineSyntaxes ?? <md.InlineSyntax>[])
-        ..add(TaskListSyntax()),
+      inlineSyntaxes: widget.inlineSyntaxes,
       extensionSet: widget.extensionSet ?? md.ExtensionSet.gitHubFlavored,
       encodeHtml: false,
     );
@@ -348,8 +347,9 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
     final List<GestureRecognizer> localRecognizers =
         List<GestureRecognizer>.from(_recognizers);
     _recognizers.clear();
-    for (final GestureRecognizer recognizer in localRecognizers)
+    for (final GestureRecognizer recognizer in localRecognizers) {
       recognizer.dispose();
+    }
   }
 
   @override
@@ -436,12 +436,14 @@ class MarkdownBody extends MarkdownWidget {
           softLineBreak: softLineBreak,
         );
 
-  /// See [ScrollView.shrinkWrap]
+  /// If [shrinkWrap] is `true`, [MarkdownBody] will take the minimum height
+  /// that wraps its content. Otherwise, [MarkdownBody] will expand to the
+  /// maximum allowed height.
   final bool shrinkWrap;
 
   @override
   Widget build(BuildContext context, List<Widget>? children) {
-    if (children!.length == 1) {
+    if (children!.length == 1 && shrinkWrap) {
       return children.single;
     }
     return Column(
@@ -545,11 +547,16 @@ class Markdown extends MarkdownWidget {
 }
 
 /// Parse [task list items](https://github.github.com/gfm/#task-list-items-extension-).
+///
+/// This class is no longer used as Markdown now supports checkbox syntax natively.
+@Deprecated(
+    'Use [OrderedListWithCheckBoxSyntax] or [UnorderedListWithCheckBoxSyntax]')
 class TaskListSyntax extends md.InlineSyntax {
-  /// Cretaes a new instance.
+  /// Creates a new instance.
+  @Deprecated(
+      'Use [OrderedListWithCheckBoxSyntax] or [UnorderedListWithCheckBoxSyntax]')
   TaskListSyntax() : super(_pattern);
 
-  // FIXME: Waiting for dart-lang/markdown#269 to land
   static const String _pattern = r'^ *\[([ xX])\] +';
 
   @override

@@ -2,15 +2,43 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show FutureOr;
+
 import 'package:flutter/widgets.dart';
 
-import 'go_route_match.dart';
-import 'go_router_state.dart';
+import 'configuration.dart';
 
-/// Signature of a go router builder function with matchers.
-typedef GoRouterBuilderWithMatches = Widget Function(
+/// The widget builder for [GoRoute].
+typedef GoRouterWidgetBuilder = Widget Function(
   BuildContext context,
-  Iterable<GoRouteMatch> matches,
+  GoRouterState state,
+);
+
+/// The page builder for [GoRoute].
+typedef GoRouterPageBuilder = Page<dynamic> Function(
+  BuildContext context,
+  GoRouterState state,
+);
+
+/// The widget builder for [ShellRoute].
+typedef ShellRouteBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
+);
+
+/// The page builder for [ShellRoute].
+typedef ShellRoutePageBuilder = Page<dynamic> Function(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
+);
+
+/// The signature of the navigatorBuilder callback.
+typedef GoRouterNavigatorBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
 );
 
 /// Signature of a go router builder function with navigator.
@@ -20,24 +48,6 @@ typedef GoRouterBuilderWithNav = Widget Function(
   Navigator navigator,
 );
 
-/// The signature of the page builder callback for a matched GoRoute.
-typedef GoRouterPageBuilder = Page<void> Function(
-  BuildContext context,
-  GoRouterState state,
-);
-
-/// The signature of the widget builder callback for a matched GoRoute.
-typedef GoRouterWidgetBuilder = Widget Function(
-  BuildContext context,
-  GoRouterState state,
-);
-
 /// The signature of the redirect callback.
-typedef GoRouterRedirect = String? Function(GoRouterState state);
-
-/// The signature of the navigatorBuilder callback.
-typedef GoRouterNavigatorBuilder = Widget Function(
-  BuildContext context,
-  GoRouterState state,
-  Widget child,
-);
+typedef GoRouterRedirect = FutureOr<String?> Function(
+    BuildContext context, GoRouterState state);

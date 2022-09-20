@@ -1,3 +1,87 @@
+## 5.0.0
+
+- Fixes a bug where intermediate route redirect methods are not called.
+- GoRouter implements the RouterConfig interface, allowing you to call
+  MaterialApp.router(routerConfig: _myGoRouter) instead of passing
+  the RouterDelegate, RouteInformationParser, and RouteInformationProvider
+  fields.
+- **BREAKING CHANGE**
+  - Redesigns redirection API, adds asynchronous feature, and adds build context to redirect.
+  - Removes GoRouterRefreshStream
+  - Removes navigatorBuilder
+  - Removes urlPathStrategy
+- [go_router v5 migration guide](https://flutter.dev/go/go-router-v5-breaking-changes)
+
+## 4.5.1
+
+- Fixes an issue where GoRoutes with only a redirect were disallowed
+  (flutter/flutter#111763)
+
+## 4.5.0
+
+- Adds ShellRoute for nested navigation support (flutter/flutter#99126)
+- Adds `parentNavigatorKey` to GoRoute, which specifies the Navigator to place that
+  route's Page onto.
+
+## 4.4.1
+
+- Fix an issue where disabling logging clears the root logger's listeners
+
+## 4.4.0
+
+- Adds `buildPageWithState` to `GoRouteData`.
+- `GoRouteData.buildPage` is now deprecated in favor of `GoRouteData.buildPageWithState`.
+
+## 4.3.0
+
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+
+## 4.2.9
+
+* Updates text theme parameters to avoid deprecation issues.
+* Fixes lint warnings.
+
+## 4.2.8
+
+- Fixes namedLocation to return URIs without trailing question marks if there are no query parameters.
+- Cleans up examples.
+
+## 4.2.7
+
+- Updates README.
+
+## 4.2.6
+
+- Fixes rendering issues in the README.
+
+## 4.2.5
+
+- Fixes a bug where calling extra parameter is always null in route level redirect callback
+
+## 4.2.4
+
+- Rewrites Readme and examples.
+
+## 4.2.3
+
+- Fixes a bug where the ValueKey to be the same when a page was pushed multiple times.
+
+## 4.2.2
+
+- Fixes a bug where go_router_builder wasn't detecting annotations.
+
+## 4.2.1
+
+- Refactors internal classes and methods
+
+## 4.2.0
+
+- Adds `void replace()` and `replaceNamed` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.
+
+## 4.1.1
+
+- Fixes a bug where calling namedLocation does not support case-insensitive way.
+
 ## 4.1.0
 
 - Adds `bool canPop()` to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`.

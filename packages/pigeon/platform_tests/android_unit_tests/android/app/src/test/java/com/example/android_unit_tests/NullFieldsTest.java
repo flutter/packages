@@ -27,14 +27,14 @@ public class NullFieldsTest {
             .setError("error")
             .setIndices(Arrays.asList(1L, 2L, 3L))
             .setRequest(request)
-            .setType(NullFields.NullFieldsSearchReplyType.success)
+            .setType(NullFields.NullFieldsSearchReplyType.SUCCESS)
             .build();
 
     assertEquals(reply.getResult(), "result");
     assertEquals(reply.getError(), "error");
     assertEquals(reply.getIndices(), Arrays.asList(1L, 2L, 3L));
     assertEquals(reply.getRequest().getQuery(), "hello");
-    assertEquals(reply.getType(), NullFields.NullFieldsSearchReplyType.success);
+    assertEquals(reply.getType(), NullFields.NullFieldsSearchReplyType.SUCCESS);
   }
 
   @Test
@@ -92,14 +92,14 @@ public class NullFieldsTest {
     map.put("error", "error");
     map.put("indices", Arrays.asList(1L, 2L, 3L));
     map.put("request", requestMap);
-    map.put("type", NullFields.NullFieldsSearchReplyType.success.ordinal());
+    map.put("type", NullFields.NullFieldsSearchReplyType.SUCCESS.ordinal());
 
     NullFields.NullFieldsSearchReply reply = NullFields.NullFieldsSearchReply.fromMap(map);
     assertEquals(reply.getResult(), "result");
     assertEquals(reply.getError(), "error");
     assertEquals(reply.getIndices(), Arrays.asList(1L, 2L, 3L));
     assertEquals(reply.getRequest().getQuery(), "hello");
-    assertEquals(reply.getType(), NullFields.NullFieldsSearchReplyType.success);
+    assertEquals(reply.getType(), NullFields.NullFieldsSearchReplyType.SUCCESS);
   }
 
   @Test
@@ -152,7 +152,7 @@ public class NullFieldsTest {
                     .setQuery("hello")
                     .setIdentifier(1L)
                     .build())
-            .setType(NullFields.NullFieldsSearchReplyType.success)
+            .setType(NullFields.NullFieldsSearchReplyType.SUCCESS)
             .build();
 
     Map<String, Object> map = reply.toMap();
@@ -160,7 +160,7 @@ public class NullFieldsTest {
     assertEquals(map.get("error"), "error");
     assertEquals(map.get("indices"), Arrays.asList(1L, 2L, 3L));
     assertEquals(map.get("request"), reply.getRequest().toMap());
-    assertEquals(map.get("type"), NullFields.NullFieldsSearchReplyType.success.ordinal());
+    assertEquals(map.get("type"), NullFields.NullFieldsSearchReplyType.SUCCESS.ordinal());
   }
 
   @Test

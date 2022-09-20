@@ -1,3 +1,57 @@
+## 4.1.0
+
+* Adds documentation comment support for all currently supported languages.
+
+## 4.0.3
+
+* [swift] Makes swift output work on macOS.
+
+## 4.0.2
+
+* Fixes lint warnings.
+
+## 4.0.1
+
+* Exposes `SwiftOptions`.
+
+## 4.0.0
+
+* [java] **BREAKING CHANGE**: Changes style for enum values from camelCase to snake_case.
+  Generated java enum values will now always be in upper snake_case.
+
+## 3.2.9
+
+* Updates text theme parameters to avoid deprecation issues.
+
+## 3.2.8
+
+* [dart] Deduces the correct import statement for Dart test files made with
+  `dartHostTestHandler` instead of relying on relative imports.
+
+## 3.2.7
+
+* Requires `analyzer 4.4.0`, and replaces use of deprecated APIs.
+
+## 3.2.6
+
+* [java] Fixes returning int values from FlutterApi methods that fit in 32 bits.
+
+## 3.2.5
+
+* [c++] Fixes style issues in `FlutterError` and `ErrorOr`. The names and
+  visibility of some members have changed, so this may require updates
+  to existing code.
+
+## 3.2.4
+
+* [c++] Fixes most non-class arguments and return values in host APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
+
+## 3.2.3
+
+* Adds `unnecessary_import` to linter ignore list in generated dart tests.
+
 ## 3.2.2
 
 * Adds `unnecessary_import` to linter ignore list for `package:flutter/foundation.dart`.

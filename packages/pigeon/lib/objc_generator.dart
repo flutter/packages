@@ -2,11 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/functional.dart';
-import 'package:pigeon/pigeon_lib.dart' show TaskQueueType, Error;
-
 import 'ast.dart';
+import 'functional.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart' show Error, TaskQueueType;
+
+/// Documentation comment open symbol.
+const String _docCommentPrefix = '///';
+
+/// Documentation comment spec.
+const DocumentCommentSpecification _docCommentSpec =
+    DocumentCommentSpecification(_docCommentPrefix);
 
 /// Options that control how Objective-C code will be generated.
 class ObjcOptions {
@@ -107,9 +113,10 @@ String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   return result;
 }
 
-String? _objcTypePtrForPrimitiveDartType(String? classPrefix, NamedType field) {
-  return _objcTypeForDartTypeMap.containsKey(field.type.baseName)
-      ? _objcTypeForDartType(classPrefix, field.type).ptr
+String? _objcTypePtrForPrimitiveDartType(
+    String? classPrefix, TypeDeclaration type) {
+  return _objcTypeForDartTypeMap.containsKey(type.baseName)
+      ? _objcTypeForDartType(classPrefix, type).ptr
       : null;
 }
 
@@ -170,8 +177,11 @@ void _writeInitializerDeclaration(Indent indent, Class klass,
               indent.write(x);
             };
       isFirst = false;
-      final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
-          (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+      final HostDatatype hostDatatype = getFieldHostDatatype(
+          field,
+          classes,
+          enums,
+          (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
           customResolver: enumNames.contains(field.type.baseName)
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
@@ -192,25 +202,33 @@ void _writeClassDeclarations(
     Indent indent, List<Class> classes, List<Enum> enums, String? prefix) {
   final List<String> enumNames = enums.map((Enum x) => x.name).toList();
   for (final Class klass in classes) {
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec);
+
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
     if (klass.fields.isNotEmpty) {
       if (klass.fields
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
-            '/// `init` unavailable to enforce nonnull fields, see the `make` class method.');
+            '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.');
         indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
       }
       _writeInitializerDeclaration(indent, klass, classes, enums, prefix);
       indent.addln(';');
     }
     for (final NamedType field in klass.fields) {
-      final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
-          (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+      final HostDatatype hostDatatype = getFieldHostDatatype(
+          field,
+          classes,
+          enums,
+          (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
           customResolver: enumNames.contains(field.type.baseName)
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
+      addDocumentationComments(
+          indent, field.documentationComments, _docCommentSpec);
       if (enumNames.contains(field.type.baseName)) {
         propertyType = 'assign';
       } else {
@@ -409,6 +427,8 @@ String _makeObjcSignature({
 void _writeHostApiDeclaration(
     Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
+
   indent.writeln('@protocol $apiName');
   for (final Method func in api.methods) {
     final _ObjcPtr returnTypeName =
@@ -437,16 +457,21 @@ void _writeHostApiDeclaration(
     if (!func.returnType.isNullable &&
         !func.returnType.isVoid &&
         !func.isAsynchronous) {
-      indent.writeln('/// @return `nil` only when `error != nil`.');
+      indent.writeln(
+          '$_docCommentPrefix @return `nil` only when `error != nil`.');
     }
-    indent.writeln(_makeObjcSignature(
-            func: func,
-            options: options,
-            returnType: returnType,
-            lastArgName: lastArgName,
-            lastArgType: lastArgType,
-            isEnum: (TypeDeclaration t) => isEnum(root, t)) +
-        ';');
+    addDocumentationComments(
+        indent, func.documentationComments, _docCommentSpec);
+
+    final String signature = _makeObjcSignature(
+      func: func,
+      options: options,
+      returnType: returnType,
+      lastArgName: lastArgName,
+      lastArgType: lastArgType,
+      isEnum: (TypeDeclaration t) => isEnum(root, t),
+    );
+    indent.writeln('$signature;');
   }
   indent.writeln('@end');
   indent.writeln('');
@@ -466,6 +491,8 @@ void _writeHostApiDeclaration(
 void _writeFlutterApiDeclaration(
     Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
+
   indent.writeln('@interface $apiName : NSObject');
   indent.writeln(
       '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
@@ -473,15 +500,17 @@ void _writeFlutterApiDeclaration(
     final _ObjcPtr returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
-    indent.writeln(_makeObjcSignature(
-          func: func,
-          options: options,
-          returnType: 'void',
-          lastArgName: 'completion',
-          lastArgType: callbackType,
-          isEnum: (TypeDeclaration t) => isEnum(root, t),
-        ) +
-        ';');
+    addDocumentationComments(
+        indent, func.documentationComments, _docCommentSpec);
+
+    indent.writeln('${_makeObjcSignature(
+      func: func,
+      options: options,
+      returnType: 'void',
+      lastArgName: 'completion',
+      lastArgType: callbackType,
+      isEnum: (TypeDeclaration t) => isEnum(root, t),
+    )};');
   }
   indent.writeln('@end');
 }
@@ -512,6 +541,9 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   void writeEnum(Enum anEnum) {
     final String enumName = _className(options.prefix, anEnum.name);
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.scoped('{', '};', () {
       int index = 0;
@@ -547,7 +579,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   for (final Api api in root.apis) {
     indent.writeln(
-        '/// The codec used by ${_className(options.prefix, api.name)}.');
+        '${_docCommentPrefix}The codec used by ${_className(options.prefix, api.name)}.');
     indent.writeln(
         'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void);');
     indent.addln('');
@@ -586,7 +618,7 @@ String _dictValue(
 }
 
 String _getSelector(Method func, String lastSelectorComponent) =>
-    _getSelectorComponents(func, lastSelectorComponent).join(':') + ':';
+    '${_getSelectorComponents(func, lastSelectorComponent).join(':')}:';
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgName(int count, NamedType arg) =>
@@ -718,6 +750,9 @@ void _writeHostApiSource(
   indent.scoped('{', '}', () {
     for (final Method func in api.methods) {
       indent.write('');
+      addDocumentationComments(
+          indent, func.documentationComments, _docCommentSpec);
+
       indent.scoped('{', '}', () {
         String? taskQueue;
         if (func.taskQueueType != TaskQueueType.serial) {
@@ -983,7 +1018,7 @@ List<Error> validateObjc(ObjcOptions options, Root root) {
           // TODO(gaaclarke): Add line number.
           errors.add(Error(
               message:
-                  'Nullable enum types aren\'t support in ObjC arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name}).'));
+                  "Nullable enum types aren't support in ObjC arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name})."));
         }
       }
     }

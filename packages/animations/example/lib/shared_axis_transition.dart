@@ -11,7 +11,7 @@ class SharedAxisTransitionDemo extends StatefulWidget {
   const SharedAxisTransitionDemo({Key? key}) : super(key: key);
 
   @override
-  _SharedAxisTransitionDemoState createState() {
+  State<SharedAxisTransitionDemo> createState() {
     return _SharedAxisTransitionDemoState();
   }
 }
@@ -43,7 +43,6 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
           children: <Widget>[
             Expanded(
               child: PageTransitionSwitcher(
-                duration: const Duration(milliseconds: 300),
                 reverse: !_isLoggedIn,
                 transitionBuilder: (
                   Widget child,
@@ -51,10 +50,10 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                   Animation<double> secondaryAnimation,
                 ) {
                   return SharedAxisTransition(
-                    child: child,
                     animation: animation,
                     secondaryAnimation: secondaryAnimation,
                     transitionType: _transitionType!,
+                    child: child,
                   );
                 },
                 child: _isLoggedIn ? _CoursePage() : _SignInPage(),
@@ -121,7 +120,7 @@ class _CoursePage extends StatelessWidget {
         const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
         Text(
           'Streamling your courses',
-          style: Theme.of(context).textTheme.headline5,
+          style: Theme.of(context).textTheme.headlineSmall,
           textAlign: TextAlign.center,
         ),
         const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
@@ -193,7 +192,7 @@ class _SignInPage extends StatelessWidget {
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
             Text(
               'Hi David Park',
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
             const Text(

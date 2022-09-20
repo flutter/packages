@@ -59,7 +59,7 @@ class ImageColors extends StatefulWidget {
   final Size? imageSize;
 
   @override
-  _ImageColorsState createState() {
+  State<ImageColors> createState() {
     return _ImageColorsState();
   }
 }
@@ -149,9 +149,6 @@ class _ImageColorsState extends State<ImageColors> {
         title: Text(widget.title ?? ''),
       ),
       body: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -175,9 +172,7 @@ class _ImageColorsState extends State<ImageColors> {
                       decoration: BoxDecoration(
                           color: _kSelectionRectangleBackground,
                           border: Border.all(
-                            width: 1.0,
                             color: _kSelectionRectangleBorder,
-                            style: BorderStyle.solid,
                           )),
                     )),
               ]),
@@ -218,7 +213,6 @@ class PaletteSwatches extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Wrap(
           children: swatches,
@@ -280,13 +274,11 @@ class PaletteSwatch extends StatelessWidget {
               fallbackWidth: 34.0,
               fallbackHeight: 20.0,
               color: Color(0xff404040),
-              strokeWidth: 2.0,
             )
           : Container(
               decoration: BoxDecoration(
                   color: color,
                   border: Border.all(
-                    width: 1.0,
                     color: _kPlaceholderColor,
                     style: colorDistance < 0.2
                         ? BorderStyle.solid
@@ -301,7 +293,6 @@ class PaletteSwatch extends StatelessWidget {
       swatch = ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 130.0, minWidth: 130.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             swatch,
             Container(width: 5.0),

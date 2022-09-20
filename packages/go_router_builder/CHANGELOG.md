@@ -1,3 +1,32 @@
+## 1.0.13
+
+* Support the latest `package:analyzer`.
+
+## 1.0.12
+
+* Adds support for enhanced enums. [#105876](https://github.com/flutter/flutter/issues/105876).
+
+## 1.0.11
+
+* Replace mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
+
+## 1.0.10
+
+* Adds a lint ignore for deprecated member in the example. 
+
+## 1.0.9
+
+* Fixes lint warnings.
+
+## 1.0.8
+
+* Updates `analyzer` to 4.4.0.
+* Removes the usage of deprecated API in `analyzer`.
+
+## 1.0.7
+
+* Supports newer versions of `analyzer`.
+
 ## 1.0.6
 
 * Uses path-based deps in example.
