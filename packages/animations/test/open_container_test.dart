@@ -580,6 +580,7 @@ void main() {
     final NavigatorState navigator = tester.state(find.byType(Navigator));
     navigator.pop();
     await tester.pump();
+    await tester.pump();
 
     expect(find.text('Closed'), findsOneWidget);
     expect(find.text('Open'), findsOneWidget);
@@ -1854,11 +1855,11 @@ void _expectMaterialPropertiesHaveAdvanced({
 }
 
 double _getOpacity(WidgetTester tester, String label) {
-  final Opacity widget = tester.firstWidget(find.ancestor(
+  final FadeTransition widget = tester.firstWidget(find.ancestor(
     of: find.text(label),
-    matching: find.byType(Opacity),
+    matching: find.byType(FadeTransition),
   ));
-  return widget.opacity;
+  return widget.opacity.value;
 }
 
 class _TrackedData {
