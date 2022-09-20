@@ -137,10 +137,23 @@ Future<int> _runAndroidKotlinUnitTests() async {
     }
   }
 
+  const String androidPath = '$androidKotlinUnitTestsPath/android';
+
+  if (!File('android/gradlew').existsSync()) {
+    final int buildApk = await _runProcess(
+      'flutter',
+      <String>['build', 'apk', '--debug'],
+      workingDirectory: androidPath,
+    );
+    if (buildApk != 0) {
+      return buildApk;
+    }
+  }
+
   final Process gradlewExists = await _streamOutput(Process.start(
     './gradlew',
     <String>[],
-    workingDirectory: '$androidKotlinUnitTestsPath/android',
+    workingDirectory: androidPath,
     runInShell: true,
   ));
   final int gradlewExistsCode = await gradlewExists.exitCode;
