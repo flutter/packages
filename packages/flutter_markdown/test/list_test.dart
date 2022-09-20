@@ -5,6 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markdown/markdown.dart'
+    show indicatorForCheckedCheckBox, indicatorForUncheckedCheckBox;
 import 'utils.dart';
 
 void main() => defineTests();
@@ -129,9 +131,9 @@ void defineTests() {
 
         expectTextStrings(widgets, <String>[
           String.fromCharCode(Icons.check_box.codePoint),
-          'Item 1',
+          '${indicatorForCheckedCheckBox}Item 1',
           String.fromCharCode(Icons.check_box_outline_blank.codePoint),
-          'Item 2',
+          '${indicatorForUncheckedCheckBox}Item 2',
         ]);
       },
     );
@@ -177,10 +179,58 @@ void defineTests() {
 
         expectTextStrings(widgets, <String>[
           'true',
-          'Item 1',
+          '${indicatorForCheckedCheckBox}Item 1',
           'false',
-          'Item 2',
+          '${indicatorForUncheckedCheckBox}Item 2',
         ]);
+      },
+    );
+  });
+
+  group('fitContent', () {
+    testWidgets(
+      'uses maximum width when false',
+      (WidgetTester tester) async {
+        const String data = '- Foo\n- Bar';
+
+        await tester.pumpWidget(
+          boilerplate(
+            Column(
+              children: const <Widget>[
+                MarkdownBody(fitContent: false, data: data),
+              ],
+            ),
+          ),
+        );
+
+        final double screenWidth = tester.allElements.first.size!.width;
+        final double markdownBodyWidth =
+            find.byType(MarkdownBody).evaluate().single.size!.width;
+
+        expect(markdownBodyWidth, equals(screenWidth));
+      },
+    );
+
+    testWidgets(
+      'uses minimum width when true',
+      (WidgetTester tester) async {
+        const String data = '- Foo\n- Bar';
+
+        await tester.pumpWidget(
+          boilerplate(
+            Column(
+              children: const <Widget>[
+                MarkdownBody(data: data),
+              ],
+            ),
+          ),
+        );
+
+        final double screenWidth = tester.allElements.first.size!.width;
+        final double markdownBodyWidth =
+            find.byType(MarkdownBody).evaluate().single.size!.width;
+
+        expect(markdownBodyWidth, lessThan(screenWidth));
       },
     );
   });

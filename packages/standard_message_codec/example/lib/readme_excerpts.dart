@@ -7,11 +7,10 @@
 
 // ignore_for_file: avoid_print
 
-// #docregion Encoding
 import 'dart:typed_data';
 import 'package:standard_message_codec/standard_message_codec.dart';
-// #enddocregion Encoding
 
+// #docregion Encoding
 void main() {
   final ByteData? data =
       const StandardMessageCodec().encodeMessage(<Object, Object>{
@@ -20,3 +19,4 @@ void main() {
   });
   print('The encoded message is $data');
 }
+// #enddocregion Encoding

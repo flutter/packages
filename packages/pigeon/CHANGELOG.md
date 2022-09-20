@@ -1,6 +1,14 @@
-## 4.1.0
+## 4.2.0
 
 * Adds experimental support for Kotlin generation.
+
+## 4.1.0
+
+* Adds documentation comment support for all currently supported languages.
+
+## 4.0.3
+
+* [swift] Makes swift output work on macOS.
 
 ## 4.0.2
 

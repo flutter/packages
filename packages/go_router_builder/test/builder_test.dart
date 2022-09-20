@@ -31,4 +31,5 @@ const Set<String> _expectedAnnotatedTests = <String>{
   'NullableRequiredParam',
   'UnsupportedType',
   'theAnswer',
+  'EnumParam',
 };

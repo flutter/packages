@@ -26,7 +26,7 @@ macos_template: &MACOS_TEMPLATE
   # PRs on macOS.
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   macos_instance:
-    image: ghcr.io/cirruslabs/macos-monterey-xcode:13.4.1
+    image: ghcr.io/cirruslabs/macos-ventura-xcode:14
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -62,7 +62,7 @@ task:
     zone: us-central1-a
     namespace: default
     cpu: 4
-    memory: 8G
+    memory: 12G
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
     ### Platform-agnostic tasks ###
@@ -76,7 +76,7 @@ task:
           # Run analysis with path-based dependencies to ensure that publishing
           # the changes won't break analysis of other packages in the respository
           # that depend on it.
-          - ./script/tool_runner.sh make-deps-path-based  --target-dependencies-with-non-breaking-updates 
+          - ./script/tool_runner.sh make-deps-path-based  --target-dependencies-with-non-breaking-updates
           # This uses --run-on-dirty-packages rather than --packages-for-branch
           # since only the packages changed by 'make-deps-path-based' need to be
           # checked.
@@ -106,11 +106,11 @@ task:
       depends_on: format+analyze
       matrix:
         env:
+          CHANNEL: "3.0.5"
+          DART_VERSION: "2.17.6"
+        env:
           CHANNEL: "2.10.5"
           DART_VERSION: "2.16.2"
-        env:
-          CHANNEL: "2.8.1"
-          DART_VERSION: "2.15.1"
       package_prep_script:
         # Allow analyzing packages that use a dev dependency with a higher
         # minimum Flutter/Dart version than the package itself.
@@ -183,6 +183,9 @@ task:
     - name: android-platform_tests
       env:
         matrix:
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 2"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 2"
+        matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
       build_script:
@@ -234,7 +237,7 @@ task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   << : *MACOS_TEMPLATE
   matrix:
-   ### iOS tasks ###
+    ### iOS tasks ###
     - name: ios-platform_tests
       env:
         PATH: $PATH:/usr/local/bin
@@ -243,7 +246,7 @@ task:
           CHANNEL: "stable"
       create_simulator_script:
         - xcrun simctl list
-        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-15-5 | xargs xcrun simctl boot
+        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-0 | xargs xcrun simctl boot
       build_script:
         - ./script/tool_runner.sh build-examples --ios
       native_test_script:
