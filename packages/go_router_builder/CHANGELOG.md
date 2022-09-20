@@ -1,8 +1,10 @@
 ## NEXT
 
+* Bumps go_router version in example folder to v5.0.0
+
 ## 1.0.13
 
-* Support the latest `package:analyzer`.
+* Supports the latest `package:analyzer`.
 
 ## 1.0.12
 
