@@ -333,6 +333,46 @@ void main() {
         );
       },
     );
+    test('does not throw when ShellRoute is the child of another ShellRoute',
+        () {
+      final GlobalKey<NavigatorState> root =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> shell =
+          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final GlobalKey<NavigatorState> shell2 =
+          GlobalKey<NavigatorState>(debugLabel: 'shell2');
+      RouteConfiguration(
+        routes: <RouteBase>[
+          ShellRoute(
+            builder: _mockShellBuilder,
+            routes: <RouteBase>[
+              ShellRoute(
+                builder: _mockShellBuilder,
+                routes: [
+                  GoRoute(
+                    path: '/a',
+                    builder: _mockScreenBuilder,
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: '/b',
+                builder: _mockScreenBuilder,
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/c',
+            builder: _mockScreenBuilder,
+          ),
+        ],
+        redirectLimit: 10,
+        topRedirect: (BuildContext context, GoRouterState state) {
+          return null;
+        },
+        navigatorKey: root,
+      );
+    });
   });
 
   test(
@@ -389,35 +429,6 @@ void main() {
       );
     },
   );
-
-  test('throws when ShellRoute contains a ShellRoute', () {
-    final GlobalKey<NavigatorState> root =
-        GlobalKey<NavigatorState>(debugLabel: 'root');
-    expect(
-      () {
-        RouteConfiguration(
-          navigatorKey: root,
-          routes: <RouteBase>[
-            ShellRoute(routes: <RouteBase>[
-              ShellRoute(
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: '/a',
-                    builder: _mockScreenBuilder,
-                  ),
-                ],
-              ),
-            ]),
-          ],
-          redirectLimit: 10,
-          topRedirect: (BuildContext context, GoRouterState state) {
-            return null;
-          },
-        );
-      },
-      throwsAssertionError,
-    );
-  });
 
   test('throws when ShellRoute contains a GoRoute with a parentNavigatorKey',
       () {
