@@ -12,11 +12,11 @@
 import 'dart:io'
     show
         Directory,
-        exit,
         File,
         Platform,
         Process,
         ProcessResult,
+        exit,
         stderr,
         stdout;
 import 'dart:math';
