@@ -37,7 +37,7 @@ class App extends StatelessWidget {
     routes: $appRoutes,
 
     // redirect to the login page if the user is not logged in
-    redirect: (GoRouterState state) {
+    redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = loginInfo.loggedIn;
 
       // check just the subloc in case there are query parameters
