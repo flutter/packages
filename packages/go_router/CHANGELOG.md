@@ -1,6 +1,4 @@
-## NEXT
-
-## 5.0.0
+## 5.0.1
 
 - Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981)
 
