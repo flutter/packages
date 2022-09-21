@@ -385,27 +385,27 @@ if [ "$should_run_android_unittests" = true ]; then
   get_java_linter_formatter
 fi
 test_command_line
-# if [ "$should_run_dart_unittests" = true ]; then
-#   run_dart_unittests
-# fi
-# if [ "$should_run_flutter_unittests" = true ]; then
-#   run_flutter_unittests
-# fi
-# if [ "$should_run_mock_handler_tests" = true ]; then
-#   run_mock_handler_tests
-# fi
-# if [ "$should_run_dart_compilation_tests" = true ]; then
-#   run_dart_compilation_tests
-# fi
-# if [ "$should_run_ios_unittests" = true ]; then
-#   run_ios_unittests
-# fi
-# if [ "$should_run_ios_e2e_tests" = true ]; then
-#   run_ios_e2e_tests
-# fi
-# if [ "$should_run_android_unittests" = true ]; then
-#   run_android_unittests
-# fi
+if [ "$should_run_dart_unittests" = true ]; then
+  run_dart_unittests
+fi
+if [ "$should_run_flutter_unittests" = true ]; then
+  run_flutter_unittests
+fi
+if [ "$should_run_mock_handler_tests" = true ]; then
+  run_mock_handler_tests
+fi
+if [ "$should_run_dart_compilation_tests" = true ]; then
+  run_dart_compilation_tests
+fi
+if [ "$should_run_ios_unittests" = true ]; then
+  run_ios_unittests
+fi
+if [ "$should_run_ios_e2e_tests" = true ]; then
+  run_ios_e2e_tests
+fi
+if [ "$should_run_android_unittests" = true ]; then
+  run_android_unittests
+fi
 # if [ "$should_run_macos_swift_unittests" = true ]; then
 #   run_macos_swift_unittests
 # fi
