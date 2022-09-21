@@ -191,6 +191,10 @@ run_mock_handler_tests() {
   dart run tool/run_tests.dart -t mock_handler_tests
 }
 
+run_ios_swift_unittests() {
+  dart run tool/run_tests.dart -t ios_swift_unittests
+}
+
 run_macos_swift_unittests() {
   dart run tool/run_tests.dart -t mac_swift_unittests
 }
@@ -314,6 +318,7 @@ should_run_dart_unittests=true
 should_run_flutter_unittests=true
 should_run_ios_e2e_tests=true
 should_run_ios_unittests=true
+should_run_ios_swift_unittests=true
 should_run_mock_handler_tests=true
 should_run_macos_swift_unittests=true
 while getopts "t:l?h" opt; do
@@ -325,6 +330,7 @@ while getopts "t:l?h" opt; do
     should_run_flutter_unittests=false
     should_run_ios_e2e_tests=false
     should_run_ios_unittests=false
+    should_run_ios_swift_unittests=false
     should_run_mock_handler_tests=false
     should_run_macos_swift_unittests=false
     case $OPTARG in
@@ -334,6 +340,7 @@ while getopts "t:l?h" opt; do
     flutter_unittests) should_run_flutter_unittests=true ;;
     ios_e2e_tests) should_run_ios_e2e_tests=true ;;
     ios_unittests) should_run_ios_unittests=true ;;
+    ios_swift_unittests) should_run_ios_swift_unittests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
     macos_swift_unittests) should_run_macos_swift_unittests=true ;;
     *)
@@ -350,6 +357,7 @@ while getopts "t:l?h" opt; do
   flutter_unittests      - Unit tests on generated Dart code.
   ios_e2e_tests          - End-to-end objc tests run on iOS Simulator
   ios_unittests          - Unit tests on generated Objc code.
+  ios_swift_unittests    - Unit tests on generated Swift code.
   mock_handler_tests     - Unit tests on generated Dart mock handler code.
   macos_swift_unittests  - Unit tests on generated Swift code on macOS.
   "
@@ -391,6 +399,9 @@ if [ "$should_run_dart_compilation_tests" = true ]; then
 fi
 if [ "$should_run_ios_unittests" = true ]; then
   run_ios_unittests
+fi
+if [ "$should_run_ios_swift_unittests" = true ]; then
+  run_ios_swift_unittests
 fi
 if [ "$should_run_ios_e2e_tests" = true ]; then
   run_ios_e2e_tests
