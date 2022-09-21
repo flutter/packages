@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'staggered_layout_example.dart';
 import 'wrap_layout_example.dart';
 
 void main() {
@@ -28,7 +29,6 @@ class MyApp extends StatelessWidget {
 }
 
 /// The home page
-
 class MyHomePage extends StatelessWidget {
   /// The home page constructor.
   const MyHomePage({super.key});
@@ -51,6 +51,16 @@ class MyHomePage extends StatelessWidget {
                 ),
               ),
               child: const Text('Wrap Demo'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => const StaggeredExample(),
+                ),
+              ),
+              child: const Text('Staggered Demo'),
             ),
           ],
         ),

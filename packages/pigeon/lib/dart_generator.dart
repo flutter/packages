@@ -11,6 +11,13 @@ import 'ast.dart';
 import 'functional.dart';
 import 'generator_tools.dart';
 
+/// Documentation comment open symbol.
+const String _docCommentPrefix = '///';
+
+/// Documentation comment spec.
+const DocumentCommentSpecification _docCommentSpec =
+    DocumentCommentSpecification(_docCommentPrefix);
+
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
@@ -154,6 +161,7 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   _writeCodec(indent, codecName, api, root);
   indent.addln('');
   bool first = true;
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.format('''
@@ -173,6 +181,8 @@ final BinaryMessenger? _binaryMessenger;
       } else {
         first = false;
       }
+      addDocumentationComments(
+          indent, func.documentationComments, _docCommentSpec);
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
@@ -264,11 +274,16 @@ void _writeFlutterApi(
   assert(api.location == ApiLocation.flutter);
   final String codecName = _getCodecName(api);
   _writeCodec(indent, codecName, api, root);
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
+
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.writeln('static const MessageCodec<Object?> codec = $codecName();');
     indent.addln('');
     for (final Method func in api.methods) {
+      addDocumentationComments(
+          indent, func.documentationComments, _docCommentSpec);
+
       final bool isAsync = func.isAsynchronous;
       final String returnType = isAsync
           ? 'Future<${_addGenericTypesNullable(func.returnType)}>'
@@ -433,6 +448,8 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   void writeEnums() {
     for (final Enum anEnum in root.enums) {
       indent.writeln('');
+      addDocumentationComments(
+          indent, anEnum.documentationComments, _docCommentSpec);
       indent.write('enum ${anEnum.name} ');
       indent.scoped('{', '}', () {
         for (final String member in anEnum.members) {
@@ -555,11 +572,17 @@ pigeonMap['${field.name}'] != null
       });
     }
 
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec);
+
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       writeConstructor();
       indent.addln('');
       for (final NamedType field in klass.fields) {
+        addDocumentationComments(
+            indent, field.documentationComments, _docCommentSpec);
+
         final String datatype = _addGenericTypesNullable(field.type);
         indent.writeln('$datatype ${field.name};');
       }
@@ -696,6 +719,7 @@ void generateTestDart(
         methods: api.methods,
         location: ApiLocation.flutter,
         dartHostTestHandler: api.dartHostTestHandler,
+        documentationComments: api.documentationComments,
       );
       indent.writeln('');
       _writeFlutterApi(

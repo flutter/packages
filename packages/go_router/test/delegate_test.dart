@@ -25,9 +25,8 @@ Future<GoRouter> createGoRouter(
     refreshListenable: refreshListenable,
   );
   await tester.pumpWidget(MaterialApp.router(
-      routeInformationProvider: router.routeInformationProvider,
-      routeInformationParser: router.routeInformationParser,
-      routerDelegate: router.routerDelegate));
+    routerConfig: router,
+  ));
   return router;
 }
 
@@ -127,9 +126,7 @@ void main() {
         );
         await tester.pumpWidget(
           MaterialApp.router(
-            routeInformationProvider: goRouter.routeInformationProvider,
-            routeInformationParser: goRouter.routeInformationParser,
-            routerDelegate: goRouter.routerDelegate,
+            routerConfig: goRouter,
           ),
         );
 
@@ -179,9 +176,7 @@ void main() {
         );
         await tester.pumpWidget(
           MaterialApp.router(
-            routeInformationProvider: goRouter.routeInformationProvider,
-            routeInformationParser: goRouter.routeInformationParser,
-            routerDelegate: goRouter.routerDelegate,
+            routerConfig: goRouter,
           ),
         );
 
