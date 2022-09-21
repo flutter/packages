@@ -406,10 +406,9 @@ fi
 if [ "$should_run_android_unittests" = true ]; then
   run_android_unittests
 fi
-# if [ "$should_run_macos_swift_unittests" = true ]; then
-#   run_macos_swift_unittests
-# fi
+if [ "$should_run_macos_swift_unittests" = true ]; then
+  run_macos_swift_unittests
+fi
 if [ "$should_run_android_kotlin_unittests" = true ]; then
-  echo "Skipping android kotlin unittests"
   run_android_kotlin_unittests
 fi
