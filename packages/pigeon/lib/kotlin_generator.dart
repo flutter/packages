@@ -80,7 +80,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
       });
 
       indent.write(
-          'override fun writeValue(stream: ByteArrayOutputStream, value: Any) ');
+          'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) ');
       indent.writeScoped('{', '}', () {
         indent.write('when (value) ');
         indent.scoped('{', '}', () {
