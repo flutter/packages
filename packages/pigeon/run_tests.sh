@@ -352,6 +352,7 @@ while getopts "t:l?h" opt; do
   l)
     echo "available tests for -t:
   android_unittests        - Unit tests on generated Java code.
+  android_kotlin_unittests - Unit tests on generated Kotlin code on Android.
   dart_compilation_tests   - Compilation tests on generated Dart code.
   dart_unittests           - Unit tests on and analysis on Pigeon's implementation.
   flutter_unittests        - Unit tests on generated Dart code.
@@ -359,7 +360,6 @@ while getopts "t:l?h" opt; do
   ios_unittests            - Unit tests on generated Objc code.
   mock_handler_tests       - Unit tests on generated Dart mock handler code.
   macos_swift_unittests    - Unit tests on generated Swift code on macOS.
-  android_kotlin_unittests - Unit tests on generated Kotlin code on Android.
   "
     exit 1
     ;;
