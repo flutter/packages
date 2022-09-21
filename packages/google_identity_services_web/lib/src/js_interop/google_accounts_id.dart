@@ -14,9 +14,7 @@ library id;
 
 import 'package:js/js.dart';
 
-/// The type of several functions from the library, that don't receive
-/// parameters nor return anything.
-typedef VoidFn = void Function();
+import 'shared.dart';
 
 /// An undocumented method. Try with 'debug'.
 @JS()
@@ -314,8 +312,7 @@ external VoidFn get cancel;
 /*
 // Library load callback: onGoogleLibraryLoad
 // https://developers.google.com/identity/gsi/web/reference/js-reference#onGoogleLibraryLoad
-//
-// TODO: USE THE ABOVE TO IMPLEMENT THE JS_LOADER!!
+// See: `load_callback.dart` and `loader.dart`
 */
 
 /*

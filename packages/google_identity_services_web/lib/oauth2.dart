@@ -3,4 +3,3 @@
 // found in the LICENSE file.
 
 export 'src/js_interop/google_accounts_oauth2.dart';
-export 'src/js_loader.dart';
