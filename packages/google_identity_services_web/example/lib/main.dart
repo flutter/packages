@@ -1,10 +1,12 @@
-import 'dart:js' as js;
-
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:google_identity_services_web/id.dart' as id;
+import 'package:google_identity_services_web/loader.dart' as loader;
+import 'package:js/js.dart' as js;
 import 'package:jwt_decoder/jwt_decoder.dart' as jwt;
 
-void main() {
+void main() async {
+  await loader.loadWebSdk(); // Load the GIS SDK
+
   id.setLogLevel('debug');
 
   final id.IdConfiguration config = id.IdConfiguration(
@@ -35,6 +37,7 @@ void onPromptMoment(id.PromptMomentNotification o) {
   print(o.getMomentType());
 }
 
+/*
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -144,3 +147,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+*/
