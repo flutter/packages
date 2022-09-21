@@ -12,7 +12,6 @@ dependencies:
   provider: ^6.0.0
 
 dev_dependencies:
-  all_lint_rules_community: ^0.0.4
   build_runner: ^2.0.0
   build_verify: ^3.0.0
   flutter_test:
