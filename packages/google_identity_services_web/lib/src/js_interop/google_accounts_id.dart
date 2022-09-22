@@ -62,7 +62,11 @@ typedef InitializeFn = void Function(IdConfiguration idConfiguration);
 @JS()
 @anonymous
 abstract class IdConfiguration {
+  /// Constructs a IdConfiguration object in JavaScript.
   ///
+  /// The following properties need to be manually wrapped in [allowInterop]
+  /// before being passed to this constructor: [callback], [native_callback],
+  /// and [intermediate_iframe_close_callback].
   external factory IdConfiguration({
     required String client_id,
     bool? auto_select,
@@ -141,6 +145,9 @@ enum UxMode {
 external PromptFn get prompt;
 
 /// The type of the [prompt] function.
+///
+/// The [momentListener] parameter must be manually wrapped in [allowInterop]
+/// before being passed to the [prompt] function.
 typedef PromptFn = void Function(PromptMomentListenerFn? momentListener);
 
 /// The type of the function that can be passed to [prompt] to listen for [PromptMomentNotification]s.
@@ -293,6 +300,9 @@ external VoidFn get disableAutoSelect;
 external StoreCredentialFn get storeCredential;
 
 /// The type of the [storeCredential] function.
+///
+/// The [callback] parameter must be manually wrapped in [allowInterop]
+/// before being passed to the [storeCredential] function.
 // TODO: What's the type of the callback function??? VoidFn?
 typedef StoreCredentialFn = void Function(Credential credential, Function? callback);
 
@@ -334,6 +344,9 @@ external RevokeFn get revoke;
 ///
 /// The optional [callback] is a function that gets called to report on the
 /// success of the revocation call.
+///
+/// The [callback] parameter must be manually wrapped in [allowInterop]
+/// before being passed to the [revoke] function.
 typedef RevokeFn = void Function(String hint, RevocationResponseHandlerFn? callback);
 
 /// The type of the `callback` function passed to [revoke], to be notified of

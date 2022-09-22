@@ -94,7 +94,10 @@ extension DomTrustedTypePolicyFactoryExtension on DomTrustedTypePolicyFactory {
 @staticInterop
 @anonymous
 abstract class DomTrustedTypePolicyOptions {
+  /// Constructs a TrustedPolicyOptions object in JavaScript.
   ///
+  /// The following properties need to be manually wrapped in [allowInterop]
+  /// before being passed to this constructor: [createScriptURL].
   external factory DomTrustedTypePolicyOptions({
     DomCreateScriptUrlOptionFn? createScriptURL,
   });

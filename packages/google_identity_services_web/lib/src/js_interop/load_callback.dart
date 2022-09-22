@@ -18,6 +18,9 @@ import 'shared.dart';
 */
 
 /// Method called after the Sign In With Google JavaScript library is loaded.
+///
+/// The [callback] parameter must be manually wrapped in [allowInterop]
+/// before being set to the [onGoogleLibraryLoad] property.
 @JS()
 @staticInterop
 external set onGoogleLibraryLoad(VoidFn callback);

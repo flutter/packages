@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 import 'package:google_identity_services_web/id.dart' as id;
 import 'package:google_identity_services_web/loader.dart' as loader;
-import 'package:js/js.dart' as js;
+import 'package:js/js.dart' show allowInterop;
 import 'package:jwt_decoder/jwt_decoder.dart' as jwt;
 
 void main() async {
@@ -12,11 +12,11 @@ void main() async {
   final id.IdConfiguration config = id.IdConfiguration(
     client_id:'933321482045-m78qk55i00hu4r3s7o2nc5j4gatr1vp7.apps.googleusercontent.com',
     ux_mode: id.UxMode.popup,
-    callback: js.allowInterop(onCredentialResponse),
+    callback: allowInterop(onCredentialResponse),
   );
 
   id.initialize(config);
-  id.prompt(js.allowInterop(onPromptMoment));
+  id.prompt(allowInterop(onPromptMoment));
   //runApp(const MyApp());
 }
 
