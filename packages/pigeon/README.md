@@ -5,9 +5,10 @@ host platform type-safe, easier and faster.
 
 ## Supported Platforms
 
-Currently Pigeon supports generating Objective-C code for usage on iOS, Java
-code for Android, and has experimental support for C++ for Windows. The
-Objective-C code is
+Currently Pigeon supports generating Objective-C and experimental Swift code
+for usage on iOS, Java and experimental Kotlin code for Android, 
+and has experimental support for C++ for Windows.
+The Objective-C code is
 [accessible to Swift](https://developer.apple.com/documentation/swift/imported_c_and_objective-c_apis/importing_objective-c_into_swift)
 and the Java code is accessible to Kotlin.
 
@@ -31,17 +32,23 @@ doesn't need to worry about conflicting versions of Pigeon.
 
 ### Flutter calling into iOS steps
 
-1) Add the generated Objective-C code to your Xcode project for compilation
+1) Add the generated Objective-C or Swift code to your Xcode project for compilation
    (e.g. `ios/Runner.xcworkspace` or `.podspec`).
 1) Implement the generated iOS protocol for handling the calls on iOS, set it up
    as the handler for the messages.
 
+**Note:** Swift code generation for iOS is experimental while we get more usage and add more
+testing. Not all features may be supported.
+
 ### Flutter calling into Android Steps
 
-1) Add the generated Java code to your `./android/app/src/main/java` directory
+1) Add the generated Java or Kotlin code to your `./android/app/src/main/java` directory
    for compilation.
-1) Implement the generated Java interface for handling the calls on Android, set
+1) Implement the generated Java or Kotlin interface for handling the calls on Android, set
    it up as the handler for the messages.
+
+**Note:** Kotlin code generation for Android is experimental while we get more usage and add more
+testing and works just with Flutter 3.3.0 or later. Not all features may be supported.
 
 ### Flutter calling into Windows Steps
 
@@ -112,6 +119,15 @@ Generates:
 @end
 ```
 
+```swift
+// Swift
+
+/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
+protocol Api2Host {
+  func calculate(value: Value, completion: @escaping (Value) -> Void)
+}
+```
+
 ```java
 // Java
 public interface Result<T> {
@@ -121,6 +137,15 @@ public interface Result<T> {
 /** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
 public interface Api2Host {
    void calculate(Value arg, Result<Value> result);
+}
+```
+
+```kotlin
+// Kotlin
+
+/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
+interface Api2Host {
+   fun calculate(value: Value, callback: (Value) -> Unit)
 }
 ```
 
