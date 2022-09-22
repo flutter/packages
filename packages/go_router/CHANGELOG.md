@@ -1,3 +1,7 @@
+## 5.0.2
+
+- Fixes missing code example in ShellRoute documentation.
+
 ## 5.0.1
 
 - Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981)
