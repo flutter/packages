@@ -1,3 +1,11 @@
+## 4.2.0
+
+* Adds experimental support for Kotlin generation.
+
+## 4.1.1
+
+* [java] Adds missing `@NonNull` annotations to some methods.
+
 ## 4.1.0
 
 * Adds documentation comment support for all currently supported languages.

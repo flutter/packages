@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/widgets.dart';
+
 import 'configuration.dart';
 import 'match.dart';
 import 'path_utils.dart';
@@ -83,7 +85,7 @@ class RouteMatchList {
   }
 
   /// An optional object provided by the app during navigation.
-  Object? get extra => _matches.last.extra;
+  Object? get extra => _matches.isEmpty ? null : _matches.last.extra;
 
   /// The last matching route.
   RouteMatch get last => _matches.last;
@@ -219,4 +221,26 @@ List<RouteMatch> _getLocRouteRecursively({
   // To make predefined routes to take precedence over dynamic routes eg. '/:id'
   // consider adding the dynamic route at the end of the routes
   return result.first;
+}
+
+/// The match used when there is an error during parsing.
+RouteMatchList errorScreen(Uri uri, String errorMessage) {
+  final Exception error = Exception(errorMessage);
+  return RouteMatchList(<RouteMatch>[
+    RouteMatch(
+      subloc: uri.path,
+      fullpath: uri.path,
+      encodedParams: <String, String>{},
+      queryParams: uri.queryParameters,
+      queryParametersAll: uri.queryParametersAll,
+      extra: null,
+      error: error,
+      route: GoRoute(
+        path: uri.toString(),
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          throw UnimplementedError();
+        },
+      ),
+    ),
+  ]);
 }

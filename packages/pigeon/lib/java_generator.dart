@@ -102,7 +102,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
     if (getCodecClasses(api, root).isNotEmpty) {
       indent.writeln('@Override');
       indent.write(
-          'protected Object readValueOfType(byte type, ByteBuffer buffer) ');
+          'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) ');
       indent.scoped('{', '}', () {
         indent.write('switch (type) ');
         indent.scoped('{', '}', () {
@@ -122,7 +122,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
       });
       indent.writeln('@Override');
       indent.write(
-          'protected void writeValue(ByteArrayOutputStream stream, Object value) ');
+          'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) ');
       indent.writeScoped('{', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
           indent.write('if (value instanceof ${customClass.name}) ');
@@ -721,7 +721,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
   void writeWrapError() {
     indent.format('''
-private static Map<String, Object> wrapError(Throwable exception) {
+@NonNull private static Map<String, Object> wrapError(@NonNull Throwable exception) {
 \tMap<String, Object> errorMap = new HashMap<>();
 \terrorMap.put("${Keys.errorMessage}", exception.toString());
 \terrorMap.put("${Keys.errorCode}", exception.getClass().getSimpleName());

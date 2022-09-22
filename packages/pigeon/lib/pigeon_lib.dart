@@ -30,6 +30,7 @@ import 'dart_generator.dart';
 import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
 import 'java_generator.dart';
+import 'kotlin_generator.dart';
 import 'objc_generator.dart';
 import 'swift_generator.dart';
 
@@ -164,6 +165,8 @@ class PigeonOptions {
       this.javaOptions,
       this.swiftOut,
       this.swiftOptions,
+      this.kotlinOut,
+      this.kotlinOptions,
       this.cppHeaderOut,
       this.cppSourceOut,
       this.cppOptions,
@@ -202,6 +205,12 @@ class PigeonOptions {
 
   /// Options that control how Swift will be generated.
   final SwiftOptions? swiftOptions;
+
+  /// Path to the kotlin file that will be generated.
+  final String? kotlinOut;
+
+  /// Options that control how Kotlin will be generated.
+  final KotlinOptions? kotlinOptions;
 
   /// Path to the ".h" C++ file that will be generated.
   final String? cppHeaderOut;
@@ -247,6 +256,11 @@ class PigeonOptions {
       swiftOptions: map.containsKey('swiftOptions')
           ? SwiftOptions.fromMap((map['swiftOptions'] as Map<String, Object>?)!)
           : null,
+      kotlinOut: map['kotlinOut'] as String?,
+      kotlinOptions: map.containsKey('kotlinOptions')
+          ? KotlinOptions.fromMap(
+              (map['kotlinOptions'] as Map<String, Object>?)!)
+          : null,
       cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
       cppSourceOut: map['experimental_cppSourceOut'] as String?,
       cppOptions: map.containsKey('experimental_cppOptions')
@@ -277,6 +291,8 @@ class PigeonOptions {
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
       if (swiftOut != null) 'swiftOut': swiftOut!,
       if (swiftOptions != null) 'swiftOptions': swiftOptions!.toMap(),
+      if (kotlinOut != null) 'kotlinOut': kotlinOut!,
+      if (kotlinOptions != null) 'kotlinOptions': kotlinOptions!.toMap(),
       if (cppHeaderOut != null) 'experimental_cppHeaderOut': cppHeaderOut!,
       if (cppSourceOut != null) 'experimental_cppSourceOut': cppSourceOut!,
       if (cppOptions != null) 'experimental_cppOptions': cppOptions!.toMap(),
@@ -566,6 +582,29 @@ class CppSourceGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.cppSourceOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+}
+
+/// A [Generator] that generates Kotlin source code.
+class KotlinGenerator implements Generator {
+  /// Constructor for [KotlinGenerator].
+  const KotlinGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    KotlinOptions kotlinOptions =
+        options.kotlinOptions ?? const KotlinOptions();
+    kotlinOptions = kotlinOptions.merge(KotlinOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateKotlin(kotlinOptions, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.kotlinOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -1202,6 +1241,11 @@ ${_argParser.usage}''';
         help: 'Adds the java.annotation.Generated annotation to the output.')
     ..addOption('experimental_swift_out',
         help: 'Path to generated Swift file (.swift).')
+    ..addOption('experimental_kotlin_out',
+        help: 'Path to generated Kotlin file (.kt). (experimental)')
+    ..addOption('experimental_kotlin_package',
+        help:
+            'The package that generated Kotlin code will be in. (experimental)')
     ..addOption('experimental_cpp_header_out',
         help: 'Path to generated C++ header file (.h). (experimental)')
     ..addOption('experimental_cpp_source_out',
@@ -1247,6 +1291,10 @@ ${_argParser.usage}''';
         useGeneratedAnnotation: results['java_use_generated_annotation'],
       ),
       swiftOut: results['experimental_swift_out'],
+      kotlinOut: results['experimental_kotlin_out'],
+      kotlinOptions: KotlinOptions(
+        package: results['experimental_kotlin_package'],
+      ),
       cppHeaderOut: results['experimental_cpp_header_out'],
       cppSourceOut: results['experimental_cpp_source_out'],
       cppOptions: CppOptions(
@@ -1295,6 +1343,7 @@ ${_argParser.usage}''';
           const DartGenerator(),
           const JavaGenerator(),
           const SwiftGenerator(),
+          const KotlinGenerator(),
           const CppHeaderGenerator(),
           const CppSourceGenerator(),
           const DartTestGenerator(),

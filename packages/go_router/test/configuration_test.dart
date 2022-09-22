@@ -50,7 +50,7 @@ void main() {
               ),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           );
@@ -71,7 +71,7 @@ void main() {
               ShellRoute(routes: shellRouteChildren),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           );
@@ -111,7 +111,7 @@ void main() {
               ),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           );
@@ -168,7 +168,7 @@ void main() {
             ),
           ],
           redirectLimit: 10,
-          topRedirect: (GoRouterState state) {
+          topRedirect: (BuildContext context, GoRouterState state) {
             return null;
           },
         );
@@ -217,7 +217,7 @@ void main() {
               ),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           ),
@@ -267,7 +267,7 @@ void main() {
             ),
           ],
           redirectLimit: 10,
-          topRedirect: (GoRouterState state) {
+          topRedirect: (BuildContext context, GoRouterState state) {
             return null;
           },
         );
@@ -325,7 +325,7 @@ void main() {
               ),
             ],
             redirectLimit: 10,
-            topRedirect: (GoRouterState state) {
+            topRedirect: (BuildContext context, GoRouterState state) {
               return null;
             },
           ),
@@ -333,6 +333,42 @@ void main() {
         );
       },
     );
+    test('does not throw when ShellRoute is the child of another ShellRoute',
+        () {
+      final GlobalKey<NavigatorState> root =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      RouteConfiguration(
+        routes: <RouteBase>[
+          ShellRoute(
+            builder: _mockShellBuilder,
+            routes: <RouteBase>[
+              ShellRoute(
+                builder: _mockShellBuilder,
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: '/a',
+                    builder: _mockScreenBuilder,
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: '/b',
+                builder: _mockScreenBuilder,
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/c',
+            builder: _mockScreenBuilder,
+          ),
+        ],
+        redirectLimit: 10,
+        topRedirect: (BuildContext context, GoRouterState state) {
+          return null;
+        },
+        navigatorKey: root,
+      );
+    });
   });
 
   test(
@@ -383,41 +419,12 @@ void main() {
           ),
         ],
         redirectLimit: 10,
-        topRedirect: (GoRouterState state) {
+        topRedirect: (BuildContext context, GoRouterState state) {
           return null;
         },
       );
     },
   );
-
-  test('throws when ShellRoute contains a ShellRoute', () {
-    final GlobalKey<NavigatorState> root =
-        GlobalKey<NavigatorState>(debugLabel: 'root');
-    expect(
-      () {
-        RouteConfiguration(
-          navigatorKey: root,
-          routes: <RouteBase>[
-            ShellRoute(routes: <RouteBase>[
-              ShellRoute(
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: '/a',
-                    builder: _mockScreenBuilder,
-                  ),
-                ],
-              ),
-            ]),
-          ],
-          redirectLimit: 10,
-          topRedirect: (GoRouterState state) {
-            return null;
-          },
-        );
-      },
-      throwsAssertionError,
-    );
-  });
 
   test('throws when ShellRoute contains a GoRoute with a parentNavigatorKey',
       () {
@@ -439,7 +446,7 @@ void main() {
             ),
           ],
           redirectLimit: 10,
-          topRedirect: (GoRouterState state) {
+          topRedirect: (BuildContext context, GoRouterState state) {
             return null;
           },
         );

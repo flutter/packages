@@ -24,9 +24,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routeInformationProvider: _router.routeInformationProvider,
-      routeInformationParser: _router.routeInformationParser,
-      routerDelegate: _router.routerDelegate,
+      routerConfig: _router,
       title: 'GoRouter Example',
     );
   }
@@ -87,7 +85,7 @@ will cause go_router to use the `MaterialPage` transitions. Consider using
 [pageBuilder](https://pub.dev/documentation/go_router/latest/go_router/GoRoute/pageBuilder.html)
 for custom `Page` class.
 
-## Initalization
+## Initialization
 
 Create a [GoRouter](https://pub.dev/documentation/go_router/latest/go_router/GoRouter-class.html)
 object and initialize your `MaterialApp` or `CupertinoApp`:
@@ -100,9 +98,7 @@ final GoRouter _router = GoRouter(
 );
 
 MaterialApp.router(
-  routeInformationProvider: _router.routeInformationProvider,
-  routeInformationParser: _router.routeInformationParser,
-  routerDelegate: _router.routerDelegate,
+  routerConfig: _router,
 );
 ```
 
@@ -118,6 +114,42 @@ GoRouter(
   errorBuilder: (context, state) => ErrorScreen(state.error),
 );
 ```
+
+## Redirection
+
+You can use redirection to prevent the user from visiting a specific page. In
+go_router, redirection can be asynchronous.
+
+```dart
+GoRouter(
+  ...
+  redirect: (context, state) async {
+    if (await LoginService.of(context).isLoggedIn) {
+      return state.location;
+    }
+    return '/login';
+  },
+);
+```
+
+If the code depends on [BuildContext](https://api.flutter.dev/flutter/widgets/BuildContext-class.html)
+through the [dependOnInheritedWidgetOfExactType](https://api.flutter.dev/flutter/widgets/BuildContext/dependOnInheritedWidgetOfExactType.html)
+(which is how `of` methods are usually implemented), the redirect will be called every time the [InheritedWidget](https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html)
+updated.
+
+### Top-level redirect
+
+The [GoRouter.redirect](https://pub.dev/documentation/go_router/latest/go_router/GoRouter-class.html)
+is always called for every navigation regardless of which GoRoute was matched. The
+top-level redirect always takes priority over route-level redirect.
+
+### Route-level redirect
+
+If the top-level redirect does not redirect to a different location,
+the [GoRoute.redirect](https://pub.dev/documentation/go_router/latest/go_router/GoRoute/redirect.html)
+is then called if the route has matched the GoRoute. If there are multiple
+GoRoute matches, e.g. GoRoute with sub-routes, the parent route redirect takes
+priority over sub-routes' redirect.
 
 ## Navigation
 
@@ -186,6 +218,7 @@ See [examples](https://github.com/flutter/packages/tree/main/packages/go_router/
 - [Migrating to 2.5](https://flutter.dev/go/go-router-v2-5-breaking-changes)
 - [Migrating to 3.0](https://flutter.dev/go/go-router-v3-breaking-changes)
 - [Migrating to 4.0](https://flutter.dev/go/go-router-v4-breaking-changes)
+- [Migrating to 5.0](https://flutter.dev/go/go-router-v5-breaking-changes)
 
 ## Changelog
 

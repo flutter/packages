@@ -7,8 +7,14 @@
 'p: css_colors':
   - packages/css_colors/**/*
 
+'p: dynamic_layouts':
+  - packages/dynamic_layouts/**/*
+
 'p: extension_google_sign_in_as_googleapis_auth':
   - packages/extension_google_sign_in_as_googleapis_auth/**/*
+
+'p: flutter_adaptive_scaffold':
+  - packages/flutter_adaptive_scaffold/**/*
 
 'p: flutter_image':
   - packages/flutter_image/**/*
@@ -18,6 +24,9 @@
 
 'p: flutter_markdown':
   - packages/flutter_markdown/**/*
+
+'p: flutter_migrate':
+  - packages/flutter_migrate/**/*
 
 'p: flutter_template_images':
   - packages/flutter_template_images/**/*
@@ -48,6 +57,9 @@
 
 'p: rfw':
   - packages/rfw/**/*
+
+'p: standard_message_codec':
+  - packages/standard_message_codec/**/*
 
 'p: web_benchmarks':
   - packages/web_benchmarks/**/*
