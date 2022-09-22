@@ -3,3 +3,4 @@
 // found in the LICENSE file.
 
 export 'src/js_interop/google_accounts_id.dart';
+export 'src/js_interop/shared.dart' show UxMode;
