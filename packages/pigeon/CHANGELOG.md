@@ -2,6 +2,10 @@
 
 Adds Swift tests in CI script.
 
+## 4.1.1
+
+* [java] Adds missing `@NonNull` annotations to some methods.
+
 ## 4.1.0
 
 * Adds documentation comment support for all currently supported languages.
