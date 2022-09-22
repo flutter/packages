@@ -1,6 +1,6 @@
 ## 4.2.0
 
-Adds Swift tests in CI script
+Adds Swift tests in CI script.
 
 ## 4.1.0
 
