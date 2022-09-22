@@ -8,19 +8,19 @@ environment:
   flutter: ">=3.3.0"
 
 dependencies:
-  adaptive_dialog: ^1.2.0
-  adaptive_navigation: ^0.0.4
-  collection: ^1.15.0
-  cupertino_icons: ^1.0.2
+  adaptive_dialog: ^1.8.0+1
+  adaptive_navigation: ^0.0.7
+  collection: ^1.16.0
+  cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
   go_router:
     path: ..
-  logging: ^1.0.0
-  package_info_plus: ^1.3.0
-  provider: ^6.0.0
-  shared_preferences: ^2.0.11
-  url_launcher: ^6.0.7
+  logging: ^1.0.2
+  package_info_plus: ^1.4.3+1
+  provider: ^6.0.3
+  shared_preferences: ^2.0.15
+  url_launcher: ^6.1.5
 
 dev_dependencies:
   flutter_test:
