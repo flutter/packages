@@ -25,7 +25,12 @@ An example to demonstrate how to navigate using named locations instead of URLs.
 
 An example to demonstrate how to use redirect to handle a synchronous sign-in flow.
 
-## [Asynchronous Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/async_redirection.dart)
+## [Shell routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/shell_route.dart)
+`flutter run lib/shell_route.dart`
+
+An example to demonstrate how wrap all sub-routes with a UI shell.
+
+## [Asynchronous redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/async_redirection.dart)
 `flutter run lib/async_redirection.dart`
 
 An example to demonstrate how to use handle a sign-in flow with a stream authentication service.
