@@ -18,7 +18,6 @@ import 'shared.dart';
 
 /// An undocumented method. Try with 'debug'.
 @JS()
-@staticInterop
 external SetLogLevelFn get setLogLevel;
 ///
 typedef SetLogLevelFn = void Function(String level);
@@ -46,8 +45,6 @@ typedef SetLogLevelFn = void Function(String level);
 /// WARNING: The `initialize` method should be called only once, even if you
 /// use both One Tap and button in the same web page.
 @JS()
-@staticInterop
-@anonymous
 external InitializeFn get initialize;
 
 /// The type of the [initialize] function.
@@ -61,6 +58,7 @@ typedef InitializeFn = void Function(IdConfiguration idConfiguration);
 /// The configuration object for the [initialize] method.
 @JS()
 @anonymous
+@staticInterop
 abstract class IdConfiguration {
   /// Constructs a IdConfiguration object in JavaScript.
   ///
@@ -140,8 +138,6 @@ enum UxMode {
 ///   WARNING: When on a dismissed moment, do not try any of the next identity
 ///   providers.
 @JS()
-@staticInterop
-@anonymous
 external PromptFn get prompt;
 
 /// The type of the [prompt] function.
@@ -160,7 +156,6 @@ typedef PromptMomentListenerFn = void Function(PromptMomentNotification moment);
 
 /// A moment (status) notification from the [prompt] method.
 @JS()
-@anonymous
 @staticInterop
 abstract class PromptMomentNotification {}
 
@@ -193,7 +188,6 @@ extension PromptMomentNotificationExtension on PromptMomentNotification {
 
 /// The object passed as the parameter of your [CallbackFn].
 @JS()
-@anonymous
 @staticInterop
 abstract class CredentialResponse {}
 
@@ -279,8 +273,6 @@ typedef NativeCallbackFn = void Function(Credential credential);
 ///
 /// This prevents a UX dead loop.
 @JS()
-@staticInterop
-@anonymous
 external VoidFn get disableAutoSelect;
 
 /*
@@ -295,8 +287,6 @@ external VoidFn get disableAutoSelect;
 ///
 /// See: https://developer.mozilla.org/en-US/docs/Web/API/CredentialsContainer/store
 @JS()
-@staticInterop
-@anonymous
 external StoreCredentialFn get storeCredential;
 
 /// The type of the [storeCredential] function.
@@ -315,8 +305,6 @@ typedef StoreCredentialFn = void Function(Credential credential, Function? callb
 /// party DOM. The cancel operation is ignored if a credential is already
 /// selected.
 @JS()
-@staticInterop
-@anonymous
 external VoidFn get cancel;
 
 /*
@@ -333,8 +321,6 @@ external VoidFn get cancel;
 /// The `revoke` method revokes the OAuth grant used to share the ID token for
 /// the specified user.
 @JS()
-@staticInterop
-@anonymous
 external RevokeFn get revoke;
 
 /// The type of the [revoke] function.
@@ -361,10 +347,8 @@ typedef RevocationResponseHandlerFn = void Function(RevocationResponse revocatio
 /// The parameter passed to the optional [RevocationResponseHandlerFn]
 /// `callback` of the [revoke] function.
 @JS()
-@anonymous
 @staticInterop
-abstract class RevocationResponse {
-}
+abstract class RevocationResponse {}
 
 /// The fields that are contained in the [RevocationResponse] object.
 extension RevocationResponseExtension on RevocationResponse {
