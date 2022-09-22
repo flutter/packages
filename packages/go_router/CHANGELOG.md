@@ -1,3 +1,7 @@
+## 5.0.1
+
+- Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981)
+
 ## 5.0.0
 
 - Fixes a bug where intermediate route redirect methods are not called.

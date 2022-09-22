@@ -33,6 +33,10 @@ void main() {
     expect(code, contains('public static class Foobar'));
     expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
+    expect(
+        code,
+        contains(
+            '@NonNull private static Map<String, Object> wrapError(@NonNull Throwable exception)'));
   });
 
   test('gen one enum', () {
@@ -130,6 +134,14 @@ void main() {
     expect(code, contains('public interface Api'));
     expect(code, matches('Output.*doSomething.*Input'));
     expect(code, contains('channel.setMessageHandler(null)'));
+    expect(
+        code,
+        contains(
+            'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer)'));
+    expect(
+        code,
+        contains(
+            'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value)'));
   });
 
   test('all the simple datatypes header', () {
