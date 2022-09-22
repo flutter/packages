@@ -368,7 +368,7 @@ String _enumMapConst(InterfaceType type) {
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
   for (final FieldElement enumField in type.element2.fields
-      .where((FieldElement element) => !element.isSynthetic)) {
+      .where((FieldElement element) => element.isEnumConstant)) {
     buffer.writeln(
       '$enumName.${enumField.name}: ${escapeDartString(enumField.name.kebab)},',
     );

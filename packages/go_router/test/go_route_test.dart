@@ -13,4 +13,8 @@ void main() {
   test('throws when a path is empty', () {
     expect(() => GoRoute(path: ''), throwsA(isAssertionError));
   });
+
+  test('does not throw when only redirect is provided', () {
+    GoRoute(path: '/', redirect: (_, __) => '/a');
+  });
 }

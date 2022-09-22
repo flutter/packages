@@ -33,6 +33,10 @@ void main() {
     expect(code, contains('public static class Foobar'));
     expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
+    expect(
+        code,
+        contains(
+            '@NonNull private static Map<String, Object> wrapError(@NonNull Throwable exception)'));
   });
 
   test('gen one enum', () {
@@ -130,6 +134,14 @@ void main() {
     expect(code, contains('public interface Api'));
     expect(code, matches('Output.*doSomething.*Input'));
     expect(code, contains('channel.setMessageHandler(null)'));
+    expect(
+        code,
+        contains(
+            'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer)'));
+    expect(
+        code,
+        contains(
+            'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value)'));
   });
 
   test('all the simple datatypes header', () {
@@ -1068,5 +1080,82 @@ void main() {
     final String code = sink.toString();
     expect(code,
         isNot(contains('@javax.annotation.Generated("dev.flutter.pigeon")')));
+  });
+
+  test('transfers documentation comments', () {
+    final List<String> comments = <String>[
+      ' api comment',
+      ' api method comment',
+      ' class comment',
+      ' class field comment',
+      ' enum comment',
+    ];
+    int count = 0;
+
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'api',
+          location: ApiLocation.flutter,
+          documentationComments: <String>[comments[count++]],
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              documentationComments: <String>[comments[count++]],
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[
+        Class(
+          name: 'class',
+          documentationComments: <String>[comments[count++]],
+          fields: <NamedType>[
+            NamedType(
+              documentationComments: <String>[comments[count++]],
+              type: const TypeDeclaration(
+                  baseName: 'Map',
+                  isNullable: true,
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'int', isNullable: true),
+                  ]),
+              name: 'field1',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'enum',
+          documentationComments: <String>[comments[count++]],
+          members: <String>[
+            'one',
+            'two',
+          ],
+        ),
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    for (final String comment in comments) {
+      // This regex finds the comment only between the open and close comment block
+      expect(
+          RegExp(r'(?<=\/\*\*.*?)' + comment + r'(?=.*?\*\/)', dotAll: true)
+              .hasMatch(code),
+          true);
+    }
   });
 }

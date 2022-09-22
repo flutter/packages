@@ -184,4 +184,52 @@ void defineTests() {
       },
     );
   });
+
+  group('fitContent', () {
+    testWidgets(
+      'uses maximum width when false',
+      (WidgetTester tester) async {
+        const String data = '- Foo\n- Bar';
+
+        await tester.pumpWidget(
+          boilerplate(
+            Column(
+              children: const <Widget>[
+                MarkdownBody(fitContent: false, data: data),
+              ],
+            ),
+          ),
+        );
+
+        final double screenWidth = tester.allElements.first.size!.width;
+        final double markdownBodyWidth =
+            find.byType(MarkdownBody).evaluate().single.size!.width;
+
+        expect(markdownBodyWidth, equals(screenWidth));
+      },
+    );
+
+    testWidgets(
+      'uses minimum width when true',
+      (WidgetTester tester) async {
+        const String data = '- Foo\n- Bar';
+
+        await tester.pumpWidget(
+          boilerplate(
+            Column(
+              children: const <Widget>[
+                MarkdownBody(data: data),
+              ],
+            ),
+          ),
+        );
+
+        final double screenWidth = tester.allElements.first.size!.width;
+        final double markdownBodyWidth =
+            find.byType(MarkdownBody).evaluate().single.size!.width;
+
+        expect(markdownBodyWidth, lessThan(screenWidth));
+      },
+    );
+  });
 }

@@ -1,3 +1,24 @@
+## 1.0.14
+
+* Bumps go_router version in example folder to v5.0.0
+* Bumps flutter version to 3.3.0
+
+## 1.0.13
+
+* Supports the latest `package:analyzer`.
+
+## 1.0.12
+
+* Adds support for enhanced enums. [#105876](https://github.com/flutter/flutter/issues/105876).
+
+## 1.0.11
+
+* Replace mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
+
+## 1.0.10
+
+* Adds a lint ignore for deprecated member in the example. 
+
 ## 1.0.9
 
 * Fixes lint warnings.

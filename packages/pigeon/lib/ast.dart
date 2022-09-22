@@ -34,6 +34,7 @@ class Method extends Node {
     this.objcSelector = '',
     this.swiftFunction = '',
     this.taskQueueType = TaskQueueType.serial,
+    this.documentationComments = const <String>[],
   });
 
   /// The name of the method.
@@ -60,13 +61,20 @@ class Method extends Node {
   /// Specifies how handlers are dispatched with respect to threading.
   TaskQueueType taskQueueType;
 
+  /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  List<String> documentationComments;
+
   @override
   String toString() {
     final String objcSelectorStr =
         objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
     final String swiftFunctionStr =
         swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
-    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr)';
+    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
 
@@ -78,6 +86,7 @@ class Api extends Node {
     required this.location,
     required this.methods,
     this.dartHostTestHandler,
+    this.documentationComments = const <String>[],
   });
 
   /// The name of the API.
@@ -92,9 +101,16 @@ class Api extends Node {
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
 
+  /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  List<String> documentationComments;
+
   @override
   String toString() {
-    return '(Api name:$name location:$location methods:$methods)';
+    return '(Api name:$name location:$location methods:$methods documentationComments:$documentationComments)';
   }
 }
 
@@ -162,7 +178,12 @@ class TypeDeclaration {
 /// Represents a named entity that has a type.
 class NamedType extends Node {
   /// Parametric constructor for [NamedType].
-  NamedType({required this.name, required this.type, this.offset});
+  NamedType({
+    required this.name,
+    required this.type,
+    this.offset,
+    this.documentationComments = const <String>[],
+  });
 
   /// The name of the entity.
   String name;
@@ -173,9 +194,16 @@ class NamedType extends Node {
   /// The offset in the source file where the [NamedType] appears.
   int? offset;
 
+  /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  List<String> documentationComments;
+
   @override
   String toString() {
-    return '(NamedType name:$name type:$type)';
+    return '(NamedType name:$name type:$type documentationComments:$documentationComments)';
   }
 }
 
@@ -185,6 +213,7 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
+    this.documentationComments = const <String>[],
   });
 
   /// The name of the class.
@@ -193,9 +222,16 @@ class Class extends Node {
   /// All the fields contained in the class.
   List<NamedType> fields;
 
+  /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  List<String> documentationComments;
+
   @override
   String toString() {
-    return '(Class name:$name fields:$fields)';
+    return '(Class name:$name fields:$fields documentationComments:$documentationComments)';
   }
 }
 
@@ -205,6 +241,7 @@ class Enum extends Node {
   Enum({
     required this.name,
     required this.members,
+    this.documentationComments = const <String>[],
   });
 
   /// The name of the enum.
@@ -213,9 +250,16 @@ class Enum extends Node {
   /// All of the members of the enum.
   List<String> members;
 
+  /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  List<String> documentationComments;
+
   @override
   String toString() {
-    return '(Enum name:$name members:$members)';
+    return '(Enum name:$name members:$members documentationComments:$documentationComments)';
   }
 }
 

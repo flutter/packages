@@ -1,3 +1,18 @@
+## 0.6.12
+
+* Markdown Lists now take into account `fitContent` instead of always expanding to the maximum horizontally ([flutter/flutter#108976](https://github.com/flutter/flutter/issues/108976)).
+
+## 0.6.11
+
+* Deprecates and removes use of `TaskListSyntax` as new markdown package supports checkboxes natively.
+  Consider using `OrderedListWithCheckBoxSyntax` or `UnorderedListWithCheckBoxSyntax` as a replacement.
+* Changes `_buildCheckbox()` to inspect state of checkbox input element by existence of `'checked'` attribute.
+
+## 0.6.10+6
+
+* Removes print logged when not handling hr for alignment.
+* Removes print logged when not handling li for alignment.
+
 ## 0.6.10+5
 
 * Fixes lint warnings.

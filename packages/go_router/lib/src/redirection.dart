@@ -2,38 +2,107 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
+
 import 'configuration.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
 
 /// A GoRouter redirector function.
-// TODO(johnpryan): make redirector async
-// See https://github.com/flutter/flutter/issues/105808
-typedef RouteRedirector = RouteMatchList Function(RouteMatchList matches,
-    RouteConfiguration configuration, RouteMatcher matcher,
-    {Object? extra});
+typedef RouteRedirector = FutureOr<RouteMatchList> Function(
+    BuildContext, FutureOr<RouteMatchList>, RouteConfiguration, RouteMatcher,
+    {List<RouteMatchList>? redirectHistory, Object? extra});
 
 /// Processes redirects by returning a new [RouteMatchList] representing the new
 /// location.
-RouteMatchList redirect(RouteMatchList prevMatchList,
-    RouteConfiguration configuration, RouteMatcher matcher,
-    {Object? extra}) {
-  RouteMatchList matches;
+FutureOr<RouteMatchList> redirect(
+    BuildContext context,
+    FutureOr<RouteMatchList> prevMatchListFuture,
+    RouteConfiguration configuration,
+    RouteMatcher matcher,
+    {List<RouteMatchList>? redirectHistory,
+    Object? extra}) {
+  FutureOr<RouteMatchList> processRedirect(RouteMatchList prevMatchList) {
+    FutureOr<RouteMatchList> processTopLevelRedirect(
+        String? topRedirectLocation) {
+      if (topRedirectLocation != null) {
+        final RouteMatchList newMatch = _getNewMatches(
+          topRedirectLocation,
+          prevMatchList.location,
+          configuration,
+          matcher,
+          redirectHistory!,
+        );
+        if (newMatch.isError) {
+          return newMatch;
+        }
+        return redirect(
+          context,
+          newMatch,
+          configuration,
+          matcher,
+          redirectHistory: redirectHistory,
+          extra: extra,
+        );
+      }
 
-  // Store each redirect to detect loops
-  final List<RouteMatchList> redirects = <RouteMatchList>[prevMatchList];
+      // Merge new params to keep params from previously matched paths, e.g.
+      // /users/:userId/book/:bookId provides userId and bookId to bookgit /:bookId
+      Map<String, String> previouslyMatchedParams = <String, String>{};
+      for (final RouteMatch match in prevMatchList.matches) {
+        assert(
+          !previouslyMatchedParams.keys.any(match.encodedParams.containsKey),
+          'Duplicated parameter names',
+        );
+        match.encodedParams.addAll(previouslyMatchedParams);
+        previouslyMatchedParams = match.encodedParams;
+      }
+      FutureOr<RouteMatchList> processRouteLevelRedirect(
+          String? routeRedirectLocation) {
+        if (routeRedirectLocation != null) {
+          final RouteMatchList newMatch = _getNewMatches(
+            routeRedirectLocation,
+            prevMatchList.location,
+            configuration,
+            matcher,
+            redirectHistory!,
+          );
 
-  // Keep looping until redirecting is done
-  while (true) {
-    final RouteMatchList currentMatches = redirects.last;
+          if (newMatch.isError) {
+            return newMatch;
+          }
+          return redirect(
+            context,
+            newMatch,
+            configuration,
+            matcher,
+            redirectHistory: redirectHistory,
+            extra: extra,
+          );
+        }
+        return prevMatchList;
+      }
 
+      final FutureOr<String?> routeLevelRedirectResult =
+          _getRouteLevelRedirect(context, configuration, prevMatchList, 0);
+      if (routeLevelRedirectResult is String?) {
+        return processRouteLevelRedirect(routeLevelRedirectResult);
+      }
+      return routeLevelRedirectResult
+          .then<RouteMatchList>(processRouteLevelRedirect);
+    }
+
+    redirectHistory ??= <RouteMatchList>[prevMatchList];
     // Check for top-level redirect
-    final Uri uri = currentMatches.location;
-    final String? topRedirectLocation = configuration.topRedirect(
+    final Uri uri = prevMatchList.location;
+    final FutureOr<String?> topRedirectResult = configuration.topRedirect(
+      context,
       GoRouterState(
         configuration,
-        location: currentMatches.location.toString(),
+        location: prevMatchList.location.toString(),
         name: null,
         // No name available at the top level trim the query params off the
         // sub-location to match route.redirect
@@ -44,58 +113,89 @@ RouteMatchList redirect(RouteMatchList prevMatchList,
       ),
     );
 
-    if (topRedirectLocation != null) {
-      final RouteMatchList newMatch = matcher.findMatch(topRedirectLocation);
-      _addRedirect(redirects, newMatch, prevMatchList.location,
-          configuration.redirectLimit);
-      continue;
+    if (topRedirectResult is String?) {
+      return processTopLevelRedirect(topRedirectResult);
     }
+    return topRedirectResult.then<RouteMatchList>(processTopLevelRedirect);
+  }
 
-    // If there's no top-level redirect, keep the matches the same as before.
-    matches = currentMatches;
+  if (prevMatchListFuture is RouteMatchList) {
+    return processRedirect(prevMatchListFuture);
+  }
+  return prevMatchListFuture.then<RouteMatchList>(processRedirect);
+}
 
-    // Merge new params to keep params from previously matched paths, e.g.
-    // /users/:userId/book/:bookId provides userId and bookId to book/:bookId
-    Map<String, String> previouslyMatchedParams = <String, String>{};
-    for (final RouteMatch match in currentMatches.matches) {
-      assert(
-        !previouslyMatchedParams.keys.any(match.encodedParams.containsKey),
-        'Duplicated parameter names',
-      );
-      match.encodedParams.addAll(previouslyMatchedParams);
-      previouslyMatchedParams = match.encodedParams;
-    }
-
-    // check top route for redirect
-    final RouteMatch? top = matches.isNotEmpty ? matches.last : null;
-    if (top == null) {
-      break;
-    }
-    final String? topRouteLocation = top.route.redirect(
+FutureOr<String?> _getRouteLevelRedirect(
+  BuildContext context,
+  RouteConfiguration configuration,
+  RouteMatchList matchList,
+  int currentCheckIndex,
+) {
+  if (currentCheckIndex >= matchList.matches.length) {
+    return null;
+  }
+  final RouteMatch match = matchList.matches[currentCheckIndex];
+  FutureOr<String?> processRouteRedirect(String? newLocation) =>
+      newLocation ??
+      _getRouteLevelRedirect(
+          context, configuration, matchList, currentCheckIndex + 1);
+  final RouteBase route = match.route;
+  FutureOr<String?> routeRedirectResult;
+  if (route is GoRoute && route.redirect != null) {
+    routeRedirectResult = route.redirect!(
+      context,
       GoRouterState(
         configuration,
-        location: currentMatches.location.toString(),
-        subloc: top.subloc,
-        name: top.route.name,
-        path: top.route.path,
-        fullpath: top.fullpath,
-        extra: top.extra,
-        params: top.decodedParams,
-        queryParams: top.queryParams,
-        queryParametersAll: top.queryParametersAll,
+        location: matchList.location.toString(),
+        subloc: match.subloc,
+        name: route.name,
+        path: route.path,
+        fullpath: match.fullpath,
+        extra: match.extra,
+        params: match.decodedParams,
+        queryParams: match.queryParams,
+        queryParametersAll: match.queryParametersAll,
       ),
     );
-
-    if (topRouteLocation == null) {
-      break;
-    }
-
-    final RouteMatchList newMatchList = matcher.findMatch(topRouteLocation);
-    _addRedirect(redirects, newMatchList, prevMatchList.location,
-        configuration.redirectLimit);
-    continue;
   }
-  return matches;
+  if (routeRedirectResult is String?) {
+    return processRouteRedirect(routeRedirectResult);
+  }
+  return routeRedirectResult.then<String?>(processRouteRedirect);
+}
+
+RouteMatchList _getNewMatches(
+  String newLocation,
+  Uri previousLocation,
+  RouteConfiguration configuration,
+  RouteMatcher matcher,
+  List<RouteMatchList> redirectHistory,
+) {
+  try {
+    final RouteMatchList newMatch = matcher.findMatch(newLocation);
+    _addRedirect(redirectHistory, newMatch, previousLocation,
+        configuration.redirectLimit);
+    return newMatch;
+  } on RedirectionError catch (e) {
+    return _handleRedirectionError(e);
+  } on MatcherError catch (e) {
+    return _handleMatcherError(e);
+  }
+}
+
+RouteMatchList _handleMatcherError(MatcherError error) {
+  // The RouteRedirector uses the matcher to find the match, so a match
+  // exception can happen during redirection. For example, the redirector
+  // redirects from `/a` to `/b`, it needs to get the matches for `/b`.
+  log.info('Match error: ${error.message}');
+  final Uri uri = Uri.parse(error.location);
+  return errorScreen(uri, error.message);
+}
+
+RouteMatchList _handleRedirectionError(RedirectionError error) {
+  log.info('Redirection error: ${error.message}');
+  final Uri uri = error.location;
+  return errorScreen(uri, error.message);
 }
 
 /// A configuration error detected while processing redirects.
