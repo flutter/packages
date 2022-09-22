@@ -199,6 +199,10 @@ run_macos_swift_unittests() {
   dart run tool/run_tests.dart -t mac_swift_unittests
 }
 
+run_android_kotlin_unittests() {
+  dart run tool/run_tests.dart -t android_kotlin_unittests
+}
+
 run_dart_compilation_tests() {
   local temp_dir=$(mktmpdir)
   local flutter_project_dir=$temp_dir/project
@@ -321,6 +325,7 @@ should_run_ios_unittests=true
 should_run_ios_swift_unittests=true
 should_run_mock_handler_tests=true
 should_run_macos_swift_unittests=true
+should_run_android_kotlin_unittests=true
 while getopts "t:l?h" opt; do
   case $opt in
   t)
@@ -333,6 +338,7 @@ while getopts "t:l?h" opt; do
     should_run_ios_swift_unittests=false
     should_run_mock_handler_tests=false
     should_run_macos_swift_unittests=false
+    should_run_android_kotlin_unittests=false
     case $OPTARG in
     android_unittests) should_run_android_unittests=true ;;
     dart_compilation_tests) should_run_dart_compilation_tests=true ;;
@@ -343,6 +349,7 @@ while getopts "t:l?h" opt; do
     ios_swift_unittests) should_run_ios_swift_unittests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
     macos_swift_unittests) should_run_macos_swift_unittests=true ;;
+    android_kotlin_unittests) should_run_android_kotlin_unittests=true ;;
     *)
       echo "unrecognized test: $OPTARG"
       exit 1
@@ -351,15 +358,16 @@ while getopts "t:l?h" opt; do
     ;;
   l)
     echo "available tests for -t:
-  android_unittests      - Unit tests on generated Java code.
-  dart_compilation_tests - Compilation tests on generated Dart code.
-  dart_unittests         - Unit tests on and analysis on Pigeon's implementation.
-  flutter_unittests      - Unit tests on generated Dart code.
-  ios_e2e_tests          - End-to-end objc tests run on iOS Simulator
-  ios_unittests          - Unit tests on generated Objc code.
-  ios_swift_unittests    - Unit tests on generated Swift code.
-  mock_handler_tests     - Unit tests on generated Dart mock handler code.
-  macos_swift_unittests  - Unit tests on generated Swift code on macOS.
+  android_unittests        - Unit tests on generated Java code.
+  android_kotlin_unittests - Unit tests on generated Kotlin code on Android.
+  dart_compilation_tests   - Compilation tests on generated Dart code.
+  dart_unittests           - Unit tests on and analysis on Pigeon's implementation.
+  flutter_unittests        - Unit tests on generated Dart code.
+  ios_e2e_tests            - End-to-end objc tests run on iOS Simulator
+  ios_unittests            - Unit tests on generated Objc code.
+  ios_swift_unittests      - Unit tests on generated Swift code.
+  mock_handler_tests       - Unit tests on generated Dart mock handler code.
+  macos_swift_unittests    - Unit tests on generated Swift code on macOS.
   "
     exit 1
     ;;
@@ -411,4 +419,7 @@ if [ "$should_run_android_unittests" = true ]; then
 fi
 if [ "$should_run_macos_swift_unittests" = true ]; then
   run_macos_swift_unittests
+fi
+if [ "$should_run_android_kotlin_unittests" = true ]; then
+  run_android_kotlin_unittests
 fi
