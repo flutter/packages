@@ -1,7 +1,3 @@
-## 4.2.1
-
-Adds Swift tests in CI script.
-
 ## 4.2.0
 
 * Adds experimental support for Kotlin generation.
