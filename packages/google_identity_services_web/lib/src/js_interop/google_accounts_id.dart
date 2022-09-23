@@ -66,19 +66,74 @@ abstract class IdConfiguration {
   /// before being passed to this constructor: [callback], [native_callback],
   /// and [intermediate_iframe_close_callback].
   external factory IdConfiguration({
+    /// Your application's client ID, which is found and created in the Google
+    /// Developers Console.
     required String client_id,
+    /// Determines if an ID token is automatically returned without any user
+    /// interaction when there's only one Google session that has approved your
+    /// app before. The default value is `false`.
     bool? auto_select,
+    /// The function that handles the ID token returned from the One Tap prompt
+    /// or the pop-up window. This attribute is required if Google One Tap or
+    /// the Sign In With Google button `popup` UX mode is used.
     CallbackFn? callback,
+    /// This attribute is the URI of your login endpoint. May be omitted if the
+    /// current page is your login page, in which case the credential is posted
+    /// to this page by default.
+    ///
+    /// The ID token credential response is posted to your login endpoint when
+    /// a user clicks on the Sign In With Google button and `redirect` UX mode
+    /// is used.
+    ///
+    /// Your login endpoint must handle POST requests containing a credential
+    /// key with an ID token value in the body.
     Uri? login_uri,
+    /// The function that handles the password credential returned from the
+    /// browser's native credential manager.
     NativeCallbackFn? native_callback,
+    /// Whether or not to cancel the One Tap request if a user clicks outside
+    /// the prompt. The default value is `true`.
     bool? cancel_on_tap_outside,
+    /// The DOM ID of the container element. If it's not set, the One Tap prompt
+    /// is displayed in the top-right corner of the window.
     String? prompt_parent_id,
+    /// A random string used by the ID token to prevent replay attacks.
+    ///
+    /// Nonce length is limited to the maximum JWT size supported by your
+    /// environment, and individual browser and server HTTP size constraints.
     String? nonce,
-    String? context,
+    /// Changes the text of the title and messages in the One Tap prompt.
+    OneTapContext? context,
+    /// If you need to display One Tap in the parent domain and its subdomains,
+    /// pass the parent domain to this field so that a single shared-state
+    /// cookie is used.
+    ///
+    /// See: https://developers.google.com/identity/gsi/web/guides/subdomains
     String? state_cookie_domain,
+    /// Set the UX flow used by the Sign In With Google button. The default
+    /// value is `popup`. **This attribute has no impact on the OneTap UX.**
     UxMode? ux_mode,
+    /// The origins that are allowed to embed the intermediate iframe. One Tap
+    /// will run in the intermediate iframe mode if this field presents.
+    ///
+    /// Wildcard prefixes are also supported. Wildcard domains must begin with
+    /// a secure `https://` scheme, otherwise they'll be considered invalid.
     List<String>? allowed_parent_origin,
+    /// Overrides the default intermediate iframe behavior when users manually
+    /// close One Tap by tapping on the 'X' button in the One Tap UI. The
+    /// default behavior is to remove the intermediate iframe from the DOM
+    /// immediately.
+    ///
+    /// The `intermediate_iframe_close_callback` field takes effect only in
+    /// intermediate iframe mode. And it has impact only to the intermediate
+    /// iframe, instead of the One Tap iframe. The One Tap UI is removed before
+    /// the callback is invoked.
     Function? intermediate_iframe_close_callback,
+    /// determines if the upgraded One Tap UX should be enabled on browsers
+    /// that support Intelligent Tracking Prevention (ITP). The default value
+    /// is false.
+    ///
+    /// See: https://developers.google.com/identity/gsi/web/guides/features#upgraded_ux_on_itp_browsers
     bool? itp_support,
   });
 }
@@ -144,18 +199,26 @@ extension PromptMomentNotificationExtension on PromptMomentNotification {
   external bool isDisplayed();
   /// Is this notification for a display moment, and the UI isn't displayed?
   external bool isNotDisplayed();
-  /// The detailed reason why the UI isn't displayed.
-  external String getNotDisplayedReason(); // todo: migrate Strings to enum
   /// Is this notification for a skipped moment?
   external bool isSkippedMoment();
-  /// The detailed reason for the skipped moment.
-  external String getSkippedReason();
   /// Is this notification for a dismissed moment?
   external bool isDismissedMoment();
-  /// The detailed reason for the dismissal.
-  external String getDismissedReason();
+  @JS('getMomentType')
+  external String _getMomentType();
+  @JS('getNotDisplayedReason')
+  external String? _getNotDisplayedReason();
+  @JS('getSkippedReason')
+  external String? _getSkippedReason();
+  @JS('getDismissedReason')
+  external String? _getDismissedReason();
   /// The moment type.
-  external String getMomentType();
+  MomentType getMomentType() => MomentType.values.byName(_getMomentType());
+  /// The detailed reason why the UI isn't displayed.
+  MomentNotDisplayedReason? getNotDisplayedReason() => maybeEnum(_getNotDisplayedReason(), MomentNotDisplayedReason.values);
+  /// The detailed reason for the skipped moment.
+  MomentSkippedReason? getSkippedReason() => maybeEnum(_getSkippedReason(), MomentSkippedReason.values);
+  /// The detailed reason for the dismissal.
+  MomentDismissedReason? getDismissedReason() => maybeEnum(_getDismissedReason(), MomentDismissedReason.values);
 }
 
 /*
@@ -175,13 +238,15 @@ extension CredentialResponseExtension on CredentialResponse {
   ///
   /// See more: https://developers.google.com/identity/gsi/web/reference/js-reference#credential
   external String get credential;
+  @JS('select_by')
+  external String get _select_by;
   /// This field sets how the credential was selected.
   ///
   /// The type of button used along with the session and consent state are used
   /// to set the value.
   ///
   /// See more: https://developers.google.com/identity/gsi/web/reference/js-reference#select_by
-  external String get select_by; // Convert to enum
+  CredentialSelectBy get select_by => CredentialSelectBy.values.byName(_select_by);
 }
 
 /// The type of the `callback` used to create an [IdConfiguration].

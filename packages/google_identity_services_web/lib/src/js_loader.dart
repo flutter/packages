@@ -15,7 +15,7 @@ const String _url = 'https://accounts.google.com/gsi/client';
 // The default TrustedPolicy name that will be used to inject the script.
 const String _defaultTrustedPolicyName = 'gis-dart';
 
-/// loads the GIS SDK for web, using Trusted Types API when available.
+/// Loads the GIS SDK for web, using Trusted Types API when available.
 Future<void> loadWebSdk({
     DomHtmlElement? target,
     String trustedTypePolicyName = _defaultTrustedPolicyName,
