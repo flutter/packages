@@ -7,7 +7,7 @@ executables:
   vector_graphics_compiler:
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=2.19.0-214.0.dev <3.0.0'
 
 dependencies:
   args: ^2.3.0
@@ -15,6 +15,7 @@ dependencies:
   path_parsing: ^1.0.1
   xml: ^6.0.1
   vector_graphics_codec: 0.0.2
+  pool: ^1.5.0
 
 dev_dependencies:
   flutter_lints: ^1.0.0
