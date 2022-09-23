@@ -9,6 +9,7 @@ import 'dart:typed_data';
 import 'package:pool/pool.dart';
 
 import '../vector_graphics_compiler.dart';
+import 'debug_format.dart';
 
 /// The isolate processor distributes SVG compilation across multiple isolates.
 class IsolateProcessor {
@@ -32,6 +33,7 @@ class IsolateProcessor {
     required bool clippingOptimizerEnabled,
     required bool overdrawOptimizerEnabled,
     required bool tessellate,
+    required bool dumpDebug,
   }) async {
     _total = pairs.length;
     _current = 0;
@@ -44,6 +46,7 @@ class IsolateProcessor {
           clippingOptimizerEnabled: clippingOptimizerEnabled,
           overdrawOptimizerEnabled: overdrawOptimizerEnabled,
           tessellate: tessellate,
+          dumpDebug: dumpDebug,
           libpathops: _libpathops,
           libtessellator: _libtessellator,
         ).catchError((dynamic error, [StackTrace? stackTrace]) {
@@ -81,6 +84,7 @@ class IsolateProcessor {
     required bool clippingOptimizerEnabled,
     required bool overdrawOptimizerEnabled,
     required bool tessellate,
+    required bool dumpDebug,
     required String? libpathops,
     required String? libtessellator,
   }) async {
@@ -105,6 +109,10 @@ class IsolateProcessor {
           enableOverdrawOptimizer: overdrawOptimizerEnabled,
         );
         File(pair.outputPath).writeAsBytesSync(bytes);
+        if (dumpDebug) {
+          final Uint8List debugBytes = dumpToDebugFormat(bytes);
+          File(pair.outputPath + '.debug').writeAsBytesSync(debugBytes);
+        }
       });
       _current++;
       print('Progress: $_current/$_total');

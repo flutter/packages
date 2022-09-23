@@ -55,6 +55,10 @@ final ArgParser argParser = ArgParser()
       abbr: 'k',
       help: 'The maximum number of SVG processing isolates to spawn at once. '
           'If not provided, defaults to the number of cores.')
+  ..addFlag('dump-debug',
+      help:
+          'Dump a human readable debugging format alongside the compiled asset',
+      hide: true)
   ..addOption(
     'output',
     abbr: 'o',
@@ -113,6 +117,7 @@ Future<void> main(List<String> args) async {
   final bool clippingOptimizerEnabled = results['optimize-clips'] == true;
   final bool overdrawOptimizerEnabled = results['optimize-overdraw'] == true;
   final bool tessellate = results['tessellate'] == true;
+  final bool dumpDebug = results['dump-debug'] == true;
   final int concurrency;
   if (results.wasParsed('concurrency')) {
     concurrency = int.parse(results['concurrency'] as String);
@@ -131,6 +136,7 @@ Future<void> main(List<String> args) async {
     clippingOptimizerEnabled: clippingOptimizerEnabled,
     overdrawOptimizerEnabled: overdrawOptimizerEnabled,
     tessellate: tessellate,
+    dumpDebug: dumpDebug,
   )) {
     exit(1);
   }
