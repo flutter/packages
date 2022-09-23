@@ -315,6 +315,9 @@ class DummyBuildContext implements BuildContext {
   }
 
   @override
+  bool get mounted => throw UnimplementedError();
+
+  @override
   BuildOwner? get owner => throw UnimplementedError();
 
   @override
