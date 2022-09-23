@@ -1,3 +1,7 @@
+## 5.0.2
+
+- Fixes a bug in ShellRoute example where BottomNavigationBar might lose current index in long URIs.
+
 ## 5.0.1
 
 - Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981)
