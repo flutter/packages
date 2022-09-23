@@ -1,11 +1,11 @@
 // import 'package:flutter/material.dart';
 import 'package:google_identity_services_web/id.dart' as id;
-import 'package:google_identity_services_web/loader.dart' as loader;
+import 'package:google_identity_services_web/loader.dart' as gis;
 import 'package:js/js.dart' show allowInterop;
 import 'package:jwt_decoder/jwt_decoder.dart' as jwt;
 
 void main() async {
-  await loader.loadWebSdk(); // Load the GIS SDK
+  await gis.loadWebSdk(); // Load the GIS SDK
 
   id.setLogLevel('debug');
 
@@ -34,7 +34,13 @@ void onCredentialResponse(id.CredentialResponse o) {
 
 ///
 void onPromptMoment(id.PromptMomentNotification o) {
-  print(o.getMomentType());
+  id.MomentType type = o.getMomentType();
+  print(type.runtimeType);
+  print(type);
+  print(type.index);
+  print(o.getDismissedReason());
+  print(o.getNotDisplayedReason());
+  print(o.getSkippedReason());
 }
 
 /*
