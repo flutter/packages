@@ -75,7 +75,7 @@ abstract class CodeClient {}
 /// The methods available on the [CodeClient].
 extension CodeClientExtension on CodeClient {
   /// Starts the OAuth 2.0 Code UX flow.
-  external VoidFn get requestCode;
+  external void requestCode();
 }
 
 /*
@@ -94,8 +94,6 @@ extension CodeResponseExtension on CodeResponse {
   external String get code;
   /// A space-delimited list of scopes that are approved by the user.
   external String get scope;
-  /// A List of scopes that are approved by the user.
-  List<String> get scopes => scope.split(' ');
   /// The string value that your application uses to maintain state between your
   /// authorization request and the response.
   external String get state;
@@ -169,11 +167,8 @@ abstract class TokenClient {}
 /// The methods available on the [TokenClient].
 extension TokenClientExtension on TokenClient {
   /// Starts the OAuth 2.0 Code UX flow.
-  external RequestAccessTokenFn get requestAccessToken;
+  external void requestAccessToken([OverridableTokenClientConfig overrideConfig]);
 }
-
-/// The type of the `requestAccessToken` function from the [TokenClient].
-typedef RequestAccessTokenFn = void Function(OverridableTokenClientConfig? overrideConfig);
 
 /*
 // Data type: OverridableTokenClientConfig
@@ -303,4 +298,9 @@ external RevokeTokenFn get revokeToken;
 ///
 /// The (optional) [done] parameter must be manually wrapped in [allowInterop]
 /// before being passed to the [revokeToken] function.
-typedef RevokeTokenFn = void Function(String accessToken, VoidFn? done);
+typedef RevokeTokenFn = void Function(String accessToken, [RevokeTokenDoneFn? done]);
+
+/// The signature of the `done` function for [revokeToken].
+///
+/// TODO: b/248628502
+typedef RevokeTokenDoneFn = void Function(String jsonError);
