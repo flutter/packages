@@ -73,6 +73,9 @@ class DrawCommandBuilder {
 
   /// Add a path to the current draw command stack
   void addPath(Path path, Paint paint, String? debugString, int? patternId) {
+    if (path.isEmpty) {
+      return;
+    }
     final int pathId = _getOrGenerateId(path, _paths);
     final int paintId = _getOrGenerateId(paint, _paints);
 

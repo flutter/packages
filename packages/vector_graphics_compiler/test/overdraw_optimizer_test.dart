@@ -320,17 +320,13 @@ void main() {
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xccff0000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x99ff0000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x66ff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xc2ff0000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x33ff0000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff008000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xbfff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xffbf2000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xbf008000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xdf913700))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7f008000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x3fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x9fff0000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x3f008000)))
     ]);
 
@@ -389,9 +385,6 @@ void main() {
               350.0, 72.40425109863281, 372.40423583984375, 50.0, 400.0, 50.0),
           CloseCommand()
         ],
-      ),
-      Path(
-        fillType: PathFillType.evenOdd,
       ),
       Path(
         fillType: PathFillType.evenOdd,
