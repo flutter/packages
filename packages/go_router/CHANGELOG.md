@@ -1,3 +1,7 @@
+## NEXT
+
+- Link to the ShellRoute example from the README
+
 ## 5.0.1
 
 - Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981)
