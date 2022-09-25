@@ -1,7 +1,6 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
 import XCTest
 @testable import Runner
 
@@ -17,8 +16,9 @@ class MockNullableArgHostApi: NullableArgHostApi {
 }
 
 class NullableReturnsTests: XCTestCase {
+  var codec = FlutterStandardMessageCodec.sharedInstance()
   func testNullableParameterWithFlutterApi() {
-    let binaryMessenger = EchoBinaryMessenger(codec: NullableArgFlutterApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: codec)
     binaryMessenger.defaultReturn = 99
     let api = NullableArgFlutterApi(binaryMessenger: binaryMessenger)
     
@@ -32,7 +32,7 @@ class NullableReturnsTests: XCTestCase {
   
   func testNullableParameterWithHostApi() {
     let api = MockNullableArgHostApi()
-    let binaryMessenger = MockBinaryMessenger<Int32?>(codec: NullableArgHostApiCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<Int32?>(codec: codec)
     let channel = "dev.flutter.pigeon.NullableArgHostApi.doit"
     
     NullableArgHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: api)
