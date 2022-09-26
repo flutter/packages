@@ -5,6 +5,7 @@
 // import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:go_router_builder_example/all_types.dart';
 import 'package:go_router_builder_example/shared/data.dart';
 
@@ -87,6 +88,21 @@ void main() {
       requiredEnumField: PersonDetails.favoriteFood,
       enumField: PersonDetails.favoriteSport,
     ).go(scaffoldState.context);
+    await tester.pumpAndSettle();
+    expect(find.text('EnumRoute'), findsOneWidget);
+    expect(find.text('Param: PersonDetails.favoriteFood'), findsOneWidget);
+    expect(
+        find.text('Query param: PersonDetails.favoriteSport'), findsOneWidget);
+
+    final String enumRouteLocation = EnumRoute(
+      requiredEnumField: PersonDetails.favoriteFood,
+      enumField: PersonDetails.favoriteSport,
+    ).location;
+    final String capitalizedEnumRouteLocation = enumRouteLocation
+        .replaceFirst('food', 'FoOd')
+        .replaceAll('favorite', 'faVoRite')
+        .replaceAll('sport', 'SpOrT');
+    GoRouter.of(scaffoldState.context).go(capitalizedEnumRouteLocation);
     await tester.pumpAndSettle();
     expect(find.text('EnumRoute'), findsOneWidget);
     expect(find.text('Param: PersonDetails.favoriteFood'), findsOneWidget);

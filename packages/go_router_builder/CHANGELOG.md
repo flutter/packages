@@ -1,3 +1,7 @@
+## 1.0.15
+
+* Adds support for case insensitive enum parameters in URL [#112371](https://github.com/flutter/flutter/issues/112371)
+
 ## 1.0.14
 
 * Bumps go_router version in example folder to v5.0.0

@@ -412,6 +412,8 @@ bool $boolConverterHelperName(String value) {
 
 const String _enumConverterHelper = '''
 extension<T extends Enum> on Map<T, String> {
-  T $enumExtensionHelperName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T $enumExtensionHelperName(String value) => entries
+      .singleWhere(
+          (element) => element.value.toLowerCase() == value.toLowerCase())
+      .key;
 }''';

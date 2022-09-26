@@ -102,8 +102,10 @@ const _$PersonDetailsEnumMap = {
 };
 
 extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T _$fromName(String value) => entries
+      .singleWhere(
+          (element) => element.value.toLowerCase() == value.toLowerCase())
+      .key;
 }
 
 GoRoute get $loginRoute => GoRouteData.$route(
