@@ -121,6 +121,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         // in this case.
         assert(canPop);
         return canPop;
+      } else if (route is NestedNavigationShellRoute) {
+        // NestedNavigationShellRoute delegates navigation handling and should
+        // therefore not handle pop here
+        continue;
       } else if (route is ShellRoute) {
         final bool canPop = route.navigatorKey.currentState!.canPop();
         if (canPop) {

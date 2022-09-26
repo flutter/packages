@@ -187,9 +187,16 @@ class RouteBuilder {
       _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
           keyToPages, newParams, shellNavigatorKey);
 
-      // Build the Navigator
-      final Widget child = _buildNavigator(
-          pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey);
+      final Widget child;
+      if (route is NestedNavigationShellRoute) {
+        // Build the container for the nested routes
+        child = route.nestedNavigationBuilder(context, state,
+            keyToPages[shellNavigatorKey]!);
+      } else {
+        // Build the Navigator
+        child = _buildNavigator(
+            pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey);
+      }
 
       // Build the Page for this route
       final Page<dynamic> page =
