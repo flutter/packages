@@ -21,7 +21,7 @@ Future<void> loadWebSdk({
     String trustedTypePolicyName = _defaultTrustedPolicyName,
 }) {
   final Completer<void> completer = Completer<void>();
-  onGoogleLibraryLoad = allowInterop(completer.complete);
+  onGoogleLibraryLoad = allowInterop(() => completer.complete());
 
   // If TrustedTypes are available, prepare a trusted URL.
   DomTrustedScriptUrl? trustedUrl;
