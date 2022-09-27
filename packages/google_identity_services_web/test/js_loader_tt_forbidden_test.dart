@@ -22,14 +22,14 @@ import 'tools.dart';
 // * js_loader_tt_forbidden_test.dart: TT are completely disallowed
 
 void main() {
-  group('JS Loader, Trusted Types explicitly disabled', () {
+  group('loadWebSdk (TrustedTypes forbidden)', () {
     final dom.DomHtmlElement target = dom.document.createElement('div');
     injectMetaTag(<String, String>{
       'http-equiv': 'Content-Security-Policy',
       'content': "trusted-types 'none';",
     });
 
-    test('Fail with a TrustedTypesException', () {
+    test('Fail with TrustedTypesException', () {
       expect(() {
         loadWebSdk(target: target);
       }, throwsA(isA<TrustedTypesException>()));

@@ -23,7 +23,7 @@ import 'package:test/test.dart';
 // * js_loader_tt_forbidden_test.dart: TT are completely disallowed
 
 void main() {
-  group('JS Loader, with no Trusted Types configuration', () {
+  group('loadWebSdk (no TrustedTypes)', () {
     final dom.DomHtmlElement target = dom.document.createElement('div');
 
     test('Injects script into desired target', () async {
@@ -40,7 +40,7 @@ void main() {
       expect(js_util.getProperty<String>(script, 'src'), 'https://accounts.google.com/gsi/client');
     });
 
-    test('Completes when the script calls the method in the window!', () async {
+    test('Completes when the script loads', () async {
       final Future<void> loadFuture = loadWebSdk(target: target);
 
       Future<void>.delayed(const Duration(milliseconds: 100), () {

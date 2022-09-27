@@ -22,20 +22,20 @@ import 'tools.dart';
 // * js_loader_tt_forbidden_test.dart: TT are completely disallowed
 
 void main() {
-  group('JS Loader, Trusted Types customized', () {
+  group('loadWebSdk (TrustedTypes configured)', () {
     final dom.DomHtmlElement target = dom.document.createElement('div');
     injectMetaTag(<String, String>{
       'http-equiv': 'Content-Security-Policy',
       'content': "trusted-types my-custom-policy-name 'allow-duplicates';",
     });
 
-    test('Fail with an Exception if the Policy name is not correctly set', () {
+    test('Wrong policy name: Fail with TrustedTypesException', () {
       expect(() {
         loadWebSdk(target: target);
       }, throwsA(isA<TrustedTypesException>()));
     });
 
-    test('The loader respects the passed policy name', () {
+    test('Correct policy name: Completes', () {
       final Future<void> done = loadWebSdk(
         target: target,
         trustedTypePolicyName: 'my-custom-policy-name',
