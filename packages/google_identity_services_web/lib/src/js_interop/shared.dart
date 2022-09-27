@@ -27,6 +27,7 @@ typedef VoidFn = void Function();
 enum UxMode {
   /// Performs sign-in UX flow in a pop-up window.
   popup('popup'),
+
   /// Performs sign-in UX flow by a full page redirection.
   redirect('redirect');
 
@@ -42,8 +43,10 @@ enum UxMode {
 enum OneTapContext {
   /// "Sign in with Google"
   signin('signin'),
+
   /// "Sign up with Google"
   signup('signup'),
+
   /// "Use with Google"
   use('use');
 
@@ -61,30 +64,37 @@ enum MomentNotDisplayedReason {
   ///
   /// See https://developers.google.com/identity/gsi/web/guides/supported-browsers
   browser_not_supported('browser_not_supported'),
+
   /// Invalid Client.
   ///
   /// See https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid
   invalid_client('invalid_client'),
+
   /// Missing client_id.
   ///
   /// See https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid
   missing_client_id('missing_client_id'),
+
   /// The user has opted out, or they aren't signed in to a Google account.
   ///
   /// https://developers.google.com/identity/gsi/web/guides/features
   opt_out_or_no_session('opt_out_or_no_session'),
+
   /// Google One Tap can only be displayed in HTTPS domains.
   ///
   /// See https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid
   secure_http_required('secure_http_required'),
+
   /// The user has previously closed the OneTap card.
   ///
   /// See https://developers.google.com/identity/gsi/web/guides/features#exponential_cooldown
   suppressed_by_user('suppressed_by_user'),
+
   /// The current `origin` is not associated with the Client ID.
   ///
   /// See https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid
   unregistered_origin('unregistered_origin'),
+
   /// Unknown reason
   unknown_reason('unknown_reason');
 
@@ -100,10 +110,13 @@ enum MomentNotDisplayedReason {
 enum MomentSkippedReason {
   /// auto_cancel
   auto_cancel('auto_cancel'),
+
   /// user_cancel
   user_cancel('user_cancel'),
+
   /// tap_outside
   tap_outside('tap_outside'),
+
   /// issuing_failed
   issuing_failed('issuing_failed');
 
@@ -119,8 +132,10 @@ enum MomentSkippedReason {
 enum MomentDismissedReason {
   /// credential_returned
   credential_returned('credential_returned'),
+
   /// cancel_called
   cancel_called('cancel_called'),
+
   /// flow_restarted
   flow_restarted('flow_restarted');
 
@@ -136,8 +151,10 @@ enum MomentDismissedReason {
 enum MomentType {
   /// Display moment
   display('display'),
+
   /// Skipped moment
   skipped('skipped'),
+
   /// Dismissed moment
   dismissed('dismissed');
 
@@ -154,29 +171,36 @@ enum CredentialSelectBy {
   /// Automatic sign-in of a user with an existing session who had previously
   /// granted consent to share credentials.
   auto('auto'),
+
   /// A user with an existing session who had previously granted consent
   /// pressed the One Tap 'Continue as' button to share credentials.
   user('user'),
+
   /// A user with an existing session pressed the One Tap 'Continue as' button
   /// to grant consent and share credentials. Applies only to Chrome v75 and
   /// higher.
   user_1tap('user_1tap'),
+
   /// A user without an existing session pressed the One Tap 'Continue as'
   /// button to select an account and then pressed the Confirm button in a
   /// pop-up window to grant consent and share credentials. Applies to
   /// non-Chromium based browsers.
   user_2tap('user_2tap'),
+
   /// A user with an existing session who previously granted consent pressed
   /// the Sign In With Google button and selected a Google Account from
   /// 'Choose an Account' to share credentials.
   btn('btn'),
+
   /// A user with an existing session pressed the Sign In With Google button
   /// and pressed the Confirm button to grant consent and share credentials.
   btn_confirm('btn_confirm'),
+
   /// A user without an existing session who previously granted consent
   /// pressed the Sign In With Google button to select a Google Account and
   /// share credentials.
   btn_add_session('btn_add_session'),
+
   /// A user without an existing session first pressed the Sign In With Google
   /// button to select a Google Account and then pressed the Confirm button to
   /// consent and share credentials.

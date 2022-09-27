@@ -17,8 +17,8 @@ const String _defaultTrustedPolicyName = 'gis-dart';
 
 /// Loads the GIS SDK for web, using Trusted Types API when available.
 Future<void> loadWebSdk({
-    DomHtmlElement? target,
-    String trustedTypePolicyName = _defaultTrustedPolicyName,
+  DomHtmlElement? target,
+  String trustedTypePolicyName = _defaultTrustedPolicyName,
 }) {
   final Completer<void> completer = Completer<void>();
   onGoogleLibraryLoad = allowInterop(() => completer.complete());
@@ -26,23 +26,28 @@ Future<void> loadWebSdk({
   // If TrustedTypes are available, prepare a trusted URL.
   DomTrustedScriptUrl? trustedUrl;
   if (trustedTypes != null) {
-    console.debug('TrustedTypes available. Creating policy:', trustedTypePolicyName);
+    console.debug(
+      'TrustedTypes available. Creating policy:',
+      trustedTypePolicyName,
+    );
     final DomTrustedTypePolicyFactory factory = trustedTypes!;
     try {
-      final DomTrustedTypePolicy policy = factory.createPolicy(trustedTypePolicyName, DomTrustedTypePolicyOptions(
-        createScriptURL: allowInterop((String url) => _url),
-      ));
+      final DomTrustedTypePolicy policy = factory.createPolicy(
+          trustedTypePolicyName,
+          DomTrustedTypePolicyOptions(
+            createScriptURL: allowInterop((String url) => _url),
+          ));
       trustedUrl = policy.createScriptURL(_url);
-    } catch(e) {
+    } catch (e) {
       throw TrustedTypesException(e.toString());
     }
   }
 
   final DomHtmlScriptElement script =
-    document.createElement('script') as DomHtmlScriptElement
-      ..src = trustedUrl ?? _url
-      ..async = true
-      ..defer = true;
+      document.createElement('script') as DomHtmlScriptElement
+        ..src = trustedUrl ?? _url
+        ..async = true
+        ..defer = true;
 
   (target ?? document.head).appendChild(script);
 
@@ -54,6 +59,7 @@ Future<void> loadWebSdk({
 class TrustedTypesException implements Exception {
   ///
   TrustedTypesException(this.message);
+
   /// The message of the exception
   final String message;
   @override

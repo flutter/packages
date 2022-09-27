@@ -31,13 +31,21 @@ void main() {
 
       // Target now should have a child that is a script element
       final Object children = js_util.getProperty<Object>(target, 'children');
-      final Object injected = js_util.callMethod<Object>(children, 'item', <Object>[0]);
+      final Object injected = js_util.callMethod<Object>(
+        children,
+        'item',
+        <Object>[0],
+      );
       expect(injected, isA<dom.DomHtmlScriptElement>());
 
-      final dom.DomHtmlScriptElement script = injected as dom.DomHtmlScriptElement;
+      final dom.DomHtmlScriptElement script =
+          injected as dom.DomHtmlScriptElement;
       expect(js_util.getProperty<bool>(script, 'defer'), isTrue);
       expect(js_util.getProperty<bool>(script, 'async'), isTrue);
-      expect(js_util.getProperty<String>(script, 'src'), 'https://accounts.google.com/gsi/client');
+      expect(
+        js_util.getProperty<String>(script, 'src'),
+        'https://accounts.google.com/gsi/client',
+      );
     });
 
     test('Completes when the script loads', () async {
@@ -45,7 +53,11 @@ void main() {
 
       Future<void>.delayed(const Duration(milliseconds: 100), () {
         // Simulate the library calling `window.onGoogleLibraryLoad`.
-        js_util.callMethod<void>(js_util.globalThis, 'onGoogleLibraryLoad', <Object>[]);
+        js_util.callMethod<void>(
+          js_util.globalThis,
+          'onGoogleLibraryLoad',
+          <Object>[],
+        );
       });
 
       await expectLater(loadFuture, completes);

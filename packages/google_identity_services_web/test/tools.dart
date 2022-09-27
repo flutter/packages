@@ -9,7 +9,11 @@ import 'package:js/js_util.dart' as js_util;
 void injectMetaTag(Map<String, String> attributes) {
   final dom.DomHtmlElement meta = dom.document.createElement('meta');
   for (final MapEntry<String, String> attribute in attributes.entries) {
-    js_util.callMethod(meta, 'setAttribute', <String>[attribute.key, attribute.value]);
+    js_util.callMethod(
+      meta,
+      'setAttribute',
+      <String>[attribute.key, attribute.value],
+    );
   }
   dom.document.head.appendChild(meta);
 }

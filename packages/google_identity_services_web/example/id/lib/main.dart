@@ -10,7 +10,8 @@ void main() async {
   id.setLogLevel('debug');
 
   final id.IdConfiguration config = id.IdConfiguration(
-    client_id:'933321482045-m78qk55i00hu4r3s7o2nc5j4gatr1vp7.apps.googleusercontent.com',
+    client_id:
+        'your-client_id.apps.googleusercontent.com',
     ux_mode: id.UxMode.popup,
     callback: allowInterop(onCredentialResponse),
   );

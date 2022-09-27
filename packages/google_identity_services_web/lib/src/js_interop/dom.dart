@@ -20,6 +20,7 @@ abstract class DomHtmlDocument {}
 extension DomHtmlDocumentExtension on DomHtmlDocument {
   /// document.head
   external DomHtmlElement get head;
+
   /// document.createElement
   external DomHtmlElement createElement(String tagName);
 }
@@ -34,18 +35,33 @@ abstract class DomConsole {}
 extension DomConsoleExtension on DomConsole {
   /// console.debug
   external DomConsoleDumpFn get debug;
+
   /// console.info
   external DomConsoleDumpFn get info;
+
   /// console.log
   external DomConsoleDumpFn get log;
+
   /// console.warn
   external DomConsoleDumpFn get warn;
+
   /// console.error
   external DomConsoleDumpFn get error;
 }
 
 /// Fakey variadic-type for console-dumping methods (like console.log or info).
-typedef DomConsoleDumpFn = void Function(Object? arg, [Object? arg2, Object? arg3, Object? arg4, Object? arg5, Object? arg6, Object? arg7, Object? arg8, Object? arg9, Object? arg10,]);
+typedef DomConsoleDumpFn = void Function(
+  Object? arg, [
+  Object? arg2,
+  Object? arg3,
+  Object? arg4,
+  Object? arg5,
+  Object? arg6,
+  Object? arg7,
+  Object? arg8,
+  Object? arg9,
+  Object? arg10,
+]);
 
 /// An instance of an HTMLElement
 @JS()
@@ -86,7 +102,10 @@ abstract class DomTrustedTypePolicyFactory {}
 /// (Some) methods of the [DomTrustedTypePolicyFactory]:
 extension DomTrustedTypePolicyFactoryExtension on DomTrustedTypePolicyFactory {
   /// createPolicy
-  external DomTrustedTypePolicy createPolicy(String policyName, DomTrustedTypePolicyOptions? policyOptions);
+  external DomTrustedTypePolicy createPolicy(
+    String policyName,
+    DomTrustedTypePolicyOptions? policyOptions,
+  );
 }
 
 /// Options to create a trusted type policy.

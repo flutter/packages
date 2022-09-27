@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:js/js.dart' show allowInterop;
 
 const List<String> scopes = <String>[
-  'email', 'profile', 'https://www.googleapis.com/auth/contacts.readonly',
+  'email',
+  'profile',
+  'https://www.googleapis.com/auth/contacts.readonly',
 ];
 
 void main() async {
@@ -15,12 +17,14 @@ void main() async {
   id.setLogLevel('debug');
 
   final oauth2.TokenClientConfig config = oauth2.TokenClientConfig(
-    client_id: '933321482045-m78qk55i00hu4r3s7o2nc5j4gatr1vp7.apps.googleusercontent.com',
+    client_id:
+        'your-client_id.apps.googleusercontent.com',
     scope: scopes.join(' '),
     callback: allowInterop(onTokenResponse),
   );
 
-  final oauth2.OverridableTokenClientConfig overridableCfg = oauth2.OverridableTokenClientConfig(
+  final oauth2.OverridableTokenClientConfig overridableCfg =
+      oauth2.OverridableTokenClientConfig(
     prompt: '',
   );
 
@@ -56,7 +60,8 @@ void onTokenResponse(oauth2.TokenResponse response) async {
   if (apiResponse.statusCode == 200) {
     print('People API ${apiResponse.statusCode} OK!');
   } else {
-    print('People API ${apiResponse.statusCode} Oops! Something wrong happened!');
+    print(
+        'People API ${apiResponse.statusCode} Oops! Something wrong happened!');
   }
   print(apiResponse.body);
 
