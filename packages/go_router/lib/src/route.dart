@@ -465,11 +465,9 @@ class ShellRoute extends RouteBase {
   final GlobalKey<NavigatorState> navigatorKey;
 }
 
-
 /// Specialized version of [ShellRoute], that delegates the building of nested
 /// [Navigator]s to a child [Widget], created by
 class NestedNavigationShellRoute extends ShellRoute {
-
   /// Constructs a [NestedNavigationShellRoute].
   NestedNavigationShellRoute({
     required this.nestedNavigationBuilder,
@@ -484,10 +482,11 @@ class NestedNavigationShellRoute extends ShellRoute {
   /// a nested navigation.
   final ShellRouteNestedNavigationBuilder nestedNavigationBuilder;
 
-  static Page<dynamic> _defaultPageBuilder(BuildContext context,
-      GoRouterState state, Widget child) {
-    return NoTransitionPage<dynamic>(child: child, name: state.name ?? state.fullpath,
+  static Page<dynamic> _defaultPageBuilder(
+      BuildContext context, GoRouterState state, Widget child) {
+    return NoTransitionPage<dynamic>(
+        child: child,
+        name: state.name ?? state.fullpath,
         restorationId: state.pageKey.value);
   }
-
 }

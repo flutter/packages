@@ -190,8 +190,8 @@ class RouteBuilder {
       final Widget child;
       if (route is NestedNavigationShellRoute) {
         // Build the container for the nested routes
-        child = route.nestedNavigationBuilder(context, state,
-            keyToPages[shellNavigatorKey]!);
+        child = route.nestedNavigationBuilder(
+            context, state, keyToPages[shellNavigatorKey]!);
       } else {
         // Build the Navigator
         child = _buildNavigator(
