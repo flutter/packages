@@ -70,3 +70,49 @@ class MissingPathParam extends GoRouteData {
   MissingPathParam({required this.id});
   final String id;
 }
+
+@ShouldGenerate(r'''
+GoRoute get $enumParam => GoRouteData.$route(
+      path: '/:y',
+      factory: $EnumParamExtension._fromState,
+    );
+
+extension $EnumParamExtension on EnumParam {
+  static EnumParam _fromState(GoRouterState state) => EnumParam(
+        y: _$EnumTestEnumMap._$fromName(state.params['y']!),
+      );
+
+  String get location => GoRouteData.$location(
+        '/${Uri.encodeComponent(_$EnumTestEnumMap[y]!)}',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
+}
+
+const _$EnumTestEnumMap = {
+  EnumTest.a: 'a',
+  EnumTest.b: 'b',
+  EnumTest.c: 'c',
+};
+
+extension<T extends Enum> on Map<T, String> {
+  T _$fromName(String value) =>
+      entries.singleWhere((element) => element.value == value).key;
+}
+''')
+@TypedGoRoute<EnumParam>(path: '/:y')
+class EnumParam extends GoRouteData {
+  EnumParam({required this.y});
+  final EnumTest y;
+}
+
+enum EnumTest {
+  a(1),
+  b(3),
+  c(5);
+
+  const EnumTest(this.x);
+  final int x;
+}

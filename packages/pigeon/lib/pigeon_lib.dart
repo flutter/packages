@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
@@ -15,27 +17,28 @@ import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
 import 'package:analyzer/dart/ast/syntactic_entity.dart'
     as dart_ast_syntactic_entity;
+import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
-import 'package:pigeon/cpp_generator.dart';
-import 'package:pigeon/generator_tools.dart';
-import 'package:pigeon/java_generator.dart';
-import 'package:pigeon/swift_generator.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
+import 'cpp_generator.dart';
 import 'dart_generator.dart';
+import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
+import 'java_generator.dart';
 import 'objc_generator.dart';
+import 'swift_generator.dart';
 
 class _Asynchronous {
   const _Asynchronous();
 }
 
 /// Metadata to annotate a Api method as asynchronous
-const _Asynchronous async = _Asynchronous();
+const Object async = _Asynchronous();
 
 /// Metadata annotation used to configure how Pigeon will generate code.
 class ConfigurePigeon {
@@ -313,11 +316,6 @@ class ParseResults {
   final Map<String, Object>? pigeonOptions;
 }
 
-String _posixify(String input) {
-  final path.Context context = path.Context(style: path.Style.posix);
-  return context.fromUri(path.toUri(path.absolute(input)));
-}
-
 Iterable<String> _lineReader(String path) sync* {
   final String contents = File(path).readAsStringSync();
   const LineSplitter lineSplitter = LineSplitter();
@@ -408,17 +406,14 @@ class DartTestGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final String mainPath = path.context.relative(
-      _posixify(options.dartOut!),
-      from: _posixify(path.dirname(options.dartTestOut!)),
-    );
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
         options.dartOptions, options.copyrightHeader);
     generateTestDart(
       dartOptionsWithHeader,
       root,
       sink,
-      mainPath,
+      dartOutPath: options.dartOut!,
+      testOutPath: options.dartTestOut!,
     );
   }
 
@@ -817,7 +812,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (node.uri.stringValue != 'package:pigeon/pigeon.dart') {
       _errors.add(Error(
         message:
-            'Unsupported import ${node.uri}, only imports of \'package:pigeon/pigeon.dart\' are supported.',
+            "Unsupported import ${node.uri}, only imports of 'package:pigeon/pigeon.dart' are supported.",
         lineNumber: _calculateLineNumber(source, node.offset),
       ));
     }
@@ -872,20 +867,40 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           location: ApiLocation.host,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
         _currentApi = Api(
           name: node.name2.lexeme,
           location: ApiLocation.flutter,
           methods: <Method>[],
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
         );
       }
     } else {
-      _currentClass = Class(name: node.name2.lexeme, fields: <NamedType>[]);
+      _currentClass = Class(
+        name: node.name2.lexeme,
+        fields: <NamedType>[],
+        documentationComments:
+            _documentationCommentsParser(node.documentationComment?.tokens),
+      );
     }
 
     node.visitChildren(this);
     return null;
+  }
+
+  /// Converts Token's to Strings and removes documentation comment symbol.
+  List<String> _documentationCommentsParser(List<Token>? comments) {
+    const String docCommentPrefix = '///';
+    return comments
+            ?.map((Token line) => line.length > docCommentPrefix.length
+                ? line.toString().substring(docCommentPrefix.length)
+                : '')
+            .toList() ??
+        <String>[];
   }
 
   NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
@@ -958,12 +973,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final TaskQueueType taskQueueType =
         _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
             TaskQueueType.serial;
+
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
       final dart_ast.SimpleIdentifier returnTypeIdentifier =
           getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
-      _currentApi!.methods.add(Method(
+      _currentApi!.methods.add(
+        Method(
           name: node.name2.lexeme,
           returnType: TypeDeclaration(
               baseName: returnTypeIdentifier.name,
@@ -974,7 +991,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
           offset: node.offset,
-          taskQueueType: taskQueueType));
+          taskQueueType: taskQueueType,
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        ),
+      );
     } else if (_currentClass != null) {
       _errors.add(Error(
           message:
@@ -988,10 +1009,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
     _enums.add(Enum(
-        name: node.name2.lexeme,
-        members: node.constants
-            .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
-            .toList()));
+      name: node.name2.lexeme,
+      members: node.constants
+          .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
+          .toList(),
+      documentationComments:
+          _documentationCommentsParser(node.documentationComment?.tokens),
+    ));
     node.visitChildren(this);
     return null;
   }
@@ -1019,7 +1043,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       if (node.isStatic) {
         _errors.add(Error(
             message:
-                'Pigeon doesn\'t support static fields ("${node.toString()}"), consider using enums.',
+                'Pigeon doesn\'t support static fields ("$node"), consider using enums.',
             lineNumber: _calculateLineNumber(source, node.offset)));
       } else if (type is dart_ast.NamedType) {
         final _FindInitializer findInitializerVisitor = _FindInitializer();
@@ -1032,16 +1056,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           _currentClass!.fields.add(NamedType(
-              type: TypeDeclaration(
-                  baseName: type.name.name,
-                  isNullable: type.question != null,
-                  typeArguments: typeAnnotationsToTypeArguments(typeArguments)),
-              name: node.fields.variables[0].name2.lexeme,
-              offset: node.offset));
+            type: TypeDeclaration(
+              baseName: type.name.name,
+              isNullable: type.question != null,
+              typeArguments: typeAnnotationsToTypeArguments(typeArguments),
+            ),
+            name: node.fields.variables[0].name2.lexeme,
+            offset: node.offset,
+            documentationComments:
+                _documentationCommentsParser(node.documentationComment?.tokens),
+          ));
         }
       } else {
         _errors.add(Error(
-            message: 'Expected a named type but found "${node.toString()}".',
+            message: 'Expected a named type but found "$node".',
             lineNumber: _calculateLineNumber(source, node.offset)));
       }
     } else if (_currentApi != null) {
@@ -1148,15 +1176,13 @@ class Pigeon {
   /// String that describes how the tool is used.
   static String get usage {
     return '''
-
 Pigeon is a tool for generating type-safe communication code between Flutter
 and the host platform.
 
 usage: pigeon --input <pigeon path> --dart_out <dart path> [option]*
 
 options:
-''' +
-        _argParser.usage;
+${_argParser.usage}''';
   }
 
   static final ArgParser _argParser = ArgParser()
@@ -1190,14 +1216,13 @@ options:
         help:
             'Path to file with copyright header to be prepended to generated code.')
     ..addFlag('one_language',
-        help: 'Allow Pigeon to only generate code for one language.',
-        defaultsTo: false)
+        help: 'Allow Pigeon to only generate code for one language.')
     ..addOption('ast_out',
         help:
             'Path to generated AST debugging info. (Warning: format subject to change)')
     ..addFlag('debug_generators',
-        help: 'Print the line number of the generator in comments at newlines.',
-        defaultsTo: false);
+        help:
+            'Print the line number of the generator in comments at newlines.');
 
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
@@ -1247,7 +1272,7 @@ options:
               declaration.parameters[0].type == reflectClass(PigeonOptions)) {
             library.invoke(declaration.simpleName, <dynamic>[options]);
           } else {
-            print('warning: invalid \'configurePigeon\' method defined.');
+            print("warning: invalid 'configurePigeon' method defined.");
           }
         }
       }

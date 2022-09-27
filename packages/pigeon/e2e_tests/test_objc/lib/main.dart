@@ -73,11 +73,11 @@ class _MyHomePageState extends State<_MyHomePage> {
             ),
             Text(
               _message,
-              style: Theme.of(context).textTheme.headline1,
+              style: Theme.of(context).textTheme.displayLarge,
             ),
             Text(
               _state.toString(),
-              style: Theme.of(context).textTheme.headline1,
+              style: Theme.of(context).textTheme.displayLarge,
             ),
           ],
         ),

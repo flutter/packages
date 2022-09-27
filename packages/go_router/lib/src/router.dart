@@ -31,19 +31,23 @@ import 'typedefs.dart';
 ///
 /// The `redirect` does top-level redirection before the URIs are parsed by
 /// the `routes`. Consider using [GoRoute.redirect] for individual route
-/// redirection.
+/// redirection. If [BuildContext.dependOnInheritedWidgetOfExactType] is used
+/// during the redirection (which is how `of` methods are usually implemented),
+/// a re-evaluation will be triggered when the [InheritedWidget] changes.
 ///
 /// See also:
 ///  * [GoRoute], which provides APIs to define the routing table.
 ///  * [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example),
 ///    which contains examples for different routing scenarios.
-class GoRouter extends ChangeNotifier with NavigatorObserver {
+class GoRouter extends ChangeNotifier
+    with NavigatorObserver
+    implements RouterConfig<RouteMatchList> {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
   ///
   /// The `routes` must not be null and must contain an [GoRouter] to match `/`.
   GoRouter({
-    required List<GoRoute> routes,
+    required List<RouteBase> routes,
     // TODO(johnpryan): Change to a route, improve error API
     // See https://github.com/flutter/flutter/issues/108144
     GoRouterPageBuilder? errorPageBuilder,
@@ -53,27 +57,21 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     int redirectLimit = 5,
     bool routerNeglect = false,
     String? initialLocation,
-    // TODO(johnpryan): Deprecate this parameter
-    // See https://github.com/flutter/flutter/issues/108132
-    UrlPathStrategy? urlPathStrategy,
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
-    // TODO(johnpryan): Deprecate this parameter
-    // See https://github.com/flutter/flutter/issues/108145
-    GoRouterNavigatorBuilder? navigatorBuilder,
+    GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
-  }) {
-    if (urlPathStrategy != null) {
-      setUrlPathStrategy(urlPathStrategy);
-    }
-
+  }) : backButtonDispatcher = RootBackButtonDispatcher() {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
+    navigatorKey ??= GlobalKey<NavigatorState>();
+
     _routeConfiguration = RouteConfiguration(
       routes: routes,
-      topRedirect: redirect ?? (_) => null,
+      topRedirect: redirect ?? (_, __) => null,
       redirectLimit: redirectLimit,
+      navigatorKey: navigatorKey,
     );
 
     _routeInformationParser = GoRouteInformationParser(
@@ -102,9 +100,10 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
           (BuildContext context, GoRouterState state, Navigator nav) =>
               InheritedGoRouter(
         goRouter: this,
-        child: navigatorBuilder?.call(context, state, nav) ?? nav,
+        child: nav,
       ),
     );
+
     assert(() {
       log.info('setting initial location $initialLocation');
       return true;
@@ -116,15 +115,21 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   late final GoRouterDelegate _routerDelegate;
   late final GoRouteInformationProvider _routeInformationProvider;
 
+  @override
+  final BackButtonDispatcher backButtonDispatcher;
+
   /// The router delegate. Provide this to the MaterialApp or CupertinoApp's
   /// `.router()` constructor
+  @override
   GoRouterDelegate get routerDelegate => _routerDelegate;
 
   /// The route information provider used by [GoRouter].
+  @override
   GoRouteInformationProvider get routeInformationProvider =>
       _routeInformationProvider;
 
   /// The route information parser used by [GoRouter].
+  @override
   GoRouteInformationParser get routeInformationParser =>
       _routeInformationParser;
 
@@ -139,12 +144,10 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
-  // TODO(johnpryan): Deprecate this API
-  // See https://github.com/flutter/flutter/issues/107729
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
   }) =>
       _routeInformationParser.configuration.namedLocation(
         name,
@@ -169,7 +172,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
       go(
@@ -184,11 +187,15 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       log.info('pushing $location');
       return true;
     }());
-    final RouteMatchList matches =
-        await _routeInformationParser.parseRouteInformation(
+    final RouteMatchList matchList =
+        await _routeInformationParser.parseRouteInformationWithDependencies(
       DebugGoRouteInformation(location: location, state: extra),
+      // TODO(chunhtai): avoid accessing the context directly through global key.
+      // https://github.com/flutter/flutter/issues/99112
+      _routerDelegate.navigatorKey.currentContext!,
     );
-    return _routerDelegate.push<T?>(matches.last);
+
+    return _routerDelegate.push<T?>(matchList.last);
   }
 
   /// Push a named route asynchronously onto the page stack w/ optional
@@ -196,7 +203,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   Future<T?> pushNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
       push<T?>(
@@ -225,9 +232,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   Future<T?> replace<T extends Object?>(String location,
       {Object? extra}) async {
     final RouteMatchList matchList =
-        await routeInformationParser.parseRouteInformation(
+        await routeInformationParser.parseRouteInformationWithDependencies(
       DebugGoRouteInformation(location: location, state: extra),
+      // TODO(chunhtai): avoid accessing the context directly through global key.
+      // https://github.com/flutter/flutter/issues/99112
+      _routerDelegate.navigatorKey.currentContext!,
     );
+
     return routerDelegate.replace<T?>(matchList.matches.last);
   }
 
@@ -241,7 +252,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   Future<T?> replaceNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
       replace<T?>(

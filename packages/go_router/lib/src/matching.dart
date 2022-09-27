@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
 import 'match.dart';
@@ -33,6 +34,7 @@ class RouteMatcher {
       parentFullpath: '',
       parentSubloc: '',
       queryParams: uri.queryParameters,
+      queryParametersAll: uri.queryParametersAll,
       extra: extra,
     );
 
@@ -72,19 +74,19 @@ class RouteMatchList {
   /// Removes the last match.
   void pop() {
     _matches.removeLast();
-    assert(
-        _matches.isNotEmpty,
-        'You have popped the last page off of the stack,'
-        ' there are no pages left to show');
-  }
 
-  /// Returns true if [pop] can safely be called.
-  bool canPop() {
-    return _matches.length > 1;
+    _debugAssertNotEmpty();
+
+    // Also pop ShellRoutes when there are no subsequent route matches
+    while (_matches.isNotEmpty && _matches.last.route is ShellRoute) {
+      _matches.removeLast();
+    }
+
+    _debugAssertNotEmpty();
   }
 
   /// An optional object provided by the app during navigation.
-  Object? get extra => _matches.last.extra;
+  Object? get extra => _matches.isEmpty ? null : _matches.last.extra;
 
   /// The last matching route.
   RouteMatch get last => _matches.last;
@@ -97,13 +99,19 @@ class RouteMatchList {
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.first.error;
+
+  void _debugAssertNotEmpty() {
+    assert(
+        _matches.isNotEmpty,
+        'You have popped the last page off of the stack,'
+        ' there are no pages left to show');
+  }
 }
 
 /// An error that occurred during matching.
 class MatcherError extends Error {
   /// Constructs a [MatcherError].
-  MatcherError(String message, this.location)
-      : message = message + ': $location';
+  MatcherError(String message, this.location) : message = '$message: $location';
 
   /// The error message.
   final String message;
@@ -121,9 +129,10 @@ List<RouteMatch> _getLocRouteRecursively({
   required String loc,
   required String restLoc,
   required String parentSubloc,
-  required List<GoRoute> routes,
+  required List<RouteBase> routes,
   required String parentFullpath,
   required Map<String, String> queryParams,
+  required Map<String, List<String>> queryParametersAll,
   required Object? extra,
 }) {
   bool debugGatherAllMatches = false;
@@ -133,14 +142,21 @@ List<RouteMatch> _getLocRouteRecursively({
   }());
   final List<List<RouteMatch>> result = <List<RouteMatch>>[];
   // find the set of matches at this level of the tree
-  for (final GoRoute route in routes) {
-    final String fullpath = concatenatePaths(parentFullpath, route.path);
+  for (final RouteBase route in routes) {
+    late final String fullpath;
+    if (route is GoRoute) {
+      fullpath = concatenatePaths(parentFullpath, route.path);
+    } else if (route is ShellRoute) {
+      fullpath = parentFullpath;
+    }
+
     final RouteMatch? match = RouteMatch.match(
       route: route,
       restLoc: restLoc,
       parentSubloc: parentSubloc,
       fullpath: fullpath,
       queryParams: queryParams,
+      queryParametersAll: queryParametersAll,
       extra: extra,
       completer: Completer<void>(),
     );
@@ -148,7 +164,9 @@ List<RouteMatch> _getLocRouteRecursively({
     if (match == null) {
       continue;
     }
-    if (match.subloc.toLowerCase() == loc.toLowerCase()) {
+
+    if (match.route is GoRoute &&
+        match.subloc.toLowerCase() == loc.toLowerCase()) {
       // If it is a complete match, then return the matched route
       // NOTE: need a lower case match because subloc is canonicalized to match
       // the path case whereas the location can be of any case and still match
@@ -158,18 +176,28 @@ List<RouteMatch> _getLocRouteRecursively({
       continue;
     } else {
       // Otherwise, recurse
-      final String childRestLoc =
-          loc.substring(match.subloc.length + (match.subloc == '/' ? 0 : 1));
-      assert(loc.startsWith(match.subloc));
-      assert(restLoc.isNotEmpty);
+      final String childRestLoc;
+      final String newParentSubLoc;
+      if (match.route is ShellRoute) {
+        childRestLoc = restLoc;
+        newParentSubLoc = parentSubloc;
+      } else {
+        assert(loc.startsWith(match.subloc));
+        assert(restLoc.isNotEmpty);
+
+        childRestLoc =
+            loc.substring(match.subloc.length + (match.subloc == '/' ? 0 : 1));
+        newParentSubLoc = match.subloc;
+      }
 
       final List<RouteMatch> subRouteMatch = _getLocRouteRecursively(
         loc: loc,
         restLoc: childRestLoc,
-        parentSubloc: match.subloc,
+        parentSubloc: newParentSubLoc,
         routes: route.routes,
         parentFullpath: fullpath,
         queryParams: queryParams,
+        queryParametersAll: queryParametersAll,
         extra: extra,
       ).toList();
 
@@ -195,4 +223,27 @@ List<RouteMatch> _getLocRouteRecursively({
   // To make predefined routes to take precedence over dynamic routes eg. '/:id'
   // consider adding the dynamic route at the end of the routes
   return result.first;
+}
+
+/// The match used when there is an error during parsing.
+RouteMatchList errorScreen(Uri uri, String errorMessage) {
+  final Exception error = Exception(errorMessage);
+  return RouteMatchList(<RouteMatch>[
+    RouteMatch(
+      completer: Completer<void>(),
+      subloc: uri.path,
+      fullpath: uri.path,
+      encodedParams: <String, String>{},
+      queryParams: uri.queryParameters,
+      queryParametersAll: uri.queryParametersAll,
+      extra: null,
+      error: error,
+      route: GoRoute(
+        path: uri.toString(),
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          throw UnimplementedError();
+        },
+      ),
+    ),
+  ]);
 }

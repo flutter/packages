@@ -178,7 +178,7 @@ void testValidPackages() {
       TxtResourceRecord(
         '______________________.____________.____._____',
         result[1].validUntil,
-        text: (')' * 129) + '\n',
+        text: '${')' * 129}\n',
       ),
     ]);
   });

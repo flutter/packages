@@ -2,12 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Script for executing the Pigeon tests
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Process, Platform, exit, stderr, stdout;
+import 'dart:io'
+    show
+        Directory,
+        File,
+        Platform,
+        Process,
+        ProcessResult,
+        exit,
+        stderr,
+        stdout;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 import 'package:pigeon/functional.dart';
@@ -34,7 +45,7 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
       description: 'Compilation tests on generated Dart code.'),
   'dart_unittests': _TestInfo(
       function: _runDartUnitTests,
-      description: 'Unit tests on and analysis on Pigeon\'s implementation.'),
+      description: "Unit tests on and analysis on Pigeon's implementation."),
   'flutter_unittests': _TestInfo(
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
@@ -47,6 +58,9 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'ios_swift_unittests': _TestInfo(
       function: _runIosSwiftUnitTests,
       description: 'Unit tests on generated Swift code.'),
+  'mac_swift_unittests': _TestInfo(
+      function: _runMacOSSwiftUnitTests,
+      description: 'Unit tests on generated Swift code on macOS.'),
   'mock_handler_tests': _TestInfo(
       function: _runMockHandlerTests,
       description: 'Unit tests on generated Dart mock handler code.'),
@@ -121,7 +135,6 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
     input: 'pigeons/message.dart',
     dartOut: messagePath,
     dartTestOut: messageTestPath,
-    streamOutput: true,
   );
   if (generateTestCode != 0) {
     return generateTestCode;
@@ -187,6 +200,31 @@ Future<int> _runIosE2eTests() async {
 
 Future<int> _runIosUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
+}
+
+Future<int> _runMacOSSwiftUnitTests() async {
+  const String macosSwiftUnitTestsPath =
+      './platform_tests/macos_swift_unit_tests';
+  final int generateCode = await _runPigeon(
+    input: '$macosSwiftUnitTestsPath/pigeons/messages.dart',
+    iosSwiftOut: '$macosSwiftUnitTestsPath/macos/Classes/messages.g.swift',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+  final Directory oldCwd = Directory.current;
+  try {
+    Directory.current = Directory('$macosSwiftUnitTestsPath/macos');
+    final ProcessResult lintResult =
+        Process.runSync('pod', <String>['lib', 'lint']);
+    if (lintResult.exitCode != 0) {
+      return lintResult.exitCode;
+    }
+  } finally {
+    Directory.current = oldCwd;
+  }
+
+  return 0;
 }
 
 Future<int> _runIosSwiftUnitTests() async {
@@ -400,7 +438,7 @@ Future<void> main(List<String> args) async {
     print('available tests:');
     for (final MapEntry<String, _TestInfo> info in _tests.entries) {
       final int tabCount = (4 - info.key.length / 8).toInt();
-      final String tabs = repeat('\t', tabCount).join('');
+      final String tabs = repeat('\t', tabCount).join();
       print('${info.key}$tabs- ${info.value.description}');
     }
     exit(0);

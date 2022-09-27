@@ -9,7 +9,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '3.2.7';
+const String pigeonVersion = '4.1.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -37,9 +37,7 @@ class Indent {
   String get newline {
     if (debugGenerators) {
       final List<String> frames = StackTrace.current.toString().split('\n');
-      return ' //' +
-          frames.firstWhere((String x) => x.contains('_generator.dart')) +
-          '\n';
+      return ' //${frames.firstWhere((String x) => x.contains('_generator.dart'))}\n';
     } else {
       return '\n';
     }
@@ -119,7 +117,7 @@ class Indent {
   /// indentation will be incremented by the given amount.
   void nest(int count, Function func) {
     inc(count);
-    func();
+    func(); // ignore: avoid_dynamic_calls
     dec(count);
   }
 
@@ -423,7 +421,7 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
   if (sortedNames.length > maxCustomClassesPerApi) {
     throw Exception(
-        'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
+        "Pigeon doesn't support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.");
   }
   for (final String name in sortedNames) {
     yield EnumeratedClass(name, enumeration);
@@ -434,3 +432,59 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
 /// Returns true if the [TypeDeclaration] represents an enum.
 bool isEnum(Root root, TypeDeclaration type) =>
     root.enums.map((Enum e) => e.name).contains(type.baseName);
+
+/// Describes how to format a document comment.
+class DocumentCommentSpecification {
+  /// Constructor for [DocumentationCommentSpecification]
+  const DocumentCommentSpecification(
+    this.openCommentToken, {
+    this.closeCommentToken = '',
+    this.blockContinuationToken = '',
+  });
+
+  /// Token that represents the open symbol for a documentation comment.
+  final String openCommentToken;
+
+  /// Token that represents the closing symbol for a documentation comment.
+  final String closeCommentToken;
+
+  /// Token that represents the continuation symbol for a block of documentation comments.
+  final String blockContinuationToken;
+}
+
+/// Formats documentation comments and adds them to current Indent.
+///
+/// The [comments] list is meant for comments written in the input dart file.
+/// The [generatorComments] list is meant for comments added by the generators.
+/// Include white space for all tokens when called, no assumptions are made.
+void addDocumentationComments(
+  Indent indent,
+  List<String> comments,
+  DocumentCommentSpecification commentSpec, {
+  List<String> generatorComments = const <String>[],
+}) {
+  final List<String> allComments = <String>[
+    ...comments,
+    if (comments.isNotEmpty && generatorComments.isNotEmpty) '',
+    ...generatorComments,
+  ];
+  String currentLineOpenToken = commentSpec.openCommentToken;
+  if (allComments.length > 1) {
+    if (commentSpec.closeCommentToken != '') {
+      indent.writeln(commentSpec.openCommentToken);
+      currentLineOpenToken = commentSpec.blockContinuationToken;
+    }
+    for (final String line in allComments) {
+      indent.writeln(
+        '$currentLineOpenToken$line',
+      );
+    }
+    if (commentSpec.closeCommentToken != '') {
+      indent.writeln(commentSpec.closeCommentToken);
+    }
+  } else if (allComments.length == 1) {
+    indent.writeln(
+      '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
+    );
+  }
+}

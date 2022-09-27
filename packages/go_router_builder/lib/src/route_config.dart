@@ -219,7 +219,7 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
         'Token ($e) of type ${e.runtimeType} is not supported.',
       );
     });
-    return "'${pathItems.join('')}'";
+    return "'${pathItems.join()}'";
   }
 
   late final Set<String> _pathParams = Set<String>.unmodifiable(_parsedPath
@@ -249,7 +249,7 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
     final String routesBit = _children.isEmpty
         ? ''
         : '''
-routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join('')}],
+routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
 ''';
 
     return '''
@@ -368,7 +368,7 @@ String _enumMapConst(InterfaceType type) {
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
   for (final FieldElement enumField in type.element2.fields
-      .where((FieldElement element) => !element.isSynthetic)) {
+      .where((FieldElement element) => element.isEnumConstant)) {
     buffer.writeln(
       '$enumName.${enumField.name}: ${escapeDartString(enumField.name.kebab)},',
     );

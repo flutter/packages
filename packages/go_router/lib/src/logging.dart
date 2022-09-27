@@ -16,7 +16,6 @@ StreamSubscription<LogRecord>? _subscription;
 void setLogging({bool enabled = false}) {
   _subscription?.cancel();
   if (!enabled) {
-    log.clearListeners();
     return;
   }
 
