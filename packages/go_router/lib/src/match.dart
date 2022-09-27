@@ -20,7 +20,7 @@ class RouteMatch {
     required this.fullpath,
     required this.encodedParams,
     required this.queryParams,
-    required this.completer,
+    this.completer,
     required this.queryParametersAll,
     required this.extra,
     required this.error,
@@ -43,7 +43,7 @@ class RouteMatch {
     required String parentSubloc, // e.g. /family/f2
     required String fullpath, // e.g. /family/:fid/person/:pid
     required Map<String, String> queryParams,
-    required Completer<dynamic> completer,
+    Completer<dynamic>? completer,
     required Map<String, List<String>> queryParametersAll,
     required Object? extra,
   }) {
@@ -117,7 +117,7 @@ class RouteMatch {
   final Map<String, String> queryParams;
 
   /// The completer for the promise when pushing routes.
-  final Completer<dynamic> completer;
+  final Completer<dynamic>? completer;
 
   /// Returns the URI query split into a map according to the rules specified
   /// for FORM post in the [HTML 4.01 specification section

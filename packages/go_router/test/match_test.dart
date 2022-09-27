@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -56,6 +58,7 @@ void main() {
           'foo': <String>['bar'],
         },
         extra: const _Extra('foo'),
+        completer: Completer<void>(),
       );
       if (match == null) {
         fail('Null match');

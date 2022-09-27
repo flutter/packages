@@ -145,7 +145,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     // If there is a promise for this page, complete it.
     if (last.completer != null) {
-      last.completer.complete(value);
+      last.completer?.complete(value);
     }
 
     _matchList.pop();
@@ -156,11 +156,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
-  Future<T?> replace<T extends Object?>(RouteMatch match) {
+  Future<T?>? replace<T extends Object?>(RouteMatch match) {
     _matchList.matches.last = match;
 
     notifyListeners();
-    return match.completer.future as Future<T?>;
+    return match.completer?.future as Future<T?>?;
   }
 
   /// For internal use; visible for testing only.
