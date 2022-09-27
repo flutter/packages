@@ -28,10 +28,14 @@ Future<void> loadWebSdk({
   if (trustedTypes != null) {
     console.debug('TrustedTypes available. Creating policy:', trustedTypePolicyName);
     final DomTrustedTypePolicyFactory factory = trustedTypes!;
-    final DomTrustedTypePolicy policy = factory.createPolicy(trustedTypePolicyName, DomTrustedTypePolicyOptions(
-      createScriptURL: allowInterop((String url) => _url),
-    ));
-    trustedUrl = policy.createScriptURL(_url);
+    try {
+      final DomTrustedTypePolicy policy = factory.createPolicy(trustedTypePolicyName, DomTrustedTypePolicyOptions(
+        createScriptURL: allowInterop((String url) => _url),
+      ));
+      trustedUrl = policy.createScriptURL(_url);
+    } catch(e) {
+      throw TrustedTypesException(e.toString());
+    }
   }
 
   final DomHtmlScriptElement script =
@@ -43,4 +47,15 @@ Future<void> loadWebSdk({
   (target ?? document.head).appendChild(script);
 
   return completer.future;
+}
+
+/// Exception thrown if the Trusted Types feature is supported, enabled, and it
+/// has prevented this loader from injecting the JS SDK.
+class TrustedTypesException implements Exception {
+  ///
+  TrustedTypesException(this.message);
+  /// The message of the exception
+  final String message;
+  @override
+  String toString() => 'TrustedTypesException: $message';
 }
