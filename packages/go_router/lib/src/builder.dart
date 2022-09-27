@@ -188,9 +188,12 @@ class RouteBuilder {
           keyToPages, newParams, shellNavigatorKey);
 
       final Widget child;
-      if (route is NestedNavigationShellRoute) {
-        // Build the container for the nested routes
-        child = route.nestedNavigationBuilder(
+      final ShellRouteNestedNavigationBuilder? nestedNavigationBuilder =
+          route.nestedNavigationBuilder;
+      if (nestedNavigationBuilder != null) {
+        // Build the container for nested routes (delegate responsibility for
+        // building nested Navigator)
+        child = nestedNavigationBuilder(
             context, state, keyToPages[shellNavigatorKey]!);
       } else {
         // Build the Navigator
@@ -310,6 +313,12 @@ class RouteBuilder {
       if (childWidget == null) {
         throw _RouteBuilderException(
             'Attempt to build ShellRoute without a child widget');
+      }
+
+      // When `nestedNavigationBuilder` is set it supersedes `builder`, and at
+      // this point it will already have been used to create `childWidget`.
+      if (route.nestedNavigationBuilder != null) {
+        return childWidget;
       }
 
       final ShellRouteBuilder? builder = route.builder;

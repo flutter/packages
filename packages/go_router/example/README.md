@@ -28,6 +28,12 @@ An example to demonstrate how to use redirect to handle a synchronous sign-in fl
 ## [Asynchronous Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/async_redirection.dart)
 `flutter run lib/async_redirection.dart`
 
+An example to demonstrate how to use a `Shell Route` to create stateful nested navigation, with a
+`BottomNavigationBar`.
+
+## [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/nested_navigation_shell_route.dart)
+`flutter run lib/sub_routes.dart`
+
 An example to demonstrate how to use handle a sign-in flow with a stream authentication service.
 
 ## [Books app](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/books)

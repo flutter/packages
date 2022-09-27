@@ -34,7 +34,8 @@ typedef ShellRoutePageBuilder = Page<dynamic> Function(
   Widget child,
 );
 
-/// The builder for a [NestedNavigationShellRoute]
+/// A builder used for customizing the creation of nested navigation in a
+/// [ShellRoute].
 typedef ShellRouteNestedNavigationBuilder = Widget Function(
   BuildContext context,
   GoRouterState state,

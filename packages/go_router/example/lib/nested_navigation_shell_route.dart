@@ -19,9 +19,9 @@ void main() {
   runApp(NestedTabNavigationExampleApp());
 }
 
-/// NestedNavigationShellRoute that uses a bottom tab navigation
-/// (ScaffoldWithNavBar) with separate navigators for each tab.
-class BottomTabBarShellRoute extends NestedNavigationShellRoute {
+/// ShellRoute that uses a bottom tab navigation (ScaffoldWithNavBar) with
+/// separate navigators for each tab.
+class BottomTabBarShellRoute extends ShellRoute {
   /// Constructs a BottomTabBarShellRoute
   BottomTabBarShellRoute({
     required this.tabs,
@@ -187,7 +187,7 @@ class ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
     final GoRouter route = GoRouter.of(context);
     final String location = route.location;
 
-    final previousIndex = _currentIndex;
+    final int previousIndex = _currentIndex;
     _currentIndex = _locationToTabIndex(location);
 
     final _NavBarTabNavigator tabNav = _tabs[_currentIndex];
