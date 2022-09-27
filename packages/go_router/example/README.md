@@ -32,7 +32,7 @@ An example to demonstrate how to use a `Shell Route` to create stateful nested n
 `BottomNavigationBar`.
 
 ## [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/nested_navigation_shell_route.dart)
-`flutter run lib/sub_routes.dart`
+`flutter run lib/nested_navigation_shell_route.dart`
 
 An example to demonstrate how to use handle a sign-in flow with a stream authentication service.
 

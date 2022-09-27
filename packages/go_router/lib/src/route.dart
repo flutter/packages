@@ -347,7 +347,7 @@ class GoRoute extends RouteBase {
 ///
 /// To delegate nested navigation handling entirely to a child of this route,
 /// specify [nestedNavigationBuilder] instead of [builder] or [pageBuilder].
-/// Doing so means no [Navigator] will be built by this route. This in
+/// Doing so means no [Navigator] will be built by this route. This is
 /// convenient when for instance implementing a UI with a [BottomNavigationBar],
 /// with a persistent navigation state for each tab (i.e. building a [Navigator]
 /// for each tab).

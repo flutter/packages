@@ -1,6 +1,6 @@
 ## 5.1.0
 
-- Adds support for customizing the nested navigation of ShellRoute, to support things like 
+- Adds support for customising the nested navigation of `ShellRoute`, to support things like 
   preserving state in nested navigators (flutter/flutter#99124).
 
 ## 5.0.3
