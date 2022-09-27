@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each tab uses its own persistent navigator, i.e.
 // navigation state is maintained separately for each tab. This setup also
@@ -20,7 +19,6 @@ void main() {
   runApp(NestedTabNavigationExampleApp());
 }
 
-
 /// NestedNavigationShellRoute that uses a bottom tab navigation
 /// (ScaffoldWithNavBar) with separate navigators for each tab.
 class BottomTabBarShellRoute extends NestedNavigationShellRoute {
@@ -30,18 +28,18 @@ class BottomTabBarShellRoute extends NestedNavigationShellRoute {
     List<RouteBase> routes = const <RouteBase>[],
     Key? scaffoldKey = const ValueKey<String>('ScaffoldWithNavBar'),
   }) : super(
-      routes: routes,
-      nestedNavigationBuilder: (BuildContext context, GoRouterState state,
-          List<Page<dynamic>> pagesForCurrentRoute) {
-        return ScaffoldWithNavBar(tabs: tabs, key: scaffoldKey,
-            pagesForCurrentRoute: pagesForCurrentRoute);
-      }
-  );
+            routes: routes,
+            nestedNavigationBuilder: (BuildContext context, GoRouterState state,
+                List<Page<dynamic>> pagesForCurrentRoute) {
+              return ScaffoldWithNavBar(
+                  tabs: tabs,
+                  key: scaffoldKey,
+                  pagesForCurrentRoute: pagesForCurrentRoute);
+            });
 
   /// The tabs
   final List<ScaffoldWithNavBarTabItem> tabs;
 }
-
 
 /// An example demonstrating how to use nested navigators
 class NestedTabNavigationExampleApp extends StatelessWidget {
@@ -49,11 +47,11 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
   NestedTabNavigationExampleApp({Key? key}) : super(key: key);
 
   static const List<ScaffoldWithNavBarTabItem> _tabs =
-  <ScaffoldWithNavBarTabItem>[
-    ScaffoldWithNavBarTabItem(initialLocation: '/a',
-        icon: Icon(Icons.home), label: 'Section A'),
-    ScaffoldWithNavBarTabItem(initialLocation: '/b',
-        icon: Icon(Icons.settings), label: 'Section B'),
+      <ScaffoldWithNavBarTabItem>[
+    ScaffoldWithNavBarTabItem(
+        initialLocation: '/a', icon: Icon(Icons.home), label: 'Section A'),
+    ScaffoldWithNavBarTabItem(
+        initialLocation: '/b', icon: Icon(Icons.settings), label: 'Section B'),
   ];
 
   final GoRouter _router = GoRouter(
@@ -70,7 +68,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           GoRoute(
             path: '/a',
             builder: (BuildContext context, GoRouterState state) =>
-            const RootScreen(label: 'A', detailsPath: '/a/details'),
+                const RootScreen(label: 'A', detailsPath: '/a/details'),
             routes: <RouteBase>[
               /// The details screen to display stacked on navigator of the
               /// first tab. This will cover screen A but not the application
@@ -78,16 +76,17 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
               GoRoute(
                 path: 'details',
                 builder: (BuildContext context, GoRouterState state) =>
-                const DetailsScreen(label: 'A'),
+                    const DetailsScreen(label: 'A'),
               ),
             ],
           ),
+
           /// The screen to display as the root in the second tab of the bottom
           /// navigation bar.
           GoRoute(
             path: '/b',
             builder: (BuildContext context, GoRouterState state) =>
-            const RootScreen(label: 'B', detailsPath: '/b/details'),
+                const RootScreen(label: 'B', detailsPath: '/b/details'),
             routes: <RouteBase>[
               /// The details screen to display stacked on navigator of the
               /// second tab. This will cover screen B but not the application
@@ -95,7 +94,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
               GoRoute(
                 path: 'details',
                 builder: (BuildContext context, GoRouterState state) =>
-                const DetailsScreen(label: 'B'),
+                    const DetailsScreen(label: 'B'),
               ),
             ],
           ),
@@ -118,13 +117,15 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
   }
 }
 
-
 /// Representation of a tab item in a [ScaffoldWithNavBar]
 class ScaffoldWithNavBarTabItem extends BottomNavigationBarItem {
   /// Constructs an [ScaffoldWithNavBarTabItem].
-  const ScaffoldWithNavBarTabItem({required this.initialLocation,
-    this.navigatorKey, required Widget icon, String? label}) :
-        super(icon: icon, label: label);
+  const ScaffoldWithNavBarTabItem(
+      {required this.initialLocation,
+      this.navigatorKey,
+      required Widget icon,
+      String? label})
+      : super(icon: icon, label: label);
 
   /// The initial location/path
   final String initialLocation;
@@ -132,7 +133,6 @@ class ScaffoldWithNavBarTabItem extends BottomNavigationBarItem {
   /// Optional navigatorKey
   final GlobalKey<NavigatorState>? navigatorKey;
 }
-
 
 /// Builds the "shell" for the app by building a Scaffold with a
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
@@ -156,23 +156,29 @@ class ScaffoldWithNavBar extends StatefulWidget {
 }
 
 /// State for ScaffoldWithNavBar
-class ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
-
+class ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
   late final List<_NavBarTabNavigator> _tabs;
 
   int _locationToTabIndex(String location) {
-    final int index = _tabs.indexWhere((_NavBarTabNavigator t) =>
-        location.startsWith(t.initialLocation));
+    final int index = _tabs.indexWhere(
+        (_NavBarTabNavigator t) => location.startsWith(t.initialLocation));
     return index < 0 ? 0 : index;
   }
 
-  int get _currentIndex => _locationToTabIndex(GoRouter.of(context).location);
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabs = widget.tabs.map((ScaffoldWithNavBarTabItem e) =>
-        _NavBarTabNavigator(e)).toList();
+    _tabs = widget.tabs
+        .map((ScaffoldWithNavBarTabItem e) => _NavBarTabNavigator(e))
+        .toList();
+
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 400));
+    _animationController.forward();
   }
 
   @override
@@ -181,15 +187,17 @@ class ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
     final GoRouter route = GoRouter.of(context);
     final String location = route.location;
 
-    final int tabIndex = _locationToTabIndex(location);
+    final previousIndex = _currentIndex;
+    _currentIndex = _locationToTabIndex(location);
 
-    final _NavBarTabNavigator tabNav = _tabs[tabIndex];
+    final _NavBarTabNavigator tabNav = _tabs[_currentIndex];
     final List<Page<dynamic>> filteredPages = widget.pagesForCurrentRoute
         .where((Page<dynamic> p) => p.name!.startsWith(tabNav.initialLocation))
         .toList();
 
     if (filteredPages.length == 1 && location != tabNav.initialLocation) {
-      final int index = tabNav.pages.indexWhere((Page<dynamic> e) => e.name == location);
+      final int index =
+          tabNav.pages.indexWhere((Page<dynamic> e) => e.name == location);
       if (index < 0) {
         tabNav.pages.add(filteredPages.last);
       } else {
@@ -198,6 +206,16 @@ class ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
     } else {
       tabNav.pages = filteredPages;
     }
+
+    if (previousIndex != _currentIndex) {
+      _animationController.forward(from: 0.0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -205,7 +223,9 @@ class ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
     return Scaffold(
       body: _buildBody(context),
       bottomNavigationBar: BottomNavigationBar(
-        items: _tabs.map((_NavBarTabNavigator e) => e.bottomNavigationTab).toList(),
+        items: _tabs
+            .map((_NavBarTabNavigator e) => e.bottomNavigationTab)
+            .toList(),
         currentIndex: _currentIndex,
         onTap: (int idx) => _onItemTapped(idx, context),
       ),
@@ -213,10 +233,13 @@ class ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return IndexedStack(
-        index: _currentIndex,
-        children: _tabs.map((_NavBarTabNavigator tab) => tab.buildNavigator(context)).toList()
-    );
+    return FadeTransition(
+        opacity: _animationController,
+        child: IndexedStack(
+            index: _currentIndex,
+            children: _tabs
+                .map((_NavBarTabNavigator tab) => tab.buildNavigator(context))
+                .toList()));
   }
 
   void _onItemTapped(int index, BuildContext context) {
@@ -224,45 +247,42 @@ class ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
   }
 }
 
-
-/// Class representing
+/// Class representing a tab along with its navigation logic
 class _NavBarTabNavigator {
-
   _NavBarTabNavigator(this.bottomNavigationTab);
-  static const String _initialPlaceholderPageName = '#placeholder#';
 
   final ScaffoldWithNavBarTabItem bottomNavigationTab;
   String get initialLocation => bottomNavigationTab.initialLocation;
   Key? get navigatorKey => bottomNavigationTab.navigatorKey;
   List<Page<dynamic>> pages = <Page<dynamic>>[];
 
-  List<Page<dynamic>> get _pagesWithPlaceholder => pages.isNotEmpty ? pages :
-  <Page<dynamic>>[const MaterialPage<dynamic>(name: _initialPlaceholderPageName,
-      child: SizedBox.shrink())];
-
-  String get currentLocation => pages.isNotEmpty ? pages.last.name! : initialLocation;
+  String get currentLocation =>
+      pages.isNotEmpty ? pages.last.name! : initialLocation;
 
   Widget buildNavigator(BuildContext context) {
-    return Navigator(
-      key: navigatorKey,
-      pages: _pagesWithPlaceholder,
-      onPopPage: (Route<dynamic> route, dynamic result) {
-        if (pages.length == 1 || !route.didPop(result)) {
-          return false;
-        }
-        GoRouter.of(context).pop();
-        return true;
-      },
-    );
+    if (pages.isNotEmpty) {
+      return Navigator(
+        key: navigatorKey,
+        pages: pages,
+        onPopPage: (Route<dynamic> route, dynamic result) {
+          if (pages.length == 1 || !route.didPop(result)) {
+            return false;
+          }
+          GoRouter.of(context).pop();
+          return true;
+        },
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 }
-
 
 /// Widget for the root/initial pages in the bottom navigation bar.
 class RootScreen extends StatelessWidget {
   /// Creates a RootScreen
-  const RootScreen({required this.label, required this.detailsPath, Key? key}) :
-        super(key: key);
+  const RootScreen({required this.label, required this.detailsPath, Key? key})
+      : super(key: key);
 
   /// The label
   final String label;
@@ -280,7 +300,8 @@ class RootScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('Screen $label', style: Theme.of(context).textTheme.titleLarge),
+            Text('Screen $label',
+                style: Theme.of(context).textTheme.titleLarge),
             const Padding(padding: EdgeInsets.all(4)),
             TextButton(
               onPressed: () {
@@ -295,10 +316,8 @@ class RootScreen extends StatelessWidget {
   }
 }
 
-
 /// The details screen for either the A or B screen.
 class DetailsScreen extends StatefulWidget {
-
   /// Constructs a [DetailsScreen].
   const DetailsScreen({
     required this.label,
@@ -331,7 +350,9 @@ class DetailsScreenState extends State<DetailsScreen> {
             const Padding(padding: EdgeInsets.all(4)),
             TextButton(
               onPressed: () {
-                setState(() { _counter++; });
+                setState(() {
+                  _counter++;
+                });
               },
               child: const Text('Increment counter'),
             ),
