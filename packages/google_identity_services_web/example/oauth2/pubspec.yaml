@@ -1,5 +1,5 @@
 name: google_identity_services_web_example
-description: An example for the google_identity_services_web package.
+description: An example for the google_identity_services_web package, Token mode.
 publish_to: 'none'
 version: 0.0.1
 
@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_identity_services_web:
-    path: ../
+    path: ../../
   http: ^0.13.5
   js: ^0.6.4
   jwt_decoder: ^2.0.1
