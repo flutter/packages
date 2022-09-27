@@ -1,6 +1,6 @@
 ## 5.0.2
 
-- Fixes a bug in ShellRoute example where BottomNavigationBar might lose current index in long URIs.
+- Fixes missing code example in ShellRoute documentation.
 
 ## 5.0.1
 

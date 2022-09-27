@@ -347,7 +347,7 @@ class GoRoute extends RouteBase {
 ///
 /// ```
 /// final GlobalKey<NavigatorState> _rootNavigatorKey =
-//     GlobalKey<NavigatorState>();
+///     GlobalKey<NavigatorState>();
 ///
 ///   final GoRouter _router = GoRouter(
 ///     navigatorKey: _rootNavigatorKey,
