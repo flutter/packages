@@ -8,61 +8,63 @@ See the original JS SDK reference:
 
 ## Usage
 
-Import `package:cross_file/cross_file.dart`, instantiate a `XFile`
-using a path or byte array and use its methods and properties to
-access the file and its metadata.
+This package is the Dart js-interop layer of the new **Sign In With Google**
+SDK. Here's the API references for both of the sub-libraries:
 
-Example:
+* `id.dart`: [Sign In With Google JavaScript API reference](https://developers.google.com/identity/gsi/web/reference/js-reference)
+* `oauth2.dart`: [Google 3P Authorization JavaScript Library for websites - API reference](https://developers.google.com/identity/oauth2/web/reference/js-reference)
+* `loader.dart`: An (optional) loader mechanism that installs the library and
+resolves a `Future<void>` when it's ready.
 
-```dart
-import 'package:cross_file/cross_file.dart';
+### Loading the SDK
 
-final file = XFile('assets/hello.txt');
+There's two ways to load the JS SDK in your app. The most performant way is to
+modify your `web/index.html` file to insert the script tag [as recommended](https://developers.google.com/identity/gsi/web/guides/client-library). Place the `script` tag in the
+`<head>` of your site, next to the script tag that loads `flutter.js`, so both
+can be downloaded in parallel:
 
-print('File information:');
-print('- Path: ${file.path}');
-print('- Name: ${file.name}');
-print('- MIME type: ${file.mimeType}');
-
-final fileContent = await file.readAsString();
-print('Content of the file: ${fileContent}');  // e.g. "Moto G (4)"
+```html
+<!-- Your index.html -->
+<head>
+    ...
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- ^^^^^^^-- add the new script there -->
+    <script src="flutter.js" defer></script>
+    ...
+</head>
 ```
 
-You will find links to the API docs on the [pub page](https://pub.dev/packages/cross_file).
+An alternative way, that downloads the SDK on demand, is to use the
+**`loadWebSdk`** function provided by the library. A simple location to embed
+this in a Flutter Web only app can be the `main.dart`:
 
-## Web Limitations
+```dart
+...
+import 'package:google_identity_services_web/loader.dart' as gis;
 
-`XFile` on the web platform is backed by [Blob](https://api.dart.dev/be/180361/dart-html/Blob-class.html)
-objects and their URLs.
+void main() async {
+  await gis.loadWebSdk(); // Load the GIS SDK
+  ...
+  runApp(const MyApp());
+}
+```
 
-It seems that Safari hangs when reading Blobs larger than 4GB (your app will stop
-without returning any data, or throwing an exception).
+(Note that the above won't compile for mobile apps, so if you're developing a
+cross-platform app, you'll probably need to hide the call to `loadWebSdk`
+behind a [conditional import/export](https://dart.dev/guides/libraries/create-library-packages#conditionally-importing-and-exporting-library-files).)
 
-This package will attempt to throw an `Exception` before a large file is accessed
-from Safari (if its size is known beforehand), so that case can be handled
-programmatically.
+## Browser compatibility
 
-### Browser compatibility
+The new SDK is introducing new concepts that are on track of standardization to
+most browsers, and older browsers might not be compatible with older browsers.
 
-[![Data on Global support for Blob constructing](https://caniuse.bitsofco.de/image/blobbuilder.png)](https://caniuse.com/blobbuilder)
+Check the browser compatibility in the official documentation site:
 
-[![Data on Global support for Blob URLs](https://caniuse.bitsofco.de/image/bloburls.png)](https://caniuse.com/bloburls)
+* **Sign In With Google > [Supported browsers and platforms](https://developers.google.com/identity/gsi/web/guides/supported-browsers)**
 
 ## Testing
 
-This package supports both web and native platforms. Unit tests need to be split
-in two separate suites (because native code cannot use `dart:html`, and web code
-cannot use `dart:io`).
-
-When adding new features, it is likely that tests need to be added for both the
-native and web platforms.
-
-### Native tests
-
-Tests for native platforms are located in the `x_file_io_test.dart`. Tests can
-be run  with `dart test`.
-
-### Web tests
-
-Tests for the web platform live in the `x_file_html_test.dart`. They can be run
+This web-only package uses `dart:test` to test its features. They can be run
 with `dart test -p chrome`.
+
+_(Look at `test/README.md` and `tool/run_tests.dart` for more info.)_
