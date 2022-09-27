@@ -1,3 +1,7 @@
+## 5.0.3
+
+- Changes routeInformationProvider, routeInformationParser, routerDelegate to routerConfig
+
 ## 5.0.2
 
 - Fixes missing code example in ShellRoute documentation.
