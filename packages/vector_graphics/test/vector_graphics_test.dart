@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -428,6 +428,39 @@ void main() {
     expect(exception.originalException, isA<StateError>());
     expect(exception.toString(), contains(loader.toString()));
   });
+
+  testWidgets(
+      '(WebOnly) creates OpacityLayer, TransformLayer, and ColorFilterLayer to draw picture',
+      (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: const Directionality(
+          textDirection: TextDirection.ltr,
+          child: VectorGraphic(
+            loader: AssetBytesLoader('foo.svg'),
+            colorFilter: ColorFilter.mode(Colors.red, BlendMode.srcIn),
+            opacity: AlwaysStoppedAnimation<double>(0.5),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.layers.last, isA<PictureLayer>());
+    expect(
+        tester.layers[tester.layers.length - 2],
+        isA<ColorFilterLayer>().having(
+            (ColorFilterLayer layer) => layer.colorFilter,
+            'colorFilter',
+            const ColorFilter.mode(Colors.red, BlendMode.srcIn)));
+    expect(
+        tester.layers[tester.layers.length - 3],
+        isA<OpacityLayer>()
+            .having((OpacityLayer layer) => layer.alpha, 'alpha', 128));
+  }, skip: !kIsWeb);
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {

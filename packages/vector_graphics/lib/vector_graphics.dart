@@ -9,8 +9,10 @@ import 'package:flutter/widgets.dart';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
+import 'src/html_render_vector_graphics.dart';
 import 'src/loader.dart';
 import 'src/listener.dart';
+import 'src/render_object_selection.dart';
 import 'src/render_vector_graphics.dart';
 
 export 'src/listener.dart' show PictureInfo;
@@ -271,6 +273,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     });
   }
 
+  static final bool _webRenderObject = useHtmlRenderObject();
+
   @override
   Widget build(BuildContext context) {
     final PictureInfo? pictureInfo = _pictureInfo?.pictureInfo;
@@ -301,6 +305,24 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         pictureInfo.size.height / height!,
       );
 
+      final Widget renderWidget;
+      if (_webRenderObject) {
+        renderWidget = _RawWebVectorGraphicWidget(
+          pictureInfo: pictureInfo,
+          assetKey: _pictureInfo!.key,
+          colorFilter: widget.colorFilter,
+          opacity: widget.opacity,
+        );
+      } else {
+        renderWidget = _RawVectorGraphicWidget(
+          pictureInfo: pictureInfo,
+          assetKey: _pictureInfo!.key,
+          colorFilter: widget.colorFilter,
+          opacity: widget.opacity,
+          scale: scale,
+        );
+      }
+
       child = SizedBox(
         width: width,
         height: height,
@@ -310,13 +332,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           clipBehavior: Clip.hardEdge,
           child: SizedBox.fromSize(
             size: pictureInfo.size,
-            child: _RawVectorGraphicWidget(
-              pictureInfo: pictureInfo,
-              assetKey: _pictureInfo!.key,
-              colorFilter: widget.colorFilter,
-              opacity: widget.opacity,
-              scale: scale,
-            ),
+            child: renderWidget,
           ),
         ),
       );
@@ -376,6 +392,42 @@ class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
       ..devicePixelRatio = MediaQuery.maybeOf(context)?.devicePixelRatio ?? 1.0
       ..opacity = opacity
       ..scale = scale;
+  }
+}
+
+class _RawWebVectorGraphicWidget extends SingleChildRenderObjectWidget {
+  const _RawWebVectorGraphicWidget({
+    required this.pictureInfo,
+    required this.colorFilter,
+    required this.opacity,
+    required this.assetKey,
+  });
+
+  final PictureInfo pictureInfo;
+  final ColorFilter? colorFilter;
+  final Animation<double>? opacity;
+  final Object assetKey;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return RenderWebVectorGraphic(
+      pictureInfo,
+      assetKey,
+      colorFilter,
+      opacity,
+    );
+  }
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    covariant RenderWebVectorGraphic renderObject,
+  ) {
+    renderObject
+      ..pictureInfo = pictureInfo
+      ..assetKey = assetKey
+      ..colorFilter = colorFilter
+      ..opacity = opacity;
   }
 }
 
