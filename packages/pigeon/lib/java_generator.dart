@@ -388,8 +388,13 @@ static MessageCodec<Object> getCodec() {
             .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
         final Iterable<String> argNames =
             indexMap(func.arguments, _getSafeArgumentName);
-        sendArgument =
-            'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
+        if (func.arguments.length == 1) {
+          sendArgument =
+              'new ArrayList<Object>(Collections.singletonList(${argNames.first}))';
+        } else {
+          sendArgument =
+              'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
+        }
         final String argsSignature =
             map2(argTypes, argNames, (String x, String y) => '$x $y')
                 .join(', ');
@@ -534,6 +539,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     indent.writeln('import java.nio.ByteBuffer;');
     indent.writeln('import java.util.Arrays;');
     indent.writeln('import java.util.ArrayList;');
+    indent.writeln('import java.util.Collections;');
     indent.writeln('import java.util.List;');
     indent.writeln('import java.util.Map;');
     indent.writeln('import java.util.HashMap;');

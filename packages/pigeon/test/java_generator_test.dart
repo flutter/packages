@@ -932,6 +932,36 @@ void main() {
             'channel.send(new ArrayList<Object>(Arrays.asList(xArg, yArg)), channelReply ->'));
   });
 
+  test('flutter single args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'send',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type:
+                    const TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class Messages'));
+    expect(code, contains('BasicMessageChannel<Object> channel'));
+    expect(code, contains('Long output'));
+    expect(code,
+        contains('public void send(@NonNull Long xArg, Reply<Long> callback)'));
+    expect(
+        code,
+        contains(
+            'channel.send(new ArrayList<Object>(Collections.singletonList(xArg)), channelReply ->'));
+  });
+
   test('return nullable host', () {
     final Root root = Root(
       apis: <Api>[
