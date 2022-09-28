@@ -870,6 +870,32 @@ void main() {
             'Long output = api.add((xArg == null) ? null : xArg.longValue(), (yArg == null) ? null : yArg.longValue())'));
   });
 
+  test('host Object argType', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'objectTest',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: const TypeDeclaration(
+                    isNullable: false, baseName: 'Object')),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Api');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class Api'));
+    expect(code, contains('void objectTest(@NonNull Object x)'));
+    expect(
+        code, contains('ArrayList<Object> args = (ArrayList<Object>)message;'));
+    expect(code, contains('Object xArg = args.get(0)'));
+  });
+
   test('flutter multiple args', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
