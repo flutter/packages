@@ -98,6 +98,68 @@ void main() {
       expect(find.byType(_DetailsScreen), findsOneWidget);
     });
 
+    testWidgets('Builds ShellRoute with nestedNavigationBuilder',
+        (WidgetTester tester) async {
+      final RouteConfiguration config = RouteConfiguration(
+        routes: <RouteBase>[
+          ShellRoute(
+              nestedNavigationBuilder: (BuildContext context,
+                  GoRouterState state, List<Page<dynamic>> pages) {
+                return Navigator(
+                    pages: pages,
+                    onPopPage: (Route<dynamic> route, dynamic result) {
+                      return false;
+                    });
+              },
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/nested',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return _DetailsScreen();
+                  },
+                ),
+              ]),
+        ],
+        redirectLimit: 10,
+        topRedirect: (BuildContext context, GoRouterState state) {
+          return null;
+        },
+        navigatorKey: GlobalKey<NavigatorState>(),
+      );
+
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        RouteMatch(
+          route: config.routes.first,
+          subloc: '',
+          fullpath: '',
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
+          queryParametersAll: <String, List<String>>{},
+          extra: null,
+          error: null,
+        ),
+        RouteMatch(
+          route: config.routes.first.routes.first,
+          subloc: '/nested',
+          fullpath: '/nested',
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
+          queryParametersAll: <String, List<String>>{},
+          extra: null,
+          error: null,
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      expect(find.byType(_DetailsScreen), findsOneWidget);
+    });
+
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
