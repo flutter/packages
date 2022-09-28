@@ -265,52 +265,52 @@ String _getCodecGetterName(String? prefix, String className) =>
 /// NSObject<FlutterMessageCodec> *FooHostApiCodecGetCodec() {...}
 void _writeCodec(
     Indent indent, String name, ObjcOptions options, Api api, Root root) {
+  final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
+  if (codecClasses.isEmpty) {
+    return;
+  }
   final String readerWriterName = '${name}ReaderWriter';
   final String readerName = '${name}Reader';
   final String writerName = '${name}Writer';
   indent.writeln('@interface $readerName : FlutterStandardReader');
   indent.writeln('@end');
   indent.writeln('@implementation $readerName');
-  if (getCodecClasses(api, root).isNotEmpty) {
-    indent.writeln('- (nullable id)readValueOfType:(UInt8)type ');
+  indent.writeln('- (nullable id)readValueOfType:(UInt8)type ');
+  indent.scoped('{', '}', () {
+    indent.write('switch (type) ');
     indent.scoped('{', '}', () {
-      indent.write('switch (type) ');
-      indent.scoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('case ${customClass.enumeration}: ');
-          indent.writeScoped('', '', () {
-            indent.writeln(
-                'return [${_className(options.prefix, customClass.name)} fromMap:[self readValue]];');
-          });
-        }
-        indent.write('default:');
+      for (final EnumeratedClass customClass in codecClasses) {
+        indent.write('case ${customClass.enumeration}: ');
         indent.writeScoped('', '', () {
-          indent.writeln('return [super readValueOfType:type];');
+          indent.writeln(
+              'return [${_className(options.prefix, customClass.name)} fromMap:[self readValue]];');
         });
+      }
+      indent.write('default:');
+      indent.writeScoped('', '', () {
+        indent.writeln('return [super readValueOfType:type];');
       });
     });
-  }
+  });
   indent.writeln('@end');
   indent.addln('');
   indent.writeln('@interface $writerName : FlutterStandardWriter');
   indent.writeln('@end');
   indent.writeln('@implementation $writerName');
-  if (getCodecClasses(api, root).isNotEmpty) {
-    indent.writeln('- (void)writeValue:(id)value ');
-    indent.scoped('{', '}', () {
-      for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-        indent.write(
-            'if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
-        indent.scoped('{', '} else ', () {
-          indent.writeln('[self writeByte:${customClass.enumeration}];');
-          indent.writeln('[self writeValue:[value toMap]];');
-        });
-      }
-      indent.scoped('{', '}', () {
-        indent.writeln('[super writeValue:value];');
+  indent.writeln('- (void)writeValue:(id)value ');
+  indent.scoped('{', '}', () {
+    for (final EnumeratedClass customClass in codecClasses) {
+      indent.write(
+          'if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
+      indent.scoped('{', '} else ', () {
+        indent.writeln('[self writeByte:${customClass.enumeration}];');
+        indent.writeln('[self writeValue:[value toMap]];');
       });
+    }
+    indent.scoped('{', '}', () {
+      indent.writeln('[super writeValue:value];');
     });
-  }
+  });
   indent.writeln('@end');
   indent.addln('');
   indent.format('''
@@ -454,14 +454,15 @@ void _writeHostApiDeclaration(
       lastArgType = 'FlutterError *_Nullable *_Nonnull';
       lastArgName = 'error';
     }
+    final List<String> generatorComments = <String>[];
     if (!func.returnType.isNullable &&
         !func.returnType.isVoid &&
         !func.isAsynchronous) {
-      indent.writeln(
-          '$_docCommentPrefix @return `nil` only when `error != nil`.');
+      generatorComments.add(' @return `nil` only when `error != nil`.');
     }
     addDocumentationComments(
-        indent, func.documentationComments, _docCommentSpec);
+        indent, func.documentationComments, _docCommentSpec,
+        generatorComments: generatorComments);
 
     final String signature = _makeObjcSignature(
       func: func,
@@ -578,11 +579,13 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   _writeClassDeclarations(indent, root.classes, root.enums, options.prefix);
 
   for (final Api api in root.apis) {
-    indent.writeln(
-        '${_docCommentPrefix}The codec used by ${_className(options.prefix, api.name)}.');
-    indent.writeln(
-        'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void);');
-    indent.addln('');
+    if (getCodecClasses(api, root).isNotEmpty) {
+      indent.writeln(
+          '$_docCommentPrefix The codec used by ${_className(options.prefix, api.name)}.');
+      indent.writeln(
+          'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void);');
+      indent.addln('');
+    }
     if (api.location == ApiLocation.host) {
       _writeHostApiDeclaration(indent, api, options, root);
     } else if (api.location == ApiLocation.flutter) {
@@ -638,7 +641,12 @@ void _writeHostApiSource(
     indent.inc();
     indent.writeln('initWithName:@"${makeChannelName(api, func)}"');
     indent.writeln('binaryMessenger:binaryMessenger');
-    indent.write('codec:${_getCodecGetterName(options.prefix, api.name)}()');
+    indent.write('codec:');
+    if (getCodecClasses(api, root).isNotEmpty) {
+      indent.write('${_getCodecGetterName(options.prefix, api.name)}()');
+    } else {
+      indent.write('[FlutterStandardMessageCodec sharedInstance]');
+    }
     if (taskQueue != null) {
       indent.addln('');
       indent.writeln('taskQueue:$taskQueue];');
@@ -780,6 +788,7 @@ void _writeFlutterApiSource(
     Indent indent, ObjcOptions options, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
   final String apiName = _className(options.prefix, api.name);
+  final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
 
   void writeExtension() {
     indent.writeln('@interface $apiName ()');
@@ -831,8 +840,11 @@ void _writeFlutterApiSource(
       indent.inc();
       indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
       indent.writeln('binaryMessenger:self.binaryMessenger');
-      indent.writeln(
-          'codec:${_getCodecGetterName(options.prefix, api.name)}()];');
+      if (isCustomCodec) {
+        indent
+            .write('codec:${_getCodecGetterName(options.prefix, api.name)}()');
+      }
+      indent.write('];');
       indent.dec();
       indent.dec();
       indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
