@@ -482,7 +482,12 @@ class ShellRoute extends RouteBase {
   final ShellRouteNestedNavigationBuilder? nestedNavigationBuilder;
 
   /// The [GlobalKey] to be used by the [Navigator] built for this route.
-  /// All ShellRoutes build a Navigator by default. Child GoRoutes
-  /// are placed onto this Navigator instead of the root Navigator.
+  ///
+  /// Unless [nestedNavigationBuilder] is set, all ShellRoutes build a Navigator
+  /// by default. Child GoRoutes are placed onto this Navigator instead of the
+  /// root Navigator. However, if [nestedNavigationBuilder] is set, construction
+  /// of a nested Navigator is instead delegated to the widget created by that
+  /// builder. In that scenario, this property will not be associated with a
+  /// Navigator, and should not be used to access NavigatorState.
   final GlobalKey<NavigatorState> navigatorKey;
 }
