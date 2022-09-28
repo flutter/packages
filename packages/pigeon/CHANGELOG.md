@@ -1,3 +1,9 @@
+## 4.2.1
+
+* [java] Fix 'Method invocation 'get' may produce 'NullPointerException''
+* [java] Fix 'Call to 'asList()' with only one argument'
+* [java] Fix 'Casting 'args.get(...)' to 'Object' is redundant'
+
 ## 4.2.0
 
 * Adds experimental support for Kotlin generation.
