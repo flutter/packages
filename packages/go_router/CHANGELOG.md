@@ -1,6 +1,6 @@
 ## 5.0.3
 
-- Changes routeInformationProvider, routeInformationParser, routerDelegate to routerConfig
+- Changes examples to use the routerConfig API
 
 ## 5.0.2
 
