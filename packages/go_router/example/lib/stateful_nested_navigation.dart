@@ -2,21 +2,47 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+final GlobalKey<NavigatorState> _sectionANavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
+final GlobalKey<NavigatorState> _sectionBNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'sectionBNav');
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each tab uses its own persistent navigator, i.e.
 // navigation state is maintained separately for each tab. This setup also
 // enables deep linking into nested pages.
 //
-// The example is loosely based on the ShellRoute sample in go_router, but
-// differs in that it is able to maintain the navigation state of each tab.
-// This example introduces a fex (imperfect) classes that ideally should be part
-// of go_router, such as BottomTabBarShellRoute etc.
+// This example demonstrates how to display routes within a ShellRoute using a
+// `nestedNavigationBuilder`. Navigators for the tabs ('Section A' and
+// 'Section B') are created via nested ShellRoutes. Note that no navigator will
+// be created by the "top" ShellRoute. This example is similar to the ShellRoute
+// example, but differs in that it is able to maintain the navigation state of
+// each tab.
 
 void main() {
   runApp(NestedTabNavigationExampleApp());
+}
+
+/// Extension to get the child widget of the Page. Wish there were a better way...
+extension PageWithChild on Page<dynamic> {
+  /// Gets the child of the page
+  Widget? findTheChild() {
+    final Page<dynamic> widget = this;
+    if (widget is MaterialPage) {
+      return widget.child;
+    } else if (widget is CupertinoPage) {
+      return widget.child;
+    } else if (widget is CustomTransitionPage) {
+      return widget.child;
+    }
+    return null;
+    // An unsafer option... :
+    //return (this as dynamic).child as Widget;
+  }
 }
 
 /// ShellRoute that uses a bottom tab navigation (ScaffoldWithNavBar) with
@@ -25,16 +51,22 @@ class BottomTabBarShellRoute extends ShellRoute {
   /// Constructs a BottomTabBarShellRoute
   BottomTabBarShellRoute({
     required this.tabs,
+    GlobalKey<NavigatorState>? navigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
     Key? scaffoldKey = const ValueKey<String>('ScaffoldWithNavBar'),
   }) : super(
+            navigatorKey: navigatorKey,
             routes: routes,
             nestedNavigationBuilder: (BuildContext context, GoRouterState state,
                 List<Page<dynamic>> pagesForCurrentRoute) {
+              // The first (and only) page will be the nested navigator for the
+              // current tab. The pages parameter will in this case
+              final Widget? shellNav =
+                  pagesForCurrentRoute.first.findTheChild();
               return ScaffoldWithNavBar(
                   tabs: tabs,
                   key: scaffoldKey,
-                  pagesForCurrentRoute: pagesForCurrentRoute);
+                  shellNav: shellNav! as Navigator);
             });
 
   /// The tabs
@@ -46,55 +78,77 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
   /// Creates a NestedTabNavigationExampleApp
   NestedTabNavigationExampleApp({Key? key}) : super(key: key);
 
-  static const List<ScaffoldWithNavBarTabItem> _tabs =
+  static final List<ScaffoldWithNavBarTabItem> _tabs =
       <ScaffoldWithNavBarTabItem>[
     ScaffoldWithNavBarTabItem(
-        initialLocation: '/a', icon: Icon(Icons.home), label: 'Section A'),
+        initialLocation: '/a',
+        navigatorKey: _sectionANavigatorKey,
+        icon: const Icon(Icons.home),
+        label: 'Section A'),
     ScaffoldWithNavBarTabItem(
-        initialLocation: '/b', icon: Icon(Icons.settings), label: 'Section B'),
+      initialLocation: '/b',
+      navigatorKey: _sectionBNavigatorKey,
+      icon: const Icon(Icons.settings),
+      label: 'Section B',
+    ),
   ];
 
   final GoRouter _router = GoRouter(
     initialLocation: '/a',
-    navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'Root'),
     routes: <RouteBase>[
-      /// Custom shell route - wraps the below routes in a scaffold with
-      /// a bottom tab navigator
+      /// Custom top shell route - wraps the below routes in a scaffold with
+      /// a bottom tab navigator (ScaffoldWithNavBar). Note that no Navigator
+      /// will be created by this top ShellRoute.
       BottomTabBarShellRoute(
         tabs: _tabs,
         routes: <RouteBase>[
-          /// The screen to display as the root in the first tab of the bottom
-          /// navigation bar.
-          GoRoute(
-            path: '/a',
-            builder: (BuildContext context, GoRouterState state) =>
-                const RootScreen(label: 'A', detailsPath: '/a/details'),
+          ShellRoute(
+              navigatorKey: _sectionANavigatorKey,
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                return child;
+              },
+              routes: <RouteBase>[
+                /// The screen to display as the root in the first tab of the bottom
+                /// navigation bar.
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const RootScreen(label: 'A', detailsPath: '/a/details'),
+                  routes: <RouteBase>[
+                    /// The details screen to display stacked on navigator of the
+                    /// first tab. This will cover screen A but not the application
+                    /// shell (bottom navigation bar).
+                    GoRoute(
+                      path: 'details',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const DetailsScreen(label: 'A'),
+                    ),
+                  ],
+                ),
+              ]),
+          ShellRoute(
+            navigatorKey: _sectionBNavigatorKey,
+            builder: (BuildContext context, GoRouterState state, Widget child) {
+              return child;
+            },
             routes: <RouteBase>[
-              /// The details screen to display stacked on navigator of the
-              /// first tab. This will cover screen A but not the application
-              /// shell (bottom navigation bar).
+              /// The screen to display as the root in the second tab of the bottom
+              /// navigation bar.
               GoRoute(
-                path: 'details',
+                path: '/b',
                 builder: (BuildContext context, GoRouterState state) =>
-                    const DetailsScreen(label: 'A'),
-              ),
-            ],
-          ),
-
-          /// The screen to display as the root in the second tab of the bottom
-          /// navigation bar.
-          GoRoute(
-            path: '/b',
-            builder: (BuildContext context, GoRouterState state) =>
-                const RootScreen(label: 'B', detailsPath: '/b/details'),
-            routes: <RouteBase>[
-              /// The details screen to display stacked on navigator of the
-              /// second tab. This will cover screen B but not the application
-              /// shell (bottom navigation bar).
-              GoRoute(
-                path: 'details',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DetailsScreen(label: 'B'),
+                    const RootScreen(label: 'B', detailsPath: '/b/details'),
+                routes: <RouteBase>[
+                  /// The details screen to display stacked on navigator of the
+                  /// second tab. This will cover screen B but not the application
+                  /// shell (bottom navigation bar).
+                  GoRoute(
+                    path: 'details',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const DetailsScreen(label: 'B'),
+                  ),
+                ],
               ),
             ],
           ),
@@ -122,7 +176,7 @@ class ScaffoldWithNavBarTabItem extends BottomNavigationBarItem {
   /// Constructs an [ScaffoldWithNavBarTabItem].
   const ScaffoldWithNavBarTabItem(
       {required this.initialLocation,
-      this.navigatorKey,
+      required this.navigatorKey,
       required Widget icon,
       String? label})
       : super(icon: icon, label: label);
@@ -131,7 +185,7 @@ class ScaffoldWithNavBarTabItem extends BottomNavigationBarItem {
   final String initialLocation;
 
   /// Optional navigatorKey
-  final GlobalKey<NavigatorState>? navigatorKey;
+  final GlobalKey<NavigatorState> navigatorKey;
 }
 
 /// Builds the "shell" for the app by building a Scaffold with a
@@ -139,14 +193,13 @@ class ScaffoldWithNavBarTabItem extends BottomNavigationBarItem {
 class ScaffoldWithNavBar extends StatefulWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
-    required this.pagesForCurrentRoute,
+    required this.shellNav,
     required this.tabs,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
-  /// The widget to display in the body of the Scaffold.
-  /// In this sample, it is a Navigator.
-  final List<Page<dynamic>> pagesForCurrentRoute;
+  /// The navigator for the currently active tab
+  final Navigator shellNav;
 
   /// The tabs
   final List<ScaffoldWithNavBarTabItem> tabs;
@@ -184,28 +237,22 @@ class ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
   @override
   void didUpdateWidget(covariant ScaffoldWithNavBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final GoRouter route = GoRouter.of(context);
-    final String location = route.location;
+    _updateForCurrentTab();
+  }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateForCurrentTab();
+  }
+
+  void _updateForCurrentTab() {
     final int previousIndex = _currentIndex;
-    _currentIndex = _locationToTabIndex(location);
+    _currentIndex = _locationToTabIndex(GoRouter.of(context).location);
 
     final _NavBarTabNavigator tabNav = _tabs[_currentIndex];
-    final List<Page<dynamic>> filteredPages = widget.pagesForCurrentRoute
-        .where((Page<dynamic> p) => p.name!.startsWith(tabNav.initialLocation))
-        .toList();
-
-    if (filteredPages.length == 1 && location != tabNav.initialLocation) {
-      final int index =
-          tabNav.pages.indexWhere((Page<dynamic> e) => e.name == location);
-      if (index < 0) {
-        tabNav.pages.add(filteredPages.last);
-      } else {
-        tabNav.pages.length = index + 1;
-      }
-    } else {
-      tabNav.pages = filteredPages;
-    }
+    tabNav.navigator = widget.shellNav;
+    assert(widget.shellNav.key == tabNav.navigatorKey);
 
     if (previousIndex != _currentIndex) {
       _animationController.forward(from: 0.0);
@@ -252,26 +299,17 @@ class _NavBarTabNavigator {
   _NavBarTabNavigator(this.bottomNavigationTab);
 
   final ScaffoldWithNavBarTabItem bottomNavigationTab;
-  String get initialLocation => bottomNavigationTab.initialLocation;
-  Key? get navigatorKey => bottomNavigationTab.navigatorKey;
-  List<Page<dynamic>> pages = <Page<dynamic>>[];
+  Navigator? navigator;
 
+  String get initialLocation => bottomNavigationTab.initialLocation;
+  Key get navigatorKey => bottomNavigationTab.navigatorKey;
+  List<Page<dynamic>> get pages => navigator?.pages ?? <Page<dynamic>>[];
   String get currentLocation =>
       pages.isNotEmpty ? pages.last.name! : initialLocation;
 
   Widget buildNavigator(BuildContext context) {
-    if (pages.isNotEmpty) {
-      return Navigator(
-        key: navigatorKey,
-        pages: pages,
-        onPopPage: (Route<dynamic> route, dynamic result) {
-          if (pages.length == 1 || !route.didPop(result)) {
-            return false;
-          }
-          GoRouter.of(context).pop();
-          return true;
-        },
-      );
+    if (navigator != null) {
+      return navigator!;
     } else {
       return const SizedBox.shrink();
     }

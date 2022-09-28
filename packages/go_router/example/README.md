@@ -31,8 +31,8 @@ An example to demonstrate how to use redirect to handle a synchronous sign-in fl
 An example to demonstrate how to use a `Shell Route` to create stateful nested navigation, with a
 `BottomNavigationBar`.
 
-## [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/nested_navigation_shell_route.dart)
-`flutter run lib/nested_navigation_shell_route.dart`
+## [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_nested_navigation.dart)
+`flutter run lib/stateful_nested_navigation.dart`
 
 An example to demonstrate how to use handle a sign-in flow with a stream authentication service.
 

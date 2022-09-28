@@ -351,7 +351,7 @@ class GoRoute extends RouteBase {
 /// convenient when for instance implementing a UI with a [BottomNavigationBar],
 /// with a persistent navigation state for each tab (i.e. building a [Navigator]
 /// for each tab).
-/// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/nested_navigation_shell_route.dart)
+/// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_nested_navigation.dart)
 /// for a complete runnable example.
 ///
 /// ```
