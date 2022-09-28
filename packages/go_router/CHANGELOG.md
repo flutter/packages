@@ -1,3 +1,7 @@
+## 5.0.3
+
+- Changes examples to use the routerConfig API
+
 ## 5.0.2
 
 - Fixes missing code example in ShellRoute documentation.
