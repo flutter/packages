@@ -238,9 +238,10 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                     ? '($argName == null) ? null : $argName.longValue()'
                     : argName;
                 String accessor = 'args.get($index)';
+                final bool argTypeIsObject = argType == 'Object';
                 if (isEnum(arg.type)) {
                   accessor = _intToEnum(accessor, arg.type.baseName);
-                } else {
+                } else if (!argTypeIsObject) {
                   accessor = '($argType)$accessor';
                 }
                 indent.writeln('$argType $argName = $accessor;');
