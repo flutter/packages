@@ -14,9 +14,6 @@ import 'generator_tools.dart';
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
 
-/// Standard Message Codec String.
-const String _standardMessageCodec = 'StandardMessageCodec';
-
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
@@ -74,7 +71,7 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
   if (codecClasses.isEmpty) {
     return;
   }
-  indent.write('class $codecName extends $_standardMessageCodec ');
+  indent.write('class $codecName extends StandardMessageCodec');
   indent.scoped('{', '}', () {
     indent.writeln('const $codecName();');
     indent.writeln('@override');
@@ -161,7 +158,7 @@ String _getMethodArgumentsSignature(
 /// }
 void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
-  String codecName = _standardMessageCodec;
+  String codecName = 'StandardMessageCodec';
   if (getCodecClasses(api, root).isNotEmpty) {
     codecName = _getCodecName(api);
     _writeCodec(indent, codecName, api, root);
@@ -278,7 +275,7 @@ void _writeFlutterApi(
   bool isMockHandler = false,
 }) {
   assert(api.location == ApiLocation.flutter);
-  String codecName = _standardMessageCodec;
+  String codecName = 'StandardMessageCodec';
   if (getCodecClasses(api, root).isNotEmpty) {
     codecName = _getCodecName(api);
     _writeCodec(indent, codecName, api, root);
