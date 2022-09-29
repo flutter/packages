@@ -258,7 +258,7 @@ void main() {
       await tester.pump(const Duration(microseconds: 1)); // 300 * 1/5 = 60
 
       // Jump to start of fade out: 1/5 of 300.
-      await tester.pump(const Duration(milliseconds: 60)); // 300 * 1/5 = 60
+      await tester.pump(const Duration(milliseconds: 59, microseconds: 999)); // 300 * 1/5 = 60
       final _TrackedData dataPreFadeOut = _TrackedData(
         materialElement.widget as Material,
         tester.getRect(
