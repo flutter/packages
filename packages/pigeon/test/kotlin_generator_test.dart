@@ -29,7 +29,7 @@ void main() {
     const KotlinOptions kotlinOptions = KotlinOptions();
     generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('data class Foobar('));
+    expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
     expect(code, contains('fun fromMap(map: Map<String, Any?>): Foobar'));
     expect(code, contains('fun toMap(): Map<String, Any?>'));
