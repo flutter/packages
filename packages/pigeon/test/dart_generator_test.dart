@@ -1234,4 +1234,36 @@ name: foobar
       expect(code, contains('///$comment'));
     }
   });
+
+  test('doesnt create codecs if no custom datatypes', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(contains('extends StandardMessageCodec')));
+  });
 }
