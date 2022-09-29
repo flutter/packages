@@ -70,9 +70,7 @@ void _writeCodecHeader(Indent indent, Api api, Root root) {
   if (getCodecClasses(api, root).isEmpty) {
     return;
   }
-  final String codecName = getCodecClasses(api, root).isNotEmpty
-      ? _getCodecName(api)
-      : 'flutter::StandardCodecSerializer';
+  final String codecName = _getCodecName(api);
   indent.write('class $codecName : public flutter::StandardCodecSerializer ');
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
@@ -85,16 +83,14 @@ inline static $codecName& GetInstance() {
 ''');
       indent.writeln('$codecName();');
     });
-    if (getCodecClasses(api, root).isNotEmpty) {
-      indent.writeScoped(' public:', '', () {
-        indent.writeln(
-            'void WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const override;');
-      });
-      indent.writeScoped(' protected:', '', () {
-        indent.writeln(
-            'flutter::EncodableValue ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const override;');
-      });
-    }
+    indent.writeScoped(' public:', '', () {
+      indent.writeln(
+          'void WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const override;');
+    });
+    indent.writeScoped(' protected:', '', () {
+      indent.writeln(
+          'flutter::EncodableValue ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const override;');
+    });
   }, nestCount: 0);
 }
 
@@ -102,52 +98,48 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
   if (getCodecClasses(api, root).isEmpty) {
     return;
   }
-  final String codecName = getCodecClasses(api, root).isNotEmpty
-      ? _getCodecName(api)
-      : 'flutter::StandardCodecSerializer';
+  final String codecName = _getCodecName(api);
   indent.writeln('$codecName::$codecName() {}');
-  if (getCodecClasses(api, root).isNotEmpty) {
-    indent.write(
-        'flutter::EncodableValue $codecName::ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const ');
+  indent.write(
+      'flutter::EncodableValue $codecName::ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const ');
+  indent.scoped('{', '}', () {
+    indent.write('switch (type) ');
     indent.scoped('{', '}', () {
-      indent.write('switch (type) ');
-      indent.scoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('case ${customClass.enumeration}:');
-          indent.writeScoped('', '', () {
-            indent.writeln(
-                'return flutter::CustomEncodableValue(${customClass.name}(std::get<flutter::EncodableMap>(ReadValue(stream))));');
-          });
-        }
-        indent.write('default:');
+      for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+        indent.write('case ${customClass.enumeration}:');
         indent.writeScoped('', '', () {
           indent.writeln(
-              'return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);');
-        }, addTrailingNewline: false);
-      });
+              'return flutter::CustomEncodableValue(${customClass.name}(std::get<flutter::EncodableMap>(ReadValue(stream))));');
+        });
+      }
+      indent.write('default:');
+      indent.writeScoped('', '', () {
+        indent.writeln(
+            'return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);');
+      }, addTrailingNewline: false);
     });
-    indent.writeln('');
+  });
+  indent.writeln('');
+  indent.write(
+      'void $codecName::WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const ');
+  indent.writeScoped('{', '}', () {
     indent.write(
-        'void $codecName::WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const ');
-    indent.writeScoped('{', '}', () {
-      indent.write(
-          'if (const flutter::CustomEncodableValue* custom_value = std::get_if<flutter::CustomEncodableValue>(&value)) ');
-      indent.scoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write(
-              'if (custom_value->type() == typeid(${customClass.name})) ');
-          indent.scoped('{', '}', () {
-            indent.writeln('stream->WriteByte(${customClass.enumeration});');
-            indent.writeln(
-                'WriteValue(std::any_cast<${customClass.name}>(*custom_value).ToEncodableMap(), stream);');
-            indent.writeln('return;');
-          });
-        }
-      });
-      indent.writeln(
-          'flutter::StandardCodecSerializer::WriteValue(value, stream);');
+        'if (const flutter::CustomEncodableValue* custom_value = std::get_if<flutter::CustomEncodableValue>(&value)) ');
+    indent.scoped('{', '}', () {
+      for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+        indent
+            .write('if (custom_value->type() == typeid(${customClass.name})) ');
+        indent.scoped('{', '}', () {
+          indent.writeln('stream->WriteByte(${customClass.enumeration});');
+          indent.writeln(
+              'WriteValue(std::any_cast<${customClass.name}>(*custom_value).ToEncodableMap(), stream);');
+          indent.writeln('return;');
+        });
+      }
     });
-  }
+    indent.writeln(
+        'flutter::StandardCodecSerializer::WriteValue(value, stream);');
+  });
 }
 
 void _writeErrorOr(Indent indent,
