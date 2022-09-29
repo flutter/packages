@@ -1,3 +1,7 @@
+## 4.2.1
+
+* Removes unneeded custom codecs for all languages.
+
 ## 4.2.0
 
 * Adds experimental support for Kotlin generation.
