@@ -4,6 +4,7 @@
 
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -535,7 +536,7 @@ void main() {
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
 
-      await simulateAndroidBackButton();
+      await simulateAndroidBackButton(tester);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B'), findsNothing);
@@ -606,7 +607,7 @@ void main() {
       expect(find.text('Screen C'), findsNothing);
       expect(find.text('Screen D'), findsOneWidget);
 
-      await simulateAndroidBackButton();
+      await simulateAndroidBackButton(tester);
       await tester.pumpAndSettle();
       expect(find.text('Shell'), findsOneWidget);
       expect(find.text('Screen A'), findsNothing);
@@ -614,12 +615,120 @@ void main() {
       expect(find.text('Screen C'), findsOneWidget);
       expect(find.text('Screen D'), findsNothing);
 
-      await simulateAndroidBackButton();
+      await simulateAndroidBackButton(tester);
       await tester.pumpAndSettle();
       expect(find.text('Shell'), findsOneWidget);
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen C'), findsNothing);
+    });
+
+    testWidgets(
+        'Handles the Android back button when parentNavigatorKey is set to the root navigator',
+        (WidgetTester tester) async {
+      final List<MethodCall> log = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform,
+              (MethodCall methodCall) async {
+        log.add(methodCall);
+        return null;
+      });
+
+      Future<void> verify(AsyncCallback test, List<Object> expectations) async {
+        log.clear();
+        await test();
+        expect(log, expectations);
+      }
+
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          parentNavigatorKey: rootNavigatorKey,
+          path: '/a',
+          builder: (BuildContext context, GoRouterState state) {
+            return const Scaffold(
+              body: Text('Screen A'),
+            );
+          },
+        ),
+      ];
+
+      await createRouter(routes, tester,
+          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      expect(find.text('Screen A'), findsOneWidget);
+
+      await tester.runAsync(() async {
+        await verify(() => simulateAndroidBackButton(tester), <Object>[
+          isMethodCall('SystemNavigator.pop', arguments: null),
+        ]);
+      });
+    });
+
+    testWidgets("Handles the Android back button when ShellRoute can't pop",
+        (WidgetTester tester) async {
+      final List<MethodCall> log = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform,
+              (MethodCall methodCall) async {
+        log.add(methodCall);
+        return null;
+      });
+
+      Future<void> verify(AsyncCallback test, List<Object> expectations) async {
+        log.clear();
+        await test();
+        expect(log, expectations);
+      }
+
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          parentNavigatorKey: rootNavigatorKey,
+          path: '/a',
+          builder: (BuildContext context, GoRouterState state) {
+            return const Scaffold(
+              body: Text('Screen A'),
+            );
+          },
+          routes: <RouteBase>[
+            ShellRoute(
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Shell'),
+                  ),
+                  body: child,
+                );
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'b',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const Scaffold(
+                      body: Text('Screen B'),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester,
+          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      expect(find.text('Screen A'), findsOneWidget);
+
+      await tester.runAsync(() async {
+        await verify(() => simulateAndroidBackButton(tester), <Object>[
+          isMethodCall('SystemNavigator.pop', arguments: null),
+        ]);
+      });
     });
   });
 
@@ -2141,7 +2250,7 @@ void main() {
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Screen C'), findsOneWidget);
 
-      await simulateAndroidBackButton();
+      await simulateAndroidBackButton(tester);
       await tester.pumpAndSettle();
 
       expect(find.text('Screen A'), findsOneWidget);
@@ -2200,7 +2309,7 @@ void main() {
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Screen C'), findsOneWidget);
 
-      await simulateAndroidBackButton();
+      await simulateAndroidBackButton(tester);
       await tester.pumpAndSettle();
 
       expect(find.text('Screen A'), findsOneWidget);
