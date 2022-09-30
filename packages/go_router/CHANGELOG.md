@@ -1,7 +1,9 @@
 ## 5.1.0
 
-- Adds support for customising the nested navigation of `ShellRoute`, to support things like 
-  preserving state in nested navigators (flutter/flutter#99124).
+- Introduced a new shell route class called `PartitionedShellRoute`, to support using separate 
+  navigators for child routes as well as preserving state in each navigation tree  
+  (flutter/flutter#99124). Also introduced the supporting widget class `StackedNavigationShell`, 
+  which facilitates using an `IndexStack` to manage multiple parallel navigation trees.
 
 ## 5.0.3
 
