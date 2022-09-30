@@ -437,7 +437,14 @@ class ShellRoute extends RouteBase {
     GlobalKey<NavigatorState>? navigatorKey,
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
-        super._();
+        super._() {
+    for (final RouteBase route in routes) {
+      if (route is GoRoute) {
+        assert(route.parentNavigatorKey == null ||
+            route.parentNavigatorKey == navigatorKey);
+      }
+    }
+  }
 
   /// The widget builder for a shell route.
   ///
