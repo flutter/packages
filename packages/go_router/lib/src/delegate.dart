@@ -50,8 +50,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   @override
   Future<bool> popRoute() async {
-
-
     // Iterate backwards through the RouteMatchList until seeing a GoRoute with
     // a non-null parentNavigatorKey or a ShellRoute with a non-null
     // parentNavigatorKey and pop from that Navigator instead of the root.
@@ -61,7 +59,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       final RouteBase route = match.route;
 
       if (route is GoRoute && route.parentNavigatorKey != null) {
-        return route.parentNavigatorKey!.currentState!.maybePop();
+        final bool didPop = await route.parentNavigatorKey!.currentState!.maybePop();
+        if (didPop) {
+          return didPop;
+        }
       } else if (route is ShellRoute) {
         final bool didPop = await route.navigatorKey.currentState!.maybePop();
         if (didPop) {
