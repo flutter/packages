@@ -694,35 +694,32 @@ void main() {
               body: Text('Screen A'),
             );
           },
+        ),
+        ShellRoute(
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Shell'),
+              ),
+              body: child,
+            );
+          },
           routes: <RouteBase>[
-            ShellRoute(
-              builder:
-                  (BuildContext context, GoRouterState state, Widget child) {
-                return Scaffold(
-                  appBar: AppBar(
-                    title: Text('Shell'),
-                  ),
-                  body: child,
+            GoRoute(
+              path: '/b',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen B'),
                 );
               },
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'b',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return const Scaffold(
-                      body: Text('Screen B'),
-                    );
-                  },
-                ),
-              ],
             ),
           ],
         ),
       ];
 
       await createRouter(routes, tester,
-          initialLocation: '/a', navigatorKey: rootNavigatorKey);
-      expect(find.text('Screen A'), findsOneWidget);
+          initialLocation: '/b', navigatorKey: rootNavigatorKey);
+      expect(find.text('Screen B'), findsOneWidget);
 
       await tester.runAsync(() async {
         await verify(() => simulateAndroidBackButton(tester), <Object>[
