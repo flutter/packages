@@ -2,7 +2,8 @@ name: release
 on:
   push:
     branches:
-      - main
+      - main;
+      - branch;
 
 # Declare default permissions as read only.
 permissions: read-all
