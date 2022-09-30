@@ -61,11 +61,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       if (route is GoRoute && route.parentNavigatorKey != null) {
         final bool didPop =
             await route.parentNavigatorKey!.currentState!.maybePop();
+
+        // Continue if didPop was false.
         if (didPop) {
           return didPop;
         }
       } else if (route is ShellRoute) {
         final bool didPop = await route.navigatorKey.currentState!.maybePop();
+
+        // Continue if didPop was false.
         if (didPop) {
           return didPop;
         }
@@ -119,9 +123,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       final RouteBase route = match.route;
       if (route is GoRoute && route.parentNavigatorKey != null) {
         final bool canPop = route.parentNavigatorKey!.currentState!.canPop();
-        return canPop;
+
+        // Continue if canPop is false.
+        if (canPop) {
+          return canPop;
+        }
       } else if (route is ShellRoute) {
         final bool canPop = route.navigatorKey.currentState!.canPop();
+
+        // Continue if canPop is false.
         if (canPop) {
           return canPop;
         }
