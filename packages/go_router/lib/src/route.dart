@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
-import 'misc/stacked_navigation_scaffold.dart';
+import 'misc/stacked_navigation_shell.dart';
 import 'pages/custom_transition_page.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
@@ -497,14 +497,21 @@ class PartitionedShellRoute extends ShellRouteBase {
     super.pageBuilder,
   })  : assert(routes.isNotEmpty),
         assert(navigationKeys.length == routes.length),
+        assert(pageBuilder != null || builder != null,
+            'builder or pageBuilder must be provided'),
         super._(routes: routes) {
-    for (final GoRoute route in routes) {
-      assert(navigationKeys.contains(route.parentNavigatorKey));
+    for (int i = 0; i < routes.length; ++i) {
+      assert(routes[i].parentNavigatorKey == navigationKeys[i]);
     }
   }
 
-  /// Constructs a [PartitionedShellRoute] that manages its navigators in form of
-  /// a stack, using [StackedNavigationScaffold].
+  /// Constructs a [PartitionedShellRoute] that places its navigators in an
+  /// [IndexStack], managed by a [StackedNavigationShell].
+  ///
+  /// Each route in the `routes` parameter must correspond to a
+  /// [StackedNavigationItem], specified in the `stackItems` parameter.
+  /// The stacked navigation shell can be customized by specifying a
+  /// `scaffoldBuilder`, to build a widget that wraps the index stack.
   factory PartitionedShellRoute.stackedNavigation({
     required List<GoRoute> routes,
     required List<StackedNavigationItem> stackItems,
@@ -519,14 +526,13 @@ class PartitionedShellRoute extends ShellRouteBase {
             .toList(),
         builder: (BuildContext context, GoRouterState state,
             Widget currentTabNavigator) {
-          return StackedNavigationScaffold(
+          return StackedNavigationShell(
             currentNavigator: currentTabNavigator as Navigator,
             currentRouterState: state,
             stackItems: stackItems,
             scaffoldBuilder: scaffoldBuilder,
             transitionBuilder: transitionBuilder,
-            transitionDuration: transitionDuration ??
-                StackedNavigationScaffold.defaultTransitionDuration,
+            transitionDuration: transitionDuration,
           );
         });
   }

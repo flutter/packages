@@ -10,7 +10,7 @@ export 'src/configuration.dart'
     show GoRoute, GoRouterState, RouteBase, ShellRoute, PartitionedShellRoute;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
-export 'src/misc/stacked_navigation_scaffold.dart';
+export 'src/misc/stacked_navigation_shell.dart';
 export 'src/pages/custom_transition_page.dart';
 export 'src/platform.dart' show UrlPathStrategy;
 export 'src/route_data.dart' show GoRouteData, TypedGoRoute;

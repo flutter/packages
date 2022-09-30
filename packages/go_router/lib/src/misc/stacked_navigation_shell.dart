@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 import '../router.dart';
 import '../state.dart';
 
-/// Transition builder callback used by [StackedNavigationScaffold].
+/// Transition builder callback used by [StackedNavigationShell].
 ///
 /// The builder is expected to return a transition powered by the provided
 /// `animation` and wrapping the provided `child`.
@@ -20,14 +20,15 @@ typedef StackedNavigationTransitionBuilder = Widget Function(
   Widget child,
 );
 
-/// Builder for the scaffold of a [StackedNavigationScaffold]
+/// Builder for the scaffold of a [StackedNavigationShell]
 typedef StackedNavigationScaffoldBuilder = Widget Function(
-    BuildContext context,
-    int currentIndex,
-    List<StackedNavigationItemState> itemsState,
-    Widget scaffoldBody);
+  BuildContext context,
+  int currentIndex,
+  List<StackedNavigationItemState> itemsState,
+  Widget scaffoldBody,
+);
 
-/// Representation of a item in the stack of a [StackedNavigationScaffold]
+/// Representation of a item in the stack of a [StackedNavigationShell]
 class StackedNavigationItem {
   /// Constructs an [StackedNavigationItem].
   StackedNavigationItem(
@@ -41,7 +42,7 @@ class StackedNavigationItem {
 }
 
 /// Represents the current state of a [StackedNavigationItem] in a
-/// [StackedNavigationScaffold]
+/// [StackedNavigationShell]
 class StackedNavigationItemState {
   /// Constructs an [StackedNavigationItemState].
   StackedNavigationItemState(this.item);
@@ -63,9 +64,18 @@ class StackedNavigationItemState {
 
 /// Widget that maintains a stateful stack of [Navigator]s, using an
 /// [IndexStack].
-class StackedNavigationScaffold extends StatefulWidget {
-  /// Constructs an [StackedNavigationScaffold].
-  const StackedNavigationScaffold({
+///
+/// Each item in the stack is represented by a [StackedNavigationItem],
+/// specified in the `stackItems` parameter. The stack items will be used to
+/// build the widgets containing the [Navigator] for each index in the stack.
+/// Once a stack item (along with its Navigator) has been initialized, it will
+/// remain in a widget tree, wrapped in an [Offstage] widget.
+///
+/// The stacked navigation shell can be customized by specifying a
+/// `scaffoldBuilder`, to build a widget that wraps the index stack.
+class StackedNavigationShell extends StatefulWidget {
+  /// Constructs an [StackedNavigationShell].
+  const StackedNavigationShell({
     required this.currentNavigator,
     required this.currentRouterState,
     required this.stackItems,
@@ -97,10 +107,10 @@ class StackedNavigationScaffold extends StatefulWidget {
   final Duration? transitionDuration;
 
   @override
-  State<StatefulWidget> createState() => _StackedNavigationScaffoldState();
+  State<StatefulWidget> createState() => _StackedNavigationShellState();
 }
 
-class _StackedNavigationScaffoldState extends State<StackedNavigationScaffold>
+class _StackedNavigationShellState extends State<StackedNavigationShell>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   late final AnimationController? _animationController;
@@ -123,7 +133,7 @@ class _StackedNavigationScaffoldState extends State<StackedNavigationScaffold>
       _animationController = AnimationController(
           vsync: this,
           duration: widget.transitionDuration ??
-              StackedNavigationScaffold.defaultTransitionDuration);
+              StackedNavigationShell.defaultTransitionDuration);
       _animationController?.forward();
     } else {
       _animationController = null;
@@ -131,7 +141,7 @@ class _StackedNavigationScaffoldState extends State<StackedNavigationScaffold>
   }
 
   @override
-  void didUpdateWidget(covariant StackedNavigationScaffold oldWidget) {
+  void didUpdateWidget(covariant StackedNavigationShell oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateForCurrentTab();
   }
