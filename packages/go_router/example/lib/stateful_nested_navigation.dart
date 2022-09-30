@@ -35,12 +35,12 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
       <ScaffoldWithNavBarTabItem>[
     ScaffoldWithNavBarTabItem(
         navigationItem: StackedNavigationItem(
-            initialLocation: '/a', navigatorKey: _sectionANavigatorKey),
+            rootRoutePath: '/a', navigatorKey: _sectionANavigatorKey),
         icon: const Icon(Icons.home),
         label: 'Section A'),
     ScaffoldWithNavBarTabItem(
       navigationItem: StackedNavigationItem(
-          initialLocation: '/b', navigatorKey: _sectionBNavigatorKey),
+          rootRoutePath: '/b', navigatorKey: _sectionBNavigatorKey),
       icon: const Icon(Icons.settings),
       label: 'Section B',
     ),
@@ -64,7 +64,6 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
               itemsState: itemsState,
               body: scaffoldBody);
         },
-
         /// A transition builder is optional, only included here for
         /// demonstration purposes.
         transitionBuilder:
@@ -124,9 +123,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      routeInformationParser: _router.routeInformationParser,
-      routerDelegate: _router.routerDelegate,
-      routeInformationProvider: _router.routeInformationProvider,
+      routerConfig: _router,
     );
   }
 }
