@@ -1,10 +1,16 @@
-// import 'package:flutter/material.dart';
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: avoid_print
+
 import 'package:google_identity_services_web/id.dart' as id show setLogLevel;
 import 'package:google_identity_services_web/loader.dart' as gis;
 import 'package:google_identity_services_web/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;
 import 'package:js/js.dart' show allowInterop;
 
+/// The scopes to be requested
 const List<String> scopes = <String>[
   'email',
   'profile',
@@ -35,7 +41,7 @@ void main() async {
 }
 
 ///
-void onTokenResponse(oauth2.TokenResponse response) async {
+Future<void> onTokenResponse(oauth2.TokenResponse response) async {
   if (response.error != null) {
     print('Authorization error!');
     print(response.error);
@@ -50,6 +56,7 @@ void onTokenResponse(oauth2.TokenResponse response) async {
     return;
   }
 
+  // Attempt to do a request to the `people` API
   final http.Response apiResponse = await http.get(
     Uri.parse('https://people.googleapis.com/v1/people/me/connections'
         '?requestMask.includeField=person.names'),
