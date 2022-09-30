@@ -77,6 +77,24 @@ class ShellRouteExampleApp extends StatelessWidget {
               ),
             ],
           ),
+
+          /// The third screen to display in the bottom navigation bar.
+          GoRoute(
+            path: '/c',
+            builder: (BuildContext context, GoRouterState state) {
+              return const ScreenC();
+            },
+            routes: <RouteBase>[
+              // The details screen to display stacked on the inner Navigator.
+              // This will cover screen A but not the application shell.
+              GoRoute(
+                path: 'details',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const DetailsScreen(label: 'C');
+                },
+              ),
+            ],
+          ),
         ],
       ),
     ],
@@ -121,6 +139,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
             icon: Icon(Icons.business),
             label: 'B Screen',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notification_important_rounded),
+            label: 'C Screen',
+          ),
         ],
         currentIndex: _calculateSelectedIndex(context),
         onTap: (int idx) => _onItemTapped(idx, context),
@@ -131,11 +153,14 @@ class ScaffoldWithNavBar extends StatelessWidget {
   static int _calculateSelectedIndex(BuildContext context) {
     final GoRouter route = GoRouter.of(context);
     final String location = route.location;
-    if (location == '/a') {
+    if (location.startsWith('/a')) {
       return 0;
     }
-    if (location == '/b') {
+    if (location.startsWith('/b')) {
       return 1;
+    }
+    if (location.startsWith('/c')) {
+      return 2;
     }
     return 0;
   }
@@ -147,6 +172,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
         break;
       case 1:
         GoRouter.of(context).go('/b');
+        break;
+      case 2:
+        GoRouter.of(context).go('/c');
         break;
     }
   }
@@ -206,7 +234,34 @@ class ScreenB extends StatelessWidget {
   }
 }
 
-/// The details screen for either the A or B screen.
+/// The third screen in the bottom navigation bar.
+class ScreenC extends StatelessWidget {
+  /// Constructs a [ScreenC] widget.
+  const ScreenC({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Text('Screen C'),
+            TextButton(
+              onPressed: () {
+                GoRouter.of(context).go('/c/details');
+              },
+              child: const Text('View C details'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The details screen for either the A, B or C screen.
 class DetailsScreen extends StatelessWidget {
   /// Constructs a [DetailsScreen].
   const DetailsScreen({
