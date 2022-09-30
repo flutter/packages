@@ -7,7 +7,7 @@
 library go_router;
 
 export 'src/configuration.dart'
-    show GoRoute, GoRouterState, RouteBase, ShellRoute, PartitionedShellRoute;
+    show GoRoute, GoRouterState, PartitionedShellRoute, RouteBase, ShellRoute;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
 export 'src/misc/stacked_navigation_shell.dart';

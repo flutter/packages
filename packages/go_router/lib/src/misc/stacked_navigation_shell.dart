@@ -58,8 +58,7 @@ class StackedNavigationItemState {
 
   /// Gets the current location from the [currentRouterState] or falls back to
   /// the root route location of the associated [item].
-  String get currentLocation =>
-      lastLocation != null ? lastLocation! : item.rootRoutePath;
+  String get currentLocation => lastLocation ?? item.rootRoutePath;
 }
 
 /// Widget that maintains a stateful stack of [Navigator]s, using an
