@@ -23,8 +23,7 @@ void main() async {
   id.setLogLevel('debug');
 
   final oauth2.TokenClientConfig config = oauth2.TokenClientConfig(
-    client_id:
-        'your-client_id.apps.googleusercontent.com',
+    client_id: 'your-client_id.apps.googleusercontent.com',
     scope: scopes.join(' '),
     callback: allowInterop(onTokenResponse),
   );
