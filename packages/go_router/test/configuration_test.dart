@@ -81,6 +81,78 @@ void main() {
     });
 
     test(
+        'throws when a child of PartitionedShellRoute is missing a '
+        'parentNavigatorKey', () {
+      final GlobalKey<NavigatorState> root =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> nested =
+          GlobalKey<NavigatorState>(debugLabel: 'nested');
+      final List<GoRoute> shellRouteChildren = <GoRoute>[
+        GoRoute(path: '/', builder: _mockScreenBuilder),
+      ];
+      expect(
+        () {
+          RouteConfiguration(
+            navigatorKey: root,
+            routes: <RouteBase>[
+              PartitionedShellRoute(
+                  routes: shellRouteChildren,
+                  navigationKeys: <GlobalKey<NavigatorState>>[nested],
+                  builder: _mockShellBuilder),
+            ],
+            redirectLimit: 10,
+            topRedirect: (BuildContext context, GoRouterState state) {
+              return null;
+            },
+          );
+        },
+        throwsAssertionError,
+      );
+    });
+
+    test(
+        'throws when a child of PartitionedShellRoute has an incorrect '
+        'parentNavigatorKey', () {
+      final GlobalKey<NavigatorState> root =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> sectionANavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> sectionBNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final List<GoRoute> shellRouteChildren = <GoRoute>[
+        GoRoute(
+            path: '/a',
+            builder: _mockScreenBuilder,
+            parentNavigatorKey: sectionBNavigatorKey),
+        GoRoute(
+            path: '/b',
+            builder: _mockScreenBuilder,
+            parentNavigatorKey: sectionANavigatorKey),
+      ];
+      expect(
+        () {
+          RouteConfiguration(
+            navigatorKey: root,
+            routes: <RouteBase>[
+              PartitionedShellRoute(
+                  routes: shellRouteChildren,
+                  navigationKeys: <GlobalKey<NavigatorState>>[
+                    sectionANavigatorKey,
+                    sectionBNavigatorKey
+                  ],
+                  builder: _mockShellBuilder),
+            ],
+            redirectLimit: 10,
+            topRedirect: (BuildContext context, GoRouterState state) {
+              return null;
+            },
+          );
+        },
+        throwsAssertionError,
+      );
+    });
+
+    test(
         'throws when there is a GoRoute ancestor with a different parentNavigatorKey',
         () {
       final GlobalKey<NavigatorState> root =

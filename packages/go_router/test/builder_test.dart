@@ -98,17 +98,17 @@ void main() {
       expect(find.byType(_DetailsScreen), findsOneWidget);
     });
 
-    testWidgets('Builds ShellRoute with nestedNavigationBuilder',
-        (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> key = GlobalKey<NavigatorState>();
+    testWidgets('Builds PartitionedShellRoute', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> key =
+          GlobalKey<NavigatorState>(debugLabel: 'key');
       final RouteConfiguration config = RouteConfiguration(
         routes: <RouteBase>[
           PartitionedShellRoute(
               builder:
                   (BuildContext context, GoRouterState state, Widget child) =>
                       child,
-              navigationKeys: [
-                key
+              navigationKeys: <GlobalKey<NavigatorState>>[
+                key,
               ],
               routes: <GoRoute>[
                 GoRoute(
@@ -158,6 +158,7 @@ void main() {
       );
 
       expect(find.byType(_DetailsScreen), findsOneWidget);
+      expect(find.byKey(key), findsOneWidget);
     });
 
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {

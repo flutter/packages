@@ -2207,6 +2207,156 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen C'), findsNothing);
     });
+
+    testWidgets(
+        'Navigates to correct nested navigation tree in PartitionedShellRoute '
+        'and maintains state', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> sectionANavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> sectionBNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
+          GlobalKey<DummyStatefulWidgetState>();
+
+      final List<StackedNavigationItem> stackItems = <StackedNavigationItem>[
+        StackedNavigationItem(
+            rootRoutePath: '/a', navigatorKey: sectionANavigatorKey),
+        StackedNavigationItem(
+            rootRoutePath: '/b', navigatorKey: sectionBNavigatorKey),
+      ];
+
+      final List<RouteBase> routes = <RouteBase>[
+        PartitionedShellRoute.stackedNavigation(
+          stackItems: stackItems,
+          routes: <GoRoute>[
+            GoRoute(
+              parentNavigatorKey: sectionANavigatorKey,
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen A'),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'detailA',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      Column(children: <Widget>[
+                    const Text('Screen A Detail'),
+                    DummyStatefulWidget(key: statefulWidgetKey),
+                  ]),
+                ),
+              ],
+            ),
+            GoRoute(
+              parentNavigatorKey: sectionBNavigatorKey,
+              path: '/b',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen B'),
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          initialLocation: '/a/detailA', navigatorKey: rootNavigatorKey);
+      statefulWidgetKey.currentState?.increment();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen A Detail'), findsOneWidget);
+      expect(find.text('Screen B'), findsNothing);
+
+      router.go('/b');
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen A Detail'), findsNothing);
+      expect(find.text('Screen B'), findsOneWidget);
+
+      router.go('/a/detailA');
+      await tester.pumpAndSettle();
+      expect(statefulWidgetKey.currentState?.counter, equals(1));
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen A Detail'), findsNothing);
+      router.go('/a/detailA');
+      await tester.pumpAndSettle();
+      expect(statefulWidgetKey.currentState?.counter, equals(0));
+    });
+
+    testWidgets(
+        'Pops from the correct Navigator in a PartitionedShellRoute when the '
+        'Android back button is pressed', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> sectionANavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> sectionBNavigatorKey =
+          GlobalKey<NavigatorState>();
+
+      final List<StackedNavigationItem> stackItems = <StackedNavigationItem>[
+        StackedNavigationItem(
+            rootRoutePath: '/a', navigatorKey: sectionANavigatorKey),
+        StackedNavigationItem(
+            rootRoutePath: '/b', navigatorKey: sectionBNavigatorKey),
+      ];
+
+      final List<RouteBase> routes = <RouteBase>[
+        PartitionedShellRoute.stackedNavigation(
+          stackItems: stackItems,
+          routes: <GoRoute>[
+            GoRoute(
+              parentNavigatorKey: sectionANavigatorKey,
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen A'),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'detailA',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A Detail'),
+                ),
+              ],
+            ),
+            GoRoute(
+              parentNavigatorKey: sectionBNavigatorKey,
+              path: '/b',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen B'),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'detailB',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen B Detail'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          initialLocation: '/a/detailA', navigatorKey: rootNavigatorKey);
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen A Detail'), findsOneWidget);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen B Detail'), findsNothing);
+
+      router.go('/b/detailB');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen A Detail'), findsNothing);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen B Detail'), findsOneWidget);
+
+      await simulateAndroidBackButton();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen A Detail'), findsNothing);
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(find.text('Screen B Detail'), findsNothing);
+    });
   });
 
   group('Imperative navigation', () {

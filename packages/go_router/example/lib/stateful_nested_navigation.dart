@@ -64,6 +64,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
               itemsState: itemsState,
               body: scaffoldBody);
         },
+
         /// A transition builder is optional, only included here for
         /// demonstration purposes.
         transitionBuilder:

@@ -343,6 +343,12 @@ class DummyStatefulWidget extends StatefulWidget {
 }
 
 class DummyStatefulWidgetState extends State<DummyStatefulWidget> {
+  int counter = 0;
+
+  void increment() => setState(() {
+        counter++;
+      });
+
   @override
   Widget build(BuildContext context) => Container();
 }
