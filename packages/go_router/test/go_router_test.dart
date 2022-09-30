@@ -2545,7 +2545,7 @@ void main() {
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Screen B Detail'), findsOneWidget);
 
-      await simulateAndroidBackButton();
+      await simulateAndroidBackButton(tester);
       await tester.pumpAndSettle();
 
       expect(find.text('Screen A'), findsNothing);
