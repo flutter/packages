@@ -5,9 +5,10 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
+import '../router.dart';
 import '../state.dart';
 
-/// Transition builder callback used by [IndexStackShell].
+/// Transition builder callback used by [StackedNavigationScaffold].
 ///
 /// The builder is expected to return a transition powered by the provided
 /// `animation` and wrapping the provided `child`.
@@ -30,10 +31,10 @@ typedef StackedNavigationScaffoldBuilder = Widget Function(
 class StackedNavigationItem {
   /// Constructs an [StackedNavigationItem].
   StackedNavigationItem(
-      {required this.initialLocation, required this.navigatorKey});
+      {required this.rootRoutePath, required this.navigatorKey});
 
-  /// The initial location/path
-  final String initialLocation;
+  /// The location/path of the root route of this navigation tree
+  final String rootRoutePath;
 
   /// Optional navigatorKey
   final GlobalKey<NavigatorState> navigatorKey;
@@ -48,30 +49,29 @@ class StackedNavigationItemState {
   /// The [StackedNavigationItem] this state is representing.
   final StackedNavigationItem item;
 
-  /// The current [GoRouterState] for the navigator of this item.
-  GoRouterState? currentRouterState;
+  /// The last location of this item.
+  String? lastLocation;
 
   /// The [Navigator] for this item.
   Navigator? navigator;
 
   /// Gets the current location from the [currentRouterState] or falls back to
-  /// the initial location of the associated [item].
-  String get currentLocation => currentRouterState != null
-      ? currentRouterState!.location
-      : item.initialLocation;
+  /// the root route location of the associated [item].
+  String get currentLocation =>
+      lastLocation != null ? lastLocation! : item.rootRoutePath;
 }
 
 /// Widget that maintains a stateful stack of [Navigator]s, using an
 /// [IndexStack].
 class StackedNavigationScaffold extends StatefulWidget {
-  /// Constructs an [IndexStackShell].
+  /// Constructs an [StackedNavigationScaffold].
   const StackedNavigationScaffold({
     required this.currentNavigator,
     required this.currentRouterState,
     required this.stackItems,
     this.scaffoldBuilder,
     this.transitionBuilder,
-    this.transitionDuration = defaultTransitionDuration,
+    this.transitionDuration,
     super.key,
   });
 
@@ -94,7 +94,7 @@ class StackedNavigationScaffold extends StatefulWidget {
   final StackedNavigationTransitionBuilder? transitionBuilder;
 
   /// The duration for stack transitions
-  final Duration transitionDuration;
+  final Duration? transitionDuration;
 
   @override
   State<StatefulWidget> createState() => _StackedNavigationScaffoldState();
@@ -120,8 +120,10 @@ class _StackedNavigationScaffoldState extends State<StackedNavigationScaffold>
         .toList();
 
     if (widget.transitionBuilder != null) {
-      _animationController =
-          AnimationController(vsync: this, duration: widget.transitionDuration);
+      _animationController = AnimationController(
+          vsync: this,
+          duration: widget.transitionDuration ??
+              StackedNavigationScaffold.defaultTransitionDuration);
       _animationController?.forward();
     } else {
       _animationController = null;
@@ -146,7 +148,10 @@ class _StackedNavigationScaffoldState extends State<StackedNavigationScaffold>
 
     final StackedNavigationItemState itemState = _items[_currentIndex];
     itemState.navigator = widget.currentNavigator;
-    itemState.currentRouterState = widget.currentRouterState;
+    // Note: Would have been cleaner to be able to get the current location
+    // (full path) from GoRouterState, but currently that isn't possible, since
+    // the RouteMatchList doesn't seem to be updated properly on pop.
+    itemState.lastLocation = GoRouter.of(context).location;
 
     if (previousIndex != _currentIndex) {
       _animationController?.forward(from: 0.0);
