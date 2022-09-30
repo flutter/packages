@@ -59,7 +59,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       final RouteBase route = match.route;
 
       if (route is GoRoute && route.parentNavigatorKey != null) {
-        final bool didPop = await route.parentNavigatorKey!.currentState!.maybePop();
+        final bool didPop =
+            await route.parentNavigatorKey!.currentState!.maybePop();
         if (didPop) {
           return didPop;
         }
