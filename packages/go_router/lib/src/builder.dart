@@ -191,6 +191,10 @@ class RouteBuilder {
       // The key to provide to the ShellRoute's Navigator.
       final GlobalKey<NavigatorState> shellNavigatorKey = route.navigatorKey;
 
+      // The observers list for the ShellRoute's Navigator.
+      final List<NavigatorObserver> observers =
+          route.observers ?? <NavigatorObserver>[];
+
       // Add an entry for the parent navigator if none exists.
       keyToPages.putIfAbsent(parentNavigatorKey, () => <Page<Object?>>[]);
 
@@ -208,7 +212,8 @@ class RouteBuilder {
 
       // Build the Navigator
       final Widget child = _buildNavigator(
-          onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey);
+          onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
+          observers: observers);
 
       // Build the Page for this route
       final Page<Object?> page =
