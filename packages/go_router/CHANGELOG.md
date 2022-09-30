@@ -1,9 +1,18 @@
 ## 5.1.0
 
-- Introduced a new shell route class called `PartitionedShellRoute`, to support using separate 
+- Introduced a new shell route class called `PartitionedShellRoute`, to support using separate
   navigators for child routes as well as preserving state in each navigation tree  
-  (flutter/flutter#99124). Also introduced the supporting widget class `StackedNavigationShell`, 
+  (flutter/flutter#99124). Also introduced the supporting widget class `StackedNavigationShell`,
   which facilitates using an `IndexStack` to manage multiple parallel navigation trees.
+
+## 5.0.5
+
+- Fixes issue where asserts in popRoute were preventing the app from
+  exiting on Android.
+
+## 5.0.4
+
+- Fixes a bug in ShellRoute example where NavigationBar might lose current index in a nested routes.
 
 ## 5.0.3
 
