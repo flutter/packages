@@ -729,6 +729,96 @@ void main() {
     });
   });
 
+  testWidgets('Handles the Android back button when a second Shell has a GoRoute with parentNavigator key',
+      (WidgetTester tester) async {
+    final List<MethodCall> log = <MethodCall>[];
+    TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform,
+            (MethodCall methodCall) async {
+      log.add(methodCall);
+      return null;
+    });
+
+    Future<void> verify(AsyncCallback test, List<Object> expectations) async {
+      log.clear();
+      await test();
+      expect(log, expectations);
+    }
+
+    final GlobalKey<NavigatorState> rootNavigatorKey =
+        GlobalKey<NavigatorState>();
+    final GlobalKey<NavigatorState> shellNavigatorKeyA =
+    GlobalKey<NavigatorState>();
+    final GlobalKey<NavigatorState> shellNavigatorKeyB =
+    GlobalKey<NavigatorState>();
+
+    final List<RouteBase> routes = <RouteBase>[
+      ShellRoute(
+        navigatorKey: shellNavigatorKeyA,
+        builder:
+            (BuildContext context, GoRouterState state, Widget child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Shell'),
+            ),
+            body: child,
+          );
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/a',
+            builder: (BuildContext context, GoRouterState state) {
+              return const Scaffold(
+                body: Text('Screen A'),
+              );
+            },
+            routes: <RouteBase>[
+              ShellRoute(
+                navigatorKey: shellNavigatorKeyB,
+                builder:
+                    (BuildContext context, GoRouterState state, Widget child) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Shell'),
+                    ),
+                    body: child,
+                  );
+                },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'b',
+                    parentNavigatorKey: shellNavigatorKeyB,
+                    builder: (BuildContext context, GoRouterState state) {
+                      return const Scaffold(
+                        body: Text('Screen B'),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
+
+    await createRouter(routes, tester,
+        initialLocation: '/a/b', navigatorKey: rootNavigatorKey);
+    expect(find.text('Screen B'), findsOneWidget);
+
+    // The first pop should not exit the app.
+    await tester.runAsync(() async {
+      await verify(() => simulateAndroidBackButton(tester), <Object>[]);
+    });
+
+    // The second pop should exit the app.
+    await tester.runAsync(() async {
+      await verify(() => simulateAndroidBackButton(tester), <Object>[
+        isMethodCall('SystemNavigator.pop', arguments: null),
+      ]);
+    });
+  });
+
   group('named routes', () {
     testWidgets('match home route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
