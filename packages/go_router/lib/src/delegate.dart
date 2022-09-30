@@ -82,7 +82,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Pushes the given location onto the page stack
   void push(RouteMatch match) {
-    if (match.route is ShellRoute) {
+    if (match.route is ShellRouteBase) {
       throw GoError('ShellRoutes cannot be pushed');
     }
 
@@ -122,12 +122,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         assert(canPop);
         return canPop;
       } else if (route is ShellRoute) {
-        if (route.nestedNavigationBuilder != null) {
-          // When nestedNavigationBuilder is set on a ShellRoute, the navigation
-          // handling is delegated, meaning ShellRoute doesn't have an associated
-          // Navigator.
-          continue;
-        }
         final bool canPop = route.navigatorKey.currentState!.canPop();
         if (canPop) {
           return canPop;

@@ -81,37 +81,6 @@ void main() {
     });
 
     test(
-        'throws when ShellRoute has both a builder and a nestedNavigationBuilder',
-        () {
-      final GlobalKey<NavigatorState> root =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final List<RouteBase> shellRouteChildren = <RouteBase>[
-        GoRoute(
-          path: '/a',
-          builder: _mockScreenBuilder,
-        )
-      ];
-      expect(
-        () {
-          RouteConfiguration(
-            navigatorKey: root,
-            routes: <RouteBase>[
-              ShellRoute(
-                  routes: shellRouteChildren,
-                  builder: _mockShellBuilder,
-                  nestedNavigationBuilder: _mockShellNavigationBuilder),
-            ],
-            redirectLimit: 10,
-            topRedirect: (BuildContext context, GoRouterState state) {
-              return null;
-            },
-          );
-        },
-        throwsAssertionError,
-      );
-    });
-
-    test(
         'throws when there is a GoRoute ancestor with a different parentNavigatorKey',
         () {
       final GlobalKey<NavigatorState> root =
@@ -500,7 +469,3 @@ Widget _mockScreenBuilder(BuildContext context, GoRouterState state) =>
 Widget _mockShellBuilder(
         BuildContext context, GoRouterState state, Widget child) =>
     child;
-
-Widget _mockShellNavigationBuilder(
-        BuildContext context, GoRouterState state, List<Page<dynamic>> pages) =>
-    _MockScreen(key: state.pageKey);

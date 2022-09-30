@@ -100,19 +100,19 @@ void main() {
 
     testWidgets('Builds ShellRoute with nestedNavigationBuilder',
         (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> key = GlobalKey<NavigatorState>();
       final RouteConfiguration config = RouteConfiguration(
         routes: <RouteBase>[
-          ShellRoute(
-              nestedNavigationBuilder: (BuildContext context,
-                  GoRouterState state, List<Page<dynamic>> pages) {
-                return Navigator(
-                    pages: pages,
-                    onPopPage: (Route<dynamic> route, dynamic result) {
-                      return false;
-                    });
-              },
+          PartitionedShellRoute(
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) =>
+                      child,
+              navigationKeys: [
+                key
+              ],
               routes: <GoRoute>[
                 GoRoute(
+                  parentNavigatorKey: key,
                   path: '/nested',
                   builder: (BuildContext context, GoRouterState state) {
                     return _DetailsScreen();

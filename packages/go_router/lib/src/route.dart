@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
+import 'misc/stacked_navigation_scaffold.dart';
 import 'pages/custom_transition_page.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
@@ -333,6 +334,27 @@ class GoRoute extends RouteBase {
   late final RegExp _pathRE;
 }
 
+/// Base class for classes that acts as a shell for child routes, such
+/// as [ShellRoute] and [PartitionedShellRoute].
+abstract class ShellRouteBase extends RouteBase {
+  const ShellRouteBase._({this.builder, this.pageBuilder, super.routes})
+      : super._();
+
+  /// The widget builder for a shell route.
+  ///
+  /// Similar to GoRoute builder, but with an additional child parameter. This
+  /// child parameter is the Widget built by calling the matching sub-route's
+  /// builder.
+  final ShellRouteBuilder? builder;
+
+  /// The page builder for a shell route.
+  ///
+  /// Similar to GoRoute pageBuilder, but with an additional child parameter.
+  /// This child parameter is the Widget built by calling the matching
+  /// sub-route's builder.
+  final ShellRoutePageBuilder? pageBuilder;
+}
+
 /// A route that displays a UI shell around the matching child route.
 ///
 /// When a ShellRoute is added to the list of routes on GoRouter or GoRoute, a
@@ -344,15 +366,6 @@ class GoRoute extends RouteBase {
 /// or [ShellRoute] constructor. In this example, the _rootNavigator key is
 /// passed to the /b/details route so that it displays on the root Navigator
 /// instead of the ShellRoute's Navigator:
-///
-/// To delegate nested navigation handling entirely to a child of this route,
-/// specify [nestedNavigationBuilder] instead of [builder] or [pageBuilder].
-/// Doing so means no [Navigator] will be built by this route. This is
-/// convenient when for instance implementing a UI with a [BottomNavigationBar],
-/// with a persistent navigation state for each tab (i.e. building a [Navigator]
-/// for each tab).
-/// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_nested_navigation.dart)
-/// for a complete runnable example.
 ///
 /// ```
 /// final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -437,57 +450,87 @@ class GoRoute extends RouteBase {
 /// ),
 /// ```
 ///
-class ShellRoute extends RouteBase {
+class ShellRoute extends ShellRouteBase {
   /// Constructs a [ShellRoute].
   ShellRoute({
-    this.builder,
-    this.pageBuilder,
-    this.nestedNavigationBuilder,
+    super.builder,
+    super.pageBuilder,
     super.routes,
     GlobalKey<NavigatorState>? navigatorKey,
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
+        //nestedNavigationBuilder = null,
         super._() {
     for (final RouteBase route in routes) {
       if (route is GoRoute) {
         assert(route.parentNavigatorKey == null);
       }
     }
-    if (nestedNavigationBuilder != null) {
-      assert(builder == null,
-          'Cannot use both builder and nestedNavigationBuilder');
+  }
+
+  /// The [GlobalKey] to be used by the [Navigator] built for this route.
+  /// All ShellRoutes build a Navigator by default. Child GoRoutes
+  /// are placed onto this Navigator instead of the root Navigator.
+  final GlobalKey<NavigatorState> navigatorKey;
+}
+
+/// A route that displays a UI shell with separate [Navigator]s for its child
+/// routes.
+///
+/// When using this route class as a parent shell route, it possible to build
+/// a stateful nested navigation. This is convenient when for instance
+/// implementing a UI with a [BottomNavigationBar], with a persistent navigation
+/// state for each tab
+///
+/// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_nested_navigation.dart)
+/// for a complete runnable example.
+class PartitionedShellRoute extends ShellRouteBase {
+  /// Constructs a [PartitionedShellRoute] from a list of [GoRoute], that will
+  /// represent the roots in a stacked navigation hierarchy. For each root route,
+  /// a separate [Navigator] will be created, using the navigation key specified
+  /// by the `parentNavigatorKey` property of [GoRoute]. This navigation key must
+  /// be one of the keys specified in [navigationKeys].
+  PartitionedShellRoute({
+    required List<GoRoute> routes,
+    required this.navigationKeys,
+    super.builder,
+    super.pageBuilder,
+  })  : assert(routes.isNotEmpty),
+        assert(navigationKeys.length == routes.length),
+        super._(routes: routes) {
+    for (final GoRoute route in routes) {
+      assert(navigationKeys.contains(route.parentNavigatorKey));
     }
   }
 
-  /// The widget builder for a shell route.
-  ///
-  /// Similar to GoRoute builder, but with an additional child parameter. This
-  /// child parameter is the Widget built by calling the matching sub-route's
-  /// builder.
-  final ShellRouteBuilder? builder;
+  /// Constructs a [PartitionedShellRoute] that manages its navigators in form of
+  /// a stack, using [StackedNavigationScaffold].
+  factory PartitionedShellRoute.stackedNavigation({
+    required List<GoRoute> routes,
+    required List<StackedNavigationItem> stackItems,
+    IndexStackShellScaffoldBuilder? scaffoldBuilder,
+    IndexStackTransitionBuilder? transitionBuilder,
+    Duration? transitionDuration,
+  }) {
+    return PartitionedShellRoute(
+        routes: routes,
+        navigationKeys: stackItems
+            .map((StackedNavigationItem e) => e.navigatorKey)
+            .toList(),
+        builder: (BuildContext context, GoRouterState state,
+            Widget currentTabNavigator) {
+          return StackedNavigationScaffold(
+            currentNavigator: currentTabNavigator as Navigator,
+            currentRouterState: state,
+            stackItems: stackItems,
+            scaffoldBuilder: scaffoldBuilder,
+            transitionBuilder: transitionBuilder,
+            transitionDuration: transitionDuration ??
+                StackedNavigationScaffold.defaultTransitionDuration,
+          );
+        });
+  }
 
-  /// The page builder for a shell route.
-  ///
-  /// Similar to GoRoute pageBuilder, but with an additional child parameter.
-  /// This child parameter is the Widget built by calling the matching
-  /// sub-route's builder.
-  final ShellRoutePageBuilder? pageBuilder;
-
-  /// The widget builder for a nested navigation shell route.
-  ///
-  /// Similar to GoRoute builder, but with an additional pages parameter. This
-  /// pages parameter contains the pages that should currently be displayed in
-  /// a nested navigation. This nested navigation builder is a replacement for
-  /// [builder] (i.e. both cannot be used as the same time).
-  final ShellRouteNestedNavigationBuilder? nestedNavigationBuilder;
-
-  /// The [GlobalKey] to be used by the [Navigator] built for this route.
-  ///
-  /// Unless [nestedNavigationBuilder] is set, all ShellRoutes build a Navigator
-  /// by default. Child GoRoutes are placed onto this Navigator instead of the
-  /// root Navigator. However, if [nestedNavigationBuilder] is set, construction
-  /// of a nested Navigator is instead delegated to the widget created by that
-  /// builder. In that scenario, this property will not be associated with a
-  /// Navigator, and should not be used to access NavigatorState.
-  final GlobalKey<NavigatorState> navigatorKey;
+  /// The navigator keys of the navigators created by this route.
+  final List<GlobalKey<NavigatorState>> navigationKeys;
 }

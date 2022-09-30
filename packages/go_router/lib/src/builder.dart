@@ -165,41 +165,48 @@ class RouteBuilder {
 
       _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
           keyToPages, newParams, navigatorKey);
-    } else if (route is ShellRoute) {
+    } else if (route is ShellRouteBase) {
       // The key for the Navigator that will display this ShellRoute's page.
       final GlobalKey<NavigatorState> parentNavigatorKey = navigatorKey;
 
-      // The key to provide to the ShellRoute's Navigator.
-      final GlobalKey<NavigatorState> shellNavigatorKey = route.navigatorKey;
-
       // Add an entry for the parent navigator if none exists.
       keyToPages.putIfAbsent(parentNavigatorKey, () => <Page<dynamic>>[]);
-
-      // Add an entry for the shell route's navigator
-      keyToPages.putIfAbsent(shellNavigatorKey, () => <Page<dynamic>>[]);
 
       // Calling _buildRecursive can result in adding pages to the
       // parentNavigatorKey entry's list. Store the current length so
       // that the page for this ShellRoute is placed at the right index.
       final int shellPageIdx = keyToPages[parentNavigatorKey]!.length;
 
+      // The key to provide to the ShellRoute's Navigator.
+      final GlobalKey<NavigatorState> shellNavigatorKey;
+
+      if (route is PartitionedShellRoute) {
+        // Get the next route match (sub route), which for a PartitionedShellRoute
+        // should always be a GoRoute with a parentNavigatorKey
+        final RouteBase? subRoute = (matchList.matches.length > startIndex + 1)
+            ? matchList.matches[startIndex + 1].route
+            : null;
+        if (subRoute is! GoRoute || subRoute.parentNavigatorKey == null) {
+          throw _RouteBuilderError(
+              'Direct descendants of PartitionedShellRoute '
+              '($route) must be GoRoute with a parentNavigatorKey.');
+        }
+        shellNavigatorKey = subRoute.parentNavigatorKey!;
+      } else if (route is ShellRoute) {
+        shellNavigatorKey = route.navigatorKey;
+      } else {
+        throw _RouteBuilderError('Unknown route type: $route');
+      }
+
+      // Add an entry for the shell route's navigator
+      keyToPages.putIfAbsent(shellNavigatorKey, () => <Page<dynamic>>[]);
+
       // Build the remaining pages
       _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
           keyToPages, newParams, shellNavigatorKey);
 
-      final Widget child;
-      final ShellRouteNestedNavigationBuilder? nestedNavigationBuilder =
-          route.nestedNavigationBuilder;
-      if (nestedNavigationBuilder != null) {
-        // Build the container for nested routes (delegate responsibility for
-        // building nested Navigator)
-        child = nestedNavigationBuilder(
-            context, state, keyToPages[shellNavigatorKey]!);
-      } else {
-        // Build the Navigator
-        child = _buildNavigator(
-            pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey);
-      }
+      final Widget child = _buildNavigator(
+          pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey);
 
       // Build the Page for this route
       final Page<dynamic> page =
@@ -273,7 +280,7 @@ class RouteBuilder {
       if (pageBuilder != null) {
         page = pageBuilder(context, state);
       }
-    } else if (route is ShellRoute) {
+    } else if (route is ShellRouteBase) {
       final ShellRoutePageBuilder? pageBuilder = route.pageBuilder;
       assert(child != null, 'ShellRoute must contain a child route');
       if (pageBuilder != null) {
@@ -309,16 +316,10 @@ class RouteBuilder {
       }
 
       return builder(context, state);
-    } else if (route is ShellRoute) {
+    } else if (route is ShellRouteBase) {
       if (childWidget == null) {
         throw _RouteBuilderException(
             'Attempt to build ShellRoute without a child widget');
-      }
-
-      // When `nestedNavigationBuilder` is set it supersedes `builder`, and at
-      // this point it will already have been used to create `childWidget`.
-      if (route.nestedNavigationBuilder != null) {
-        return childWidget;
       }
 
       final ShellRouteBuilder? builder = route.builder;

@@ -30,7 +30,7 @@ class RouteConfiguration {
         if (route is GoRoute && !route.path.startsWith('/')) {
           assert(route.path.startsWith('/'),
               'top-level path must start with "/": ${route.path}');
-        } else if (route is ShellRoute) {
+        } else if (route is ShellRouteBase) {
           for (final RouteBase route in routes) {
             if (route is GoRoute) {
               assert(route.path.startsWith('/'),
@@ -78,6 +78,14 @@ class RouteConfiguration {
               route.routes,
               <GlobalKey<NavigatorState>>[
                 ...allowedKeys..add(route.navigatorKey)
+              ],
+            );
+          } else if (route is PartitionedShellRoute) {
+            checkParentNavigatorKeys(
+              route.routes,
+              <GlobalKey<NavigatorState>>[
+                ...allowedKeys,
+                ...route.navigationKeys,
               ],
             );
           }
@@ -194,7 +202,7 @@ class RouteConfiguration {
         if (route.routes.isNotEmpty) {
           _cacheNameToPath(fullPath, route.routes);
         }
-      } else if (route is ShellRoute) {
+      } else if (route is ShellRouteBase) {
         if (route.routes.isNotEmpty) {
           _cacheNameToPath(parentFullPath, route.routes);
         }
