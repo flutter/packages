@@ -292,7 +292,7 @@ typedef CallbackFn = void Function(CredentialResponse credentialResponse);
 // Data type: GsiButtonConfiguration
 // https://developers.google.com/identity/gsi/web/reference/js-reference#GsiButtonConfiguration
 //
-// TODO: Implement renderButton and its options?
+// Question: Do we need to implement renderButton and its options?
 */
 
 /*
@@ -363,7 +363,7 @@ external StoreCredentialFn get storeCredential;
 ///
 /// The [callback] parameter must be manually wrapped in [allowInterop]
 /// before being passed to the [storeCredential] function.
-// TODO: What's the type of the callback function??? VoidFn?
+// Question: What's the type of the callback function??? VoidFn?
 typedef StoreCredentialFn = void Function(
   Credential credential,
   Function? callback,

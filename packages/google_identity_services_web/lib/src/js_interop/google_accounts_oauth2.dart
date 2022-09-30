@@ -335,5 +335,5 @@ typedef RevokeTokenFn = void Function(
 
 /// The signature of the `done` function for [revokeToken].
 ///
-/// TODO: b/248628502
+/// Work in progress here: b/248628502
 typedef RevokeTokenDoneFn = void Function(String jsonError);
