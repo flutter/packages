@@ -1,6 +1,6 @@
 # google_identity_services_web
 
-A js-interop layer for Google Identity's Sign In With Google SDK.
+A JS-interop layer for Google Identity's Sign In With Google SDK.
 
 See the original JS SDK reference:
 
@@ -8,7 +8,7 @@ See the original JS SDK reference:
 
 ## Usage
 
-This package is the Dart js-interop layer of the new **Sign In With Google**
+This package is the Dart JS-interop layer of the new **Sign In With Google**
 SDK. Here's the API references for both of the sub-libraries:
 
 * `id.dart`: [Sign In With Google JavaScript API reference](https://developers.google.com/identity/gsi/web/reference/js-reference)
@@ -18,10 +18,14 @@ resolves a `Future<void>` when it's ready.
 
 ### Loading the SDK
 
-There's two ways to load the JS SDK in your app. The most performant way is to
-modify your `web/index.html` file to insert the script tag [as recommended](https://developers.google.com/identity/gsi/web/guides/client-library). Place the `script` tag in the
-`<head>` of your site, next to the script tag that loads `flutter.js`, so both
-can be downloaded in parallel:
+There are two ways to load the JS SDK in your app.
+
+#### Modify your index.html (most performant)
+
+The most performant way is to modify your `web/index.html` file to insert a
+script tag [as recommended](https://developers.google.com/identity/gsi/web/guides/client-library).
+Place the `script` tag in the `<head>` of your site, next to the script tag that
+loads `flutter.js`, so the browser can downloaded both in parallel:
 
 ```html
 <!-- Your index.html -->
@@ -33,6 +37,8 @@ can be downloaded in parallel:
     ...
 </head>
 ```
+
+#### With the `loadWebSdk` function (on-demand)
 
 An alternative way, that downloads the SDK on demand, is to use the
 **`loadWebSdk`** function provided by the library. A simple location to embed
@@ -53,12 +59,21 @@ void main() async {
 cross-platform app, you'll probably need to hide the call to `loadWebSdk`
 behind a [conditional import/export](https://dart.dev/guides/libraries/create-library-packages#conditionally-importing-and-exporting-library-files).)
 
+### Using the SDK
+
+Once the SDK has been loaded, it can be used by importing the correct library:
+
+* `import 'package:google_identity_services/id.dart' as id;` for Authentication
+* `import 'package:google_identity_services/oauth2.dart' as oauth2;` for
+  Authorization.
+
 ## Browser compatibility
 
-The new SDK is introducing new concepts that are on track of standardization to
-most browsers, and older browsers might not be compatible with older browsers.
+The new SDK is introducing concepts that are on track for standardization to
+most browsers, and it might not be compatible with older browsers.
 
-Check the browser compatibility in the official documentation site:
+Refer to the official documentation site for the latest browser compatibility
+information of the underlying JS SDK:
 
 * **Sign In With Google > [Supported browsers and platforms](https://developers.google.com/identity/gsi/web/guides/supported-browsers)**
 
