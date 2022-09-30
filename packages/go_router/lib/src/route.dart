@@ -508,8 +508,8 @@ class PartitionedShellRoute extends ShellRouteBase {
   factory PartitionedShellRoute.stackedNavigation({
     required List<GoRoute> routes,
     required List<StackedNavigationItem> stackItems,
-    IndexStackShellScaffoldBuilder? scaffoldBuilder,
-    IndexStackTransitionBuilder? transitionBuilder,
+    StackedNavigationScaffoldBuilder? scaffoldBuilder,
+    StackedNavigationTransitionBuilder? transitionBuilder,
     Duration? transitionDuration,
   }) {
     return PartitionedShellRoute(

@@ -13,14 +13,14 @@ import '../state.dart';
 /// `animation` and wrapping the provided `child`.
 ///
 /// The `animation` provided to the builder always runs forward from 0.0 to 1.0.
-typedef IndexStackTransitionBuilder = Widget Function(
+typedef StackedNavigationTransitionBuilder = Widget Function(
   BuildContext context,
   Animation<double> animation,
   Widget child,
 );
 
 /// Builder for the scaffold of a [StackedNavigationScaffold]
-typedef IndexStackShellScaffoldBuilder = Widget Function(
+typedef StackedNavigationScaffoldBuilder = Widget Function(
     BuildContext context,
     int currentIndex,
     List<StackedNavigationItemState> itemsState,
@@ -88,10 +88,10 @@ class StackedNavigationScaffold extends StatefulWidget {
   final List<StackedNavigationItem> stackItems;
 
   /// The scaffold builder
-  final IndexStackShellScaffoldBuilder? scaffoldBuilder;
+  final StackedNavigationScaffoldBuilder? scaffoldBuilder;
 
   /// An optional transition builder for stack transitions
-  final IndexStackTransitionBuilder? transitionBuilder;
+  final StackedNavigationTransitionBuilder? transitionBuilder;
 
   /// The duration for stack transitions
   final Duration transitionDuration;
@@ -161,7 +161,7 @@ class _StackedNavigationScaffoldState extends State<StackedNavigationScaffold>
 
   @override
   Widget build(BuildContext context) {
-    final IndexStackShellScaffoldBuilder? scaffoldBuilder =
+    final StackedNavigationScaffoldBuilder? scaffoldBuilder =
         widget.scaffoldBuilder;
     if (scaffoldBuilder != null) {
       return scaffoldBuilder(
@@ -180,7 +180,7 @@ class _StackedNavigationScaffoldState extends State<StackedNavigationScaffold>
     final Widget indexedStack =
         IndexedStack(index: _currentIndex, children: children);
 
-    final IndexStackTransitionBuilder? transitionBuilder =
+    final StackedNavigationTransitionBuilder? transitionBuilder =
         widget.transitionBuilder;
     if (transitionBuilder != null) {
       return transitionBuilder(context, _animationController!, indexedStack);
