@@ -729,7 +729,8 @@ void main() {
     });
   });
 
-  testWidgets('Handles the Android back button when a second Shell has a GoRoute with parentNavigator key',
+  testWidgets(
+      'Handles the Android back button when a second Shell has a GoRoute with parentNavigator key',
       (WidgetTester tester) async {
     final List<MethodCall> log = <MethodCall>[];
     TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
@@ -748,15 +749,14 @@ void main() {
     final GlobalKey<NavigatorState> rootNavigatorKey =
         GlobalKey<NavigatorState>();
     final GlobalKey<NavigatorState> shellNavigatorKeyA =
-    GlobalKey<NavigatorState>();
+        GlobalKey<NavigatorState>();
     final GlobalKey<NavigatorState> shellNavigatorKeyB =
-    GlobalKey<NavigatorState>();
+        GlobalKey<NavigatorState>();
 
     final List<RouteBase> routes = <RouteBase>[
       ShellRoute(
         navigatorKey: shellNavigatorKeyA,
-        builder:
-            (BuildContext context, GoRouterState state, Widget child) {
+        builder: (BuildContext context, GoRouterState state, Widget child) {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Shell'),
