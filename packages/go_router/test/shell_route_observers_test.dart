@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 void main() {
   test('ShellRoute observers test', () {
     final ShellRoute shell = ShellRoute(
-      observers: [HeroController()],
+      observers: <NavigatorObserver>[HeroController()],
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return SafeArea(child: child);
       },
