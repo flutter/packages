@@ -2722,15 +2722,23 @@ void main() {
       );
 
       testWidgets(
-        'It checks if ShellRoute navigators can pop',
+        'It checks if PartitionedShellRoute navigators can pop',
         (WidgetTester tester) async {
-          final GlobalKey<NavigatorState> shellNavigatorKey =
+          final GlobalKey<NavigatorState> rootNavigatorKey =
+              GlobalKey<NavigatorState>();
+          final GlobalKey<NavigatorState> shellNavigatorKeyA =
+              GlobalKey<NavigatorState>();
+          final GlobalKey<NavigatorState> shellNavigatorKeyB =
               GlobalKey<NavigatorState>();
           final GoRouter router = GoRouter(
+            navigatorKey: rootNavigatorKey,
             initialLocation: '/a',
             routes: <RouteBase>[
-              ShellRoute(
-                navigatorKey: shellNavigatorKey,
+              PartitionedShellRoute(
+                navigatorKeys: <GlobalKey<NavigatorState>>[
+                  shellNavigatorKeyA,
+                  shellNavigatorKeyB
+                ],
                 builder:
                     (BuildContext context, GoRouterState state, Widget child) {
                   return Scaffold(
@@ -2742,23 +2750,28 @@ void main() {
                   GoRoute(
                     path: '/a',
                     builder: (BuildContext context, _) {
-                      return Scaffold(
-                        body: TextButton(
-                          onPressed: () async {
-                            shellNavigatorKey.currentState!.push(
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext context) {
-                                  return const Scaffold(
-                                    body: Text('pageless route'),
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          child: const Text('Push'),
-                        ),
+                      return const Scaffold(
+                        body: Text('Screen A'),
                       );
                     },
+                  ),
+                  GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, _) {
+                      return const Scaffold(
+                        body: Text('Screen B'),
+                      );
+                    },
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'detail',
+                        builder: (BuildContext context, _) {
+                          return const Scaffold(
+                            body: Text('Screen B detail'),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -2773,17 +2786,20 @@ void main() {
           );
 
           expect(router.canPop(), false);
-          expect(find.text('Push'), findsOneWidget);
 
-          await tester.tap(find.text('Push'));
+          router.go('/b/detail');
           await tester.pumpAndSettle();
 
-          expect(
-              find.text('pageless route', skipOffstage: false), findsOneWidget);
+          expect(find.text('Screen B detail', skipOffstage: false),
+              findsOneWidget);
           expect(router.canPop(), true);
+          // Verify that it is actually the PartitionedShellRoute that reports
+          // canPop = true
+          expect(rootNavigatorKey.currentState?.canPop(), false);
         },
       );
     });
+
     group('pop', () {
       testWidgets(
         'Should pop from the correct navigator when parentNavigatorKey is set',
