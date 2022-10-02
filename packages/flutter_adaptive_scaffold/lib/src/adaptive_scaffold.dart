@@ -212,7 +212,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Option to override the drawerBreakpoint for the usage of [Drawer] over the
   /// usual [BottomNavigationBar].
   ///
-  /// Defaults to [Breakpoints.onlySmallDesktop].
+  /// Defaults to [Breakpoints.smallDesktop].
   final Breakpoint drawerBreakpoint;
 
   /// Option to override the default [AppBar] when using drawer in desktop
