@@ -126,6 +126,48 @@ void main() {
     expect(tester.getTopLeft(sBody), const Offset(400, 0));
     expect(tester.getBottomRight(sBody), const Offset(800, 800));
   });
+
+  // The goal of this test is to run through each of the navigation elements
+  // and test whether tapping on that element will update the selected index
+  // globally
+  testWidgets('tapping navigation elements calls onSelectedIndexChange',
+      (WidgetTester tester) async {
+    // for each screen size there is a different navigational element that
+    // we want to test tapping to set the selected index
+    await Future.forEach(SimulatedLayout.values,
+        (SimulatedLayout region) async {
+      int selectedIndex = 0;
+      final MaterialApp app = region.app(initialIndex: selectedIndex);
+      await tester.binding.setSurfaceSize(region.size);
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
+
+      // tap on the next icon
+      selectedIndex = (selectedIndex + 1) % TestScaffold.destinations.length;
+
+      // Resolve the icon that should be found
+      final NavigationDestination destination =
+          TestScaffold.destinations[selectedIndex];
+      expect(destination.icon, isA<Icon>());
+      final Icon icon = destination.icon as Icon;
+      expect(icon.icon, isNotNull);
+
+      // Find the icon in the application to tap
+      final Widget navigationSlot =
+          tester.widget(find.byKey(Key(region.navSlotKey)));
+      final Finder target =
+          find.widgetWithIcon(navigationSlot.runtimeType, icon.icon!);
+      expect(target, findsOneWidget);
+
+      await tester.tap(target);
+      await tester.pumpAndSettle();
+
+      // Check that the state was set appropriately
+      final Finder scaffold = find.byType(TestScaffold);
+      final TestScaffoldState state = tester.state<TestScaffoldState>(scaffold);
+      expect(selectedIndex, state.index);
+    });
+  });
 }
 
 class TestBreakpoint0 extends Breakpoint {
@@ -220,9 +262,9 @@ class TestScaffoldState extends State<TestScaffold> {
 }
 
 enum SimulatedLayout {
-  mobile(width: 400, navSlotKey: Key('bottomNavigation')),
-  tablet(width: 800, navSlotKey: Key('primaryNavigation')),
-  desktop(width: 1100, navSlotKey: Key('primaryNavigation1'));
+  mobile(width: 400, navSlotKey: 'bottomNavigation'),
+  tablet(width: 800, navSlotKey: 'primaryNavigation'),
+  desktop(width: 1100, navSlotKey: 'primaryNavigation1');
 
   const SimulatedLayout({
     required double width,
@@ -231,7 +273,7 @@ enum SimulatedLayout {
 
   final double _width;
   final double _height = 800;
-  final Key navSlotKey;
+  final String navSlotKey;
 
   Size get size => Size(_width, _height);
 
