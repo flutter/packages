@@ -75,7 +75,6 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           /// navigation bar. Note that the root route must specify the
           /// `parentNavigatorKey`
           GoRoute(
-            parentNavigatorKey: _sectionANavigatorKey,
             path: '/a',
             builder: (BuildContext context, GoRouterState state) =>
                 const RootScreen(label: 'A', detailsPath: '/a/details'),
@@ -94,7 +93,6 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           /// The screen to display as the root in the second tab of the bottom
           /// navigation bar.
           GoRoute(
-            parentNavigatorKey: _sectionBNavigatorKey,
             path: '/b',
             builder: (BuildContext context, GoRouterState state) =>
                 const RootScreen(

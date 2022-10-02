@@ -81,14 +81,15 @@ void main() {
     });
 
     test(
-        'throws when a child of PartitionedShellRoute is missing a '
-        'parentNavigatorKey', () {
+        'throws when PartitionedShellRoute is missing a navigator key for a '
+        'child route', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> nested =
-          GlobalKey<NavigatorState>(debugLabel: 'nested');
+      final GlobalKey<NavigatorState> keyA =
+          GlobalKey<NavigatorState>(debugLabel: 'A');
       final List<GoRoute> shellRouteChildren = <GoRoute>[
-        GoRoute(path: '/', builder: _mockScreenBuilder),
+        GoRoute(path: '/a', builder: _mockScreenBuilder),
+        GoRoute(path: '/b', builder: _mockScreenBuilder),
       ];
       expect(
         () {
@@ -97,7 +98,36 @@ void main() {
             routes: <RouteBase>[
               PartitionedShellRoute(
                   routes: shellRouteChildren,
-                  navigationKeys: <GlobalKey<NavigatorState>>[nested],
+                  navigatorKeys: <GlobalKey<NavigatorState>>[keyA],
+                  builder: _mockShellBuilder),
+            ],
+            redirectLimit: 10,
+            topRedirect: (BuildContext context, GoRouterState state) {
+              return null;
+            },
+          );
+        },
+        throwsAssertionError,
+      );
+    });
+
+    test('throws when PartitionedShellRoute has duplicate navigator keys', () {
+      final GlobalKey<NavigatorState> root =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> keyA =
+          GlobalKey<NavigatorState>(debugLabel: 'A');
+      final List<GoRoute> shellRouteChildren = <GoRoute>[
+        GoRoute(path: '/a', builder: _mockScreenBuilder),
+        GoRoute(path: '/b', builder: _mockScreenBuilder),
+      ];
+      expect(
+        () {
+          RouteConfiguration(
+            navigatorKey: root,
+            routes: <RouteBase>[
+              PartitionedShellRoute(
+                  routes: shellRouteChildren,
+                  navigatorKeys: <GlobalKey<NavigatorState>>[keyA, keyA],
                   builder: _mockShellBuilder),
             ],
             redirectLimit: 10,
@@ -136,7 +166,7 @@ void main() {
             routes: <RouteBase>[
               PartitionedShellRoute(
                   routes: shellRouteChildren,
-                  navigationKeys: <GlobalKey<NavigatorState>>[
+                  navigatorKeys: <GlobalKey<NavigatorState>>[
                     sectionANavigatorKey,
                     sectionBNavigatorKey
                   ],

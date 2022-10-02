@@ -166,6 +166,10 @@ class RouteBuilder {
       _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
           keyToPages, newParams, navigatorKey);
     } else if (route is ShellRouteBase) {
+      if (startIndex + 1 >= matchList.matches.length) {
+        throw _RouteBuilderError('Shell routes must always have child routes');
+      }
+
       // The key for the Navigator that will display this ShellRoute's page.
       final GlobalKey<NavigatorState> parentNavigatorKey = navigatorKey;
 
@@ -177,26 +181,12 @@ class RouteBuilder {
       // that the page for this ShellRoute is placed at the right index.
       final int shellPageIdx = keyToPages[parentNavigatorKey]!.length;
 
-      // The key to provide to the ShellRoute's Navigator.
-      final GlobalKey<NavigatorState> shellNavigatorKey;
+      // Get the current child route of this shell route from the match list.
+      final RouteBase childRoute = matchList.matches[startIndex + 1].route;
 
-      if (route is PartitionedShellRoute) {
-        // Get the next route match (sub route), which for a PartitionedShellRoute
-        // should always be a GoRoute with a parentNavigatorKey
-        final RouteBase? subRoute = (matchList.matches.length > startIndex + 1)
-            ? matchList.matches[startIndex + 1].route
-            : null;
-        if (subRoute is! GoRoute || subRoute.parentNavigatorKey == null) {
-          throw _RouteBuilderError(
-              'Direct descendants of PartitionedShellRoute '
-              '($route) must be GoRoute with a parentNavigatorKey.');
-        }
-        shellNavigatorKey = subRoute.parentNavigatorKey!;
-      } else if (route is ShellRoute) {
-        shellNavigatorKey = route.navigatorKey;
-      } else {
-        throw _RouteBuilderError('Unknown route type: $route');
-      }
+      // The key to provide to the shell route's Navigator.
+      final GlobalKey<NavigatorState> shellNavigatorKey =
+          route.navigatorKeyForChildRoute(childRoute);
 
       // Add an entry for the shell route's navigator
       keyToPages.putIfAbsent(shellNavigatorKey, () => <Page<dynamic>>[]);

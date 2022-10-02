@@ -85,7 +85,7 @@ class RouteConfiguration {
               route.routes,
               <GlobalKey<NavigatorState>>[
                 ...allowedKeys,
-                ...route.navigationKeys,
+                ...route.navigatorKeys,
               ],
             );
           }

@@ -78,6 +78,16 @@ void main() {
       final RouteMatchList matches = RouteMatchList(<RouteMatch>[
         RouteMatch(
           route: config.routes.first,
+          subloc: '',
+          fullpath: '',
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
+          queryParametersAll: <String, List<String>>{},
+          extra: null,
+          error: null,
+        ),
+        RouteMatch(
+          route: config.routes.first.routes.first,
           subloc: '/',
           fullpath: '/',
           encodedParams: <String, String>{},
@@ -107,7 +117,7 @@ void main() {
               builder:
                   (BuildContext context, GoRouterState state, Widget child) =>
                       child,
-              navigationKeys: <GlobalKey<NavigatorState>>[
+              navigatorKeys: <GlobalKey<NavigatorState>>[
                 key,
               ],
               routes: <GoRoute>[

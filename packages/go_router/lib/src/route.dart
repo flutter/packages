@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
+import 'misc/errors.dart';
 import 'misc/stacked_navigation_shell.dart';
 import 'pages/custom_transition_page.dart';
 import 'path_utils.dart';
@@ -353,6 +354,10 @@ abstract class ShellRouteBase extends RouteBase {
   /// This child parameter is the Widget built by calling the matching
   /// sub-route's builder.
   final ShellRoutePageBuilder? pageBuilder;
+
+  /// Returns the key for the [Navigator] that is to be used for the specified
+  /// child route.
+  GlobalKey<NavigatorState> navigatorKeyForChildRoute(RouteBase route);
 }
 
 /// A route that displays a UI shell around the matching child route.
@@ -459,7 +464,6 @@ class ShellRoute extends ShellRouteBase {
     GlobalKey<NavigatorState>? navigatorKey,
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
-        //nestedNavigationBuilder = null,
         super._() {
     for (final RouteBase route in routes) {
       if (route is GoRoute) {
@@ -473,6 +477,11 @@ class ShellRoute extends ShellRouteBase {
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
   final GlobalKey<NavigatorState> navigatorKey;
+
+  @override
+  GlobalKey<NavigatorState> navigatorKeyForChildRoute(RouteBase route) {
+    return navigatorKey;
+  }
 }
 
 /// A route that displays a UI shell with separate [Navigator]s for its child
@@ -481,28 +490,33 @@ class ShellRoute extends ShellRouteBase {
 /// When using this route class as a parent shell route, it possible to build
 /// a stateful nested navigation. This is convenient when for instance
 /// implementing a UI with a [BottomNavigationBar], with a persistent navigation
-/// state for each tab
+/// state for each tab.
 ///
 /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_nested_navigation.dart)
 /// for a complete runnable example.
 class PartitionedShellRoute extends ShellRouteBase {
-  /// Constructs a [PartitionedShellRoute] from a list of [GoRoute], that will
-  /// represent the roots in a stacked navigation hierarchy. For each root route,
-  /// a separate [Navigator] will be created, using the navigation key specified
-  /// by the `parentNavigatorKey` property of [GoRoute]. This navigation key must
-  /// be one of the keys specified in [navigationKeys].
+  /// Constructs a [PartitionedShellRoute] from a list of routes, each
+  /// representing the root of a navigation hierarchy. A separate
+  /// [Navigator] will be created for each of the root routes, using the
+  /// navigator key at the corresponding index in [navigatorKeys].
   PartitionedShellRoute({
-    required List<GoRoute> routes,
-    required this.navigationKeys,
+    required List<RouteBase> routes,
+    required this.navigatorKeys,
     super.builder,
     super.pageBuilder,
   })  : assert(routes.isNotEmpty),
-        assert(navigationKeys.length == routes.length),
+        assert(navigatorKeys.length == routes.length),
+        assert(Set<GlobalKey<NavigatorState>>.from(navigatorKeys).length ==
+            routes.length),
         assert(pageBuilder != null || builder != null,
             'builder or pageBuilder must be provided'),
         super._(routes: routes) {
     for (int i = 0; i < routes.length; ++i) {
-      assert(routes[i].parentNavigatorKey == navigationKeys[i]);
+      final RouteBase route = routes[i];
+      if (route is GoRoute) {
+        assert(route.parentNavigatorKey == null ||
+            route.parentNavigatorKey == navigatorKeys[i]);
+      }
     }
   }
 
@@ -522,7 +536,7 @@ class PartitionedShellRoute extends ShellRouteBase {
   }) {
     return PartitionedShellRoute(
         routes: routes,
-        navigationKeys: stackItems
+        navigatorKeys: stackItems
             .map((StackedNavigationItem e) => e.navigatorKey)
             .toList(),
         builder: (BuildContext context, GoRouterState state,
@@ -539,5 +553,15 @@ class PartitionedShellRoute extends ShellRouteBase {
   }
 
   /// The navigator keys of the navigators created by this route.
-  final List<GlobalKey<NavigatorState>> navigationKeys;
+  final List<GlobalKey<NavigatorState>> navigatorKeys;
+
+  @override
+  GlobalKey<NavigatorState> navigatorKeyForChildRoute(RouteBase route) {
+    final int routeIndex = routes.indexOf(route);
+    if (routeIndex < 0) {
+      throw GoError('Route $route is not a child of this '
+          'PartitionedShellRoute $this');
+    }
+    return navigatorKeys[routeIndex];
+  }
 }
