@@ -54,6 +54,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // a non-null parentNavigatorKey or a ShellRoute with a non-null
     // parentNavigatorKey and pop from that Navigator instead of the root.
     final int matchCount = _matchList.matches.length;
+    RouteBase? childRoute;
     for (int i = matchCount - 1; i >= 0; i -= 1) {
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
@@ -66,14 +67,20 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         if (didPop) {
           return didPop;
         }
-      } else if (route is ShellRoute) {
-        final bool didPop = await route.navigatorKey.currentState!.maybePop();
+      } else if (route is ShellRouteBase && childRoute != null) {
+        // For shell routes, find the navigator key that should be used for the
+        // child route in the current match list
+        final GlobalKey<NavigatorState> navigatorKey =
+            route.navigatorKeyForChildRoute(childRoute);
+
+        final bool didPop = await navigatorKey.currentState!.maybePop();
 
         // Continue if didPop was false.
         if (didPop) {
           return didPop;
         }
       }
+      childRoute = route;
     }
 
     // Use the root navigator if no ShellRoute Navigators were found and didn't
