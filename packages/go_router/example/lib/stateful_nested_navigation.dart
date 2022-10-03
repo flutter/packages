@@ -70,10 +70,9 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
         transitionBuilder:
             (BuildContext context, Animation<double> animation, Widget child) =>
                 FadeTransition(opacity: animation, child: child),
-        routes: <GoRoute>[
+        routes: <RouteBase>[
           /// The screen to display as the root in the first tab of the bottom
-          /// navigation bar. Note that the root route must specify the
-          /// `parentNavigatorKey`
+          /// navigation bar.
           GoRoute(
             path: '/a',
             builder: (BuildContext context, GoRouterState state) =>

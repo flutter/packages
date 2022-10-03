@@ -487,10 +487,116 @@ class ShellRoute extends ShellRouteBase {
 /// A route that displays a UI shell with separate [Navigator]s for its child
 /// routes.
 ///
-/// When using this route class as a parent shell route, it possible to build
-/// a stateful nested navigation. This is convenient when for instance
-/// implementing a UI with a [BottomNavigationBar], with a persistent navigation
-/// state for each tab.
+/// Similar to [ShellRoute], this route class places its sub routes on a
+/// separate Navigator instead of the root Navigator. However, this route
+/// class differs in that it uses a separate Navigator for each of its sub
+/// route trees, making it possible to build a stateful nested navigation. This
+/// is convenient when for instance implementing a UI with a
+/// [BottomNavigationBar], with a persistent navigation state for each tab.
+///
+/// Below is a simple example of how a router configuration with
+/// PartitionedShellRoute could be achieved. In this example, a
+/// BottomNavigationBar with two tabs is used, and each of the tabs gets its
+/// own Navigator. This Navigator will then be passed as the child argument
+/// of the [builder] function.
+///
+/// ```
+/// final GlobalKey<NavigatorState> _tabANavigatorKey =
+///   GlobalKey<NavigatorState>(debugLabel: 'tabANavigator');
+/// final GlobalKey<NavigatorState> _tabBNavigatorKey =
+///   GlobalKey<NavigatorState>(debugLabel: 'tabBNavigator');
+///
+/// final GoRouter _router = GoRouter(
+///   initialLocation: '/a',
+///   routes: <RouteBase>[
+///     PartitionedShellRoute(
+///       navigatorKeys: <GlobalKey<NavigatorState>>[
+///         _tabANavigatorKey, _tabBNavigatorKey,
+///       ],
+///       builder: (BuildContext context, GoRouterState state, Widget child) {
+///         return CustomScaffoldWithBottomNavigationBar(
+///           currentNavigator: child as Navigator,
+///           currentRouterState: state,
+///         );
+///       },
+///       routes: <RouteBase>[
+///         /// The root of tab 'A'
+///         GoRoute(
+///           path: '/a',
+///           builder: (BuildContext context, GoRouterState state) =>
+///           const RootScreen(label: 'A', detailsPath: '/a/details'),
+///           routes: <RouteBase>[
+///             /// Will cover screen A but not the bottom navigation bar
+///             GoRoute(
+///               path: 'details',
+///               builder: (BuildContext context, GoRouterState state) =>
+///               const DetailsScreen(label: 'A'),
+///             ),
+///           ],
+///         ),
+///
+///         /// The root of tab 'B'
+///         GoRoute(
+///           path: '/b',
+///           builder: (BuildContext context, GoRouterState state) =>
+///           const RootScreen(label: 'B', detailsPath: '/b/details/1'),
+///           routes: <RouteBase>[
+///             /// Will cover screen B but not the bottom navigation bar
+///             GoRoute(
+///               path: 'details',
+///               builder: (BuildContext context, GoRouterState state) =>
+///               const DetailsScreen(label: 'B'),
+///             ),
+///           ],
+///         ),
+///       ],
+///     ),
+///   ],
+/// );
+/// ```
+///
+/// For scenarios where it's suitable to use an [IndexStack] to manage the
+/// navigators, consider using the [PartitionedShellRoute.stackedNavigation]
+/// constructor instead to reduce boilerplate. For example:
+///
+/// ```
+/// final GoRouter _router = GoRouter(
+///   initialLocation: '/a',
+///   routes: <RouteBase>[
+///     PartitionedShellRoute.stackedNavigation(
+///       stackItems: [
+///         StackedNavigationItem(
+///           rootRoutePath: '/a', navigatorKey: _sectionANavigatorKey),
+///         StackedNavigationItem(
+///           rootRoutePath: '/b', navigatorKey: _sectionBNavigatorKey),
+///       ],
+///       scaffoldBuilder: (BuildContext context, int currentIndex,
+///           List<StackedNavigationItemState> itemsState,
+///           Widget scaffoldBody) {
+///         return ScaffoldWithBottomNavigationBar(
+///             currentIndex: currentIndex,
+///             itemsState: itemsState,
+///             body: scaffoldBody,
+///         );
+///       },
+///       routes: <RouteBase>[
+///         /// The root of tab 'A'
+///         GoRoute(
+///           path: '/a',
+///           builder: (BuildContext context, GoRouterState state) =>
+///             const RootScreen(label: 'A', detailsPath: '/a/details'),
+///         ),
+///         /// The root of tab 'B'
+///         GoRoute(
+///           path: '/b',
+///           builder: (BuildContext context, GoRouterState state) =>
+///             const RootScreen(label: 'B', detailsPath: '/b/details/1'),
+///         ),
+///       ],
+///     ),
+///   ],
+/// );
+/// ```
 ///
 /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_nested_navigation.dart)
 /// for a complete runnable example.
@@ -525,10 +631,10 @@ class PartitionedShellRoute extends ShellRouteBase {
   ///
   /// Each route in the `routes` parameter must correspond to a
   /// [StackedNavigationItem], specified in the `stackItems` parameter.
-  /// The stacked navigation shell can be customized by specifying a
+  /// The stacked navigation shell can be implemented by specifying a
   /// `scaffoldBuilder`, to build a widget that wraps the index stack.
   factory PartitionedShellRoute.stackedNavigation({
-    required List<GoRoute> routes,
+    required List<RouteBase> routes,
     required List<StackedNavigationItem> stackItems,
     StackedNavigationScaffoldBuilder? scaffoldBuilder,
     StackedNavigationTransitionBuilder? transitionBuilder,
@@ -539,10 +645,10 @@ class PartitionedShellRoute extends ShellRouteBase {
         navigatorKeys: stackItems
             .map((StackedNavigationItem e) => e.navigatorKey)
             .toList(),
-        builder: (BuildContext context, GoRouterState state,
-            Widget currentTabNavigator) {
+        builder: (BuildContext context, GoRouterState state, Widget child) {
+          assert(child is Navigator);
           return StackedNavigationShell(
-            currentNavigator: currentTabNavigator as Navigator,
+            currentNavigator: child as Navigator,
             currentRouterState: state,
             stackItems: stackItems,
             scaffoldBuilder: scaffoldBuilder,
