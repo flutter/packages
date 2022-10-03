@@ -555,8 +555,8 @@ class ShellRoute extends ShellRouteBase {
 /// );
 /// ```
 ///
-/// For scenarios where it's suitable to use an [IndexStack] to manage the
-/// navigators, consider using the [PartitionedShellRoute.stackedNavigation]
+/// For scenarios where it's suitable to use an [IndexedStack] to manage the
+/// navigators, consider using the [PartitionedShellRoute.stackedNavigationShell]
 /// constructor instead to reduce boilerplate. For example:
 ///
 /// ```
@@ -566,9 +566,9 @@ class ShellRoute extends ShellRouteBase {
 ///     PartitionedShellRoute.stackedNavigation(
 ///       stackItems: [
 ///         StackedNavigationItem(
-///           rootRoutePath: '/a', navigatorKey: _sectionANavigatorKey),
+///           rootRoutePath: '/a', navigatorKey: _tabANavigatorKey),
 ///         StackedNavigationItem(
-///           rootRoutePath: '/b', navigatorKey: _sectionBNavigatorKey),
+///           rootRoutePath: '/b', navigatorKey: _tabBNavigatorKey),
 ///       ],
 ///       scaffoldBuilder: (BuildContext context, int currentIndex,
 ///           List<StackedNavigationItemState> itemsState,
@@ -627,13 +627,13 @@ class PartitionedShellRoute extends ShellRouteBase {
   }
 
   /// Constructs a [PartitionedShellRoute] that places its navigators in an
-  /// [IndexStack], managed by a [StackedNavigationShell].
+  /// [IndexedStack], managed by a [StackedNavigationShell].
   ///
   /// Each route in the `routes` parameter must correspond to a
   /// [StackedNavigationItem], specified in the `stackItems` parameter.
   /// The stacked navigation shell can be implemented by specifying a
-  /// `scaffoldBuilder`, to build a widget that wraps the index stack.
-  factory PartitionedShellRoute.stackedNavigation({
+  /// `scaffoldBuilder`, to build a widget that wraps the indexed stack.
+  factory PartitionedShellRoute.stackedNavigationShell({
     required List<RouteBase> routes,
     required List<StackedNavigationItem> stackItems,
     StackedNavigationScaffoldBuilder? scaffoldBuilder,

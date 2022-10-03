@@ -62,7 +62,7 @@ class StackedNavigationItemState {
 }
 
 /// Widget that maintains a stateful stack of [Navigator]s, using an
-/// [IndexStack].
+/// [IndexedStack].
 ///
 /// Each item in the stack is represented by a [StackedNavigationItem],
 /// specified in the `stackItems` parameter. The stack items will be used to

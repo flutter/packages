@@ -2424,7 +2424,7 @@ void main() {
       ];
 
       final List<RouteBase> routes = <RouteBase>[
-        PartitionedShellRoute.stackedNavigation(
+        PartitionedShellRoute.stackedNavigationShell(
           stackItems: stackItems,
           routes: <GoRoute>[
             GoRoute(
@@ -2497,7 +2497,7 @@ void main() {
       ];
 
       final List<RouteBase> routes = <RouteBase>[
-        PartitionedShellRoute.stackedNavigation(
+        PartitionedShellRoute.stackedNavigationShell(
           stackItems: stackItems,
           routes: <GoRoute>[
             GoRoute(

@@ -5,10 +5,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _sectionANavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
-final GlobalKey<NavigatorState> _sectionBNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'sectionBNav');
+final GlobalKey<NavigatorState> _tabANavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'tabANav');
+final GlobalKey<NavigatorState> _tabBNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'tabBNav');
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each tab uses its own persistent navigator, i.e.
@@ -35,12 +35,12 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
       <ScaffoldWithNavBarTabItem>[
     ScaffoldWithNavBarTabItem(
         navigationItem: StackedNavigationItem(
-            rootRoutePath: '/a', navigatorKey: _sectionANavigatorKey),
+            rootRoutePath: '/a', navigatorKey: _tabANavigatorKey),
         icon: const Icon(Icons.home),
         label: 'Section A'),
     ScaffoldWithNavBarTabItem(
       navigationItem: StackedNavigationItem(
-          rootRoutePath: '/b', navigatorKey: _sectionBNavigatorKey),
+          rootRoutePath: '/b', navigatorKey: _tabBNavigatorKey),
       icon: const Icon(Icons.settings),
       label: 'Section B',
     ),
@@ -52,7 +52,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
       /// Custom top shell route - wraps the below routes in a scaffold with
       /// a bottom tab navigator (ScaffoldWithNavBar). Each tab will use its own
       /// Navigator, provided by MultiPathShellRoute.
-      PartitionedShellRoute.stackedNavigation(
+      PartitionedShellRoute.stackedNavigationShell(
         stackItems: _tabs
             .map((ScaffoldWithNavBarTabItem e) => e.navigationItem)
             .toList(),
