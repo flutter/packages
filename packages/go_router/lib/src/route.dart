@@ -344,15 +344,15 @@ abstract class ShellRouteBase extends RouteBase {
   /// The widget builder for a shell route.
   ///
   /// Similar to GoRoute builder, but with an additional child parameter. This
-  /// child parameter is the Widget built by calling the matching sub-route's
-  /// builder.
+  /// child parameter is the [Navigator] that will be used for the matching
+  /// sub-routes.
   final ShellRouteBuilder? builder;
 
   /// The page builder for a shell route.
   ///
   /// Similar to GoRoute pageBuilder, but with an additional child parameter.
-  /// This child parameter is the Widget built by calling the matching
-  /// sub-route's builder.
+  /// This child parameter is the [Navigator] that will be used for the matching
+  /// sub-routes.
   final ShellRoutePageBuilder? pageBuilder;
 
   /// Returns the key for the [Navigator] that is to be used for the specified

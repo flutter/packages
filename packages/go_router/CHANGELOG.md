@@ -4,6 +4,8 @@
   navigators for child routes as well as preserving state in each navigation tree  
   (flutter/flutter#99124). Also introduced the supporting widget class `StackedNavigationShell`,
   which facilitates using an `IndexStack` to manage multiple parallel navigation trees.
+- Updated documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly 
+  describe the meaning of the child argument in the builder functions.
 
 ## 5.0.5
 
