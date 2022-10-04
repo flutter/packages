@@ -68,21 +68,24 @@ class RouteConfig {
     RouteConfig? parent,
   ) {
     assert(!reader.isNull, 'reader should not be null');
-    final ConstantReader pathValue = reader.read('path');
-    if (pathValue.isNull) {
-      throw InvalidGenerationSourceError(
-        'Missing `path` value on annotation.',
-        element: element,
-      );
+    final InterfaceType type = reader.objectValue.type! as InterfaceType;
+    final bool isShellRoute = type.element2.name == 'TypedShellRoute';
+
+    String? path;
+
+    if (!isShellRoute) {
+      final ConstantReader pathValue = reader.read('path');
+      if (pathValue.isNull) {
+        throw InvalidGenerationSourceError(
+          'Missing `path` value on annotation.',
+          element: element,
+        );
+      }
+      path = pathValue.stringValue;
     }
 
-    final String path = pathValue.stringValue;
-
-    final InterfaceType type = reader.objectValue.type! as InterfaceType;
     final DartType typeParamType = type.typeArguments.single;
-    final bool isShellRoute = reader.read('isShellRoute').boolValue;
     final ConstantReader keyReader = reader.read('key');
-
     if (typeParamType is! InterfaceType) {
       throw InvalidGenerationSourceError(
         'The type parameter on one of the @TypedGoRoute declarations could not '
@@ -95,7 +98,7 @@ class RouteConfig {
     final InterfaceElement classElement = typeParamType.element2;
 
     final RouteConfig value = RouteConfig._(
-      path,
+      path ?? '',
       classElement,
       parent,
       _decodeKey(keyReader),

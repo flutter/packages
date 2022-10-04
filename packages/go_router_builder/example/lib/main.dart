@@ -73,8 +73,7 @@ const shellkey = GlobalObjectKey<NavigatorState>('shell_key');
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: [
-    TypedGoRoute<FamilyRoute>(
-      isShellRoute: true,
+    TypedShellRoute<FamilyRoute>(
       key: 'shell_key',
       routes: <TypedGoRoute<GoRouteData>>[
         TypedGoRoute<FamilyIdRoute>(

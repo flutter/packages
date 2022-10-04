@@ -150,34 +150,47 @@ abstract class GoRouteData {
   );
 }
 
-/// Annotation for types that support typed routing.
-@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
-class TypedGoRoute<T extends GoRouteData> {
-  /// Instantiates a new instance of [TypedGoRoute].
-  const TypedGoRoute({
-    this.path = '',
-    this.routes = const <TypedGoRoute<GoRouteData>>[],
+/// A superclass for each annotation
+abstract class TypedRoute<T extends GoRouteData> {
+  /// Instantiate a new [TypedRoute].
+  const TypedRoute({
     this.key,
-    this.isShellRoute = false,
+    this.routes = const <TypedRoute<GoRouteData>>[],
   });
 
-  /// The path that corresponds to this rout.
-  ///
-  /// See [BaseRoute.path].
-  final String path;
+  /// Key for pointing to a certain navigator
+  final String? key;
 
   /// Child route definitions.
   ///
   /// See [BaseRoute.routes].
-  final List<TypedGoRoute<GoRouteData>> routes;
+  final List<TypedRoute<GoRouteData>> routes;
+}
 
-  /// Key for pointing to a certain navigator
-  final Object? key;
+/// Annotation for types that support typed routing.
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
+  /// Instantiates a new instance of [TypedGoRoute].
+  const TypedGoRoute({
+    required this.path,
+    super.routes,
+    super.key,
+  });
 
-  /// Whether this route should be a shell route.
-  /// See [ShellRoute].
-  /// Defaults to `false`.
-  final bool isShellRoute;
+  /// The path that corresponds to this route.
+  ///
+  /// See [BaseRoute.path].
+  final String path;
+}
+
+/// Annotation for route that adds nested navigation.
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedShellRoute<T extends GoRouteData> extends TypedRoute<T> {
+  /// Instantiates a new instance of [TypedShellRoute].
+  const TypedShellRoute({
+    super.key,
+    super.routes,
+  });
 }
 
 /// Internal class used to signal that the default page behavior should be used.
