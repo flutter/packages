@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Adds support for `ShellRoute` [#112854](https://github.com/flutter/flutter/issues/112854)
+
 ## 1.0.14
 
 * Bumps go_router version in example folder to v5.0.0
