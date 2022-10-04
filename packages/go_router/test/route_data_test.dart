@@ -44,7 +44,7 @@ final GoRoute _goRouteDataBuildPageWithState = GoRouteData.$route(
   factory: (GoRouterState state) => const _GoRouteDataBuildPageWithState(),
 );
 
-final List<RouteBase> _routes = <GoRoute>[
+final List<GoRoute> _routes = <GoRoute>[
   _goRouteDataBuild,
   _goRouteDataBuildPage,
   _goRouteDataBuildPageWithState,
@@ -61,11 +61,7 @@ class _ShellRouteDataBuild extends ShellRouteData {
 
 final ShellRoute _shellRouteDataBuild = ShellRouteData.$route(
   factory: (_) => const _ShellRouteDataBuild(),
-  routes: <RouteBase>[
-    _goRouteDataBuild,
-    _goRouteDataBuildPage,
-    _goRouteDataBuildPageWithState,
-  ],
+  routes: _routes,
 );
 
 void main() {
