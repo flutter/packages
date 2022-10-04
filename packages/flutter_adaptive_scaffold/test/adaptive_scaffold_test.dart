@@ -20,7 +20,8 @@ void main() {
     final Finder primaryNav = find.byKey(const Key('primaryNavigation'));
     final Finder primaryNav1 = find.byKey(const Key('primaryNavigation1'));
 
-    await tester.pumpWidget(await scaffold(width: 300, tester: tester));
+    await tester.binding.setSurfaceSize(SimulatedLayout.mobile.size);
+    await tester.pumpWidget(SimulatedLayout.mobile.app());
     await tester.pumpAndSettle();
 
     expect(smallBody, findsOneWidget);
@@ -29,10 +30,11 @@ void main() {
     expect(primaryNav, findsNothing);
 
     expect(tester.getTopLeft(smallBody), Offset.zero);
-    expect(tester.getTopLeft(smallSBody), const Offset(150, 0));
+    expect(tester.getTopLeft(smallSBody), const Offset(200, 0));
     expect(tester.getTopLeft(bottomNav), const Offset(0, 744));
 
-    await tester.pumpWidget(await scaffold(width: 900, tester: tester));
+    await tester.binding.setSurfaceSize(SimulatedLayout.tablet.size);
+    await tester.pumpWidget(SimulatedLayout.tablet.app());
     await tester.pumpAndSettle();
 
     expect(smallBody, findsNothing);
@@ -43,11 +45,12 @@ void main() {
     expect(primaryNav, findsOneWidget);
 
     expect(tester.getTopLeft(body), const Offset(88, 0));
-    expect(tester.getTopLeft(sBody), const Offset(450, 0));
+    expect(tester.getTopLeft(sBody), const Offset(400, 0));
     expect(tester.getTopLeft(primaryNav), Offset.zero);
     expect(tester.getBottomRight(primaryNav), const Offset(88, 800));
 
-    await tester.pumpWidget(await scaffold(width: 1100, tester: tester));
+    await tester.binding.setSurfaceSize(SimulatedLayout.desktop.size);
+    await tester.pumpWidget(SimulatedLayout.desktop.app());
     await tester.pumpAndSettle();
 
     expect(body, findsNothing);
@@ -68,8 +71,10 @@ void main() {
     final Finder b = find.byKey(const Key('body'));
     final Finder sBody = find.byKey(const Key('sBody'));
 
-    await tester.pumpWidget(await scaffold(width: 400, tester: tester));
-    await tester.pumpWidget(await scaffold(width: 800, tester: tester));
+    await tester.binding.setSurfaceSize(SimulatedLayout.mobile.size);
+    await tester.pumpWidget(SimulatedLayout.mobile.app());
+    await tester.binding.setSurfaceSize(SimulatedLayout.tablet.size);
+    await tester.pumpWidget(SimulatedLayout.tablet.app());
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
@@ -107,10 +112,11 @@ void main() {
     final Finder b = find.byKey(const Key('body'));
     final Finder sBody = find.byKey(const Key('sBody'));
 
-    await tester.pumpWidget(
-        await scaffold(width: 400, tester: tester, animations: false));
-    await tester.pumpWidget(
-        await scaffold(width: 800, tester: tester, animations: false));
+    await tester.binding.setSurfaceSize(SimulatedLayout.mobile.size);
+    await tester.pumpWidget(SimulatedLayout.mobile.app(animations: false));
+
+    await tester.binding.setSurfaceSize(SimulatedLayout.tablet.size);
+    await tester.pumpWidget(SimulatedLayout.tablet.app(animations: false));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
@@ -119,6 +125,48 @@ void main() {
     expect(tester.getBottomRight(b), const Offset(400, 800));
     expect(tester.getTopLeft(sBody), const Offset(400, 0));
     expect(tester.getBottomRight(sBody), const Offset(800, 800));
+  });
+
+  // The goal of this test is to run through each of the navigation elements
+  // and test whether tapping on that element will update the selected index
+  // globally
+  testWidgets('tapping navigation elements calls onSelectedIndexChange',
+      (WidgetTester tester) async {
+    // for each screen size there is a different navigational element that
+    // we want to test tapping to set the selected index
+    await Future.forEach(SimulatedLayout.values,
+        (SimulatedLayout region) async {
+      int selectedIndex = 0;
+      final MaterialApp app = region.app(initialIndex: selectedIndex);
+      await tester.binding.setSurfaceSize(region.size);
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
+
+      // tap on the next icon
+      selectedIndex = (selectedIndex + 1) % TestScaffold.destinations.length;
+
+      // Resolve the icon that should be found
+      final NavigationDestination destination =
+          TestScaffold.destinations[selectedIndex];
+      expect(destination.icon, isA<Icon>());
+      final Icon icon = destination.icon as Icon;
+      expect(icon.icon, isNotNull);
+
+      // Find the icon in the application to tap
+      final Widget navigationSlot =
+          tester.widget(find.byKey(Key(region.navSlotKey)));
+      final Finder target =
+          find.widgetWithIcon(navigationSlot.runtimeType, icon.icon!);
+      expect(target, findsOneWidget);
+
+      await tester.tap(target);
+      await tester.pumpAndSettle();
+
+      // Check that the state was set appropriately
+      final Finder scaffold = find.byType(TestScaffold);
+      final TestScaffoldState state = tester.state<TestScaffoldState>(scaffold);
+      expect(selectedIndex, state.index);
+    });
   });
 }
 
@@ -152,34 +200,95 @@ class NeverOnBreakpoint extends Breakpoint {
   }
 }
 
-Future<MaterialApp> scaffold({
-  required double width,
-  required WidgetTester tester,
-  bool animations = true,
-}) async {
-  await tester.binding.setSurfaceSize(Size(width, 800));
-  return MaterialApp(
-    home: MediaQuery(
-      data: MediaQueryData(size: Size(width, 800)),
-      child: AdaptiveScaffold(
-        drawerBreakpoint: NeverOnBreakpoint(),
-        internalAnimations: animations,
-        smallBreakpoint: TestBreakpoint0(),
-        mediumBreakpoint: TestBreakpoint800(),
-        largeBreakpoint: TestBreakpoint1000(),
-        destinations: const <NavigationDestination>[
-          NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
-          NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
-          NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
-          NavigationDestination(icon: Icon(Icons.video_call), label: 'Video'),
-        ],
-        smallBody: (_) => Container(color: Colors.red),
-        body: (_) => Container(color: Colors.green),
-        largeBody: (_) => Container(color: Colors.blue),
-        smallSecondaryBody: (_) => Container(color: Colors.red),
-        secondaryBody: (_) => Container(color: Colors.green),
-        largeSecondaryBody: (_) => Container(color: Colors.blue),
-      ),
+class TestScaffold extends StatefulWidget {
+  const TestScaffold({
+    super.key,
+    this.initialIndex = 0,
+    this.isAnimated = true,
+  });
+
+  final int initialIndex;
+  final bool isAnimated;
+
+  static const List<NavigationDestination> destinations =
+      <NavigationDestination>[
+    NavigationDestination(
+      key: Key('Inbox'),
+      icon: Icon(Icons.inbox),
+      label: 'Inbox',
     ),
-  );
+    NavigationDestination(
+      key: Key('Articles'),
+      icon: Icon(Icons.article),
+      label: 'Articles',
+    ),
+    NavigationDestination(
+      key: Key('Chat'),
+      icon: Icon(Icons.chat),
+      label: 'Chat',
+    ),
+  ];
+
+  @override
+  State<TestScaffold> createState() => TestScaffoldState();
+}
+
+class TestScaffoldState extends State<TestScaffold> {
+  late int index = widget.initialIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return AdaptiveScaffold(
+      selectedIndex: index,
+      onSelectedIndexChange: (int index) {
+        setState(() {
+          this.index = index;
+        });
+      },
+      drawerBreakpoint: NeverOnBreakpoint(),
+      internalAnimations: widget.isAnimated,
+      smallBreakpoint: TestBreakpoint0(),
+      mediumBreakpoint: TestBreakpoint800(),
+      largeBreakpoint: TestBreakpoint1000(),
+      destinations: TestScaffold.destinations,
+      smallBody: (_) => Container(color: Colors.red),
+      body: (_) => Container(color: Colors.green),
+      largeBody: (_) => Container(color: Colors.blue),
+      smallSecondaryBody: (_) => Container(color: Colors.red),
+      secondaryBody: (_) => Container(color: Colors.green),
+      largeSecondaryBody: (_) => Container(color: Colors.blue),
+    );
+  }
+}
+
+enum SimulatedLayout {
+  mobile(width: 400, navSlotKey: 'bottomNavigation'),
+  tablet(width: 800, navSlotKey: 'primaryNavigation'),
+  desktop(width: 1100, navSlotKey: 'primaryNavigation1');
+
+  const SimulatedLayout({
+    required double width,
+    required this.navSlotKey,
+  }) : _width = width;
+
+  final double _width;
+  final double _height = 800;
+  final String navSlotKey;
+
+  Size get size => Size(_width, _height);
+
+  MaterialApp app({
+    int initialIndex = 0,
+    bool animations = true,
+  }) {
+    return MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(size: size),
+        child: TestScaffold(
+          initialIndex: initialIndex,
+          isAnimated: animations,
+        ),
+      ),
+    );
+  }
 }
