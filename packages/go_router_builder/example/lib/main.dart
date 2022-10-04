@@ -99,11 +99,10 @@ class FamilyRoute extends GoRouteData {
   const FamilyRoute();
 
   @override
-  Widget build(BuildContext context, _) {
-    print(_);
+  Widget build(BuildContext context, child) {
     return FamilyScreen(
       nKey: shellkey,
-      child: _!,
+      child: child!,
     );
   }
 }

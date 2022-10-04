@@ -16,28 +16,28 @@ List<RouteBase> get $appRoutes => [
 RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
       factory: $HomeRouteExtension._fromState,
-      shouldShell: false,
+      isShell: false,
       routes: [
         GoRouteData.$route(
           path: '',
           factory: $FamilyRouteExtension._fromState,
-          shouldShell: true,
+          isShell: true,
           key: const GlobalObjectKey('shell_key'),
           routes: [
             GoRouteData.$route(
               path: 'family/:fid',
               factory: $FamilyIdRouteExtension._fromState,
-              shouldShell: false,
+              isShell: false,
               routes: [
                 GoRouteData.$route(
                   path: 'person/:pid',
                   factory: $PersonRouteExtension._fromState,
-                  shouldShell: false,
+                  isShell: false,
                   routes: [
                     GoRouteData.$route(
                       path: 'details/:details',
                       factory: $PersonDetailsRouteExtension._fromState,
-                      shouldShell: false,
+                      isShell: false,
                     ),
                   ],
                 ),
@@ -133,7 +133,7 @@ extension<T extends Enum> on Map<T, String> {
 RouteBase get $loginRoute => GoRouteData.$route(
       path: '/login',
       factory: $LoginRouteExtension._fromState,
-      shouldShell: false,
+      isShell: false,
     );
 
 extension $LoginRouteExtension on LoginRoute {

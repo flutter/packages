@@ -15,62 +15,62 @@ List<RouteBase> get $appRoutes => [
 RouteBase get $allTypesBaseRoute => GoRouteData.$route(
       path: '/',
       factory: $AllTypesBaseRouteExtension._fromState,
-      shouldShell: false,
+      isShell: false,
       routes: [
         GoRouteData.$route(
           path: 'big-int-route/:requiredBigIntField',
           factory: $BigIntRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'bool-route/:requiredBoolField',
           factory: $BoolRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'date-time-route/:requiredDateTimeField',
           factory: $DateTimeRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'double-route/:requiredDoubleField',
           factory: $DoubleRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'int-route/:requiredIntField',
           factory: $IntRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'num-route/:requiredNumField',
           factory: $NumRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'double-route/:requiredDoubleField',
           factory: $DoubleRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'enum-route/:requiredEnumField',
           factory: $EnumRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'enhanced-enum-route/:requiredEnumField',
           factory: $EnhancedEnumRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'string-route/:requiredStringField',
           factory: $StringRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
         GoRouteData.$route(
           path: 'uri-route/:requiredUriField',
           factory: $UriRouteExtension._fromState,
-          shouldShell: false,
+          isShell: false,
         ),
       ],
     );
