@@ -1,3 +1,8 @@
+## 5.0.6
+
+- Adds a helpers and refactors some code in order to use the new ShellRoute API
+  to implement nested navigation.
+
 ## 5.0.5
 
 - Fixes issue where asserts in popRoute were preventing the app from
