@@ -279,7 +279,7 @@ routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}]
 GoRouteData.\$route(
       path: ${escapeDartString(_path)},
       factory: $_extensionName._fromState,
-      shouldShell: $_isShellRoute,
+      isShell: $_isShellRoute,
       $key
       $routesBit
 )

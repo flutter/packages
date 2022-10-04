@@ -96,7 +96,7 @@ abstract class GoRouteData {
     required T Function(GoRouterState) factory,
     List<RouteBase> routes = const <RouteBase>[],
     GlobalKey<NavigatorState>? key,
-    bool shouldShell = false,
+    bool isShell = false,
   }) {
     T factoryImpl(GoRouterState state) {
       final Object? extra = state.extra;
@@ -119,7 +119,7 @@ abstract class GoRouteData {
     FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect();
 
-    if (shouldShell) {
+    if (isShell) {
       Widget builder(
               BuildContext context, GoRouterState state, Widget? child) =>
           factoryImpl(state).build(context, child);
