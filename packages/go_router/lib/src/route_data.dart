@@ -97,7 +97,7 @@ abstract class GoRouteData implements RouteData {
   ///
   /// Should not be used directly.
   static GoRoute $route<T extends GoRouteData>({
-    String path = '',
+    required String path,
     required T Function(GoRouterState) factory,
     List<RouteBase> routes = const <RouteBase>[],
     GlobalKey<NavigatorState>? key,
