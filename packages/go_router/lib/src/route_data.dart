@@ -27,8 +27,8 @@ abstract class GoRouteData {
   /// Subclasses must override one of [build], [buildPageWithState], or
   /// [redirect].
   ///
-  /// Corresponds to [GoRoute.builder].
-  Widget build(BuildContext context) => throw UnimplementedError(
+  /// Corresponds to [GoRoute.builder] and [ShellRoute.builder].
+  Widget build(BuildContext context, Widget? child) => throw UnimplementedError(
         'One of `build` or `buildPageWithState` must be implemented.',
       );
 
@@ -56,11 +56,15 @@ abstract class GoRouteData {
   /// Subclasses must override one of [build], [buildPageWithState] or
   /// [redirect].
   ///
-  /// Corresponds to [GoRoute.pageBuilder].
+  /// Corresponds to [GoRoute.pageBuilder] and [ShellRoute.pageBuilder].
   ///
   /// By default, returns a [Page] instance that is ignored, causing a default
   /// [Page] implementation to be used with the results of [build].
-  Page<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+  Page<void> buildPageWithState(
+    BuildContext context,
+    GoRouterState state,
+    Widget? child,
+  ) =>
       // ignore: deprecated_member_use_from_same_package
       buildPage(context);
 
@@ -87,10 +91,12 @@ abstract class GoRouteData {
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
-  static GoRoute $route<T extends GoRouteData>({
-    required String path,
+  static RouteBase $route<T extends GoRouteData>({
+    String path = '',
     required T Function(GoRouterState) factory,
-    List<GoRoute> routes = const <GoRoute>[],
+    List<RouteBase> routes = const <RouteBase>[],
+    GlobalKey<NavigatorState>? key,
+    bool isShell = false,
   }) {
     T factoryImpl(GoRouterState state) {
       final Object? extra = state.extra;
@@ -105,21 +111,36 @@ abstract class GoRouteData {
     }
 
     Widget builder(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).build(context);
+        factoryImpl(state).build(context, null);
 
     Page<void> pageBuilder(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).buildPageWithState(context, state);
+        factoryImpl(state).buildPageWithState(context, state, null);
 
     FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect();
 
+    if (isShell) {
+      Widget builder(
+              BuildContext context, GoRouterState state, Widget? child) =>
+          factoryImpl(state).build(context, child);
+      Page<void> pageBuilder(
+              BuildContext context, GoRouterState state, Widget? child) =>
+          factoryImpl(state).buildPageWithState(context, state, child);
+      return ShellRoute(
+        navigatorKey: key,
+        routes: routes,
+        builder: builder,
+        pageBuilder: pageBuilder,
+      );
+    }
+
     return GoRoute(
-      path: path,
-      builder: builder,
-      pageBuilder: pageBuilder,
-      redirect: redirect,
-      routes: routes,
-    );
+        path: path,
+        builder: builder,
+        pageBuilder: pageBuilder,
+        redirect: redirect,
+        routes: routes,
+        parentNavigatorKey: key);
   }
 
   /// Used to cache [GoRouteData] that corresponds to a given [GoRouterState]
@@ -129,24 +150,47 @@ abstract class GoRouteData {
   );
 }
 
-/// Annotation for types that support typed routing.
-@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
-class TypedGoRoute<T extends GoRouteData> {
-  /// Instantiates a new instance of [TypedGoRoute].
-  const TypedGoRoute({
-    required this.path,
-    this.routes = const <TypedGoRoute<GoRouteData>>[],
+/// A superclass for each annotation
+abstract class TypedRoute<T extends GoRouteData> {
+  /// Instantiate a new [TypedRoute].
+  const TypedRoute({
+    this.key,
+    this.routes = const <TypedRoute<GoRouteData>>[],
   });
 
-  /// The path that corresponds to this rout.
-  ///
-  /// See [GoRoute.path].
-  final String path;
+  /// Key for pointing to a certain navigator
+  final String? key;
 
   /// Child route definitions.
   ///
-  /// See [GoRoute.routes].
-  final List<TypedGoRoute<GoRouteData>> routes;
+  /// See [BaseRoute.routes].
+  final List<TypedRoute<GoRouteData>> routes;
+}
+
+/// Annotation for types that support typed routing.
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
+  /// Instantiates a new instance of [TypedGoRoute].
+  const TypedGoRoute({
+    required this.path,
+    super.routes,
+    super.key,
+  });
+
+  /// The path that corresponds to this route.
+  ///
+  /// See [GoRoute.path].
+  final String path;
+}
+
+/// Annotation for route that adds nested navigation.
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedShellRoute<T extends GoRouteData> extends TypedRoute<T> {
+  /// Instantiates a new instance of [TypedShellRoute].
+  const TypedShellRoute({
+    super.key,
+    super.routes,
+  });
 }
 
 /// Internal class used to signal that the default page behavior should be used.
