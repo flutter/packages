@@ -1,3 +1,8 @@
+## 5.0.6
+
+- Refactors route datas, routes in order to have a possibility to implement nested
+  navigation using ShellRoute. [#111909](https://github.com/flutter/flutter/issues/111909)
+
 ## 5.0.5
 
 - Fixes issue where asserts in popRoute were preventing the app from
