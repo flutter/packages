@@ -21,19 +21,16 @@ class App extends StatelessWidget {
   static const String title = 'GoRouter Example: Named Routes';
 
   @override
-  Widget build(BuildContext context) {
-    final d = $appRoutes;
-    return ChangeNotifierProvider<LoginInfo>.value(
-      value: loginInfo,
-      child: MaterialApp.router(
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
-        routeInformationProvider: _router.routeInformationProvider,
-        title: title,
-        debugShowCheckedModeBanner: false,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ChangeNotifierProvider<LoginInfo>.value(
+        value: loginInfo,
+        child: MaterialApp.router(
+          routeInformationParser: _router.routeInformationParser,
+          routerDelegate: _router.routerDelegate,
+          routeInformationProvider: _router.routeInformationProvider,
+          title: title,
+          debugShowCheckedModeBanner: false,
+        ),
+      );
 
   late final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,
