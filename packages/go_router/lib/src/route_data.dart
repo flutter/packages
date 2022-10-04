@@ -155,7 +155,7 @@ abstract class ShellRouteData extends RouteData {
   /// Corresponds to [GoRoute.builder] and [ShellRoute.builder].
   Widget build(
     BuildContext context,
-    Widget? child,
+    Widget child,
   ) =>
       throw UnimplementedError(
         'One of `build` or `buildPageWithState` must be implemented.',
@@ -174,6 +174,7 @@ abstract class ShellRouteData extends RouteData {
   Page<void> buildPageWithState(
     BuildContext context,
     GoRouterState state,
+    Widget child,
   ) =>
       const NoOpPage();
 
@@ -197,11 +198,11 @@ abstract class ShellRouteData extends RouteData {
       return (_stateObjectExpando[state] ??= factory(state)) as T;
     }
 
-    Widget builder(BuildContext context, GoRouterState state, Widget? child) =>
+    Widget builder(BuildContext context, GoRouterState state, Widget child) =>
         factoryImpl(state).build(context, child);
     Page<void> pageBuilder(
-            BuildContext context, GoRouterState state, Widget? child) =>
-        factoryImpl(state).buildPageWithState(context, state);
+            BuildContext context, GoRouterState state, Widget child) =>
+        factoryImpl(state).buildPageWithState(context, state, child);
     return ShellRoute(
       navigatorKey: key,
       routes: routes,

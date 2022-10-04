@@ -99,7 +99,7 @@ class FamilyRoute extends ShellRouteData {
 
   @override
   Widget build(BuildContext context, child) {
-    return FamilyScreen(child: child!);
+    return FamilyScreen(child: child);
   }
 }
 
