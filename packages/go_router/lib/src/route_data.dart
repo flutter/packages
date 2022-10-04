@@ -27,7 +27,7 @@ abstract class GoRouteData {
   /// Subclasses must override one of [build], [buildPageWithState], or
   /// [redirect].
   ///
-  /// Corresponds to [BaseRoute.builder].
+  /// Corresponds to [GoRoute.builder] and [ShellRoute.builder].
   Widget build(BuildContext context, Widget? child) => throw UnimplementedError(
         'One of `build` or `buildPageWithState` must be implemented.',
       );
@@ -39,7 +39,7 @@ abstract class GoRouteData {
   /// Subclasses must override one of [build], [buildPageWithState] or
   /// [redirect].
   ///
-  /// Corresponds to [BaseRoute.pageBuilder].
+  /// Corresponds to [GoRoute.pageBuilder].
   ///
   /// By default, returns a [Page] instance that is ignored, causing a default
   /// [Page] implementation to be used with the results of [build].
@@ -56,7 +56,7 @@ abstract class GoRouteData {
   /// Subclasses must override one of [build], [buildPageWithState] or
   /// [redirect].
   ///
-  /// Corresponds to [BaseRoute.pageBuilder].
+  /// Corresponds to [GoRoute.pageBuilder] and [ShellRoute.pageBuilder].
   ///
   /// By default, returns a [Page] instance that is ignored, causing a default
   /// [Page] implementation to be used with the results of [build].
@@ -73,7 +73,7 @@ abstract class GoRouteData {
   /// Subclasses must override one of [build], [buildPageWithState], or
   /// [redirect].
   ///
-  /// Corresponds to [BaseRoute.redirect].
+  /// Corresponds to [GoRoute.redirect].
   FutureOr<String?> redirect() => null;
 
   /// A helper function used by generated code.
@@ -179,7 +179,7 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
 
   /// The path that corresponds to this route.
   ///
-  /// See [BaseRoute.path].
+  /// See [GoRoute.path].
   final String path;
 }
 
