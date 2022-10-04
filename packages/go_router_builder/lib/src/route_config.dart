@@ -39,6 +39,8 @@ class RouteConfig {
     this._path,
     this._routeDataClass,
     this._parent,
+    this._key,
+    this._isShellRoute,
   );
 
   /// Creates a new [RouteConfig] represented the annotation data in [reader].
@@ -78,6 +80,8 @@ class RouteConfig {
 
     final InterfaceType type = reader.objectValue.type! as InterfaceType;
     final DartType typeParamType = type.typeArguments.single;
+    final bool isShellRoute = reader.read('isShellRoute').boolValue;
+    final ConstantReader keyReader = reader.read('key');
 
     if (typeParamType is! InterfaceType) {
       throw InvalidGenerationSourceError(
@@ -90,7 +94,13 @@ class RouteConfig {
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
     final InterfaceElement classElement = typeParamType.element2;
 
-    final RouteConfig value = RouteConfig._(path, classElement, parent);
+    final RouteConfig value = RouteConfig._(
+      path,
+      classElement,
+      parent,
+      _decodeKey(keyReader),
+      isShellRoute,
+    );
 
     value._children.addAll(reader.read('routes').listValue.map((DartObject e) =>
         RouteConfig._fromAnnotation(ConstantReader(e), element, value)));
@@ -102,6 +112,15 @@ class RouteConfig {
   final String _path;
   final InterfaceElement _routeDataClass;
   final RouteConfig? _parent;
+  final String? _key;
+  final bool _isShellRoute;
+
+  static String? _decodeKey(ConstantReader keyReader) {
+    if (keyReader.isNull) {
+      return null;
+    }
+    return "const GlobalObjectKey('${keyReader.stringValue}')";
+  }
 
   /// Generates all of the members that correspond to `this`.
   InfoIterable generateMembers() => InfoIterable._(
@@ -158,7 +177,7 @@ extension $_extensionName on $_className {
 
   /// Returns the `GoRoute` code for the annotated class.
   String _rootDefinition() => '''
-GoRoute get $_routeGetterName => ${_routeDefinition()};
+RouteBase get $_routeGetterName => ${_routeDefinition()};
 ''';
 
   /// Returns code representing the constant maps that contain the `enum` to
@@ -251,11 +270,14 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
         : '''
 routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
 ''';
+    final String key = _key == null || _key!.isEmpty ? '' : 'key: $_key,';
 
     return '''
 GoRouteData.\$route(
       path: ${escapeDartString(_path)},
       factory: $_extensionName._fromState,
+      shouldShell: $_isShellRoute,
+      $key
       $routesBit
 )
 ''';

@@ -9,10 +9,10 @@ import 'package:go_router/go_router.dart';
 class _GoRouteDataBuild extends GoRouteData {
   const _GoRouteDataBuild();
   @override
-  Widget build(BuildContext context) => const SizedBox(key: Key('build'));
+  Widget build(BuildContext context, _) => const SizedBox(key: Key('build'));
 }
 
-final GoRoute _goRouteDataBuild = GoRouteData.$route(
+final RouteBase _goRouteDataBuild = GoRouteData.$route(
   path: '/build',
   factory: (GoRouterState state) => const _GoRouteDataBuild(),
 );
@@ -25,7 +25,7 @@ class _GoRouteDataBuildPage extends GoRouteData {
       );
 }
 
-final GoRoute _goRouteDataBuildPage = GoRouteData.$route(
+final RouteBase _goRouteDataBuildPage = GoRouteData.$route(
   path: '/build-page',
   factory: (GoRouterState state) => const _GoRouteDataBuildPage(),
 );
@@ -33,18 +33,18 @@ final GoRoute _goRouteDataBuildPage = GoRouteData.$route(
 class _GoRouteDataBuildPageWithState extends GoRouteData {
   const _GoRouteDataBuildPageWithState();
   @override
-  Page<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+  Page<void> buildPageWithState(BuildContext context, GoRouterState state, _) =>
       const MaterialPage<void>(
         child: SizedBox(key: Key('buildPageWithState')),
       );
 }
 
-final GoRoute _goRouteDataBuildPageWithState = GoRouteData.$route(
+final RouteBase _goRouteDataBuildPageWithState = GoRouteData.$route(
   path: '/build-page-with-state',
   factory: (GoRouterState state) => const _GoRouteDataBuildPageWithState(),
 );
 
-final List<GoRoute> _routes = <GoRoute>[
+final List<RouteBase> _routes = <RouteBase>[
   _goRouteDataBuild,
   _goRouteDataBuildPage,
   _goRouteDataBuildPageWithState,

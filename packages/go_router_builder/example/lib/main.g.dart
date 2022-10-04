@@ -8,26 +8,38 @@ part of 'main.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<GoRoute> get $appRoutes => [
+List<RouteBase> get $appRoutes => [
       $homeRoute,
       $loginRoute,
     ];
 
-GoRoute get $homeRoute => GoRouteData.$route(
+RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
       factory: $HomeRouteExtension._fromState,
+      shouldShell: false,
       routes: [
         GoRouteData.$route(
-          path: 'family/:fid',
+          path: '',
           factory: $FamilyRouteExtension._fromState,
+          shouldShell: true,
+          key: const GlobalObjectKey('shell_key'),
           routes: [
             GoRouteData.$route(
-              path: 'person/:pid',
-              factory: $PersonRouteExtension._fromState,
+              path: 'family/:fid',
+              factory: $FamilyIdRouteExtension._fromState,
+              shouldShell: false,
               routes: [
                 GoRouteData.$route(
-                  path: 'details/:details',
-                  factory: $PersonDetailsRouteExtension._fromState,
+                  path: 'person/:pid',
+                  factory: $PersonRouteExtension._fromState,
+                  shouldShell: false,
+                  routes: [
+                    GoRouteData.$route(
+                      path: 'details/:details',
+                      factory: $PersonDetailsRouteExtension._fromState,
+                      shouldShell: false,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -49,7 +61,19 @@ extension $HomeRouteExtension on HomeRoute {
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
-  static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
+  static FamilyRoute _fromState(GoRouterState state) => const FamilyRoute();
+
+  String get location => GoRouteData.$location(
+        '/',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
+}
+
+extension $FamilyIdRouteExtension on FamilyIdRoute {
+  static FamilyIdRoute _fromState(GoRouterState state) => FamilyIdRoute(
         state.params['fid']!,
       );
 
@@ -106,9 +130,10 @@ extension<T extends Enum> on Map<T, String> {
       entries.singleWhere((element) => element.value == value).key;
 }
 
-GoRoute get $loginRoute => GoRouteData.$route(
+RouteBase get $loginRoute => GoRouteData.$route(
       path: '/login',
       factory: $LoginRouteExtension._fromState,
+      shouldShell: false,
     );
 
 extension $LoginRouteExtension on LoginRoute {

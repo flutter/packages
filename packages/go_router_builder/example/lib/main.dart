@@ -21,20 +21,24 @@ class App extends StatelessWidget {
   static const String title = 'GoRouter Example: Named Routes';
 
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider<LoginInfo>.value(
-        value: loginInfo,
-        child: MaterialApp.router(
-          routeInformationParser: _router.routeInformationParser,
-          routerDelegate: _router.routerDelegate,
-          routeInformationProvider: _router.routeInformationProvider,
-          title: title,
-          debugShowCheckedModeBanner: false,
-        ),
-      );
+  Widget build(BuildContext context) {
+    final d = $appRoutes;
+    return ChangeNotifierProvider<LoginInfo>.value(
+      value: loginInfo,
+      child: MaterialApp.router(
+        routeInformationParser: _router.routeInformationParser,
+        routerDelegate: _router.routerDelegate,
+        routeInformationProvider: _router.routeInformationProvider,
+        title: title,
+        debugShowCheckedModeBanner: false,
+      ),
+    );
+  }
 
   late final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,
     routes: $appRoutes,
+    navigatorKey: key,
 
     // redirect to the login page if the user is not logged in
     redirect: (BuildContext context, GoRouterState state) {
@@ -63,27 +67,49 @@ class App extends StatelessWidget {
   );
 }
 
+const key = GlobalObjectKey<NavigatorState>('navigator_key');
+const shellkey = GlobalObjectKey<NavigatorState>('shell_key');
+
 @TypedGoRoute<HomeRoute>(
   path: '/',
-  routes: <TypedGoRoute<GoRouteData>>[
+  routes: [
     TypedGoRoute<FamilyRoute>(
-      path: 'family/:fid',
+      isShellRoute: true,
+      key: 'shell_key',
       routes: <TypedGoRoute<GoRouteData>>[
-        TypedGoRoute<PersonRoute>(
-          path: 'person/:pid',
-          routes: <TypedGoRoute<GoRouteData>>[
-            TypedGoRoute<PersonDetailsRoute>(path: 'details/:details'),
+        TypedGoRoute<FamilyIdRoute>(
+          path: 'family/:fid',
+          routes: [
+            TypedGoRoute<PersonRoute>(
+              path: 'person/:pid',
+              routes: <TypedGoRoute<GoRouteData>>[
+                TypedGoRoute<PersonDetailsRoute>(path: 'details/:details'),
+              ],
+            ),
           ],
         ),
       ],
-    )
+    ),
   ],
 )
 class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => const HomeScreen();
+  Widget build(BuildContext context, _) => const HomeScreen();
+}
+
+class FamilyRoute extends GoRouteData {
+  const FamilyRoute();
+
+  @override
+  Widget build(BuildContext context, _) {
+    print(_);
+    return FamilyScreen(
+      nKey: shellkey,
+      child: _!,
+    );
+  }
 }
 
 @TypedGoRoute<LoginRoute>(
@@ -95,16 +121,18 @@ class LoginRoute extends GoRouteData {
   final String? fromPage;
 
   @override
-  Widget build(BuildContext context) => LoginScreen(from: fromPage);
+  Widget build(BuildContext context, _) => LoginScreen(from: fromPage);
 }
 
-class FamilyRoute extends GoRouteData {
-  const FamilyRoute(this.fid);
+class FamilyIdRoute extends GoRouteData {
+  const FamilyIdRoute(this.fid);
 
   final String fid;
 
   @override
-  Widget build(BuildContext context) => FamilyScreen(family: familyById(fid));
+  Widget build(BuildContext context, _) => FamilyIdScreen(
+        family: familyById(fid),
+      );
 }
 
 class PersonRoute extends GoRouteData {
@@ -114,7 +142,7 @@ class PersonRoute extends GoRouteData {
   final int pid;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, _) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
     return PersonScreen(family: family, person: person);
@@ -130,7 +158,7 @@ class PersonDetailsRoute extends GoRouteData {
   final int? $extra;
 
   @override
-  Page<void> buildPageWithState(BuildContext context, GoRouterState state) {
+  Page<void> buildPageWithState(BuildContext context, GoRouterState state, _) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
 
@@ -175,7 +203,7 @@ class HomeScreen extends StatelessWidget {
           for (final Family f in familyData)
             ListTile(
               title: Text(f.name),
-              onTap: () => FamilyRoute(f.id).go(context),
+              onTap: () => FamilyIdRoute(f.id).go(context),
             )
         ],
       ),
@@ -184,7 +212,23 @@ class HomeScreen extends StatelessWidget {
 }
 
 class FamilyScreen extends StatelessWidget {
-  const FamilyScreen({required this.family, super.key});
+  const FamilyScreen({
+    required this.nKey,
+    required this.child,
+    super.key,
+  });
+  final GlobalKey<NavigatorState> nKey;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: child,
+      );
+}
+
+class FamilyIdScreen extends StatelessWidget {
+  const FamilyIdScreen({required this.family, super.key});
   final Family family;
 
   @override
