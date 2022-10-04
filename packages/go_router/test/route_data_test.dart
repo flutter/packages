@@ -12,7 +12,7 @@ class _GoRouteDataBuild extends GoRouteData {
   Widget build(BuildContext context) => const SizedBox(key: Key('build'));
 }
 
-final RouteBase _goRouteDataBuild = GoRouteData.$route(
+final GoRoute _goRouteDataBuild = GoRouteData.$route(
   path: '/build',
   factory: (GoRouterState state) => const _GoRouteDataBuild(),
 );
@@ -25,7 +25,7 @@ class _GoRouteDataBuildPage extends GoRouteData {
       );
 }
 
-final RouteBase _goRouteDataBuildPage = GoRouteData.$route(
+final GoRoute _goRouteDataBuildPage = GoRouteData.$route(
   path: '/build-page',
   factory: (GoRouterState state) => const _GoRouteDataBuildPage(),
 );
@@ -39,16 +39,34 @@ class _GoRouteDataBuildPageWithState extends GoRouteData {
       );
 }
 
-final RouteBase _goRouteDataBuildPageWithState = GoRouteData.$route(
+final GoRoute _goRouteDataBuildPageWithState = GoRouteData.$route(
   path: '/build-page-with-state',
   factory: (GoRouterState state) => const _GoRouteDataBuildPageWithState(),
 );
 
-final List<RouteBase> _routes = <RouteBase>[
+final List<RouteBase> _routes = <GoRoute>[
   _goRouteDataBuild,
   _goRouteDataBuildPage,
   _goRouteDataBuildPageWithState,
 ];
+
+class _ShellRouteDataBuild extends ShellRouteData {
+  const _ShellRouteDataBuild();
+  @override
+  Widget build(BuildContext context, Widget child) => SizedBox(
+        key: const Key('build'),
+        child: child,
+      );
+}
+
+final ShellRoute _shellRouteDataBuild = ShellRouteData.$route(
+  factory: (_) => const _ShellRouteDataBuild(),
+  routes: <RouteBase>[
+    _goRouteDataBuild,
+    _goRouteDataBuildPage,
+    _goRouteDataBuildPageWithState,
+  ],
+);
 
 void main() {
   testWidgets(
@@ -102,6 +120,22 @@ void main() {
       expect(find.byKey(const Key('build')), findsNothing);
       expect(find.byKey(const Key('buildPage')), findsNothing);
       expect(find.byKey(const Key('buildPageWithState')), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'It should build the wrapper page and another built page, so N = 2',
+    (WidgetTester tester) async {
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/build',
+        routes: <ShellRoute>[_shellRouteDataBuild],
+      );
+      await tester.pumpWidget(MaterialApp.router(
+        routeInformationProvider: goRouter.routeInformationProvider,
+        routeInformationParser: goRouter.routeInformationParser,
+        routerDelegate: goRouter.routerDelegate,
+      ));
+      expect(find.byKey(const Key('build')), findsNWidgets(2));
     },
   );
 }
