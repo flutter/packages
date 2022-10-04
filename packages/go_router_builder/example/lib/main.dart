@@ -65,7 +65,6 @@ class App extends StatelessWidget {
 }
 
 const key = GlobalObjectKey<NavigatorState>('navigator_key');
-const shellkey = GlobalObjectKey<NavigatorState>('shell_key');
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
@@ -92,18 +91,15 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context, _) => const HomeScreen();
+  Widget build(BuildContext context) => const HomeScreen();
 }
 
-class FamilyRoute extends GoRouteData {
+class FamilyRoute extends ShellRouteData {
   const FamilyRoute();
 
   @override
   Widget build(BuildContext context, child) {
-    return FamilyScreen(
-      nKey: shellkey,
-      child: child!,
-    );
+    return FamilyScreen(child: child!);
   }
 }
 
@@ -116,7 +112,7 @@ class LoginRoute extends GoRouteData {
   final String? fromPage;
 
   @override
-  Widget build(BuildContext context, _) => LoginScreen(from: fromPage);
+  Widget build(BuildContext context) => LoginScreen(from: fromPage);
 }
 
 class FamilyIdRoute extends GoRouteData {
@@ -125,7 +121,7 @@ class FamilyIdRoute extends GoRouteData {
   final String fid;
 
   @override
-  Widget build(BuildContext context, _) => FamilyIdScreen(
+  Widget build(BuildContext context) => FamilyIdScreen(
         family: familyById(fid),
       );
 }
@@ -137,7 +133,7 @@ class PersonRoute extends GoRouteData {
   final int pid;
 
   @override
-  Widget build(BuildContext context, _) {
+  Widget build(BuildContext context) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
     return PersonScreen(family: family, person: person);
@@ -153,7 +149,7 @@ class PersonDetailsRoute extends GoRouteData {
   final int? $extra;
 
   @override
-  Page<void> buildPageWithState(BuildContext context, GoRouterState state, _) {
+  Page<void> buildPageWithState(BuildContext context, GoRouterState state) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
 
@@ -208,11 +204,9 @@ class HomeScreen extends StatelessWidget {
 
 class FamilyScreen extends StatelessWidget {
   const FamilyScreen({
-    required this.nKey,
     required this.child,
     super.key,
   });
-  final GlobalKey<NavigatorState> nKey;
   final Widget child;
 
   @override

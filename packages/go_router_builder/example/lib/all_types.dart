@@ -30,7 +30,7 @@ class AllTypesBaseRoute extends GoRouteData {
   const AllTypesBaseRoute();
 
   @override
-  Widget build(BuildContext context, _) => const BasePage<void>(
+  Widget build(BuildContext context) => const BasePage<void>(
         dataTitle: 'Root',
         param: null,
       );
@@ -46,7 +46,7 @@ class BigIntRoute extends GoRouteData {
   final BigInt? bigIntField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<BigInt>(
+  Widget build(BuildContext context) => BasePage<BigInt>(
         dataTitle: 'BigIntRoute',
         param: requiredBigIntField,
         queryParam: bigIntField,
@@ -69,7 +69,7 @@ class BoolRoute extends GoRouteData {
   final bool? boolField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<bool>(
+  Widget build(BuildContext context) => BasePage<bool>(
         dataTitle: 'BoolRoute',
         param: requiredBoolField,
         queryParam: boolField,
@@ -92,7 +92,7 @@ class DateTimeRoute extends GoRouteData {
   final DateTime? dateTimeField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<DateTime>(
+  Widget build(BuildContext context) => BasePage<DateTime>(
         dataTitle: 'DateTimeRoute',
         param: requiredDateTimeField,
         queryParam: dateTimeField,
@@ -115,7 +115,7 @@ class DoubleRoute extends GoRouteData {
   final double? doubleField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<double>(
+  Widget build(BuildContext context) => BasePage<double>(
         dataTitle: 'DoubleRoute',
         param: requiredDoubleField,
         queryParam: doubleField,
@@ -138,7 +138,7 @@ class IntRoute extends GoRouteData {
   final int? intField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<int>(
+  Widget build(BuildContext context) => BasePage<int>(
         dataTitle: 'IntRoute',
         param: requiredIntField,
         queryParam: intField,
@@ -161,7 +161,7 @@ class NumRoute extends GoRouteData {
   final num? numField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<num>(
+  Widget build(BuildContext context) => BasePage<num>(
         dataTitle: 'NumRoute',
         param: requiredNumField,
         queryParam: numField,
@@ -184,7 +184,7 @@ class EnumRoute extends GoRouteData {
   final PersonDetails? enumField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<PersonDetails>(
+  Widget build(BuildContext context) => BasePage<PersonDetails>(
         dataTitle: 'EnumRoute',
         param: requiredEnumField,
         queryParam: enumField,
@@ -207,7 +207,7 @@ class EnhancedEnumRoute extends GoRouteData {
   final SportDetails? enumField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<SportDetails>(
+  Widget build(BuildContext context) => BasePage<SportDetails>(
         dataTitle: 'EnhancedEnumRoute',
         param: requiredEnumField,
         queryParam: enumField,
@@ -230,7 +230,7 @@ class StringRoute extends GoRouteData {
   final String? stringField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<String>(
+  Widget build(BuildContext context) => BasePage<String>(
         dataTitle: 'StringRoute',
         param: requiredStringField,
         queryParam: stringField,
@@ -253,7 +253,7 @@ class UriRoute extends GoRouteData {
   final Uri? uriField;
 
   @override
-  Widget build(BuildContext context, _) => BasePage<Uri>(
+  Widget build(BuildContext context) => BasePage<Uri>(
         dataTitle: 'UriRoute',
         param: requiredUriField,
         queryParam: uriField,

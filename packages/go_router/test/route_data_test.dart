@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 class _GoRouteDataBuild extends GoRouteData {
   const _GoRouteDataBuild();
   @override
-  Widget build(BuildContext context, _) => const SizedBox(key: Key('build'));
+  Widget build(BuildContext context) => const SizedBox(key: Key('build'));
 }
 
 final RouteBase _goRouteDataBuild = GoRouteData.$route(
@@ -33,7 +33,7 @@ final RouteBase _goRouteDataBuildPage = GoRouteData.$route(
 class _GoRouteDataBuildPageWithState extends GoRouteData {
   const _GoRouteDataBuildPageWithState();
   @override
-  Page<void> buildPageWithState(BuildContext context, GoRouterState state, _) =>
+  Page<void> buildPageWithState(BuildContext context, GoRouterState state) =>
       const MaterialPage<void>(
         child: SizedBox(key: Key('buildPageWithState')),
       );

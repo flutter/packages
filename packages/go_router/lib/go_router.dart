@@ -12,6 +12,7 @@ export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
 export 'src/pages/custom_transition_page.dart';
 export 'src/platform.dart' show UrlPathStrategy;
-export 'src/route_data.dart' show GoRouteData, TypedGoRoute, TypedShellRoute;
+export 'src/route_data.dart'
+    show GoRouteData, ShellRouteData, TypedGoRoute, TypedShellRoute;
 export 'src/router.dart';
 export 'src/typedefs.dart' show GoRouterPageBuilder, GoRouterRedirect;

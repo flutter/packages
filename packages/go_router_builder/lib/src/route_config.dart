@@ -274,12 +274,19 @@ RouteBase get $_routeGetterName => ${_routeDefinition()};
 routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
 ''';
     final String key = _key == null || _key!.isEmpty ? '' : 'key: $_key,';
-
+    if (_isShellRoute) {
+      return '''
+  ShellRouteData.\$route(
+    factory: $_extensionName._fromState,
+    $key
+    $routesBit
+  )
+''';
+    }
     return '''
 GoRouteData.\$route(
       path: ${escapeDartString(_path)},
       factory: $_extensionName._fromState,
-      isShell: $_isShellRoute,
       $key
       $routesBit
 )
