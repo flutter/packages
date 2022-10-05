@@ -1,6 +1,7 @@
 ## 1.1.0
 
 * Adds support for `ShellRoute` [#112854](https://github.com/flutter/flutter/issues/112854)
+* Refactors inner structure to support keys
 
 ## 1.0.14
 
