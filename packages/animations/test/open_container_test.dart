@@ -255,7 +255,6 @@ void main() {
       expect(dataTransitionStart.radius, dataOpen.radius);
       expect(dataTransitionStart.rect, dataOpen.rect);
       expect(_getOpacity(tester, 'Open'), 1.0);
-      await tester.pump(const Duration(microseconds: 1)); // 300 * 1/5 = 60
 
       // Jump to start of fade out: 1/5 of 300.
       await tester.pump(const Duration(milliseconds: 60)); // 300 * 1/5 = 60
