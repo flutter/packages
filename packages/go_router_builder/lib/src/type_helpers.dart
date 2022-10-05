@@ -266,14 +266,16 @@ class _TypeHelperIterable extends _TypeHelper {
       final DartType iterableType =
           (parameterElement.type as ParameterizedType).typeArguments.first;
 
-      String entriesTypeMapper = '(e) => e';
+      // get a type converter for values in iterable
+      String entriesTypeDecoder = '(e) => e';
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType) &&
             helper is _TypeHelperWithHelper) {
-          entriesTypeMapper = helper.helperName(iterableType);
+          entriesTypeDecoder = helper.helperName(iterableType);
         }
       }
 
+      // get correct type for iterable
       String iterableCaster = '';
       if (const TypeChecker.fromRuntime(List)
           .isAssignableFromType(parameterElement.type)) {
@@ -286,14 +288,32 @@ class _TypeHelperIterable extends _TypeHelper {
       return '''
 state.queryParametersAll[
         ${escapeDartString(parameterElement.name.kebab)}]
-        ?.map($entriesTypeMapper)$iterableCaster''';
+        ?.map($entriesTypeDecoder)$iterableCaster''';
     }
     return '''
 state.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
   }
 
   @override
-  String _encode(String fieldName, DartType type) => fieldName;
+  String _encode(String fieldName, DartType type) {
+    if (type is ParameterizedType) {
+      final DartType iterableType = type.typeArguments.first;
+
+      // get a type encoder for values in iterable
+      String entriesTypeEncoder = 'e.toString()';
+      for (final _TypeHelper helper in _helpers) {
+        if (helper._matchesType(iterableType) &&
+            helper is _TypeHelperWithHelper) {
+          entriesTypeEncoder = helper._encode('e', iterableType);
+        }
+      }
+      return '''
+$fieldName?.map((e) => $entriesTypeEncoder).toList()''';
+    }
+
+    return '''
+$fieldName?.map((e) => e.toString()).toList()''';
+  }
 
   @override
   bool _matchesType(DartType type) =>

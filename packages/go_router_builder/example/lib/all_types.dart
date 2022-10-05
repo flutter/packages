@@ -332,13 +332,13 @@ class IterableRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context) => BasePage<Iterable<int>>(
-        dataTitle: 'UriRoute',
+        dataTitle: 'IterableRoute',
         param: const <int>[],
         queryParam: intIterableField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-        title: const Text('UriRoute'),
+        title: const Text('IterableRoute'),
         onTap: () => go(context),
         selected: GoRouter.of(context).location == location,
       );
@@ -405,6 +405,23 @@ class BasePage<T> extends StatelessWidget {
             UriRoute(
               requiredUriField: Uri.parse('https://dart.dev'),
               uriField: Uri.parse('https://dart.dev'),
+            ).drawerTile(context),
+            IterableRoute(
+              intIterableField: [1, 2, 3],
+              doubleIterableField: [.3, .4, .5],
+              stringIterableField: ['quo usque tandem'],
+              boolIterableField: [true, false, false],
+              enumIterableField: [SportDetails.football, SportDetails.hockey],
+              intListField: [1, 2, 3],
+              doubleListField: [.3, .4, .5],
+              stringListField: ['quo usque tandem'],
+              boolListField: [true, false, false],
+              enumListField: [SportDetails.football, SportDetails.hockey],
+              intSetField: {1, 2, 3},
+              doubleSetField: {.3, .4, .5},
+              stringSetField: {'quo usque tandem'},
+              boolSetField: {true, false},
+              enumSetField: {SportDetails.football, SportDetails.hockey},
             ).drawerTile(context),
           ],
         )),

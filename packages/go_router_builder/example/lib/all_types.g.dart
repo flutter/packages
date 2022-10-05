@@ -396,25 +396,48 @@ extension $IterableRouteExtension on IterableRoute {
   String get location => GoRouteData.$location(
         '/iterable-route',
         queryParams: {
-          if (intIterableField != null) 'int-iterable-field': intIterableField,
+          if (intIterableField != null)
+            'int-iterable-field':
+                intIterableField?.map((e) => e.toString()).toList(),
           if (doubleIterableField != null)
-            'double-iterable-field': doubleIterableField,
+            'double-iterable-field':
+                doubleIterableField?.map((e) => e.toString()).toList(),
           if (stringIterableField != null)
-            'string-iterable-field': stringIterableField,
+            'string-iterable-field':
+                stringIterableField?.map((e) => e.toString()).toList(),
           if (boolIterableField != null)
-            'bool-iterable-field': boolIterableField,
+            'bool-iterable-field':
+                boolIterableField?.map((e) => e.toString()).toList(),
           if (enumIterableField != null)
-            'enum-iterable-field': enumIterableField,
-          if (intListField != null) 'int-list-field': intListField,
-          if (doubleListField != null) 'double-list-field': doubleListField,
-          if (stringListField != null) 'string-list-field': stringListField,
-          if (boolListField != null) 'bool-list-field': boolListField,
-          if (enumListField != null) 'enum-list-field': enumListField,
-          if (intSetField != null) 'int-set-field': intSetField,
-          if (doubleSetField != null) 'double-set-field': doubleSetField,
-          if (stringSetField != null) 'string-set-field': stringSetField,
-          if (boolSetField != null) 'bool-set-field': boolSetField,
-          if (enumSetField != null) 'enum-set-field': enumSetField,
+            'enum-iterable-field': enumIterableField
+                ?.map((e) => _$SportDetailsEnumMap[e]!)
+                .toList(),
+          if (intListField != null)
+            'int-list-field': intListField?.map((e) => e.toString()).toList(),
+          if (doubleListField != null)
+            'double-list-field':
+                doubleListField?.map((e) => e.toString()).toList(),
+          if (stringListField != null)
+            'string-list-field':
+                stringListField?.map((e) => e.toString()).toList(),
+          if (boolListField != null)
+            'bool-list-field': boolListField?.map((e) => e.toString()).toList(),
+          if (enumListField != null)
+            'enum-list-field':
+                enumListField?.map((e) => _$SportDetailsEnumMap[e]!).toList(),
+          if (intSetField != null)
+            'int-set-field': intSetField?.map((e) => e.toString()).toList(),
+          if (doubleSetField != null)
+            'double-set-field':
+                doubleSetField?.map((e) => e.toString()).toList(),
+          if (stringSetField != null)
+            'string-set-field':
+                stringSetField?.map((e) => e.toString()).toList(),
+          if (boolSetField != null)
+            'bool-set-field': boolSetField?.map((e) => e.toString()).toList(),
+          if (enumSetField != null)
+            'enum-set-field':
+                enumSetField?.map((e) => _$SportDetailsEnumMap[e]!).toList(),
         },
       );
 
