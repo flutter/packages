@@ -185,6 +185,7 @@ class SvgPathStringSource {
   /// Reads a code unit and advances the index.
   ///
   /// Returns -1 if at end of string.
+  @pragma('vm:prefer-inline')
   int _readCodeUnit() {
     if (_idx >= _length) {
       return -1;
