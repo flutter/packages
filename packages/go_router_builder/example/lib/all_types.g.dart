@@ -404,7 +404,7 @@ extension $IterableRouteExtension on IterableRoute {
                 doubleIterableField?.map((e) => e.toString()).toList(),
           if (stringIterableField != null)
             'string-iterable-field':
-                stringIterableField?.map((e) => e.toString()).toList(),
+                stringIterableField?.map((e) => e).toList(),
           if (boolIterableField != null)
             'bool-iterable-field':
                 boolIterableField?.map((e) => e.toString()).toList(),
@@ -418,8 +418,7 @@ extension $IterableRouteExtension on IterableRoute {
             'double-list-field':
                 doubleListField?.map((e) => e.toString()).toList(),
           if (stringListField != null)
-            'string-list-field':
-                stringListField?.map((e) => e.toString()).toList(),
+            'string-list-field': stringListField?.map((e) => e).toList(),
           if (boolListField != null)
             'bool-list-field': boolListField?.map((e) => e.toString()).toList(),
           if (enumListField != null)
@@ -431,8 +430,7 @@ extension $IterableRouteExtension on IterableRoute {
             'double-set-field':
                 doubleSetField?.map((e) => e.toString()).toList(),
           if (stringSetField != null)
-            'string-set-field':
-                stringSetField?.map((e) => e.toString()).toList(),
+            'string-set-field': stringSetField?.map((e) => e).toList(),
           if (boolSetField != null)
             'bool-set-field': boolSetField?.map((e) => e.toString()).toList(),
           if (enumSetField != null)

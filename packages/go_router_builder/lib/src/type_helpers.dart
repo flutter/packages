@@ -300,15 +300,15 @@ state.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
       final DartType iterableType = type.typeArguments.first;
 
       // get a type encoder for values in iterable
-      String entriesTypeEncoder = 'e.toString()';
+      String entriesTypeEncoder = '';
       for (final _TypeHelper helper in _helpers) {
-        if (helper._matchesType(iterableType) &&
-            helper is _TypeHelperWithHelper) {
-          entriesTypeEncoder = helper._encode('e', iterableType);
+        if (helper._matchesType(iterableType)) {
+          entriesTypeEncoder = '''
+?.map((e) => ${helper._encode('e', iterableType)}).toList()''';
         }
       }
       return '''
-$fieldName?.map((e) => $entriesTypeEncoder).toList()''';
+$fieldName$entriesTypeEncoder''';
     }
 
     return '''
