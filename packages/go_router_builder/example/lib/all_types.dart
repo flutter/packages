@@ -331,10 +331,8 @@ class IterableRoute extends GoRouteData {
   final Set<SportDetails>? enumSetField;
 
   @override
-  Widget build(BuildContext context) => BasePage<Iterable<int>>(
+  Widget build(BuildContext context) => BasePage<String>(
         dataTitle: 'IterableRoute',
-        param: const <int>[],
-        queryParam: intIterableField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -347,14 +345,14 @@ class IterableRoute extends GoRouteData {
 class BasePage<T> extends StatelessWidget {
   const BasePage({
     required this.dataTitle,
-    required this.param,
+    this.param,
     this.queryParam,
     this.queryParamWithDefaultValue,
     super.key,
   });
 
   final String dataTitle;
-  final T param;
+  final T? param;
   final T? queryParam;
   final T? queryParamWithDefaultValue;
 
