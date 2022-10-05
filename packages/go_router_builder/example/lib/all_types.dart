@@ -34,7 +34,6 @@ class AllTypesBaseRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) =>
       const BasePage<void>(
         dataTitle: 'Root',
-        param: null,
       );
 }
 
@@ -331,7 +330,7 @@ class IterableRoute extends GoRouteData {
   final Set<SportDetails>? enumSetField;
 
   @override
-  Widget build(BuildContext context) => BasePage<String>(
+  Widget build(BuildContext context) => const BasePage<String>(
         dataTitle: 'IterableRoute',
       );
 
@@ -405,21 +404,21 @@ class BasePage<T> extends StatelessWidget {
               uriField: Uri.parse('https://dart.dev'),
             ).drawerTile(context),
             IterableRoute(
-              intIterableField: [1, 2, 3],
-              doubleIterableField: [.3, .4, .5],
-              stringIterableField: ['quo usque tandem'],
-              boolIterableField: [true, false, false],
-              enumIterableField: [SportDetails.football, SportDetails.hockey],
-              intListField: [1, 2, 3],
-              doubleListField: [.3, .4, .5],
-              stringListField: ['quo usque tandem'],
-              boolListField: [true, false, false],
-              enumListField: [SportDetails.football, SportDetails.hockey],
-              intSetField: {1, 2, 3},
-              doubleSetField: {.3, .4, .5},
-              stringSetField: {'quo usque tandem'},
-              boolSetField: {true, false},
-              enumSetField: {SportDetails.football, SportDetails.hockey},
+              intIterableField: <int>[1, 2, 3],
+              doubleIterableField: <double>[.3, .4, .5],
+              stringIterableField: <String>['quo usque tandem'],
+              boolIterableField: <bool>[true, false, false],
+              enumIterableField: <SportDetails>[SportDetails.football, SportDetails.hockey],
+              intListField: <int>[1, 2, 3],
+              doubleListField: <double>[.3, .4, .5],
+              stringListField: <String>['quo usque tandem'],
+              boolListField: <bool>[true, false, false],
+              enumListField: <SportDetails>[SportDetails.football, SportDetails.hockey],
+              intSetField: <int>{1, 2, 3},
+              doubleSetField: <double>{.3, .4, .5},
+              stringSetField: <String>{'quo usque tandem'},
+              boolSetField: <bool>{true, false},
+              enumSetField: <SportDetails>{SportDetails.football, SportDetails.hockey},
             ).drawerTile(context),
           ],
         )),
