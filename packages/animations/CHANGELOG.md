@@ -1,3 +1,6 @@
+## 2.0.7
+* Updates screenshots to use webp compressed animations
+
 ## 2.0.6
 * Adds screenshots to pubspec.yaml
 
