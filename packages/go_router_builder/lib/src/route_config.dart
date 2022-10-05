@@ -85,7 +85,6 @@ class RouteConfig {
     }
 
     final DartType typeParamType = type.typeArguments.single;
-    final ConstantReader keyReader = reader.read('key');
     if (typeParamType is! InterfaceType) {
       throw InvalidGenerationSourceError(
         'The type parameter on one of the @TypedGoRoute declarations could not '
@@ -101,7 +100,7 @@ class RouteConfig {
       path ?? '',
       classElement,
       parent,
-      _decodeKey(keyReader),
+      _decodeKey(classElement),
       isShellRoute,
     );
 
@@ -110,7 +109,6 @@ class RouteConfig {
 
     return value;
   }
-
   final List<RouteConfig> _children = <RouteConfig>[];
   final String _path;
   final InterfaceElement _routeDataClass;
@@ -118,11 +116,35 @@ class RouteConfig {
   final String? _key;
   final bool _isShellRoute;
 
-  static String? _decodeKey(ConstantReader keyReader) {
-    if (keyReader.isNull) {
+  static String? _decodeKey(InterfaceElement classElement) {
+    bool whereStatic(FieldElement element) => element.isStatic;
+    bool whereKeyName(FieldElement element) => element.name == r'$key';
+    final String? fieldDisplayName = classElement.fields
+        .where(whereStatic)
+        .where(whereKeyName)
+        .where((FieldElement element) {
+          final DartType type = element.type;
+          if (type is! ParameterizedType) {
+            return false;
+          }
+          final List<DartType> typeArguments = type.typeArguments;
+          if (typeArguments.length != 1) {
+            return false;
+          }
+          final DartType typeArgument = typeArguments.single;
+          if (typeArgument.getDisplayString(withNullability: false) ==
+              'NavigatorState') {
+            return true;
+          }
+          return false;
+        })
+        .map<String>((FieldElement e) => e.displayName)
+        .firstOrNull;
+
+    if (fieldDisplayName == null) {
       return null;
     }
-    return "const GlobalObjectKey('${keyReader.stringValue}')";
+    return '${classElement.name}.$fieldDisplayName';
   }
 
   /// Generates all of the members that correspond to `this`.

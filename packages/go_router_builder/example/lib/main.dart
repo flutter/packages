@@ -70,7 +70,6 @@ const key = GlobalObjectKey<NavigatorState>('navigator_key');
   path: '/',
   routes: [
     TypedShellRoute<FamilyRoute>(
-      key: 'shell_key',
       routes: <TypedGoRoute<GoRouteData>>[
         TypedGoRoute<FamilyIdRoute>(
           path: 'family/:fid',
@@ -96,6 +95,8 @@ class HomeRoute extends GoRouteData {
 
 class FamilyRoute extends ShellRouteData {
   const FamilyRoute();
+
+  static final $key = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context, child) {

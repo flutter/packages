@@ -19,7 +19,7 @@ RouteBase get $homeRoute => GoRouteData.$route(
       routes: [
         ShellRouteData.$route(
           factory: $FamilyRouteExtension._fromState,
-          key: const GlobalObjectKey('shell_key'),
+          key: FamilyRoute.$key,
           routes: [
             GoRouteData.$route(
               path: 'family/:fid',
