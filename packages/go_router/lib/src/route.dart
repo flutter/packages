@@ -440,7 +440,8 @@ class ShellRoute extends RouteBase {
         super._() {
     for (final RouteBase route in routes) {
       if (route is GoRoute) {
-        assert(route.parentNavigatorKey == null);
+        assert(route.parentNavigatorKey == null ||
+            route.parentNavigatorKey == navigatorKey);
       }
     }
   }

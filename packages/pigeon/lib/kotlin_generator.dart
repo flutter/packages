@@ -7,6 +7,23 @@ import 'functional.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show TaskQueueType;
 
+/// Documentation open symbol.
+const String _docCommentPrefix = '/**';
+
+/// Documentation continuation symbol.
+const String _docCommentContinuation = ' *';
+
+/// Documentation close symbol.
+const String _docCommentSuffix = ' */';
+
+/// Documentation comment spec.
+const DocumentCommentSpecification _docCommentSpec =
+    DocumentCommentSpecification(
+  _docCommentPrefix,
+  closeCommentToken: _docCommentSuffix,
+  blockContinuationToken: _docCommentContinuation,
+);
+
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
   /// Creates a [KotlinOptions] object
@@ -114,8 +131,12 @@ void _writeHostApi(Indent indent, Api api, Root root) {
 
   final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
 
-  indent.writeln(
-      '/** Generated interface from Pigeon that represents a handler of messages from Flutter. */');
+  const List<String> generatedMessages = <String>[
+    ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
+  ];
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+      generatorComments: generatedMessages);
+
   indent.write('interface $apiName ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
@@ -134,6 +155,10 @@ void _writeHostApi(Indent indent, Api api, Root root) {
       final String returnType = method.returnType.isVoid
           ? ''
           : _nullsafeKotlinTypeForDartType(method.returnType);
+
+      addDocumentationComments(
+          indent, method.documentationComments, _docCommentSpec);
+
       if (method.isAsynchronous) {
         argSignature.add('callback: ($returnType) -> Unit');
         indent.writeln('fun ${method.name}(${argSignature.join(', ')})');
@@ -265,8 +290,12 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
   final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
 
-  indent.writeln(
-      '/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */');
+  const List<String> generatedMessages = <String>[
+    ' Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.'
+  ];
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+      generatorComments: generatedMessages);
+
   final String apiName = api.name;
   indent.writeln('@Suppress("UNCHECKED_CAST")');
   indent.write('class $apiName(private val binaryMessenger: BinaryMessenger) ');
@@ -290,6 +319,10 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
           ? ''
           : _nullsafeKotlinTypeForDartType(func.returnType);
       String sendArgument;
+
+      addDocumentationComments(
+          indent, func.documentationComments, _docCommentSpec);
+
       if (func.arguments.isEmpty) {
         indent.write('fun ${func.name}(callback: ($returnType) -> Unit) ');
         sendArgument = 'null';
@@ -443,6 +476,8 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
   }
 
   void writeEnum(Enum anEnum) {
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.scoped('{', '}', () {
       // We use explicit indexing here as use of the ordinal() method is
@@ -473,6 +508,8 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
 
   void writeDataClass(Class klass) {
     void writeField(NamedType field) {
+      addDocumentationComments(
+          indent, field.documentationComments, _docCommentSpec);
       indent.write(
           'val ${field.name}: ${_nullsafeKotlinTypeForDartType(field.type)}');
       final String defaultNil = field.type.isNullable ? ' = null' : '';
@@ -579,8 +616,13 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
       });
     }
 
-    indent.writeln(
-        '/** Generated class from Pigeon that represents data sent in messages. */');
+    const List<String> generatedMessages = <String>[
+      ' Generated class from Pigeon that represents data sent in messages.'
+    ];
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec,
+        generatorComments: generatedMessages);
+
     indent.write('data class ${klass.name} ');
     indent.scoped('(', '', () {
       for (final NamedType element in klass.fields) {
