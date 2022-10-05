@@ -60,6 +60,10 @@ GoRoute get $allTypesBaseRoute => GoRouteData.$route(
           path: 'uri-route/:requiredUriField',
           factory: $UriRouteExtension._fromState,
         ),
+        GoRouteData.$route(
+          path: 'iterable-route',
+          factory: $IterableRouteExtension._fromState,
+        ),
       ],
     );
 
@@ -346,6 +350,77 @@ extension $UriRouteExtension on UriRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: this);
+}
+
+extension $IterableRouteExtension on IterableRoute {
+  static IterableRoute _fromState(GoRouterState state) => IterableRoute(
+        intIterableField:
+            state.queryParametersAll['int-iterable-field']?.map(int.parse),
+        doubleIterableField: state.queryParametersAll['double-iterable-field']
+            ?.map(double.parse),
+        stringIterableField:
+            state.queryParametersAll['string-iterable-field']?.map((e) => e),
+        boolIterableField: state.queryParametersAll['bool-iterable-field']
+            ?.map(_$boolConverter),
+        enumIterableField: state.queryParametersAll['enum-iterable-field']
+            ?.map(_$SportDetailsEnumMap._$fromName),
+        intListField:
+            state.queryParametersAll['int-list-field']?.map(int.parse).toList(),
+        doubleListField: state.queryParametersAll['double-list-field']
+            ?.map(double.parse)
+            .toList(),
+        stringListField: state.queryParametersAll['string-list-field']
+            ?.map((e) => e)
+            .toList(),
+        boolListField: state.queryParametersAll['bool-list-field']
+            ?.map(_$boolConverter)
+            .toList(),
+        enumListField: state.queryParametersAll['enum-list-field']
+            ?.map(_$SportDetailsEnumMap._$fromName)
+            .toList(),
+        intSetField:
+            state.queryParametersAll['int-set-field']?.map(int.parse).toSet(),
+        doubleSetField: state.queryParametersAll['double-set-field']
+            ?.map(double.parse)
+            .toSet(),
+        stringSetField:
+            state.queryParametersAll['string-set-field']?.map((e) => e).toSet(),
+        boolSetField: state.queryParametersAll['bool-set-field']
+            ?.map(_$boolConverter)
+            .toSet(),
+        enumSetField: state.queryParametersAll['enum-set-field']
+            ?.map(_$SportDetailsEnumMap._$fromName)
+            .toSet(),
+      );
+
+  String get location => GoRouteData.$location(
+        '/iterable-route',
+        queryParams: {
+          if (intIterableField != null) 'int-iterable-field': intIterableField,
+          if (doubleIterableField != null)
+            'double-iterable-field': doubleIterableField,
+          if (stringIterableField != null)
+            'string-iterable-field': stringIterableField,
+          if (boolIterableField != null)
+            'bool-iterable-field': boolIterableField,
+          if (enumIterableField != null)
+            'enum-iterable-field': enumIterableField,
+          if (intListField != null) 'int-list-field': intListField,
+          if (doubleListField != null) 'double-list-field': doubleListField,
+          if (stringListField != null) 'string-list-field': stringListField,
+          if (boolListField != null) 'bool-list-field': boolListField,
+          if (enumListField != null) 'enum-list-field': enumListField,
+          if (intSetField != null) 'int-set-field': intSetField,
+          if (doubleSetField != null) 'double-set-field': doubleSetField,
+          if (stringSetField != null) 'string-set-field': stringSetField,
+          if (boolSetField != null) 'bool-set-field': boolSetField,
+          if (enumSetField != null) 'enum-set-field': enumSetField,
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
 }
 
 const _$PersonDetailsEnumMap = {

@@ -21,6 +21,9 @@ const String durationDecoderHelperName = r'_$duractionConverter';
 /// The name of the generated, private helper for converting [String] to [Enum].
 const String enumExtensionHelperName = r'_$fromName';
 
+/// The name of the generated, private helper for converting [String] to [Enum].
+const String iterableDecoderHelperName = r'_$iterableConverter';
+
 /// The property/parameter name used to represent the `extra` data that may
 /// be passed to a route.
 const String extraFieldName = r'$extra';
@@ -38,6 +41,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperNum(),
   _TypeHelperString(),
   _TypeHelperUri(),
+  _TypeHelperIterable(),
 ];
 
 /// Returns the decoded [String] value for [element], if its type is supported.
@@ -251,6 +255,49 @@ class _TypeHelperUri extends _TypeHelperWithHelper {
   @override
   bool _matchesType(DartType type) =>
       const TypeChecker.fromRuntime(Uri).isAssignableFromType(type);
+}
+
+class _TypeHelperIterable extends _TypeHelper {
+  const _TypeHelperIterable();
+
+  @override
+  String _decode(ParameterElement parameterElement) {
+    if (parameterElement.type is ParameterizedType) {
+      final DartType iterableType =
+          (parameterElement.type as ParameterizedType).typeArguments.first;
+
+      String entriesTypeMapper = '(e) => e';
+      for (final _TypeHelper helper in _helpers) {
+        if (helper._matchesType(iterableType) &&
+            helper is _TypeHelperWithHelper) {
+          entriesTypeMapper = helper.helperName(iterableType);
+        }
+      }
+
+      String iterableCaster = '';
+      if (const TypeChecker.fromRuntime(List)
+          .isAssignableFromType(parameterElement.type)) {
+        iterableCaster = '.toList()';
+      } else if (const TypeChecker.fromRuntime(Set)
+          .isAssignableFromType(parameterElement.type)) {
+        iterableCaster = '.toSet()';
+      }
+
+      return '''
+state.queryParametersAll[
+        ${escapeDartString(parameterElement.name.kebab)}]
+        ?.map($entriesTypeMapper)$iterableCaster''';
+    }
+    return '''
+state.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
+  }
+
+  @override
+  String _encode(String fieldName, DartType type) => fieldName;
+
+  @override
+  bool _matchesType(DartType type) =>
+      const TypeChecker.fromRuntime(Iterable).isAssignableFromType(type);
 }
 
 abstract class _TypeHelperWithHelper extends _TypeHelper {

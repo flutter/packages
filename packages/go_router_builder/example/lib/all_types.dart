@@ -24,6 +24,7 @@ part 'all_types.g.dart';
       path: 'enhanced-enum-route/:requiredEnumField'),
   TypedGoRoute<StringRoute>(path: 'string-route/:requiredStringField'),
   TypedGoRoute<UriRoute>(path: 'uri-route/:requiredUriField'),
+  TypedGoRoute<IterableRoute>(path: 'iterable-route'),
 ])
 @immutable
 class AllTypesBaseRoute extends GoRouteData {
@@ -281,6 +282,59 @@ class UriRoute extends GoRouteData {
         dataTitle: 'UriRoute',
         param: requiredUriField,
         queryParam: uriField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('UriRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
+class IterableRoute extends GoRouteData {
+  IterableRoute({
+    this.intIterableField,
+    this.doubleIterableField,
+    this.stringIterableField,
+    this.boolIterableField,
+    this.enumIterableField,
+    this.intListField,
+    this.doubleListField,
+    this.stringListField,
+    this.boolListField,
+    this.enumListField,
+    this.intSetField,
+    this.doubleSetField,
+    this.stringSetField,
+    this.boolSetField,
+    this.enumSetField,
+  });
+
+  final Iterable<int>? intIterableField;
+  final List<int>? intListField;
+  final Set<int>? intSetField;
+
+  final Iterable<double>? doubleIterableField;
+  final List<double>? doubleListField;
+  final Set<double>? doubleSetField;
+
+  final Iterable<String>? stringIterableField;
+  final List<String>? stringListField;
+  final Set<String>? stringSetField;
+
+  final Iterable<bool>? boolIterableField;
+  final List<bool>? boolListField;
+  final Set<bool>? boolSetField;
+
+  final Iterable<SportDetails>? enumIterableField;
+  final List<SportDetails>? enumListField;
+  final Set<SportDetails>? enumSetField;
+
+  @override
+  Widget build(BuildContext context) => BasePage<Iterable<int>>(
+        dataTitle: 'UriRoute',
+        param: const <int>[],
+        queryParam: intIterableField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
