@@ -30,7 +30,8 @@ void main() async {
 }
 // #enddocregion use-loader
 
-///
+/// Handles the ID token returned from the One Tap prompt.
+/// See: https://developers.google.com/identity/gsi/web/reference/js-reference#callback
 void onCredentialResponse(id.CredentialResponse o) {
   final Map<String, dynamic>? payload = jwt.JwtDecoder.tryDecode(o.credential);
   if (payload != null) {
@@ -42,7 +43,8 @@ void onCredentialResponse(id.CredentialResponse o) {
   }
 }
 
-///
+/// Handles Prompt UI status notifications.
+/// See: https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.prompt
 void onPromptMoment(id.PromptMomentNotification o) {
   final id.MomentType type = o.getMomentType();
   print(type.runtimeType);

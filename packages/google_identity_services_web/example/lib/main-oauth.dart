@@ -39,7 +39,8 @@ void main() async {
   client.requestAccessToken(overridableCfg);
 }
 
-///
+/// Handles the returned (auth) token response.
+/// See: https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenResponse
 Future<void> onTokenResponse(oauth2.TokenResponse response) async {
   if (response.error != null) {
     print('Authorization error!');
