@@ -16,6 +16,7 @@ dependencies:
   jwt_decoder: ^2.0.1
 
 dev_dependencies:
+  build_runner: ^2.1.10 # To extract README excerpts only.
   flutter_test:
     sdk: flutter
 

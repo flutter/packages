@@ -5,13 +5,17 @@
 // ignore_for_file: avoid_print
 
 import 'package:google_identity_services_web/id.dart' as id;
+// #docregion use-loader
 import 'package:google_identity_services_web/loader.dart' as gis;
+// #enddocregion use-loader
 import 'package:js/js.dart' show allowInterop;
 import 'package:jwt_decoder/jwt_decoder.dart' as jwt;
 
+// #docregion use-loader
 void main() async {
   await gis.loadWebSdk(); // Load the GIS SDK
-
+  // The rest of your code...
+// #enddocregion use-loader
   id.setLogLevel('debug');
 
   final id.IdConfiguration config = id.IdConfiguration(
@@ -22,8 +26,9 @@ void main() async {
 
   id.initialize(config);
   id.prompt(allowInterop(onPromptMoment));
-  //runApp(const MyApp());
+// #docregion use-loader
 }
+// #enddocregion use-loader
 
 ///
 void onCredentialResponse(id.CredentialResponse o) {
