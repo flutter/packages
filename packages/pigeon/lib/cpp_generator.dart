@@ -14,6 +14,9 @@ const String _commentPrefix = '//';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_commentPrefix);
 
+/// The standard codec for flutter, used for any non custom codecs and extended for custom codecs.
+const String standardFlutterCodec = 'flutter::StandardCodecSerializer';
+
 /// Options that control how C++ code will be generated.
 class CppOptions {
   /// Creates a [CppOptions] object
@@ -67,11 +70,8 @@ const String _pointerPrefix = 'pointer';
 const String _encodablePrefix = 'encodable';
 
 void _writeCodecHeader(Indent indent, Api api, Root root) {
-  if (getCodecClasses(api, root).isEmpty) {
-    return;
-  }
   final String codecName = _getCodecName(api);
-  indent.write('class $codecName : public flutter::StandardCodecSerializer ');
+  indent.write('class $codecName : public $standardFlutterCodec ');
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
       indent.writeln('');
@@ -95,9 +95,6 @@ inline static $codecName& GetInstance() {
 }
 
 void _writeCodecSource(Indent indent, Api api, Root root) {
-  if (getCodecClasses(api, root).isEmpty) {
-    return;
-  }
   final String codecName = _getCodecName(api);
   indent.writeln('$codecName::$codecName() {}');
   indent.write(
@@ -115,7 +112,7 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
       indent.write('default:');
       indent.writeScoped('', '', () {
         indent.writeln(
-            'return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);');
+            'return $standardFlutterCodec::ReadValueOfType(type, stream);');
       }, addTrailingNewline: false);
     });
   });
@@ -137,8 +134,7 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
         });
       }
     });
-    indent.writeln(
-        'flutter::StandardCodecSerializer::WriteValue(value, stream);');
+    indent.writeln('$standardFlutterCodec::WriteValue(value, stream);');
   });
 }
 
@@ -488,7 +484,7 @@ void _writeHostApiSource(Indent indent, Api api, Root root) {
 
   final String codecName = getCodecClasses(api, root).isNotEmpty
       ? _getCodecName(api)
-      : 'flutter::StandardCodecSerializer';
+      : standardFlutterCodec;
   indent.format('''
 /// The codec used by ${api.name}.
 const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
@@ -756,7 +752,7 @@ void _writeFlutterApiSource(Indent indent, Api api, Root root) {
   indent.writeln('');
   final String codecName = getCodecClasses(api, root).isNotEmpty
       ? _getCodecName(api)
-      : 'flutter::StandardCodecSerializer';
+      : standardFlutterCodec;
   indent.format('''
 const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
 \treturn flutter::StandardMessageCodec::GetInstance(&$codecName::GetInstance());
@@ -1087,7 +1083,9 @@ void generateCppHeader(
   }
 
   for (final Api api in root.apis) {
-    _writeCodecHeader(indent, api, root);
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodecHeader(indent, api, root);
+    }
     indent.addln('');
     if (api.location == ApiLocation.host) {
       _writeHostApiHeader(indent, api, root);
@@ -1141,8 +1139,10 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
   }
 
   for (final Api api in root.apis) {
-    _writeCodecSource(indent, api, root);
-    indent.addln('');
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodecSource(indent, api, root);
+      indent.addln('');
+    }
     if (api.location == ApiLocation.host) {
       _writeHostApiSource(indent, api, root);
 

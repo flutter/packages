@@ -24,6 +24,9 @@ const DocumentCommentSpecification _docCommentSpec =
   blockContinuationToken: _docCommentContinuation,
 );
 
+/// The standard codec for flutter, used for any non custom codecs and extended for custom codecs.
+const String standardMessageCodec = 'StandardMessageCodec';
+
 /// Options that control how Java code will be generated.
 class JavaOptions {
   /// Creates a [JavaOptions] object
@@ -94,11 +97,9 @@ String _intToEnum(String expression, String enumName) =>
 /// private static class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, Api api, Root root) {
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
-  if (codecClasses.isEmpty) {
-    return;
-  }
   final String codecName = _getCodecName(api);
-  indent.write('private static class $codecName extends StandardMessageCodec ');
+  indent
+      .write('private static class $codecName extends $standardMessageCodec ');
   indent.scoped('{', '}', () {
     indent
         .writeln('public static final $codecName INSTANCE = new $codecName();');
@@ -313,10 +314,11 @@ Result<$returnType> $resultName = new Result<$returnType>() {
     indent.writeln('/** The codec used by ${api.name}. */');
     indent.write('static MessageCodec<Object> getCodec() ');
     indent.scoped('{', '}', () {
+      indent.write('return ');
       if (getCodecClasses(api, root).isNotEmpty) {
-        indent.writeln('return $codecName.INSTANCE;');
+        indent.write('$codecName.INSTANCE;');
       } else {
-        indent.writeln('return new StandardMessageCodec();');
+        indent.write('new $standardMessageCodec();');
       }
     });
 
@@ -369,10 +371,11 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
     indent.writeln('/** The codec used by ${api.name}. */');
     indent.write('static MessageCodec<Object> getCodec() ');
     indent.scoped('{', '}', () {
+      indent.write('return ');
       if (getCodecClasses(api, root).isNotEmpty) {
-        indent.writeln('return $codecName.INSTANCE;');
+        indent.writeln('$codecName.INSTANCE;');
       } else {
-        indent.writeln('return new StandardMessageCodec();');
+        indent.writeln('new $standardMessageCodec();');
       }
     });
 
@@ -775,8 +778,10 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     }
 
     for (final Api api in root.apis) {
-      _writeCodec(indent, api, root);
-      indent.addln('');
+      if (getCodecClasses(api, root).isNotEmpty) {
+        _writeCodec(indent, api, root);
+        indent.addln('');
+      }
       writeApi(api);
     }
 

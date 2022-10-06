@@ -72,9 +72,6 @@ String _getCodecName(Api api) => '${api.name}Codec';
 /// private static class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, Api api, Root root) {
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
-  if (codecClasses.isEmpty) {
-    return;
-  }
   final String codecName = _getCodecName(api);
   indent.writeln('@Suppress("UNCHECKED_CAST")');
   indent.write('private object $codecName : StandardMessageCodec() ');
@@ -700,8 +697,10 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
   }
 
   for (final Api api in root.apis) {
-    _writeCodec(indent, api, root);
-    indent.addln('');
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(indent, api, root);
+      indent.addln('');
+    }
     writeApi(api);
   }
 

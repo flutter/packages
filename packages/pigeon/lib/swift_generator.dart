@@ -56,9 +56,6 @@ String _getCodecName(Api api) => '${api.name}Codec';
 /// private class FooHostApiCodecWriter: FlutterStandardWriter {...}
 /// private class FooHostApiCodecReaderWriter: FlutterStandardReaderWriter {...}
 void _writeCodec(Indent indent, Api api, Root root) {
-  if (getCodecClasses(api, root).isEmpty) {
-    return;
-  }
   final String codecName = _getCodecName(api);
   final String readerWriterName = '${codecName}ReaderWriter';
   final String readerName = '${codecName}Reader';
@@ -652,8 +649,10 @@ import FlutterMacOS
   }
 
   for (final Api api in root.apis) {
-    _writeCodec(indent, api, root);
-    indent.addln('');
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(indent, api, root);
+      indent.addln('');
+    }
     writeApi(api, root);
   }
 

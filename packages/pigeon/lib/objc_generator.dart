@@ -266,9 +266,6 @@ String _getCodecGetterName(String? prefix, String className) =>
 void _writeCodec(
     Indent indent, String name, ObjcOptions options, Api api, Root root) {
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
-  if (codecClasses.isEmpty) {
-    return;
-  }
   final String readerWriterName = '${name}ReaderWriter';
   final String readerName = '${name}Reader';
   final String writerName = '${name}Writer';
@@ -993,9 +990,11 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   }
 
   void writeApi(Api api) {
-    final String codecName = _getCodecName(options.prefix, api.name);
-    _writeCodec(indent, codecName, options, api, root);
-    indent.addln('');
+    if (getCodecClasses(api, root).isNotEmpty) {
+      final String codecName = _getCodecName(options.prefix, api.name);
+      _writeCodec(indent, codecName, options, api, root);
+      indent.addln('');
+    }
     if (api.location == ApiLocation.host) {
       _writeHostApiSource(indent, options, api, root);
     } else if (api.location == ApiLocation.flutter) {
