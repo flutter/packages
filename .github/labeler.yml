@@ -38,7 +38,7 @@
   - packages/go_router_builder/**/*
 
 'p: google_identity_services':
-  - packages/google_indentity_services_web/*
+  - packages/google_indentity_services_web/**
 
 'p: imitation_game':
   - packages/imitation_game/**/*
