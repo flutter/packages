@@ -321,17 +321,33 @@ void _writeCodec(
 \treturn [[$readerName alloc] initWithData:data];
 }
 @end
-
-NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}() {
-\tstatic dispatch_once_t sPred = 0;
-\tstatic FlutterStandardMessageCodec *sSharedObject = nil;
-\tdispatch_once(&sPred, ^{
-\t\t$readerWriterName *readerWriter = [[$readerWriterName alloc] init];
-\t\tsSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-\t});
-\treturn sSharedObject;
-}
 ''');
+}
+
+void _writeCodecGetter(
+    Indent indent, String name, ObjcOptions options, Api api, Root root) {
+  final String readerWriterName = '${name}ReaderWriter';
+
+  indent.write(
+      'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}() ');
+  indent.scoped('{', '}', () {
+    indent.writeln('static FlutterStandardMessageCodec *sSharedObject = nil;');
+    if (getCodecClasses(api, root).isNotEmpty) {
+      indent.writeln('static dispatch_once_t sPred = 0;');
+      indent.write('dispatch_once(&sPred, ^');
+      indent.scoped('{', '});', () {
+        indent.writeln(
+            '$readerWriterName *readerWriter = [[$readerWriterName alloc] init];');
+        indent.writeln(
+            'sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];');
+      });
+    } else {
+      indent.writeln(
+          'sSharedObject = [FlutterStandardMessageCodec sharedInstance];');
+    }
+
+    indent.writeln('return sSharedObject;');
+  });
 }
 
 String _capitalize(String str) =>
@@ -576,13 +592,11 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   _writeClassDeclarations(indent, root.classes, root.enums, options.prefix);
 
   for (final Api api in root.apis) {
-    if (getCodecClasses(api, root).isNotEmpty) {
-      indent.writeln(
-          '$_docCommentPrefix The codec used by ${_className(options.prefix, api.name)}.');
-      indent.writeln(
-          'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void);');
-      indent.addln('');
-    }
+    indent.writeln(
+        '$_docCommentPrefix The codec used by ${_className(options.prefix, api.name)}.');
+    indent.writeln(
+        'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void);');
+    indent.addln('');
     if (api.location == ApiLocation.host) {
       _writeHostApiDeclaration(indent, api, options, root);
     } else if (api.location == ApiLocation.flutter) {
@@ -639,16 +653,13 @@ void _writeHostApiSource(
     indent.writeln('initWithName:@"${makeChannelName(api, func)}"');
     indent.writeln('binaryMessenger:binaryMessenger');
     indent.write('codec:');
-    if (getCodecClasses(api, root).isNotEmpty) {
-      indent.write('${_getCodecGetterName(options.prefix, api.name)}()');
-    } else {
-      indent.write('[FlutterStandardMessageCodec sharedInstance]');
-    }
+    indent.add('${_getCodecGetterName(options.prefix, api.name)}()');
+
     if (taskQueue != null) {
       indent.addln('');
-      indent.writeln('taskQueue:$taskQueue];');
+      indent.addln('taskQueue:$taskQueue];');
     } else {
-      indent.writeln('];');
+      indent.addln('];');
     }
     indent.dec();
     indent.dec();
@@ -785,7 +796,6 @@ void _writeFlutterApiSource(
     Indent indent, ObjcOptions options, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
   final String apiName = _className(options.prefix, api.name);
-  final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
 
   void writeExtension() {
     indent.writeln('@interface $apiName ()');
@@ -837,10 +847,7 @@ void _writeFlutterApiSource(
       indent.inc();
       indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
       indent.writeln('binaryMessenger:self.binaryMessenger');
-      if (isCustomCodec) {
-        indent
-            .write('codec:${_getCodecGetterName(options.prefix, api.name)}()');
-      }
+      indent.write('codec:${_getCodecGetterName(options.prefix, api.name)}()');
       indent.write('];');
       indent.dec();
       indent.dec();
@@ -990,11 +997,13 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   }
 
   void writeApi(Api api) {
+    final String codecName = _getCodecName(options.prefix, api.name);
     if (getCodecClasses(api, root).isNotEmpty) {
-      final String codecName = _getCodecName(options.prefix, api.name);
       _writeCodec(indent, codecName, options, api, root);
       indent.addln('');
     }
+    _writeCodecGetter(indent, codecName, options, api, root);
+    indent.addln('');
     if (api.location == ApiLocation.host) {
       _writeHostApiSource(indent, options, api, root);
     } else if (api.location == ApiLocation.flutter) {

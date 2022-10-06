@@ -16,7 +16,7 @@
 
 - (void)testSimple {
   HandlerBinaryMessenger *binaryMessenger =
-      [[HandlerBinaryMessenger alloc] initWithCodec:[FlutterStandardMessageCodec sharedInstance]
+      [[HandlerBinaryMessenger alloc] initWithCodec:MultipleArityHostApiGetCodec()
                                             handler:^id _Nullable(NSArray *_Nonnull args) {
                                               return @([args[0] intValue] - [args[1] intValue]);
                                             }];

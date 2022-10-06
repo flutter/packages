@@ -33,7 +33,7 @@
 
 - (void)testNullableParameterWithFlutterApi {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:[FlutterStandardMessageCodec sharedInstance]];
+      [[EchoBinaryMessenger alloc] initWithCodec:NRNullableArgHostApiGetCodec()];
   NRNullableArgFlutterApi *api =
       [[NRNullableArgFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
@@ -48,12 +48,12 @@
 - (void)testNullableParameterWithHostApi {
   MockNullableArgHostApi *api = [[MockNullableArgHostApi alloc] init];
   MockBinaryMessenger *binaryMessenger =
-      [[MockBinaryMessenger alloc] initWithCodec:[FlutterStandardMessageCodec sharedInstance]];
+      [[MockBinaryMessenger alloc] initWithCodec:NRNullableArgHostApiGetCodec()];
   NSString *channel = @"dev.flutter.pigeon.NullableArgHostApi.doit";
   NRNullableArgHostApiSetup(binaryMessenger, api);
   XCTAssertNotNil(binaryMessenger.handlers[channel]);
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  NSData *arguments = [[FlutterStandardMessageCodec sharedInstance] encode:@[ [NSNull null] ]];
+  NSData *arguments = [NRNullableArgHostApiGetCodec() encode:@[ [NSNull null] ]];
   binaryMessenger.handlers[channel](arguments, ^(NSData *data) {
     [expectation fulfill];
   });
