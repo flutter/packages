@@ -13,11 +13,12 @@
 # exit when any command fails
 set -e
 
+# TODO(tarrinneal): Watch over time to see if this is working properly, remove comments when validated.
 # TODO(blasten): Enable on stable when possible.
 # https://github.com/flutter/flutter/issues/75187
-if [[ "$CHANNEL" == "stable" ]]; then
-  exit 0
-fi
+#if [[ "$CHANNEL" == "stable" ]]; then
+#  exit 0
+#fi
 
 ###############################################################################
 # Variables
