@@ -24,6 +24,9 @@ const DocumentCommentSpecification _docCommentSpec =
   blockContinuationToken: _docCommentContinuation,
 );
 
+/// The standard codec for Flutter, used for any non custom codecs and extended for custom codecs.
+const String _standardMessageCodec = 'StandardMessageCodec';
+
 /// Options that control how Java code will be generated.
 class JavaOptions {
   /// Creates a [JavaOptions] object
@@ -93,50 +96,50 @@ String _intToEnum(String expression, String enumName) =>
 /// Example:
 /// private static class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, Api api, Root root) {
+  assert(getCodecClasses(api, root).isNotEmpty);
+  final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
   final String codecName = _getCodecName(api);
-  indent.write('private static class $codecName extends StandardMessageCodec ');
+  indent
+      .write('private static class $codecName extends $_standardMessageCodec ');
   indent.scoped('{', '}', () {
     indent
         .writeln('public static final $codecName INSTANCE = new $codecName();');
     indent.writeln('private $codecName() {}');
-    if (getCodecClasses(api, root).isNotEmpty) {
-      indent.writeln('@Override');
-      indent.write(
-          'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) ');
+    indent.writeln('@Override');
+    indent.write(
+        'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) ');
+    indent.scoped('{', '}', () {
+      indent.write('switch (type) ');
       indent.scoped('{', '}', () {
-        indent.write('switch (type) ');
-        indent.scoped('{', '}', () {
-          for (final EnumeratedClass customClass
-              in getCodecClasses(api, root)) {
-            indent.write('case (byte)${customClass.enumeration}: ');
-            indent.writeScoped('', '', () {
-              indent.writeln(
-                  'return ${customClass.name}.fromMap((Map<String, Object>) readValue(buffer));');
-            });
-          }
-          indent.write('default:');
+        for (final EnumeratedClass customClass in codecClasses) {
+          indent.write('case (byte)${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
-            indent.writeln('return super.readValueOfType(type, buffer);');
-          });
-        });
-      });
-      indent.writeln('@Override');
-      indent.write(
-          'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) ');
-      indent.writeScoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('if (value instanceof ${customClass.name}) ');
-          indent.scoped('{', '} else ', () {
-            indent.writeln('stream.write(${customClass.enumeration});');
             indent.writeln(
-                'writeValue(stream, ((${customClass.name}) value).toMap());');
+                'return ${customClass.name}.fromMap((Map<String, Object>) readValue(buffer));');
           });
         }
-        indent.scoped('{', '}', () {
-          indent.writeln('super.writeValue(stream, value);');
+        indent.write('default:');
+        indent.writeScoped('', '', () {
+          indent.writeln('return super.readValueOfType(type, buffer);');
         });
       });
-    }
+    });
+    indent.writeln('@Override');
+    indent.write(
+        'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) ');
+    indent.writeScoped('{', '}', () {
+      for (final EnumeratedClass customClass in codecClasses) {
+        indent.write('if (value instanceof ${customClass.name}) ');
+        indent.scoped('{', '} else ', () {
+          indent.writeln('stream.write(${customClass.enumeration});');
+          indent.writeln(
+              'writeValue(stream, ((${customClass.name}) value).toMap());');
+        });
+      }
+      indent.scoped('{', '}', () {
+        indent.writeln('super.writeValue(stream, value);');
+      });
+    });
   });
 }
 
@@ -309,12 +312,17 @@ Result<$returnType> $resultName = new Result<$returnType>() {
     api.methods.forEach(writeInterfaceMethod);
     indent.addln('');
     final String codecName = _getCodecName(api);
-    indent.format('''
-/** The codec used by ${api.name}. */
-static MessageCodec<Object> getCodec() {
-\treturn $codecName.INSTANCE;
-}
-''');
+    indent.writeln('/** The codec used by ${api.name}. */');
+    indent.write('static MessageCodec<Object> getCodec() ');
+    indent.scoped('{', '}', () {
+      indent.write('return ');
+      if (getCodecClasses(api, root).isNotEmpty) {
+        indent.write('$codecName.INSTANCE;');
+      } else {
+        indent.write('new $_standardMessageCodec();');
+      }
+    });
+
     indent.writeln(
         '${_docCommentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`.$_docCommentSuffix');
     indent.write(
@@ -341,7 +349,7 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 ///   }
 ///   public int add(int x, int y, Reply<int> callback) {...}
 /// }
-void _writeFlutterApi(Indent indent, Api api) {
+void _writeFlutterApi(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
   const List<String> generatedMessages = <String>[
     ' Generated class from Pigeon that represents Flutter messages that can be called from Java.'
@@ -361,11 +369,17 @@ void _writeFlutterApi(Indent indent, Api api) {
       indent.writeln('void reply(T reply);');
     });
     final String codecName = _getCodecName(api);
-    indent.format('''
-static MessageCodec<Object> getCodec() {
-\treturn $codecName.INSTANCE;
-}
-''');
+    indent.writeln('/** The codec used by ${api.name}. */');
+    indent.write('static MessageCodec<Object> getCodec() ');
+    indent.scoped('{', '}', () {
+      indent.write('return ');
+      if (getCodecClasses(api, root).isNotEmpty) {
+        indent.writeln('$codecName.INSTANCE;');
+      } else {
+        indent.writeln('new $_standardMessageCodec();');
+      }
+    });
+
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
       final String returnType = func.returnType.isVoid
@@ -715,7 +729,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     if (api.location == ApiLocation.host) {
       _writeHostApi(indent, api, root);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(indent, api);
+      _writeFlutterApi(indent, api, root);
     }
   }
 
@@ -765,8 +779,10 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     }
 
     for (final Api api in root.apis) {
-      _writeCodec(indent, api, root);
-      indent.addln('');
+      if (getCodecClasses(api, root).isNotEmpty) {
+        _writeCodec(indent, api, root);
+        indent.addln('');
+      }
       writeApi(api);
     }
 

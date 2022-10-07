@@ -29,7 +29,7 @@ void main() {
     const KotlinOptions kotlinOptions = KotlinOptions();
     generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('data class Foobar('));
+    expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
     expect(code, contains('fun fromMap(map: Map<String, Any?>): Foobar'));
     expect(code, contains('fun toMap(): Map<String, Any?>'));
@@ -194,8 +194,6 @@ void main() {
 
     const KotlinOptions kotlinOptions = KotlinOptions();
     generateKotlin(kotlinOptions, root, sink);
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('val aBool: Boolean? = null'));
     expect(code, contains('val aInt: Long? = null'));
@@ -246,8 +244,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code,
         contains('class Api(private val binaryMessenger: BinaryMessenger)'));
@@ -283,8 +281,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('.*doSomething(.*) ->')));
     expect(code, matches('doSomething(.*)'));
@@ -319,8 +317,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('callback: () -> Unit'));
     expect(code, contains('callback()'));
@@ -348,8 +346,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
     expect(code, contains('wrapped["result"] = api.doSomething()'));
@@ -379,8 +377,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doSomething(callback: (Output) -> Unit)'));
     expect(code, contains('channel.send(null)'));
@@ -399,8 +397,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Foobar'));
     expect(code, contains('val field1: List<Any?>? = null'));
@@ -419,8 +417,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Foobar'));
     expect(code, contains('val field1: Map<Any, Any?>? = null'));
@@ -457,8 +455,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Outer'));
     expect(code, contains('data class Nested'));
@@ -512,8 +510,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('interface Api'));
     expect(code, contains('api.doSomething(argArg) {'));
@@ -560,8 +558,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('fun doSomething.*Input.*callback.*Output.*Unit'));
@@ -593,8 +591,8 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum class Enum1(val raw: Int)'));
     expect(code, contains('ONE(0)'));
@@ -608,10 +606,10 @@ void main() {
   test('header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final KotlinOptions swiftOptions = KotlinOptions(
+    final KotlinOptions kotlinOptions = KotlinOptions(
       copyrightHeader: makeIterable('hello world'),
     );
-    generateKotlin(swiftOptions, root, sink);
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -637,8 +635,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Foobar'));
     expect(code, contains('val field1: List<Long?>'));
@@ -666,8 +664,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Foobar'));
     expect(code, contains('val field1: Map<String?, String?>'));
@@ -697,8 +695,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(arg: List<Long?>'));
   });
@@ -727,8 +725,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(argArg: List<Long?>'));
   });
@@ -752,8 +750,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
     expect(code, contains('wrapped["result"] = api.doit()'));
@@ -779,8 +777,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(callback: (List<Long?>) -> Unit'));
     expect(code, contains('val result = it as List<Long?>'));
@@ -807,8 +805,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun add(x: Long, y: Long): Long'));
     expect(code, contains('val args = message as List<Any?>'));
@@ -844,8 +842,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('val channel = BasicMessageChannel'));
     expect(code, contains('val result = it as Long'));
@@ -872,8 +870,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(): Long?'));
   });
@@ -896,8 +894,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(callback: (Long?) -> Unit'));
   });
@@ -923,8 +921,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -953,8 +951,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(fooArg: Long?, callback: () -> Unit'));
   });
@@ -988,8 +986,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const KotlinOptions swiftOptions = KotlinOptions();
-    generateKotlin(swiftOptions, root, sink);
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('val input: String\n'));
   });
@@ -1069,5 +1067,82 @@ void main() {
               .hasMatch(code),
           true);
     }
+  });
+
+  test('doesnt create codecs if no custom datatypes', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(contains(' : StandardMessageCodec() ')));
+    expect(code, contains('StandardMessageCodec'));
+  });
+
+  test('creates custom codecs if custom datatypes present', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
+                name: '')
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'input')
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'output')
+      ])
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    generateKotlin(kotlinOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains(' : StandardMessageCodec() '));
   });
 }
