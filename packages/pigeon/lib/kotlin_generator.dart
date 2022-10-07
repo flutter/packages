@@ -71,6 +71,7 @@ String _getCodecName(Api api) => '${api.name}Codec';
 /// Example:
 /// private static class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, Api api, Root root) {
+  assert(getCodecClasses(api, root).isNotEmpty);
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
   final String codecName = _getCodecName(api);
   indent.writeln('@Suppress("UNCHECKED_CAST")');

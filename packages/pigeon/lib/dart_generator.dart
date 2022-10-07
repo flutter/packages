@@ -18,8 +18,8 @@ const String _docCommentPrefix = '///';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
-/// The standard codec for flutter, used for any non custom codecs and extended for custom codecs.
-const String standardMessageCodec = 'StandardMessageCodec';
+/// The standard codec for Flutter, used for any non custom codecs and extended for custom codecs.
+const String _standardMessageCodec = 'StandardMessageCodec';
 
 /// Options that control how Dart code will be generated.
 class DartOptions {
@@ -70,8 +70,9 @@ String _getCodecName(Api api) => '_${api.name}Codec';
 ///
 /// class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, String codecName, Api api, Root root) {
+  assert(getCodecClasses(api, root).isNotEmpty);
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
-  indent.write('class $codecName extends $standardMessageCodec');
+  indent.write('class $codecName extends $_standardMessageCodec');
   indent.scoped('{', '}', () {
     indent.writeln('const $codecName();');
     indent.writeln('@override');
@@ -158,7 +159,7 @@ String _getMethodArgumentsSignature(
 /// }
 void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
-  String codecName = standardMessageCodec;
+  String codecName = _standardMessageCodec;
   if (getCodecClasses(api, root).isNotEmpty) {
     codecName = _getCodecName(api);
     _writeCodec(indent, codecName, api, root);
@@ -275,7 +276,7 @@ void _writeFlutterApi(
   bool isMockHandler = false,
 }) {
   assert(api.location == ApiLocation.flutter);
-  String codecName = standardMessageCodec;
+  String codecName = _standardMessageCodec;
   if (getCodecClasses(api, root).isNotEmpty) {
     codecName = _getCodecName(api);
     _writeCodec(indent, codecName, api, root);

@@ -24,8 +24,8 @@ const DocumentCommentSpecification _docCommentSpec =
   blockContinuationToken: _docCommentContinuation,
 );
 
-/// The standard codec for flutter, used for any non custom codecs and extended for custom codecs.
-const String standardMessageCodec = 'StandardMessageCodec';
+/// The standard codec for Flutter, used for any non custom codecs and extended for custom codecs.
+const String _standardMessageCodec = 'StandardMessageCodec';
 
 /// Options that control how Java code will be generated.
 class JavaOptions {
@@ -96,10 +96,11 @@ String _intToEnum(String expression, String enumName) =>
 /// Example:
 /// private static class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, Api api, Root root) {
+  assert(getCodecClasses(api, root).isNotEmpty);
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
   final String codecName = _getCodecName(api);
   indent
-      .write('private static class $codecName extends $standardMessageCodec ');
+      .write('private static class $codecName extends $_standardMessageCodec ');
   indent.scoped('{', '}', () {
     indent
         .writeln('public static final $codecName INSTANCE = new $codecName();');
@@ -318,7 +319,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
       if (getCodecClasses(api, root).isNotEmpty) {
         indent.write('$codecName.INSTANCE;');
       } else {
-        indent.write('new $standardMessageCodec();');
+        indent.write('new $_standardMessageCodec();');
       }
     });
 
@@ -375,7 +376,7 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
       if (getCodecClasses(api, root).isNotEmpty) {
         indent.writeln('$codecName.INSTANCE;');
       } else {
-        indent.writeln('new $standardMessageCodec();');
+        indent.writeln('new $_standardMessageCodec();');
       }
     });
 

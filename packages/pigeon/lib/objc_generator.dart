@@ -265,6 +265,7 @@ String _getCodecGetterName(String? prefix, String className) =>
 /// NSObject<FlutterMessageCodec> *FooHostApiCodecGetCodec() {...}
 void _writeCodec(
     Indent indent, String name, ObjcOptions options, Api api, Root root) {
+  assert(getCodecClasses(api, root).isNotEmpty);
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
   final String readerWriterName = '${name}ReaderWriter';
   final String readerName = '${name}Reader';

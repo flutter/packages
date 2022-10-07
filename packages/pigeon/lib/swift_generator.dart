@@ -56,6 +56,7 @@ String _getCodecName(Api api) => '${api.name}Codec';
 /// private class FooHostApiCodecWriter: FlutterStandardWriter {...}
 /// private class FooHostApiCodecReaderWriter: FlutterStandardReaderWriter {...}
 void _writeCodec(Indent indent, Api api, Root root) {
+  assert(getCodecClasses(api, root).isNotEmpty);
   final String codecName = _getCodecName(api);
   final String readerWriterName = '${codecName}ReaderWriter';
   final String readerName = '${codecName}Reader';

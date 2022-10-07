@@ -14,8 +14,8 @@ const String _commentPrefix = '//';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_commentPrefix);
 
-/// The standard codec for flutter, used for any non custom codecs and extended for custom codecs.
-const String standardFlutterCodec = 'flutter::StandardCodecSerializer';
+/// The default serializer for Flutter.
+const String _defaultCodecSerializer = 'flutter::StandardCodecSerializer';
 
 /// Options that control how C++ code will be generated.
 class CppOptions {
@@ -64,24 +64,25 @@ class CppOptions {
   }
 }
 
-String _getCodecName(Api api) => '${api.name}CodecSerializer';
+String _getCodecSerializerName(Api api) => '${api.name}CodecSerializer';
 
 const String _pointerPrefix = 'pointer';
 const String _encodablePrefix = 'encodable';
 
 void _writeCodecHeader(Indent indent, Api api, Root root) {
-  final String codecName = _getCodecName(api);
-  indent.write('class $codecName : public $standardFlutterCodec ');
+  assert(getCodecClasses(api, root).isNotEmpty);
+  final String codeSerializerName = _getCodecSerializerName(api);
+  indent.write('class $codeSerializerName : public $_defaultCodecSerializer ');
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
       indent.writeln('');
       indent.format('''
-inline static $codecName& GetInstance() {
-\tstatic $codecName sInstance;
+inline static $codeSerializerName& GetInstance() {
+\tstatic $codeSerializerName sInstance;
 \treturn sInstance;
 }
 ''');
-      indent.writeln('$codecName();');
+      indent.writeln('$codeSerializerName();');
     });
     indent.writeScoped(' public:', '', () {
       indent.writeln(
@@ -95,10 +96,11 @@ inline static $codecName& GetInstance() {
 }
 
 void _writeCodecSource(Indent indent, Api api, Root root) {
-  final String codecName = _getCodecName(api);
-  indent.writeln('$codecName::$codecName() {}');
+  assert(getCodecClasses(api, root).isNotEmpty);
+  final String codeSerializerName = _getCodecSerializerName(api);
+  indent.writeln('$codeSerializerName::$codeSerializerName() {}');
   indent.write(
-      'flutter::EncodableValue $codecName::ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const ');
+      'flutter::EncodableValue $codeSerializerName::ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const ');
   indent.scoped('{', '}', () {
     indent.write('switch (type) ');
     indent.scoped('{', '}', () {
@@ -112,13 +114,13 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
       indent.write('default:');
       indent.writeScoped('', '', () {
         indent.writeln(
-            'return $standardFlutterCodec::ReadValueOfType(type, stream);');
+            'return $_defaultCodecSerializer::ReadValueOfType(type, stream);');
       }, addTrailingNewline: false);
     });
   });
   indent.writeln('');
   indent.write(
-      'void $codecName::WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const ');
+      'void $codeSerializerName::WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const ');
   indent.writeScoped('{', '}', () {
     indent.write(
         'if (const flutter::CustomEncodableValue* custom_value = std::get_if<flutter::CustomEncodableValue>(&value)) ');
@@ -134,7 +136,7 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
         });
       }
     });
-    indent.writeln('$standardFlutterCodec::WriteValue(value, stream);');
+    indent.writeln('$_defaultCodecSerializer::WriteValue(value, stream);');
   });
 }
 
@@ -243,7 +245,7 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
         // TODO(gaaclarke): Find a way to be more precise with our
         // friendships.
         indent.writeln('friend class ${api.name};');
-        indent.writeln('friend class ${_getCodecName(api)};');
+        indent.writeln('friend class ${_getCodecSerializerName(api)};');
       }
       if (testFriend != null) {
         indent.writeln('friend class $testFriend;');
@@ -482,13 +484,13 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
 void _writeHostApiSource(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
 
-  final String codecName = getCodecClasses(api, root).isNotEmpty
-      ? _getCodecName(api)
-      : standardFlutterCodec;
+  final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
+      ? _getCodecSerializerName(api)
+      : _defaultCodecSerializer;
   indent.format('''
 /// The codec used by ${api.name}.
 const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
-\treturn flutter::StandardMessageCodec::GetInstance(&$codecName::GetInstance());
+\treturn flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());
 }
 ''');
   indent.writeln(
@@ -750,12 +752,12 @@ void _writeFlutterApiSource(Indent indent, Api api, Root root) {
     indent.writeln('this->binary_messenger_ = binary_messenger;');
   });
   indent.writeln('');
-  final String codecName = getCodecClasses(api, root).isNotEmpty
-      ? _getCodecName(api)
-      : standardFlutterCodec;
+  final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
+      ? _getCodecSerializerName(api)
+      : _defaultCodecSerializer;
   indent.format('''
 const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
-\treturn flutter::StandardMessageCodec::GetInstance(&$codecName::GetInstance());
+\treturn flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());
 }
 ''');
   for (final Method func in api.methods) {
