@@ -80,7 +80,7 @@ class RouteConfiguration {
                 ...allowedKeys..add(route.navigatorKey)
               ],
             );
-          } else if (route is PartitionedShellRoute) {
+          } else if (route is StatefulShellRoute) {
             checkParentNavigatorKeys(
               route.routes,
               <GlobalKey<NavigatorState>>[
@@ -152,6 +152,31 @@ class RouteConfiguration {
             path: location,
             queryParameters: queryParams.isEmpty ? null : queryParams)
         .toString();
+  }
+
+  /// Returns the full path to the specified route.
+  String fullPathForRoute(RouteBase route) {
+    return _fullPathForRoute(route, '', routes) ?? '';
+  }
+
+  static String? _fullPathForRoute(
+      RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
+    for (final RouteBase route in routes) {
+      final String fullPath = (route is GoRoute)
+          ? concatenatePaths(parentFullpath, route.path)
+          : parentFullpath;
+
+      if (route == targetRoute) {
+        return fullPath;
+      } else {
+        final String? subRoutePath =
+            _fullPathForRoute(targetRoute, fullPath, route.routes);
+        if (subRoutePath != null) {
+          return subRoutePath;
+        }
+      }
+    }
+    return null;
   }
 
   @override

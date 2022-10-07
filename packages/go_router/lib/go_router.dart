@@ -7,12 +7,25 @@
 library go_router;
 
 export 'src/configuration.dart'
-    show GoRoute, GoRouterState, PartitionedShellRoute, RouteBase, ShellRoute;
+    show
+        GoRoute,
+        GoRouterState,
+        RouteBase,
+        ShellNavigationBranchItem,
+        ShellNavigationBranchState,
+        ShellRoute,
+        StatefulShellRoute,
+        StatefulShellRouteState;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
-export 'src/misc/stacked_navigation_shell.dart';
 export 'src/pages/custom_transition_page.dart';
 export 'src/platform.dart' show UrlPathStrategy;
 export 'src/route_data.dart' show GoRouteData, TypedGoRoute;
 export 'src/router.dart';
-export 'src/typedefs.dart' show GoRouterPageBuilder, GoRouterRedirect;
+export 'src/typedefs.dart'
+    show
+        GoRouterPageBuilder,
+        GoRouterRedirect,
+        GoRouterWidgetBuilder,
+        ShellRouteBuilder,
+        ShellRoutePageBuilder;

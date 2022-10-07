@@ -70,10 +70,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       } else if (route is ShellRouteBase && childRoute != null) {
         // For shell routes, find the navigator key that should be used for the
         // child route in the current match list
-        final GlobalKey<NavigatorState> navigatorKey =
+        final GlobalKey<NavigatorState>? navigatorKey =
             route.navigatorKeyForChildRoute(childRoute);
 
-        final bool didPop = await navigatorKey.currentState!.maybePop();
+        final bool didPop =
+            await navigatorKey?.currentState!.maybePop() ?? false;
 
         // Continue if didPop was false.
         if (didPop) {
@@ -139,10 +140,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       } else if (route is ShellRouteBase && childRoute != null) {
         // For shell routes, find the navigator key that should be used for the
         // child route in the current match list
-        final GlobalKey<NavigatorState> navigatorKey =
+        final GlobalKey<NavigatorState>? navigatorKey =
             route.navigatorKeyForChildRoute(childRoute);
 
-        final bool canPop = navigatorKey.currentState!.canPop();
+        final bool canPop = navigatorKey?.currentState!.canPop() ?? false;
 
         // Continue if canPop is false.
         if (canPop) {

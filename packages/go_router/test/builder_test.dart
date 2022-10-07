@@ -108,18 +108,15 @@ void main() {
       expect(find.byType(_DetailsScreen), findsOneWidget);
     });
 
-    testWidgets('Builds PartitionedShellRoute', (WidgetTester tester) async {
+    testWidgets('Builds StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> key =
           GlobalKey<NavigatorState>(debugLabel: 'key');
       final RouteConfiguration config = RouteConfiguration(
         routes: <RouteBase>[
-          PartitionedShellRoute(
+          StatefulShellRoute.navigationBranchRoutes(
               builder:
                   (BuildContext context, GoRouterState state, Widget child) =>
                       child,
-              navigatorKeys: <GlobalKey<NavigatorState>>[
-                key,
-              ],
               routes: <GoRoute>[
                 GoRoute(
                   parentNavigatorKey: key,

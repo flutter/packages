@@ -2405,7 +2405,7 @@ void main() {
     });
 
     testWidgets(
-        'Navigates to correct nested navigation tree in PartitionedShellRoute '
+        'Navigates to correct nested navigation tree in StatefulShellRoute '
         'and maintains state', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -2416,16 +2416,10 @@ void main() {
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
 
-      final List<StackedNavigationItem> stackItems = <StackedNavigationItem>[
-        StackedNavigationItem(
-            rootRoutePath: '/a', navigatorKey: sectionANavigatorKey),
-        StackedNavigationItem(
-            rootRoutePath: '/b', navigatorKey: sectionBNavigatorKey),
-      ];
-
       final List<RouteBase> routes = <RouteBase>[
-        PartitionedShellRoute.stackedNavigationShell(
-          stackItems: stackItems,
+        StatefulShellRoute.navigationBranchRoutes(
+          builder: (BuildContext context, GoRouterState state, Widget child) =>
+              child,
           routes: <GoRoute>[
             GoRoute(
               parentNavigatorKey: sectionANavigatorKey,
@@ -2480,7 +2474,7 @@ void main() {
     });
 
     testWidgets(
-        'Pops from the correct Navigator in a PartitionedShellRoute when the '
+        'Pops from the correct Navigator in a StatefulShellRoute when the '
         'Android back button is pressed', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -2489,16 +2483,10 @@ void main() {
       final GlobalKey<NavigatorState> sectionBNavigatorKey =
           GlobalKey<NavigatorState>();
 
-      final List<StackedNavigationItem> stackItems = <StackedNavigationItem>[
-        StackedNavigationItem(
-            rootRoutePath: '/a', navigatorKey: sectionANavigatorKey),
-        StackedNavigationItem(
-            rootRoutePath: '/b', navigatorKey: sectionBNavigatorKey),
-      ];
-
       final List<RouteBase> routes = <RouteBase>[
-        PartitionedShellRoute.stackedNavigationShell(
-          stackItems: stackItems,
+        StatefulShellRoute.navigationBranchRoutes(
+          builder: (BuildContext context, GoRouterState state, Widget child) =>
+              child,
           routes: <GoRoute>[
             GoRoute(
               parentNavigatorKey: sectionANavigatorKey,
@@ -2722,7 +2710,7 @@ void main() {
       );
 
       testWidgets(
-        'It checks if PartitionedShellRoute navigators can pop',
+        'It checks if StatefulShellRoute navigators can pop',
         (WidgetTester tester) async {
           final GlobalKey<NavigatorState> rootNavigatorKey =
               GlobalKey<NavigatorState>();
@@ -2734,11 +2722,7 @@ void main() {
             navigatorKey: rootNavigatorKey,
             initialLocation: '/a',
             routes: <RouteBase>[
-              PartitionedShellRoute(
-                navigatorKeys: <GlobalKey<NavigatorState>>[
-                  shellNavigatorKeyA,
-                  shellNavigatorKeyB
-                ],
+              StatefulShellRoute.navigationBranchRoutes(
                 builder:
                     (BuildContext context, GoRouterState state, Widget child) {
                   return Scaffold(
@@ -2749,6 +2733,7 @@ void main() {
                 routes: <GoRoute>[
                   GoRoute(
                     path: '/a',
+                    parentNavigatorKey: shellNavigatorKeyA,
                     builder: (BuildContext context, _) {
                       return const Scaffold(
                         body: Text('Screen A'),
@@ -2757,6 +2742,7 @@ void main() {
                   ),
                   GoRoute(
                     path: '/b',
+                    parentNavigatorKey: shellNavigatorKeyB,
                     builder: (BuildContext context, _) {
                       return const Scaffold(
                         body: Text('Screen B'),
@@ -2793,7 +2779,7 @@ void main() {
           expect(find.text('Screen B detail', skipOffstage: false),
               findsOneWidget);
           expect(router.canPop(), true);
-          // Verify that it is actually the PartitionedShellRoute that reports
+          // Verify that it is actually the StatefulShellRoute that reports
           // canPop = true
           expect(rootNavigatorKey.currentState?.canPop(), false);
         },

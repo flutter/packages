@@ -31,49 +31,30 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
   /// Creates a NestedTabNavigationExampleApp
   NestedTabNavigationExampleApp({Key? key}) : super(key: key);
 
-  static final List<ScaffoldWithNavBarTabItem> _tabs =
-      <ScaffoldWithNavBarTabItem>[
-    ScaffoldWithNavBarTabItem(
-        navigationItem: StackedNavigationItem(
-            rootRoutePath: '/a', navigatorKey: _tabANavigatorKey),
-        icon: const Icon(Icons.home),
-        label: 'Section A'),
-    ScaffoldWithNavBarTabItem(
-      navigationItem: StackedNavigationItem(
-          rootRoutePath: '/b', navigatorKey: _tabBNavigatorKey),
-      icon: const Icon(Icons.settings),
-      label: 'Section B',
-    ),
-  ];
-
   final GoRouter _router = GoRouter(
     initialLocation: '/a',
     routes: <RouteBase>[
       /// Custom top shell route - wraps the below routes in a scaffold with
       /// a bottom tab navigator (ScaffoldWithNavBar). Each tab will use its own
-      /// Navigator, provided by MultiPathShellRoute.
-      PartitionedShellRoute.stackedNavigationShell(
-        stackItems: _tabs
-            .map((ScaffoldWithNavBarTabItem e) => e.navigationItem)
-            .toList(),
-        scaffoldBuilder: (BuildContext context, int currentIndex,
-            List<StackedNavigationItemState> itemsState, Widget scaffoldBody) {
-          return ScaffoldWithNavBar(
-              tabs: _tabs,
-              currentIndex: currentIndex,
-              itemsState: itemsState,
-              body: scaffoldBody);
+      /// Navigator, provided by StatefulShellRoute.
+      StatefulShellRoute.navigationBranchRoutes(
+        builder: (BuildContext context, GoRouterState state,
+            Widget statefulShellNavigation) {
+          return ScaffoldWithNavBar(body: statefulShellNavigation);
         },
-
-        /// A transition builder is optional, only included here for
-        /// demonstration purposes.
-        transitionBuilder:
-            (BuildContext context, Animation<double> animation, Widget child) =>
-                FadeTransition(opacity: animation, child: child),
-        routes: <RouteBase>[
+        pageProvider:
+            (BuildContext context, GoRouterState state, Widget statefulShell) {
+          return NoTransitionPage<dynamic>(child: statefulShell);
+        },
+        // A transition builder is optional:
+        // transitionBuilder:
+        //     (BuildContext context, Animation<double> animation, Widget child) =>
+        //         FadeTransition(opacity: animation, child: child),
+        routes: <GoRoute>[
           /// The screen to display as the root in the first tab of the bottom
           /// navigation bar.
           GoRoute(
+            parentNavigatorKey: _tabANavigatorKey,
             path: '/a',
             builder: (BuildContext context, GoRouterState state) =>
                 const RootScreen(label: 'A', detailsPath: '/a/details'),
@@ -82,16 +63,16 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
               /// first tab. This will cover screen A but not the application
               /// shell (bottom navigation bar).
               GoRoute(
-                path: 'details',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DetailsScreen(label: 'A'),
-              ),
+                  path: 'details',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const DetailsScreen(label: 'A')),
             ],
           ),
 
           /// The screen to display as the root in the second tab of the bottom
           /// navigation bar.
           GoRoute(
+            parentNavigatorKey: _tabBNavigatorKey,
             path: '/b',
             builder: (BuildContext context, GoRouterState state) =>
                 const RootScreen(
@@ -126,60 +107,41 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
   }
 }
 
-/// Representation of a tab item in a [ScaffoldWithNavBar]
-class ScaffoldWithNavBarTabItem extends BottomNavigationBarItem {
-  /// Constructs an [ScaffoldWithNavBarTabItem].
-  const ScaffoldWithNavBarTabItem(
-      {required this.navigationItem, required Widget icon, String? label})
-      : super(icon: icon, label: label);
-
-  /// The [StackedNavigationItem]
-  final StackedNavigationItem navigationItem;
-
-  /// Gets the associated navigator key
-  GlobalKey<NavigatorState> get navigatorKey => navigationItem.navigatorKey;
-}
-
 /// Builds the "shell" for the app by building a Scaffold with a
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
-    required this.currentIndex,
-    required this.itemsState,
     required this.body,
-    required this.tabs,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
-
-  /// Currently active tab index
-  final int currentIndex;
-
-  /// Route state
-  final List<StackedNavigationItemState> itemsState;
 
   /// Body, i.e. the index stack
   final Widget body;
 
-  /// The tabs
-  final List<ScaffoldWithNavBarTabItem> tabs;
-
   @override
   Widget build(BuildContext context) {
+    final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
     return Scaffold(
       body: body,
       bottomNavigationBar: BottomNavigationBar(
-        items: tabs,
-        currentIndex: currentIndex,
-        onTap: (int tappedIndex) =>
-            _onItemTapped(context, itemsState[tappedIndex]),
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: 'Section B'),
+        ],
+        currentIndex: shellState.currentBranchIndex,
+        onTap: (int tappedIndex) => _onItemTapped(
+          context,
+          shellState.navigationBranchState[tappedIndex],
+        ),
       ),
     );
   }
 
   void _onItemTapped(
-      BuildContext context, StackedNavigationItemState itemState) {
-    GoRouter.of(context).go(itemState.currentLocation);
+      BuildContext context, ShellNavigationBranchState routeState) {
+    GoRouter.of(context).go(routeState.currentLocation);
   }
 }
 
