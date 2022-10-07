@@ -125,7 +125,8 @@ GoRouter(
   ...
   redirect: (context, state) async {
     if (await LoginService.of(context).isLoggedIn) {
-      return state.location;
+      // No redirect is required if the user is already logged in.
+      return null;
     }
     return '/login';
   },
