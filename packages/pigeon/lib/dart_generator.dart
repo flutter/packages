@@ -18,6 +18,9 @@ const String _docCommentPrefix = '///';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
+/// The standard codec for Flutter, used for any non custom codecs and extended for custom codecs.
+const String _standardMessageCodec = 'StandardMessageCodec';
+
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
@@ -67,44 +70,43 @@ String _getCodecName(Api api) => '_${api.name}Codec';
 ///
 /// class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, String codecName, Api api, Root root) {
-  indent.write('class $codecName extends StandardMessageCodec ');
+  assert(getCodecClasses(api, root).isNotEmpty);
+  final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
+  indent.write('class $codecName extends $_standardMessageCodec');
   indent.scoped('{', '}', () {
     indent.writeln('const $codecName();');
-    if (getCodecClasses(api, root).isNotEmpty) {
-      indent.writeln('@override');
-      indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+    indent.writeln('@override');
+    indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+    indent.scoped('{', '}', () {
+      for (final EnumeratedClass customClass in codecClasses) {
+        indent.write('if (value is ${customClass.name}) ');
+        indent.scoped('{', '} else ', () {
+          indent.writeln('buffer.putUint8(${customClass.enumeration});');
+          indent.writeln('writeValue(buffer, value.encode());');
+        });
+      }
       indent.scoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('if (value is ${customClass.name}) ');
-          indent.scoped('{', '} else ', () {
-            indent.writeln('buffer.putUint8(${customClass.enumeration});');
-            indent.writeln('writeValue(buffer, value.encode());');
+        indent.writeln('super.writeValue(buffer, value);');
+      });
+    });
+    indent.writeln('@override');
+    indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+    indent.scoped('{', '}', () {
+      indent.write('switch (type) ');
+      indent.scoped('{', '}', () {
+        for (final EnumeratedClass customClass in codecClasses) {
+          indent.write('case ${customClass.enumeration}: ');
+          indent.writeScoped('', '', () {
+            indent.writeln(
+                'return ${customClass.name}.decode(readValue(buffer)!);');
           });
         }
-        indent.scoped('{', '}', () {
-          indent.writeln('super.writeValue(buffer, value);');
+        indent.write('default:');
+        indent.writeScoped('', '', () {
+          indent.writeln('return super.readValueOfType(type, buffer);');
         });
       });
-      indent.writeln('@override');
-      indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
-      indent.scoped('{', '}', () {
-        indent.write('switch (type) ');
-        indent.scoped('{', '}', () {
-          for (final EnumeratedClass customClass
-              in getCodecClasses(api, root)) {
-            indent.write('case ${customClass.enumeration}: ');
-            indent.writeScoped('', '', () {
-              indent.writeln(
-                  'return ${customClass.name}.decode(readValue(buffer)!);');
-            });
-          }
-          indent.write('default:');
-          indent.writeScoped('', '', () {
-            indent.writeln('return super.readValueOfType(type, buffer);');
-          });
-        });
-      });
-    }
+    });
   });
 }
 
@@ -157,8 +159,11 @@ String _getMethodArgumentsSignature(
 /// }
 void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
-  final String codecName = _getCodecName(api);
-  _writeCodec(indent, codecName, api, root);
+  String codecName = _standardMessageCodec;
+  if (getCodecClasses(api, root).isNotEmpty) {
+    codecName = _getCodecName(api);
+    _writeCodec(indent, codecName, api, root);
+  }
   indent.addln('');
   bool first = true;
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
@@ -169,7 +174,6 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
 /// available for dependency injection.  If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
 ${api.name}({BinaryMessenger? binaryMessenger}) : _binaryMessenger = binaryMessenger;
-
 final BinaryMessenger? _binaryMessenger;
 ''');
 
@@ -272,8 +276,11 @@ void _writeFlutterApi(
   bool isMockHandler = false,
 }) {
   assert(api.location == ApiLocation.flutter);
-  final String codecName = _getCodecName(api);
-  _writeCodec(indent, codecName, api, root);
+  String codecName = _standardMessageCodec;
+  if (getCodecClasses(api, root).isNotEmpty) {
+    codecName = _getCodecName(api);
+    _writeCodec(indent, codecName, api, root);
+  }
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
 
   indent.write('abstract class ${api.name} ');

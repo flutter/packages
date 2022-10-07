@@ -33,7 +33,7 @@
 
 - (void)testNullableParameterWithFlutterApi {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:NRNullableArgFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:NRNullableArgHostApiGetCodec()];
   NRNullableArgFlutterApi *api =
       [[NRNullableArgFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
