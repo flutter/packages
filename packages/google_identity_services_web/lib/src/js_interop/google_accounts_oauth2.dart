@@ -330,7 +330,7 @@ external RevokeTokenFn get revokeToken;
 /// before being passed to the [revokeToken] function.
 typedef RevokeTokenFn = void Function(
   String accessToken, [
-  RevokeTokenDoneFn? done,
+  RevokeTokenDoneFn done,
 ]);
 
 /// The signature of the `done` function for [revokeToken].

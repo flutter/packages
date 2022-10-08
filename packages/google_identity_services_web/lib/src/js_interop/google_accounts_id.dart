@@ -190,7 +190,7 @@ external PromptFn get prompt;
 ///
 /// The [momentListener] parameter must be manually wrapped in [allowInterop]
 /// before being passed to the [prompt] function.
-typedef PromptFn = void Function(PromptMomentListenerFn? momentListener);
+typedef PromptFn = void Function([PromptMomentListenerFn momentListener]);
 
 /// The type of the function that can be passed to [prompt] to listen for [PromptMomentNotification]s.
 typedef PromptMomentListenerFn = void Function(PromptMomentNotification moment);
@@ -408,7 +408,7 @@ external RevokeFn get revoke;
 /// before being passed to the [revoke] function.
 typedef RevokeFn = void Function(
   String hint,
-  RevocationResponseHandlerFn? callback,
+  [RevocationResponseHandlerFn callback]
 );
 
 /// The type of the `callback` function passed to [revoke], to be notified of
