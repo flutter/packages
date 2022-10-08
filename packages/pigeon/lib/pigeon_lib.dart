@@ -17,6 +17,7 @@ import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
 import 'package:analyzer/dart/ast/syntactic_entity.dart'
     as dart_ast_syntactic_entity;
+import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
@@ -29,6 +30,7 @@ import 'dart_generator.dart';
 import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
 import 'java_generator.dart';
+import 'kotlin_generator.dart';
 import 'objc_generator.dart';
 import 'swift_generator.dart';
 
@@ -163,6 +165,8 @@ class PigeonOptions {
       this.javaOptions,
       this.swiftOut,
       this.swiftOptions,
+      this.kotlinOut,
+      this.kotlinOptions,
       this.cppHeaderOut,
       this.cppSourceOut,
       this.cppOptions,
@@ -201,6 +205,12 @@ class PigeonOptions {
 
   /// Options that control how Swift will be generated.
   final SwiftOptions? swiftOptions;
+
+  /// Path to the kotlin file that will be generated.
+  final String? kotlinOut;
+
+  /// Options that control how Kotlin will be generated.
+  final KotlinOptions? kotlinOptions;
 
   /// Path to the ".h" C++ file that will be generated.
   final String? cppHeaderOut;
@@ -246,6 +256,11 @@ class PigeonOptions {
       swiftOptions: map.containsKey('swiftOptions')
           ? SwiftOptions.fromMap((map['swiftOptions'] as Map<String, Object>?)!)
           : null,
+      kotlinOut: map['kotlinOut'] as String?,
+      kotlinOptions: map.containsKey('kotlinOptions')
+          ? KotlinOptions.fromMap(
+              (map['kotlinOptions'] as Map<String, Object>?)!)
+          : null,
       cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
       cppSourceOut: map['experimental_cppSourceOut'] as String?,
       cppOptions: map.containsKey('experimental_cppOptions')
@@ -276,6 +291,8 @@ class PigeonOptions {
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
       if (swiftOut != null) 'swiftOut': swiftOut!,
       if (swiftOptions != null) 'swiftOptions': swiftOptions!.toMap(),
+      if (kotlinOut != null) 'kotlinOut': kotlinOut!,
+      if (kotlinOptions != null) 'kotlinOptions': kotlinOptions!.toMap(),
       if (cppHeaderOut != null) 'experimental_cppHeaderOut': cppHeaderOut!,
       if (cppSourceOut != null) 'experimental_cppSourceOut': cppSourceOut!,
       if (cppOptions != null) 'experimental_cppOptions': cppOptions!.toMap(),
@@ -565,6 +582,29 @@ class CppSourceGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.cppSourceOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+}
+
+/// A [Generator] that generates Kotlin source code.
+class KotlinGenerator implements Generator {
+  /// Constructor for [KotlinGenerator].
+  const KotlinGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    KotlinOptions kotlinOptions =
+        options.kotlinOptions ?? const KotlinOptions();
+    kotlinOptions = kotlinOptions.merge(KotlinOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateKotlin(kotlinOptions, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.kotlinOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -866,20 +906,40 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           location: ApiLocation.host,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
         _currentApi = Api(
           name: node.name2.lexeme,
           location: ApiLocation.flutter,
           methods: <Method>[],
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
         );
       }
     } else {
-      _currentClass = Class(name: node.name2.lexeme, fields: <NamedType>[]);
+      _currentClass = Class(
+        name: node.name2.lexeme,
+        fields: <NamedType>[],
+        documentationComments:
+            _documentationCommentsParser(node.documentationComment?.tokens),
+      );
     }
 
     node.visitChildren(this);
     return null;
+  }
+
+  /// Converts Token's to Strings and removes documentation comment symbol.
+  List<String> _documentationCommentsParser(List<Token>? comments) {
+    const String docCommentPrefix = '///';
+    return comments
+            ?.map((Token line) => line.length > docCommentPrefix.length
+                ? line.toString().substring(docCommentPrefix.length)
+                : '')
+            .toList() ??
+        <String>[];
   }
 
   NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
@@ -952,12 +1012,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final TaskQueueType taskQueueType =
         _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
             TaskQueueType.serial;
+
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
       final dart_ast.SimpleIdentifier returnTypeIdentifier =
           getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
-      _currentApi!.methods.add(Method(
+      _currentApi!.methods.add(
+        Method(
           name: node.name2.lexeme,
           returnType: TypeDeclaration(
               baseName: returnTypeIdentifier.name,
@@ -968,7 +1030,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
           offset: node.offset,
-          taskQueueType: taskQueueType));
+          taskQueueType: taskQueueType,
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        ),
+      );
     } else if (_currentClass != null) {
       _errors.add(Error(
           message:
@@ -982,10 +1048,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
     _enums.add(Enum(
-        name: node.name2.lexeme,
-        members: node.constants
-            .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
-            .toList()));
+      name: node.name2.lexeme,
+      members: node.constants
+          .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
+          .toList(),
+      documentationComments:
+          _documentationCommentsParser(node.documentationComment?.tokens),
+    ));
     node.visitChildren(this);
     return null;
   }
@@ -1026,12 +1095,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           _currentClass!.fields.add(NamedType(
-              type: TypeDeclaration(
-                  baseName: type.name.name,
-                  isNullable: type.question != null,
-                  typeArguments: typeAnnotationsToTypeArguments(typeArguments)),
-              name: node.fields.variables[0].name2.lexeme,
-              offset: node.offset));
+            type: TypeDeclaration(
+              baseName: type.name.name,
+              isNullable: type.question != null,
+              typeArguments: typeAnnotationsToTypeArguments(typeArguments),
+            ),
+            name: node.fields.variables[0].name2.lexeme,
+            offset: node.offset,
+            documentationComments:
+                _documentationCommentsParser(node.documentationComment?.tokens),
+          ));
         }
       } else {
         _errors.add(Error(
@@ -1168,6 +1241,11 @@ ${_argParser.usage}''';
         help: 'Adds the java.annotation.Generated annotation to the output.')
     ..addOption('experimental_swift_out',
         help: 'Path to generated Swift file (.swift).')
+    ..addOption('experimental_kotlin_out',
+        help: 'Path to generated Kotlin file (.kt). (experimental)')
+    ..addOption('experimental_kotlin_package',
+        help:
+            'The package that generated Kotlin code will be in. (experimental)')
     ..addOption('experimental_cpp_header_out',
         help: 'Path to generated C++ header file (.h). (experimental)')
     ..addOption('experimental_cpp_source_out',
@@ -1213,6 +1291,10 @@ ${_argParser.usage}''';
         useGeneratedAnnotation: results['java_use_generated_annotation'],
       ),
       swiftOut: results['experimental_swift_out'],
+      kotlinOut: results['experimental_kotlin_out'],
+      kotlinOptions: KotlinOptions(
+        package: results['experimental_kotlin_package'],
+      ),
       cppHeaderOut: results['experimental_cpp_header_out'],
       cppSourceOut: results['experimental_cpp_source_out'],
       cppOptions: CppOptions(
@@ -1261,6 +1343,7 @@ ${_argParser.usage}''';
           const DartGenerator(),
           const JavaGenerator(),
           const SwiftGenerator(),
+          const KotlinGenerator(),
           const CppHeaderGenerator(),
           const CppSourceGenerator(),
           const DartTestGenerator(),

@@ -124,17 +124,12 @@ class GoRoute extends RouteBase {
     this.builder,
     this.pageBuilder,
     this.parentNavigatorKey,
-    this.redirect = _emptyRedirect,
+    this.redirect,
     List<RouteBase> routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
-        assert(!(builder == null && pageBuilder == null),
-            'builder or pageBuilder must be provided'),
-        assert(
-            pageBuilder != null ||
-                builder != _invalidBuilder ||
-                redirect != _noRedirection,
-            'GoRoute builder parameter not set\n'),
+        assert(pageBuilder != null || builder != null || redirect != null,
+            'builder, pageBuilder, or redirect must be provided'),
         super._(
           routes: routes,
         ) {
@@ -284,11 +279,39 @@ class GoRoute extends RouteBase {
   /// );
   /// ```
   ///
+  /// If there are multiple redirects in the matched routes, the parent route's
+  /// redirect takes priority over sub-route's.
+  ///
+  /// For example:
+  /// ```
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       path: '/',
+  ///       redirect: (_) => '/page1', // this takes priority over the sub-route.
+  ///       routes: <GoRoute>[
+  ///         GoRoute(
+  ///           path: 'child',
+  ///           redirect: (_) => '/page2',
+  ///         ),
+  ///       ],
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
+  ///
+  /// The `context.go('/child')` will be redirected to `/page1` instead of
+  /// `/page2`.
+  ///
   /// Redirect can also be used for conditionally preventing users from visiting
   /// routes, also known as route guards. One canonical example is user
   /// authentication. See [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart)
   /// for a complete runnable example.
-  final GoRouterRedirect redirect;
+  ///
+  /// If [BuildContext.dependOnInheritedWidgetOfExactType] is used during the
+  /// redirection (which is how `of` method is usually implemented), a
+  /// re-evaluation will be triggered if the [InheritedWidget] changes.
+  final GoRouterRedirect? redirect;
 
   /// An optional key specifying which Navigator to display this route's screen
   /// onto.
@@ -305,19 +328,9 @@ class GoRoute extends RouteBase {
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(_pathParams, match);
 
-  static String? _emptyRedirect(GoRouterState state) => null;
-
   final List<String> _pathParams = <String>[];
 
   late final RegExp _pathRE;
-
-  static String? _noRedirection(GoRouterState state) => null;
-
-  static Widget _invalidBuilder(
-    BuildContext context,
-    GoRouterState state,
-  ) =>
-      const SizedBox.shrink();
 }
 
 /// A route that displays a UI shell around the matching child route.
@@ -334,7 +347,7 @@ class GoRoute extends RouteBase {
 ///
 /// ```
 /// final GlobalKey<NavigatorState> _rootNavigatorKey =
-//     GlobalKey<NavigatorState>();
+///     GlobalKey<NavigatorState>();
 ///
 ///   final GoRouter _router = GoRouter(
 ///     navigatorKey: _rootNavigatorKey,
@@ -426,8 +439,10 @@ class ShellRoute extends RouteBase {
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._() {
     for (final RouteBase route in routes) {
-      assert(route is GoRoute);
-      assert((route as GoRoute).parentNavigatorKey == null);
+      if (route is GoRoute) {
+        assert(route.parentNavigatorKey == null ||
+            route.parentNavigatorKey == navigatorKey);
+      }
     }
   }
 

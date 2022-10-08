@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show FutureOr;
+
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -47,4 +49,5 @@ typedef GoRouterBuilderWithNav = Widget Function(
 );
 
 /// The signature of the redirect callback.
-typedef GoRouterRedirect = String? Function(GoRouterState state);
+typedef GoRouterRedirect = FutureOr<String?> Function(
+    BuildContext context, GoRouterState state);

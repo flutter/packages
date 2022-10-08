@@ -2,7 +2,7 @@ name: animations
 description: Fancy pre-built animations that can easily be integrated into any Flutter application.
 repository: https://github.com/flutter/packages/tree/main/packages/animations
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+animations%22
-version: 2.0.4
+version: 2.0.7
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -16,3 +16,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   vector_math: ^2.1.0
+
+screenshots:
+  - description: 'Examples of the container transform pattern.'
+    path: example/screenshots/container_transform_lineup.webp
+  - description: 'Examples of the fade pattern.'
+    path: example/screenshots/fade_lineup.webp
+  - description: 'Examples of the fade through pattern.'
+    path: example/screenshots/fade_through_lineup.webp
+  - description: 'Examples of the shared axis pattern.'
+    path: example/screenshots/shared_axis_lineup.webp

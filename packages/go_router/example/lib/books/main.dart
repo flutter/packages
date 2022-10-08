@@ -31,9 +31,7 @@ class Bookstore extends StatelessWidget {
   Widget build(BuildContext context) => BookstoreAuthScope(
         notifier: _auth,
         child: MaterialApp.router(
-          routeInformationProvider: _router.routeInformationProvider,
-          routerDelegate: _router.routerDelegate,
-          routeInformationParser: _router.routeInformationParser,
+          routerConfig: _router,
         ),
       );
 
@@ -43,7 +41,7 @@ class Bookstore extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        redirect: (_) => '/books',
+        redirect: (_, __) => '/books',
       ),
       GoRoute(
         path: '/signin',
@@ -60,11 +58,11 @@ class Bookstore extends StatelessWidget {
       ),
       GoRoute(
         path: '/books',
-        redirect: (_) => '/books/popular',
+        redirect: (_, __) => '/books/popular',
       ),
       GoRoute(
         path: '/book/:bookId',
-        redirect: (GoRouterState state) =>
+        redirect: (BuildContext context, GoRouterState state) =>
             '/books/all/${state.params['bookId']}',
       ),
       GoRoute(
@@ -92,7 +90,7 @@ class Bookstore extends StatelessWidget {
       ),
       GoRoute(
         path: '/author/:authorId',
-        redirect: (GoRouterState state) =>
+        redirect: (BuildContext context, GoRouterState state) =>
             '/authors/${state.params['authorId']}',
       ),
       GoRoute(
@@ -135,7 +133,7 @@ class Bookstore extends StatelessWidget {
     debugLogDiagnostics: true,
   );
 
-  String? _guard(GoRouterState state) {
+  String? _guard(BuildContext context, GoRouterState state) {
     final bool signedIn = _auth.signedIn;
     final bool signingIn = state.subloc == '/signin';
 

@@ -1,3 +1,14 @@
+## 2.0.7
+* Updates screenshots to use webp compressed animations
+
+## 2.0.6
+* Adds screenshots to pubspec.yaml
+
+## 2.0.5
+* Update `OpenContainer` to use `Visibility` widget internally instead of `Opacity`.
+* Update `OpenContainer` to use `FadeTransition` instead of animating an `Opacity`
+  widget internally.
+
 ## 2.0.4
 
 * Updates text theme parameters to avoid deprecation issues.
