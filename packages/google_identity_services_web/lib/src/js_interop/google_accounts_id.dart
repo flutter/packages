@@ -406,10 +406,8 @@ external RevokeFn get revoke;
 ///
 /// The [callback] parameter must be manually wrapped in [allowInterop]
 /// before being passed to the [revoke] function.
-typedef RevokeFn = void Function(
-  String hint,
-  [RevocationResponseHandlerFn callback]
-);
+typedef RevokeFn = void Function(String hint,
+    [RevocationResponseHandlerFn callback]);
 
 /// The type of the `callback` function passed to [revoke], to be notified of
 /// the success of the revocation operation.
