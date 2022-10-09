@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -56,8 +56,9 @@ class MemoryIOSink implements IOSink {
       (List<int> data) {
         try {
           add(data);
-        // Catches all exceptions to propagate them to the completer.
-        } catch (err, stack) { // ignore: avoid_catches_without_on_clauses
+          // Catches all exceptions to propagate them to the completer.
+        } catch (err, stack) {
+          // ignore: avoid_catches_without_on_clauses
           sub.cancel();
           completer.completeError(err, stack);
         }
@@ -80,12 +81,12 @@ class MemoryIOSink implements IOSink {
   }
 
   @override
-  void writeln([ Object? obj = '' ]) {
+  void writeln([Object? obj = '']) {
     add(encoding.encode('$obj\n'));
   }
 
   @override
-  void writeAll(Iterable<dynamic> objects, [ String separator = '' ]) {
+  void writeAll(Iterable<dynamic> objects, [String separator = '']) {
     bool addSeparator = false;
     for (final dynamic object in objects) {
       if (addSeparator) {
@@ -97,7 +98,7 @@ class MemoryIOSink implements IOSink {
   }
 
   @override
-  void addError(dynamic error, [ StackTrace? stackTrace ]) {
+  void addError(dynamic error, [StackTrace? stackTrace]) {
     throw UnimplementedError();
   }
 
@@ -105,17 +106,18 @@ class MemoryIOSink implements IOSink {
   Future<void> get done => close();
 
   @override
-  Future<void> close() async { }
+  Future<void> close() async {}
 
   @override
-  Future<void> flush() async { }
+  Future<void> flush() async {}
 
   void clear() {
     writes.clear();
   }
 
   String getAndClear() {
-    final String result = utf8.decode(writes.expand((List<int> l) => l).toList());
+    final String result =
+        utf8.decode(writes.expand((List<int> l) => l).toList());
     clear();
     return result;
   }
@@ -128,6 +130,7 @@ class MemoryStdout extends MemoryIOSink implements io.Stdout {
     assert(value != null);
     _hasTerminal = value;
   }
+
   bool _hasTerminal = true;
 
   @override
@@ -139,6 +142,7 @@ class MemoryStdout extends MemoryIOSink implements io.Stdout {
     assert(value != null);
     _supportsAnsiEscapes = value;
   }
+
   bool _supportsAnsiEscapes = true;
 
   @override
@@ -148,6 +152,7 @@ class MemoryStdout extends MemoryIOSink implements io.Stdout {
     }
     throw const io.StdoutException('unspecified mock value');
   }
+
   set terminalColumns(int value) => _terminalColumns = value;
   int? _terminalColumns;
 
@@ -158,6 +163,7 @@ class MemoryStdout extends MemoryIOSink implements io.Stdout {
     }
     throw const io.StdoutException('unspecified mock value');
   }
+
   set terminalLines(int value) => _terminalLines = value;
   int? _terminalLines;
 }
@@ -184,8 +190,10 @@ class FakeStdio extends Stdio {
   @override
   bool hasTerminal = true;
 
-  List<String> get writtenToStdout => _stdout.writes.map<String>(_stdout.encoding.decode).toList();
-  List<String> get writtenToStderr => _stderr.writes.map<String>(_stderr.encoding.decode).toList();
+  List<String> get writtenToStdout =>
+      _stdout.writes.map<String>(_stdout.encoding.decode).toList();
+  List<String> get writtenToStderr =>
+      _stderr.writes.map<String>(_stderr.encoding.decode).toList();
 }
 
 class FakeStdin extends Fake implements Stdin {
@@ -261,13 +269,12 @@ class FakeStopwatch implements Stopwatch {
 }
 
 class FakeStopwatchFactory implements StopwatchFactory {
-  FakeStopwatchFactory({
-    Stopwatch? stopwatch,
-    Map<String, Stopwatch>? stopwatches
-  }) : stopwatches = <String, Stopwatch>{
-         if (stopwatches != null) ...stopwatches,
-         if (stopwatch != null) '': stopwatch,
-       };
+  FakeStopwatchFactory(
+      {Stopwatch? stopwatch, Map<String, Stopwatch>? stopwatches})
+      : stopwatches = <String, Stopwatch>{
+          if (stopwatches != null) ...stopwatches,
+          if (stopwatch != null) '': stopwatch,
+        };
 
   Map<String, Stopwatch> stopwatches;
 

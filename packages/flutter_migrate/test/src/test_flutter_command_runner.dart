@@ -1,13 +1,16 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:args/command_runner.dart';
 import 'package:flutter_migrate/src/base/command.dart';
 
-export 'package:test_api/test_api.dart' hide  isInstanceOf, test; // ignore: deprecated_member_use
+export 'package:test_api/test_api.dart' // ignore: deprecated_member_use
+    hide
+        isInstanceOf,
+        test;
 
-CommandRunner<void> createTestCommandRunner([ MigrateCommand? command ]) {
+CommandRunner<void> createTestCommandRunner([MigrateCommand? command]) {
   final CommandRunner<void> runner = TestCommandRunner();
   if (command != null) {
     runner.addCommand(command);
@@ -16,18 +19,19 @@ CommandRunner<void> createTestCommandRunner([ MigrateCommand? command ]) {
 }
 
 class TestCommandRunner extends CommandRunner<void> {
-  TestCommandRunner() : super(
-    'flutter',
-    'Manage your Flutter app development.\n'
-      '\n'
-      'Common commands:\n'
-      '\n'
-      '  flutter create <output directory>\n'
-      '    Create a new Flutter project in the specified directory.\n'
-      '\n'
-      '  flutter run [options]\n'
-      '    Run your Flutter application on an attached device or in an emulator.',
-  );
+  TestCommandRunner()
+      : super(
+          'flutter',
+          'Manage your Flutter app development.\n'
+              '\n'
+              'Common commands:\n'
+              '\n'
+              '  flutter create <output directory>\n'
+              '    Create a new Flutter project in the specified directory.\n'
+              '\n'
+              '  flutter run [options]\n'
+              '    Run your Flutter application on an attached device or in an emulator.',
+        );
 
   @override
   Future<void> run(Iterable<String> args) {

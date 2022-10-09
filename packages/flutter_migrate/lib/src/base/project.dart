@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,10 +22,8 @@ enum SupportedPlatform {
 class FlutterProjectFactory {
   FlutterProjectFactory();
 
-
   @visibleForTesting
-  final Map<String, FlutterProject> projects =
-      <String, FlutterProject>{};
+  final Map<String, FlutterProject> projects = <String, FlutterProject>{};
 
   /// Returns a [FlutterProject] view of the given directory or a ToolExit error,
   /// if `pubspec.yaml` or `example/pubspec.yaml` is invalid.
@@ -39,16 +37,17 @@ class FlutterProjectFactory {
 
 /// Represents the contents of a Flutter project at the specified [directory].
 class FlutterProject {
-  FlutterProject(this.directory)
-    : assert(directory != null);
+  FlutterProject(this.directory) : assert(directory != null);
 
   /// Returns a [FlutterProject] view of the current directory or a ToolExit error,
   /// if `pubspec.yaml` or `example/pubspec.yaml` is invalid.
-  static FlutterProject current(FileSystem fs) => FlutterProject(fs.currentDirectory);
+  static FlutterProject current(FileSystem fs) =>
+      FlutterProject(fs.currentDirectory);
 
   /// Create a [FlutterProject] and bypass the project caching.
   @visibleForTesting
-  static FlutterProject fromDirectoryTest(Directory directory, [Logger? logger]) {
+  static FlutterProject fromDirectoryTest(Directory directory,
+      [Logger? logger]) {
     logger ??= BufferLogger.test();
     return FlutterProject(directory);
   }
@@ -63,7 +62,9 @@ class FlutterProject {
 
   /// Returns a list of platform names that are supported by the project.
   List<SupportedPlatform> getSupportedPlatforms({bool includeRoot = false}) {
-    final List<SupportedPlatform> platforms = includeRoot ? <SupportedPlatform>[SupportedPlatform.root] : <SupportedPlatform>[];
+    final List<SupportedPlatform> platforms = includeRoot
+        ? <SupportedPlatform>[SupportedPlatform.root]
+        : <SupportedPlatform>[];
     if (directory.childDirectory('android').existsSync()) {
       platforms.add(SupportedPlatform.android);
     }

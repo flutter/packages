@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,17 +33,17 @@
 
 import 'dart:async';
 import 'dart:io' as io
-  show
-    IOSink,
-    Process,
-    ProcessSignal,
-    Stdin,
-    StdinException,
-    Stdout,
-    StdoutException,
-    stderr,
-    stdin,
-    stdout;
+    show
+        IOSink,
+        Process,
+        ProcessSignal,
+        Stdin,
+        StdinException,
+        Stdout,
+        StdoutException,
+        stderr,
+        stdin,
+        stdout;
 
 import 'package:meta/meta.dart';
 
@@ -122,7 +122,8 @@ class Stdio {
   Stdio.test({
     required io.Stdout stdout,
     required io.IOSink stderr,
-  }) : _stdoutOverride = stdout, _stderrOverride = stderr;
+  })  : _stdoutOverride = stdout,
+        _stderrOverride = stderr;
 
   io.Stdout? _stdoutOverride;
   io.IOSink? _stderrOverride;
@@ -141,11 +142,16 @@ class Stdio {
     }
     _stdout = _stdoutOverride ?? io.stdout;
     _stdout!.done.then(
-      (void _) { _stdoutDone = true; },
-      onError: (Object err, StackTrace st) { _stdoutDone = true; },
+      (void _) {
+        _stdoutDone = true;
+      },
+      onError: (Object err, StackTrace st) {
+        _stdoutDone = true;
+      },
     );
     return _stdout!;
   }
+
   io.Stdout? _stdout;
 
   @visibleForTesting
@@ -155,11 +161,16 @@ class Stdio {
     }
     _stderr = _stderrOverride ?? io.stderr;
     _stderr!.done.then(
-      (void _) { _stderrDone = true; },
-      onError: (Object err, StackTrace st) { _stderrDone = true; },
+      (void _) {
+        _stderrDone = true;
+      },
+      onError: (Object err, StackTrace st) {
+        _stderrDone = true;
+      },
     );
     return _stderr!;
   }
+
   io.IOSink? _stderr;
 
   bool get hasTerminal => io.stdout.hasTerminal;
@@ -207,11 +218,13 @@ class Stdio {
       _stdioWrite(stderr, message, fallback: fallback);
       return;
     }
-    fallback == null ? print(message) : fallback(
-      message,
-      const io.StdoutException('stderr is done'),
-      StackTrace.current,
-    );
+    fallback == null
+        ? print(message)
+        : fallback(
+            message,
+            const io.StdoutException('stderr is done'),
+            StackTrace.current,
+          );
   }
 
   /// Writes [message] to [stdout], falling back on [fallback] if the write
@@ -224,15 +237,19 @@ class Stdio {
       _stdioWrite(stdout, message, fallback: fallback);
       return;
     }
-    fallback == null ? print(message) : fallback(
-      message,
-      const io.StdoutException('stdout is done'),
-      StackTrace.current,
-    );
+    fallback == null
+        ? print(message)
+        : fallback(
+            message,
+            const io.StdoutException('stdout is done'),
+            StackTrace.current,
+          );
   }
 
   // Helper for [stderrWrite] and [stdoutWrite].
-  void _stdioWrite(io.IOSink sink, String message, {
+  void _stdioWrite(
+    io.IOSink sink,
+    String message, {
     void Function(String, dynamic, StackTrace)? fallback,
   }) {
     asyncGuard<void>(() async {
@@ -247,10 +264,12 @@ class Stdio {
   }
 
   /// Adds [stream] to [stdout].
-  Future<void> addStdoutStream(Stream<List<int>> stream) => stdout.addStream(stream);
+  Future<void> addStdoutStream(Stream<List<int>> stream) =>
+      stdout.addStream(stream);
 
   /// Adds [stream] to [stderr].
-  Future<void> addStderrStream(Stream<List<int>> stream) => stderr.addStream(stream);
+  Future<void> addStderrStream(Stream<List<int>> stream) =>
+      stderr.addStream(stream);
 }
 
 /// A portable version of [io.ProcessSignal].
@@ -267,17 +286,23 @@ class ProcessSignal {
   @visibleForTesting
   const ProcessSignal(this._delegate);
 
-  static const ProcessSignal sigwinch = PosixProcessSignal(io.ProcessSignal.sigwinch);
-  static const ProcessSignal sigterm = PosixProcessSignal(io.ProcessSignal.sigterm);
-  static const ProcessSignal sigusr1 = PosixProcessSignal(io.ProcessSignal.sigusr1);
-  static const ProcessSignal sigusr2 = PosixProcessSignal(io.ProcessSignal.sigusr2);
+  static const ProcessSignal sigwinch =
+      PosixProcessSignal(io.ProcessSignal.sigwinch);
+  static const ProcessSignal sigterm =
+      PosixProcessSignal(io.ProcessSignal.sigterm);
+  static const ProcessSignal sigusr1 =
+      PosixProcessSignal(io.ProcessSignal.sigusr1);
+  static const ProcessSignal sigusr2 =
+      PosixProcessSignal(io.ProcessSignal.sigusr2);
   static const ProcessSignal sigint = ProcessSignal(io.ProcessSignal.sigint);
   static const ProcessSignal sigkill = ProcessSignal(io.ProcessSignal.sigkill);
 
   final io.ProcessSignal _delegate;
 
   Stream<ProcessSignal> watch() {
-    return _delegate.watch().map<ProcessSignal>((io.ProcessSignal signal) => this);
+    return _delegate
+        .watch()
+        .map<ProcessSignal>((io.ProcessSignal signal) => this);
   }
 
   /// Sends the signal to the given process (identified by pid).
@@ -302,7 +327,6 @@ class ProcessSignal {
 /// Listening to a [_PosixProcessSignal] is a no-op on Windows.
 @visibleForTesting
 class PosixProcessSignal extends ProcessSignal {
-
   const PosixProcessSignal(super.wrappedSignal);
 
   @override

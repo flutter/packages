@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,15 +26,21 @@ void main() {
       outputPreferences: OutputPreferences.test(),
     );
 
-    expect(loggerFactory.createLogger(
-      windows: false,
-    ), isA<StdoutLogger>());
-    expect(loggerFactory.createLogger(
-      windows: true,
-    ), isA<WindowsStdoutLogger>());
+    expect(
+        loggerFactory.createLogger(
+          windows: false,
+        ),
+        isA<StdoutLogger>());
+    expect(
+        loggerFactory.createLogger(
+          windows: true,
+        ),
+        isA<WindowsStdoutLogger>());
   });
 
-  testWithoutContext('WindowsStdoutLogger rewrites emojis when terminal does not support emoji', () {
+  testWithoutContext(
+      'WindowsStdoutLogger rewrites emojis when terminal does not support emoji',
+      () {
     final FakeStdio stdio = FakeStdio();
     final WindowsStdoutLogger logger = WindowsStdoutLogger(
       outputPreferences: OutputPreferences.test(),
@@ -47,7 +53,9 @@ void main() {
     expect(stdio.writtenToStdout, <String>['X√\n']);
   });
 
-  testWithoutContext('WindowsStdoutLogger does not rewrite emojis when terminal does support emoji', () {
+  testWithoutContext(
+      'WindowsStdoutLogger does not rewrite emojis when terminal does support emoji',
+      () {
     final FakeStdio stdio = FakeStdio();
     final WindowsStdoutLogger logger = WindowsStdoutLogger(
       outputPreferences: OutputPreferences.test(),
@@ -59,7 +67,8 @@ void main() {
 
     expect(stdio.writtenToStdout, <String>['🔥🖼️✗✓🔨💪✏️\n']);
   });
-  testWithoutContext('Logger does not throw when stdio write throws synchronously', () async {
+  testWithoutContext(
+      'Logger does not throw when stdio write throws synchronously', () async {
     final FakeStdout stdout = FakeStdout(syncError: true);
     final FakeStdout stderr = FakeStdout(syncError: true);
     final Stdio stdio = Stdio.test(stdout: stdout, stderr: stderr);
@@ -75,7 +84,8 @@ void main() {
     logger.printError('error message');
   });
 
-  testWithoutContext('Logger does not throw when stdio write throws asynchronously', () async {
+  testWithoutContext(
+      'Logger does not throw when stdio write throws asynchronously', () async {
     final FakeStdout stdout = FakeStdout(syncError: false);
     final FakeStdout stderr = FakeStdout(syncError: false);
     final Stdio stdio = Stdio.test(stdout: stdout, stderr: stderr);
@@ -93,9 +103,13 @@ void main() {
     await stderr.done;
   });
 
-  testWithoutContext('Logger does not throw when stdio completes done with an error', () async {
-    final FakeStdout stdout = FakeStdout(syncError: false, completeWithError: true);
-    final FakeStdout stderr = FakeStdout(syncError: false, completeWithError: true);
+  testWithoutContext(
+      'Logger does not throw when stdio completes done with an error',
+      () async {
+    final FakeStdout stdout =
+        FakeStdout(syncError: false, completeWithError: true);
+    final FakeStdout stderr =
+        FakeStdout(syncError: false, completeWithError: true);
     final Stdio stdio = Stdio.test(stdout: stdout, stderr: stderr);
     final Logger logger = StdoutLogger(
       terminal: AnsiTerminal(
@@ -137,7 +151,8 @@ void main() {
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(wrapText: true, wrapColumn: 40),
+        outputPreferences:
+            OutputPreferences.test(wrapText: true, wrapColumn: 40),
       );
       logger.printError('0123456789' * 15);
       final List<String> lines = outputStderr();
@@ -156,7 +171,8 @@ void main() {
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(wrapText: true, wrapColumn: 40),
+        outputPreferences:
+            OutputPreferences.test(wrapText: true, wrapColumn: 40),
       );
       logger.printError('0123456789' * 15, indent: 5);
       final List<String> lines = outputStderr();
@@ -172,13 +188,15 @@ void main() {
       expect(lines[5], isEmpty);
     });
 
-    testWithoutContext('Error logs are wrapped and can have hanging indent.', () async {
+    testWithoutContext('Error logs are wrapped and can have hanging indent.',
+        () async {
       final Logger logger = StdoutLogger(
         terminal: AnsiTerminal(
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(wrapText: true, wrapColumn: 40),
+        outputPreferences:
+            OutputPreferences.test(wrapText: true, wrapColumn: 40),
       );
       logger.printError('0123456789' * 15, hangingIndent: 5);
       final List<String> lines = outputStderr();
@@ -194,13 +212,16 @@ void main() {
       expect(lines[5], isEmpty);
     });
 
-    testWithoutContext('Error logs are wrapped, indented, and can have hanging indent.', () async {
+    testWithoutContext(
+        'Error logs are wrapped, indented, and can have hanging indent.',
+        () async {
       final Logger logger = StdoutLogger(
         terminal: AnsiTerminal(
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(wrapText: true, wrapColumn: 40),
+        outputPreferences:
+            OutputPreferences.test(wrapText: true, wrapColumn: 40),
       );
       logger.printError('0123456789' * 15, indent: 4, hangingIndent: 5);
       final List<String> lines = outputStderr();
@@ -222,7 +243,8 @@ void main() {
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(wrapText: true, wrapColumn: 40),
+        outputPreferences:
+            OutputPreferences.test(wrapText: true, wrapColumn: 40),
       );
       logger.printStatus('0123456789' * 15);
       final List<String> lines = outputStdout();
@@ -235,13 +257,15 @@ void main() {
       expect(lines[3], equals('0123456789' * 3));
     });
 
-    testWithoutContext('Stdout logs are wrapped and can be indented.', () async {
+    testWithoutContext('Stdout logs are wrapped and can be indented.',
+        () async {
       final Logger logger = StdoutLogger(
         terminal: AnsiTerminal(
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(wrapText: true, wrapColumn: 40),
+        outputPreferences:
+            OutputPreferences.test(wrapText: true, wrapColumn: 40),
       );
       logger.printStatus('0123456789' * 15, indent: 5);
       final List<String> lines = outputStdout();
@@ -257,14 +281,15 @@ void main() {
       expect(lines[5], isEmpty);
     });
 
-    testWithoutContext('Stdout logs are wrapped and can have hanging indent.', () async {
+    testWithoutContext('Stdout logs are wrapped and can have hanging indent.',
+        () async {
       final Logger logger = StdoutLogger(
-        terminal: AnsiTerminal(
+          terminal: AnsiTerminal(
+            stdio: fakeStdio,
+          ),
           stdio: fakeStdio,
-        ),
-        stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(wrapText: true, wrapColumn: 40)
-      );
+          outputPreferences:
+              OutputPreferences.test(wrapText: true, wrapColumn: 40));
       logger.printStatus('0123456789' * 15, hangingIndent: 5);
       final List<String> lines = outputStdout();
 
@@ -279,13 +304,16 @@ void main() {
       expect(lines[5], isEmpty);
     });
 
-    testWithoutContext('Stdout logs are wrapped, indented, and can have hanging indent.', () async {
+    testWithoutContext(
+        'Stdout logs are wrapped, indented, and can have hanging indent.',
+        () async {
       final Logger logger = StdoutLogger(
         terminal: AnsiTerminal(
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(wrapText: true, wrapColumn: 40),
+        outputPreferences:
+            OutputPreferences.test(wrapText: true, wrapColumn: 40),
       );
       logger.printStatus('0123456789' * 15, indent: 4, hangingIndent: 5);
       final List<String> lines = outputStdout();
@@ -315,7 +343,10 @@ void main() {
 
       expect(outputStdout().length, equals(1));
       expect(outputStdout().first, isEmpty);
-      expect(lines[0], equals('${AnsiTerminal.red}Pants on fire!${AnsiTerminal.resetColor}'));
+      expect(
+          lines[0],
+          equals(
+              '${AnsiTerminal.red}Pants on fire!${AnsiTerminal.resetColor}'));
     });
 
     testWithoutContext('Stdout logs are not colored', () async {
@@ -324,7 +355,7 @@ void main() {
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences:  OutputPreferences.test(showColor: true),
+        outputPreferences: OutputPreferences.test(showColor: true),
       );
       logger.printStatus('All good.');
 
@@ -344,13 +375,12 @@ void main() {
       );
       logger.printBox('Hello world', title: 'Test title');
       final String stdout = fakeStdio.writtenToStdout.join();
-      expect(stdout,
-        contains(
-          '\n'
-          '┌─ Test title ┐\n'
-          '│ Hello world │\n'
-          '└─────────────┘\n'
-        ),
+      expect(
+        stdout,
+        contains('\n'
+            '┌─ Test title ┐\n'
+            '│ Hello world │\n'
+            '└─────────────┘\n'),
       );
     });
 
@@ -364,13 +394,12 @@ void main() {
       );
       logger.printBox('Hello world');
       final String stdout = fakeStdio.writtenToStdout.join();
-      expect(stdout,
-        contains(
-          '\n'
-          '┌─────────────┐\n'
-          '│ Hello world │\n'
-          '└─────────────┘\n'
-        ),
+      expect(
+        stdout,
+        contains('\n'
+            '┌─────────────┐\n'
+            '│ Hello world │\n'
+            '└─────────────┘\n'),
       );
     });
 
@@ -384,18 +413,18 @@ void main() {
       );
       logger.printBox('Hello world\nThis is a new line', title: 'Test title');
       final String stdout = fakeStdio.writtenToStdout.join();
-      expect(stdout,
-        contains(
-          '\n'
-          '┌─ Test title ───────┐\n'
-          '│ Hello world        │\n'
-          '│ This is a new line │\n'
-          '└────────────────────┘\n'
-        ),
+      expect(
+        stdout,
+        contains('\n'
+            '┌─ Test title ───────┐\n'
+            '│ Hello world        │\n'
+            '│ This is a new line │\n'
+            '└────────────────────┘\n'),
       );
     });
 
-    testWithoutContext('Stdout printBox handles content with ANSI escape characters', () {
+    testWithoutContext(
+        'Stdout printBox handles content with ANSI escape characters', () {
       final Logger logger = StdoutLogger(
         terminal: AnsiTerminal(
           stdio: fakeStdio,
@@ -407,13 +436,12 @@ void main() {
       const String clear = '\u001B[2J\u001B[H';
       logger.printBox('${bold}Hello world$clear', title: 'Test title');
       final String stdout = fakeStdio.writtenToStdout.join();
-      expect(stdout,
-        contains(
-          '\n'
-          '┌─ Test title ┐\n'
-          '│ ${bold}Hello world$clear │\n'
-          '└─────────────┘\n'
-        ),
+      expect(
+        stdout,
+        contains('\n'
+            '┌─ Test title ┐\n'
+            '│ ${bold}Hello world$clear │\n'
+            '└─────────────┘\n'),
       );
     });
 
@@ -424,86 +452,90 @@ void main() {
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(showColor: true, wrapColumn: columnLimit),
+        outputPreferences:
+            OutputPreferences.test(showColor: true, wrapColumn: columnLimit),
       );
-      logger.printBox('This line is longer than $columnLimit characters', title: 'Test');
+      logger.printBox('This line is longer than $columnLimit characters',
+          title: 'Test');
       final String stdout = fakeStdio.writtenToStdout.join();
       final List<String> stdoutLines = stdout.split('\n');
 
       expect(stdoutLines.length, greaterThan(1));
       expect(stdoutLines[1].length, equals(columnLimit));
-      expect(stdout,
-        contains(
-          '\n'
-          '┌─ Test ─────┐\n'
-          '│ This line  │\n'
-          '│ is longer  │\n'
-          '│ than 14    │\n'
-          '│ characters │\n'
-          '└────────────┘\n'
-        ),
+      expect(
+        stdout,
+        contains('\n'
+            '┌─ Test ─────┐\n'
+            '│ This line  │\n'
+            '│ is longer  │\n'
+            '│ than 14    │\n'
+            '│ characters │\n'
+            '└────────────┘\n'),
       );
     });
 
-    testWithoutContext('Stdout printBox handles column limit and respects new lines', () {
+    testWithoutContext(
+        'Stdout printBox handles column limit and respects new lines', () {
       const int columnLimit = 14;
       final Logger logger = StdoutLogger(
         terminal: AnsiTerminal(
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(showColor: true, wrapColumn: columnLimit),
+        outputPreferences:
+            OutputPreferences.test(showColor: true, wrapColumn: columnLimit),
       );
-      logger.printBox('This\nline is longer than\n\n$columnLimit characters', title: 'Test');
+      logger.printBox('This\nline is longer than\n\n$columnLimit characters',
+          title: 'Test');
       final String stdout = fakeStdio.writtenToStdout.join();
       final List<String> stdoutLines = stdout.split('\n');
 
       expect(stdoutLines.length, greaterThan(1));
       expect(stdoutLines[1].length, equals(columnLimit));
-      expect(stdout,
-        contains(
-          '\n'
-          '┌─ Test ─────┐\n'
-          '│ This       │\n'
-          '│ line is    │\n'
-          '│ longer     │\n'
-          '│ than       │\n'
-          '│            │\n'
-          '│ 14         │\n'
-          '│ characters │\n'
-          '└────────────┘\n'
-        ),
+      expect(
+        stdout,
+        contains('\n'
+            '┌─ Test ─────┐\n'
+            '│ This       │\n'
+            '│ line is    │\n'
+            '│ longer     │\n'
+            '│ than       │\n'
+            '│            │\n'
+            '│ 14         │\n'
+            '│ characters │\n'
+            '└────────────┘\n'),
       );
     });
 
-    testWithoutContext('Stdout printBox breaks long words that exceed the column limit', () {
+    testWithoutContext(
+        'Stdout printBox breaks long words that exceed the column limit', () {
       const int columnLimit = 14;
       final Logger logger = StdoutLogger(
         terminal: AnsiTerminal(
           stdio: fakeStdio,
         ),
         stdio: fakeStdio,
-        outputPreferences: OutputPreferences.test(showColor: true, wrapColumn: columnLimit),
+        outputPreferences:
+            OutputPreferences.test(showColor: true, wrapColumn: columnLimit),
       );
-      logger.printBox('Thiswordislongerthan${columnLimit}characters', title: 'Test');
+      logger.printBox('Thiswordislongerthan${columnLimit}characters',
+          title: 'Test');
       final String stdout = fakeStdio.writtenToStdout.join();
       final List<String> stdoutLines = stdout.split('\n');
 
       expect(stdoutLines.length, greaterThan(1));
       expect(stdoutLines[1].length, equals(columnLimit));
-      expect(stdout,
-        contains(
-          '\n'
-          '┌─ Test ─────┐\n'
-          '│ Thiswordis │\n'
-          '│ longerthan │\n'
-          '│ 14characte │\n'
-          '│ rs         │\n'
-          '└────────────┘\n'
-        ),
+      expect(
+        stdout,
+        contains('\n'
+            '┌─ Test ─────┐\n'
+            '│ Thiswordis │\n'
+            '│ longerthan │\n'
+            '│ 14characte │\n'
+            '│ rs         │\n'
+            '└────────────┘\n'),
       );
     });
-
 
     testWithoutContext('Stdout startProgress on non-color terminal', () async {
       final FakeStopwatch fakeStopwatch = FakeStopwatch();
@@ -517,7 +549,8 @@ void main() {
       );
       final Status status = logger.startProgress(
         'Hello',
-        progressIndicatorPadding: 20, // this minus the "Hello" equals the 15 below.
+        progressIndicatorPadding:
+            20, // this minus the "Hello" equals the 15 below.
       );
       expect(outputStderr().length, equals(1));
       expect(outputStderr().first, isEmpty);
@@ -574,7 +607,8 @@ void main() {
       expect(summaryStatus.cancel, throwsAssertionError);
     });
 
-    testWithoutContext('sequential startProgress calls with StdoutLogger', () async {
+    testWithoutContext('sequential startProgress calls with StdoutLogger',
+        () async {
       final Logger logger = StdoutLogger(
         terminal: AnsiTerminal(
           stdio: fakeStdio,
@@ -595,7 +629,8 @@ void main() {
       expect(output[1], matches(RegExp(r'BBB[ ]{61}[\d, ]{5}[\d]ms')));
     });
 
-    testWithoutContext('sequential startProgress calls with BufferLogger', () async {
+    testWithoutContext('sequential startProgress calls with BufferLogger',
+        () async {
       final BufferLogger logger = BufferLogger(
         terminal: AnsiTerminal(
           stdio: fakeStdio,
@@ -613,7 +648,8 @@ void main() {
 /// A fake [Logger] that throws the [Invocation] for any method call.
 class FakeLogger implements Logger {
   @override
-  dynamic noSuchMethod(Invocation invocation) => throw invocation; // ignore: only_throw_errors
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw invocation; // ignore: only_throw_errors
 }
 
 class FakeStdout extends Fake implements Stdout {

@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,14 +24,14 @@ void testUsingContext(
   Map<Type, Generator> overrides = const <Type, Generator>{},
   bool initializeFlutterRoot = true,
   String? testOn,
-  bool? skip, // should default to `false`, but https://github.com/dart-lang/test/issues/545 doesn't allow this
+  bool?
+      skip, // should default to `false`, but https://github.com/dart-lang/test/issues/545 doesn't allow this
 }) {
   if (overrides[FileSystem] != null && overrides[ProcessManager] == null) {
     throw StateError(
-      'If you override the FileSystem context you must also provide a ProcessManager, '
-      'otherwise the processes you launch will not be dealing with the same file system '
-      'that you are dealing with in your test.'
-    );
+        'If you override the FileSystem context you must also provide a ProcessManager, '
+        'otherwise the processes you launch will not be dealing with the same file system '
+        'that you are dealing with in your test.');
   }
 
   // Ensure we don't rely on the default [Config] constructor which will
@@ -71,8 +71,9 @@ void testUsingContext(
                   return await testMethod();
                 },
               );
-            // This catch rethrows, so doesn't need to catch only Exception.
-            } catch (error) { // ignore: avoid_catches_without_on_clauses
+              // This catch rethrows, so doesn't need to catch only Exception.
+            } catch (error) {
+              // ignore: avoid_catches_without_on_clauses
               _printBufferedErrors(context);
               rethrow;
             }
@@ -94,7 +95,8 @@ void testUsingContext(
 
 void _printBufferedErrors(AppContext testContext) {
   if (testContext.get<Logger>() is BufferLogger) {
-    final BufferLogger bufferLogger = testContext.get<Logger>()! as BufferLogger;
+    final BufferLogger bufferLogger =
+        testContext.get<Logger>()! as BufferLogger;
     if (bufferLogger.errorText.isNotEmpty) {
       // This is where the logger outputting errors is implemented, so it has
       // to use `print`.
@@ -108,7 +110,6 @@ Future<T> runInContext<T>(
   FutureOr<T> Function() runner, {
   Map<Type, Generator>? overrides,
 }) async {
-
   // Wrap runner with any asynchronous initialization that should run with the
   // overrides and callbacks.
   // late bool runningOnBot;
@@ -117,9 +118,8 @@ Future<T> runInContext<T>(
   }
 
   return context.run<T>(
-    name: 'global fallbacks',
-    body: runnerWrapper,
-    overrides: overrides,
-    fallbacks: <Type, Generator>{}
-  );
+      name: 'global fallbacks',
+      body: runnerWrapper,
+      overrides: overrides,
+      fallbacks: <Type, Generator>{});
 }

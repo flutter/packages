@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,8 +17,8 @@ import 'package:flutter_migrate/src/base/file_system.dart';
 /// The only safe delegate types are those that do not call out to `dart:io`,
 /// like the [MemoryFileSystem].
 class FlutterIOOverrides extends io.IOOverrides {
-  FlutterIOOverrides({ FileSystem? fileSystem })
-    : _fileSystemDelegate = fileSystem;
+  FlutterIOOverrides({FileSystem? fileSystem})
+      : _fileSystemDelegate = fileSystem;
 
   final FileSystem? _fileSystemDelegate;
 
@@ -51,7 +51,9 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.fsWatch(path, events, recursive);
     }
-    return _fileSystemDelegate!.file(path).watch(events: events, recursive: recursive);
+    return _fileSystemDelegate!
+        .file(path)
+        .watch(events: events, recursive: recursive);
   }
 
   @override

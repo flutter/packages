@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import 'file_system.dart';
 /// where the tool should exit with a clear message to the user
 /// and no stack trace unless the --verbose option is specified.
 /// For example: network errors.
-Never throwToolExit(String? message, { int? exitCode }) {
+Never throwToolExit(String? message, {int? exitCode}) {
   throw ToolExit(message, exitCode: exitCode);
 }
 
@@ -20,13 +20,14 @@ Never throwToolExit(String? message, { int? exitCode }) {
 /// and no stack trace unless the --verbose option is specified.
 /// For example: network errors.
 class ToolExit implements Exception {
-  ToolExit(this.message, { this.exitCode });
+  ToolExit(this.message, {this.exitCode});
 
   final String? message;
   final int? exitCode;
 
   @override
-  String toString() => 'Exception: $message'; // TODO(ianh): Really this should say "Error".
+  String toString() =>
+      'Exception: $message'; // TODO(ianh): Really this should say "Error".
 }
 
 /// Return the name of an enum item.
@@ -118,8 +119,8 @@ Future<T> asyncGuard<T>(
       onError is! _UnaryOnError<T> &&
       onError is! _BinaryOnError<T>) {
     throw ArgumentError('onError must be a unary function accepting an Object, '
-                        'or a binary function accepting an Object and '
-                        'StackTrace. onError must return a T');
+        'or a binary function accepting an Object and '
+        'StackTrace. onError must return a T');
   }
   final Completer<T> completer = Completer<T>();
 
@@ -144,12 +145,14 @@ Future<T> asyncGuard<T>(
       if (!completer.isCompleted) {
         completer.complete(result);
       }
-    // This catches all exceptions so that they can be propagated to the
-    // caller-supplied error handling or the completer.
-    } catch (e, s) { // ignore: avoid_catches_without_on_clauses, forwards to Future
+      // This catches all exceptions so that they can be propagated to the
+      // caller-supplied error handling or the completer.
+    } catch (e, s) {
+      // ignore: avoid_catches_without_on_clauses, forwards to Future
       handleError(e, s);
     }
-  }, onError: (Object e, StackTrace s) { // ignore: deprecated_member_use
+  // ignore: deprecated_member_use
+  }, onError: (Object e, StackTrace s) {
     handleError(e, s);
   });
 
@@ -157,7 +160,8 @@ Future<T> asyncGuard<T>(
 }
 
 typedef _UnaryOnError<T> = FutureOr<T> Function(Object error);
-typedef _BinaryOnError<T> = FutureOr<T> Function(Object error, StackTrace stackTrace);
+typedef _BinaryOnError<T> = FutureOr<T> Function(
+    Object error, StackTrace stackTrace);
 
 /// Whether the test is running in a web browser compiled to JavaScript.
 ///
@@ -236,14 +240,19 @@ String? flutterRoot;
 String defaultFlutterRoot({
   required FileSystem fileSystem,
 }) {
-  const String kFlutterRootEnvironmentVariableName = 'FLUTTER_ROOT'; // should point to //flutter/ (root of flutter/flutter repo)
-  const String kSnapshotFileName = 'flutter_tools.snapshot'; // in //flutter/bin/cache/
-  const String kFlutterToolsScriptFileName = 'flutter_tools.dart'; // in //flutter/packages/flutter_tools/bin/
+  const String kFlutterRootEnvironmentVariableName =
+      'FLUTTER_ROOT'; // should point to //flutter/ (root of flutter/flutter repo)
+  const String kSnapshotFileName =
+      'flutter_tools.snapshot'; // in //flutter/bin/cache/
+  const String kFlutterToolsScriptFileName =
+      'flutter_tools.dart'; // in //flutter/packages/flutter_tools/bin/
   String normalize(String path) {
     return fileSystem.path.normalize(fileSystem.path.absolute(path));
   }
+
   if (Platform.environment.containsKey(kFlutterRootEnvironmentVariableName)) {
-    return normalize(Platform.environment[kFlutterRootEnvironmentVariableName]!);
+    return normalize(
+        Platform.environment[kFlutterRootEnvironmentVariableName]!);
   }
   try {
     if (Platform.script.scheme == 'data') {
@@ -252,7 +261,8 @@ String defaultFlutterRoot({
     final String Function(String) dirname = fileSystem.path.dirname;
 
     if (Platform.script.scheme == 'package') {
-      final String packageConfigPath = Uri.parse(Platform.packageConfig!).toFilePath(
+      final String packageConfigPath =
+          Uri.parse(Platform.packageConfig!).toFilePath(
         windows: isWindows,
       );
       return normalize(dirname(dirname(dirname(packageConfigPath))));

@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -31,7 +31,8 @@ class FileNotFoundException implements IOException {
 /// Return a relative path if [fullPath] is contained by the cwd, else return an
 /// absolute path.
 String getDisplayPath(String fullPath, FileSystem fileSystem) {
-  final String cwd = fileSystem.currentDirectory.path + fileSystem.path.separator;
+  final String cwd =
+      fileSystem.currentDirectory.path + fileSystem.path.separator;
   return fullPath.startsWith(cwd) ? fullPath.substring(cwd.length) : fullPath;
 }
 
@@ -54,7 +55,8 @@ class LocalFileSystem extends local_fs.LocalFileSystem {
 
   Future<void> dispose() async {
     _tryToDeleteTemp();
-    for (final MapEntry<ProcessSignal, Object> signalToken in _signalTokens.entries) {
+    for (final MapEntry<ProcessSignal, Object> signalToken
+        in _signalTokens.entries) {
       await _signals.removeHandler(signalToken.key, signalToken.value);
     }
     _signalTokens.clear();
@@ -83,9 +85,9 @@ class LocalFileSystem extends local_fs.LocalFileSystem {
   Directory get systemTempDirectory {
     if (_systemTemp == null) {
       if (!superSystemTempDirectory.existsSync()) {
-        throwToolExit('Your system temp directory (${superSystemTempDirectory.path}) does not exist. '
-          'Did you set an invalid override in your environment? See issue https://github.com/flutter/flutter/issues/74042 for more context.'
-        );
+        throwToolExit(
+            'Your system temp directory (${superSystemTempDirectory.path}) does not exist. '
+            'Did you set an invalid override in your environment? See issue https://github.com/flutter/flutter/issues/74042 for more context.');
       }
       _systemTemp = superSystemTempDirectory.createTempSync('flutter_tools.')
         ..createSync(recursive: true);
@@ -121,9 +123,7 @@ abstract class ShutdownHooks {
   factory ShutdownHooks() => _DefaultShutdownHooks();
 
   /// Registers a [ShutdownHook] to be executed before the VM exits.
-  void addShutdownHook(
-    ShutdownHook shutdownHook
-  );
+  void addShutdownHook(ShutdownHook shutdownHook);
 
   @visibleForTesting
   List<ShutdownHook> get registeredHooks;
@@ -150,9 +150,7 @@ class _DefaultShutdownHooks implements ShutdownHooks {
   bool _shutdownHooksRunning = false;
 
   @override
-  void addShutdownHook(
-    ShutdownHook shutdownHook
-  ) {
+  void addShutdownHook(ShutdownHook shutdownHook) {
     assert(!_shutdownHooksRunning);
     registeredHooks.add(shutdownHook);
   }

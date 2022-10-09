@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,7 +19,8 @@ abstract class Signals {
   @visibleForTesting
   factory Signals.test({
     List<ProcessSignal> exitSignals = defaultExitSignals,
-  }) => LocalSignals._(exitSignals);
+  }) =>
+      LocalSignals._(exitSignals);
 
   // The default list of signals that should cause the process to exit.
   static const List<ProcessSignal> defaultExitSignals = <ProcessSignal>[
@@ -69,11 +70,13 @@ class LocalSignals implements Signals {
       <ProcessSignal, List<SignalHandler>>{};
 
   // A table mapping (signal) -> low-level signal event stream.
-  final Map<ProcessSignal, StreamSubscription<ProcessSignal>> _streamSubscriptions =
-    <ProcessSignal, StreamSubscription<ProcessSignal>>{};
+  final Map<ProcessSignal, StreamSubscription<ProcessSignal>>
+      _streamSubscriptions =
+      <ProcessSignal, StreamSubscription<ProcessSignal>>{};
 
   // The stream controller for errors coming from signal handlers.
-  final StreamController<Object> _errorStreamController = StreamController<Object>.broadcast();
+  final StreamController<Object> _errorStreamController =
+      StreamController<Object>.broadcast();
 
   @override
   Stream<Object> get errors => _errorStreamController.stream;

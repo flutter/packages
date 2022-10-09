@@ -15,3 +15,6 @@
 - rfw/example
 # Disables docs requirements, as it is test code.
 - web_benchmarks/testing/test_app
+# Adopts some flutter_tools rules regarding public api docs due to being an
+# extension of the tool and using tools base code.
+- flutter_migrate
