@@ -870,7 +870,7 @@ void main() {
             'Long output = api.add((xArg == null) ? null : xArg.longValue(), (yArg == null) ? null : yArg.longValue())'));
   });
 
-  test('host Object argType', () {
+  test('if host argType is Object not cast', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
