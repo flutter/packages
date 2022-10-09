@@ -889,10 +889,6 @@ void main() {
     const JavaOptions javaOptions = JavaOptions(className: 'Api');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('class Api'));
-    expect(code, contains('void objectTest(@NonNull Object x)'));
-    expect(
-        code, contains('ArrayList<Object> args = (ArrayList<Object>)message;'));
     expect(code, contains('Object xArg = args.get(0)'));
   });
 
@@ -951,11 +947,6 @@ void main() {
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('class Messages'));
-    expect(code, contains('BasicMessageChannel<Object> channel'));
-    expect(code, contains('Long output'));
-    expect(code,
-        contains('public void send(@NonNull Long xArg, Reply<Long> callback)'));
     expect(
         code,
         contains(
