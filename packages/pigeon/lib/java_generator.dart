@@ -221,11 +221,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
             if (method.arguments.isNotEmpty) {
               indent.writeln(
                   'ArrayList<Object> args = (ArrayList<Object>)message;');
-              indent.write('if (args == null) ');
-              indent.scoped('{', '}', () {
-                indent.writeln(
-                    'throw new NullPointerException("args unexpectedly null.");');
-              });
+              indent.writeln('assert args != null;');
               enumerate(method.arguments, (int index, NamedType arg) {
                 // The StandardMessageCodec can give us [Integer, Long] for
                 // a Dart 'int'.  To keep things simple we just use 64bit
