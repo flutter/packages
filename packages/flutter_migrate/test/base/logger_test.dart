@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'package:flutter_migrate/executable.dart';
 import 'package:flutter_migrate/src/base/io.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
 import 'package:flutter_migrate/src/base/terminal.dart';

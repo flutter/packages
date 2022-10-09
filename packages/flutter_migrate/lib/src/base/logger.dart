@@ -1343,3 +1343,46 @@ bool _isWhitespace(_AnsiRun run) {
       rune == 0x3000 ||
       rune == 0xFEFF;
 }
+
+/// An abstraction for instantiation of the correct logger type.
+///
+/// Our logger class hierarchy and runtime requirements are overly complicated.
+class LoggerFactory {
+  LoggerFactory({
+    required Terminal terminal,
+    required Stdio stdio,
+    required OutputPreferences outputPreferences,
+    StopwatchFactory stopwatchFactory = const StopwatchFactory(),
+  }) : _terminal = terminal,
+       _stdio = stdio,
+       _stopwatchFactory = stopwatchFactory,
+       _outputPreferences = outputPreferences;
+
+  final Terminal _terminal;
+  final Stdio _stdio;
+  final StopwatchFactory _stopwatchFactory;
+  final OutputPreferences _outputPreferences;
+
+  /// Create the appropriate logger for the current platform and configuration.
+  Logger createLogger({
+    required bool windows,
+  }) {
+    Logger logger;
+    if (windows) {
+      logger = WindowsStdoutLogger(
+        terminal: _terminal,
+        stdio: _stdio,
+        outputPreferences: _outputPreferences,
+        stopwatchFactory: _stopwatchFactory,
+      );
+    } else {
+      logger = StdoutLogger(
+        terminal: _terminal,
+        stdio: _stdio,
+        outputPreferences: _outputPreferences,
+        stopwatchFactory: _stopwatchFactory
+      );
+    }
+    return logger;
+  }
+}
