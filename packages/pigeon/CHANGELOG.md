@@ -1,3 +1,7 @@
+## 4.2.2
+
+* Removes unneeded custom codecs for all languages.
+
 ## 4.2.1
 
 * Adds documentation comment support for Kotlin.
