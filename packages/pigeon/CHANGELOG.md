@@ -1,8 +1,8 @@
 ## 4.2.1
 
-* [java] Adds null check for `args`.
-* [java] Changes the args of a single element to `ArrayList` from `Arrays.asList` to `Collections.singletonList`.
-* [java] Removes cast for `Object`.
+* [java] Adds null check for `args` 
+* [java] Changes the args of a single element to `ArrayList` from `Arrays.asList` to `Collections.singletonList` 
+* [java] Removes cast for `Object`
 
 ## 4.2.0
 
