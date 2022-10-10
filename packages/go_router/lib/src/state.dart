@@ -86,19 +86,20 @@ class GoRouterState {
 /// The current state for a [StatefulShellRoute].
 class StatefulShellRouteState {
   /// Constructs a [StatefulShellRouteState].
-  StatefulShellRouteState(
-      {required this.route,
-      required this.navigationBranchState,
-      required this.currentBranchIndex});
+  StatefulShellRouteState({
+    required this.route,
+    required this.navigationBranchState,
+    required this.currentBranchIndex,
+  });
 
   /// The associated [StatefulShellRoute]
   final StatefulShellRoute route;
 
-  /// The state for all separate navigation branches associated with a
+  /// The state for all separate route branches associated with a
   /// [StatefulShellRoute].
-  final List<ShellNavigationBranchState> navigationBranchState;
+  final List<ShellRouteBranchState> navigationBranchState;
 
-  /// The index of the currently active navigation branch.
+  /// The index of the currently active route branch.
   final int currentBranchIndex;
 
   /// Gets the current location from the [topRouteState] or falls back to
@@ -107,22 +108,22 @@ class StatefulShellRouteState {
       navigationBranchState[currentBranchIndex].currentLocation;
 }
 
-/// The current state for a particular navigation branch
-/// ([ShellNavigationBranchItem]) of a [StatefulShellRoute].
-class ShellNavigationBranchState {
-  /// Constructs a [ShellNavigationBranchState].
-  ShellNavigationBranchState({
+/// The current state for a particular route branch
+/// ([ShellRouteBranch]) of a [StatefulShellRoute].
+class ShellRouteBranchState {
+  /// Constructs a [ShellRouteBranchState].
+  ShellRouteBranchState({
     required this.navigationItem,
     required this.rootRoutePath,
   });
 
-  /// The associated [ShellNavigationBranchItem]
-  final ShellNavigationBranchItem navigationItem;
+  /// The associated [ShellRouteBranch]
+  final ShellRouteBranch navigationItem;
 
-  /// The full path at which root route for the navigation branch is reachable.
+  /// The full path at which root route for the route branch is reachable.
   final String rootRoutePath;
 
-  /// The [Navigator] for this navigation branch in a [StatefulShellRoute]. This
+  /// The [Navigator] for this route branch in a [StatefulShellRoute]. This
   /// field will typically not be set until this route tree has been navigated
   /// to at least once.
   Navigator? navigator;
@@ -130,10 +131,14 @@ class ShellNavigationBranchState {
   /// The [GoRouterState] for the top of the current navigation stack.
   GoRouterState? topRouteState;
 
-  /// Gets the current location from the [topRouteState] or falls back to
+  /// Gets the defaultLocation specified in [navigationItem] or falls back to
   /// the root path of the associated [route].
-  String get currentLocation => topRouteState?.location ?? rootRoutePath;
+  String get defaultLocation => navigationItem.defaultLocation ?? rootRoutePath;
 
-  /// The root route for the navigation branch.
+  /// Gets the current location from the [topRouteState] or falls back to
+  /// [defaultLocation].
+  String get currentLocation => topRouteState?.location ?? defaultLocation;
+
+  /// The root route for the route branch.
   RouteBase get route => navigationItem.rootRoute;
 }

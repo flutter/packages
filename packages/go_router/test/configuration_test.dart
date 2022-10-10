@@ -97,7 +97,7 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute.navigationBranchRoutes(
+              StatefulShellRoute.rootRoutes(
                   routes: shellRouteChildren, builder: _mockShellBuilder),
             ],
             redirectLimit: 10,
@@ -126,7 +126,7 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute.navigationBranchRoutes(
+              StatefulShellRoute.rootRoutes(
                   routes: shellRouteChildren, builder: _mockShellBuilder),
             ],
             redirectLimit: 10,
@@ -161,14 +161,12 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute(
-                  navigationBranches: <ShellNavigationBranchItem>[
-                    ShellNavigationBranchItem(
-                        rootRoute: routeA, navigatorKey: sectionANavigatorKey),
-                    ShellNavigationBranchItem(
-                        rootRoute: routeB, navigatorKey: sectionBNavigatorKey),
-                  ],
-                  builder: _mockShellBuilder),
+              StatefulShellRoute(branches: <ShellRouteBranch>[
+                ShellRouteBranch(
+                    rootRoute: routeA, navigatorKey: sectionANavigatorKey),
+                ShellRouteBranch(
+                    rootRoute: routeB, navigatorKey: sectionBNavigatorKey),
+              ], builder: _mockShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {

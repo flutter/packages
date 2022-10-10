@@ -215,15 +215,16 @@ class RouteBuilder {
 
       if (route is StatefulShellRoute) {
         if (topRouterState == null) {
-          throw _RouteBuilderError('StatefulShellRoute must always have a '
-              'StatefulRootRoute as a child');
+          throw _RouteBuilderError('StatefulShellRoute cannot be at the top of '
+              'the navigation stack');
         }
 
         child = _buildStatefulNavigationShell(
-            shellRoute: route,
-            navigator: child as Navigator,
-            shellRouterState: state,
-            topRouterState: topRouterState);
+          shellRoute: route,
+          navigator: child as Navigator,
+          shellRouterState: state,
+          topRouterState: topRouterState,
+        );
       }
 
       // Build the Page for this route

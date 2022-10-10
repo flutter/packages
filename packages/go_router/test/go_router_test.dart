@@ -2417,7 +2417,7 @@ void main() {
           GlobalKey<DummyStatefulWidgetState>();
 
       final List<RouteBase> routes = <RouteBase>[
-        StatefulShellRoute.navigationBranchRoutes(
+        StatefulShellRoute.rootRoutes(
           builder: (BuildContext context, GoRouterState state, Widget child) =>
               child,
           routes: <GoRoute>[
@@ -2484,7 +2484,7 @@ void main() {
           GlobalKey<NavigatorState>();
 
       final List<RouteBase> routes = <RouteBase>[
-        StatefulShellRoute.navigationBranchRoutes(
+        StatefulShellRoute.rootRoutes(
           builder: (BuildContext context, GoRouterState state, Widget child) =>
               child,
           routes: <GoRoute>[
@@ -2722,7 +2722,7 @@ void main() {
             navigatorKey: rootNavigatorKey,
             initialLocation: '/a',
             routes: <RouteBase>[
-              StatefulShellRoute.navigationBranchRoutes(
+              StatefulShellRoute.rootRoutes(
                 builder:
                     (BuildContext context, GoRouterState state, Widget child) {
                   return Scaffold(

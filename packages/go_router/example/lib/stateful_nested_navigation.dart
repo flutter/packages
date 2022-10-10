@@ -36,20 +36,14 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       /// Custom top shell route - wraps the below routes in a scaffold with
       /// a bottom tab navigator (ScaffoldWithNavBar). Each tab will use its own
-      /// Navigator, provided by StatefulShellRoute.
-      StatefulShellRoute.navigationBranchRoutes(
+      /// Navigator, as specified by the navigatorKey for each root route
+      /// (branch). For more customization options for the route branches, see
+      /// the default constructor for StatefulShellRoute.
+      StatefulShellRoute.rootRoutes(
         builder: (BuildContext context, GoRouterState state,
             Widget statefulShellNavigation) {
           return ScaffoldWithNavBar(body: statefulShellNavigation);
         },
-        pageProvider:
-            (BuildContext context, GoRouterState state, Widget statefulShell) {
-          return NoTransitionPage<dynamic>(child: statefulShell);
-        },
-        // A transition builder is optional:
-        // transitionBuilder:
-        //     (BuildContext context, Animation<double> animation, Widget child) =>
-        //         FadeTransition(opacity: animation, child: child),
         routes: <GoRoute>[
           /// The screen to display as the root in the first tab of the bottom
           /// navigation bar.
@@ -91,6 +85,18 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
             ],
           ),
         ],
+
+        /// If you need to customize the Page for StatefulShellRoute, pass a
+        /// pageProvider function in addition to the builder, for example:
+        // pageProvider:
+        //     (BuildContext context, GoRouterState state, Widget statefulShell) {
+        //   return NoTransitionPage<dynamic>(child: statefulShell);
+        // },
+        /// To customize shell route branch transitions, provide a transition
+        /// builder, for example:
+        // transitionBuilder:
+        //     (BuildContext context, Animation<double> animation, Widget child) =>
+        //         FadeTransition(opacity: animation, child: child),
       ),
     ],
   );
@@ -139,8 +145,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
     );
   }
 
-  void _onItemTapped(
-      BuildContext context, ShellNavigationBranchState routeState) {
+  void _onItemTapped(BuildContext context, ShellRouteBranchState routeState) {
     GoRouter.of(context).go(routeState.currentLocation);
   }
 }

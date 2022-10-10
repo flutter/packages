@@ -91,7 +91,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   late final AnimationController? _animationController;
 
-  late final List<ShellNavigationBranchState> _childRouteState;
+  late final List<ShellRouteBranchState> _childRouteState;
 
   StatefulNavigationTransitionBuilder? get _transitionBuilder =>
       widget.shellRoute.transitionBuilder;
@@ -99,9 +99,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   Duration? get _transitionDuration => widget.shellRoute.transitionDuration;
 
   int _findCurrentIndex() {
-    final int index = _childRouteState.indexWhere(
-        (ShellNavigationBranchState i) =>
-            i.navigationItem.navigatorKey == widget.activeNavigator.key);
+    final int index = _childRouteState.indexWhere((ShellRouteBranchState i) =>
+        i.navigationItem.navigatorKey == widget.activeNavigator.key);
     return index < 0 ? 0 : index;
   }
 
@@ -114,10 +113,11 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   @override
   void initState() {
     super.initState();
-    _childRouteState = widget.shellRoute.navigationBranches
-        .map((ShellNavigationBranchItem e) => ShellNavigationBranchState(
-            navigationItem: e,
-            rootRoutePath: widget.configuration.fullPathForRoute(e.rootRoute)))
+    _childRouteState = widget.shellRoute.branches
+        .map((ShellRouteBranch e) => ShellRouteBranchState(
+              navigationItem: e,
+              rootRoutePath: widget.configuration.fullPathForRoute(e.rootRoute),
+            ))
         .toList();
 
     if (_transitionBuilder != null) {
@@ -147,8 +147,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     final int previousIndex = _currentIndex;
     _currentIndex = _findCurrentIndex();
 
-    final ShellNavigationBranchState itemState =
-        _childRouteState[_currentIndex];
+    final ShellRouteBranchState itemState = _childRouteState[_currentIndex];
     itemState.navigator = widget.activeNavigator;
     itemState.topRouteState = widget.topRouterState;
 
@@ -180,7 +179,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   Widget _buildIndexStack(BuildContext context) {
     final List<Widget> children = _childRouteState
-        .mapIndexed((int index, ShellNavigationBranchState item) =>
+        .mapIndexed((int index, ShellRouteBranchState item) =>
             _buildNavigator(context, index, item))
         .toList();
 
@@ -196,8 +195,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     }
   }
 
-  Widget _buildNavigator(BuildContext context, int index,
-      ShellNavigationBranchState navigationItem) {
+  Widget _buildNavigator(
+      BuildContext context, int index, ShellRouteBranchState navigationItem) {
     final Navigator? navigator = navigationItem.navigator;
     if (navigator == null) {
       return const SizedBox.shrink();

@@ -487,13 +487,14 @@ class ShellRoute extends ShellRouteBase {
 ///
 /// Similar to [ShellRoute], this route class places its sub routes on a
 /// different Navigator than the root Navigator. However, this route class
-/// differs in that it creates separate Navigators for each of its sub
-/// route trees (branches), making it possible to build a stateful nested
-/// navigation. This is convenient when for instance implementing a UI with a
-/// [BottomNavigationBar], with a persistent navigation state for each tab.
+/// differs in that it creates separate Navigators for each of its nested
+/// route branches (route trees), making it possible to build a stateful
+/// nested navigation. This is convenient when for instance implementing a UI
+/// with a [BottomNavigationBar], with a persistent navigation state for each
+/// tab.
 ///
 /// To access the current state of this route, to for instance access the
-/// index of the current navigation branch - use the method
+/// index of the current route branch - use the method
 /// [StatefulShellRoute.of]. For example:
 ///
 /// ```
@@ -598,27 +599,21 @@ class ShellRoute extends ShellRouteBase {
 /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_nested_navigation.dart)
 /// for a complete runnable example.
 class StatefulShellRoute extends ShellRouteBase {
-  /// Constructs a [StatefulShellRoute] from a list of [ShellNavigationBranchItem]
-  /// items, each representing a root in a stateful navigation branch.
+  /// Constructs a [StatefulShellRoute] from a list of [ShellRouteBranch], each
+  /// representing a root in a stateful route branch.
   ///
   /// A separate [Navigator] will be created for each of the branches, using
-  /// the navigator key specified in [ShellNavigationBranchItem].
+  /// the navigator key specified in [ShellRouteBranch].
   StatefulShellRoute({
-    required this.navigationBranches,
+    required this.branches,
     required this.builder,
     this.pageProvider,
     this.transitionBuilder,
     this.transitionDuration,
-  })  : assert(navigationBranches.isNotEmpty),
-        assert(
-            Set<GlobalKey<NavigatorState>>.from(navigationBranches.map(
-                    (ShellNavigationBranchItem e) => e.navigatorKey)).length ==
-                navigationBranches.length,
+  })  : assert(branches.isNotEmpty),
+        assert(_uniqueNavigatorKeys(branches).length == branches.length,
             'Navigator keys must be unique'),
-        super._(
-            routes: navigationBranches
-                .map((ShellNavigationBranchItem e) => e.rootRoute)
-                .toList()) {
+        super._(routes: _rootRoutes(branches)) {
     for (int i = 0; i < routes.length; ++i) {
       final RouteBase route = routes[i];
       if (route is GoRoute) {
@@ -629,29 +624,24 @@ class StatefulShellRoute extends ShellRouteBase {
   }
 
   /// Constructs a [StatefulShellRoute] from a list of [GoRoute]s, each
-  /// representing a root in a stateful navigation branch.
+  /// representing a root in a stateful route branch.
   ///
   /// This constructor provides a shorthand form of creating a
   /// StatefulShellRoute from a list of GoRoutes instead of
-  /// [ShellNavigationBranchItem]s. Each GoRoute provides the navigator key
+  /// [ShellRouteBranch]s. Each GoRoute provides the navigator key
   /// (via [GoRoute.parentNavigatorKey]) that will be used to create the
   /// separate [Navigator]s for the routes.
-  StatefulShellRoute.navigationBranchRoutes({
+  StatefulShellRoute.rootRoutes({
     required List<GoRoute> routes,
     required ShellRouteBuilder builder,
     ShellRoutePageBuilder? pageProvider,
     StatefulNavigationTransitionBuilder? transitionBuilder,
     Duration? transitionDuration,
   }) : this(
-          navigationBranches: routes.map((GoRoute e) {
-            assert(
-                e.parentNavigatorKey != null,
-                'Each route must specify a '
-                'parentNavigatorKey');
-            return ShellNavigationBranchItem(
-              rootRoute: e,
-              navigatorKey: e.parentNavigatorKey!,
-            );
+          branches: routes.map((GoRoute e) {
+            final GlobalKey<NavigatorState>? key = e.parentNavigatorKey;
+            assert(key != null, 'Each route must specify a parentNavigatorKey');
+            return ShellRouteBranch(rootRoute: e, navigatorKey: key!);
           }).toList(),
           builder: builder,
           pageProvider: pageProvider,
@@ -659,11 +649,11 @@ class StatefulShellRoute extends ShellRouteBase {
           transitionDuration: transitionDuration,
         );
 
-  /// Representations of the different stateful navigation branches that this
-  /// shell route will manage. Each branch identifies the Navigator to be used
+  /// Representations of the different stateful route branches that this
+  /// shell route will manage. Each branch identifies the [Navigator] to be used
   /// (via the navigatorKey) and the route that will be used as the root of the
-  /// navigation branch.
-  final List<ShellNavigationBranchItem> navigationBranches;
+  /// route branch.
+  final List<ShellRouteBranch> branches;
 
   /// The widget builder for a stateful shell route.
   ///
@@ -691,9 +681,8 @@ class StatefulShellRoute extends ShellRouteBase {
   final Duration? transitionDuration;
 
   /// The navigator keys of the navigators created by this route.
-  List<GlobalKey<NavigatorState>> get navigatorKeys => navigationBranches
-      .map((ShellNavigationBranchItem e) => e.navigatorKey)
-      .toList();
+  List<GlobalKey<NavigatorState>> get navigatorKeys =>
+      branches.map((ShellRouteBranch e) => e.navigatorKey).toList();
 
   @override
   GlobalKey<NavigatorState>? navigatorKeyForChildRoute(RouteBase route) {
@@ -701,7 +690,7 @@ class StatefulShellRoute extends ShellRouteBase {
     if (routeIndex < 0) {
       return null;
     }
-    return navigatorKeys[routeIndex];
+    return branches[routeIndex].navigatorKey;
   }
 
   /// Gets the state for the nearest stateful shell route in the Widget tree.
@@ -712,22 +701,35 @@ class StatefulShellRoute extends ShellRouteBase {
         'No InheritedStatefulNavigationShell found in context');
     return inherited!.state.routeState;
   }
+
+  static Set<GlobalKey<NavigatorState>> _uniqueNavigatorKeys(
+          List<ShellRouteBranch> branches) =>
+      Set<GlobalKey<NavigatorState>>.from(
+          branches.map((ShellRouteBranch e) => e.navigatorKey));
+
+  static List<RouteBase> _rootRoutes(List<ShellRouteBranch> branches) =>
+      branches.map((ShellRouteBranch e) => e.rootRoute).toList();
 }
 
 /// Representation of a separate branch in a stateful navigation tree, used to
 /// configure [StatefulShellRoute].
-class ShellNavigationBranchItem {
-  /// Constructs a [ShellNavigationBranchItem].
-  ShellNavigationBranchItem({
-    required this.rootRoute,
+class ShellRouteBranch {
+  /// Constructs a [ShellRouteBranch].
+  ShellRouteBranch({
     required this.navigatorKey,
+    required this.rootRoute,
+    this.defaultLocation,
   });
-
-  /// The root route of the navigation branch.
-  final RouteBase rootRoute;
 
   /// The [GlobalKey] to be used by the [Navigator] built for the navigation
   /// branch represented by this object. All child routes will also be placed
   /// onto this Navigator instead of the root Navigator.
   final GlobalKey<NavigatorState> navigatorKey;
+
+  /// The root route of the route branch.
+  final RouteBase rootRoute;
+
+  /// The default location for this route branch. If none is specified, the
+  /// location of the [rootRoute] will be used.
+  final String? defaultLocation;
 }

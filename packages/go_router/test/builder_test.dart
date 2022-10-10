@@ -113,7 +113,7 @@ void main() {
           GlobalKey<NavigatorState>(debugLabel: 'key');
       final RouteConfiguration config = RouteConfiguration(
         routes: <RouteBase>[
-          StatefulShellRoute.navigationBranchRoutes(
+          StatefulShellRoute.rootRoutes(
               builder:
                   (BuildContext context, GoRouterState state, Widget child) =>
                       child,

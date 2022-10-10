@@ -11,8 +11,8 @@ export 'src/configuration.dart'
         GoRoute,
         GoRouterState,
         RouteBase,
-        ShellNavigationBranchItem,
-        ShellNavigationBranchState,
+        ShellRouteBranch,
+        ShellRouteBranchState,
         ShellRoute,
         StatefulShellRoute,
         StatefulShellRouteState;
