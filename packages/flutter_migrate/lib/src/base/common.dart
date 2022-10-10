@@ -26,8 +26,7 @@ class ToolExit implements Exception {
   final int? exitCode;
 
   @override
-  String toString() =>
-      'Error: $message';
+  String toString() => 'Error: $message';
 }
 
 /// Return the name of an enum item.
