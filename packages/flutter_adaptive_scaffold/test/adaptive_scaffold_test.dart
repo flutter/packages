@@ -168,6 +168,46 @@ void main() {
       expect(selectedIndex, state.index);
     });
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/111008
+  testWidgets(
+    'appBar parameter should have the type PreferredSizeWidget',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(500, 800)),
+          child: AdaptiveScaffold(
+            drawerBreakpoint: TestBreakpoint0(),
+            internalAnimations: false,
+            destinations: const <NavigationDestination>[
+              NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+              NavigationDestination(
+                  icon: Icon(Icons.video_call), label: 'Video'),
+            ],
+            appBar: const PreferredSizeWidgetImpl(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(PreferredSizeWidgetImpl), findsOneWidget);
+    },
+  );
+}
+
+/// An empty widget that implements [PreferredSizeWidget] to ensure that
+/// [PreferredSizeWidget] is used as [AdaptiveScaffold.appBar] parameter instead
+/// of [AppBar].
+class PreferredSizeWidgetImpl extends StatelessWidget
+    implements PreferredSizeWidget {
+  const PreferredSizeWidgetImpl({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Size get preferredSize => const Size(200, 200);
 }
 
 class TestBreakpoint0 extends Breakpoint {
