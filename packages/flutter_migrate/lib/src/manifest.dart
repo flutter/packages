@@ -28,53 +28,72 @@ class MigrateManifest {
   });
 
   /// Parses an existing migrate manifest.
-  MigrateManifest.fromFile(File manifestFile) : migrateResult = MigrateResult.empty(), migrateRootDir = manifestFile.parent {
+  MigrateManifest.fromFile(File manifestFile)
+      : migrateResult = MigrateResult.empty(),
+        migrateRootDir = manifestFile.parent {
     final Object? yamlContents = loadYaml(manifestFile.readAsStringSync());
     if (yamlContents is! YamlMap) {
-      throw Exception('Invalid .migrate_manifest file in the migrate working directory. File is not a Yaml map.');
+      throw Exception(
+          'Invalid .migrate_manifest file in the migrate working directory. File is not a Yaml map.');
     }
     final YamlMap map = yamlContents;
-    bool valid = map.containsKey(_kMergedFilesKey) && map.containsKey(_kConflictFilesKey) && map.containsKey(_kAddedFilesKey) && map.containsKey(_kDeletedFilesKey);
+    bool valid = map.containsKey(_kMergedFilesKey) &&
+        map.containsKey(_kConflictFilesKey) &&
+        map.containsKey(_kAddedFilesKey) &&
+        map.containsKey(_kDeletedFilesKey);
     if (!valid) {
-      throw Exception('Invalid .migrate_manifest file in the migrate working directory. File is missing an entry.');
+      throw Exception(
+          'Invalid .migrate_manifest file in the migrate working directory. File is missing an entry.');
     }
     final Object? mergedFilesYaml = map[_kMergedFilesKey];
     final Object? conflictFilesYaml = map[_kConflictFilesKey];
     final Object? addedFilesYaml = map[_kAddedFilesKey];
     final Object? deletedFilesYaml = map[_kDeletedFilesKey];
     valid = valid && (mergedFilesYaml is YamlList || mergedFilesYaml == null);
-    valid = valid && (conflictFilesYaml is YamlList || conflictFilesYaml == null);
+    valid =
+        valid && (conflictFilesYaml is YamlList || conflictFilesYaml == null);
     valid = valid && (addedFilesYaml is YamlList || addedFilesYaml == null);
     valid = valid && (deletedFilesYaml is YamlList || deletedFilesYaml == null);
     if (!valid) {
-      throw Exception('Invalid .migrate_manifest file in the migrate working directory. Entry is not a Yaml list.');
+      throw Exception(
+          'Invalid .migrate_manifest file in the migrate working directory. Entry is not a Yaml list.');
     }
     if (mergedFilesYaml != null) {
       for (final Object? localPath in mergedFilesYaml as YamlList) {
         if (localPath is String) {
           // We can fill the maps with partially dummy data as not all properties are used by the manifest.
-          migrateResult.mergeResults.add(StringMergeResult.explicit(mergedString: '', hasConflict: false, exitCode: 0, localPath: localPath));
+          migrateResult.mergeResults.add(StringMergeResult.explicit(
+              mergedString: '',
+              hasConflict: false,
+              exitCode: 0,
+              localPath: localPath));
         }
       }
     }
     if (conflictFilesYaml != null) {
       for (final Object? localPath in conflictFilesYaml as YamlList) {
         if (localPath is String) {
-          migrateResult.mergeResults.add(StringMergeResult.explicit(mergedString: '', hasConflict: true, exitCode: 1, localPath: localPath));
+          migrateResult.mergeResults.add(StringMergeResult.explicit(
+              mergedString: '',
+              hasConflict: true,
+              exitCode: 1,
+              localPath: localPath));
         }
       }
     }
     if (addedFilesYaml != null) {
       for (final Object? localPath in addedFilesYaml as YamlList) {
         if (localPath is String) {
-          migrateResult.addedFiles.add(FilePendingMigration(localPath, migrateRootDir.childFile(localPath)));
+          migrateResult.addedFiles.add(FilePendingMigration(
+              localPath, migrateRootDir.childFile(localPath)));
         }
       }
     }
     if (deletedFilesYaml != null) {
       for (final Object? localPath in deletedFilesYaml as YamlList) {
         if (localPath is String) {
-          migrateResult.deletedFiles.add(FilePendingMigration(localPath, migrateRootDir.childFile(localPath)));
+          migrateResult.deletedFiles.add(FilePendingMigration(
+              localPath, migrateRootDir.childFile(localPath)));
         }
       }
     }
@@ -98,7 +117,8 @@ class MigrateManifest {
   List<String> remainingConflictFiles(Directory workingDir) {
     final List<String> output = <String>[];
     for (final String localPath in conflictFiles) {
-      if (!_conflictsResolved(workingDir.childFile(localPath).readAsStringSync())) {
+      if (!_conflictsResolved(
+          workingDir.childFile(localPath).readAsStringSync())) {
         output.add(localPath);
       }
     }
@@ -109,7 +129,8 @@ class MigrateManifest {
   List<String> resolvedConflictFiles(Directory workingDir) {
     final List<String> output = <String>[];
     for (final String localPath in conflictFiles) {
-      if (_conflictsResolved(workingDir.childFile(localPath).readAsStringSync())) {
+      if (_conflictsResolved(
+          workingDir.childFile(localPath).readAsStringSync())) {
         output.add(localPath);
       }
     }
@@ -172,7 +193,8 @@ class MigrateManifest {
       deletedFileManifestContents.write('  - $localPath\n');
     }
 
-    final String migrateManifestContents = 'merged_files:\n${mergedFileManifestContents}conflict_files:\n${conflictFilesManifestContents}added_files:\n${newFileManifestContents}deleted_files:\n$deletedFileManifestContents';
+    final String migrateManifestContents =
+        'merged_files:\n${mergedFileManifestContents}conflict_files:\n${conflictFilesManifestContents}added_files:\n${newFileManifestContents}deleted_files:\n$deletedFileManifestContents';
     final File migrateManifest = getManifestFileFromDirectory(migrateRootDir);
     migrateManifest.createSync(recursive: true);
     migrateManifest.writeAsStringSync(migrateManifestContents, flush: true);
@@ -181,7 +203,9 @@ class MigrateManifest {
 
 /// Returns true if the file does not contain any git conflict markers.
 bool _conflictsResolved(String contents) {
-  if (contents.contains('>>>>>>>') && contents.contains('=======') && contents.contains('<<<<<<<')) {
+  if (contents.contains('>>>>>>>') &&
+      contents.contains('=======') &&
+      contents.contains('<<<<<<<')) {
     return false;
   }
   return true;
@@ -190,14 +214,16 @@ bool _conflictsResolved(String contents) {
 /// Returns true if the migration working directory has all conflicts resolved and prints the migration status.
 ///
 /// The migration status printout lists all added, deleted, merged, and conflicted files.
-bool checkAndPrintMigrateStatus(MigrateManifest manifest, Directory workingDir, {bool warnConflict = false, Logger? logger}) {
+bool checkAndPrintMigrateStatus(MigrateManifest manifest, Directory workingDir,
+    {bool warnConflict = false, Logger? logger}) {
   final StringBuffer printout = StringBuffer();
   final StringBuffer redPrintout = StringBuffer();
   bool result = true;
   final List<String> remainingConflicts = <String>[];
   final List<String> mergedFiles = <String>[];
   for (final String localPath in manifest.conflictFiles) {
-    if (!_conflictsResolved(workingDir.childFile(localPath).readAsStringSync())) {
+    if (!_conflictsResolved(
+        workingDir.childFile(localPath).readAsStringSync())) {
       remainingConflicts.add(localPath);
     } else {
       mergedFiles.add(localPath);
@@ -225,7 +251,8 @@ bool checkAndPrintMigrateStatus(MigrateManifest manifest, Directory workingDir, 
   }
   if (remainingConflicts.isNotEmpty) {
     if (warnConflict) {
-      printout.write('Unable to apply migration. The following files in the migration working directory still have unresolved conflicts:');
+      printout.write(
+          'Unable to apply migration. The following files in the migration working directory still have unresolved conflicts:');
     } else {
       printout.write('Merge conflicted files:');
     }
@@ -236,7 +263,8 @@ bool checkAndPrintMigrateStatus(MigrateManifest manifest, Directory workingDir, 
   }
   if (logger != null) {
     logger.printStatus(printout.toString());
-    logger.printStatus(redPrintout.toString(), color: TerminalColor.red, newline: false);
+    logger.printStatus(redPrintout.toString(),
+        color: TerminalColor.red, newline: false);
   }
   return result;
 }
