@@ -27,7 +27,7 @@ class ToolExit implements Exception {
 
   @override
   String toString() =>
-      'Exception: $message'; // TODO(ianh): Really this should say "Error".
+      'Error: $message';
 }
 
 /// Return the name of an enum item.
