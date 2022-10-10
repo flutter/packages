@@ -2,15 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// import 'dart:io';
 import 'package:yaml/yaml.dart';
 
 import 'base/common.dart';
 import 'base/file_system.dart';
 import 'base/logger.dart';
 import 'base/project.dart';
-// import 'version.dart';
-// import 'utils.dart';
 
 enum FlutterProjectType {
   /// This is the default project with the user-managed host code.
