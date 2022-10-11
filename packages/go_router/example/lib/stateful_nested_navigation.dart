@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -34,15 +35,15 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
   final GoRouter _router = GoRouter(
     initialLocation: '/a',
     routes: <RouteBase>[
-      /// Custom top shell route - wraps the below routes in a scaffold with
+      /// Application shell - wraps the below routes in a scaffold with
       /// a bottom tab navigator (ScaffoldWithNavBar). Each tab will use its own
-      /// Navigator, as specified by the navigatorKey for each root route
+      /// Navigator, as specified by the parentNavigatorKey for each root route
       /// (branch). For more customization options for the route branches, see
       /// the default constructor for StatefulShellRoute.
       StatefulShellRoute.rootRoutes(
         builder: (BuildContext context, GoRouterState state,
-            Widget statefulShellNavigation) {
-          return ScaffoldWithNavBar(body: statefulShellNavigation);
+            Widget navigationContainer) {
+          return ScaffoldWithNavBar(body: navigationContainer);
         },
         routes: <GoRoute>[
           /// The screen to display as the root in the first tab of the bottom
@@ -92,11 +93,20 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
         //     (BuildContext context, GoRouterState state, Widget statefulShell) {
         //   return NoTransitionPage<dynamic>(child: statefulShell);
         // },
-        /// To customize shell route branch transitions, provide a transition
-        /// builder, for example:
-        // transitionBuilder:
-        //     (BuildContext context, Animation<double> animation, Widget child) =>
-        //         FadeTransition(opacity: animation, child: child),
+
+        /// If you need to create a custom container for the branch routes, to
+        /// for instance setup animations, you can implement your builder
+        /// something like this:
+        // builder:
+        //     (BuildContext context, GoRouterState state, Widget ignoringThis) {
+        //   final StatefulShellRouteState shellRouteState =
+        //       StatefulShellRoute.of(context);
+        //   return ScaffoldWithNavBar(
+        //       body: _AnimatedRouteBranchContainer(
+        //     currentIndex: shellRouteState.index,
+        //     navigators: shellRouteState.navigators,
+        //   ));
+        // },
       ),
     ],
   );
@@ -136,7 +146,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
           BottomNavigationBarItem(
               icon: Icon(Icons.settings), label: 'Section B'),
         ],
-        currentIndex: shellState.currentBranchIndex,
+        currentIndex: shellState.index,
         onTap: (int tappedIndex) => _onItemTapped(
           context,
           shellState.navigationBranchState[tappedIndex],
@@ -146,7 +156,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   }
 
   void _onItemTapped(BuildContext context, ShellRouteBranchState routeState) {
-    GoRouter.of(context).go(routeState.currentLocation);
+    GoRouter.of(context).go(routeState.location);
   }
 }
 
@@ -255,5 +265,27 @@ class DetailsScreenState extends State<DetailsScreen> {
         ),
       ),
     );
+  }
+}
+
+// ignore: unused_element
+class _AnimatedRouteBranchContainer extends StatelessWidget {
+  const _AnimatedRouteBranchContainer(
+      {Key? key, required this.currentIndex, required this.navigators})
+      : super(key: key);
+
+  final int currentIndex;
+  final List<Widget?> navigators;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+        children: navigators.mapIndexed((int index, Widget? navigator) {
+      return AnimatedOpacity(
+        opacity: index == currentIndex ? 1 : 0,
+        duration: const Duration(milliseconds: 400),
+        child: navigator ?? const SizedBox.shrink(),
+      );
+    }).toList());
   }
 }

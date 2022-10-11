@@ -8,18 +8,6 @@ import 'package:flutter/widgets.dart';
 import '../configuration.dart';
 import '../typedefs.dart';
 
-/// Transition builder callback used by [StatefulNavigationShell].
-///
-/// The builder is expected to return a transition powered by the provided
-/// `animation` and wrapping the provided `child`.
-///
-/// The `animation` provided to the builder always runs forward from 0.0 to 1.0.
-typedef StatefulNavigationTransitionBuilder = Widget Function(
-  BuildContext context,
-  Animation<double> animation,
-  Widget child,
-);
-
 /// [InheritedWidget] for providing a reference to the closest
 /// [StatefulNavigationShellState].
 class InheritedStatefulNavigationShell extends InheritedWidget {
@@ -33,6 +21,9 @@ class InheritedStatefulNavigationShell extends InheritedWidget {
   /// The [StatefulNavigationShellState] that is exposed by this InheritedWidget.
   final StatefulNavigationShellState state;
 
+  /// The [StatefulShellRouteState] that is exposed by this InheritedWidget.
+  StatefulShellRouteState get routeState => state.routeState;
+
   @override
   bool updateShouldNotify(
       covariant InheritedStatefulNavigationShell oldWidget) {
@@ -40,17 +31,21 @@ class InheritedStatefulNavigationShell extends InheritedWidget {
   }
 }
 
-/// Widget that maintains a stateful stack of [Navigator]s, using an
-/// [IndexedStack].
+/// Widget that manages and maintains the state of a [StatefulShellRoute],
+/// including the [Navigator]s of the configured route branches.
 ///
-/// Each item in the stack is represented by a [StackedNavigationItem],
-/// specified in the `stackItems` parameter. The stack items will be used to
-/// build the widgets containing the [Navigator] for each index in the stack.
-/// Once a stack item (along with its Navigator) has been initialized, it will
-/// remain in a widget tree, wrapped in an [Offstage] widget.
+/// This widget acts as a wrapper around the builder function specified for the
+/// associated StatefulShellRoute, and exposes the state (represented by
+/// [StatefulShellRouteState]) to its child widgets with the help of the
+/// InheritedWidget [InheritedStatefulNavigationShell]. The state for each route
+/// branch is represented by [ShellRouteBranchState] and can be accessed via the
+/// StatefulShellRouteState.
 ///
-/// The stacked navigation shell can be customized by specifying a
-/// `scaffoldBuilder`, to build a widget that wraps the index stack.
+/// By default, this widget creates a container for the branch route Navigators,
+/// provided as the child argument to the builder of the StatefulShellRoute.
+/// However, implementors can choose to disregard this and use an alternate
+/// container around the branch navigators
+/// (see [StatefulShellRouteState.navigators]) instead.
 class StatefulNavigationShell extends StatefulWidget {
   /// Constructs an [StatefulNavigationShell].
   const StatefulNavigationShell({
@@ -61,9 +56,6 @@ class StatefulNavigationShell extends StatefulWidget {
     required this.topRouterState,
     super.key,
   });
-
-  /// The default transition duration
-  static const Duration defaultTransitionDuration = Duration(milliseconds: 400);
 
   /// The route configuration for the app.
   final RouteConfiguration configuration;
@@ -85,18 +77,10 @@ class StatefulNavigationShell extends StatefulWidget {
 }
 
 /// State for StatefulNavigationShell.
-class StatefulNavigationShellState extends State<StatefulNavigationShell>
-    with SingleTickerProviderStateMixin {
+class StatefulNavigationShellState extends State<StatefulNavigationShell> {
   int _currentIndex = 0;
 
-  late final AnimationController? _animationController;
-
   late final List<ShellRouteBranchState> _childRouteState;
-
-  StatefulNavigationTransitionBuilder? get _transitionBuilder =>
-      widget.shellRoute.transitionBuilder;
-
-  Duration? get _transitionDuration => widget.shellRoute.transitionDuration;
 
   int _findCurrentIndex() {
     final int index = _childRouteState.indexWhere((ShellRouteBranchState i) =>
@@ -106,9 +90,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   /// The current [StatefulShellRouteState]
   StatefulShellRouteState get routeState => StatefulShellRouteState(
-      route: widget.shellRoute,
-      navigationBranchState: _childRouteState,
-      currentBranchIndex: _currentIndex);
+        route: widget.shellRoute,
+        navigationBranchState: _childRouteState,
+        index: _currentIndex,
+      );
 
   @override
   void initState() {
@@ -119,16 +104,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
               rootRoutePath: widget.configuration.fullPathForRoute(e.rootRoute),
             ))
         .toList();
-
-    if (_transitionBuilder != null) {
-      _animationController = AnimationController(
-          vsync: this,
-          duration: _transitionDuration ??
-              StatefulNavigationShell.defaultTransitionDuration);
-      _animationController?.forward();
-    } else {
-      _animationController = null;
-    }
   }
 
   @override
@@ -144,22 +119,16 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   void _updateForCurrentTab() {
-    final int previousIndex = _currentIndex;
     _currentIndex = _findCurrentIndex();
 
-    final ShellRouteBranchState itemState = _childRouteState[_currentIndex];
-    itemState.navigator = widget.activeNavigator;
-    itemState.topRouteState = widget.topRouterState;
-
-    if (previousIndex != _currentIndex) {
-      _animationController?.forward(from: 0.0);
-    }
-  }
-
-  @override
-  void dispose() {
-    _animationController?.dispose();
-    super.dispose();
+    final ShellRouteBranchState currentBranchState =
+        _childRouteState[_currentIndex];
+    _childRouteState[_currentIndex] = ShellRouteBranchState(
+      navigationItem: currentBranchState.navigationItem,
+      rootRoutePath: currentBranchState.rootRoutePath,
+      navigator: widget.activeNavigator,
+      topRouteState: widget.topRouterState,
+    );
   }
 
   @override
@@ -171,37 +140,40 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         return builder(
           context,
           widget.shellRouterState,
-          _buildIndexStack(context),
+          _IndexedStackedRouteBranchContainer(
+              branchState: _childRouteState, currentIndex: _currentIndex),
         );
       }),
     );
   }
+}
 
-  Widget _buildIndexStack(BuildContext context) {
-    final List<Widget> children = _childRouteState
+/// Default implementation of a container widget for the [Navigator]s of the
+/// route branches. This implementation uses an [IndexedStack] as a container.
+class _IndexedStackedRouteBranchContainer extends StatelessWidget {
+  const _IndexedStackedRouteBranchContainer(
+      {required this.currentIndex, required this.branchState});
+
+  final int currentIndex;
+  final List<ShellRouteBranchState> branchState;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> children = branchState
         .mapIndexed((int index, ShellRouteBranchState item) =>
-            _buildNavigator(context, index, item))
+            _buildRouteBranchContainer(context, index, item))
         .toList();
 
-    final Widget indexedStack =
-        IndexedStack(index: _currentIndex, children: children);
-
-    final StatefulNavigationTransitionBuilder? transitionBuilder =
-        _transitionBuilder;
-    if (transitionBuilder != null) {
-      return transitionBuilder(context, _animationController!, indexedStack);
-    } else {
-      return indexedStack;
-    }
+    return IndexedStack(index: currentIndex, children: children);
   }
 
-  Widget _buildNavigator(
+  Widget _buildRouteBranchContainer(
       BuildContext context, int index, ShellRouteBranchState navigationItem) {
     final Navigator? navigator = navigationItem.navigator;
     if (navigator == null) {
       return const SizedBox.shrink();
     }
-    final bool isActive = index == _currentIndex;
+    final bool isActive = index == currentIndex;
     return Offstage(
       offstage: !isActive,
       child: TickerMode(

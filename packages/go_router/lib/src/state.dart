@@ -89,7 +89,7 @@ class StatefulShellRouteState {
   StatefulShellRouteState({
     required this.route,
     required this.navigationBranchState,
-    required this.currentBranchIndex,
+    required this.index,
   });
 
   /// The associated [StatefulShellRoute]
@@ -100,12 +100,18 @@ class StatefulShellRouteState {
   final List<ShellRouteBranchState> navigationBranchState;
 
   /// The index of the currently active route branch.
-  final int currentBranchIndex;
+  final int index;
 
   /// Gets the current location from the [topRouteState] or falls back to
   /// the root path of the associated [route].
-  String get currentLocation =>
-      navigationBranchState[currentBranchIndex].currentLocation;
+  String get location => navigationBranchState[index].location;
+
+  /// Gets the [Navigator]s for each of the route branches. Note that the
+  /// Navigator for a particular branch may be null if the branch hasn't been
+  /// visited yet.
+  List<Widget?> get navigators => navigationBranchState
+      .map((ShellRouteBranchState e) => e.navigator)
+      .toList();
 }
 
 /// The current state for a particular route branch
@@ -115,6 +121,8 @@ class ShellRouteBranchState {
   ShellRouteBranchState({
     required this.navigationItem,
     required this.rootRoutePath,
+    this.navigator,
+    this.topRouteState,
   });
 
   /// The associated [ShellRouteBranch]
@@ -126,10 +134,10 @@ class ShellRouteBranchState {
   /// The [Navigator] for this route branch in a [StatefulShellRoute]. This
   /// field will typically not be set until this route tree has been navigated
   /// to at least once.
-  Navigator? navigator;
+  final Navigator? navigator;
 
   /// The [GoRouterState] for the top of the current navigation stack.
-  GoRouterState? topRouteState;
+  final GoRouterState? topRouteState;
 
   /// Gets the defaultLocation specified in [navigationItem] or falls back to
   /// the root path of the associated [route].
@@ -137,7 +145,7 @@ class ShellRouteBranchState {
 
   /// Gets the current location from the [topRouteState] or falls back to
   /// [defaultLocation].
-  String get currentLocation => topRouteState?.location ?? defaultLocation;
+  String get location => topRouteState?.location ?? defaultLocation;
 
   /// The root route for the route branch.
   RouteBase get route => navigationItem.rootRoute;
