@@ -217,7 +217,7 @@ class AdaptiveScaffold extends StatefulWidget {
 
   /// Option to override the default [AppBar] when using drawer in desktop
   /// small.
-  final AppBar? appBar;
+  final PreferredSizeWidget? appBar;
 
   /// Callback function for when the index of a [NavigationRail] changes.
   final Function(int)? onSelectedIndexChange;

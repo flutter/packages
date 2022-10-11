@@ -8,6 +8,9 @@
 
 # Deliberately uses flutter_lints, as that's what it is demonstrating.
 - flutter_lints/example
+# Adopts some flutter_tools rules regarding public api docs due to being an
+# extension of the tool and using tools base code.
+- flutter_migrate
 # Adds unawaited_futures. We should investigating adding this to the root
 # options instead.
 - metrics_center
