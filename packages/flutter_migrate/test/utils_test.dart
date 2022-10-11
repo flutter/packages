@@ -256,7 +256,7 @@ void main() {
 
       projectRoot.deleteSync(recursive: true);
     });
-  });
+  }, timeout: const Timeout(Duration(seconds: 500)));
 
   testWithoutContext('conflictsResolved', () async {
     expect(utils.conflictsResolved(''), true);
