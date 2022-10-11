@@ -1,7 +1,6 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
 import XCTest
 @testable import Runner
 
@@ -12,7 +11,7 @@ class MockMultipleArityHostApi: MultipleArityHostApi {
 }
 
 class MultipleArityTests: XCTestCase {
-  
+  var codec = FlutterStandardMessageCodec.sharedInstance()
   func testSimpleHost() throws {
     let binaryMessenger = MockBinaryMessenger<Int32>(codec: EnumApi2HostCodec.shared)
     MultipleArityHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockMultipleArityHostApi())
@@ -37,7 +36,7 @@ class MultipleArityTests: XCTestCase {
   }
   
   func testSimpleFlutter() throws {
-    let binaryMessenger = HandlerBinaryMessenger(codec: MultipleArityHostApiCodec.shared) { args in
+    let binaryMessenger = HandlerBinaryMessenger(codec: codec) { args in
       return (args[0] as! Int) - (args[1] as! Int)
     }
     let api = MultipleArityFlutterApi(binaryMessenger: binaryMessenger)

@@ -212,12 +212,12 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Option to override the drawerBreakpoint for the usage of [Drawer] over the
   /// usual [BottomNavigationBar].
   ///
-  /// Defaults to [Breakpoints.onlySmallDesktop].
+  /// Defaults to [Breakpoints.smallDesktop].
   final Breakpoint drawerBreakpoint;
 
   /// Option to override the default [AppBar] when using drawer in desktop
   /// small.
-  final AppBar? appBar;
+  final PreferredSizeWidget? appBar;
 
   /// Callback function for when the index of a [NavigationRail] changes.
   final Function(int)? onSelectedIndexChange;
@@ -303,10 +303,12 @@ class AdaptiveScaffold extends StatefulWidget {
 
   /// Public helper method to be used for creating a [BottomNavigationBar] from
   /// a list of [NavigationDestination]s.
-  static Builder standardBottomNavigationBar(
-      {required List<NavigationDestination> destinations,
-      int currentIndex = 0,
-      double iconSize = 24}) {
+  static Builder standardBottomNavigationBar({
+    required List<NavigationDestination> destinations,
+    int currentIndex = 0,
+    double iconSize = 24,
+    ValueChanged<int>? onDestinationSelected,
+  }) {
     return Builder(
       builder: (_) {
         return BottomNavigationBar(
@@ -315,6 +317,7 @@ class AdaptiveScaffold extends StatefulWidget {
           items: destinations
               .map((NavigationDestination e) => _toBottomNavItem(e))
               .toList(),
+          onTap: onDestinationSelected,
         );
       },
     );
@@ -524,7 +527,10 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                           key: const Key('bottomNavigation'),
                           builder: (_) =>
                               AdaptiveScaffold.standardBottomNavigationBar(
-                                  destinations: widget.destinations),
+                            currentIndex: widget.selectedIndex,
+                            destinations: widget.destinations,
+                            onDestinationSelected: widget.onSelectedIndexChange,
+                          ),
                         ),
                       },
                     )

@@ -7,6 +7,23 @@ import 'functional.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show TaskQueueType;
 
+/// Documentation open symbol.
+const String _docCommentPrefix = '/**';
+
+/// Documentation continuation symbol.
+const String _docCommentContinuation = ' *';
+
+/// Documentation close symbol.
+const String _docCommentSuffix = ' */';
+
+/// Documentation comment spec.
+const DocumentCommentSpecification _docCommentSpec =
+    DocumentCommentSpecification(
+  _docCommentPrefix,
+  closeCommentToken: _docCommentSuffix,
+  blockContinuationToken: _docCommentContinuation,
+);
+
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
   /// Creates a [KotlinOptions] object
@@ -54,48 +71,46 @@ String _getCodecName(Api api) => '${api.name}Codec';
 /// Example:
 /// private static class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, Api api, Root root) {
+  assert(getCodecClasses(api, root).isNotEmpty);
+  final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
   final String codecName = _getCodecName(api);
   indent.writeln('@Suppress("UNCHECKED_CAST")');
   indent.write('private object $codecName : StandardMessageCodec() ');
   indent.scoped('{', '}', () {
-    if (getCodecClasses(api, root).isNotEmpty) {
-      indent.write(
-          'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? ');
+    indent.write(
+        'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? ');
+    indent.scoped('{', '}', () {
+      indent.write('return when (type) ');
       indent.scoped('{', '}', () {
-        indent.write('return when (type) ');
-        indent.scoped('{', '}', () {
-          for (final EnumeratedClass customClass
-              in getCodecClasses(api, root)) {
-            indent.write('${customClass.enumeration}.toByte() -> ');
+        for (final EnumeratedClass customClass in codecClasses) {
+          indent.write('${customClass.enumeration}.toByte() -> ');
+          indent.scoped('{', '}', () {
+            indent.write(
+                'return (readValue(buffer) as? Map<String, Any?>)?.let ');
             indent.scoped('{', '}', () {
-              indent.write(
-                  'return (readValue(buffer) as? Map<String, Any?>)?.let ');
-              indent.scoped('{', '}', () {
-                indent.writeln('${customClass.name}.fromMap(it)');
-              });
+              indent.writeln('${customClass.name}.fromMap(it)');
             });
-          }
-          indent.writeln('else -> super.readValueOfType(type, buffer)');
-        });
+          });
+        }
+        indent.writeln('else -> super.readValueOfType(type, buffer)');
       });
+    });
 
-      indent.write(
-          'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) ');
-      indent.writeScoped('{', '}', () {
-        indent.write('when (value) ');
-        indent.scoped('{', '}', () {
-          for (final EnumeratedClass customClass
-              in getCodecClasses(api, root)) {
-            indent.write('is ${customClass.name} -> ');
-            indent.scoped('{', '}', () {
-              indent.writeln('stream.write(${customClass.enumeration})');
-              indent.writeln('writeValue(stream, value.toMap())');
-            });
-          }
-          indent.writeln('else -> super.writeValue(stream, value)');
-        });
+    indent.write(
+        'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) ');
+    indent.writeScoped('{', '}', () {
+      indent.write('when (value) ');
+      indent.scoped('{', '}', () {
+        for (final EnumeratedClass customClass in codecClasses) {
+          indent.write('is ${customClass.name} -> ');
+          indent.scoped('{', '}', () {
+            indent.writeln('stream.write(${customClass.enumeration})');
+            indent.writeln('writeValue(stream, value.toMap())');
+          });
+        }
+        indent.writeln('else -> super.writeValue(stream, value)');
       });
-    }
+    });
   });
 }
 
@@ -112,8 +127,14 @@ void _writeHostApi(Indent indent, Api api, Root root) {
 
   final String apiName = api.name;
 
-  indent.writeln(
-      '/** Generated interface from Pigeon that represents a handler of messages from Flutter. */');
+  final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
+
+  const List<String> generatedMessages = <String>[
+    ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
+  ];
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+      generatorComments: generatedMessages);
+
   indent.write('interface $apiName ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
@@ -132,6 +153,10 @@ void _writeHostApi(Indent indent, Api api, Root root) {
       final String returnType = method.returnType.isVoid
           ? ''
           : _nullsafeKotlinTypeForDartType(method.returnType);
+
+      addDocumentationComments(
+          indent, method.documentationComments, _docCommentSpec);
+
       if (method.isAsynchronous) {
         argSignature.add('callback: ($returnType) -> Unit');
         indent.writeln('fun ${method.name}(${argSignature.join(', ')})');
@@ -147,8 +172,13 @@ void _writeHostApi(Indent indent, Api api, Root root) {
     indent.write('companion object ');
     indent.scoped('{', '}', () {
       indent.writeln('/** The codec used by $apiName. */');
-      indent.scoped('val codec: MessageCodec<Any?> by lazy {', '}', () {
-        indent.writeln(_getCodecName(api));
+      indent.write('val codec: MessageCodec<Any?> by lazy ');
+      indent.scoped('{', '}', () {
+        if (isCustomCodec) {
+          indent.writeln(_getCodecName(api));
+        } else {
+          indent.writeln('StandardMessageCodec()');
+        }
       });
       indent.writeln(
           '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
@@ -157,8 +187,8 @@ void _writeHostApi(Indent indent, Api api, Root root) {
           'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?) ');
       indent.scoped('{', '}', () {
         for (final Method method in api.methods) {
-          indent.write('');
-          indent.scoped('run {', '}', () {
+          indent.write('run ');
+          indent.scoped('{', '}', () {
             String? taskQueue;
             if (method.taskQueueType != TaskQueueType.serial) {
               taskQueue = 'taskQueue';
@@ -220,7 +250,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                   }
                 }, addTrailingNewline: false);
                 indent.add(' catch (exception: Error) ');
-                indent.scoped('{', '}', () {
+                indent.scoped('{', '', () {
                   indent.writeln(
                       'wrapped["${Keys.error}"] = wrapError(exception)');
                   if (method.isAsynchronous) {
@@ -232,7 +262,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                 }
               });
             }, addTrailingNewline: false);
-            indent.scoped(' else {', '}', () {
+            indent.scoped('} else {', '}', () {
               indent.writeln('channel.setMessageHandler(null)');
             });
           });
@@ -254,10 +284,16 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 /// class Foo(private val binaryMessenger: BinaryMessenger) {
 ///   fun add(x: Int, y: Int, callback: (Int?) -> Unit) {...}
 /// }
-void _writeFlutterApi(Indent indent, Api api) {
+void _writeFlutterApi(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
-  indent.writeln(
-      '/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */');
+  final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
+
+  const List<String> generatedMessages = <String>[
+    ' Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.'
+  ];
+  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+      generatorComments: generatedMessages);
+
   final String apiName = api.name;
   indent.writeln('@Suppress("UNCHECKED_CAST")');
   indent.write('class $apiName(private val binaryMessenger: BinaryMessenger) ');
@@ -267,7 +303,11 @@ void _writeFlutterApi(Indent indent, Api api) {
       indent.writeln('/** The codec used by $apiName. */');
       indent.write('val codec: MessageCodec<Any?> by lazy ');
       indent.scoped('{', '}', () {
-        indent.writeln(_getCodecName(api));
+        if (isCustomCodec) {
+          indent.writeln(_getCodecName(api));
+        } else {
+          indent.writeln('StandardMessageCodec()');
+        }
       });
     });
 
@@ -277,6 +317,10 @@ void _writeFlutterApi(Indent indent, Api api) {
           ? ''
           : _nullsafeKotlinTypeForDartType(func.returnType);
       String sendArgument;
+
+      addDocumentationComments(
+          indent, func.documentationComments, _docCommentSpec);
+
       if (func.arguments.isEmpty) {
         indent.write('fun ${func.name}(callback: ($returnType) -> Unit) ');
         sendArgument = 'null';
@@ -430,6 +474,8 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
   }
 
   void writeEnum(Enum anEnum) {
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.scoped('{', '}', () {
       // We use explicit indexing here as use of the ordinal() method is
@@ -460,6 +506,8 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
 
   void writeDataClass(Class klass) {
     void writeField(NamedType field) {
+      addDocumentationComments(
+          indent, field.documentationComments, _docCommentSpec);
       indent.write(
           'val ${field.name}: ${_nullsafeKotlinTypeForDartType(field.type)}');
       final String defaultNil = field.type.isNullable ? ' = null' : '';
@@ -566,14 +614,21 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
       });
     }
 
-    indent.writeln(
-        '/** Generated class from Pigeon that represents data sent in messages. */');
-    indent.write('data class ${klass.name}(');
-    indent.scoped('', '', () {
+    const List<String> generatedMessages = <String>[
+      ' Generated class from Pigeon that represents data sent in messages.'
+    ];
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec,
+        generatorComments: generatedMessages);
+
+    indent.write('data class ${klass.name} ');
+    indent.scoped('(', '', () {
       for (final NamedType element in klass.fields) {
         writeField(element);
         if (klass.fields.last != element) {
           indent.addln(',');
+        } else {
+          indent.addln('');
         }
       }
     });
@@ -588,7 +643,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
     if (api.location == ApiLocation.host) {
       _writeHostApi(indent, api, root);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(indent, api);
+      _writeFlutterApi(indent, api, root);
     }
   }
 
@@ -643,8 +698,10 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
   }
 
   for (final Api api in root.apis) {
-    _writeCodec(indent, api, root);
-    indent.addln('');
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(indent, api, root);
+      indent.addln('');
+    }
     writeApi(api);
   }
 

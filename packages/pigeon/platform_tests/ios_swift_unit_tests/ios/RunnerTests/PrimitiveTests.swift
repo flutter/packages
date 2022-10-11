@@ -1,7 +1,6 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
 import XCTest
 @testable import Runner
 
@@ -18,9 +17,10 @@ class MockPrimitiveHostApi: PrimitiveHostApi {
 }
 
 class PrimitiveTests: XCTestCase {
+  var codec = FlutterStandardMessageCodec.sharedInstance()
   
   func testIntPrimitiveHost() throws {
-    let binaryMessenger = MockBinaryMessenger<Int32>(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<Int32>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.PrimitiveHostApi.anInt"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
@@ -42,7 +42,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testIntPrimitiveFlutter() throws {
-    let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
     
     let expectation = XCTestExpectation(description: "callback")
@@ -54,7 +54,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testBoolPrimitiveHost() throws {
-    let binaryMessenger = MockBinaryMessenger<Bool>(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<Bool>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aBool"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
@@ -76,7 +76,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testBoolPrimitiveFlutter() throws {
-    let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
     
     let expectation = XCTestExpectation(description: "callback")
@@ -88,7 +88,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testDoublePrimitiveHost() throws {
-    let binaryMessenger = MockBinaryMessenger<Double>(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<Double>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aDouble"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
@@ -110,7 +110,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testDoublePrimitiveFlutter() throws {
-    let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
     
     let expectation = XCTestExpectation(description: "callback")
@@ -123,7 +123,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testStringPrimitiveHost() throws {
-    let binaryMessenger = MockBinaryMessenger<String>(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<String>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aString"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
@@ -145,7 +145,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testStringPrimitiveFlutter() throws {
-    let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
     
     let expectation = XCTestExpectation(description: "callback")
@@ -158,7 +158,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testListPrimitiveHost() throws {
-    let binaryMessenger = MockBinaryMessenger<[Int]>(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<[Int]>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aList"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
@@ -180,7 +180,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testListPrimitiveFlutter() throws {
-    let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
     
     let expectation = XCTestExpectation(description: "callback")
@@ -193,7 +193,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testMapPrimitiveHost() throws {
-    let binaryMessenger = MockBinaryMessenger<[String: Int]>(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<[String: Int]>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aMap"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
@@ -215,7 +215,7 @@ class PrimitiveTests: XCTestCase {
   }
   
   func testMapPrimitiveFlutter() throws {
-    let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
     
     let expectation = XCTestExpectation(description: "callback")

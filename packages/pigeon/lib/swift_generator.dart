@@ -56,6 +56,7 @@ String _getCodecName(Api api) => '${api.name}Codec';
 /// private class FooHostApiCodecWriter: FlutterStandardWriter {...}
 /// private class FooHostApiCodecReaderWriter: FlutterStandardReaderWriter {...}
 void _writeCodec(Indent indent, Api api, Root root) {
+  assert(getCodecClasses(api, root).isNotEmpty);
   final String codecName = _getCodecName(api);
   final String readerWriterName = '${codecName}ReaderWriter';
   final String readerName = '${codecName}Reader';
@@ -189,8 +190,12 @@ void _writeHostApi(Indent indent, Api api, Root root) {
   indent.scoped('{', '}', () {
     final String codecName = _getCodecName(api);
     indent.writeln('$_docCommentPrefix The codec used by $apiName.');
-    indent.writeln(
-        'static var codec: FlutterStandardMessageCodec { $codecName.shared }');
+    String codecArgumentString = '';
+    if (getCodecClasses(api, root).isNotEmpty) {
+      codecArgumentString = ', codec: codec';
+      indent.writeln(
+          'static var codec: FlutterStandardMessageCodec { $codecName.shared }');
+    }
     indent.writeln(
         '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
     indent.write(
@@ -203,7 +208,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
             indent, method.documentationComments, _docCommentSpec);
 
         indent.writeln(
-            'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
+            'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
         indent.write('if let api = api ');
         indent.scoped('{', '}', () {
           indent.write('$varChannelName.setMessageHandler ');
@@ -290,10 +295,14 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
       indent.writeln('self.binaryMessenger = binaryMessenger');
     });
     final String codecName = _getCodecName(api);
-    indent.write('var codec: FlutterStandardMessageCodec ');
-    indent.scoped('{', '}', () {
-      indent.writeln('return $codecName.shared');
-    });
+    String codecArgumentString = '';
+    if (getCodecClasses(api, root).isNotEmpty) {
+      codecArgumentString = ', codec: codec';
+      indent.write('var codec: FlutterStandardMessageCodec ');
+      indent.scoped('{', '}', () {
+        indent.writeln('return $codecName.shared');
+      });
+    }
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
       final String returnType = func.returnType.isVoid
@@ -332,7 +341,7 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
       indent.scoped('{', '}', () {
         const String channel = 'channel';
         indent.writeln(
-            'let $channel = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
+            'let $channel = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
         indent.write('$channel.sendMessage($sendArgument) ');
         if (func.returnType.isVoid) {
           indent.scoped('{ _ in', '}', () {
@@ -641,8 +650,10 @@ import FlutterMacOS
   }
 
   for (final Api api in root.apis) {
-    _writeCodec(indent, api, root);
-    indent.addln('');
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(indent, api, root);
+      indent.addln('');
+    }
     writeApi(api, root);
   }
 
