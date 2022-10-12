@@ -122,27 +122,6 @@ task:
         # Restore the tree to a clean state, to avoid accidental issues if
         # other script steps are added to this task.
         - git checkout .
-
-# Heavy-workload Linux tasks.
-# These use machines with more CPUs and memory, so will reduce parallelization
-# for non-credit runs.
-task:
-  << : *FLUTTER_UPGRADE_TEMPLATE
-  gke_container:
-    dockerfile: .ci/Dockerfile
-    builder_image_name: docker-builder-linux # gce vm image
-    builder_image_project: flutter-cirrus
-    cluster_name: test-cluster
-    zone: us-central1-a
-    namespace: default
-    cpu: 4
-    memory: 12G
-  matrix:
-    ### Platform-agnostic tasks ###
-    - name: readme_excerpts
-      env:
-        CIRRUS_CLONE_SUBMODULES: true
-      script: ./script/tool_runner.sh update-excerpts --fail-on-change
     # Does a sanity check that packages at least pass analysis on the N-1 and N-2
     # versions of Flutter stable if the package claims to support that version.
     # This is to minimize accidentally making changes that break old versions
@@ -173,6 +152,27 @@ task:
       depends_on: analyze
       analyze_script:
         - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml
+    - name: readme_excerpts
+      env:
+        CIRRUS_CLONE_SUBMODULES: true
+      script: ./script/tool_runner.sh update-excerpts --fail-on-change
+
+# Heavy-workload Linux tasks.
+# These use machines with more CPUs and memory, so will reduce parallelization
+# for non-credit runs.
+task:
+  << : *FLUTTER_UPGRADE_TEMPLATE
+  gke_container:
+    dockerfile: .ci/Dockerfile
+    builder_image_name: docker-builder-linux # gce vm image
+    builder_image_project: flutter-cirrus
+    cluster_name: test-cluster
+    zone: us-central1-a
+    namespace: default
+    cpu: 4
+    memory: 12G
+  matrix:
+    ### Platform-agnostic tasks ###
     - name: dart_unit_tests
       env:
         matrix:
