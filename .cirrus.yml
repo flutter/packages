@@ -118,8 +118,9 @@ task:
         # This uses --run-on-dirty-packages rather than --packages-for-branch
         # since only the packages changed by 'make-deps-path-based' need to be
         # checked.
-        - $PLUGIN_TOOL_COMMAND analyze --run-on-dirty-packages --custom-analysis=script/configs/custom_analysis.yaml
-        # Restore the tree to a clean state
+        - $PLUGIN_TOOL_COMMAND analyze --run-on-dirty-packages --log-timing --custom-analysis=script/configs/custom_analysis.yaml
+        # Restore the tree to a clean state, to avoid accidental issues if
+        # other script steps are added to this task.
         - git checkout .
 
 # Heavy-workload Linux tasks.
