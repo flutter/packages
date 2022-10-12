@@ -103,6 +103,19 @@ task:
           -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
           - fi
         publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
+    - name: dart_unit_tests
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      unit_test_script:
+        - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
+      pathified_unit_test_script:
+        # Run tests with path-based dependencies to ensure that publishing
+        # the changes won't break tests of other packages in the respository
+        # that depend on it.
+        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
+        - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
     - name: analyze
       env:
         matrix:
@@ -158,36 +171,6 @@ task:
       env:
         CIRRUS_CLONE_SUBMODULES: true
       script: ./script/tool_runner.sh update-excerpts --fail-on-change
-
-# Heavy-workload Linux tasks.
-# These use machines with more CPUs and memory, so will reduce parallelization
-# for non-credit runs.
-task:
-  << : *FLUTTER_UPGRADE_TEMPLATE
-  gke_container:
-    dockerfile: .ci/Dockerfile
-    builder_image_name: docker-builder-linux # gce vm image
-    builder_image_project: flutter-cirrus
-    cluster_name: test-cluster
-    zone: us-central1-a
-    namespace: default
-    cpu: 4
-    memory: 12G
-  matrix:
-    ### Platform-agnostic tasks ###
-    - name: dart_unit_tests
-      env:
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      unit_test_script:
-        - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
-      pathified_unit_test_script:
-        # Run tests with path-based dependencies to ensure that publishing
-        # the changes won't break tests of other packages in the respository
-        # that depend on it.
-        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
     - name: linux-custom_package_tests
       env:
         PATH: $PATH:/usr/local/bin
@@ -205,6 +188,22 @@ task:
         - else
         -   ./script/tool_runner.sh custom-test --exclude=pigeon,flutter_image
         - fi
+
+# Heavy-workload Linux tasks.
+# These use machines with more CPUs and memory, so will reduce parallelization
+# for non-credit runs.
+task:
+  << : *FLUTTER_UPGRADE_TEMPLATE
+  gke_container:
+    dockerfile: .ci/Dockerfile
+    builder_image_name: docker-builder-linux # gce vm image
+    builder_image_project: flutter-cirrus
+    cluster_name: test-cluster
+    zone: us-central1-a
+    namespace: default
+    cpu: 4
+    memory: 12G
+  matrix:
     ### Android tasks ###
     - name: android-platform_tests
       env:
