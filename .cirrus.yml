@@ -104,8 +104,12 @@ task:
           - fi
         publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
     - name: analyze
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
       analyze_script:
-          - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
+        - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
       pathified_analyze_script:
         # Run analysis with path-based dependencies to ensure that publishing
         # the changes won't break analysis of other packages in the respository
