@@ -126,11 +126,6 @@ task:
       analyze_script:
         - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml
     - name: publishable
-      env:
-        # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
-        # rolls into Flutter master.
-        CHANNEL: stable
-        CHANGE_DESC: "/tmp/change-description.txt"
       version_script:
         # For pre-submit, pass the PR description to the script to allow for
         # version check overrides.
@@ -141,8 +136,7 @@ task:
         - if [[ $CIRRUS_PR == "" ]]; then
         -   ./script/tool_runner.sh version-check
         - else
-        -   echo "$CIRRUS_CHANGE_MESSAGE" > "$CHANGE_DESC"
-        -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC" --pr-labels="$CIRRUS_PR_LABELS"
+        -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
         - fi
       publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
       depends_on:
@@ -261,12 +255,12 @@ task:
       local_tests_script:
         # flutter_image
         #   https://github.com/flutter/flutter/issues/100387
-        # cross_file
-        #   Custom tests need Chrome. (They run in linux-custom_package_tests)
+        # script/configs/linux_only_custom_test.yaml
+        #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)
         - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test --exclude=cross_file
+        -   ./script/tool_runner.sh custom-test --exclude=script/configs/linux_only_custom_test.yaml
         - else
-        -   ./script/tool_runner.sh custom-test --exclude=cross_file,flutter_image
+        -   ./script/tool_runner.sh custom-test --exclude=flutter_image,script/configs/linux_only_custom_test.yaml
         - fi
     ### macOS desktop tasks ###
     - name: macos-platform_tests

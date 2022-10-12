@@ -1,3 +1,11 @@
+## 0.0.6
+
+* Change type of `appBar` parameter from `AppBar?` to `PreferredSizeWidget?`
+
+## 0.0.5
+
+* Calls onDestinationChanged callback in bottom nav bar.
+
 ## 0.0.4
 
 * Fix static analyzer warnings using `core` lint.

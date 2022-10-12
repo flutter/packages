@@ -33,6 +33,10 @@ void main() {
     expect(code, contains('public static class Foobar'));
     expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
+    expect(
+        code,
+        contains(
+            '@NonNull private static Map<String, Object> wrapError(@NonNull Throwable exception)'));
   });
 
   test('gen one enum', () {
@@ -130,6 +134,14 @@ void main() {
     expect(code, contains('public interface Api'));
     expect(code, matches('Output.*doSomething.*Input'));
     expect(code, contains('channel.setMessageHandler(null)'));
+    expect(
+        code,
+        contains(
+            'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer)'));
+    expect(
+        code,
+        contains(
+            'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value)'));
   });
 
   test('all the simple datatypes header', () {
@@ -1145,5 +1157,82 @@ void main() {
               .hasMatch(code),
           true);
     }
+  });
+
+  test('doesnt create codecs if no custom datatypes', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(contains(' extends StandardMessageCodec')));
+    expect(code, contains('StandardMessageCodec'));
+  });
+
+  test('creates custom codecs if custom datatypes present', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
+                name: '')
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'input')
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'output')
+      ])
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains(' extends StandardMessageCodec'));
   });
 }

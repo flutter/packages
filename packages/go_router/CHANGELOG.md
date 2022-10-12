@@ -2,6 +2,26 @@
 
 - Adds a Future option to `push` and `pushNamed` making it posible to await results from a `pop`.
 - Adds an optional parameter to the `pop` method, allowing to return values from a `pop`.
+## 5.0.5
+
+- Fixes issue where asserts in popRoute were preventing the app from
+  exiting on Android.
+
+## 5.0.4
+
+- Fixes a bug in ShellRoute example where NavigationBar might lose current index in a nested routes.
+
+## 5.0.3
+
+- Changes examples to use the routerConfig API
+
+## 5.0.2
+
+- Fixes missing code example in ShellRoute documentation.
+
+## 5.0.1
+
+- Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981)
 
 ## 5.0.0
 

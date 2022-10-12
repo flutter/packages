@@ -19,9 +19,10 @@ import 'dart:io'
         exit,
         stderr,
         stdout;
+import 'dart:math';
+
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
-import 'package:pigeon/functional.dart';
 
 const String _testFlag = 'test';
 const String _listFlag = 'list';
@@ -40,6 +41,9 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'android_unittests': _TestInfo(
       function: _runAndroidUnitTests,
       description: 'Unit tests on generated Java code.'),
+  'android_kotlin_unittests': _TestInfo(
+      function: _runAndroidKotlinUnitTests,
+      description: 'Unit tests on generated Kotlin code.'),
   'dart_compilation_tests': _TestInfo(
       function: _runDartCompilationTests,
       description: 'Compilation tests on generated Dart code.'),
@@ -93,6 +97,75 @@ Future<int> _runProcess(String command, List<String> arguments,
 
 Future<int> _runAndroidUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
+}
+
+Future<int> _runAndroidKotlinUnitTests() async {
+  const String androidKotlinUnitTestsPath =
+      './platform_tests/android_kotlin_unit_tests';
+  const List<String> tests = <String>[
+    'all_datatypes',
+    'all_void',
+    'android_unittests',
+    'async_handlers',
+    'background_platform_channels',
+    'enum_args',
+    'enum',
+    'host2flutter',
+    'list',
+    'message',
+    'multiple_arity',
+    'non_null_fields',
+    'null_fields',
+    'nullable_returns',
+    'primitive',
+    'void_arg_flutter',
+    'void_arg_host',
+    'voidflutter',
+    'voidhost'
+  ];
+  int generateCode = 0;
+
+  for (final String test in tests) {
+    generateCode = await _runPigeon(
+      input: './pigeons/$test.dart',
+      kotlinOut:
+          '$androidKotlinUnitTestsPath/android/app/src/main/kotlin/com/example/android_kotlin_unit_tests/${snakeToPascalCase(test)}.kt',
+      kotlinPackage: 'com.example.android_kotlin_unit_tests',
+    );
+    if (generateCode != 0) {
+      return generateCode;
+    }
+  }
+
+  final Process gradlewExists = await _streamOutput(Process.start(
+    './gradlew',
+    <String>[],
+    workingDirectory: '$androidKotlinUnitTestsPath/android',
+    runInShell: true,
+  ));
+  final int gradlewExistsCode = await gradlewExists.exitCode;
+  if (gradlewExistsCode != 0) {
+    final Process compile = await _streamOutput(Process.start(
+      'flutter',
+      <String>['build', 'apk', '--debug'],
+      workingDirectory: androidKotlinUnitTestsPath,
+      runInShell: true,
+    ));
+    final int compileCode = await compile.exitCode;
+    if (compileCode != 0) {
+      return compileCode;
+    }
+  }
+
+  final Process run = await _streamOutput(Process.start(
+    './gradlew',
+    <String>[
+      'test',
+    ],
+    workingDirectory: '$androidKotlinUnitTestsPath/android',
+  ));
+
+  return run.exitCode;
 }
 
 Future<int> _runDartCompilationTests() async {
@@ -315,6 +388,8 @@ Future<int> _runMockHandlerTests() async {
 
 Future<int> _runPigeon(
     {required String input,
+    String? kotlinOut,
+    String? kotlinPackage,
     String? iosSwiftOut,
     String? cppHeaderOut,
     String? cppSourceOut,
@@ -331,6 +406,12 @@ Future<int> _runPigeon(
     '--copyright_header',
     './copyright_header.txt',
   ];
+  if (kotlinOut != null) {
+    args.addAll(<String>['--experimental_kotlin_out', kotlinOut]);
+  }
+  if (kotlinPackage != null) {
+    args.addAll(<String>['--experimental_kotlin_package', kotlinPackage]);
+  }
   if (iosSwiftOut != null) {
     args.addAll(<String>['--experimental_swift_out', iosSwiftOut]);
   }
@@ -436,10 +517,12 @@ Future<void> main(List<String> args) async {
   List<String> testsToRun = <String>[];
   if (argResults.wasParsed(_listFlag)) {
     print('available tests:');
+
+    final int columnWidth =
+        _tests.keys.map((String key) => key.length).reduce(max) + 4;
+
     for (final MapEntry<String, _TestInfo> info in _tests.entries) {
-      final int tabCount = (4 - info.key.length / 8).toInt();
-      final String tabs = repeat('\t', tabCount).join();
-      print('${info.key}$tabs- ${info.value.description}');
+      print('${info.key.padRight(columnWidth)}- ${info.value.description}');
     }
     exit(0);
   } else if (argResults.wasParsed('help')) {
