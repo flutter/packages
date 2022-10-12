@@ -76,23 +76,10 @@ task:
     namespace: default
   matrix:
     ### Platform-agnostic tasks ###
-    - name: publishable
-      version_script:
-        # For pre-submit, pass the PR description to the script to allow for
-        # version check overrides.
-        # For post-submit, ignore missing version/CHANGELOG detection; the PR
-        # description isn't reliably part of the commit message, so using the
-        # same flags as for presubmit would likely result in false-positive
-        # post-submit failures.
-        - if [[ $CIRRUS_PR == "" ]]; then
-        -   ./script/tool_runner.sh version-check
-        - else
-        -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
-        - fi
-      publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
-      depends_on:
-        - format+analyze
-    - name: format+analyze
+    # Repository rules and best-practice enforcement.
+    # Only channel-agnostic tests should go here since it is only run once
+    # (on Flutter master).
+    - name: repo_checks
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: $PLUGIN_TOOL_COMMAND license-check
@@ -104,10 +91,22 @@ task:
           # has been fixed, this can be removed and there can just be a single
           # run with --require-excerpts and no exclusions.
           - ./script/tool_runner.sh readme-check --require-excerpts --exclude=script/configs/temp_exclude_excerpt.yaml
-        analyze_script:
+        version_script:
+          # For pre-submit, pass the PR description to the script to allow for
+          # version check overrides.
+          # For post-submit, ignore missing version/CHANGELOG detection; the PR
+          # description isn't reliably part of the commit message, so using the
+          # same flags as for presubmit would likely result in false-positive
+          # post-submit failures.
+          - if [[ $CIRRUS_PR == "" ]]; then
+          -   ./script/tool_runner.sh version-check
+          - else
+          -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
+          - fi
+        publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
+    - name: analyze
+      analyze_script:
           - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
-      # This is not part of the 'always' since there's no reason to run
-      # pathified analysis unless analysis passed.
       pathified_analyze_script:
         # Run analysis with path-based dependencies to ensure that publishing
         # the changes won't break analysis of other packages in the respository
@@ -148,7 +147,7 @@ task:
     # Note: The versions below should be manually updated after a new stable
     # version comes out.
     - name: legacy-version-analyze
-      depends_on: format+analyze
+      depends_on: analyze
       matrix:
         env:
           CHANNEL: "3.0.5"
@@ -167,7 +166,7 @@ task:
     # new APIs but forget to update minimum versions of dependencies to where
     # those APIs are introduced.
     - name: downgraded_analyze
-      depends_on: format+analyze
+      depends_on: analyze
       analyze_script:
         - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml
     - name: dart_unit_tests
@@ -183,8 +182,6 @@ task:
         # that depend on it.
         - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
         - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
-      depends_on:
-        - format+analyze
     - name: linux-custom_package_tests
       env:
         PATH: $PATH:/usr/local/bin
@@ -217,8 +214,6 @@ task:
         - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
       native_unit_test_scipt:
         - ./script/tool_runner.sh native-test --android --no-integration
-      depends_on:
-        - format+analyze
     ### Web tasks ###
     - name: web-platform_tests
       env:
