@@ -62,7 +62,42 @@ flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
     - flutter doctor -v
   << : *TOOL_SETUP_TEMPLATE
 
+# Light-workload Linux tasks.
+# These use default machines, with fewer CPUs, to reduce pressure on the
+# concurrency limits.
 task:
+  << : *FLUTTER_UPGRADE_TEMPLATE
+  gke_container:
+    dockerfile: .ci/Dockerfile
+    builder_image_name: docker-builder-linux # gce vm image
+    builder_image_project: flutter-cirrus
+    cluster_name: test-cluster
+    zone: us-central1-a
+    namespace: default
+  matrix:
+    ### Platform-agnostic tasks ###
+    - name: publishable
+      version_script:
+        # For pre-submit, pass the PR description to the script to allow for
+        # version check overrides.
+        # For post-submit, ignore missing version/CHANGELOG detection; the PR
+        # description isn't reliably part of the commit message, so using the
+        # same flags as for presubmit would likely result in false-positive
+        # post-submit failures.
+        - if [[ $CIRRUS_PR == "" ]]; then
+        -   ./script/tool_runner.sh version-check
+        - else
+        -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
+        - fi
+      publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
+      depends_on:
+        - format+analyze
+
+# Heavy-workload Linux tasks.
+# These use machines with more CPUs and memory, so will reduce parallelization
+# for non-credit runs.
+task:
+  << : *FLUTTER_UPGRADE_TEMPLATE
   gke_container:
     dockerfile: .ci/Dockerfile
     builder_image_name: docker-builder-linux # gce vm image
@@ -72,7 +107,6 @@ task:
     namespace: default
     cpu: 4
     memory: 12G
-  << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
     ### Platform-agnostic tasks ###
     - name: format+analyze
@@ -134,22 +168,6 @@ task:
       depends_on: format+analyze
       analyze_script:
         - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml
-    - name: publishable
-      version_script:
-        # For pre-submit, pass the PR description to the script to allow for
-        # version check overrides.
-        # For post-submit, ignore missing version/CHANGELOG detection; the PR
-        # description isn't reliably part of the commit message, so using the
-        # same flags as for presubmit would likely result in false-positive
-        # post-submit failures.
-        - if [[ $CIRRUS_PR == "" ]]; then
-        -   ./script/tool_runner.sh version-check
-        - else
-        -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
-        - fi
-      publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
-      depends_on:
-        - format+analyze
     - name: dart_unit_tests
       env:
         matrix:
