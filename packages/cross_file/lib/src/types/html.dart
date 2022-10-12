@@ -62,8 +62,8 @@ class XFile extends XFileBase {
         _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
         _name = name ?? '',
         super(path) {
+    _browserBlob = _createBlobFromBytes(bytes, mimeType);
     if (path == null) {
-      _browserBlob = _createBlobFromBytes(bytes, mimeType);
       _path = Url.createObjectUrl(_browserBlob);
     } else {
       _path = path;
