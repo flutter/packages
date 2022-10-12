@@ -246,7 +246,6 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       build_script:
-        - flutter config --enable-linux-desktop
         - ./script/tool_runner.sh build-examples --linux
       native_test_script:
         - ./script/tool_runner.sh native-test --linux --no-integration
@@ -294,7 +293,6 @@ task:
           CHANNEL: "stable"
         PATH: $PATH:/usr/local/bin
       build_script:
-        - flutter config --enable-macos-desktop
         - ./script/tool_runner.sh build-examples --macos
       native_test_script:
         - ./script/tool_runner.sh native-test --macos
