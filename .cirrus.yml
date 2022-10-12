@@ -92,6 +92,31 @@ task:
       publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
       depends_on:
         - format+analyze
+    - name: format+analyze
+      always:
+        format_script: ./script/tool_runner.sh format --fail-on-change
+        license_script: $PLUGIN_TOOL_COMMAND license-check
+        pubspec_script: ./script/tool_runner.sh pubspec-check
+        readme_script:
+          - ./script/tool_runner.sh readme-check
+          # Re-run with --require-excerpts, skipping packages that still need
+          # to be converted. Once https://github.com/flutter/flutter/issues/102679
+          # has been fixed, this can be removed and there can just be a single
+          # run with --require-excerpts and no exclusions.
+          - ./script/tool_runner.sh readme-check --require-excerpts --exclude=script/configs/temp_exclude_excerpt.yaml
+        analyze_script:
+          - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
+        pathified_analyze_script:
+          # Run analysis with path-based dependencies to ensure that publishing
+          # the changes won't break analysis of other packages in the respository
+          # that depend on it.
+          - ./script/tool_runner.sh make-deps-path-based  --target-dependencies-with-non-breaking-updates
+          # This uses --run-on-dirty-packages rather than --packages-for-branch
+          # since only the packages changed by 'make-deps-path-based' need to be
+          # checked.
+          - $PLUGIN_TOOL_COMMAND analyze --run-on-dirty-packages --custom-analysis=script/configs/custom_analysis.yaml
+          # Restore the tree to a clean state
+          - git checkout .
 
 # Heavy-workload Linux tasks.
 # These use machines with more CPUs and memory, so will reduce parallelization
@@ -109,31 +134,6 @@ task:
     memory: 12G
   matrix:
     ### Platform-agnostic tasks ###
-    - name: format+analyze
-      always:
-        format_script: ./script/tool_runner.sh format --fail-on-change
-        license_script: $PLUGIN_TOOL_COMMAND license-check
-        analyze_script:
-          - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
-        pathified_analyze_script:
-          # Run analysis with path-based dependencies to ensure that publishing
-          # the changes won't break analysis of other packages in the respository
-          # that depend on it.
-          - ./script/tool_runner.sh make-deps-path-based  --target-dependencies-with-non-breaking-updates
-          # This uses --run-on-dirty-packages rather than --packages-for-branch
-          # since only the packages changed by 'make-deps-path-based' need to be
-          # checked.
-          - $PLUGIN_TOOL_COMMAND analyze --run-on-dirty-packages --custom-analysis=script/configs/custom_analysis.yaml
-          # Restore the tree to a clean state
-          - git checkout .
-        pubspec_script: ./script/tool_runner.sh pubspec-check
-        readme_script:
-          - ./script/tool_runner.sh readme-check
-          # Re-run with --require-excerpts, skipping packages that still need
-          # to be converted. Once https://github.com/flutter/flutter/issues/102679
-          # has been fixed, this can be removed and there can just be a single
-          # run with --require-excerpts and no exclusions.
-          - ./script/tool_runner.sh readme-check --require-excerpts --exclude=script/configs/temp_exclude_excerpt.yaml
     - name: readme_excerpts
       env:
         CIRRUS_CLONE_SUBMODULES: true
