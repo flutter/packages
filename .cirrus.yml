@@ -4,6 +4,7 @@ gcp_credentials: ENCRYPTED[!f1177d1ddb5330ffaa9ea11c9c9e8e0c542185e895c36071f18c
 only_if: $CIRRUS_TAG == '' && ($CIRRUS_PR != '' || $CIRRUS_BRANCH == 'main')
 env:
   CHANNEL: "master" # Default to master when not explicitly set by a task.
+  PLUGIN_TOOL_COMMAND: "dart pub global run flutter_plugin_tools"
 
 install_chrome_linux_template: &INSTALL_CHROME_LINUX
   env:
@@ -69,7 +70,7 @@ task:
     - name: format+analyze
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
-        license_script: dart pub global run flutter_plugin_tools license-check
+        license_script: $PLUGIN_TOOL_COMMAND license-check
         analyze_script:
           - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
         pathified_analyze_script:
@@ -80,7 +81,7 @@ task:
           # This uses --run-on-dirty-packages rather than --packages-for-branch
           # since only the packages changed by 'make-deps-path-based' need to be
           # checked.
-          - dart pub global run flutter_plugin_tools analyze --run-on-dirty-packages --custom-analysis=script/configs/custom_analysis.yaml
+          - $PLUGIN_TOOL_COMMAND analyze --run-on-dirty-packages --custom-analysis=script/configs/custom_analysis.yaml
           # Restore the tree to a clean state
           - git checkout .
         pubspec_script: ./script/tool_runner.sh pubspec-check
@@ -153,7 +154,7 @@ task:
         # the changes won't break tests of other packages in the respository
         # that depend on it.
         - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        - dart pub global run flutter_plugin_tools test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
+        - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
       depends_on:
         - format+analyze
     - name: linux-custom_package_tests
