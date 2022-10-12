@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
+import 'package:go_router_flow/go_router.dart';
+import 'package:go_router_flow/src/match.dart';
+import 'package:go_router_flow/src/matching.dart';
 
 Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final GoRouter goRouter = GoRouter(

@@ -4,10 +4,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/builder.dart';
-import 'package:go_router/src/configuration.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
+import 'package:go_router_flow/src/builder.dart';
+import 'package:go_router_flow/src/configuration.dart';
+import 'package:go_router_flow/src/match.dart';
+import 'package:go_router_flow/src/matching.dart';
 
 void main() {
   group('RouteBuilder', () {

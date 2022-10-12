@@ -4,7 +4,7 @@
 
 /// A declarative router for Flutter based on Navigation 2 supporting
 /// deep linking, data-driven routes and more.
-library go_router;
+library go_router_flow;
 
 export 'src/configuration.dart'
     show GoRoute, GoRouterState, RouteBase, ShellRoute;

@@ -5,7 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:go_router_flow/go_router.dart';
 
 // This scenario demonstrates how to use redirect to handle a asynchronous
 // sign-in flow.
@@ -13,8 +13,8 @@ import 'package:go_router/go_router.dart';
 // The `StreamAuth` is a mock of google_sign_in. This example wraps it with an
 // InheritedNotifier, StreamAuthScope, and relies on
 // `dependOnInheritedWidgetOfExactType` to create a dependency between the
-// notifier and go_router's parsing pipeline. When StreamAuth broadcasts new
-// event, the dependency will cause the go_router to reparse the current url
+// notifier and go_router_flow's parsing pipeline. When StreamAuth broadcasts new
+// event, the dependency will cause the go_router_flow to reparse the current url
 // which will also trigger the redirect.
 
 void main() => runApp(StreamAuthScope(child: App()));
@@ -52,7 +52,7 @@ class App extends StatelessWidget {
     // redirect to the login page if the user is not logged in
     redirect: (BuildContext context, GoRouterState state) async {
       // Using `of` method creates a dependency of StreamAuthScope. It will
-      // cause go_router to reparse current route if StreamAuth has new sign-in
+      // cause go_router_flow to reparse current route if StreamAuth has new sign-in
       // information.
       final bool loggedIn = await StreamAuthScope.of(context).isSignedIn();
       final bool loggingIn = state.subloc == '/login';

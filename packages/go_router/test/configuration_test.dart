@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/configuration.dart';
+import 'package:go_router_flow/src/configuration.dart';
 
 void main() {
   group('RouteConfiguration', () {

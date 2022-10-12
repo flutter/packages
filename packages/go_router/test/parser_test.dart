@@ -4,12 +4,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
-import 'package:go_router/src/configuration.dart';
-import 'package:go_router/src/information_provider.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
-import 'package:go_router/src/parser.dart';
+import 'package:go_router_flow/go_router.dart';
+import 'package:go_router_flow/src/configuration.dart';
+import 'package:go_router_flow/src/information_provider.dart';
+import 'package:go_router_flow/src/match.dart';
+import 'package:go_router_flow/src/matching.dart';
+import 'package:go_router_flow/src/parser.dart';
 
 void main() {
   Future<GoRouteInformationParser> createParser(

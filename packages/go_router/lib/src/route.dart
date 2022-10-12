@@ -92,7 +92,7 @@ import 'typedefs.dart';
 /// In the above example, if /family route is matched, it will be used.
 /// else /:username route will be used.
 ///
-/// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
+/// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router_flow/example/lib/sub_routes.dart)
 /// for a complete runnable example.
 @immutable
 abstract class RouteBase {
@@ -195,7 +195,7 @@ class GoRoute extends RouteBase {
   /// );
   /// ```
   ///
-  /// See the [named routes example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/named_routes.dart)
+  /// See the [named routes example](https://github.com/flutter/packages/blob/main/packages/go_router_flow/example/lib/named_routes.dart)
   /// for a complete runnable app.
   final String? name;
 
@@ -220,7 +220,7 @@ class GoRoute extends RouteBase {
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].
   ///
-  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
+  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router_flow/example/lib/sub_routes.dart)
   /// to learn more about parameters.
   final String path;
 
@@ -305,7 +305,7 @@ class GoRoute extends RouteBase {
   ///
   /// Redirect can also be used for conditionally preventing users from visiting
   /// routes, also known as route guards. One canonical example is user
-  /// authentication. See [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart)
+  /// authentication. See [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router_flow/example/lib/redirection.dart)
   /// for a complete runnable example.
   ///
   /// If [BuildContext.dependOnInheritedWidgetOfExactType] is used during the

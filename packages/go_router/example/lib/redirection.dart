@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:go_router_flow/go_router.dart';
 import 'package:provider/provider.dart';
 
 // This scenario demonstrates how to use redirect to handle a sign-in flow.

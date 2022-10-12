@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/misc/error_screen.dart';
+import 'package:go_router_flow/src/misc/error_screen.dart';
 
 import 'helpers/error_screen_helpers.dart';
 

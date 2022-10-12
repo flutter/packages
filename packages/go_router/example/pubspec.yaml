@@ -14,7 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
-  go_router:
+  go_router_flow:
     path: ..
   logging: ^1.0.0
   package_info_plus: ^1.3.0

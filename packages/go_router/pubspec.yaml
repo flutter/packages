@@ -1,9 +1,7 @@
-name: go_router
-description: A declarative router for Flutter based on Navigation 2 supporting
-  deep linking, data-driven routes and more
-version: 5.1.0
-repository: https://github.com/flutter/packages/tree/main/packages/go_router
-issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+go_router%22
+name: go_router_flow
+description: A fork of go_router that let's you returns value on pop like navigator 1.0
+version: 1.0.0
+repository: https://github.com/NazarenoCavazzon/flutter-packages/tree/main/packages/go_router
 
 environment:
   sdk: ">=2.17.0 <3.0.0"

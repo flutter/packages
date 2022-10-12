@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
+import 'package:go_router_flow/go_router.dart';
 
 void main() {
   test('throws when a builder is not set', () {

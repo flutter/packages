@@ -5,7 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/pages/material.dart';
+import 'package:go_router_flow/src/pages/material.dart';
 
 import 'helpers/error_screen_helpers.dart';
 

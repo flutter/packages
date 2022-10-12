@@ -5,7 +5,7 @@
 import 'package:adaptive_navigation/adaptive_navigation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:go_router/go_router.dart';
+import 'package:go_router_flow/go_router.dart';
 
 /// The enum for scaffold tab.
 enum ScaffoldTab {
