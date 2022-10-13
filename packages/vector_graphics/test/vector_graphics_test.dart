@@ -9,8 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
-import 'package:vector_graphics/vector_graphics.dart';
-
+import 'package:vector_graphics/src/vector_graphics.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 const VectorGraphicsCodec codec = VectorGraphicsCodec();
@@ -461,6 +460,33 @@ void main() {
         isA<OpacityLayer>()
             .having((OpacityLayer layer) => layer.alpha, 'alpha', 128));
   }, skip: !kIsWeb);
+
+  testWidgets('Construct vector graphic with drawPicture strategy',
+      (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: createCompatVectorGraphic(
+            loader: const AssetBytesLoader('foo.svg'),
+            colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
+            opacity: const AlwaysStoppedAnimation<double>(0.5),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.layers.last, isA<PictureLayer>());
+    // Opacity and color filter are drawn as savelayer
+    expect(tester.layers, isNot(contains(isA<OpacityLayer>())));
+    expect(tester.layers, isNot(contains(isA<ColorFilterLayer>())));
+  },
+      skip:
+          kIsWeb); // picture rasterization works differently on HTML due to saveLayer bugs in HTML backend
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {

@@ -329,3 +329,119 @@ class RenderVectorGraphic extends RenderBox {
     );
   }
 }
+
+/// A render object which draws a vector graphic instance as a picture.
+class RenderPictureVectorGraphic extends RenderBox {
+  /// Create a new [RenderPictureVectorGraphic].
+  RenderPictureVectorGraphic(
+    this._pictureInfo,
+    this._colorFilter,
+    this._opacity,
+  ) {
+    _opacity?.addListener(_updateOpacity);
+    _updateOpacity();
+  }
+
+  /// The [PictureInfo] which contains the vector graphic and size to draw.
+  PictureInfo get pictureInfo => _pictureInfo;
+  PictureInfo _pictureInfo;
+  set pictureInfo(PictureInfo value) {
+    if (identical(value, _pictureInfo)) {
+      return;
+    }
+    _pictureInfo = value;
+    markNeedsPaint();
+  }
+
+  /// An optional [ColorFilter] to apply to the rasterized vector graphic.
+  ColorFilter? get colorFilter => _colorFilter;
+  ColorFilter? _colorFilter;
+  set colorFilter(ColorFilter? value) {
+    if (colorFilter == value) {
+      return;
+    }
+    _colorFilter = value;
+    markNeedsPaint();
+  }
+
+  double _opacityValue = 1.0;
+
+  /// An opacity to draw the rasterized vector graphic with.
+  Animation<double>? get opacity => _opacity;
+  Animation<double>? _opacity;
+  set opacity(Animation<double>? value) {
+    if (value == opacity) {
+      return;
+    }
+    _opacity?.removeListener(_updateOpacity);
+    _opacity = value;
+    _opacity?.addListener(_updateOpacity);
+    markNeedsPaint();
+  }
+
+  void _updateOpacity() {
+    if (opacity == null) {
+      return;
+    }
+    final double newValue = opacity!.value;
+    if (newValue == _opacityValue) {
+      return;
+    }
+    _opacityValue = newValue;
+    markNeedsPaint();
+  }
+
+  @override
+  bool hitTestSelf(Offset position) => true;
+
+  @override
+  bool get sizedByParent => true;
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    return constraints.smallest;
+  }
+
+  @override
+  void attach(covariant PipelineOwner owner) {
+    _opacity?.addListener(_updateOpacity);
+    _updateOpacity();
+    super.attach(owner);
+  }
+
+  @override
+  void detach() {
+    _opacity?.removeListener(_updateOpacity);
+    super.detach();
+  }
+
+  @override
+  void dispose() {
+    _opacity?.removeListener(_updateOpacity);
+    super.dispose();
+  }
+
+  @override
+  void paint(PaintingContext context, ui.Offset offset) {
+    assert(size == pictureInfo.size);
+    if (_opacityValue <= 0.0) {
+      return;
+    }
+
+    final Paint colorPaint = Paint();
+    if (colorFilter != null) {
+      colorPaint.colorFilter = colorFilter!;
+    }
+    colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
+    final int saveCount = context.canvas.getSaveCount();
+    if (offset != Offset.zero) {
+      context.canvas.save();
+      context.canvas.translate(offset.dx, offset.dy);
+    }
+    if (_opacityValue != 1.0 || colorFilter != null) {
+      context.canvas.saveLayer(offset & size, colorPaint);
+    }
+    context.canvas.drawPicture(pictureInfo.picture);
+    context.canvas.restoreToCount(saveCount);
+  }
+}

@@ -10,4 +10,6 @@ export 'src/vector_graphics.dart'
         BytesLoader,
         VectorGraphic,
         VectorGraphicUtilities,
-        vg;
+        vg,
+        RenderingStrategy,
+        createCompatVectorGraphic;
