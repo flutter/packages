@@ -1,3 +1,7 @@
+## 5.1.0
+
+- Removes urlPathStrategy completely, which should have been done in v5.0.0 but some code remained mistakenly.
+
 ## 5.0.5
 
 - Fixes issue where asserts in popRoute were preventing the app from
