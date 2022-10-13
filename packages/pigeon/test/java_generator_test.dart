@@ -870,6 +870,28 @@ void main() {
             'Long output = api.add((xArg == null) ? null : xArg.longValue(), (yArg == null) ? null : yArg.longValue())'));
   });
 
+  test('if host argType is Object not cast', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'objectTest',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: const TypeDeclaration(
+                    isNullable: false, baseName: 'Object')),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Api');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Object xArg = args.get(0)'));
+  });
+
   test('flutter multiple args', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
@@ -904,6 +926,31 @@ void main() {
         code,
         contains(
             'channel.send(new ArrayList<Object>(Arrays.asList(xArg, yArg)), channelReply ->'));
+  });
+
+  test('flutter single args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'send',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type:
+                    const TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'channel.send(new ArrayList<Object>(Collections.singletonList(xArg)), channelReply ->'));
   });
 
   test('return nullable host', () {
