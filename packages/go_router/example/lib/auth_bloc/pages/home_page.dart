@@ -25,7 +25,8 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () {
                 const AuthenticationStatusChanged event =
-                    AuthenticationStatusChanged(AuthenticationStatusType.unauthenticated);
+                    AuthenticationStatusChanged(
+                        AuthenticationStatusType.unauthenticated);
                 context.read<AuthenticationBloc>().add(event);
               },
               child: const Text('Sign Out'),

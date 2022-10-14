@@ -31,7 +31,8 @@ class _LoginPageState extends State<LoginPage> {
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () {
                 const AuthenticationStatusChanged event =
-                    AuthenticationStatusChanged(AuthenticationStatusType.authenticated);
+                    AuthenticationStatusChanged(
+                        AuthenticationStatusType.authenticated);
                 context.read<AuthenticationBloc>().add(event);
               },
               child: const Text('Sign In'),
