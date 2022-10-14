@@ -21,9 +21,6 @@ const String durationDecoderHelperName = r'_$duractionConverter';
 /// The name of the generated, private helper for converting [String] to [Enum].
 const String enumExtensionHelperName = r'_$fromName';
 
-/// The name of the generated, private helper for converting [String] to [Enum].
-const String iterableDecoderHelperName = r'_$iterableConverter';
-
 /// The property/parameter name used to represent the `extra` data that may
 /// be passed to a route.
 const String extraFieldName = r'$extra';
