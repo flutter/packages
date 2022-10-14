@@ -545,7 +545,24 @@ void main() {
                     name: '')
               ],
               returnType: const TypeDeclaration.voidDeclaration(),
-            )
+            ),
+            Method(
+              name: 'doSomethingAsync',
+              arguments: <NamedType>[
+                NamedType(
+                  type: const TypeDeclaration(
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
+                  name: '',
+                ),
+              ],
+              returnType: const TypeDeclaration(
+                baseName: 'Output',
+                isNullable: false,
+              ),
+              isAsynchronous: true,
+            ),
           ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -575,6 +592,10 @@ void main() {
     expect(mainCode, isNot(contains('.ApiMock.doSomething')));
     expect(mainCode, isNot(contains("'${Keys.result}': output")));
     expect(mainCode, isNot(contains('return <Object, Object>{};')));
+    expect(mainCode, contains('Future<Output> doSomething(Input arg0) async'));
+    expect(mainCode, contains('Future<void> voidReturner(Input arg0) async'));
+    expect(mainCode,
+        contains('Future<Output> doSomethingAsync(Input arg0) async'));
     generateTestDart(
       const DartOptions(),
       root,
@@ -589,6 +610,9 @@ void main() {
     expect(testCode, isNot(contains('.ApiMock.doSomething')));
     expect(testCode, contains("'${Keys.result}': output"));
     expect(testCode, contains('return <Object?, Object?>{};'));
+    expect(testCode, contains('Future<Output> doSomething(Input arg0);'));
+    expect(testCode, contains('Future<void> voidReturner(Input arg0);'));
+    expect(testCode, contains('Future<Output> doSomethingAsync(Input arg0);'));
   });
 
   test('gen one async Flutter Api', () {

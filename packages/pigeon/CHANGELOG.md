@@ -1,3 +1,7 @@
+## 4.2.4
+
+* [dart] Fixes HostApi and dartHostTestHandler have different signatures.
+
 ## 4.2.3
 
 * [java] Adds assert `args != null`.

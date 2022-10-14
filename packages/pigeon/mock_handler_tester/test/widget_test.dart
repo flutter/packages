@@ -14,12 +14,12 @@ class Mock implements TestHostApi {
   List<String> log = <String>[];
 
   @override
-  void initialize() {
+  Future<void> initialize() async {
     log.add('initialize');
   }
 
   @override
-  MessageSearchReply search(MessageSearchRequest arg) {
+  Future<MessageSearchReply> search(MessageSearchRequest arg) async {
     log.add('search');
     return MessageSearchReply()..result = arg.query;
   }
@@ -28,7 +28,7 @@ class Mock implements TestHostApi {
 class MockNested implements TestNestedApi {
   bool didCall = false;
   @override
-  MessageSearchReply search(MessageNested arg) {
+  Future<MessageSearchReply> search(MessageNested arg) async {
     didCall = true;
     if (arg.request == null) {
       return MessageSearchReply();

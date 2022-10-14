@@ -292,7 +292,7 @@ void _writeFlutterApi(
           indent, func.documentationComments, _docCommentSpec);
 
       final bool isAsync = func.isAsynchronous;
-      final String returnType = isAsync
+      final String returnType = isMockHandler || isAsync
           ? 'Future<${_addGenericTypesNullable(func.returnType)}>'
           : _addGenericTypesNullable(func.returnType);
       final String argSignature = _getMethodArgumentsSignature(
@@ -332,7 +332,6 @@ void _writeFlutterApi(
             indent.scoped('{', '});', () {
               final String returnType =
                   _addGenericTypesNullable(func.returnType);
-              final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object?, Object?>{};'
                   : func.returnType.isVoid
@@ -372,15 +371,16 @@ void _writeFlutterApi(
                 });
                 call = 'api.${func.name}(${argNames.join(', ')})';
               }
+              final bool isAsync = func.isAsynchronous;
               if (func.returnType.isVoid) {
-                if (isAsync) {
+                if (isMockHandler || isAsync) {
                   indent.writeln('await $call;');
                 } else {
                   indent.writeln('$call;');
                 }
                 indent.writeln(emptyReturnStatement);
               } else {
-                if (isAsync) {
+                if (isMockHandler || isAsync) {
                   indent.writeln('final $returnType output = await $call;');
                 } else {
                   indent.writeln('final $returnType output = $call;');
