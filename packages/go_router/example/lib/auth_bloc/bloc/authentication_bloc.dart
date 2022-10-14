@@ -1,6 +1,10 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:go_router_examples/auth_bloc/type/authentication_status_type.dart';
+import '../type/authentication_status_type.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
