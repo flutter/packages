@@ -224,6 +224,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
             if (method.arguments.isNotEmpty) {
               indent.writeln(
                   'ArrayList<Object> args = (ArrayList<Object>)message;');
+              indent.writeln('assert args != null;');
               enumerate(method.arguments, (int index, NamedType arg) {
                 // The StandardMessageCodec can give us [Integer, Long] for
                 // a Dart 'int'.  To keep things simple we just use 64bit
@@ -238,7 +239,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                 String accessor = 'args.get($index)';
                 if (isEnum(arg.type)) {
                   accessor = _intToEnum(accessor, arg.type.baseName);
-                } else {
+                } else if (argType != 'Object') {
                   accessor = '($argType)$accessor';
                 }
                 indent.writeln('$argType $argName = $accessor;');
@@ -396,8 +397,13 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
             .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
         final Iterable<String> argNames =
             indexMap(func.arguments, _getSafeArgumentName);
-        sendArgument =
-            'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
+        if (func.arguments.length == 1) {
+          sendArgument =
+              'new ArrayList<Object>(Collections.singletonList(${argNames.first}))';
+        } else {
+          sendArgument =
+              'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
+        }
         final String argsSignature =
             map2(argTypes, argNames, (String x, String y) => '$x $y')
                 .join(', ');
@@ -542,6 +548,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     indent.writeln('import java.nio.ByteBuffer;');
     indent.writeln('import java.util.Arrays;');
     indent.writeln('import java.util.ArrayList;');
+    indent.writeln('import java.util.Collections;');
     indent.writeln('import java.util.List;');
     indent.writeln('import java.util.Map;');
     indent.writeln('import java.util.HashMap;');

@@ -11,7 +11,6 @@ import 'logging.dart';
 import 'matching.dart';
 import 'misc/inherited_router.dart';
 import 'parser.dart';
-import 'platform.dart';
 import 'typedefs.dart';
 
 /// The top-level go router class.
@@ -268,10 +267,6 @@ class GoRouter extends ChangeNotifier
     }());
     _routeInformationProvider.notifyListeners();
   }
-
-  /// Set the app's URL path strategy (defaults to hash). call before runApp().
-  static void setUrlPathStrategy(UrlPathStrategy strategy) =>
-      setUrlPathStrategyImpl(strategy);
 
   /// Find the current GoRouter in the widget tree.
   static GoRouter of(BuildContext context) {
