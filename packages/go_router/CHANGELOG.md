@@ -2,6 +2,8 @@
 
 - Removes urlPathStrategy completely, which should have been done in v5.0.0 but some code remained mistakenly.
 
+- Add example to use flutter_bloc with go_router
+
 ## 5.0.5
 
 - Fixes issue where asserts in popRoute were preventing the app from
@@ -27,7 +29,7 @@
 
 - Fixes a bug where intermediate route redirect methods are not called.
 - GoRouter implements the RouterConfig interface, allowing you to call
-  MaterialApp.router(routerConfig: _myGoRouter) instead of passing
+  MaterialApp.router(routerConfig: \_myGoRouter) instead of passing
   the RouterDelegate, RouteInformationParser, and RouteInformationProvider
   fields.
 - **BREAKING CHANGE**
@@ -59,12 +61,12 @@
 
 ## 4.3.0
 
-- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`.
 
 ## 4.2.9
 
-* Updates text theme parameters to avoid deprecation issues.
-* Fixes lint warnings.
+- Updates text theme parameters to avoid deprecation issues.
+- Fixes lint warnings.
 
 ## 4.2.8
 
