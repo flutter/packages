@@ -11,8 +11,13 @@ import 'utils.dart';
 
 /// Checks if the project uses pubspec dependency locking and prompts if
 /// the pub upgrade should be run.
-Future<void> updatePubspecDependencies(FlutterProject flutterProject,
-    MigrateUtils migrateUtils, Logger logger, Terminal terminal) async {
+Future<void> updatePubspecDependencies(
+    FlutterProject flutterProject,
+    MigrateUtils migrateUtils,
+    Logger logger,
+    Terminal terminal, {
+    bool force = false
+  }) async {
   final File pubspecFile = flutterProject.directory.childFile('pubspec.yaml');
   if (!pubspecFile.existsSync()) {
     return;
@@ -25,13 +30,15 @@ Future<void> updatePubspecDependencies(FlutterProject flutterProject,
   logger.printStatus('\nDart dependency locking detected in pubspec.yaml.');
   terminal.usesTerminalUi = true;
   String selection = 'y';
-  selection = await terminal.promptForCharInput(
-    <String>['y', 'n'],
-    logger: logger,
-    prompt:
-        'Do you want the tool to run `flutter pub upgrade --major-versions`? (y)es, (n)o',
-    defaultChoiceIndex: 1,
-  );
+  if (!force) {
+    selection = await terminal.promptForCharInput(
+      <String>['y', 'n'],
+      logger: logger,
+      prompt:
+          'Do you want the tool to run `flutter pub upgrade --major-versions`? (y)es, (n)o',
+      defaultChoiceIndex: 1,
+    );
+  }
   if (selection == 'y') {
     // Runs `flutter pub upgrade --major-versions`
     await migrateUtils.flutterPubUpgrade(flutterProject.directory.path);
@@ -46,7 +53,9 @@ Future<void> updateGradleDependencyLocking(
     Logger logger,
     Terminal terminal,
     bool verbose,
-    FileSystem fileSystem) async {
+    FileSystem fileSystem, {
+    bool force = false,
+  }) async {
   final Directory androidDir =
       flutterProject.directory.childDirectory('android');
   if (!androidDir.existsSync()) {
@@ -85,12 +94,14 @@ Future<void> updateGradleDependencyLocking(
             'lockfiles.');
     terminal.usesTerminalUi = true;
     String selection = 'y';
-    selection = await terminal.promptForCharInput(
-      <String>['y', 'n'],
-      logger: logger,
-      prompt: 'Do you want the tool to update locked dependencies? (y)es, (n)o',
-      defaultChoiceIndex: 1,
-    );
+    if (!force) {
+      selection = await terminal.promptForCharInput(
+        <String>['y', 'n'],
+        logger: logger,
+        prompt: 'Do you want the tool to update locked dependencies? (y)es, (n)o',
+        defaultChoiceIndex: 1,
+      );
+    }
     if (selection == 'y') {
       for (final File file in lockfiles) {
         int counter = 0;
