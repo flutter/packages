@@ -11,13 +11,9 @@ import 'utils.dart';
 
 /// Checks if the project uses pubspec dependency locking and prompts if
 /// the pub upgrade should be run.
-Future<void> updatePubspecDependencies(
-    FlutterProject flutterProject,
-    MigrateUtils migrateUtils,
-    Logger logger,
-    Terminal terminal, {
-    bool force = false
-  }) async {
+Future<void> updatePubspecDependencies(FlutterProject flutterProject,
+    MigrateUtils migrateUtils, Logger logger, Terminal terminal,
+    {bool force = false}) async {
   final File pubspecFile = flutterProject.directory.childFile('pubspec.yaml');
   if (!pubspecFile.existsSync()) {
     return;
@@ -48,14 +44,14 @@ Future<void> updatePubspecDependencies(
 /// Checks if gradle dependency locking is used and prompts the developer to
 /// remove and back up the gradle dependency lockfile.
 Future<void> updateGradleDependencyLocking(
-    FlutterProject flutterProject,
-    MigrateUtils migrateUtils,
-    Logger logger,
-    Terminal terminal,
-    bool verbose,
-    FileSystem fileSystem, {
-    bool force = false,
-  }) async {
+  FlutterProject flutterProject,
+  MigrateUtils migrateUtils,
+  Logger logger,
+  Terminal terminal,
+  bool verbose,
+  FileSystem fileSystem, {
+  bool force = false,
+}) async {
   final Directory androidDir =
       flutterProject.directory.childDirectory('android');
   if (!androidDir.existsSync()) {
@@ -98,7 +94,8 @@ Future<void> updateGradleDependencyLocking(
       selection = await terminal.promptForCharInput(
         <String>['y', 'n'],
         logger: logger,
-        prompt: 'Do you want the tool to update locked dependencies? (y)es, (n)o',
+        prompt:
+            'Do you want the tool to update locked dependencies? (y)es, (n)o',
         defaultChoiceIndex: 1,
       );
     }

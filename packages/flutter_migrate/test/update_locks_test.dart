@@ -17,7 +17,7 @@ import 'src/common.dart';
 import 'src/test_utils.dart';
 
 void main() {
-late FileSystem fileSystem;
+  late FileSystem fileSystem;
   late BufferLogger logger;
   late MigrateUtils utils;
   late Directory currentDir;
@@ -45,7 +45,12 @@ late FileSystem fileSystem;
   });
 
   testWithoutContext('updates pubspec locks', () async {
-    final ProcessResult result = await processManager.run(<String>['flutter', 'create', currentDir.absolute.path, '--project-name=testproject']);
+    final ProcessResult result = await processManager.run(<String>[
+      'flutter',
+      'create',
+      currentDir.absolute.path,
+      '--project-name=testproject'
+    ]);
     expect(result.exitCode, 0);
     final File pubspec = currentDir.childFile('pubspec.yaml');
     pubspec.writeAsStringSync('''
@@ -72,23 +77,52 @@ flutter:
 # PUBSPEC CHECKSUM: 1b91
 
 ''', flush: true);
-    await updatePubspecDependencies(flutterProject, utils, logger, terminal, force: true);
+    await updatePubspecDependencies(flutterProject, utils, logger, terminal,
+        force: true);
     final YamlMap pubspecYaml = loadYaml(pubspec.readAsStringSync());
     final YamlMap dependenciesMap = pubspecYaml['dependencies'];
-    expect(_VersionCode.fromString(dependenciesMap['characters'] as String) >_VersionCode.fromString('1.2.0'), true);
-    expect(_VersionCode.fromString(dependenciesMap['collection'] as String) >_VersionCode.fromString('1.15.0'), true);
-    expect(_VersionCode.fromString(dependenciesMap['js'] as String) >_VersionCode.fromString('0.6.3'), true);
-    expect(_VersionCode.fromString(dependenciesMap['material_color_utilities'] as String) >_VersionCode.fromString('0.1.0'), true);
-    expect(_VersionCode.fromString(dependenciesMap['meta'] as String) >_VersionCode.fromString('1.7.0'), true);
-    expect(_VersionCode.fromString(dependenciesMap['vector_math'] as String) >_VersionCode.fromString('2.1.3'), true);
+    expect(
+        _VersionCode.fromString(dependenciesMap['characters'] as String) >
+            _VersionCode.fromString('1.2.0'),
+        true);
+    expect(
+        _VersionCode.fromString(dependenciesMap['collection'] as String) >
+            _VersionCode.fromString('1.15.0'),
+        true);
+    expect(
+        _VersionCode.fromString(dependenciesMap['js'] as String) >
+            _VersionCode.fromString('0.6.3'),
+        true);
+    expect(
+        _VersionCode.fromString(
+                dependenciesMap['material_color_utilities'] as String) >
+            _VersionCode.fromString('0.1.0'),
+        true);
+    expect(
+        _VersionCode.fromString(dependenciesMap['meta'] as String) >
+            _VersionCode.fromString('1.7.0'),
+        true);
+    expect(
+        _VersionCode.fromString(dependenciesMap['vector_math'] as String) >
+            _VersionCode.fromString('2.1.3'),
+        true);
   });
 
   testWithoutContext('updates gradle locks', () async {
-    final ProcessResult result = await processManager.run(<String>['flutter', 'create', currentDir.absolute.path, '--project-name=testproject']);
+    final ProcessResult result = await processManager.run(<String>[
+      'flutter',
+      'create',
+      currentDir.absolute.path,
+      '--project-name=testproject'
+    ]);
     expect(result.exitCode, 0);
-    final File projectAppLock = currentDir.childDirectory('android').childFile('project-app.lockfile');
-    final File buildGradle = currentDir.childDirectory('android').childFile('build.gradle');
-    final File projectAppLockBackup = currentDir.childDirectory('android').childFile('project-app.lockfile_backup_0');
+    final File projectAppLock =
+        currentDir.childDirectory('android').childFile('project-app.lockfile');
+    final File buildGradle =
+        currentDir.childDirectory('android').childFile('build.gradle');
+    final File projectAppLockBackup = currentDir
+        .childDirectory('android')
+        .childFile('project-app.lockfile_backup_0');
     expect(projectAppLockBackup.existsSync(), false);
     projectAppLock.createSync(recursive: true);
     projectAppLock.writeAsStringSync('''
@@ -142,7 +176,9 @@ subprojects {
 }
 
 ''', flush: true);
-    await updateGradleDependencyLocking(flutterProject, utils, logger, terminal, true, fileSystem, force: true);
+    await updateGradleDependencyLocking(
+        flutterProject, utils, logger, terminal, true, fileSystem,
+        force: true);
     expect(projectAppLockBackup.existsSync(), true);
     expect(projectAppLock.readAsStringSync().startsWith('''
 # This is a Gradle generated file for dependency locking.
@@ -157,7 +193,11 @@ androidx.annotation:annotation:1.2.0=debugAndroidTestCompileClasspath,debugApiDe
 
 class _VersionCode extends Comparable<_VersionCode> {
   _VersionCode(this.first, this.second, this.third, this.caret);
-  _VersionCode.fromString(String str) : first = 0, second = 0, third = 0, caret = 0 {
+  _VersionCode.fromString(String str)
+      : first = 0,
+        second = 0,
+        third = 0,
+        caret = 0 {
     caret = str.contains('^') ? 1 : 0;
     str = str.replaceAll('^', '');
     final List<String> splits = str.split('.');
@@ -184,7 +224,8 @@ class _VersionCode extends Comparable<_VersionCode> {
   @override
   int compareTo(_VersionCode other) {
     final int value = first * 10000000 + second * 100000 + third + caret;
-    final int otherValue = other.first * 10000000 + other.second * 100000 + other.third + caret;
+    final int otherValue =
+        other.first * 10000000 + other.second * 100000 + other.third + caret;
     return value - otherValue;
   }
 }

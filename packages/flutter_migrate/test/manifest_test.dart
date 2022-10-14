@@ -26,52 +26,67 @@ void main() {
     testWithoutContext('empty MigrateResult produces empty output', () async {
       final Directory workingDir = fileSystem.directory('migrate_working_dir');
       workingDir.createSync(recursive: true);
-      final MigrateManifest manifest = MigrateManifest(migrateRootDir: workingDir, migrateResult: MigrateResult(
-        mergeResults: <MergeResult>[],
-        addedFiles: <FilePendingMigration>[],
-        deletedFiles: <FilePendingMigration>[],
-        mergeTypeMap: <String, MergeType>{},
-        diffMap: <String, DiffResult>{},
-        tempDirectories: <Directory>[],
-        sdkDirs: <String, Directory>{},
-      ));
+      final MigrateManifest manifest = MigrateManifest(
+          migrateRootDir: workingDir,
+          migrateResult: MigrateResult(
+            mergeResults: <MergeResult>[],
+            addedFiles: <FilePendingMigration>[],
+            deletedFiles: <FilePendingMigration>[],
+            mergeTypeMap: <String, MergeType>{},
+            diffMap: <String, DiffResult>{},
+            tempDirectories: <Directory>[],
+            sdkDirs: <String, Directory>{},
+          ));
 
-      checkAndPrintMigrateStatus(manifest, workingDir, warnConflict: true, logger: logger);
+      checkAndPrintMigrateStatus(manifest, workingDir,
+          warnConflict: true, logger: logger);
 
       expect(logger.statusText, contains('\n'));
     });
 
-    testWithoutContext('populated MigrateResult produces correct output', () async {
+    testWithoutContext('populated MigrateResult produces correct output',
+        () async {
       final Directory workingDir = fileSystem.directory('migrate_working_dir');
       workingDir.createSync(recursive: true);
-      final MigrateManifest manifest = MigrateManifest(migrateRootDir: workingDir, migrateResult: MigrateResult(
-        mergeResults: <MergeResult>[
-          StringMergeResult.explicit(
-            localPath: 'merged_file',
-            mergedString: 'str',
-            hasConflict: false,
-            exitCode: 0,
-          ),
-          StringMergeResult.explicit(
-            localPath: 'conflict_file',
-            mergedString: 'hello\nwow a bunch of lines\n<<<<<<<\n=======\n<<<<<<<\nhi\n',
-            hasConflict: true,
-            exitCode: 1,
-          ),
-        ],
-        addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-        deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-        // The following are ignored by the manifest.
-        mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-        diffMap: <String, DiffResult>{},
-        tempDirectories: <Directory>[],
-        sdkDirs: <String, Directory>{},
-      ));
+      final MigrateManifest manifest = MigrateManifest(
+          migrateRootDir: workingDir,
+          migrateResult: MigrateResult(
+            mergeResults: <MergeResult>[
+              StringMergeResult.explicit(
+                localPath: 'merged_file',
+                mergedString: 'str',
+                hasConflict: false,
+                exitCode: 0,
+              ),
+              StringMergeResult.explicit(
+                localPath: 'conflict_file',
+                mergedString:
+                    'hello\nwow a bunch of lines\n<<<<<<<\n=======\n<<<<<<<\nhi\n',
+                hasConflict: true,
+                exitCode: 1,
+              ),
+            ],
+            addedFiles: <FilePendingMigration>[
+              FilePendingMigration('added_file', fileSystem.file('added_file'))
+            ],
+            deletedFiles: <FilePendingMigration>[
+              FilePendingMigration(
+                  'deleted_file', fileSystem.file('deleted_file'))
+            ],
+            // The following are ignored by the manifest.
+            mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+            diffMap: <String, DiffResult>{},
+            tempDirectories: <Directory>[],
+            sdkDirs: <String, Directory>{},
+          ));
 
       final File conflictFile = workingDir.childFile('conflict_file');
-      conflictFile.writeAsStringSync('hello\nwow a bunch of lines\n<<<<<<<\n=======\n<<<<<<<\nhi\n', flush: true);
+      conflictFile.writeAsStringSync(
+          'hello\nwow a bunch of lines\n<<<<<<<\n=======\n<<<<<<<\nhi\n',
+          flush: true);
 
-      checkAndPrintMigrateStatus(manifest, workingDir, warnConflict: true, logger: logger);
+      checkAndPrintMigrateStatus(manifest, workingDir,
+          warnConflict: true, logger: logger);
 
       expect(logger.statusText, contains('''
 Added files:
@@ -84,37 +99,48 @@ Modified files:
 '''));
     });
 
-    testWithoutContext('populated MigrateResult detects fixed conflict', () async {
+    testWithoutContext('populated MigrateResult detects fixed conflict',
+        () async {
       final Directory workingDir = fileSystem.directory('migrate_working_dir');
       workingDir.createSync(recursive: true);
-      final MigrateManifest manifest = MigrateManifest(migrateRootDir: workingDir, migrateResult: MigrateResult(
-        mergeResults: <MergeResult>[
-          StringMergeResult.explicit(
-            localPath: 'merged_file',
-            mergedString: 'str',
-            hasConflict: false,
-            exitCode: 0,
-          ),
-          StringMergeResult.explicit(
-            localPath: 'conflict_file',
-            mergedString: 'hello\nwow a bunch of lines\n<<<<<<<\n=======\n<<<<<<<\nhi\n',
-            hasConflict: true,
-            exitCode: 1,
-          ),
-        ],
-        addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-        deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-        // The following are ignored by the manifest.
-        mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-        diffMap: <String, DiffResult>{},
-        tempDirectories: <Directory>[],
-        sdkDirs: <String, Directory>{},
-      ));
+      final MigrateManifest manifest = MigrateManifest(
+          migrateRootDir: workingDir,
+          migrateResult: MigrateResult(
+            mergeResults: <MergeResult>[
+              StringMergeResult.explicit(
+                localPath: 'merged_file',
+                mergedString: 'str',
+                hasConflict: false,
+                exitCode: 0,
+              ),
+              StringMergeResult.explicit(
+                localPath: 'conflict_file',
+                mergedString:
+                    'hello\nwow a bunch of lines\n<<<<<<<\n=======\n<<<<<<<\nhi\n',
+                hasConflict: true,
+                exitCode: 1,
+              ),
+            ],
+            addedFiles: <FilePendingMigration>[
+              FilePendingMigration('added_file', fileSystem.file('added_file'))
+            ],
+            deletedFiles: <FilePendingMigration>[
+              FilePendingMigration(
+                  'deleted_file', fileSystem.file('deleted_file'))
+            ],
+            // The following are ignored by the manifest.
+            mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+            diffMap: <String, DiffResult>{},
+            tempDirectories: <Directory>[],
+            sdkDirs: <String, Directory>{},
+          ));
 
       final File conflictFile = workingDir.childFile('conflict_file');
-      conflictFile.writeAsStringSync('hello\nwow a bunch of lines\nhi\n', flush: true);
+      conflictFile.writeAsStringSync('hello\nwow a bunch of lines\nhi\n',
+          flush: true);
 
-      checkAndPrintMigrateStatus(manifest, workingDir, warnConflict: true, logger: logger);
+      checkAndPrintMigrateStatus(manifest, workingDir,
+          warnConflict: true, logger: logger);
       expect(logger.statusText, contains('''
 Added files:
   - added_file
@@ -135,7 +161,8 @@ Modified files:
         MigrateManifest.fromFile(manifestFile);
       } on Exception catch (e) {
         exceptionFound = true;
-        expect(e.toString(), 'Exception: Invalid .migrate_manifest file in the migrate working directory. File is not a Yaml map.');
+        expect(e.toString(),
+            'Exception: Invalid .migrate_manifest file in the migrate working directory. File is not a Yaml map.');
       }
       expect(exceptionFound, true);
     });
@@ -149,10 +176,11 @@ Modified files:
       ''');
       bool exceptionFound = false;
       try {
-       MigrateManifest.fromFile(manifestFile);
+        MigrateManifest.fromFile(manifestFile);
       } on Exception catch (e) {
         exceptionFound = true;
-        expect(e.toString(), 'Exception: Invalid .migrate_manifest file in the migrate working directory. File is missing an entry.');
+        expect(e.toString(),
+            'Exception: Invalid .migrate_manifest file in the migrate working directory. File is missing an entry.');
       }
       expect(exceptionFound, true);
     });
@@ -168,7 +196,8 @@ Modified files:
         MigrateManifest.fromFile(manifestFile);
       } on Exception catch (e) {
         exceptionFound = true;
-        expect(e.toString(), 'Exception: Invalid .migrate_manifest file in the migrate working directory. File is missing an entry.');
+        expect(e.toString(),
+            'Exception: Invalid .migrate_manifest file in the migrate working directory. File is missing an entry.');
       }
       expect(exceptionFound, true);
     });
@@ -186,7 +215,8 @@ Modified files:
         MigrateManifest.fromFile(manifestFile);
       } on Exception catch (e) {
         exceptionFound = true;
-        expect(e.toString(), 'Exception: Invalid .migrate_manifest file in the migrate working directory. Entry is not a Yaml list.');
+        expect(e.toString(),
+            'Exception: Invalid .migrate_manifest file in the migrate working directory. Entry is not a Yaml list.');
       }
       expect(exceptionFound, true);
     });
@@ -278,15 +308,17 @@ Modified files:
 
   group('manifest MigrateResult creation', () {
     testWithoutContext('empty MigrateResult', () async {
-      final MigrateManifest manifest = MigrateManifest(migrateRootDir: fileSystem.directory('root'), migrateResult: MigrateResult(
-        mergeResults: <MergeResult>[],
-        addedFiles: <FilePendingMigration>[],
-        deletedFiles: <FilePendingMigration>[],
-        mergeTypeMap: <String, MergeType>{},
-        diffMap: <String, DiffResult>{},
-        tempDirectories: <Directory>[],
-        sdkDirs: <String, Directory>{},
-      ));
+      final MigrateManifest manifest = MigrateManifest(
+          migrateRootDir: fileSystem.directory('root'),
+          migrateResult: MigrateResult(
+            mergeResults: <MergeResult>[],
+            addedFiles: <FilePendingMigration>[],
+            deletedFiles: <FilePendingMigration>[],
+            mergeTypeMap: <String, MergeType>{},
+            diffMap: <String, DiffResult>{},
+            tempDirectories: <Directory>[],
+            sdkDirs: <String, Directory>{},
+          ));
       expect(manifest.mergedFiles.isEmpty, true);
       expect(manifest.conflictFiles.isEmpty, true);
       expect(manifest.addedFiles.isEmpty, true);
@@ -294,29 +326,36 @@ Modified files:
     });
 
     testWithoutContext('simple MigrateResult', () async {
-      final MigrateManifest manifest = MigrateManifest(migrateRootDir: fileSystem.directory('root'), migrateResult: MigrateResult(
-        mergeResults: <MergeResult>[
-          StringMergeResult.explicit(
-            localPath: 'merged_file',
-            mergedString: 'str',
-            hasConflict: false,
-            exitCode: 0,
-          ),
-          StringMergeResult.explicit(
-            localPath: 'conflict_file',
-            mergedString: '<<<<<<<<<<<',
-            hasConflict: true,
-            exitCode: 1,
-          ),
-        ],
-        addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-        deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-        // The following are ignored by the manifest.
-        mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-        diffMap: <String, DiffResult>{},
-        tempDirectories: <Directory>[],
-        sdkDirs: <String, Directory>{},
-      ));
+      final MigrateManifest manifest = MigrateManifest(
+          migrateRootDir: fileSystem.directory('root'),
+          migrateResult: MigrateResult(
+            mergeResults: <MergeResult>[
+              StringMergeResult.explicit(
+                localPath: 'merged_file',
+                mergedString: 'str',
+                hasConflict: false,
+                exitCode: 0,
+              ),
+              StringMergeResult.explicit(
+                localPath: 'conflict_file',
+                mergedString: '<<<<<<<<<<<',
+                hasConflict: true,
+                exitCode: 1,
+              ),
+            ],
+            addedFiles: <FilePendingMigration>[
+              FilePendingMigration('added_file', fileSystem.file('added_file'))
+            ],
+            deletedFiles: <FilePendingMigration>[
+              FilePendingMigration(
+                  'deleted_file', fileSystem.file('deleted_file'))
+            ],
+            // The following are ignored by the manifest.
+            mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+            diffMap: <String, DiffResult>{},
+            tempDirectories: <Directory>[],
+            sdkDirs: <String, Directory>{},
+          ));
       expect(manifest.mergedFiles.isEmpty, false);
       expect(manifest.conflictFiles.isEmpty, false);
       expect(manifest.addedFiles.isEmpty, false);
