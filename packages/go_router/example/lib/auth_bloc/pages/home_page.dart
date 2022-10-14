@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             const Text('You are logged in successfully!!!'),
             ElevatedButton(
               onPressed: () {

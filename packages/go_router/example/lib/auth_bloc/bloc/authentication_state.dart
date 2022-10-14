@@ -19,7 +19,7 @@ abstract class AuthenticationState extends Equatable {
   final String? name;
   @override
   List<Object> get props =>
-      [status ?? AuthenticationStatusType.unknown, 'unknown'];
+      <Object>[status ?? AuthenticationStatusType.unknown, 'unknown'];
 }
 
 /// auth initial state.
@@ -28,7 +28,7 @@ class AuthenticationInitial extends AuthenticationState {
   const AuthenticationInitial()
       : super(status: AuthenticationStatusType.unknown);
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }
 
 /// auth authenticated state.
@@ -37,7 +37,7 @@ class AuthenticationAuthenticated extends AuthenticationState {
   const AuthenticationAuthenticated({required String? name})
       : super(status: AuthenticationStatusType.authenticated, name: name);
   @override
-  List<Object> get props => [name!];
+  List<Object> get props => <Object>[name!];
 }
 
 /// auth unauthenticated state.
@@ -46,7 +46,7 @@ class AuthenticationUnAuthenticated extends AuthenticationState {
   const AuthenticationUnAuthenticated()
       : super(status: AuthenticationStatusType.unauthenticated);
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }
 
 /// auth unknown state.
@@ -55,7 +55,7 @@ class AuthenticationUnknown extends AuthenticationState {
   const AuthenticationUnknown()
       : super(status: AuthenticationStatusType.unknown);
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }
 
 /// error state
@@ -69,5 +69,5 @@ class AuthenticationError extends AuthenticationState {
   final String errorMessage;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }

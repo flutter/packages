@@ -21,7 +21,7 @@ class AuthBloc extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
+      providers: <BlocProvider<Bloc<dynamic, dynamic>>>[
         BlocProvider<AuthenticationBloc>(
           create: (BuildContext context) => authBloc,
         ),

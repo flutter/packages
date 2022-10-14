@@ -14,9 +14,9 @@ import 'pages/home_page.dart';
 import 'pages/login_page.dart';
 
 /// routes
-class AppRouter extends Bloc {
+class AppRouter extends Bloc<AuthenticationEvent, AuthenticationState> {
   /// create routes with authentication bloc
-  AppRouter(this.authBloc) : super(null);
+  AppRouter(this.authBloc) : super(const AuthenticationInitial());
 
   /// use authentication bloc for use navigation
   late final AuthenticationBloc authBloc;

@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             const Text('please click under button, if you want to sign in.'),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
