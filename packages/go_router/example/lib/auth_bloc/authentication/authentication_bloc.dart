@@ -6,7 +6,8 @@ part 'authentication_event.dart';
 part 'authentication_state.dart';
 
 /// A [Bloc] which manages users authentication .
-class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc
+    extends Bloc<AuthenticationEvent, AuthenticationState> {
   /// Creates an [AuthenticationBloc].
   AuthenticationBloc() : super(const AuthenticationInitial()) {
     on<AuthenticationStatusChanged>((
