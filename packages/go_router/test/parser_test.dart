@@ -64,8 +64,7 @@ void main() {
 
     final Object extra = Object();
     matchesObj = await parser.parseRouteInformationWithDependencies(
-        RouteInformation(location: '/abc?def=ghi', state: extra),
-        context);
+        RouteInformation(location: '/abc?def=ghi', state: extra), context);
     matches = matchesObj.matches;
     expect(matches.length, 2);
     expect(matches[0].queryParams.length, 1);
@@ -228,8 +227,7 @@ void main() {
     final BuildContext context = tester.element(find.byType(Router<Object>));
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
-            const RouteInformation(location: '/123/family/456'),
-            context);
+            const RouteInformation(location: '/123/family/456'), context);
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
@@ -348,8 +346,7 @@ void main() {
     final BuildContext context = tester.element(find.byType(Router<Object>));
     expect(() async {
       await parser.parseRouteInformationWithDependencies(
-          const RouteInformation(location: '::Not valid URI::'),
-          context);
+          const RouteInformation(location: '::Not valid URI::'), context);
     }, throwsA(isA<FormatException>()));
   });
 
