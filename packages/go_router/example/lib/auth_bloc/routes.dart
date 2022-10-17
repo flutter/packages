@@ -9,6 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'bloc/authentication_bloc.dart';
+import 'bloc/authentication_event.dart';
+import 'bloc/authentication_state.dart';
 import 'pages/error_page.dart';
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';

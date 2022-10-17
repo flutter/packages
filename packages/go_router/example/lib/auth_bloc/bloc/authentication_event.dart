@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of 'authentication_bloc.dart';
+import 'package:equatable/equatable.dart';
+import '../type/authentication_status_type.dart';
 
 /// authentication event.
 abstract class AuthenticationEvent extends Equatable {

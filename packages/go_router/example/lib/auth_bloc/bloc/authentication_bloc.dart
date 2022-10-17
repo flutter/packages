@@ -2,12 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../type/authentication_status_type.dart';
-
-part 'authentication_event.dart';
-part 'authentication_state.dart';
+import 'authentication_event.dart';
+import 'authentication_state.dart';
 
 /// A [Bloc] which manages users authentication .
 class AuthenticationBloc
