@@ -1,3 +1,7 @@
+## NEXT
+
+- Removes dynamic calls in examples.
+
 ## 5.1.1
 
 - Removes DebugGoRouteInformation.
