@@ -269,7 +269,7 @@ class MigrateUtils {
     ];
     final ProcessResult result =
         await _runCommand(cmdArgs, workingDirectory: workingDirectory);
-    checkForErrors(result, commandDescription: cmdArgs.join(' '), exit: false);
+    checkForErrors(result, commandDescription: cmdArgs.join(' '));
   }
 
   /// Runs `./gradlew tasks` in the android directory of a flutter project.
