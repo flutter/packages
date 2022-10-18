@@ -73,6 +73,7 @@ class GoRouterState {
   /// This is useful for redirecting to a named location.
   // TODO(johnpryan): deprecate namedLocation API
   // See https://github.com/flutter/flutter/issues/10772
+  @Deprecated('Uses GoRouter.of(context).routeInformationParser.namedLocation instead')
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},
