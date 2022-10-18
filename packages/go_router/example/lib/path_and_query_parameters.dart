@@ -107,10 +107,10 @@ class HomeScreen extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          for (final String fid in _families.keys)
+          for (final MapEntry<String, Family> entry in _families.entries)
             ListTile(
-              title: Text(_families[fid]!.name),
-              onTap: () => context.go('/family/$fid'),
+              title: Text(entry.value.name),
+              onTap: () => context.go('/family/${entry.key}'),
             )
         ],
       ),

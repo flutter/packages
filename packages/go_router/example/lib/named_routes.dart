@@ -115,11 +115,11 @@ class HomeScreen extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          for (final String fid in _families.keys)
+          for (final MapEntry<String, Family> entry in _families.entries)
             ListTile(
-              title: Text(_families[fid]!.name),
+              title: Text(entry.value.name),
               onTap: () => context.go(context.namedLocation('family',
-                  params: <String, String>{'fid': fid})),
+                  params: <String, String>{'fid': entry.key})),
             )
         ],
       ),
@@ -142,12 +142,12 @@ class FamilyScreen extends StatelessWidget {
       appBar: AppBar(title: Text(_families[fid]!.name)),
       body: ListView(
         children: <Widget>[
-          for (final String pid in people.keys)
+          for (final MapEntry<String, Person> entry in people.entries)
             ListTile(
-              title: Text(people[pid]!.name),
+              title: Text(entry.value.name),
               onTap: () => context.go(context.namedLocation(
                 'person',
-                params: <String, String>{'fid': fid, 'pid': pid},
+                params: <String, String>{'fid': fid, 'pid': entry.key},
                 queryParams: <String, String>{'qid': 'quid'},
               )),
             ),

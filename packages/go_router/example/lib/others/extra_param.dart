@@ -96,11 +96,11 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(title: const Text(App.title)),
         body: ListView(
           children: <Widget>[
-            for (final String fid in _families.keys)
+            for (final MapEntry<String, Family> entry in _families.entries)
               ListTile(
-                title: Text(_families[fid]!.name),
-                onTap: () => context
-                    .goNamed('family', extra: <String, String>{'fid': fid}),
+                title: Text(entry.value.name),
+                onTap: () => context.goNamed('family',
+                    extra: <String, String>{'fid': entry.key}),
               )
           ],
         ),
