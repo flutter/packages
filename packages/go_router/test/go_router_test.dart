@@ -2415,46 +2415,6 @@ void main() {
       await tester.pump();
     });
 
-    testWidgets('didPush notifies listeners', (WidgetTester tester) async {
-      await createGoRouter(tester)
-        ..addListener(expectAsync0(() {}))
-        ..didPush(
-          MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
-          MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
-        );
-    });
-
-    testWidgets('didPop notifies listeners', (WidgetTester tester) async {
-      await createGoRouter(tester)
-        ..addListener(expectAsync0(() {}))
-        ..didPop(
-          MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
-          MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
-        );
-    });
-
-    testWidgets('didRemove notifies listeners', (WidgetTester tester) async {
-      await createGoRouter(tester)
-        ..addListener(expectAsync0(() {}))
-        ..didRemove(
-          MaterialPageRoute<void>(builder: (_) => const Text('Current route')),
-          MaterialPageRoute<void>(builder: (_) => const Text('Previous route')),
-        );
-    });
-
-    testWidgets('didReplace notifies listeners', (WidgetTester tester) async {
-      await createGoRouter(tester)
-        ..addListener(expectAsync0(() {}))
-        ..didReplace(
-          newRoute: MaterialPageRoute<void>(
-            builder: (_) => const Text('Current route'),
-          ),
-          oldRoute: MaterialPageRoute<void>(
-            builder: (_) => const Text('Previous route'),
-          ),
-        );
-    });
-
     group('canPop', () {
       testWidgets(
         'It should return false if Navigator.canPop() returns false.',

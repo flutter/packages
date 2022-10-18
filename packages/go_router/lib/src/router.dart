@@ -36,9 +36,7 @@ import 'typedefs.dart';
 ///  * [GoRoute], which provides APIs to define the routing table.
 ///  * [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example),
 ///    which contains examples for different routing scenarios.
-class GoRouter extends ChangeNotifier
-    with NavigatorObserver
-    implements RouterConfig<RouteMatchList> {
+class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
   ///
@@ -88,7 +86,6 @@ class GoRouter extends ChangeNotifier
       routerNeglect: routerNeglect,
       observers: <NavigatorObserver>[
         ...observers ?? <NavigatorObserver>[],
-        this
       ],
       restorationScopeId: restorationScopeId,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
@@ -100,6 +97,7 @@ class GoRouter extends ChangeNotifier
         child: nav,
       ),
     );
+    _routerDelegate.addListener(_handleStateMayChange);
 
     assert(() {
       log.info('setting initial location $initialLocation');
@@ -135,9 +133,32 @@ class GoRouter extends ChangeNotifier
   @visibleForTesting
   RouteConfiguration get routeConfiguration => _routeConfiguration;
 
-  /// Get the current location.
-  String get location =>
-      _routerDelegate.currentConfiguration.location.toString();
+  /// Gets the current location.
+  @Deprecated('Use GoRouter.uri.toString() instead')
+  String get location => _uri.toString();
+
+  /// Gets the current URI.
+  Uri get uri => _uri;
+  Uri _uri = Uri();
+
+  /// Gets the path parameters from the current uri.
+  Map<String, String> get pathParameters {
+    if(_routerDelegate.currentConfiguration.isEmpty) {
+      return const <String, String>{};
+    }
+    return _routerDelegate.currentConfiguration.last.decodedParams;
+  }
+
+  /// Returns `true` if there is more than 1 page on the stack.
+  bool canPop() => _routerDelegate.canPop();
+
+  void _handleStateMayChange() {
+    final Uri newUri = _routerDelegate.currentConfiguration.location;
+    if (_uri != newUri) {
+      _uri = newUri;
+      notifyListeners();
+    }
+  }
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
@@ -247,9 +268,6 @@ class GoRouter extends ChangeNotifier
     );
   }
 
-  /// Returns `true` if there is more than 1 page on the stack.
-  bool canPop() => _routerDelegate.canPop();
-
   /// Pop the top page off the GoRouter's page stack.
   void pop() {
     assert(() {
@@ -276,29 +294,10 @@ class GoRouter extends ChangeNotifier
     return inherited!.goRouter;
   }
 
-  /// The [Navigator] pushed `route`.
-  @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) =>
-      notifyListeners();
-
-  /// The [Navigator] popped `route`.
-  @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
-      notifyListeners();
-
-  /// The [Navigator] removed `route`.
-  @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
-      notifyListeners();
-
-  /// The [Navigator] replaced `oldRoute` with `newRoute`.
-  @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) =>
-      notifyListeners();
-
   @override
   void dispose() {
     _routeInformationProvider.dispose();
+    _routerDelegate.removeListener(_handleStateMayChange);
     _routerDelegate.dispose();
     super.dispose();
   }
