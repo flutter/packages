@@ -1,3 +1,7 @@
+## 5.1.1
+
+- Removes DebugGoRouteInformation.
+
 ## 5.1.0
 
 - Removes urlPathStrategy completely, which should have been done in v5.0.0 but some code remained mistakenly.

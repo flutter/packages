@@ -186,7 +186,7 @@ class GoRouter extends ChangeNotifier
     }());
     _routeInformationParser
         .parseRouteInformationWithDependencies(
-      DebugGoRouteInformation(location: location, state: extra),
+      RouteInformation(location: location, state: extra),
       // TODO(chunhtai): avoid accessing the context directly through global key.
       // https://github.com/flutter/flutter/issues/99112
       _routerDelegate.navigatorKey.currentContext!,
@@ -218,7 +218,7 @@ class GoRouter extends ChangeNotifier
   void replace(String location, {Object? extra}) {
     routeInformationParser
         .parseRouteInformationWithDependencies(
-      DebugGoRouteInformation(location: location, state: extra),
+      RouteInformation(location: location, state: extra),
       // TODO(chunhtai): avoid accessing the context directly through global key.
       // https://github.com/flutter/flutter/issues/99112
       _routerDelegate.navigatorKey.currentContext!,
