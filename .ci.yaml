@@ -45,7 +45,7 @@ targets:
       version_file: flutter_master.version
       dependencies: >
         [
-          {"dependency": "vs_build", "version": "version:vs2019"}
+          {"dependency": "vs_build", "version": "version:vs2019"},
           {"dependency": "open_jdk", "version:1.8.0u202-b08"}
         ]
 
