@@ -46,6 +46,7 @@ targets:
       dependencies: >
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
+          {"dependency": "open_jdk", "version:1.8.0u202-b08"}
         ]
 
   - name: Windows win32-platform_tests master - packages

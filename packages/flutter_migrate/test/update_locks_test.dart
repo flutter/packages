@@ -176,7 +176,12 @@ subprojects {
 }
 
 ''', flush: true);
-    expect(currentDir.childDirectory('android').childFile('gradlew.bat').existsSync(), true);
+    expect(
+        currentDir
+            .childDirectory('android')
+            .childFile('gradlew.bat')
+            .existsSync(),
+        true);
     await updateGradleDependencyLocking(
         flutterProject, utils, logger, terminal, true, fileSystem,
         force: true);
