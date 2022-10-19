@@ -109,20 +109,13 @@ flutter:
   });
 
   testWithoutContext('updates gradle locks', () async {
-    ProcessResult result = await processManager.run(<String>[
+    final ProcessResult result = await processManager.run(<String>[
       'flutter',
       'create',
       currentDir.absolute.path,
       '--project-name=testproject'
     ]);
     expect(result.exitCode, 0);
-    // build app to generate gradle files.
-    result = await processManager.run(<String>[
-      'flutter',
-      'build',
-      'apk',
-      '--debug',
-    ]);
     final File projectAppLock =
         currentDir.childDirectory('android').childFile('project-app.lockfile');
     final File buildGradle =
@@ -183,6 +176,7 @@ subprojects {
 }
 
 ''', flush: true);
+    expect(currentDir.childDirectory('android').childFile('gradlew.bat').existsSync(), true);
     await updateGradleDependencyLocking(
         flutterProject, utils, logger, terminal, true, fileSystem,
         force: true);

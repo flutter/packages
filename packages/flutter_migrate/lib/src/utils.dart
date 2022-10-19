@@ -31,8 +31,8 @@ class MigrateUtils {
   final ProcessManager _processManager;
 
   Future<ProcessResult> _runCommand(List<String> command,
-      {String? workingDirectory}) {
-    return _processManager.run(command, workingDirectory: workingDirectory);
+      {String? workingDirectory, bool runInShell = false}) {
+    return _processManager.run(command, workingDirectory: workingDirectory, runInShell: runInShell);
   }
 
   /// Calls `git diff` on two files and returns the diff as a DiffResult.
@@ -277,7 +277,7 @@ class MigrateUtils {
     final String baseCommand = isWindows ? 'gradlew.bat' : './gradlew';
     final List<String> cmdArgs = <String>[baseCommand, 'tasks'];
     final ProcessResult result =
-        await _runCommand(cmdArgs, workingDirectory: workingDirectory);
+        await _runCommand(cmdArgs, workingDirectory: workingDirectory, runInShell: isWindows);
     checkForErrors(result, commandDescription: cmdArgs.join(' '));
   }
 
