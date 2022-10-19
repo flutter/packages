@@ -79,8 +79,6 @@ flutter:
 ''', flush: true);
     await updatePubspecDependencies(flutterProject, utils, logger, terminal,
         force: true);
-    // expect(logger.statusText, contains('Dart dependency locking'));
-    // expect(logger.errorText, 'hi');
     final YamlMap pubspecYaml = loadYaml(pubspec.readAsStringSync());
     final YamlMap dependenciesMap = pubspecYaml['dependencies'];
     expect(
@@ -111,13 +109,20 @@ flutter:
   });
 
   testWithoutContext('updates gradle locks', () async {
-    final ProcessResult result = await processManager.run(<String>[
+    ProcessResult result = await processManager.run(<String>[
       'flutter',
       'create',
       currentDir.absolute.path,
       '--project-name=testproject'
     ]);
     expect(result.exitCode, 0);
+    // build app to generate gradle files.
+    result = await processManager.run(<String>[
+      'flutter',
+      'build',
+      'apk',
+      '--debug',
+    ]);
     final File projectAppLock =
         currentDir.childDirectory('android').childFile('project-app.lockfile');
     final File buildGradle =
