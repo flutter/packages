@@ -1,6 +1,7 @@
-## NEXT
+## 5.1.2
 
-- Update README
+- Exposes uri and path parameters from GoRouter and fixes its notifications.
+- Updates README
 - Removes dynamic calls in examples.
 
 ## 5.1.1
