@@ -90,12 +90,8 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       restorationScopeId: restorationScopeId,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
       // allowing the caller to wrap the navigator themselves
-      builderWithNav:
-          (BuildContext context, GoRouterState state, Navigator nav) =>
-              InheritedGoRouter(
-        goRouter: this,
-        child: nav,
-      ),
+      builderWithNav: (BuildContext context, Widget child) =>
+          InheritedGoRouter(goRouter: this, child: child),
     );
     _routerDelegate.addListener(_handleStateMayChange);
 
@@ -143,7 +139,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
 
   /// Gets the path parameters from the current uri.
   Map<String, String> get pathParameters {
-    if(_routerDelegate.currentConfiguration.isEmpty) {
+    if (_routerDelegate.currentConfiguration.isEmpty) {
       return const <String, String>{};
     }
     return _routerDelegate.currentConfiguration.last.decodedParams;

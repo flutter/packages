@@ -59,17 +59,24 @@ class RouteBuilder {
       // empty box until then.
       return const SizedBox.shrink();
     }
-    try {
-      return tryBuild(
-          context, matchList, pop, routerNeglect, configuration.navigatorKey);
-    } on _RouteBuilderError catch (e) {
-      return _buildErrorNavigator(
-          context,
-          e,
-          Uri.parse(matchList.location.toString()),
-          pop,
-          configuration.navigatorKey);
-    }
+    return builderWithNav(
+      context,
+      Builder(
+        builder: (BuildContext context) {
+          try {
+            return tryBuild(context, matchList, pop, routerNeglect,
+                configuration.navigatorKey);
+          } on _RouteBuilderError catch (e) {
+            return _buildErrorNavigator(
+                context,
+                e,
+                Uri.parse(matchList.location.toString()),
+                pop,
+                configuration.navigatorKey);
+          }
+        },
+      ),
+    );
   }
 
   /// Builds the top-level Navigator by invoking the build method on each
@@ -86,15 +93,6 @@ class RouteBuilder {
   ) {
     return builderWithNav(
       context,
-      GoRouterState(
-        configuration,
-        location: matchList.location.toString(),
-        name: null,
-        subloc: matchList.location.path,
-        queryParams: matchList.location.queryParameters,
-        queryParametersAll: matchList.location.queryParametersAll,
-        error: matchList.isError ? matchList.error : null,
-      ),
       _buildNavigator(
         pop,
         buildPages(context, matchList, pop, routerNeglect, navigatorKey),

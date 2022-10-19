@@ -323,10 +323,9 @@ class _BuilderTestWidget extends StatelessWidget {
       configuration: configuration,
       builderWithNav: (
         BuildContext context,
-        GoRouterState state,
-        Navigator navigator,
+        Widget child,
       ) {
-        return navigator;
+        return child;
       },
       errorPageBuilder: (
         BuildContext context,

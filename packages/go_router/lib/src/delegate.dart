@@ -117,7 +117,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
       if (route is GoRoute && route.parentNavigatorKey != null) {
-        final bool canPop = route.parentNavigatorKey!.currentState?.canPop() ?? false;
+        final bool canPop =
+            route.parentNavigatorKey!.currentState?.canPop() ?? false;
 
         // Continue if canPop is false.
         if (canPop) {

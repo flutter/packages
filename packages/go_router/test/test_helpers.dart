@@ -144,14 +144,16 @@ Future<GoRouter> createRouter(
   String initialLocation = '/',
   int redirectLimit = 5,
   GlobalKey<NavigatorState>? navigatorKey,
+  GoRouterWidgetBuilder? errorBuilder,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
     redirect: redirect,
     initialLocation: initialLocation,
     redirectLimit: redirectLimit,
-    errorBuilder: (BuildContext context, GoRouterState state) =>
-        TestErrorScreen(state.error!),
+    errorBuilder: errorBuilder ??
+        (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
     navigatorKey: navigatorKey,
   );
   await tester.pumpWidget(

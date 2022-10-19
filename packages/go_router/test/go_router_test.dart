@@ -230,6 +230,60 @@ void main() {
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
+    testWidgets('can access GoRouter parameters from builder',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(path: '/', redirect: (_, __) => '/1'),
+        GoRoute(
+            path: '/:id',
+            builder: (BuildContext context, GoRouterState state) {
+              return Text('${GoRouter.of(context).uri}');
+            }),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      expect(find.text('/1'), findsOneWidget);
+      router.go('/123?id=456');
+      await tester.pumpAndSettle();
+      expect(find.text('/123?id=456'), findsOneWidget);
+    });
+
+    testWidgets('can access GoRouter path parameters from builder',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(path: '/', redirect: (_, __) => '/1'),
+        GoRoute(
+            path: '/:id',
+            builder: (BuildContext context, GoRouterState state) {
+              return Text('${GoRouter.of(context).pathParameters['id']}');
+            }),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      expect(find.text('1'), findsOneWidget);
+      router.go('/123?id=456');
+      await tester.pumpAndSettle();
+      expect(find.text('123'), findsOneWidget);
+    });
+
+    testWidgets('can access GoRouter parameters from error builder',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(path: '/', builder: dummy),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          errorBuilder: (BuildContext context, GoRouterState state) {
+        return Text('${GoRouter.of(context).uri}');
+      });
+      router.go('/123?id=456');
+      await tester.pumpAndSettle();
+      expect(find.text('/123?id=456'), findsOneWidget);
+      router.go('/1234?id=456');
+      await tester.pumpAndSettle();
+      expect(find.text('/1234?id=456'), findsOneWidget);
+    });
+
     testWidgets('match sub-route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -2076,6 +2130,55 @@ void main() {
   });
 
   testWidgets('go should preserve the query parameters when navigating',
+      (WidgetTester tester) async {
+    const Map<String, dynamic> queryParametersAll = <String, List<dynamic>>{
+      'q1': <String>['v1'],
+      'q2': <String>['v2', 'v3'],
+    };
+    void expectLocationWithQueryParams(String location) {
+      final Uri uri = Uri.parse(location);
+      expect(uri.path, '/page');
+      expect(uri.queryParametersAll, queryParametersAll);
+    }
+
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+      ),
+      GoRoute(
+        name: 'page',
+        path: '/page',
+        builder: (BuildContext context, GoRouterState state) {
+          expect(state.queryParametersAll, queryParametersAll);
+          expectLocationWithQueryParams(state.location);
+          return DummyScreen(
+            queryParametersAll: state.queryParametersAll,
+          );
+        },
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester);
+
+    router.go('/page?q1=v1&q2=v2&q2=v3');
+    await tester.pump();
+    final List<RouteMatch> matches = router.routerDelegate.matches.matches;
+
+    expect(matches, hasLength(1));
+    expectLocationWithQueryParams(router.location);
+    expect(
+      router.screenFor(matches.last),
+      isA<DummyScreen>().having(
+        (DummyScreen screen) => screen.queryParametersAll,
+        'screen.queryParametersAll',
+        queryParametersAll,
+      ),
+    );
+  });
+
+  testWidgets('goRouter should rebuild widget if ',
       (WidgetTester tester) async {
     const Map<String, dynamic> queryParametersAll = <String, List<dynamic>>{
       'q1': <String>['v1'],
