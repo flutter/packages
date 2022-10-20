@@ -219,6 +219,12 @@ abstract class OverridableTokenClientConfig {
     /// About Multiple Sign-in: https://support.google.com/accounts/answer/1721977
     String? hint,
 
+    /// A space-delimited list of scopes that identify the resources that your
+    /// application could access on the user's behalf. These values inform the
+    /// consent screen that Google displays to the user.
+    // b/251971390
+    String? scope,
+
     /// **Not recommended.** Specifies any string value that your application
     /// uses to maintain state between your authorization request and the
     /// authorization server's response.
@@ -330,7 +336,7 @@ external RevokeTokenFn get revokeToken;
 /// before being passed to the [revokeToken] function.
 typedef RevokeTokenFn = void Function(
   String accessToken, [
-  RevokeTokenDoneFn? done,
+  RevokeTokenDoneFn done,
 ]);
 
 /// The signature of the `done` function for [revokeToken].
