@@ -115,7 +115,8 @@ flutter:
       currentDir.absolute.path,
       '--project-name=testproject'
     ]);
-    result = await Process.run('dir', <String>[], workingDirectory: currentDir.path, runInShell: true);
+    result = await Process.run('dir', <String>[],
+        workingDirectory: currentDir.path, runInShell: true);
     expect(result.exitCode, 0);
     final File projectAppLock =
         currentDir.childDirectory('android').childFile('project-app.lockfile');
@@ -177,15 +178,23 @@ subprojects {
 }
 
 ''', flush: true);
-    expect(currentDir.childDirectory('android').childFile('gradlew.bat').existsSync(), true);
+    expect(
+        currentDir
+            .childDirectory('android')
+            .childFile('gradlew.bat')
+            .existsSync(),
+        true);
     await updateGradleDependencyLocking(
         flutterProject, utils, logger, terminal, true, fileSystem,
         force: true);
     expect(projectAppLockBackup.existsSync(), true);
     expect(projectAppLock.existsSync(), true);
-    expect(projectAppLock.readAsStringSync(), contains('# This is a Gradle generated file for dependency locking.'));
-    expect(projectAppLock.readAsStringSync(), contains('# Manual edits can break the build and are not advised.'));
-    expect(projectAppLock.readAsStringSync(), contains('# This file is expected to be part of source control.'));
+    expect(projectAppLock.readAsStringSync(),
+        contains('# This is a Gradle generated file for dependency locking.'));
+    expect(projectAppLock.readAsStringSync(),
+        contains('# Manual edits can break the build and are not advised.'));
+    expect(projectAppLock.readAsStringSync(),
+        contains('# This file is expected to be part of source control.'));
   }, timeout: const Timeout(Duration(seconds: 500)));
 }
 
