@@ -6,6 +6,7 @@
 
 import 'package:flutter_migrate/src/base/context.dart';
 import 'package:flutter_migrate/src/base/file_system.dart';
+import 'package:flutter_migrate/src/base/io.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
 import 'package:flutter_migrate/src/base/signals.dart';
 import 'package:flutter_migrate/src/base/terminal.dart';
@@ -191,6 +192,16 @@ line3
         .run(<String>['git', 'add', '.'], workingDirectory: appDir.path);
     await processManager.run(<String>['git', 'commit', '-m', 'Initial commit'],
         workingDirectory: appDir.path);
+
+    final ProcessResult result = await processManager.run(<String>['flutter', '--version'],
+        workingDirectory: appDir.path);
+    final String versionOutput = (result.stdout as String);
+    final List<String> versionSplit = versionOutput.substring(8, 14).split('.');
+    expect(versionSplit.length >= 2, true);
+    if (!(int.parse(versionSplit[0]) >= 3 && int.parse(versionSplit[1]) > 3)) {
+      // Apply not supported on stable version 3.3 and below
+      return;
+    }
 
     logger.clear();
     await createTestCommandRunner(command).run(<String>[
