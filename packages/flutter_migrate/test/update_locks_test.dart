@@ -109,12 +109,13 @@ flutter:
   });
 
   testWithoutContext('updates gradle locks', () async {
-    final ProcessResult result = await processManager.run(<String>[
+    ProcessResult result = await processManager.run(<String>[
       'flutter',
       'create',
       currentDir.absolute.path,
       '--project-name=testproject'
     ]);
+    result = await Process.run('dir', <String>[], workingDirectory: currentDir.path, runInShell: true);
     expect(result.exitCode, 0);
     final File projectAppLock =
         currentDir.childDirectory('android').childFile('project-app.lockfile');
@@ -176,24 +177,15 @@ subprojects {
 }
 
 ''', flush: true);
-    expect(
-        currentDir
-            .childDirectory('android')
-            .childFile('gradlew.bat')
-            .existsSync(),
-        true);
+    expect(currentDir.childDirectory('android').childFile('gradlew.bat').existsSync(), true);
     await updateGradleDependencyLocking(
         flutterProject, utils, logger, terminal, true, fileSystem,
         force: true);
     expect(projectAppLockBackup.existsSync(), true);
-    expect(projectAppLock.readAsStringSync().startsWith('''
-# This is a Gradle generated file for dependency locking.
-# Manual edits can break the build and are not advised.
-# This file is expected to be part of source control.
-androidx.activity:activity:1.0.0=debugAndroidTestCompileClasspath,debugApiDependenciesMetadata,debugCompileClasspath,debugImplementationDependenciesMetadata,debugRuntimeClasspath,debugUnitTestCompileClasspath,debugUnitTestRuntimeClasspath,profileApiDependenciesMetadata,profileCompileClasspath,profileImplementationDependenciesMetadata,profileRuntimeClasspath,profileUnitTestCompileClasspath,profileUnitTestRuntimeClasspath,releaseApiDependenciesMetadata,releaseCompileClasspath,releaseImplementationDependenciesMetadata,releaseRuntimeClasspath,releaseUnitTestCompileClasspath,releaseUnitTestRuntimeClasspath
-androidx.annotation:annotation-experimental:1.1.0=debugAndroidTestCompileClasspath,debugApiDependenciesMetadata,debugCompileClasspath,debugImplementationDependenciesMetadata,debugRuntimeClasspath,debugUnitTestCompileClasspath,debugUnitTestRuntimeClasspath,profileApiDependenciesMetadata,profileCompileClasspath,profileImplementationDependenciesMetadata,profileRuntimeClasspath,profileUnitTestCompileClasspath,profileUnitTestRuntimeClasspath,releaseApiDependenciesMetadata,releaseCompileClasspath,releaseImplementationDependenciesMetadata,releaseRuntimeClasspath,releaseUnitTestCompileClasspath,releaseUnitTestRuntimeClasspath
-androidx.annotation:annotation:1.2.0=debugAndroidTestCompileClasspath,debugApiDependenciesMetadata,debugCompileClasspath,debugImplementationDependenciesMetadata,debugRuntimeClasspath,debugUnitTestCompileClasspath,debugUnitTestRuntimeClasspath,profileApiDependenciesMetadata,profileCompileClasspath,profileImplementationDependenciesMetadata,profileRuntimeClasspath,profileUnitTestCompileClasspath,profileUnitTestRuntimeClasspath,releaseApiDependenciesMetadata,releaseCompileClasspath,releaseImplementationDependenciesMetadata,releaseRuntimeClasspath,releaseUnitTestCompileClasspath,releaseUnitTestRuntimeClasspath
-'''), true);
+    expect(projectAppLock.existsSync(), true);
+    expect(projectAppLock.readAsStringSync(), contains('# This is a Gradle generated file for dependency locking.'));
+    expect(projectAppLock.readAsStringSync(), contains('# Manual edits can break the build and are not advised.'));
+    expect(projectAppLock.readAsStringSync(), contains('# This file is expected to be part of source control.'));
   }, timeout: const Timeout(Duration(seconds: 500)));
 }
 

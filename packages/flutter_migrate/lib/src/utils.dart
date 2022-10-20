@@ -311,7 +311,7 @@ class MigrateUtils {
     if (exit) {
       throwToolExit(
           'Command failed with exit code ${result.exitCode}: ${result.stderr}\n${result.stdout}',
-           exitCode: result.exitCode);
+          exitCode: result.exitCode);
     }
     return false;
   }
