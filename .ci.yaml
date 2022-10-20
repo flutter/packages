@@ -45,7 +45,8 @@ targets:
       version_file: flutter_master.version
       dependencies: >
         [
-          {"dependency": "vs_build", "version": "version:vs2019"}
+          {"dependency": "vs_build", "version": "version:vs2019"},
+          {"dependency": "open_jdk", "version": "version:11"}
         ]
 
   - name: Windows win32-platform_tests master - packages
