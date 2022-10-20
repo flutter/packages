@@ -233,7 +233,12 @@ task:
       build_script:
         - ./script/tool_runner.sh build-examples --web
       drive_script:
-        - ./script/tool_runner.sh drive-examples --web
+        # google_identity_services_web tests need Dart >=2.17, which is not available in stable.
+        - if [[ "$CHANNEL" == "master" ]]; then
+        -   ./script/tool_runner.sh drive-examples --web
+        - else
+        -   ./script/tool_runner.sh drive-examples --web --exclude=google_identity_services_web
+        - fi
     - name: web_benchmarks_test
       env:
         matrix:
