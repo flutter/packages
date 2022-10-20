@@ -8,9 +8,74 @@ import 'render_dynamic_grid.dart';
 import 'staggered_layout.dart';
 import 'wrap_layout.dart';
 
-/// A scrollable, 2D array of widgets.
+/// A scrollable grid of widgets, capable of dynamically positioning tiles based
+/// on different aspects of the children's size when laid out with loose
+/// constraints.
 ///
-// TODO(all): Add more documentation & sample code
+/// Three [SliverGridDelegate]s support wrapping or staggering the dynamically
+/// sized children of the grid. Staggering children can use
+/// [SliverGridDelegateWithFixedCrossAxisCount] or
+/// [SliverGridDelegateWithMaxCrossAxisExtent], while wrapping uses its own
+/// [SliverGridDelegateWithWrapping].
+///
+/// {@macro dynamicLayouts.garbageCollection}
+///
+/// The following example shows how to use the [DynamicGridView.wrap]
+/// constructor.
+///
+/// ```dart
+/// DynamicGridView.wrap(
+///     mainAxisSpacing: 10,
+///     crossAxisSpacing: 20,
+///     children: [
+///         Container(
+///           height: 100,
+///           width: 200,
+///           color: Colors.amberAccent[100],
+///           child: const Center(child: Text('Item 1')
+///          ),
+///       ),
+///       Container(
+///           height: 50,
+///           width: 70,
+///           color: Colors.blue[100],
+///           child: const Center(child: Text('Item 2'),
+///          ),
+///       ),
+///       Container(
+///           height: 82,
+///           width: 300,
+///           color: Colors.pink[100],
+///           child: const Center(child: Text('Item 3'),
+///         ),
+///       ),
+///       Container(
+///           color: Colors.green[100],
+///           child: const Center(child: Text('Item 3'),
+///       ),
+///     ),
+///   ],
+/// ),
+/// ```
+///
+/// This sample code shows how to use the [DynamicGridView.staggered]
+/// constructor with a [maxCrossAxisExtent]:
+///
+/// ```dart
+/// DynamicGridView.staggered(
+///   maxCrossAxisExtent: 100,
+///   crossAxisSpacing: 2,
+///   mainAxisSpacing: 2,
+///   children: List.generate(
+///     50,
+///     (int index) => Container(
+///       height: index % 3 * 50 + 20,
+///       color: Colors.amber[index % 9 * 100],
+///       child: Center(child: Text("Index $index")),
+///     ),
+///   ),
+/// );
+/// ```
 class DynamicGridView extends GridView {
   /// Creates a scrollable, 2D array of widgets with a custom
   /// [SliverGridDelegate].

@@ -5,16 +5,6 @@ This package provides support for multi sized tiles and different layouts.
 Currently the layouts that are implemented in this package are `Stagger` and
 `Wrap`.
 
-The following are some demos of how each of the grids look.
-
-A stagger grid demo:
-
-<!-- TODO(snat-s): Add stagger video demo -->
-
-A wrap demo:
-
-<!-- TODO(snat-s): Add wrap video demo -->
-
 ### Stagger Features
 
 `DynamicGridView` is a subclass of `GridView` and gives access
@@ -76,10 +66,6 @@ The `Stagger` layout can be used with the constructor
 `DynamicGridView.stagger` and still use the delegates from `GridView`
 like `SliverGridDelegateWithMaxCrossAxisExtent` and
 `SliverGridDelegateWithFixedCrossAxisCount`.
-
-<!-- TODO(DavBot02): Add a code example of DynamicGrid.stagger -->
-
-<!-- TODO(snat-s): Add a video of DynamicGrid.stagger -->
 
 ## Additional information
 

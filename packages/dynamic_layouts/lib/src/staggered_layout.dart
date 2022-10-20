@@ -18,7 +18,7 @@ import 'wrap_layout.dart';
 ///
 /// The tiles are placed in the column (or row in case [scrollDirection] is set
 /// to [Axis.horizontal]) with the minimum extent, which means children are not
-/// neccesarily layed out in sequential order.
+/// necessarily laid out in sequential order.
 ///
 /// See also:
 ///
@@ -75,7 +75,7 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
   final List<int> _mainAxisCount = <int>[];
 
   /// Returns the row or column with the minimum extent for the next child to
-  /// be layed out.
+  /// be laid out.
   int _getNextCrossAxisSlot() {
     int nextCrossAxisSlot = 0;
     double minScrollOffset = double.infinity;
