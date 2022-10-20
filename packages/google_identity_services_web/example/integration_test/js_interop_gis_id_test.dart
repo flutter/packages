@@ -4,15 +4,14 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'package:google_identity_services_web/id.dart' as id;
+import 'package:google_identity_services_web/src/js_interop/dom.dart';
+
 import 'package:integration_test/integration_test.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
-
-import 'package:google_identity_services_web/src/js_interop/dom.dart';
-import 'package:google_identity_services_web/id.dart' as id;
 
 @JS('window')
 external Object get domWindow;
