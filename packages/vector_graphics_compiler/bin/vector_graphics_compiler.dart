@@ -5,9 +5,30 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:vector_graphics_compiler/src/svg/colors.dart';
+import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'package:vector_graphics_compiler/src/isolate_processor.dart';
 
 final ArgParser argParser = ArgParser()
+  ..addOption(
+    'current-color',
+    help: 'The value (in ARGB format or a named SVG color) of the '
+        '"currentColor" attribute.',
+    valueHelp: '0xFF000000',
+    defaultsTo: '0xFF000000',
+  )
+  ..addOption(
+    'font-size',
+    help: 'The basis for font size based values (i.e. em, ex).',
+    valueHelp: '14',
+    defaultsTo: '14',
+  )
+  ..addOption(
+    'x-height',
+    help: 'The x-height or corpus size of the font. If unspecified, defaults '
+        'to half of font-size.',
+    valueHelp: '7',
+  )
   ..addOption(
     'libtessellator',
     help: 'The path to a libtessellator dynamic library',
@@ -80,6 +101,21 @@ void validateOptions(ArgResults results) {
   }
 }
 
+SvgTheme _parseTheme(ArgResults results) {
+  Color? currentColor = namedColors[results['current-color']];
+  if (currentColor == null) {
+    final int? argbValue = int.tryParse(results['current-color'] as String);
+    currentColor = Color(argbValue ?? 0xFF000000);
+  }
+  return SvgTheme(
+    currentColor: currentColor,
+    fontSize: double.tryParse(results['font-size'] as String) ?? 14,
+    xHeight: results.wasParsed('x-height')
+        ? double.tryParse(results['x-height'] as String)
+        : null,
+  );
+}
+
 Future<void> main(List<String> args) async {
   final ArgResults results;
   try {
@@ -132,6 +168,7 @@ Future<void> main(List<String> args) async {
   );
   if (!await processor.process(
     pairs,
+    theme: _parseTheme(results),
     maskingOptimizerEnabled: maskingOptimizerEnabled,
     clippingOptimizerEnabled: clippingOptimizerEnabled,
     overdrawOptimizerEnabled: overdrawOptimizerEnabled,

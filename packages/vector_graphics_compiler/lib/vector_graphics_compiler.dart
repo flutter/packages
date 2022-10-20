@@ -14,6 +14,7 @@ import 'src/paint.dart';
 import 'src/svg/theme.dart';
 import 'src/svg/parser.dart';
 import 'src/vector_instructions.dart';
+
 export 'src/geometry/basic_types.dart';
 export 'src/geometry/matrix.dart';
 export 'src/geometry/path.dart';
@@ -101,6 +102,7 @@ void _encodeShader(
 Future<Uint8List> encodeSvg({
   required String xml,
   required String debugName,
+  SvgTheme theme = const SvgTheme(),
   bool enableMaskingOptimizer = true,
   bool enableClippingOptimizer = true,
   bool enableOverdrawOptimizer = true,
@@ -110,6 +112,7 @@ Future<Uint8List> encodeSvg({
   final VectorInstructions instructions = await parse(
     xml,
     key: debugName,
+    theme: theme,
     enableMaskingOptimizer: enableMaskingOptimizer,
     enableClippingOptimizer: enableClippingOptimizer,
     enableOverdrawOptimizer: enableOverdrawOptimizer,

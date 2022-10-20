@@ -1240,7 +1240,7 @@ class SvgParser {
   }
 
   /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
-  Color? parseColor(String? colorString) {
+  Color? parseColor(String? colorString, {Color? currentColor}) {
     if (colorString == null || colorString.isEmpty) {
       return null;
     }
@@ -1250,7 +1250,7 @@ class SvgParser {
     }
 
     if (colorString.toLowerCase() == 'currentcolor') {
-      return null;
+      return currentColor ?? theme.currentColor;
     }
 
     // handle hex colors e.g. #fff or #ffffff.  This supports #RRGGBBAA

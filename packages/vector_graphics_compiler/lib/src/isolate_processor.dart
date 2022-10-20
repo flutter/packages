@@ -29,6 +29,7 @@ class IsolateProcessor {
   /// Returns whether all requests were successful.
   Future<bool> process(
     List<Pair> pairs, {
+    SvgTheme theme = const SvgTheme(),
     required bool maskingOptimizerEnabled,
     required bool clippingOptimizerEnabled,
     required bool overdrawOptimizerEnabled,
@@ -42,6 +43,7 @@ class IsolateProcessor {
       for (Pair pair in pairs)
         _process(
           pair,
+          theme: theme,
           maskingOptimizerEnabled: maskingOptimizerEnabled,
           clippingOptimizerEnabled: clippingOptimizerEnabled,
           overdrawOptimizerEnabled: overdrawOptimizerEnabled,
@@ -87,6 +89,7 @@ class IsolateProcessor {
     required bool dumpDebug,
     required String? libpathops,
     required String? libtessellator,
+    SvgTheme theme = const SvgTheme(),
   }) async {
     PoolResource? resource;
     try {
@@ -104,6 +107,7 @@ class IsolateProcessor {
         final Uint8List bytes = await encodeSvg(
           xml: File(pair.inputPath).readAsStringSync(),
           debugName: pair.inputPath,
+          theme: theme,
           enableMaskingOptimizer: maskingOptimizerEnabled,
           enableClippingOptimizer: clippingOptimizerEnabled,
           enableOverdrawOptimizer: overdrawOptimizerEnabled,
