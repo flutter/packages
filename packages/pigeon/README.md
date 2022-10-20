@@ -1,7 +1,7 @@
 # Pigeon
 
 Pigeon is a code generator tool to make communication between Flutter and the
-host platform type-safe, easier and faster.
+host platform type-safe, also easier and faster to implement.
 
 ## Supported Platforms
 
@@ -91,9 +91,9 @@ Nested datatypes are supported, too.
 
 ### Asynchronous Handlers
 
-By default Pigeon will generate synchronous handlers for messages.  If you want
-to be able to respond to a message asynchronously you can use the `@async`
-annotation as of version 0.1.20.
+By default Pigeon will generate synchronous handlers for messages on the native side. 
+The Flutter part is not asynchronous! If you want to be able to respond to 
+a message asynchronously you can use the `@async` annotation as of version 0.1.20.
 
 Example:
 
