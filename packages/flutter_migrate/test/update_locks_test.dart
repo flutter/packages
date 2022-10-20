@@ -102,10 +102,6 @@ flutter:
         _VersionCode.fromString(dependenciesMap['meta'] as String) >
             _VersionCode.fromString('1.7.0'),
         true);
-    expect(
-        _VersionCode.fromString(dependenciesMap['vector_math'] as String) >
-            _VersionCode.fromString('2.1.2'),
-        true);
   });
 
   testWithoutContext('updates gradle locks', () async {
