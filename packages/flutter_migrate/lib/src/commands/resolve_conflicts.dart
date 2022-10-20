@@ -23,8 +23,9 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
   }) {
     argParser.addOption(
       'staging-directory',
-      help: 'Specifies the custom migration staging directory used to stage and edit proposed changes. '
-            'This path can be absolute or relative to the flutter project root. This defaults to `$kDefaultMigrateStagingDirectoryName`',
+      help:
+          'Specifies the custom migration staging directory used to stage and edit proposed changes. '
+          'This path can be absolute or relative to the flutter project root. This defaults to `$kDefaultMigrateStagingDirectoryName`',
       valueHelp: 'path',
     );
     argParser.addOption(
@@ -35,17 +36,20 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
     argParser.addOption(
       'context-lines',
       defaultsTo: '5',
-      help: 'The number of lines of context to show around the each conflict. Defaults to 5.',
+      help:
+          'The number of lines of context to show around the each conflict. Defaults to 5.',
     );
     argParser.addFlag(
       'confirm-commit',
       defaultsTo: true,
-      help: 'Indicates if proposed changes require user verification before writing to disk.',
+      help:
+          'Indicates if proposed changes require user verification before writing to disk.',
     );
     argParser.addFlag(
       'flutter-subcommand',
-      help: 'Enable when using the flutter tool as a subcommand. This changes the '
-            'wording of log messages to indicate the correct suggested commands to use.',
+      help:
+          'Enable when using the flutter tool as a subcommand. This changes the '
+          'wording of log messages to indicate the correct suggested commands to use.',
     );
   }
 
@@ -59,7 +63,8 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
   final String name = 'resolve-conflicts';
 
   @override
-  final String description = 'Prints the current status of the in progress migration.';
+  final String description =
+      'Prints the current status of the in progress migration.';
 
   static const String _conflictStartMarker = '<<<<<<<';
   static const String _conflictDividerMarker = '=======';
@@ -70,31 +75,37 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
     final String? projectDirectory = stringArg('project-directory');
     final FlutterProjectFactory flutterProjectFactory = FlutterProjectFactory();
     final FlutterProject project = projectDirectory == null
-      ? FlutterProject.current(fileSystem)
-      : flutterProjectFactory.fromDirectory(fileSystem.directory(projectDirectory));
+        ? FlutterProject.current(fileSystem)
+        : flutterProjectFactory
+            .fromDirectory(fileSystem.directory(projectDirectory));
     final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
 
-    Directory stagingDirectory = project.directory.childDirectory(kDefaultMigrateStagingDirectoryName);
+    Directory stagingDirectory =
+        project.directory.childDirectory(kDefaultMigrateStagingDirectoryName);
     final String? customStagingDirectoryPath = stringArg('staging-directory');
     if (customStagingDirectoryPath != null) {
       if (fileSystem.path.isAbsolute(customStagingDirectoryPath)) {
         stagingDirectory = fileSystem.directory(customStagingDirectoryPath);
       } else {
-        stagingDirectory = project.directory.childDirectory(customStagingDirectoryPath);
+        stagingDirectory =
+            project.directory.childDirectory(customStagingDirectoryPath);
       }
     }
     if (!stagingDirectory.existsSync()) {
-      logger.printStatus('No migration in progress. Start a new migration with:');
+      logger
+          .printStatus('No migration in progress. Start a new migration with:');
       printCommandText('start', logger, standalone: !isSubcommand);
       return const CommandResult(ExitStatus.fail);
     }
 
-    final File manifestFile = MigrateManifest.getManifestFileFromDirectory(stagingDirectory);
+    final File manifestFile =
+        MigrateManifest.getManifestFileFromDirectory(stagingDirectory);
     final MigrateManifest manifest = MigrateManifest.fromFile(manifestFile);
 
     checkAndPrintMigrateStatus(manifest, stagingDirectory, logger: logger);
 
-    final List<String> conflictFiles = manifest.remainingConflictFiles(stagingDirectory);
+    final List<String> conflictFiles =
+        manifest.remainingConflictFiles(stagingDirectory);
 
     terminal.usesTerminalUi = true;
 
@@ -111,12 +122,14 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
       final List<Conflict> conflicts = findConflicts(lines, localPath);
 
       // Prompt developer
-      final CommandResult? promptResult = await promptDeveloperSelectAction(conflicts, lines, localPath);
+      final CommandResult? promptResult =
+          await promptDeveloperSelectAction(conflicts, lines, localPath);
       if (promptResult != null) {
         return promptResult;
       }
 
-      final bool result = await verifyAndCommit(conflicts, lines, file, localPath);
+      final bool result =
+          await verifyAndCommit(conflicts, lines, file, localPath);
       if (!result) {
         i--;
       }
@@ -137,9 +150,14 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
         currentConflict.dividerLine = lineNumber;
       } else if (line.contains(_conflictEndMarker)) {
         currentConflict.endLine = lineNumber;
-        if (!(currentConflict.startLine == null || currentConflict.dividerLine == null || currentConflict.startLine! < currentConflict.dividerLine!) ||
-            !(currentConflict.dividerLine == null || currentConflict.endLine == null || currentConflict.dividerLine! < currentConflict.endLine!)) {
-          throw StateError('Invalid merge conflict detected in $localPath: Improperly ordered conflict markers.');
+        if (!(currentConflict.startLine == null ||
+                currentConflict.dividerLine == null ||
+                currentConflict.startLine! < currentConflict.dividerLine!) ||
+            !(currentConflict.dividerLine == null ||
+                currentConflict.endLine == null ||
+                currentConflict.dividerLine! < currentConflict.endLine!)) {
+          throw StateError(
+              'Invalid merge conflict detected in $localPath: Improperly ordered conflict markers.');
         }
         conflicts.add(currentConflict);
         currentConflict = Conflict.empty();
@@ -150,7 +168,8 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
 
   /// Display a detected conflict and prompt the developer on whether to accept the original lines, new lines,
   /// or skip handling the conflict.
-  Future<CommandResult?> promptDeveloperSelectAction(List<Conflict> conflicts, List<String> lines, String localPath) async {
+  Future<CommandResult?> promptDeveloperSelectAction(
+      List<Conflict> conflicts, List<String> lines, String localPath) async {
     final int contextLineCount = int.parse(stringArg('context-lines')!);
     for (final Conflict conflict in conflicts) {
       if (!conflict.isValid) {
@@ -165,20 +184,33 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
       logger.printStatus(' = New lines.\n', newline: true);
 
       // Print the conflict for reference
-      for (int lineNumber = max(conflict.startLine! - contextLineCount, 0); lineNumber < conflict.startLine!; lineNumber++) {
-        printConflictLine(lines[lineNumber], lineNumber, color: TerminalColor.grey);
+      for (int lineNumber = max(conflict.startLine! - contextLineCount, 0);
+          lineNumber < conflict.startLine!;
+          lineNumber++) {
+        printConflictLine(lines[lineNumber], lineNumber,
+            color: TerminalColor.grey);
       }
       printConflictLine(lines[conflict.startLine!], conflict.startLine!);
-      for (int lineNumber = conflict.startLine! + 1; lineNumber < conflict.dividerLine!; lineNumber++) {
-        printConflictLine(lines[lineNumber], lineNumber, color: TerminalColor.cyan);
+      for (int lineNumber = conflict.startLine! + 1;
+          lineNumber < conflict.dividerLine!;
+          lineNumber++) {
+        printConflictLine(lines[lineNumber], lineNumber,
+            color: TerminalColor.cyan);
       }
       printConflictLine(lines[conflict.dividerLine!], conflict.dividerLine!);
-      for (int lineNumber = conflict.dividerLine! + 1; lineNumber < conflict.endLine!; lineNumber++) {
-        printConflictLine(lines[lineNumber], lineNumber, color: TerminalColor.green);
+      for (int lineNumber = conflict.dividerLine! + 1;
+          lineNumber < conflict.endLine!;
+          lineNumber++) {
+        printConflictLine(lines[lineNumber], lineNumber,
+            color: TerminalColor.green);
       }
       printConflictLine(lines[conflict.endLine!], conflict.endLine!);
-      for (int lineNumber = conflict.endLine! + 1; lineNumber <= (conflict.endLine! + contextLineCount).clamp(0, lines.length - 1); lineNumber++) {
-        printConflictLine(lines[lineNumber], lineNumber, color: TerminalColor.grey);
+      for (int lineNumber = conflict.endLine! + 1;
+          lineNumber <=
+              (conflict.endLine! + contextLineCount).clamp(0, lines.length - 1);
+          lineNumber++) {
+        printConflictLine(lines[lineNumber], lineNumber,
+            color: TerminalColor.grey);
       }
 
       logger.printStatus('\nConflict in $localPath.');
@@ -187,27 +219,34 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
       selection = await terminal.promptForCharInput(
         <String>['o', 'n', 's', 'q'],
         logger: logger,
-        prompt: 'Accept the (o)riginal lines, (n)ew lines, or (s)kip and resolve the conflict manually? Or to exit the wizard, (q)uit.',
+        prompt:
+            'Accept the (o)riginal lines, (n)ew lines, or (s)kip and resolve the conflict manually? Or to exit the wizard, (q)uit.',
         defaultChoiceIndex: 2,
       );
 
-      switch(selection) {
-        case 'o': {
-          conflict.chooseOriginal();
-          break;
-        }
-        case 'n': {
-          conflict.chooseNew();
-          break;
-        }
-        case 's': {
-          conflict.chooseSkip();
-          break;
-        }
-        case 'q': {
-          logger.printStatus('Exiting wizard. You may continue where you left off by re-running the command.', newline: true);
-          return const CommandResult(ExitStatus.success);
-        }
+      switch (selection) {
+        case 'o':
+          {
+            conflict.chooseOriginal();
+            break;
+          }
+        case 'n':
+          {
+            conflict.chooseNew();
+            break;
+          }
+        case 's':
+          {
+            conflict.chooseSkip();
+            break;
+          }
+        case 'q':
+          {
+            logger.printStatus(
+                'Exiting wizard. You may continue where you left off by re-running the command.',
+                newline: true);
+            return const CommandResult(ExitStatus.success);
+          }
       }
     }
     return null;
@@ -217,14 +256,16 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
   /// the changes.
   ///
   /// Returns true if changes were accepted or rejected. Returns false if user indicated to retry.
-  Future<bool> verifyAndCommit(List<Conflict> conflicts, List<String> lines, File file, String localPath) async {
+  Future<bool> verifyAndCommit(List<Conflict> conflicts, List<String> lines,
+      File file, String localPath) async {
     int originalCount = 0;
     int newCount = 0;
     int skipCount = 0;
 
     String result = '';
     int lastPrintedLine = 0;
-    bool hasChanges = false; // don't unecessarily write file if no changes were made.
+    bool hasChanges =
+        false; // don't unecessarily write file if no changes were made.
     for (final Conflict conflict in conflicts) {
       if (!conflict.isValid) {
         continue;
@@ -232,27 +273,35 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
       if (conflict.selection != ConflictSelection.skip) {
         hasChanges = true; // only skip results in no changes
       }
-      for (int lineNumber = lastPrintedLine; lineNumber < conflict.startLine!; lineNumber++) {
+      for (int lineNumber = lastPrintedLine;
+          lineNumber < conflict.startLine!;
+          lineNumber++) {
         result += '${lines[lineNumber]}\n';
       }
-      switch(conflict.selection) {
+      switch (conflict.selection) {
         case ConflictSelection.skip:
           // Skipped this conflict. Add all lines.
-          for (int lineNumber = conflict.startLine!; lineNumber <= conflict.endLine!; lineNumber++) {
+          for (int lineNumber = conflict.startLine!;
+              lineNumber <= conflict.endLine!;
+              lineNumber++) {
             result += '${lines[lineNumber]}\n';
           }
           skipCount++;
           break;
         case ConflictSelection.keepOriginal:
           // Keeping original lines
-          for (int lineNumber = conflict.startLine! + 1; lineNumber < conflict.dividerLine!; lineNumber++) {
+          for (int lineNumber = conflict.startLine! + 1;
+              lineNumber < conflict.dividerLine!;
+              lineNumber++) {
             result += '${lines[lineNumber]}\n';
           }
           originalCount++;
           break;
         case ConflictSelection.keepNew:
           // Keeping new lines
-          for (int lineNumber = conflict.dividerLine! + 1; lineNumber < conflict.endLine!; lineNumber++) {
+          for (int lineNumber = conflict.dividerLine! + 1;
+              lineNumber < conflict.endLine!;
+              lineNumber++) {
             result += '${lines[lineNumber]}\n';
           }
           newCount++;
@@ -260,7 +309,9 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
       }
       lastPrintedLine = (conflict.endLine! + 1).clamp(0, lines.length);
     }
-    for (int lineNumber = lastPrintedLine; lineNumber < lines.length; lineNumber++) {
+    for (int lineNumber = lastPrintedLine;
+        lineNumber < lines.length;
+        lineNumber++) {
       result += '${lines[lineNumber]}\n';
     }
 
@@ -269,27 +320,32 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
     if (confirm && skipCount != conflicts.length) {
       logger.printStatus(terminal.clearScreen(), newline: false);
       logger.printStatus('Conflicts in $localPath complete.\n');
-      logger.printStatus('You chose to:\n  Skip $skipCount conflicts\n  Acccept the original lines for $originalCount conflicts\n  Accept the new lines for $newCount conflicts\n');
+      logger.printStatus(
+          'You chose to:\n  Skip $skipCount conflicts\n  Acccept the original lines for $originalCount conflicts\n  Accept the new lines for $newCount conflicts\n');
       String selection = 'n';
       selection = await terminal.promptForCharInput(
         <String>['y', 'n', 'r'],
         logger: logger,
-        prompt: 'Commit the changes to the working directory? (y)es, (n)o, (r)etry this file',
+        prompt:
+            'Commit the changes to the working directory? (y)es, (n)o, (r)etry this file',
         defaultChoiceIndex: 1,
       );
-      switch(selection) {
-        case 'y': {
-          if (hasChanges) {
-            file.writeAsStringSync(result, flush: true);
+      switch (selection) {
+        case 'y':
+          {
+            if (hasChanges) {
+              file.writeAsStringSync(result, flush: true);
+            }
+            break;
           }
-          break;
-        }
-        case 'n': {
-          break;
-        }
-        case 'r': {
-          return false;
-        }
+        case 'n':
+          {
+            break;
+          }
+        case 'r':
+          {
+            return false;
+          }
       }
     } else {
       file.writeAsStringSync(result, flush: true);
@@ -298,10 +354,12 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
   }
 
   /// Prints the line of a file with a prefix that indicates the line count.
-  void printConflictLine(String text, int lineNumber, {TerminalColor? color, int paddingLength = 5}) {
+  void printConflictLine(String text, int lineNumber,
+      {TerminalColor? color, int paddingLength = 5}) {
     // Default padding of 5 pads line numbers up to 99,999
     final String padding = ' ' * (paddingLength - lineNumber.toString().length);
-    logger.printStatus('$lineNumber$padding', color: TerminalColor.grey, newline: false, indent: 2);
+    logger.printStatus('$lineNumber$padding',
+        color: TerminalColor.grey, newline: false, indent: 2);
     logger.printStatus(text, color: color);
   }
 }
@@ -314,7 +372,8 @@ enum ConflictSelection {
 
 /// Simple data class that represents a conflict in a file and tracks what the developer chose to do with it.
 class Conflict {
-  Conflict(this.startLine, this.dividerLine, this.endLine) : selection = ConflictSelection.skip;
+  Conflict(this.startLine, this.dividerLine, this.endLine)
+      : selection = ConflictSelection.skip;
 
   Conflict.empty() : selection = ConflictSelection.skip;
 
@@ -324,7 +383,8 @@ class Conflict {
 
   ConflictSelection selection;
 
-  bool get isValid => startLine != null && dividerLine != null && endLine != null;
+  bool get isValid =>
+      startLine != null && dividerLine != null && endLine != null;
 
   void chooseOriginal() {
     selection = ConflictSelection.keepOriginal;

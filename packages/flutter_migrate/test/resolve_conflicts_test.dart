@@ -71,42 +71,51 @@ flutter:
   testUsingContext('commits new simple conflict', () async {
     final File conflictFile = stagingDir.childFile('conflict_file');
     conflictFile.createSync(recursive: true);
-    conflictFile.writeAsStringSync('hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n', flush: true);
+    conflictFile.writeAsStringSync(
+        'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+        flush: true);
 
-    final MigrateManifest manifest = MigrateManifest(migrateRootDir: stagingDir, migrateResult: MigrateResult(
-      mergeResults: <MergeResult>[
-        StringMergeResult.explicit(
-          localPath: 'merged_file',
-          mergedString: 'str',
-          hasConflict: false,
-          exitCode: 0,
-        ),
-        StringMergeResult.explicit(
-          localPath: 'conflict_file',
-          mergedString: 'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
-          hasConflict: true,
-          exitCode: 1,
-        ),
-      ],
-      addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-      deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-      // The following are ignored by the manifest.
-      mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-      diffMap: <String, DiffResult>{},
-      tempDirectories: <Directory>[],
-      sdkDirs: <String, Directory>{},
-    ));
+    final MigrateManifest manifest = MigrateManifest(
+        migrateRootDir: stagingDir,
+        migrateResult: MigrateResult(
+          mergeResults: <MergeResult>[
+            StringMergeResult.explicit(
+              localPath: 'merged_file',
+              mergedString: 'str',
+              hasConflict: false,
+              exitCode: 0,
+            ),
+            StringMergeResult.explicit(
+              localPath: 'conflict_file',
+              mergedString:
+                  'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+              hasConflict: true,
+              exitCode: 1,
+            ),
+          ],
+          addedFiles: <FilePendingMigration>[
+            FilePendingMigration('added_file', fileSystem.file('added_file'))
+          ],
+          deletedFiles: <FilePendingMigration>[
+            FilePendingMigration(
+                'deleted_file', fileSystem.file('deleted_file'))
+          ],
+          // The following are ignored by the manifest.
+          mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+          diffMap: <String, DiffResult>{},
+          tempDirectories: <Directory>[],
+          sdkDirs: <String, Directory>{},
+        ));
     manifest.writeFile();
 
     expect(stagingDir.existsSync(), true);
-    final Future<void> commandFuture = createTestCommandRunner(command).run(
-      <String>[
-        'resolve-conflicts',
-        '--staging-directory=${stagingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    final Future<void> commandFuture =
+        createTestCommandRunner(command).run(<String>[
+      'resolve-conflicts',
+      '--staging-directory=${stagingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
 
     terminal.simulateStdin('n');
     terminal.simulateStdin('y');
@@ -136,7 +145,8 @@ You chose to:
   Accept the new lines for 1 conflicts
 
 Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n|r]:'''));
-    expect(conflictFile.readAsStringSync(), equals('hello\nwow a bunch of lines\nnew\nhi\n'));
+    expect(conflictFile.readAsStringSync(),
+        equals('hello\nwow a bunch of lines\nnew\nhi\n'));
   }, overrides: <Type, Generator>{
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,
@@ -145,42 +155,51 @@ Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n
   testUsingContext('skip commit simple conflict leaves intact', () async {
     final File conflictFile = stagingDir.childFile('conflict_file');
     conflictFile.createSync(recursive: true);
-    conflictFile.writeAsStringSync('hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n', flush: true);
+    conflictFile.writeAsStringSync(
+        'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+        flush: true);
 
-    final MigrateManifest manifest = MigrateManifest(migrateRootDir: stagingDir, migrateResult: MigrateResult(
-      mergeResults: <MergeResult>[
-        StringMergeResult.explicit(
-          localPath: 'merged_file',
-          mergedString: 'str',
-          hasConflict: false,
-          exitCode: 0,
-        ),
-        StringMergeResult.explicit(
-          localPath: 'conflict_file',
-          mergedString: 'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
-          hasConflict: true,
-          exitCode: 1,
-        ),
-      ],
-      addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-      deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-      // The following are ignored by the manifest.
-      mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-      diffMap: <String, DiffResult>{},
-      tempDirectories: <Directory>[],
-      sdkDirs: <String, Directory>{},
-    ));
+    final MigrateManifest manifest = MigrateManifest(
+        migrateRootDir: stagingDir,
+        migrateResult: MigrateResult(
+          mergeResults: <MergeResult>[
+            StringMergeResult.explicit(
+              localPath: 'merged_file',
+              mergedString: 'str',
+              hasConflict: false,
+              exitCode: 0,
+            ),
+            StringMergeResult.explicit(
+              localPath: 'conflict_file',
+              mergedString:
+                  'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+              hasConflict: true,
+              exitCode: 1,
+            ),
+          ],
+          addedFiles: <FilePendingMigration>[
+            FilePendingMigration('added_file', fileSystem.file('added_file'))
+          ],
+          deletedFiles: <FilePendingMigration>[
+            FilePendingMigration(
+                'deleted_file', fileSystem.file('deleted_file'))
+          ],
+          // The following are ignored by the manifest.
+          mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+          diffMap: <String, DiffResult>{},
+          tempDirectories: <Directory>[],
+          sdkDirs: <String, Directory>{},
+        ));
     manifest.writeFile();
 
     expect(stagingDir.existsSync(), true);
-    final Future<void> commandFuture = createTestCommandRunner(command).run(
-      <String>[
-        'resolve-conflicts',
-        '--staging-directory=${stagingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    final Future<void> commandFuture =
+        createTestCommandRunner(command).run(<String>[
+      'resolve-conflicts',
+      '--staging-directory=${stagingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
 
     terminal.simulateStdin('n');
     terminal.simulateStdin('n');
@@ -210,7 +229,10 @@ You chose to:
   Accept the new lines for 1 conflicts
 
 Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n|r]:'''));
-    expect(conflictFile.readAsStringSync(), equals('hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n'));
+    expect(
+        conflictFile.readAsStringSync(),
+        equals(
+            'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n'));
   }, overrides: <Type, Generator>{
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,
@@ -219,42 +241,51 @@ Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n
   testUsingContext('commits original simple conflict', () async {
     final File conflictFile = stagingDir.childFile('conflict_file');
     conflictFile.createSync(recursive: true);
-    conflictFile.writeAsStringSync('hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n', flush: true);
+    conflictFile.writeAsStringSync(
+        'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+        flush: true);
 
-    final MigrateManifest manifest = MigrateManifest(migrateRootDir: stagingDir, migrateResult: MigrateResult(
-      mergeResults: <MergeResult>[
-        StringMergeResult.explicit(
-          localPath: 'merged_file',
-          mergedString: 'str',
-          hasConflict: false,
-          exitCode: 0,
-        ),
-        StringMergeResult.explicit(
-          localPath: 'conflict_file',
-          mergedString: 'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
-          hasConflict: true,
-          exitCode: 1,
-        ),
-      ],
-      addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-      deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-      // The following are ignored by the manifest.
-      mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-      diffMap: <String, DiffResult>{},
-      tempDirectories: <Directory>[],
-      sdkDirs: <String, Directory>{},
-    ));
+    final MigrateManifest manifest = MigrateManifest(
+        migrateRootDir: stagingDir,
+        migrateResult: MigrateResult(
+          mergeResults: <MergeResult>[
+            StringMergeResult.explicit(
+              localPath: 'merged_file',
+              mergedString: 'str',
+              hasConflict: false,
+              exitCode: 0,
+            ),
+            StringMergeResult.explicit(
+              localPath: 'conflict_file',
+              mergedString:
+                  'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+              hasConflict: true,
+              exitCode: 1,
+            ),
+          ],
+          addedFiles: <FilePendingMigration>[
+            FilePendingMigration('added_file', fileSystem.file('added_file'))
+          ],
+          deletedFiles: <FilePendingMigration>[
+            FilePendingMigration(
+                'deleted_file', fileSystem.file('deleted_file'))
+          ],
+          // The following are ignored by the manifest.
+          mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+          diffMap: <String, DiffResult>{},
+          tempDirectories: <Directory>[],
+          sdkDirs: <String, Directory>{},
+        ));
     manifest.writeFile();
 
     expect(stagingDir.existsSync(), true);
-    final Future<void> commandFuture = createTestCommandRunner(command).run(
-      <String>[
-        'resolve-conflicts',
-        '--staging-directory=${stagingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    final Future<void> commandFuture =
+        createTestCommandRunner(command).run(<String>[
+      'resolve-conflicts',
+      '--staging-directory=${stagingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
 
     terminal.simulateStdin('o');
     terminal.simulateStdin('y');
@@ -284,7 +315,8 @@ You chose to:
   Accept the new lines for 0 conflicts
 
 Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n|r]:'''));
-    expect(conflictFile.readAsStringSync(), equals('hello\nwow a bunch of lines\noriginal\nhi\n'));
+    expect(conflictFile.readAsStringSync(),
+        equals('hello\nwow a bunch of lines\noriginal\nhi\n'));
   }, overrides: <Type, Generator>{
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,
@@ -293,42 +325,51 @@ Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n
   testUsingContext('skip conflict leaves file unchanged', () async {
     final File conflictFile = stagingDir.childFile('conflict_file');
     conflictFile.createSync(recursive: true);
-    conflictFile.writeAsStringSync('hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n', flush: true);
+    conflictFile.writeAsStringSync(
+        'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+        flush: true);
 
-    final MigrateManifest manifest = MigrateManifest(migrateRootDir: stagingDir, migrateResult: MigrateResult(
-      mergeResults: <MergeResult>[
-        StringMergeResult.explicit(
-          localPath: 'merged_file',
-          mergedString: 'str',
-          hasConflict: false,
-          exitCode: 0,
-        ),
-        StringMergeResult.explicit(
-          localPath: 'conflict_file',
-          mergedString: 'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
-          hasConflict: true,
-          exitCode: 1,
-        ),
-      ],
-      addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-      deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-      // The following are ignored by the manifest.
-      mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-      diffMap: <String, DiffResult>{},
-      tempDirectories: <Directory>[],
-      sdkDirs: <String, Directory>{},
-    ));
+    final MigrateManifest manifest = MigrateManifest(
+        migrateRootDir: stagingDir,
+        migrateResult: MigrateResult(
+          mergeResults: <MergeResult>[
+            StringMergeResult.explicit(
+              localPath: 'merged_file',
+              mergedString: 'str',
+              hasConflict: false,
+              exitCode: 0,
+            ),
+            StringMergeResult.explicit(
+              localPath: 'conflict_file',
+              mergedString:
+                  'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+              hasConflict: true,
+              exitCode: 1,
+            ),
+          ],
+          addedFiles: <FilePendingMigration>[
+            FilePendingMigration('added_file', fileSystem.file('added_file'))
+          ],
+          deletedFiles: <FilePendingMigration>[
+            FilePendingMigration(
+                'deleted_file', fileSystem.file('deleted_file'))
+          ],
+          // The following are ignored by the manifest.
+          mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+          diffMap: <String, DiffResult>{},
+          tempDirectories: <Directory>[],
+          sdkDirs: <String, Directory>{},
+        ));
     manifest.writeFile();
 
     expect(stagingDir.existsSync(), true);
-    final Future<void> commandFuture = createTestCommandRunner(command).run(
-      <String>[
-        'resolve-conflicts',
-        '--staging-directory=${stagingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    final Future<void> commandFuture =
+        createTestCommandRunner(command).run(<String>[
+      'resolve-conflicts',
+      '--staging-directory=${stagingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
 
     terminal.simulateStdin('s');
     terminal.simulateStdin('y');
@@ -345,7 +386,10 @@ Cyan = Original lines.  Green = New lines.
   5    new
   6    >>>>>>>
   7    hi'''));
-    expect(conflictFile.readAsStringSync(), equals('hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n'));
+    expect(
+        conflictFile.readAsStringSync(),
+        equals(
+            'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n'));
   }, overrides: <Type, Generator>{
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,
@@ -354,42 +398,51 @@ Cyan = Original lines.  Green = New lines.
   testUsingContext('partial conflict skipped.', () async {
     final File conflictFile = stagingDir.childFile('conflict_file');
     conflictFile.createSync(recursive: true);
-    conflictFile.writeAsStringSync('hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n<<<<<<<\nskip this partial conflict\n=======\nblah blah', flush: true);
+    conflictFile.writeAsStringSync(
+        'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n<<<<<<<\nskip this partial conflict\n=======\nblah blah',
+        flush: true);
 
-    final MigrateManifest manifest = MigrateManifest(migrateRootDir: stagingDir, migrateResult: MigrateResult(
-      mergeResults: <MergeResult>[
-        StringMergeResult.explicit(
-          localPath: 'merged_file',
-          mergedString: 'str',
-          hasConflict: false,
-          exitCode: 0,
-        ),
-        StringMergeResult.explicit(
-          localPath: 'conflict_file',
-          mergedString: 'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n<<<<<<<\nskip this partial conflict\n=======\nblah blah',
-          hasConflict: true,
-          exitCode: 1,
-        ),
-      ],
-      addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-      deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-      // The following are ignored by the manifest.
-      mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-      diffMap: <String, DiffResult>{},
-      tempDirectories: <Directory>[],
-      sdkDirs: <String, Directory>{},
-    ));
+    final MigrateManifest manifest = MigrateManifest(
+        migrateRootDir: stagingDir,
+        migrateResult: MigrateResult(
+          mergeResults: <MergeResult>[
+            StringMergeResult.explicit(
+              localPath: 'merged_file',
+              mergedString: 'str',
+              hasConflict: false,
+              exitCode: 0,
+            ),
+            StringMergeResult.explicit(
+              localPath: 'conflict_file',
+              mergedString:
+                  'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n<<<<<<<\nskip this partial conflict\n=======\nblah blah',
+              hasConflict: true,
+              exitCode: 1,
+            ),
+          ],
+          addedFiles: <FilePendingMigration>[
+            FilePendingMigration('added_file', fileSystem.file('added_file'))
+          ],
+          deletedFiles: <FilePendingMigration>[
+            FilePendingMigration(
+                'deleted_file', fileSystem.file('deleted_file'))
+          ],
+          // The following are ignored by the manifest.
+          mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+          diffMap: <String, DiffResult>{},
+          tempDirectories: <Directory>[],
+          sdkDirs: <String, Directory>{},
+        ));
     manifest.writeFile();
 
     expect(stagingDir.existsSync(), true);
-    final Future<void> commandFuture = createTestCommandRunner(command).run(
-      <String>[
-        'resolve-conflicts',
-        '--staging-directory=${stagingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    final Future<void> commandFuture =
+        createTestCommandRunner(command).run(<String>[
+      'resolve-conflicts',
+      '--staging-directory=${stagingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
 
     terminal.simulateStdin('o');
     terminal.simulateStdin('y');
@@ -419,7 +472,10 @@ You chose to:
   Accept the new lines for 0 conflicts
 
 Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n|r]:'''));
-    expect(conflictFile.readAsStringSync(), equals('hello\nwow a bunch of lines\noriginal\nhi\n<<<<<<<\nskip this partial conflict\n=======\nblah blah\n'));
+    expect(
+        conflictFile.readAsStringSync(),
+        equals(
+            'hello\nwow a bunch of lines\noriginal\nhi\n<<<<<<<\nskip this partial conflict\n=======\nblah blah\n'));
   }, overrides: <Type, Generator>{
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,
@@ -428,51 +484,63 @@ Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n
   testUsingContext('multiple files sequence', () async {
     final File conflictFile = stagingDir.childFile('conflict_file');
     conflictFile.createSync(recursive: true);
-    conflictFile.writeAsStringSync('hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n', flush: true);
+    conflictFile.writeAsStringSync(
+        'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+        flush: true);
     final File conflictFile2 = stagingDir.childFile('conflict_file2');
     conflictFile2.createSync(recursive: true);
-    conflictFile2.writeAsStringSync('MoreConflicts\n<<<<<<<\noriginal\nmultiple\nlines\n=======\nnew\n>>>>>>>\nhi\n', flush: true);
+    conflictFile2.writeAsStringSync(
+        'MoreConflicts\n<<<<<<<\noriginal\nmultiple\nlines\n=======\nnew\n>>>>>>>\nhi\n',
+        flush: true);
 
-    final MigrateManifest manifest = MigrateManifest(migrateRootDir: stagingDir, migrateResult: MigrateResult(
-      mergeResults: <MergeResult>[
-        StringMergeResult.explicit(
-          localPath: 'merged_file',
-          mergedString: 'str',
-          hasConflict: false,
-          exitCode: 0,
-        ),
-        StringMergeResult.explicit(
-          localPath: 'conflict_file',
-          mergedString: 'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
-          hasConflict: true,
-          exitCode: 1,
-        ),
-        StringMergeResult.explicit(
-          localPath: 'conflict_file2',
-          mergedString: 'MoreConflicts\n<<<<<<<\noriginal\nmultiple\nlines\n=======\nnew\n>>>>>>>\nhi\n',
-          hasConflict: true,
-          exitCode: 1,
-        ),
-      ],
-      addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-      deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-      // The following are ignored by the manifest.
-      mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-      diffMap: <String, DiffResult>{},
-      tempDirectories: <Directory>[],
-      sdkDirs: <String, Directory>{},
-    ));
+    final MigrateManifest manifest = MigrateManifest(
+        migrateRootDir: stagingDir,
+        migrateResult: MigrateResult(
+          mergeResults: <MergeResult>[
+            StringMergeResult.explicit(
+              localPath: 'merged_file',
+              mergedString: 'str',
+              hasConflict: false,
+              exitCode: 0,
+            ),
+            StringMergeResult.explicit(
+              localPath: 'conflict_file',
+              mergedString:
+                  'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n',
+              hasConflict: true,
+              exitCode: 1,
+            ),
+            StringMergeResult.explicit(
+              localPath: 'conflict_file2',
+              mergedString:
+                  'MoreConflicts\n<<<<<<<\noriginal\nmultiple\nlines\n=======\nnew\n>>>>>>>\nhi\n',
+              hasConflict: true,
+              exitCode: 1,
+            ),
+          ],
+          addedFiles: <FilePendingMigration>[
+            FilePendingMigration('added_file', fileSystem.file('added_file'))
+          ],
+          deletedFiles: <FilePendingMigration>[
+            FilePendingMigration(
+                'deleted_file', fileSystem.file('deleted_file'))
+          ],
+          // The following are ignored by the manifest.
+          mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+          diffMap: <String, DiffResult>{},
+          tempDirectories: <Directory>[],
+          sdkDirs: <String, Directory>{},
+        ));
     manifest.writeFile();
 
     expect(stagingDir.existsSync(), true);
-    final Future<void> commandFuture = createTestCommandRunner(command).run(
-      <String>[
-        'resolve-conflicts',
-        '--staging-directory=${stagingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    final Future<void> commandFuture =
+        createTestCommandRunner(command).run(<String>[
+      'resolve-conflicts',
+      '--staging-directory=${stagingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
 
     terminal.simulateStdin('n');
     terminal.simulateStdin('y');
@@ -504,7 +572,7 @@ You chose to:
   Accept the new lines for 1 conflicts
 
 Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n|r]:'''));
-        expect(logger.statusText, contains('''
+    expect(logger.statusText, contains('''
 Cyan = Original lines.  Green = New lines.
 
   0    MoreConflicts
@@ -529,8 +597,10 @@ You chose to:
   Accept the new lines for 0 conflicts
 
 Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n|r]:'''));
-    expect(conflictFile.readAsStringSync(), equals('hello\nwow a bunch of lines\nnew\nhi\n'));
-    expect(conflictFile2.readAsStringSync(), equals('MoreConflicts\noriginal\nmultiple\nlines\nhi\n'));
+    expect(conflictFile.readAsStringSync(),
+        equals('hello\nwow a bunch of lines\nnew\nhi\n'));
+    expect(conflictFile2.readAsStringSync(),
+        equals('MoreConflicts\noriginal\nmultiple\nlines\nhi\n'));
   }, overrides: <Type, Generator>{
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,
@@ -539,42 +609,51 @@ Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n
   testUsingContext('retry works', () async {
     final File conflictFile = stagingDir.childFile('conflict_file');
     conflictFile.createSync(recursive: true);
-    conflictFile.writeAsStringSync('hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n<<<<<<<\noriginal2\n=======\nnew2\n>>>>>>>\n', flush: true);
+    conflictFile.writeAsStringSync(
+        'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n<<<<<<<\noriginal2\n=======\nnew2\n>>>>>>>\n',
+        flush: true);
 
-    final MigrateManifest manifest = MigrateManifest(migrateRootDir: stagingDir, migrateResult: MigrateResult(
-      mergeResults: <MergeResult>[
-        StringMergeResult.explicit(
-          localPath: 'merged_file',
-          mergedString: 'str',
-          hasConflict: false,
-          exitCode: 0,
-        ),
-        StringMergeResult.explicit(
-          localPath: 'conflict_file',
-          mergedString: 'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n<<<<<<<\noriginal2\n=======\nnew2\n>>>>>>>\n',
-          hasConflict: true,
-          exitCode: 1,
-        ),
-      ],
-      addedFiles: <FilePendingMigration>[FilePendingMigration('added_file', fileSystem.file('added_file'))],
-      deletedFiles: <FilePendingMigration>[FilePendingMigration('deleted_file', fileSystem.file('deleted_file'))],
-      // The following are ignored by the manifest.
-      mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
-      diffMap: <String, DiffResult>{},
-      tempDirectories: <Directory>[],
-      sdkDirs: <String, Directory>{},
-    ));
+    final MigrateManifest manifest = MigrateManifest(
+        migrateRootDir: stagingDir,
+        migrateResult: MigrateResult(
+          mergeResults: <MergeResult>[
+            StringMergeResult.explicit(
+              localPath: 'merged_file',
+              mergedString: 'str',
+              hasConflict: false,
+              exitCode: 0,
+            ),
+            StringMergeResult.explicit(
+              localPath: 'conflict_file',
+              mergedString:
+                  'hello\nwow a bunch of lines\n<<<<<<<\noriginal\n=======\nnew\n>>>>>>>\nhi\n<<<<<<<\noriginal2\n=======\nnew2\n>>>>>>>\n',
+              hasConflict: true,
+              exitCode: 1,
+            ),
+          ],
+          addedFiles: <FilePendingMigration>[
+            FilePendingMigration('added_file', fileSystem.file('added_file'))
+          ],
+          deletedFiles: <FilePendingMigration>[
+            FilePendingMigration(
+                'deleted_file', fileSystem.file('deleted_file'))
+          ],
+          // The following are ignored by the manifest.
+          mergeTypeMap: <String, MergeType>{'test': MergeType.threeWay},
+          diffMap: <String, DiffResult>{},
+          tempDirectories: <Directory>[],
+          sdkDirs: <String, Directory>{},
+        ));
     manifest.writeFile();
 
     expect(stagingDir.existsSync(), true);
-    final Future<void> commandFuture = createTestCommandRunner(command).run(
-      <String>[
-        'resolve-conflicts',
-        '--staging-directory=${stagingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    final Future<void> commandFuture =
+        createTestCommandRunner(command).run(<String>[
+      'resolve-conflicts',
+      '--staging-directory=${stagingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
 
     terminal.simulateStdin('n');
     terminal.simulateStdin('o');
@@ -614,7 +693,8 @@ You chose to:
   Accept the new lines for 1 conflicts
 
 Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n|r]:'''));
-    expect(conflictFile.readAsStringSync(), equals('hello\nwow a bunch of lines\noriginal\nhi\nnew2\n'));
+    expect(conflictFile.readAsStringSync(),
+        equals('hello\nwow a bunch of lines\noriginal\nhi\nnew2\n'));
   }, overrides: <Type, Generator>{
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,
@@ -624,16 +704,15 @@ Commit the changes to the working directory? (y)es, (n)o, (r)etry this file [y|n
 class FakeTerminal extends Fake implements Terminal {
   factory FakeTerminal() {
     return FakeTerminal._private(
-        stdio: FakeStdio(),
+      stdio: FakeStdio(),
     );
   }
 
   FakeTerminal._private({
     this.stdio,
-  }) :
-    terminal = AnsiTerminal(
-      stdio: stdio,
-    );
+  }) : terminal = AnsiTerminal(
+          stdio: stdio,
+        );
 
   final FakeStdio stdio;
   final AnsiTerminal terminal;
@@ -652,17 +731,14 @@ class FakeTerminal extends Fake implements Terminal {
   String clearScreen() => terminal.clearScreen();
 
   @override
-  Future<String> promptForCharInput(
-    List<String> acceptedCharacters, {
-    Logger logger,
-    String prompt,
-    int defaultChoiceIndex,
-    bool displayAcceptedCharacters = true
-  }) => terminal.promptForCharInput(
-      acceptedCharacters,
-      logger: logger,
-      prompt: prompt,
-      defaultChoiceIndex: defaultChoiceIndex,
-      displayAcceptedCharacters: displayAcceptedCharacters
-    );
+  Future<String> promptForCharInput(List<String> acceptedCharacters,
+          {Logger logger,
+          String prompt,
+          int defaultChoiceIndex,
+          bool displayAcceptedCharacters = true}) =>
+      terminal.promptForCharInput(acceptedCharacters,
+          logger: logger,
+          prompt: prompt,
+          defaultChoiceIndex: defaultChoiceIndex,
+          displayAcceptedCharacters: displayAcceptedCharacters);
 }

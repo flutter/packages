@@ -20,7 +20,6 @@ import 'src/context.dart';
 import 'src/test_utils.dart';
 import 'test_data/migrate_project.dart';
 
-
 void main() {
   Directory tempDir;
   BufferLogger logger;
@@ -112,16 +111,22 @@ void main() {
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('Migration complete'));
 
-    expect(tempDir.childFile('.metadata').readAsStringSync(), contains('migration:\n  platforms:\n    - platform: root\n'));
+    expect(tempDir.childFile('.metadata').readAsStringSync(),
+        contains('migration:\n  platforms:\n    - platform: root\n'));
 
-    expect(tempDir.childFile('android/app/src/main/res/values-night/styles.xml').existsSync(), true);
+    expect(
+        tempDir
+            .childFile('android/app/src/main/res/values-night/styles.xml')
+            .existsSync(),
+        true);
     expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
   });
 
   // Migrates a clean untouched app generated with flutter create
   testUsingContext('vanilla migrate builds', () async {
     // Flutter Stable 2.0.0 hash: 60bd88df915880d23877bfc1602e8ddcf4c4dd2a
-    await MigrateProject.installProject('version:2.0.0_stable', tempDir, main: '''
+    await MigrateProject.installProject('version:2.0.0_stable', tempDir,
+        main: '''
 import 'package:flutter/material.dart';
 
 void main() {
@@ -176,10 +181,15 @@ class MyApp extends StatelessWidget {
       '--verbose',
     ], workingDirectory: tempDir.path);
     expect(result.exitCode, 1);
-    expect(result.stderr.toString(), contains('Error: No pubspec.yaml file found'));
-    expect(result.stderr.toString(), contains('This command should be run from the root of your Flutter project'));
+    expect(result.stderr.toString(),
+        contains('Error: No pubspec.yaml file found'));
+    expect(
+        result.stderr.toString(),
+        contains(
+            'This command should be run from the root of your Flutter project'));
 
-    final File manifestFile = tempDir.childFile('migrate_working_dir/.migrate_manifest');
+    final File manifestFile =
+        tempDir.childFile('migrate_working_dir/.migrate_manifest');
     expect(manifestFile.existsSync(), false);
 
     // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
@@ -232,7 +242,8 @@ class MyApp extends StatelessWidget {
   // Migrates a user-modified app
   testUsingContext('modified migrate process succeeds', () async {
     // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
-    await MigrateProject.installProject('version:1.22.6_stable', tempDir, vanilla: false);
+    await MigrateProject.installProject('version:1.22.6_stable', tempDir,
+        vanilla: false);
 
     ProcessResult result = await runMigrateCommand(<String>[
       'apply',
@@ -280,7 +291,10 @@ class MyApp extends StatelessWidget {
       '--verbose',
     ], workingDirectory: tempDir.path);
     expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('Conflicting files found. Resolve these conflicts and try again.'));
+    expect(
+        result.stdout.toString(),
+        contains(
+            'Conflicting files found. Resolve these conflicts and try again.'));
     expect(result.stdout.toString(), contains(']   - pubspec.yaml'));
 
     result = await runMigrateCommand(<String>[
@@ -293,7 +307,8 @@ class MyApp extends StatelessWidget {
 
     // Manually resolve conflics. The correct contents for resolution may change over time,
     // but it shouldnt matter for this test.
-    final File metadataFile = tempDir.childFile('migrate_working_dir/.metadata');
+    final File metadataFile =
+        tempDir.childFile('migrate_working_dir/.metadata');
     metadataFile.writeAsStringSync('''
 # This file tracks properties of this Flutter project.
 # Used by Flutter tool to assess capabilities and perform upgrades etc.
@@ -307,7 +322,8 @@ version:
 project_type: app
 
 ''', flush: true);
-    final File pubspecYamlFile = tempDir.childFile('migrate_working_dir/pubspec.yaml');
+    final File pubspecYamlFile =
+        tempDir.childFile('migrate_working_dir/pubspec.yaml');
     pubspecYamlFile.writeAsStringSync('''
 name: vanilla_app_1_22_6_stable
 description: This is a modified description from the default.
@@ -418,15 +434,27 @@ flutter:
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('Migration complete'));
 
-    expect(tempDir.childFile('.metadata').readAsStringSync(), contains('e96a72392696df66755ca246ff291dfc6ca6c4ad'));
-    expect(tempDir.childFile('pubspec.yaml').readAsStringSync(), isNot(contains('">=2.6.0 <3.0.0"')));
-    expect(tempDir.childFile('pubspec.yaml').readAsStringSync(), contains('">=2.17.0-79.0.dev <3.0.0"'));
-    expect(tempDir.childFile('pubspec.yaml').readAsStringSync(), contains('description: This is a modified description from the default.'));
-    expect(tempDir.childFile('lib/main.dart').readAsStringSync(), contains('OtherWidget()'));
+    expect(tempDir.childFile('.metadata').readAsStringSync(),
+        contains('e96a72392696df66755ca246ff291dfc6ca6c4ad'));
+    expect(tempDir.childFile('pubspec.yaml').readAsStringSync(),
+        isNot(contains('">=2.6.0 <3.0.0"')));
+    expect(tempDir.childFile('pubspec.yaml').readAsStringSync(),
+        contains('">=2.17.0-79.0.dev <3.0.0"'));
+    expect(
+        tempDir.childFile('pubspec.yaml').readAsStringSync(),
+        contains(
+            'description: This is a modified description from the default.'));
+    expect(tempDir.childFile('lib/main.dart').readAsStringSync(),
+        contains('OtherWidget()'));
     expect(tempDir.childFile('lib/other.dart').existsSync(), true);
-    expect(tempDir.childFile('lib/other.dart').readAsStringSync(), contains('class OtherWidget'));
+    expect(tempDir.childFile('lib/other.dart').readAsStringSync(),
+        contains('class OtherWidget'));
 
-    expect(tempDir.childFile('android/app/src/main/res/values-night/styles.xml').existsSync(), true);
+    expect(
+        tempDir
+            .childFile('android/app/src/main/res/values-night/styles.xml')
+            .existsSync(),
+        true);
     expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
   });
 }

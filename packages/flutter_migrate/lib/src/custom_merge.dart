@@ -50,12 +50,20 @@ class MetadataCustomMerge extends CustomMerge {
     );
   }
 
-  FlutterProjectMetadata computeMerge(FlutterProjectMetadata current, FlutterProjectMetadata base, FlutterProjectMetadata target, Logger logger) {
+  FlutterProjectMetadata computeMerge(
+      FlutterProjectMetadata current,
+      FlutterProjectMetadata base,
+      FlutterProjectMetadata target,
+      Logger logger) {
     // Prefer to update the version revision and channel to latest version.
-    final String? versionRevision = target.versionRevision ?? current.versionRevision ?? base.versionRevision;
-    final String? versionChannel = target.versionChannel ?? current.versionChannel ?? base.versionChannel;
+    final String? versionRevision = target.versionRevision ??
+        current.versionRevision ??
+        base.versionRevision;
+    final String? versionChannel =
+        target.versionChannel ?? current.versionChannel ?? base.versionChannel;
     // Prefer to leave the project type untouched as it is non-trivial to change project type.
-    final FlutterProjectType? projectType = current.projectType ?? base.projectType ?? target.projectType;
+    final FlutterProjectType? projectType =
+        current.projectType ?? base.projectType ?? target.projectType;
     final MigrateConfig migrateConfig = mergeMigrateConfig(
       current.migrateConfig,
       target.migrateConfig,
@@ -71,30 +79,35 @@ class MetadataCustomMerge extends CustomMerge {
     return output;
   }
 
-  MigrateConfig mergeMigrateConfig(MigrateConfig current, MigrateConfig target) {
+  MigrateConfig mergeMigrateConfig(
+      MigrateConfig current, MigrateConfig target) {
     // Create the superset of current and target platforms with baseRevision updated to be that of target.
-    final Map<SupportedPlatform, MigratePlatformConfig> platformConfigs = <SupportedPlatform, MigratePlatformConfig>{};
-    for (final MapEntry<SupportedPlatform, MigratePlatformConfig> entry in current.platformConfigs.entries) {
+    final Map<SupportedPlatform, MigratePlatformConfig> platformConfigs =
+        <SupportedPlatform, MigratePlatformConfig>{};
+    for (final MapEntry<SupportedPlatform, MigratePlatformConfig> entry
+        in current.platformConfigs.entries) {
       if (target.platformConfigs.containsKey(entry.key)) {
         platformConfigs[entry.key] = MigratePlatformConfig(
-          platform: entry.value.platform,
-          createRevision: entry.value.createRevision,
-          baseRevision: target.platformConfigs[entry.key]?.baseRevision
-        );
+            platform: entry.value.platform,
+            createRevision: entry.value.createRevision,
+            baseRevision: target.platformConfigs[entry.key]?.baseRevision);
       } else {
         platformConfigs[entry.key] = entry.value;
       }
     }
-    for (final MapEntry <SupportedPlatform, MigratePlatformConfig> entry in target.platformConfigs.entries) {
+    for (final MapEntry<SupportedPlatform, MigratePlatformConfig> entry
+        in target.platformConfigs.entries) {
       if (!platformConfigs.containsKey(entry.key)) {
         platformConfigs[entry.key] = entry.value;
       }
     }
 
     // Ignore the base file list.
-    final List<String> unmanagedFiles = List<String>.from(current.unmanagedFiles);
+    final List<String> unmanagedFiles =
+        List<String>.from(current.unmanagedFiles);
     for (final String path in target.unmanagedFiles) {
-      if (!unmanagedFiles.contains(path) && !MigrateConfig.kDefaultUnmanagedFiles.contains(path)) {
+      if (!unmanagedFiles.contains(path) &&
+          !MigrateConfig.kDefaultUnmanagedFiles.contains(path)) {
         unmanagedFiles.add(path);
       }
     }

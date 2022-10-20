@@ -20,33 +20,35 @@ class MigrateAbandonCommand extends MigrateCommand {
     required this.terminal,
     required ProcessManager processManager,
   }) : migrateUtils = MigrateUtils(
-         logger: logger,
-         fileSystem: fileSystem,
-         processManager: processManager,
-       ) {
+          logger: logger,
+          fileSystem: fileSystem,
+          processManager: processManager,
+        ) {
     argParser.addOption(
       'staging-directory',
       help: 'Specifies the custom migration working directory used to stage '
-            'and edit proposed changes. This path can be absolute or relative '
-            'to the flutter project root. This defaults to '
-            '`$kDefaultMigrateStagingDirectoryName`',
+          'and edit proposed changes. This path can be absolute or relative '
+          'to the flutter project root. This defaults to '
+          '`$kDefaultMigrateStagingDirectoryName`',
       valueHelp: 'path',
     );
     argParser.addOption(
       'project-directory',
       help: 'The root directory of the flutter project. This defaults to the '
-            'current working directory if omitted.',
+          'current working directory if omitted.',
       valueHelp: 'path',
     );
     argParser.addFlag(
       'force',
       abbr: 'f',
-      help: 'Delete the migrate working directory without asking for confirmation.',
+      help:
+          'Delete the migrate working directory without asking for confirmation.',
     );
     argParser.addFlag(
       'flutter-subcommand',
-      help: 'Enable when using the flutter tool as a subcommand. This changes the '
-            'wording of log messages to indicate the correct suggested commands to use.',
+      help:
+          'Enable when using the flutter tool as a subcommand. This changes the '
+          'wording of log messages to indicate the correct suggested commands to use.',
     );
   }
 
@@ -62,38 +64,44 @@ class MigrateAbandonCommand extends MigrateCommand {
   final String name = 'abandon';
 
   @override
-  final String description = 'Deletes the current active migration working directory.';
+  final String description =
+      'Deletes the current active migration working directory.';
 
   @override
   Future<CommandResult> runCommand() async {
     final String? projectDirectory = stringArg('project-directory');
     final FlutterProjectFactory flutterProjectFactory = FlutterProjectFactory();
     final FlutterProject project = projectDirectory == null
-      ? FlutterProject.current(fileSystem)
-      : flutterProjectFactory.fromDirectory(fileSystem.directory(projectDirectory));
+        ? FlutterProject.current(fileSystem)
+        : flutterProjectFactory
+            .fromDirectory(fileSystem.directory(projectDirectory));
     final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
-    Directory stagingDirectory = project.directory.childDirectory(kDefaultMigrateStagingDirectoryName);
+    Directory stagingDirectory =
+        project.directory.childDirectory(kDefaultMigrateStagingDirectoryName);
     final String? customStagingDirectoryPath = stringArg('staging-directory');
     if (customStagingDirectoryPath != null) {
       if (fileSystem.path.isAbsolute(customStagingDirectoryPath)) {
         stagingDirectory = fileSystem.directory(customStagingDirectoryPath);
       } else {
-        stagingDirectory = project.directory.childDirectory(customStagingDirectoryPath);
+        stagingDirectory =
+            project.directory.childDirectory(customStagingDirectoryPath);
       }
       if (!stagingDirectory.existsSync()) {
-        logger.printError('Provided staging directory `$customStagingDirectoryPath` '
-                          'does not exist or is not valid.');
+        logger.printError(
+            'Provided staging directory `$customStagingDirectoryPath` '
+            'does not exist or is not valid.');
         return const CommandResult(ExitStatus.fail);
       }
     }
     if (!stagingDirectory.existsSync()) {
-      logger.printStatus('No migration in progress. Start a new migration with:');
+      logger
+          .printStatus('No migration in progress. Start a new migration with:');
       printCommandText('start', logger, standalone: !isSubcommand);
       return const CommandResult(ExitStatus.fail);
     }
 
     logger.printStatus('\nAbandoning the existing migration will delete the '
-                       'migration staging directory at ${stagingDirectory.path}');
+        'migration staging directory at ${stagingDirectory.path}');
     final bool force = boolArg('force') ?? false;
     if (!force) {
       String selection = 'y';
@@ -102,10 +110,11 @@ class MigrateAbandonCommand extends MigrateCommand {
         selection = await terminal.promptForCharInput(
           <String>['y', 'n'],
           logger: logger,
-          prompt: 'Are you sure you wish to continue with abandoning? (y)es, (N)o',
+          prompt:
+              'Are you sure you wish to continue with abandoning? (y)es, (N)o',
           defaultChoiceIndex: 1,
         );
-      } on StateError catch(e) {
+      } on StateError catch (e) {
         logger.printError(
           e.message,
           indent: 0,
@@ -120,7 +129,8 @@ class MigrateAbandonCommand extends MigrateCommand {
       stagingDirectory.deleteSync(recursive: true);
     } on FileSystemException catch (e) {
       logger.printError('Deletion failed with: $e');
-      logger.printError('Please manually delete the staging directory at `${stagingDirectory.path}`');
+      logger.printError(
+          'Please manually delete the staging directory at `${stagingDirectory.path}`');
     }
 
     logger.printStatus('\nAbandon complete. Start a new migration with:');

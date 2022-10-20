@@ -40,7 +40,8 @@ void main() {
       fileSystem: fileSystem,
       processManager: processManager,
     );
-    final Directory stagingDir = appDir.childDirectory(kDefaultMigrateStagingDirectoryName);
+    final Directory stagingDir =
+        appDir.childDirectory(kDefaultMigrateStagingDirectoryName);
     final File pubspecOriginal = appDir.childFile('pubspec.yaml');
     pubspecOriginal.createSync();
     pubspecOriginal.writeAsStringSync('''
@@ -91,14 +92,12 @@ added_files:
 deleted_files:
 ''');
 
-    await createTestCommandRunner(command).run(
-      <String>[
-        'status',
-        '--staging-directory=${stagingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    await createTestCommandRunner(command).run(<String>[
+      'status',
+      '--staging-directory=${stagingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
 
     expect(logger.statusText, contains('''
 Newly added file at added.file:
@@ -134,7 +133,8 @@ All conflicts resolved. Review changes above and apply the migration with:
 +  EXTRALINE'''));
 
     // Add conflict file
-    final File conflictFile = stagingDir.childDirectory('conflict').childFile('conflict.file');
+    final File conflictFile =
+        stagingDir.childDirectory('conflict').childFile('conflict.file');
     conflictFile.createSync(recursive: true);
     conflictFile.writeAsStringSync('''
 line1
@@ -145,7 +145,8 @@ linetwo
 >>>>>>> /var/folders/md/gm0zgfcj07vcsj6jkh_mp_wh00ff02/T/flutter_tools.4Xdep8/generatedTargetTemplatetlN44S/conflict/conflict.file
 line3
 ''', flush: true);
-    final File conflictFileOriginal = appDir.childDirectory('conflict').childFile('conflict.file');
+    final File conflictFileOriginal =
+        appDir.childDirectory('conflict').childFile('conflict.file');
     conflictFileOriginal.createSync(recursive: true);
     conflictFileOriginal.writeAsStringSync('''
 line1
@@ -164,14 +165,12 @@ deleted_files:
 ''');
 
     logger.clear();
-    await createTestCommandRunner(command).run(
-      <String>[
-        'status',
-        '--staging-directory=${stagingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    await createTestCommandRunner(command).run(<String>[
+      'status',
+      '--staging-directory=${stagingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
 
     expect(logger.statusText, contains('''
 @@ -1,3 +1,7 @@

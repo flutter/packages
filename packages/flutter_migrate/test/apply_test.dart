@@ -44,7 +44,8 @@ void main() {
       terminal: terminal,
       processManager: processManager,
     );
-    final Directory workingDir = appDir.childDirectory(kDefaultMigrateStagingDirectoryName);
+    final Directory workingDir =
+        appDir.childDirectory(kDefaultMigrateStagingDirectoryName);
     appDir.childFile('lib/main.dart').createSync(recursive: true);
     final File pubspecOriginal = appDir.childFile('pubspec.yaml');
     pubspecOriginal.createSync();
@@ -65,30 +66,31 @@ flutter:
 
     final File gitignore = appDir.childFile('.gitignore');
     gitignore.createSync();
-    gitignore.writeAsStringSync(kDefaultMigrateStagingDirectoryName, flush: true);
+    gitignore.writeAsStringSync(kDefaultMigrateStagingDirectoryName,
+        flush: true);
 
     logger.clear();
-    await createTestCommandRunner(command).run(
-      <String>[
-        'apply',
-        '--staging-directory=${workingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
-    expect(logger.statusText, contains('Project is not a git repo. Please initialize a git repo and try again.'));
+    await createTestCommandRunner(command).run(<String>[
+      'apply',
+      '--staging-directory=${workingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
+    expect(
+        logger.statusText,
+        contains(
+            'Project is not a git repo. Please initialize a git repo and try again.'));
 
-    await processManager.run(<String>['git', 'init'], workingDirectory: appDir.path);
+    await processManager
+        .run(<String>['git', 'init'], workingDirectory: appDir.path);
 
     logger.clear();
-    await createTestCommandRunner(command).run(
-      <String>[
-        'apply',
-        '--staging-directory=${workingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    await createTestCommandRunner(command).run(<String>[
+      'apply',
+      '--staging-directory=${workingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
     expect(logger.statusText, contains('No migration in progress'));
 
     final File pubspecModified = workingDir.childFile('pubspec.yaml');
@@ -126,7 +128,8 @@ deleted_files:
 ''');
 
     // Add conflict file
-    final File conflictFile = workingDir.childDirectory('conflict').childFile('conflict.file');
+    final File conflictFile =
+        workingDir.childDirectory('conflict').childFile('conflict.file');
     conflictFile.createSync(recursive: true);
     conflictFile.writeAsStringSync('''
 line1
@@ -138,7 +141,8 @@ linetwo
 line3
 ''', flush: true);
 
-    final File conflictFileOriginal = appDir.childDirectory('conflict').childFile('conflict.file');
+    final File conflictFileOriginal =
+        appDir.childDirectory('conflict').childFile('conflict.file');
     conflictFileOriginal.createSync(recursive: true);
     conflictFileOriginal.writeAsStringSync('''
 line1
@@ -147,14 +151,12 @@ line3
 ''', flush: true);
 
     logger.clear();
-    await createTestCommandRunner(command).run(
-      <String>[
-        'apply',
-        '--staging-directory=${workingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    await createTestCommandRunner(command).run(<String>[
+      'apply',
+      '--staging-directory=${workingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
     expect(logger.statusText, contains(r'''
 Added files:
   - added.file
@@ -174,29 +176,30 @@ line3
 ''', flush: true);
 
     logger.clear();
-    await createTestCommandRunner(command).run(
-      <String>[
-        'apply',
-        '--staging-directory=${workingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
-    expect(logger.statusText, contains('There are uncommitted changes in your project. Please git commit, abandon, or stash your changes before trying again.'));
+    await createTestCommandRunner(command).run(<String>[
+      'apply',
+      '--staging-directory=${workingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
+    expect(
+        logger.statusText,
+        contains(
+            'There are uncommitted changes in your project. Please git commit, abandon, or stash your changes before trying again.'));
 
-    await processManager.run(<String>['git', 'add', '.'], workingDirectory: appDir.path);
-    await processManager.run(<String>['git', 'commit', '-m', 'Initial commit'], workingDirectory: appDir.path);
+    await processManager
+        .run(<String>['git', 'add', '.'], workingDirectory: appDir.path);
+    await processManager.run(<String>['git', 'commit', '-m', 'Initial commit'],
+        workingDirectory: appDir.path);
 
     logger.clear();
-    await createTestCommandRunner(command).run(
-      <String>[
-        // 'migrate',
-        'apply',
-        '--staging-directory=${workingDir.path}',
-        '--project-directory=${appDir.path}',
-        '--flutter-subcommand',
-      ]
-    );
+    await createTestCommandRunner(command).run(<String>[
+      // 'migrate',
+      'apply',
+      '--staging-directory=${workingDir.path}',
+      '--project-directory=${appDir.path}',
+      '--flutter-subcommand',
+    ]);
     expect(logger.statusText, contains(r'''
 Added files:
   - added.file
@@ -215,8 +218,8 @@ Migration complete. You may use commands like `git status`, `git diff` and `git 
     expect(pubspecOriginal.readAsStringSync(), contains('# EXTRALINE'));
     expect(conflictFileOriginal.readAsStringSync(), contains('linetwo'));
     expect(appDir.childFile('added.file').existsSync(), true);
-    expect(appDir.childFile('added.file').readAsStringSync(), contains('new file contents'));
-
+    expect(appDir.childFile('added.file').readAsStringSync(),
+        contains('new file contents'));
   }, overrides: <Type, Generator>{
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,

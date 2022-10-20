@@ -23,10 +23,12 @@ import 'src/commands/status.dart';
 
 Future<void> main(List<String> args) async {
   final bool veryVerbose = args.contains('-vv');
-  final bool verbose = args.contains('-v') || args.contains('--verbose') || veryVerbose;
+  final bool verbose =
+      args.contains('-v') || args.contains('--verbose') || veryVerbose;
 
   const ProcessManager localProcessManager = LocalProcessManager();
-  final FileSystem fileSystem = LocalFileSystem(LocalSignals.instance, Signals.defaultExitSignals, ShutdownHooks());
+  final FileSystem fileSystem = LocalFileSystem(
+      LocalSignals.instance, Signals.defaultExitSignals, ShutdownHooks());
 
   // flutterRoot must be set early because other features use it (e.g.
   // enginePath's initializer uses it). This can only work with the real
@@ -68,18 +70,16 @@ Future<void> main(List<String> args) async {
       terminal: terminal,
     ),
     MigrateAbandonCommand(
-      logger: logger,
-      fileSystem: fileSystem,
-      terminal: terminal,
-      processManager: localProcessManager
-    ),
+        logger: logger,
+        fileSystem: fileSystem,
+        terminal: terminal,
+        processManager: localProcessManager),
     MigrateApplyCommand(
-      verbose: verbose,
-      logger: logger,
-      fileSystem: fileSystem,
-      terminal: terminal,
-      processManager: localProcessManager
-    ),
+        verbose: verbose,
+        logger: logger,
+        fileSystem: fileSystem,
+        terminal: terminal,
+        processManager: localProcessManager),
   ];
 
   for (final MigrateCommand command in commands) {
@@ -90,8 +90,6 @@ Future<void> main(List<String> args) async {
   }
 }
 
-
-
 /// An abstraction for instantiation of the correct logger type.
 ///
 /// Our logger class hierarchy and runtime requirements are overly complicated.
@@ -101,10 +99,10 @@ class LoggerFactory {
     required Stdio stdio,
     required OutputPreferences outputPreferences,
     StopwatchFactory stopwatchFactory = const StopwatchFactory(),
-  }) : _terminal = terminal,
-       _stdio = stdio,
-       _stopwatchFactory = stopwatchFactory,
-       _outputPreferences = outputPreferences;
+  })  : _terminal = terminal,
+        _stdio = stdio,
+        _stopwatchFactory = stopwatchFactory,
+        _outputPreferences = outputPreferences;
 
   final Terminal _terminal;
   final Stdio _stdio;
@@ -125,11 +123,10 @@ class LoggerFactory {
       );
     } else {
       logger = StdoutLogger(
-        terminal: _terminal,
-        stdio: _stdio,
-        outputPreferences: _outputPreferences,
-        stopwatchFactory: _stopwatchFactory
-      );
+          terminal: _terminal,
+          stdio: _stdio,
+          outputPreferences: _outputPreferences,
+          stopwatchFactory: _stopwatchFactory);
     }
     return logger;
   }
