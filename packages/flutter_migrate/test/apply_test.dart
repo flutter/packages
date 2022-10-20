@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -194,7 +194,6 @@ line3
 
     logger.clear();
     await createTestCommandRunner(command).run(<String>[
-      // 'migrate',
       'apply',
       '--staging-directory=${workingDir.path}',
       '--project-directory=${appDir.path}',
