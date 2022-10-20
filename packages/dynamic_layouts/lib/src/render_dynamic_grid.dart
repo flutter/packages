@@ -14,11 +14,7 @@ import 'base_grid_layout.dart';
 /// [RenderDynamicSliverGrid] places its children in arbitrary positions determined by
 /// the [DynamicSliverGridLayout] provided by the [gridDelegate].
 ///
-/// This grid does not currently collect leading garbage as the user scrolls
-/// further down. This is because the current implementation requires the
-/// leading tiles to maintain the current layout. Follow
-/// [this github issue](https://github.com/flutter/flutter/issues/112234) for
-/// tracking progress on dynamic leading garbage collection.
+/// {@macro dynamicLayouts.garbageCollection}
 class RenderDynamicSliverGrid extends RenderSliverGrid {
   /// Creates a sliver that contains multiple box children whose size and
   /// position are managed by a delegate.

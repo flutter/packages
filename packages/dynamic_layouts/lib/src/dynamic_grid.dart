@@ -18,11 +18,7 @@ import 'wrap_layout.dart';
 /// [SliverGridDelegateWithMaxCrossAxisExtent], while wrapping uses its own
 /// [SliverGridDelegateWithWrapping].
 ///
-/// This grid does not currently collect leading garbage as the user scrolls
-/// further down. This is because the current implementation requires the
-/// leading tiles to maintain the current layout. Follow
-/// [this github issue](https://github.com/flutter/flutter/issues/112234) for
-/// tracking progress on dynamic leading garbage collection.
+/// {@macro dynamicLayouts.garbageCollection}
 ///
 /// The following example shows how to use the [DynamicGridView.wrap]
 /// constructor.
