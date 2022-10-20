@@ -109,6 +109,7 @@ void test(
   List<String>? tags,
   Map<String, dynamic>? onPlatform,
   int? retry,
+  Timeout? timeout,
 }) {
   test_package.test(
     description,
@@ -124,6 +125,7 @@ void test(
     onPlatform: onPlatform,
     retry: retry,
     testOn: testOn,
+    timeout: timeout,
     // We don't support "timeout"; see ../../dart_test.yaml which
     // configures all tests to have a 15 minute timeout which should
     // definitely be enough.
@@ -147,6 +149,7 @@ void testWithoutContext(
   List<String>? tags,
   Map<String, dynamic>? onPlatform,
   int? retry,
+  Timeout? timeout,
 }) {
   return test(
     description,
@@ -160,9 +163,9 @@ void testWithoutContext(
     onPlatform: onPlatform,
     retry: retry,
     testOn: testOn,
-    // We don't support "timeout"; see ../../dart_test.yaml which
-    // configures all tests to have a 15 minute timeout which should
-    // definitely be enough.
+    timeout: timeout,
+    // We support timeout here due to the packages repo not setting default
+    // timeout to 15min.
   );
 }
 
