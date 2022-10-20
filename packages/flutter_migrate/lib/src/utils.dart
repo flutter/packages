@@ -309,7 +309,7 @@ class MigrateUtils {
       _logger.printError(result.stderr, indent: 2);
     }
     if (exit) {
-      throwToolExit('Command failed with exit code ${result.exitCode}',
+      throwToolExit('Command failed with exit code ${result.exitCode}: ${result.stderr}\n${result.stdout}',
           exitCode: result.exitCode);
     }
     return false;
