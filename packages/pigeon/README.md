@@ -92,9 +92,7 @@ Nested datatypes are supported, too.
 ### Asynchronous Handlers
 
 By default Pigeon will generate synchronous handlers for messages. 
-
-**_NOTE:_** The API can return data synchronously but the request function is 
-**_NOTE:_** always asynchronous.
+The API can return data synchronously but the request function is always asynchronous.
 
 If you want to be able to respond to a message asynchronously you can use the `@async`
 annotation as of version 0.1.20.
