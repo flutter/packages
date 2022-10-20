@@ -104,7 +104,7 @@ flutter:
         true);
     expect(
         _VersionCode.fromString(dependenciesMap['vector_math'] as String) >
-            _VersionCode.fromString('2.1.3'),
+            _VersionCode.fromString('2.1.2'),
         true);
   });
 
