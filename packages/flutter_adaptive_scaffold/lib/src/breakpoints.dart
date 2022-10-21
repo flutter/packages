@@ -4,15 +4,21 @@
 
 import 'package:flutter/material.dart';
 
-const Set<TargetPlatform> _desktop = <TargetPlatform>{
+/// A subset of all TargetPlatforms which are considered to be
+/// desktop platforms.
+const Set<TargetPlatform> desktop = <TargetPlatform>{
   TargetPlatform.fuchsia,
   TargetPlatform.linux,
   TargetPlatform.macOS,
   TargetPlatform.windows
 };
-const Set<TargetPlatform> _mobile = <TargetPlatform>{
+
+/// A subset of all TargetPlatforms which are considered to be
+/// mobile platforms.
+const Set<TargetPlatform> mobile = <TargetPlatform>{
+  TargetPlatform.android,
+  TargetPlatform.fuchsia,
   TargetPlatform.iOS,
-  TargetPlatform.android
 };
 
 /// A group of standard breakpoints built according to the material
@@ -36,11 +42,11 @@ class Breakpoints {
 
   /// A desktop screen whose width is less than 600 dp and greater than 0 dp.
   static const Breakpoint smallDesktop =
-      WidthPlatformBreakpoint(begin: 0, end: 600, platform: _desktop);
+      WidthPlatformBreakpoint(begin: 0, end: 600, platform: desktop);
 
   /// A mobile screen whose width is less than 600 dp and greater than 0 dp.
   static const Breakpoint smallMobile =
-      WidthPlatformBreakpoint(begin: 0, end: 600, platform: _mobile);
+      WidthPlatformBreakpoint(begin: 0, end: 600, platform: mobile);
 
   /// A window whose width is between 600 dp and 840 dp.
   static const Breakpoint medium =
@@ -51,22 +57,22 @@ class Breakpoints {
 
   /// A desktop window whose width is between 600 dp and 840 dp.
   static const Breakpoint mediumDesktop =
-      WidthPlatformBreakpoint(begin: 600, end: 840, platform: _desktop);
+      WidthPlatformBreakpoint(begin: 600, end: 840, platform: desktop);
 
   /// A mobile window whose width is between 600 dp and 840 dp.
   static const Breakpoint mediumMobile =
-      WidthPlatformBreakpoint(begin: 600, end: 840, platform: _mobile);
+      WidthPlatformBreakpoint(begin: 600, end: 840, platform: mobile);
 
   /// A window whose width is greater than 840 dp.
   static const Breakpoint large = WidthPlatformBreakpoint(begin: 840);
 
   /// A desktop window whose width is greater than 840 dp.
   static const Breakpoint largeDesktop =
-      WidthPlatformBreakpoint(begin: 840, platform: _desktop);
+      WidthPlatformBreakpoint(begin: 840, platform: desktop);
 
   /// A mobile window whose width is greater than 840 dp.
   static const Breakpoint largeMobile =
-      WidthPlatformBreakpoint(begin: 840, platform: _mobile);
+      WidthPlatformBreakpoint(begin: 840, platform: mobile);
 }
 
 /// A class that can be used to quickly generate [Breakpoint]s that depend on
@@ -89,18 +95,19 @@ class WidthPlatformBreakpoint extends Breakpoint {
 
   @override
   bool isActive(BuildContext context) {
-    bool size = false;
+    final TargetPlatform host = Theme.of(context).platform;
     final bool isRightPlatform =
-        platform?.contains(Theme.of(context).platform) ?? true;
-    if (begin != null && end != null) {
-      size = MediaQuery.of(context).size.width >= begin! &&
-          MediaQuery.of(context).size.width < end!;
-    } else if (begin != null && end == null) {
-      size = MediaQuery.of(context).size.width >= begin!;
-    } else if (begin == null && end != null) {
-      size = MediaQuery.of(context).size.width < end!;
-    }
-    return size && isRightPlatform;
+        platform?.contains(host) ?? false;
+
+    // Null boundaries are unbounded, assign the max/min of their associated
+    // direction on a number line.
+    final double width = MediaQuery.of(context).size.width;
+    final double lowerBound = begin ?? double.negativeInfinity;
+    final double upperBound = end ?? double.infinity;
+
+    return width >= lowerBound
+      && width < upperBound
+      && isRightPlatform;
   }
 }
 
