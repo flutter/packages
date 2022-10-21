@@ -455,13 +455,15 @@ class TextNode extends AttributedNode {
     final Point newBaseline = absolute
         ? baseline
         : Point(baseline.x * bounds.width, baseline.y * bounds.height);
-
     return TextConfig(
       text,
       transform.transformPoint(newBaseline),
       attributes.fontFamily,
       fontWeight,
       fontSize,
+      attributes.textDecoration ?? TextDecoration.none,
+      attributes.textDecorationStyle ?? TextDecorationStyle.solid,
+      attributes.textDecorationColor ?? Color.opaqueBlack,
       attributes.transform,
     );
   }

@@ -4,12 +4,51 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('text decorations', () async {
+    final VectorInstructions instructions = await parseWithoutOptimizers(
+      textDecorations,
+    );
+
+    expect(instructions.text, const <TextConfig>[
+      TextConfig(
+        'Overline text',
+        Point(100.0, 60.0),
+        'Roboto',
+        FontWeight.w400,
+        55.0,
+        TextDecoration.overline,
+        TextDecorationStyle.solid,
+        Color(0xffff0000),
+        AffineMatrix.identity,
+      ),
+      TextConfig(
+        'Strike text',
+        Point(100.0, 120.0),
+        'Roboto',
+        FontWeight.w400,
+        55.0,
+        TextDecoration.lineThrough,
+        TextDecorationStyle.solid,
+        Color(0xff008000),
+        AffineMatrix.identity,
+      ),
+      TextConfig(
+        'Underline text',
+        Point(100.0, 180.0),
+        'Roboto',
+        FontWeight.w400,
+        55.0,
+        TextDecoration.underline,
+        TextDecorationStyle.double,
+        Color(0xff008000),
+        AffineMatrix.identity,
+      )
+    ]);
+  });
+
   test('Stroke property set but does not draw stroke', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       strokePropertyButNoStroke,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions.paths.single.commands, const <PathCommand>[
       MoveToCommand(10.0, 20.0),
@@ -25,31 +64,22 @@ void main() {
   });
 
   test('Clip with use', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       basicClip,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
-    final VectorInstructions instructions2 = await parse(
+    final VectorInstructions instructions2 = await parseWithoutOptimizers(
       useClip,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions, instructions2);
   });
 
   test('stroke-dasharray="none"', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       '''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <path d="M1 20L20 20L20 39L30 30L1 26z" stroke="black" fill="red" stroke-width="2" stroke-dasharray="none"/>
 </svg>
 ''',
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(instructions.paints, const <Paint>[
@@ -72,14 +102,11 @@ void main() {
   });
 
   test('Dashed path', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       '''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <path d="M1 20L20 20L20 39L30 30L1 26z" stroke="black" fill="red" stroke-width="2" stroke-dasharray="5 3 5 5"/>
 </svg>''',
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(instructions.paints, const <Paint>[
@@ -134,11 +161,8 @@ void main() {
   });
 
   test('text with transform', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><text transform="rotate(10 -100 50)">a</text></svg>',
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions.paints.single, const Paint(fill: Fill()));
     expect(
@@ -149,6 +173,9 @@ void main() {
         null,
         normalFontWeight,
         16,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color.opaqueBlack,
         AffineMatrix.identity
             .translated(-100, 50)
             .rotated(radians(10))
@@ -158,11 +185,8 @@ void main() {
   });
 
   test('Missing references', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       missingRefs,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(
       instructions.paints.single,
@@ -179,11 +203,8 @@ void main() {
   });
 
   test('focal radial', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       focalRadial,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(
@@ -225,11 +246,8 @@ void main() {
   });
 
   test('Transformed userSpaceOnUse radial', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       xformUsosRadial,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(
       instructions.paints.single,
@@ -273,11 +291,8 @@ void main() {
 
   test('Transformed objectBoundingBox gradient onto transformed path',
       () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       xformObbGradient,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(
       instructions.paints.single,
@@ -320,11 +335,8 @@ void main() {
   </g>
 </svg>
 ''';
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       svg,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(instructions.paints, const <Paint>[
@@ -343,11 +355,8 @@ void main() {
   <path fill="none" stroke="red" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.7" d="M70.822 65.557l5.376 5.296 8.389-8.676" />
 </svg>
 ''';
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       svg,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(
       instructions.paints.single,
@@ -363,11 +372,8 @@ void main() {
   });
 
   test('gradients can handle inheriting unit mode', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       linearGradientThatInheritsUnitMode,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions.paints, const <Paint>[
       Paint(
@@ -416,11 +422,8 @@ void main() {
   });
 
   test('group opacity results in save layer', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       groupOpacity,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions.paths, <Path>[
       PathBuilder().addOval(const Rect.fromCircle(80, 100, 50)).toPath(),
@@ -440,17 +443,11 @@ void main() {
   });
 
   test('xlink gradient Out of order', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       xlinkGradient,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
-    final VectorInstructions instructions2 = await parse(
+    final VectorInstructions instructions2 = await parseWithoutOptimizers(
       xlinkGradientOoO,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(instructions.paints, instructions2.paints);
@@ -459,17 +456,11 @@ void main() {
   });
 
   test('xlink use Out of order', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       simpleUseCircles,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
-    final VectorInstructions instructions2 = await parse(
+    final VectorInstructions instructions2 = await parseWithoutOptimizers(
       simpleUseCirclesOoO,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     // Use toSet to ignore ordering differences.
@@ -479,11 +470,8 @@ void main() {
   });
 
   test('xlink gradient with transform', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       xlinkGradient,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions.paths, <Path>[
       PathBuilder()
@@ -516,11 +504,8 @@ void main() {
   });
 
   test('Out of order def', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       outOfOrderGradientDef,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions.paths, <Path>[
       parseSvgPathData(
@@ -549,11 +534,8 @@ void main() {
   });
 
   test('Handles masks correctly', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       basicMask,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(
       instructions.paths,
@@ -591,11 +573,8 @@ void main() {
   <rect x="11" y="36" width="31" height="20" fill="red" />
 </svg>
 ''';
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       svg,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions.paths, <Path>[
       PathBuilder()
@@ -611,11 +590,8 @@ void main() {
   <rect x="11" y="36" width="31" height="20" rx="2.5" fill="red" />
 </svg>
 ''';
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       svg,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions.paths, <Path>[
       PathBuilder()
@@ -625,28 +601,22 @@ void main() {
   });
 
   test('Path with empty paint does not draw anything', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       '''
 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 192 192" width="24">
   <path fill="none" d="M0 0h192v192H0z" />
 </svg>''',
       key: 'emptyPath',
       warningsAsErrors: true,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
     expect(instructions.commands.isEmpty, true);
   });
 
   test('Use circles test', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       simpleUseCircles,
       key: 'useCircles',
       warningsAsErrors: true,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(
@@ -715,12 +685,9 @@ void main() {
   });
 
   test('Parses pattern used as fill and stroke', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       starPatternCircles,
       warningsAsErrors: true,
-      enableMaskingOptimizer: false,
-      enableClippingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(instructions.commands, const <DrawCommand>[
@@ -745,12 +712,9 @@ void main() {
     <text x="0" y="50%" font-size="200" fill="url(#textPattern)">Text</text>
 </svg>''';
 
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       textWithPattern,
       warningsAsErrors: true,
-      enableMaskingOptimizer: false,
-      enableClippingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(instructions.commands, const <DrawCommand>[
@@ -768,26 +732,20 @@ void main() {
     <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg==" />
 </svg>''';
 
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       svgStr,
       key: 'image',
       warningsAsErrors: true,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(instructions.drawImages.first.rect, const Rect.fromLTWH(0, 0, 1, 1));
   });
 
   test('Ghostscript Tiger - dedupes paints', () async {
-    final VectorInstructions instructions = await parse(
+    final VectorInstructions instructions = await parseWithoutOptimizers(
       ghostscriptTiger,
       key: 'ghostscriptTiger',
       warningsAsErrors: true,
-      enableClippingOptimizer: false,
-      enableMaskingOptimizer: false,
-      enableOverdrawOptimizer: false,
     );
 
     expect(instructions.paints, ghostScriptTigerPaints.toSet().toList());

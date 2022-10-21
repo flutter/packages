@@ -30,6 +30,25 @@ export 'src/initialize_tessellator.dart'
     show initializeTessellatorFromFlutterCache;
 export 'src/initialize_path_ops.dart' show initializePathOpsFromFlutterCache;
 
+/// Parses an SVG string into a [VectorInstructions] object, with all optional
+/// optimizers disabled.
+Future<VectorInstructions> parseWithoutOptimizers(
+  String xml, {
+  String key = '',
+  bool warningsAsErrors = false,
+  SvgTheme theme = const SvgTheme(),
+}) {
+  return parse(
+    xml,
+    key: key,
+    warningsAsErrors: warningsAsErrors,
+    theme: theme,
+    enableClippingOptimizer: false,
+    enableMaskingOptimizer: false,
+    enableOverdrawOptimizer: false,
+  );
+}
+
 /// Parses an SVG string into a [VectorInstructions] object.
 Future<VectorInstructions> parse(
   String xml, {
@@ -222,6 +241,9 @@ Future<Uint8List> encodeSvg({
       y: textConfig.baselineStart.y,
       fontWeight: textConfig.fontWeight.index,
       fontSize: textConfig.fontSize,
+      decoration: textConfig.decoration.mask,
+      decorationStyle: textConfig.decorationStyle.index,
+      decorationColor: textConfig.decorationColor.value,
       transform: _encodeMatrix(textConfig.transform),
     );
   }

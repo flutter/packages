@@ -450,9 +450,23 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     double y,
     int fontWeight,
     double fontSize,
+    int decoration,
+    int decorationStyle,
+    int decorationColor,
     Float64List? transform,
     int id,
   ) {
+    final List<ui.TextDecoration> decorations = <ui.TextDecoration>[];
+    if (decoration & kUnderlineMask != 0) {
+      decorations.add(ui.TextDecoration.underline);
+    }
+    if (decoration & kOverlineMask != 0) {
+      decorations.add(ui.TextDecoration.overline);
+    }
+    if (decoration & kLineThroughMask != 0) {
+      decorations.add(ui.TextDecoration.lineThrough);
+    }
+
     _textConfig.add(_TextConfig(
       text,
       fontFamily,
@@ -460,6 +474,9 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       y,
       ui.FontWeight.values[fontWeight],
       fontSize,
+      ui.TextDecoration.combine(decorations),
+      ui.TextDecorationStyle.values[decorationStyle],
+      ui.Color(decorationColor),
       transform,
     ));
   }
@@ -471,17 +488,18 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       paint.shader = _patterns[patternId]!.shader;
     }
     final _TextConfig textConfig = _textConfig[textId];
-    final ui.ParagraphBuilder builder = ui.ParagraphBuilder(
-      ui.ParagraphStyle(
-        textDirection: _textDirection,
-      ),
-    );
+    final ui.ParagraphBuilder builder = ui.ParagraphBuilder(ui.ParagraphStyle(
+      textDirection: _textDirection,
+    ));
     builder.pushStyle(ui.TextStyle(
       locale: _locale,
       foreground: paint,
       fontWeight: textConfig.fontWeight,
       fontSize: textConfig.fontSize,
       fontFamily: textConfig.fontFamily,
+      decoration: textConfig.decoration,
+      decorationStyle: textConfig.decorationStyle,
+      decorationColor: textConfig.decorationColor,
     ));
     builder.addText(textConfig.text);
 
@@ -549,6 +567,9 @@ class _TextConfig {
     this.dy,
     this.fontWeight,
     this.fontSize,
+    this.decoration,
+    this.decorationStyle,
+    this.decorationColor,
     this.transform,
   );
 
@@ -558,6 +579,9 @@ class _TextConfig {
   final double dx;
   final double dy;
   final ui.FontWeight fontWeight;
+  final ui.TextDecoration decoration;
+  final ui.TextDecorationStyle decorationStyle;
+  final ui.Color decorationColor;
   final Float64List? transform;
 }
 

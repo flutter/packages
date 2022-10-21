@@ -14,11 +14,13 @@ Supported SVG features:
 - Linear and radial gradients, including radial gradients with focal points.
 - Text
 - Symbols
+- Images
+- Patterns
 
 Unsupported SVG features:
 
-- Images
-- The pattern element
+- Filters
+- Some text processing attributes
 
 Optimizations:
 

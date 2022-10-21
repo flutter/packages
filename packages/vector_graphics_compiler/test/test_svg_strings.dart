@@ -1103,6 +1103,30 @@ const String starPatternCircles =
   <circle cx="180" cy="50" r="40" fill="none" stroke-width="20" stroke="url(#star)"/>
 </svg>''';
 
+const String textDecorations = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 500 200"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Example text05 - Text decoration</desc>
+
+  <text x="100" y="60"
+      font-family="Roboto" font-size="55" font-style="normal" fill="blue"
+      text-decoration="overline" text-decoration-color="red">
+    Overline text</text>
+
+  <text x="100" y="120"
+      font-family="Roboto" font-size="55" font-style="normal" fill="blue"
+      text-decoration="line-through" text-decoration-color="green">
+    Strike text</text>
+
+  <text x="100" y="180"
+      font-family="Roboto" font-size="55" font-style="normal" fill="blue"
+      text-decoration="underline" text-decoration-color="green" text-decoration-style="double">
+    Underline text</text>
+
+</svg>
+''';
+
 /// Excpected groupMask result when [MaskingOptimizer] is applied
 List<Path> groupMaskForMaskingOptimizer = <Path>[
   Path(fillType: PathFillType.evenOdd, commands: const <PathCommand>[

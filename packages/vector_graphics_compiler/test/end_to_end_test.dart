@@ -209,15 +209,16 @@ void main() {
         id: 3,
         shaderId: null,
       ),
+      const OnTextConfig('Plain text Roboto', 100, 50, 55, 'Roboto', 3, 0, 0,
+          4278190080, null, 0),
+      const OnTextConfig('Plain text Verdana', 100, 100, 55, 'Verdana', 3, 0, 0,
+          4278190080, null, 1),
+      const OnTextConfig('Bold text Verdana', 100, 150, 55, 'Verdana', 6, 0, 0,
+          4278190080, null, 2),
+      const OnTextConfig('Stroked bold line', 150, 215, 55, 'Roboto', 8, 0, 0,
+          4278190080, null, 3),
       const OnTextConfig(
-          'Plain text Roboto', 100, 50, 55, 'Roboto', 3, null, 0),
-      const OnTextConfig(
-          'Plain text Verdana', 100, 100, 55, 'Verdana', 3, null, 1),
-      const OnTextConfig(
-          'Bold text Verdana', 100, 150, 55, 'Verdana', 6, null, 2),
-      const OnTextConfig(
-          'Stroked bold line', 150, 215, 55, 'Roboto', 8, null, 3),
-      const OnTextConfig('Line 3', 150, 50, 55, 'Roboto', 3, null, 4),
+          'Line 3', 150, 50, 55, 'Roboto', 3, 0, 0, 4278190080, null, 4),
       const OnDrawText(0, 0, null),
       const OnDrawText(1, 0, null),
       const OnDrawText(2, 0, null),
@@ -488,6 +489,9 @@ class TestListener extends VectorGraphicsCodecListener {
     double dy,
     int fontWeight,
     double fontSize,
+    int decoration,
+    int decorationStyle,
+    int decorationColor,
     Float64List? transform,
     int id,
   ) {
@@ -498,6 +502,9 @@ class TestListener extends VectorGraphicsCodecListener {
       fontSize,
       fontFamily,
       fontWeight,
+      decoration,
+      decorationStyle,
+      decorationColor,
       transform,
       id,
     ));
@@ -902,6 +909,9 @@ class OnTextConfig {
     this.fontSize,
     this.fontFamily,
     this.fontWeight,
+    this.decoration,
+    this.decorationStyle,
+    this.decorationColor,
     this.transform,
     this.id,
   );
@@ -914,10 +924,24 @@ class OnTextConfig {
   final int fontWeight;
   final int id;
   final Float64List? transform;
+  final int decoration;
+  final int decorationStyle;
+  final int decorationColor;
 
   @override
-  int get hashCode => Object.hash(text, x, y, fontSize, fontFamily, fontWeight,
-      Object.hashAll(transform ?? <double>[]), id);
+  int get hashCode => Object.hash(
+        text,
+        x,
+        y,
+        fontSize,
+        fontFamily,
+        fontWeight,
+        decoration,
+        decorationStyle,
+        decorationColor,
+        Object.hashAll(transform ?? <double>[]),
+        id,
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -928,12 +952,15 @@ class OnTextConfig {
       other.fontSize == fontSize &&
       other.fontFamily == fontFamily &&
       other.fontWeight == fontWeight &&
+      other.decoration == decoration &&
+      other.decorationStyle == decorationStyle &&
+      other.decorationColor == decorationColor &&
       _listEquals(other.transform, transform) &&
       other.id == id;
 
   @override
   String toString() =>
-      'OnTextConfig($text, $x, $y, $fontSize, $fontFamily, $fontWeight, $transform, $id)';
+      'OnTextConfig($text, $x, $y, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $transform, $id)';
 }
 
 class OnDrawText {

@@ -977,6 +977,48 @@ class SvgParser {
     throw StateError('Could not parse font-size: $raw');
   }
 
+  /// Parses a `text-decoration` attribute value into a [TextDecoration].
+  TextDecoration? parseTextDecoration(String? textDecoration) {
+    if (textDecoration == null) {
+      return null;
+    }
+    switch (textDecoration) {
+      case 'none':
+        return TextDecoration.none;
+      case 'underline':
+        return TextDecoration.underline;
+      case 'overline':
+        return TextDecoration.overline;
+      case 'line-through':
+        return TextDecoration.lineThrough;
+    }
+    throw UnsupportedError(
+        'Attribute value for text-decoration="$textDecoration"'
+        ' is not supported');
+  }
+
+  /// Parses a `text-decoration-style` attribute value into a [TextDecorationStyle].
+  TextDecorationStyle? parseTextDecorationStyle(String? textDecorationStyle) {
+    if (textDecorationStyle == null) {
+      return null;
+    }
+    switch (textDecorationStyle) {
+      case 'solid':
+        return TextDecorationStyle.solid;
+      case 'dashed':
+        return TextDecorationStyle.dashed;
+      case 'dotted':
+        return TextDecorationStyle.dotted;
+      case 'double':
+        return TextDecorationStyle.double;
+      case 'wavy':
+        return TextDecorationStyle.wavy;
+    }
+    throw UnsupportedError(
+        'Attribute value for text-decoration-style="$textDecorationStyle"'
+        ' is not supported');
+  }
+
   double _parseRawWidthHeight(String raw) {
     if (raw == '100%' || raw == '') {
       return double.infinity;
@@ -1559,6 +1601,10 @@ class SvgParser {
       fontFamily: attributeMap['font-family'],
       fontWeight: parseFontWeight(attributeMap['font-weight']),
       fontSize: parseFontSize(attributeMap['font-size']),
+      textDecoration: parseTextDecoration(attributeMap['text-decoration']),
+      textDecorationStyle:
+          parseTextDecorationStyle(attributeMap['text-decoration-style']),
+      textDecorationColor: parseColor(attributeMap['text-decoration-color']),
     );
   }
 }
@@ -1723,6 +1769,9 @@ class SvgAttributes {
     this.fontFamily,
     this.fontWeight,
     this.fontSize,
+    this.textDecoration,
+    this.textDecorationStyle,
+    this.textDecorationColor,
     this.x,
     this.y,
     this.width,
@@ -1856,6 +1905,15 @@ class SvgAttributes {
   /// The `font-size` attribute.
   final double? fontSize;
 
+  /// The `text-decoration` attribute.
+  final TextDecoration? textDecoration;
+
+  /// The `text-decoration-style` attribute.
+  final TextDecorationStyle? textDecorationStyle;
+
+  /// The `text-decoration-color` attribute.
+  final Color? textDecorationColor;
+
   /// The `width` attribute.
   final double? width;
 
@@ -1896,6 +1954,9 @@ class SvgAttributes {
       fontFamily: parent.fontFamily ?? fontFamily,
       fontWeight: parent.fontWeight ?? fontWeight,
       fontSize: parent.fontSize ?? fontSize,
+      textDecoration: parent.textDecoration ?? textDecoration,
+      textDecorationStyle: parent.textDecorationStyle ?? textDecorationStyle,
+      textDecorationColor: parent.textDecorationColor ?? textDecorationColor,
       x: parent.x ?? x,
       y: parent.y ?? y,
       height: parent.height ?? height,

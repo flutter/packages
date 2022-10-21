@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:meta/meta.dart';
+import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'geometry/basic_types.dart';
 import 'geometry/matrix.dart';
@@ -1238,6 +1239,9 @@ class TextConfig {
     this.fontFamily,
     this.fontWeight,
     this.fontSize,
+    this.decoration,
+    this.decorationStyle,
+    this.decorationColor,
     this.transform,
   );
 
@@ -1256,6 +1260,15 @@ class TextConfig {
   /// The font weight, converted to a weight constant.
   final FontWeight fontWeight;
 
+  /// The decoration to apply to the text.
+  final TextDecoration decoration;
+
+  /// The decoration style to apply to the text.
+  final TextDecorationStyle decorationStyle;
+
+  /// The color to use for the decoration, if any.
+  final Color decorationColor;
+
   /// A transform applied to the rendered font.
   ///
   /// If `null` this implies no transform.
@@ -1263,7 +1276,16 @@ class TextConfig {
 
   @override
   int get hashCode => Object.hash(
-      text, baselineStart, fontSize, fontFamily, fontWeight, transform);
+        text,
+        baselineStart,
+        fontSize,
+        fontFamily,
+        fontWeight,
+        decoration,
+        decorationStyle,
+        decorationColor,
+        transform,
+      );
 
   @override
   bool operator ==(Object other) {
@@ -1273,12 +1295,15 @@ class TextConfig {
         other.fontSize == fontSize &&
         other.fontFamily == fontFamily &&
         other.fontWeight == fontWeight &&
+        other.decoration == decoration &&
+        other.decorationStyle == decorationStyle &&
+        other.decorationColor == decorationColor &&
         other.transform == transform;
   }
 
   @override
   String toString() {
-    return 'TextConfig($text, $baselineStart, $fontSize, $fontFamily, $fontWeight, $transform)';
+    return 'TextConfig($text, $baselineStart, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $transform)';
   }
 }
 
@@ -1312,6 +1337,91 @@ enum FontWeight {
 
   /// A font weight of 900,
   w900,
+}
+
+/// The style in which to draw a text decoration
+///
+/// This matches the enum values defined in dart:ui.
+enum TextDecorationStyle {
+  /// Draw a solid line
+  solid,
+
+  /// Draw two lines
+  double,
+
+  /// Draw a dotted line
+  dotted,
+
+  /// Draw a dashed line
+  dashed,
+
+  /// Draw a sinusoidal line
+  wavy
+}
+
+/// A linear decoration to draw near the text.
+///
+/// This matches the enum values defined in dart:ui.
+class TextDecoration {
+  const TextDecoration._(this.mask);
+
+  /// Creates a decoration that paints the union of all the given decorations.
+  factory TextDecoration.combine(List<TextDecoration> decorations) {
+    int mask = 0;
+    for (final TextDecoration decoration in decorations) {
+      mask |= decoration.mask;
+    }
+    return TextDecoration._(mask);
+  }
+
+  /// The raw mask for serialization.
+  final int mask;
+
+  /// Whether this decoration will paint at least as much decoration as the given decoration.
+  bool contains(TextDecoration other) {
+    return (mask | other.mask) == mask;
+  }
+
+  /// Do not draw a decoration
+  static const TextDecoration none = TextDecoration._(kNoTextDecorationMask);
+
+  /// Draw a line underneath each line of text
+  static const TextDecoration underline = TextDecoration._(kUnderlineMask);
+
+  /// Draw a line above each line of text
+  static const TextDecoration overline = TextDecoration._(kOverlineMask);
+
+  /// Draw a line through each line of text
+  static const TextDecoration lineThrough = TextDecoration._(kLineThroughMask);
+
+  @override
+  bool operator ==(Object other) {
+    return other is TextDecoration && other.mask == mask;
+  }
+
+  @override
+  int get hashCode => mask.hashCode;
+
+  @override
+  String toString() {
+    if (mask == 0) {
+      return 'TextDecoration.none';
+    }
+    final List<String> values = <String>[];
+    if (mask & underline.mask != 0) {
+      values.add('underline');
+    }
+    if (mask & overline.mask != 0) {
+      values.add('overline');
+    }
+    if (mask & lineThrough.mask != 0) {
+      values.add('lineThrough');
+    }
+    if (values.length == 1) {
+      return 'TextDecoration.${values[0]}';
+    }
+    return 'TextDecoration.combine([${values.join(", ")}])';
+  }
 }
 
 /// The default font weight.

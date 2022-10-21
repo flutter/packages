@@ -469,6 +469,9 @@ void main() {
       y: 12,
       fontWeight: 0,
       fontSize: 16,
+      decoration: 0,
+      decorationStyle: 0,
+      decorationColor: 0,
       transform: null,
     );
     codec.writeDrawText(buffer, textId, paintId, null);
@@ -493,6 +496,9 @@ void main() {
         16,
         'Roboto',
         0,
+        0,
+        0,
+        0,
         null,
         textId,
       ),
@@ -515,6 +521,9 @@ void main() {
       y: 12,
       fontWeight: 0,
       fontSize: 16,
+      decoration: 0,
+      decorationStyle: 0,
+      decorationColor: 0,
       transform: transform,
     );
     codec.writeDrawText(buffer, textId, paintId, null);
@@ -539,6 +548,9 @@ void main() {
         16,
         'Roboto',
         0,
+        0,
+        0,
+        0,
         transform,
         textId,
       ),
@@ -559,6 +571,9 @@ void main() {
       y: 12,
       fontWeight: 0,
       fontSize: 16,
+      decoration: 0,
+      decorationStyle: 0,
+      decorationColor: 0,
       transform: null,
     );
     codec.writeDrawText(buffer, textId, paintId, null);
@@ -583,6 +598,9 @@ void main() {
         16,
         null,
         0,
+        0,
+        0,
+        0,
         null,
         textId,
       ),
@@ -603,6 +621,9 @@ void main() {
       y: 12,
       fontWeight: 0,
       fontSize: 16,
+      decoration: 0,
+      decorationStyle: 0,
+      decorationColor: 0,
       transform: null,
     );
     codec.writeDrawText(buffer, textId, paintId, null);
@@ -626,6 +647,9 @@ void main() {
         12,
         16,
         null,
+        0,
+        0,
+        0,
         0,
         null,
         textId,
@@ -976,6 +1000,9 @@ class TestListener extends VectorGraphicsCodecListener {
     double dy,
     int fontWeight,
     double fontSize,
+    int decoration,
+    int decorationStyle,
+    int decorationColor,
     Float64List? transform,
     int id,
   ) {
@@ -986,6 +1013,9 @@ class TestListener extends VectorGraphicsCodecListener {
       fontSize,
       fontFamily,
       fontWeight,
+      decoration,
+      decorationStyle,
+      decorationColor,
       transform,
       id,
     ));
@@ -1394,6 +1424,9 @@ class OnTextConfig {
     this.fontSize,
     this.fontFamily,
     this.fontWeight,
+    this.decoration,
+    this.decorationStyle,
+    this.decorationColor,
     this.transform,
     this.id,
   );
@@ -1404,12 +1437,26 @@ class OnTextConfig {
   final double fontSize;
   final String? fontFamily;
   final int fontWeight;
+  final int decoration;
+  final int decorationStyle;
+  final int decorationColor;
   final int id;
   final Float64List? transform;
 
   @override
-  int get hashCode => Object.hash(text, x, y, fontSize, fontFamily, fontWeight,
-      Object.hashAll(transform ?? Float64List(0)), id);
+  int get hashCode => Object.hash(
+        text,
+        x,
+        y,
+        fontSize,
+        fontFamily,
+        fontWeight,
+        decoration,
+        decorationStyle,
+        decorationColor,
+        Object.hashAll(transform ?? Float64List(0)),
+        id,
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -1420,12 +1467,15 @@ class OnTextConfig {
       other.fontSize == fontSize &&
       other.fontFamily == fontFamily &&
       other.fontWeight == fontWeight &&
+      other.decoration == decoration &&
+      other.decorationStyle == decorationStyle &&
+      other.decorationColor == decorationColor &&
       _listEquals(other.transform, transform) &&
       other.id == id;
 
   @override
   String toString() =>
-      'OnTextConfig($text, $x, $y, $fontSize, $fontFamily, $fontWeight, $transform, $id)';
+      'OnTextConfig($text, $x, $y, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $transform, $id)';
 }
 
 class OnDrawText {

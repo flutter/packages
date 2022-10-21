@@ -192,10 +192,13 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
     double y,
     int fontWeight,
     double fontSize,
+    int decoration,
+    int decorationStyle,
+    int decorationColor,
     Float64List? transform,
     int id,
   ) {
     buffer.writeln(
-        'RecordText: id:$id ($text, ($x, $y), weight: $fontWeight, size: $fontSize, family: $fontFamily, transform: $transform)');
+        'RecordText: id:$id ($text, ($x, $y), weight: $fontWeight, size: $fontSize, decoration: $decoration, decorationStyle: $decorationStyle, decorationColor: 0x${decorationColor.toRadixString(16)}, family: $fontFamily, transform: $transform)');
   }
 }
