@@ -38,6 +38,17 @@ void main() {
   });
 
   testUsingContext('Apply produces all outputs', () async {
+    final ProcessResult result = await processManager
+        .run(<String>['flutter', '--version'], workingDirectory: appDir.path);
+    final String versionOutput = result.stdout as String;
+    final List<String> versionSplit = versionOutput.substring(8, 14).split('.');
+    expect(versionSplit.length >= 2, true);
+    if (!(int.parse(versionSplit[0]) > 3 ||
+        int.parse(versionSplit[0]) == 3 && int.parse(versionSplit[1]) > 3)) {
+      // Apply not supported on stable version 3.3 and below
+      return;
+    }
+
     final MigrateApplyCommand command = MigrateApplyCommand(
       verbose: true,
       logger: logger,
@@ -192,17 +203,6 @@ line3
         .run(<String>['git', 'add', '.'], workingDirectory: appDir.path);
     await processManager.run(<String>['git', 'commit', '-m', 'Initial commit'],
         workingDirectory: appDir.path);
-
-    final ProcessResult result = await processManager
-        .run(<String>['flutter', '--version'], workingDirectory: appDir.path);
-    final String versionOutput = result.stdout as String;
-    final List<String> versionSplit = versionOutput.substring(8, 14).split('.');
-    expect(versionSplit.length >= 2, true);
-    if (!(int.parse(versionSplit[0]) > 3 ||
-        int.parse(versionSplit[0]) == 3 && int.parse(versionSplit[1]) > 3)) {
-      // Apply not supported on stable version 3.3 and below
-      return;
-    }
 
     logger.clear();
     await createTestCommandRunner(command).run(<String>[
