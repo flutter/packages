@@ -1,5 +1,6 @@
 ## NEXT
 
+- Update README
 - Removes dynamic calls in examples.
 
 ## 5.1.1
