@@ -96,7 +96,8 @@ class MigrateApplyCommand extends MigrateCommand {
         : flutterProjectFactory
             .fromDirectory(fileSystem.directory(projectDirectory));
     final FlutterToolsEnvironment environment =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(_processManager, logger);
+        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
+            _processManager, logger);
     final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
 
     if (!await gitRepoExists(project.directory.path, logger, migrateUtils)) {

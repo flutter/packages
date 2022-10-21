@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -19,10 +18,10 @@ class FlutterToolsEnvironment {
     required Map<String, Object?> mapping,
   }) : _mapping = mapping;
 
-  static Future<FlutterToolsEnvironment> initializeFlutterToolsEnvironment(ProcessManager processManager,
-      Logger logger) async {
-    final ProcessResult result = await processManager.run(
-        <String>['flutter', 'analyze', '--suggestions', '--machine']);
+  static Future<FlutterToolsEnvironment> initializeFlutterToolsEnvironment(
+      ProcessManager processManager, Logger logger) async {
+    final ProcessResult result = await processManager
+        .run(<String>['flutter', 'analyze', '--suggestions', '--machine']);
     if (result.exitCode != 0) {
       if ((result.stderr as String).contains(
           'The "--machine" flag is only valid with the "--version" flag.')) {
