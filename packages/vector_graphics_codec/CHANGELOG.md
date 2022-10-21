@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.0.3
+
+* Pattern support.
+
 ## 0.0.2
 
 * Add support for encoding and decoding inline images.

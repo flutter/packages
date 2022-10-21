@@ -1,6 +1,6 @@
 name: vector_graphics_compiler
 description: A compiler for `package:vector_graphics`.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/dnfield/vector_graphics
 
 executables:
