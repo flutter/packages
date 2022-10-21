@@ -1,3 +1,7 @@
+## 0.0.7
+
+* Patch duplicate key error in SlotLayout.
+
 ## 0.0.6
 
 * Change type of `appBar` parameter from `AppBar?` to `PreferredSizeWidget?`
