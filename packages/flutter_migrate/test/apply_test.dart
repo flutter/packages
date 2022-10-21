@@ -198,7 +198,8 @@ line3
     final String versionOutput = result.stdout as String;
     final List<String> versionSplit = versionOutput.substring(8, 14).split('.');
     expect(versionSplit.length >= 2, true);
-    if (!(int.parse(versionSplit[0]) >= 3 && int.parse(versionSplit[1]) > 3)) {
+    if (!(int.parse(versionSplit[0]) > 3 ||
+        int.parse(versionSplit[0]) == 3 && int.parse(versionSplit[1]) > 3)) {
       // Apply not supported on stable version 3.3 and below
       return;
     }
