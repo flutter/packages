@@ -193,9 +193,9 @@ line3
     await processManager.run(<String>['git', 'commit', '-m', 'Initial commit'],
         workingDirectory: appDir.path);
 
-    final ProcessResult result = await processManager.run(<String>['flutter', '--version'],
-        workingDirectory: appDir.path);
-    final String versionOutput = (result.stdout as String);
+    final ProcessResult result = await processManager
+        .run(<String>['flutter', '--version'], workingDirectory: appDir.path);
+    final String versionOutput = result.stdout as String;
     final List<String> versionSplit = versionOutput.substring(8, 14).split('.');
     expect(versionSplit.length >= 2, true);
     if (!(int.parse(versionSplit[0]) >= 3 && int.parse(versionSplit[1]) > 3)) {
