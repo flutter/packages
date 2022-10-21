@@ -226,5 +226,9 @@ See [examples](https://github.com/flutter/packages/tree/main/packages/go_router/
 See the [Changelog](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md)
 for a list of new features and breaking changes.
 
+## Roadmap
+
+See the [github project](https://github.com/orgs/flutter/projects/17/) for our current priority.
+
 
 
