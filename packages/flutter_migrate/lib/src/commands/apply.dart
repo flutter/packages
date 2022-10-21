@@ -26,6 +26,7 @@ class MigrateApplyCommand extends MigrateCommand {
     required this.terminal,
     required ProcessManager processManager,
   })  : _verbose = verbose,
+        _processManager = processManager,
         migrateUtils = MigrateUtils(
           logger: logger,
           fileSystem: fileSystem,
@@ -65,6 +66,8 @@ class MigrateApplyCommand extends MigrateCommand {
 
   final bool _verbose;
 
+  final ProcessManager _processManager;
+
   final Logger logger;
 
   final FileSystem fileSystem;
@@ -93,7 +96,7 @@ class MigrateApplyCommand extends MigrateCommand {
         : flutterProjectFactory
             .fromDirectory(fileSystem.directory(projectDirectory));
     final FlutterToolsEnvironment environment =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(logger);
+        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(_processManager, logger);
     final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
 
     if (!await gitRepoExists(project.directory.path, logger, migrateUtils)) {

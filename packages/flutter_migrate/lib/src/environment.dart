@@ -2,9 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:process/process.dart';
 
 import 'base/common.dart';
 import 'base/logger.dart';
@@ -16,10 +19,10 @@ class FlutterToolsEnvironment {
     required Map<String, Object?> mapping,
   }) : _mapping = mapping;
 
-  static Future<FlutterToolsEnvironment> initializeFlutterToolsEnvironment(
+  static Future<FlutterToolsEnvironment> initializeFlutterToolsEnvironment(ProcessManager processManager,
       Logger logger) async {
-    final ProcessResult result = await Process.run(
-        'flutter', <String>['analyze', '--suggestions', '--machine']);
+    final ProcessResult result = await processManager.run(
+        <String>['flutter', 'analyze', '--suggestions', '--machine']);
     if (result.exitCode != 0) {
       if ((result.stderr as String).contains(
           'The "--machine" flag is only valid with the "--version" flag.')) {
@@ -33,7 +36,7 @@ class FlutterToolsEnvironment {
     Map<String, Object?> mapping = <String, Object?>{};
     if (commandOutput.contains('{') && commandOutput.endsWith('}\n')) {
       commandOutput = commandOutput.substring(commandOutput.indexOf('{'));
-      mapping = jsonDecode(result.stdout);
+      mapping = jsonDecode(commandOutput.replaceAll(r'\', r'\\'));
     }
     return FlutterToolsEnvironment(mapping: mapping);
   }
