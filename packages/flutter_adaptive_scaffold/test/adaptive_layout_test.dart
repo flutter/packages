@@ -142,6 +142,33 @@ void main() {
     expect(begin, findsNothing);
     expect(end, findsOneWidget);
   });
+
+  testWidgets('AnimatedSwitcher does not spawn duplicate keys on rapid resize',
+      (WidgetTester tester) async {
+    // Populate the smaller slot layout and let the animation settle.
+    await tester.pumpWidget(slot(300));
+    await tester.pumpAndSettle();
+    expect(begin, findsOneWidget);
+    expect(end, findsNothing);
+
+    // Jumping back between two layouts before allowing an animation to complete.
+    // Produces a chain widgets in AnimatedSwitcher that contains duplicate
+    // widgets with the same global key.
+    for (int i = 0; i < 2; i++) {
+      // Resize between the two slot layouts, but do not pump the animation
+      // until completion.
+      await tester.pumpWidget(slot(500));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(begin, findsOneWidget);
+      expect(end, findsOneWidget);
+
+      await tester.pumpWidget(slot(300));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(begin, findsOneWidget);
+      expect(end, findsOneWidget);
+    }
+  });
+
   testWidgets('slot layout can tolerate rapid changes in breakpoints',
       (WidgetTester tester) async {
     await tester.pumpWidget(slot(300));
