@@ -130,7 +130,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   RouteConfiguration get routeConfiguration => _routeConfiguration;
 
   /// Gets the current location.
-  @Deprecated('Use GoRouter.uri.toString() instead')
+  // TODO(chunhtai): deprecates this property once go_router_builder is migrated
   String get location => _uri.toString();
 
   /// Gets the current URI.

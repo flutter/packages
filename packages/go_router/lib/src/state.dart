@@ -71,8 +71,6 @@ class GoRouterState {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
-  // TODO(johnpryan): deprecate namedLocation API
-  // See https://github.com/flutter/flutter/issues/10772
   @Deprecated(
       'Uses GoRouter.of(context).routeInformationParser.namedLocation instead')
   String namedLocation(
