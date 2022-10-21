@@ -13,11 +13,16 @@ import 'base/logger.dart';
 
 /// Polls the flutter tool for details about the environment and project and exposes it as
 /// a mapping of String keys to values.
+///
+/// This class is based on the `flutter analyze --suggestions --machine` flutter_tools command
+/// which dumps various variables as JSON.
 class FlutterToolsEnvironment {
   FlutterToolsEnvironment({
     required Map<String, Object?> mapping,
   }) : _mapping = mapping;
 
+  /// Creates a FlutterToolsEnvironment instance by calling `flutter analyze --suggestions --machine`
+  /// and parsing its output.
   static Future<FlutterToolsEnvironment> initializeFlutterToolsEnvironment(
       ProcessManager processManager, Logger logger) async {
     final ProcessResult result = await processManager
@@ -49,6 +54,8 @@ class FlutterToolsEnvironment {
     return null;
   }
 
+  /// Returns the String stored at the key and null if
+  /// the key does not exist or is not a String.
   String? getString(String key) {
     if (_mapping.containsKey(key) &&
         _mapping[key] != null &&
@@ -58,6 +65,8 @@ class FlutterToolsEnvironment {
     return null;
   }
 
+  /// Returns the bool stored at the key and null if
+  /// the key does not exist or is not a bool.
   bool? getBool(String key) {
     if (_mapping.containsKey(key) &&
         _mapping[key] != null &&

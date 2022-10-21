@@ -83,7 +83,7 @@ void main() {
     expect(env.getBool('Platform.isWindows'), isWindows);
     expect(env.getBool('Platform.isMacOS'), isMacOS);
     expect(env.getBool('Platform.isFuchsia'), false);
-    final String separator = isWindows ? r'\' : '/';
+    final String separator = isWindows ? r'\\' : '/';
     expect(env.getString('Platform.pathSeparator'), separator);
     expect(env.getString('Cache.flutterRoot') != null, true);
   }, overrides: <Type, Generator>{
