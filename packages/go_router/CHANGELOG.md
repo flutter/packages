@@ -1,6 +1,11 @@
 ## NEXT
 
 - Update README
+- Removes dynamic calls in examples.
+
+## 5.1.1
+
+- Removes DebugGoRouteInformation.
 
 ## 5.1.0
 

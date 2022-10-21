@@ -55,12 +55,19 @@ class DynamicSliverGridGeometry extends SliverGridGeometry {
   }
 }
 
-// TODO(all): A bit more docs here
 /// Manages the size and position of all the tiles in a [RenderSliverGrid].
 ///
 /// Rather than providing a grid with a [SliverGridLayout] directly, you instead
 /// provide the grid with a [SliverGridDelegate], which can compute a
 /// [SliverGridLayout] given the current [SliverConstraints].
+///
+/// {@template dynamicLayouts.garbageCollection}
+/// This grid does not currently collect leading garbage as the user scrolls
+/// further down. This is because the current implementation requires the
+/// leading tiles to maintain the current layout. Follow
+/// [this github issue](https://github.com/flutter/flutter/issues/112234) for
+/// tracking progress on dynamic leading garbage collection.
+/// {@endtemplate}
 abstract class DynamicSliverGridLayout extends SliverGridLayout {
   /// The  estimated size and position of the child with the given index.
   ///

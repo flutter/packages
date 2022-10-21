@@ -63,7 +63,7 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
             (scrollDirection == Axis.horizontal ||
                 scrollDirection == Axis.vertical));
 
-  /// The direction in wich the layout should be built.
+  /// The direction in which the layout should be built.
   final Axis scrollDirection;
 
   /// The extent of the child in the non-scrolling axis.
@@ -184,7 +184,7 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
 /// A [SliverGridDelegate] for creating grids that wrap variably sized tiles.
 ///
 /// For example, if the grid is vertical, this delegate will create a layout
-/// where the children are layed out until they fill the horizontal axis and then
+/// where the children are laid out until they fill the horizontal axis and then
 /// they continue in the next row. If the grid is horizontal, this delegate will
 /// do the same but it will fill the vertical axis and will pass to another
 /// column until it finishes.
@@ -194,7 +194,7 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
 /// [childMainAxisExtent] are provided.
 ///
 /// See also:
-///  * [DynamicGridView.wrap], wich is a constructor to use this [SliverGridDelegate],
+///  * [DynamicGridView.wrap], a constructor to use with this [SliverGridDelegate],
 ///    like `GridView.extent`.
 ///  * [DynamicGridView], which can use this delegate to control the layout of its
 ///    tiles.
