@@ -56,6 +56,27 @@ void main() {
     });
   });
 
+  group('popUntil', () {
+    testWidgets('It should pop 2 pages', (WidgetTester tester) async {
+      final GoRouter goRouter = await createGoRouter(tester)
+        ..push('/a')
+        ..push('/a');
+
+      await tester.pumpAndSettle();
+      expect(goRouter.routerDelegate.matches.matches.length, 3);
+      goRouter.routerDelegate.addListener(expectAsync0(() {}));
+      final RouteMatch second = goRouter.routerDelegate.matches.matches[1];
+      final RouteMatch last = goRouter.routerDelegate.matches.matches.last;
+
+      int count = 0;
+      goRouter.popUntil((RouteMatch routeMatch) => count++ >= 2);
+
+      expect(goRouter.routerDelegate.matches.matches.length, 1);
+      expect(goRouter.routerDelegate.matches.matches.contains(second), false);
+      expect(goRouter.routerDelegate.matches.matches.contains(last), false);
+    });
+  });
+
   group('push', () {
     testWidgets(
       'It should return different pageKey when push is called',
