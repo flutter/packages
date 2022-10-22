@@ -8,6 +8,7 @@ import 'configuration.dart';
 import 'delegate.dart';
 import 'information_provider.dart';
 import 'logging.dart';
+import 'match.dart';
 import 'matching.dart';
 import 'misc/inherited_router.dart';
 import 'parser.dart';
@@ -257,6 +258,11 @@ class GoRouter extends ChangeNotifier
       return true;
     }());
     _routerDelegate.pop();
+  }
+
+  /// Calls [pop] repeatedly until the predicate returns true.
+  void popUntil(bool Function(RouteMatch) predicate) {
+    _routerDelegate.popUntil(predicate);
   }
 
   /// Refresh the route.

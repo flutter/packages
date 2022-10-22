@@ -146,6 +146,18 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     notifyListeners();
   }
 
+  /// Calls [pop] repeatedly until the predicate returns true.
+  void popUntil(bool Function(RouteMatch) predicate) {
+    bool hasPopped = false;
+    while (!predicate(_matchList.last)) {
+      hasPopped = true;
+      _matchList.pop();
+    }
+    if (hasPopped) {
+      notifyListeners();
+    }
+  }
+
   /// Replaces the top-most page of the page stack with the given one.
   ///
   /// See also:
