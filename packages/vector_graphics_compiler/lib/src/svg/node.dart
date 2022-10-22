@@ -458,6 +458,7 @@ class TextNode extends AttributedNode {
     return TextConfig(
       text,
       transform.transformPoint(newBaseline),
+      attributes.textAnchorMultiplier ?? 0,
       attributes.fontFamily,
       fontWeight,
       fontSize,

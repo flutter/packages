@@ -4,6 +4,51 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('text anchor', () async {
+    final VectorInstructions instructions = await parseWithoutOptimizers(
+      textAnchors,
+    );
+
+    expect(instructions.text, const <TextConfig>[
+      TextConfig(
+        'Text anchor start',
+        Point(100.0, 50.0),
+        0.0,
+        'Roboto',
+        FontWeight.w400,
+        10.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+        AffineMatrix.identity,
+      ),
+      TextConfig(
+        'Text anchor middle',
+        Point(100.0, 100.0),
+        0.5,
+        'Roboto',
+        FontWeight.w400,
+        10.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+        AffineMatrix.identity,
+      ),
+      TextConfig(
+        'Text anchor end',
+        Point(100.0, 150.0),
+        1.0,
+        'Roboto',
+        FontWeight.w400,
+        10.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+        AffineMatrix.identity,
+      )
+    ]);
+  });
+
   test('text decorations', () async {
     final VectorInstructions instructions = await parseWithoutOptimizers(
       textDecorations,
@@ -13,6 +58,7 @@ void main() {
       TextConfig(
         'Overline text',
         Point(100.0, 60.0),
+        0,
         'Roboto',
         FontWeight.w400,
         55.0,
@@ -24,6 +70,7 @@ void main() {
       TextConfig(
         'Strike text',
         Point(100.0, 120.0),
+        0,
         'Roboto',
         FontWeight.w400,
         55.0,
@@ -35,6 +82,7 @@ void main() {
       TextConfig(
         'Underline text',
         Point(100.0, 180.0),
+        0,
         'Roboto',
         FontWeight.w400,
         55.0,
@@ -170,6 +218,7 @@ void main() {
       TextConfig(
         'a',
         Point.zero,
+        0,
         null,
         normalFontWeight,
         16,

@@ -1019,6 +1019,21 @@ class SvgParser {
         ' is not supported');
   }
 
+  /// Parses a `text-anchor` attribute.
+  double? parseTextAnchor(String? raw) {
+    switch (raw) {
+      case 'inherit':
+        return null;
+      case 'end':
+        return 1;
+      case 'middle':
+        return .5;
+      case 'start':
+      default:
+        return 0;
+    }
+  }
+
   double _parseRawWidthHeight(String raw) {
     if (raw == '100%' || raw == '') {
       return double.infinity;
@@ -1584,28 +1599,28 @@ class SvgParser {
         parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0).toDouble();
     final Color? color = parseColor(attributeMap['color']) ?? currentColor;
     return SvgAttributes._(
-      raw: attributeMap,
-      id: attributeMap['id'],
-      href: attributeMap['href'],
-      opacity: opacity,
-      color: color,
-      stroke: _parseStrokeAttributes(attributeMap, opacity, color),
-      fill: _parseFillAttributes(attributeMap, opacity, color),
-      fillRule:
-          parseRawFillRule(attributeMap['fill-rule']) ?? PathFillType.nonZero,
-      clipRule: parseRawFillRule(attributeMap['clip-rule']),
-      clipPathId: attributeMap['clip-path'],
-      blendMode: _blendModes[attributeMap['mix-blend-mode']],
-      transform:
-          parseTransform(attributeMap['transform']) ?? AffineMatrix.identity,
-      fontFamily: attributeMap['font-family'],
-      fontWeight: parseFontWeight(attributeMap['font-weight']),
-      fontSize: parseFontSize(attributeMap['font-size']),
-      textDecoration: parseTextDecoration(attributeMap['text-decoration']),
-      textDecorationStyle:
-          parseTextDecorationStyle(attributeMap['text-decoration-style']),
-      textDecorationColor: parseColor(attributeMap['text-decoration-color']),
-    );
+        raw: attributeMap,
+        id: attributeMap['id'],
+        href: attributeMap['href'],
+        opacity: opacity,
+        color: color,
+        stroke: _parseStrokeAttributes(attributeMap, opacity, color),
+        fill: _parseFillAttributes(attributeMap, opacity, color),
+        fillRule:
+            parseRawFillRule(attributeMap['fill-rule']) ?? PathFillType.nonZero,
+        clipRule: parseRawFillRule(attributeMap['clip-rule']),
+        clipPathId: attributeMap['clip-path'],
+        blendMode: _blendModes[attributeMap['mix-blend-mode']],
+        transform:
+            parseTransform(attributeMap['transform']) ?? AffineMatrix.identity,
+        fontFamily: attributeMap['font-family'],
+        fontWeight: parseFontWeight(attributeMap['font-weight']),
+        fontSize: parseFontSize(attributeMap['font-size']),
+        textDecoration: parseTextDecoration(attributeMap['text-decoration']),
+        textDecorationStyle:
+            parseTextDecorationStyle(attributeMap['text-decoration-style']),
+        textDecorationColor: parseColor(attributeMap['text-decoration-color']),
+        textAnchorMultiplier: parseTextAnchor(attributeMap['text-anchor']));
   }
 }
 
@@ -1773,6 +1788,7 @@ class SvgAttributes {
     this.textDecorationStyle,
     this.textDecorationColor,
     this.x,
+    this.textAnchorMultiplier,
     this.y,
     this.width,
     this.height,
@@ -1923,6 +1939,9 @@ class SvgAttributes {
   /// The x translation.
   final double? x;
 
+  /// A multiplier for text-anchoring.
+  final double? textAnchorMultiplier;
+
   /// The y translation.
   final double? y;
 
@@ -1957,6 +1976,7 @@ class SvgAttributes {
       textDecoration: parent.textDecoration ?? textDecoration,
       textDecorationStyle: parent.textDecorationStyle ?? textDecorationStyle,
       textDecorationColor: parent.textDecorationColor ?? textDecorationColor,
+      textAnchorMultiplier: parent.textAnchorMultiplier ?? textAnchorMultiplier,
       x: parent.x ?? x,
       y: parent.y ?? y,
       height: parent.height ?? height,

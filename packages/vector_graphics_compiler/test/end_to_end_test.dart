@@ -209,16 +209,16 @@ void main() {
         id: 3,
         shaderId: null,
       ),
-      const OnTextConfig('Plain text Roboto', 100, 50, 55, 'Roboto', 3, 0, 0,
+      const OnTextConfig('Plain text Roboto', 100, 0, 50, 55, 'Roboto', 3, 0, 0,
           4278190080, null, 0),
-      const OnTextConfig('Plain text Verdana', 100, 100, 55, 'Verdana', 3, 0, 0,
-          4278190080, null, 1),
-      const OnTextConfig('Bold text Verdana', 100, 150, 55, 'Verdana', 6, 0, 0,
-          4278190080, null, 2),
-      const OnTextConfig('Stroked bold line', 150, 215, 55, 'Roboto', 8, 0, 0,
-          4278190080, null, 3),
+      const OnTextConfig('Plain text Verdana', 100, 0, 100, 55, 'Verdana', 3, 0,
+          0, 4278190080, null, 1),
+      const OnTextConfig('Bold text Verdana', 100, 0, 150, 55, 'Verdana', 6, 0,
+          0, 4278190080, null, 2),
+      const OnTextConfig('Stroked bold line', 150, 0, 215, 55, 'Roboto', 8, 0,
+          0, 4278190080, null, 3),
       const OnTextConfig(
-          'Line 3', 150, 50, 55, 'Roboto', 3, 0, 0, 4278190080, null, 4),
+          'Line 3', 150, 0, 50, 55, 'Roboto', 3, 0, 0, 4278190080, null, 4),
       const OnDrawText(0, 0, null),
       const OnDrawText(1, 0, null),
       const OnDrawText(2, 0, null),
@@ -486,6 +486,7 @@ class TestListener extends VectorGraphicsCodecListener {
     String text,
     String? fontFamily,
     double dx,
+    double xAnchorMultiplier,
     double dy,
     int fontWeight,
     double fontSize,
@@ -498,6 +499,7 @@ class TestListener extends VectorGraphicsCodecListener {
     commands.add(OnTextConfig(
       text,
       dx,
+      xAnchorMultiplier,
       dy,
       fontSize,
       fontFamily,
@@ -905,6 +907,7 @@ class OnTextConfig {
   const OnTextConfig(
     this.text,
     this.x,
+    this.xAnchorMultiplier,
     this.y,
     this.fontSize,
     this.fontFamily,
@@ -918,6 +921,7 @@ class OnTextConfig {
 
   final String text;
   final double x;
+  final double xAnchorMultiplier;
   final double y;
   final double fontSize;
   final String? fontFamily;
@@ -932,6 +936,7 @@ class OnTextConfig {
   int get hashCode => Object.hash(
         text,
         x,
+        xAnchorMultiplier,
         y,
         fontSize,
         fontFamily,
@@ -948,6 +953,7 @@ class OnTextConfig {
       other is OnTextConfig &&
       other.text == text &&
       other.x == x &&
+      other.xAnchorMultiplier == xAnchorMultiplier &&
       other.y == y &&
       other.fontSize == fontSize &&
       other.fontFamily == fontFamily &&
@@ -960,7 +966,7 @@ class OnTextConfig {
 
   @override
   String toString() =>
-      'OnTextConfig($text, $x, $y, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $transform, $id)';
+      'OnTextConfig($text, $x (anchor: $xAnchorMultiplier), $y, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $transform, $id)';
 }
 
 class OnDrawText {

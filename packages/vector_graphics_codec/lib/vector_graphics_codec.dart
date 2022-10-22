@@ -541,6 +541,7 @@ class VectorGraphicsCodec {
     required String text,
     required String? fontFamily,
     required double x,
+    required double xAnchorMultiplier,
     required double y,
     required int fontWeight,
     required double fontSize,
@@ -557,6 +558,7 @@ class VectorGraphicsCodec {
     buffer._putUint8(_textConfigTag);
     buffer._putUint16(textId);
     buffer._putFloat32(x);
+    buffer._putFloat32(xAnchorMultiplier);
     buffer._putFloat32(y);
     buffer._putFloat32(fontSize);
     buffer._putUint8(fontWeight);
@@ -807,6 +809,7 @@ class VectorGraphicsCodec {
   ) {
     final int id = buffer.getUint16();
     final double dx = buffer.getFloat32();
+    final double xAnchorMultiplier = buffer.getFloat32();
     final double dy = buffer.getFloat32();
     final double fontSize = buffer.getFloat32();
     final int fontWeight = buffer.getUint8();
@@ -826,6 +829,7 @@ class VectorGraphicsCodec {
       text,
       fontFamily,
       dx,
+      xAnchorMultiplier,
       dy,
       fontWeight,
       fontSize,
@@ -988,6 +992,7 @@ abstract class VectorGraphicsCodecListener {
     String text,
     String? fontFamily,
     double x,
+    double xAnchorMultiplier,
     double y,
     int fontWeight,
     double fontSize,

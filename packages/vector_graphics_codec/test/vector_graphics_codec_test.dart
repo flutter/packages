@@ -466,6 +466,7 @@ void main() {
       text: 'Hello',
       fontFamily: 'Roboto',
       x: 10,
+      xAnchorMultiplier: 0,
       y: 12,
       fontWeight: 0,
       fontSize: 16,
@@ -492,6 +493,7 @@ void main() {
       OnTextConfig(
         'Hello',
         10,
+        0,
         12,
         16,
         'Roboto',
@@ -518,6 +520,7 @@ void main() {
       text: 'Hello',
       fontFamily: 'Roboto',
       x: 10,
+      xAnchorMultiplier: 0,
       y: 12,
       fontWeight: 0,
       fontSize: 16,
@@ -544,6 +547,7 @@ void main() {
       OnTextConfig(
         'Hello',
         10,
+        0,
         12,
         16,
         'Roboto',
@@ -568,6 +572,7 @@ void main() {
       text: 'Hello',
       fontFamily: null,
       x: 10,
+      xAnchorMultiplier: 0,
       y: 12,
       fontWeight: 0,
       fontSize: 16,
@@ -594,6 +599,7 @@ void main() {
       OnTextConfig(
         'Hello',
         10,
+        0,
         12,
         16,
         null,
@@ -618,6 +624,7 @@ void main() {
       text: '',
       fontFamily: null,
       x: 10,
+      xAnchorMultiplier: 0,
       y: 12,
       fontWeight: 0,
       fontSize: 16,
@@ -644,6 +651,7 @@ void main() {
       OnTextConfig(
         '',
         10,
+        0,
         12,
         16,
         null,
@@ -997,6 +1005,7 @@ class TestListener extends VectorGraphicsCodecListener {
     String text,
     String? fontFamily,
     double dx,
+    double xAnchorMultiplier,
     double dy,
     int fontWeight,
     double fontSize,
@@ -1009,6 +1018,7 @@ class TestListener extends VectorGraphicsCodecListener {
     commands.add(OnTextConfig(
       text,
       dx,
+      xAnchorMultiplier,
       dy,
       fontSize,
       fontFamily,
@@ -1420,6 +1430,7 @@ class OnTextConfig {
   const OnTextConfig(
     this.text,
     this.x,
+    this.xAnchorMultiplier,
     this.y,
     this.fontSize,
     this.fontFamily,
@@ -1433,6 +1444,7 @@ class OnTextConfig {
 
   final String text;
   final double x;
+  final double xAnchorMultiplier;
   final double y;
   final double fontSize;
   final String? fontFamily;
@@ -1447,6 +1459,7 @@ class OnTextConfig {
   int get hashCode => Object.hash(
         text,
         x,
+        xAnchorMultiplier,
         y,
         fontSize,
         fontFamily,
@@ -1463,6 +1476,7 @@ class OnTextConfig {
       other is OnTextConfig &&
       other.text == text &&
       other.x == x &&
+      other.xAnchorMultiplier == xAnchorMultiplier &&
       other.y == y &&
       other.fontSize == fontSize &&
       other.fontFamily == fontFamily &&

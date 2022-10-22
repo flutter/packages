@@ -238,6 +238,7 @@ Future<Uint8List> encodeSvg({
       text: textConfig.text,
       fontFamily: textConfig.fontFamily,
       x: textConfig.baselineStart.x,
+      xAnchorMultiplier: textConfig.xAnchorMultiplier,
       y: textConfig.baselineStart.y,
       fontWeight: textConfig.fontWeight.index,
       fontSize: textConfig.fontSize,

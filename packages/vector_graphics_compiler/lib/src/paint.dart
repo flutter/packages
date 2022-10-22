@@ -1236,6 +1236,7 @@ class TextConfig {
   const TextConfig(
     this.text,
     this.baselineStart,
+    this.xAnchorMultiplier,
     this.fontFamily,
     this.fontWeight,
     this.fontSize,
@@ -1250,6 +1251,12 @@ class TextConfig {
 
   /// The coordinate of the starting point of the text baseline.
   final Point baselineStart;
+
+  /// A multiplier for text anchoring.
+  ///
+  /// This value should be multiplied by the length of the longest line in the
+  /// text and subtracted from [baselineStart]'s x coordinate.
+  final double xAnchorMultiplier;
 
   /// The size of the font, only supported as absolute size.
   final double fontSize;
@@ -1278,6 +1285,7 @@ class TextConfig {
   int get hashCode => Object.hash(
         text,
         baselineStart,
+        xAnchorMultiplier,
         fontSize,
         fontFamily,
         fontWeight,
@@ -1292,6 +1300,7 @@ class TextConfig {
     return other is TextConfig &&
         other.text == text &&
         other.baselineStart == baselineStart &&
+        other.xAnchorMultiplier == xAnchorMultiplier &&
         other.fontSize == fontSize &&
         other.fontFamily == fontFamily &&
         other.fontWeight == fontWeight &&
@@ -1303,7 +1312,17 @@ class TextConfig {
 
   @override
   String toString() {
-    return 'TextConfig($text, $baselineStart, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $transform)';
+    return 'TextConfig('
+        "'$text', "
+        '$baselineStart, '
+        '$xAnchorMultiplier, '
+        "'$fontFamily', "
+        '$fontWeight, '
+        '$fontSize, '
+        '$decoration, '
+        '$decorationStyle, '
+        '$decorationColor, '
+        '$transform,)';
   }
 }
 

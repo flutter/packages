@@ -447,6 +447,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     String text,
     String? fontFamily,
     double x,
+    double xAnchorMultiplier,
     double y,
     int fontWeight,
     double fontSize,
@@ -471,6 +472,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       text,
       fontFamily,
       x,
+      xAnchorMultiplier,
       y,
       ui.FontWeight.values[fontWeight],
       fontSize,
@@ -514,7 +516,10 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     }
     _canvas.drawParagraph(
       paragraph,
-      ui.Offset(textConfig.dx, textConfig.dy - paragraph.alphabeticBaseline),
+      ui.Offset(
+        textConfig.dx - paragraph.longestLine * textConfig.xAnchorMultiplier,
+        textConfig.dy - paragraph.alphabeticBaseline,
+      ),
     );
     paragraph.dispose();
     if (textConfig.transform != null) {
@@ -564,6 +569,7 @@ class _TextConfig {
     this.text,
     this.fontFamily,
     this.dx,
+    this.xAnchorMultiplier,
     this.dy,
     this.fontWeight,
     this.fontSize,
@@ -577,6 +583,7 @@ class _TextConfig {
   final String? fontFamily;
   final double fontSize;
   final double dx;
+  final double xAnchorMultiplier;
   final double dy;
   final ui.FontWeight fontWeight;
   final ui.TextDecoration decoration;
