@@ -167,7 +167,9 @@ void main() {
       expect(begin, findsOneWidget);
       expect(end, findsOneWidget);
     }
-  });
+    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // https://github.com/flutter/flutter/pull/107476
+  }, skip: true);
 
   testWidgets('slot layout can tolerate rapid changes in breakpoints',
       (WidgetTester tester) async {
@@ -186,7 +188,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
-    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // TODO(a-wallen): Remove skip when AnimatedSwitcher fix rolls into stable.
     // https://github.com/flutter/flutter/pull/107476
   }, skip: true);
 
@@ -243,7 +245,7 @@ void main() {
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
     expect(
         tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
-    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // TODO(a-wallen): Remove skip when AnimatedSwitcher fix rolls into stable.
     // https://github.com/flutter/flutter/pull/107476
   }, skip: true);
 
@@ -264,7 +266,7 @@ void main() {
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
     expect(
         tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
-    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // TODO(a-wallen): Remove skip when AnimatedSwitcher fix rolls into stable.
     // https://github.com/flutter/flutter/pull/107476
   }, skip: true);
 }
