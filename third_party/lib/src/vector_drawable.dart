@@ -1293,7 +1293,10 @@ class DrawableShape implements DrawableStyleable {
         canvas.drawPath(path, style.fill!.toFlutterPaint());
       }
 
-      if (style.stroke?.color != null) {
+      if (style.stroke?.color != null &&
+          (style.stroke!.strokeWidth == null ||
+              (style.stroke!.strokeWidth != null &&
+                  style.stroke!.strokeWidth! > 0))) {
         assert(style.stroke!.style == PaintingStyle.stroke);
         if (style.dashArray != null &&
             !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
