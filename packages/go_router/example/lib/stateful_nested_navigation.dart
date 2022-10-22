@@ -149,7 +149,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
         currentIndex: shellState.index,
         onTap: (int tappedIndex) => _onItemTapped(
           context,
-          shellState.navigationBranchState[tappedIndex],
+          shellState.branchState[tappedIndex],
         ),
       ),
     );

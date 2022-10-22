@@ -272,8 +272,8 @@ class RouteBuilder {
       configuration: configuration,
       shellRoute: shellRoute,
       activeNavigator: navigator,
-      shellRouterState: shellRouterState,
-      topRouterState: topRouterState,
+      shellGoRouterState: shellRouterState,
+      topGoRouterState: topRouterState,
     );
   }
 
