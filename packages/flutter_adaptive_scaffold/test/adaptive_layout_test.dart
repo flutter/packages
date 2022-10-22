@@ -152,7 +152,7 @@ void main() {
     expect(end, findsNothing);
 
     // Jumping back between two layouts before allowing an animation to complete.
-    // Produces a chain widgets in AnimatedSwitcher that contains duplicate
+    // Produces a chain of widgets in AnimatedSwitcher that includes duplicate
     // widgets with the same global key.
     for (int i = 0; i < 2; i++) {
       // Resize between the two slot layouts, but do not pump the animation
