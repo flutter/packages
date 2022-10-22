@@ -4,6 +4,19 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Zero width stroke', () async {
+    final VectorInstructions instructions = await parseWithoutOptimizers(
+      '''
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="main-svg" width="100" height="100" viewBox="0 0 100 100">
+    <rect style="stroke: rgb(68, 68, 68); stroke-opacity: 1; fill: rgb(255, 255, 255); fill-opacity: 1; stroke-width: 0;" width="90" height="90" x="5" y="5" />
+</svg>''',
+    );
+
+    expect(instructions.paints.single.stroke, null);
+    expect(
+        instructions.paints.single.fill, const Fill(color: Color(0xFFFFFFFF)));
+  });
+
   test('text anchor', () async {
     final VectorInstructions instructions = await parseWithoutOptimizers(
       textAnchors,

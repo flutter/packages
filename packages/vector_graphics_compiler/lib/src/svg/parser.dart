@@ -2039,7 +2039,8 @@ class SvgStrokeAttributes {
   ///
   /// Returns null if this is [none].
   Stroke? toStroke(Rect shaderBounds, AffineMatrix transform) {
-    if (color == null && hasPattern == null && shaderId == null) {
+    // A zero width stroke is a hairline in Flutter, but a nop in SVG.
+    if (color == null && hasPattern == null && shaderId == null || width == 0) {
       return null;
     }
 
