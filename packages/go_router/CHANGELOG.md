@@ -1,7 +1,8 @@
-## NEXT
+## 5.2.0
 
 - Update README
 - Removes dynamic calls in examples.
+- Adds `popUntil` method to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`. 
 
 ## 5.1.1
 
