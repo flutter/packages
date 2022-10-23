@@ -2,6 +2,7 @@
 
 - Update README
 - Removes dynamic calls in examples.
+- Hiding the internal implementation from external API.
 
 ## 5.1.1
 
@@ -36,7 +37,7 @@
 
 - Fixes a bug where intermediate route redirect methods are not called.
 - GoRouter implements the RouterConfig interface, allowing you to call
-  MaterialApp.router(routerConfig: _myGoRouter) instead of passing
+  MaterialApp.router(routerConfig: \_myGoRouter) instead of passing
   the RouterDelegate, RouteInformationParser, and RouteInformationProvider
   fields.
 - **BREAKING CHANGE**
@@ -68,12 +69,12 @@
 
 ## 4.3.0
 
-- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`.
 
 ## 4.2.9
 
-* Updates text theme parameters to avoid deprecation issues.
-* Fixes lint warnings.
+- Updates text theme parameters to avoid deprecation issues.
+- Fixes lint warnings.
 
 ## 4.2.8
 
