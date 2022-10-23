@@ -1,5 +1,6 @@
-## NEXT
+## 5.1.2
 
+- Adds helpers for go_router_builder for ShellRoute support
 - Update README
 - Removes dynamic calls in examples.
 
