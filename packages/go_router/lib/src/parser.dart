@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'information_provider.dart';
@@ -15,6 +16,7 @@ import 'redirection.dart';
 
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
 /// Also performs redirection using [RouteRedirector].
+@internal
 class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Creates a [GoRouteInformationParser].
   GoRouteInformationParser({
@@ -24,9 +26,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         redirector = redirect;
 
   /// The route configuration for the app.
+  @visibleForTesting
   final RouteConfiguration configuration;
 
   /// The route matcher.
+  @visibleForTesting
   final RouteMatcher matcher;
 
   /// The route redirector.

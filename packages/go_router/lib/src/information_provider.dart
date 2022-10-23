@@ -5,8 +5,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 /// The [RouteInformationProvider] created by go_router.
+@internal
 class GoRouteInformationProvider extends RouteInformationProvider
     with WidgetsBindingObserver, ChangeNotifier {
   /// Creates a [GoRouteInformationProvider].

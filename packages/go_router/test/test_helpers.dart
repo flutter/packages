@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/matching.dart';
 
@@ -221,9 +222,10 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 extension Extension on GoRouter {
   Page<dynamic> _pageFor(RouteMatch match) {
-    final RouteMatchList matchList = routerDelegate.matches;
+    final GoRouterDelegate delegate = routerDelegate as GoRouterDelegate;
+    final RouteMatchList matchList = delegate.matches;
     final int i = matchList.matches.indexOf(match);
-    final List<Page<dynamic>> pages = routerDelegate.builder
+    final List<Page<dynamic>> pages = delegate.builder
         .buildPages(
           DummyBuildContext(),
           matchList,

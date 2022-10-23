@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'logging.dart';
@@ -13,6 +14,7 @@ export 'route.dart';
 export 'state.dart';
 
 /// The route configuration for GoRouter configured by the app.
+@internal
 class RouteConfiguration {
   /// Constructs a [RouteConfiguration].
   RouteConfiguration({

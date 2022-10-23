@@ -38,7 +38,7 @@ import 'typedefs.dart';
 ///    which contains examples for different routing scenarios.
 class GoRouter extends ChangeNotifier
     with NavigatorObserver
-    implements RouterConfig<RouteMatchList> {
+    implements RouterConfig<Object> {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
   ///
@@ -118,7 +118,7 @@ class GoRouter extends ChangeNotifier
   /// The router delegate. Provide this to the MaterialApp or CupertinoApp's
   /// `.router()` constructor
   @override
-  GoRouterDelegate get routerDelegate => _routerDelegate;
+  RouterDelegate<Object> get routerDelegate => _routerDelegate;
 
   /// The route information provider used by [GoRouter].
   @override
@@ -224,9 +224,17 @@ class GoRouter extends ChangeNotifier
       _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matchList) {
-      routerDelegate.replace(matchList.matches.last);
+      _$goRouterDelegateOrException(routerDelegate)
+          .replace(matchList.matches.last);
     });
   }
+
+  static GoRouterDelegate _$goRouterDelegateOrException(
+          RouterDelegate<Object?> delegate) =>
+      delegate is GoRouterDelegate
+          ? delegate
+          : throw UnsupportedError(
+              'Unknown RouterDelegate type: ' '${delegate.runtimeType}');
 
   /// Replaces the top-most page of the page stack with the named route w/
   /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
