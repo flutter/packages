@@ -71,7 +71,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         // For shell routes, find the navigator key that should be used for the
         // child route in the current match list
         final GlobalKey<NavigatorState>? navigatorKey =
-            route.navigatorKeyForChildRoute(childRoute);
+            route.navigatorKeyForSubRoute(childRoute);
 
         final bool didPop =
             await navigatorKey?.currentState!.maybePop() ?? false;
@@ -141,7 +141,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         // For shell routes, find the navigator key that should be used for the
         // child route in the current match list
         final GlobalKey<NavigatorState>? navigatorKey =
-            route.navigatorKeyForChildRoute(childRoute);
+            route.navigatorKeyForSubRoute(childRoute);
 
         final bool canPop = navigatorKey?.currentState!.canPop() ?? false;
 

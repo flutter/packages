@@ -188,7 +188,7 @@ class RouteBuilder {
 
       // The key to provide to the shell route's Navigator.
       final GlobalKey<NavigatorState>? shellNavigatorKey =
-          route.navigatorKeyForChildRoute(childRoute);
+          route.navigatorKeyForSubRoute(childRoute);
       if (shellNavigatorKey == null) {
         throw _RouteBuilderError(
             'Shell routes must always have a navigator key');
@@ -318,7 +318,7 @@ class RouteBuilder {
         page = pageBuilder(context, state);
       }
     } else if (route is StatefulShellRoute) {
-      final ShellRoutePageBuilder? pageForShell = route.pageProvider;
+      final ShellRoutePageBuilder? pageForShell = route.pageBuilder;
       assert(child != null, 'StatefulShellRoute must contain a child route');
       if (pageForShell != null) {
         page = pageForShell(context, state, child!);
