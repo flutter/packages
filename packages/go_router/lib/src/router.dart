@@ -122,12 +122,12 @@ class GoRouter extends ChangeNotifier
 
   /// The route information provider used by [GoRouter].
   @override
-  GoRouteInformationProvider get routeInformationProvider =>
+  RouteInformationProvider get routeInformationProvider =>
       _routeInformationProvider;
 
   /// The route information parser used by [GoRouter].
   @override
-  GoRouteInformationParser get routeInformationParser =>
+  RouteInformationParser<Object> get routeInformationParser =>
       _routeInformationParser;
 
   /// The route configuration. Used for testing.
@@ -215,19 +215,24 @@ class GoRouter extends ChangeNotifier
   /// See also:
   /// * [go] which navigates to the location.
   /// * [push] which pushes the location onto the page stack.
-  void replace(String location, {Object? extra}) {
-    routeInformationParser
-        .parseRouteInformationWithDependencies(
-      RouteInformation(location: location, state: extra),
-      // TODO(chunhtai): avoid accessing the context directly through global key.
-      // https://github.com/flutter/flutter/issues/99112
-      _routerDelegate.navigatorKey.currentContext!,
-    )
-        .then<void>((RouteMatchList matchList) {
-      _$goRouterDelegateOrException(routerDelegate)
-          .replace(matchList.matches.last);
-    });
-  }
+  void replace(String location, {Object? extra}) =>
+      _$goParserOrException(routeInformationParser)
+          .parseRouteInformationWithDependencies(
+            RouteInformation(location: location, state: extra),
+            // TODO(chunhtai): avoid accessing the context directly through global key.
+            // https://github.com/flutter/flutter/issues/99112
+            _routerDelegate.navigatorKey.currentContext!,
+          )
+          .then<void>((RouteMatchList matchList) =>
+              _$goRouterDelegateOrException(routerDelegate)
+                  .replace(matchList.matches.last));
+
+  static GoRouteInformationParser _$goParserOrException(
+          RouteInformationParser<Object> parser) =>
+      parser is GoRouteInformationParser
+          ? parser
+          : throw UnsupportedError(
+              'Unknown Parser type: ' '${parser.runtimeType}');
 
   static GoRouterDelegate _$goRouterDelegateOrException(
           RouterDelegate<Object?> delegate) =>

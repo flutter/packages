@@ -25,7 +25,7 @@ void main() {
     await tester.pumpWidget(MaterialApp.router(
       routerConfig: router,
     ));
-    return router.routeInformationParser;
+    return router.routeInformationParser as GoRouteInformationParser;
   }
 
   testWidgets('GoRouteInformationParser can parse route',
