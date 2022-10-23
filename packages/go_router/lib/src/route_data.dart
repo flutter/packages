@@ -236,38 +236,44 @@ abstract class ShellRouteData extends RouteData {
 /// {@template typed_route}
 /// A superclass for each typed route descendant
 /// {@endtemplate}
-@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedRoute<T extends RouteData> {
   /// {@macro typed_route}
   const TypedRoute({
     this.routes = const <TypedRoute<RouteData>>[],
-    this.path,
   });
-
-  /// Instantiate a [TypedRoute] with a [path] and [routes].
-  factory TypedRoute.go({
-    required String path,
-    List<TypedRoute<RouteData>> routes = const <TypedRoute<RouteData>>[],
-  }) =>
-      TypedRoute<T>(routes: routes, path: path);
-
-  /// Instantiate a [TypedRoute] with [routes].
-  factory TypedRoute.shell({
-    List<TypedRoute<RouteData>> routes = const <TypedRoute<RouteData>>[],
-  }) =>
-      TypedRoute<T>(routes: routes);
 
   /// Child route definitions.
   ///
   /// See [RouteBase.routes].
   final List<TypedRoute<RouteData>> routes;
+}
+
+/// {@template typed_go_route}
+/// A superclass for each typed go route descendant
+/// {@endtemplate}
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedGoRoute<T extends RouteData> extends TypedRoute<T> {
+  /// {@macro typed_go_route}
+  const TypedGoRoute({
+    required this.path,
+    super.routes,
+  });
 
   /// The path that corresponds to this route.
   ///
   /// See [GoRoute.path].
   ///
   ///
-  final String? path;
+  final String path;
+}
+
+/// {@template typed_shell_route}
+/// A superclass for each typed shell route descendant
+/// {@endtemplate}
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedShellRoute<T extends RouteData> extends TypedRoute<T> {
+  /// {@macro typed_shell_route}
+  const TypedShellRoute({super.routes});
 }
 
 /// Internal class used to signal that the default page behavior should be used.
