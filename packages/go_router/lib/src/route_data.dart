@@ -239,7 +239,7 @@ abstract class ShellRouteData extends RouteData {
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedRoute<T extends RouteData> {
   /// {@macro typed_route}
-  const TypedRoute._({
+  const TypedRoute({
     this.routes = const <TypedRoute<RouteData>>[],
     this.path,
   });
@@ -249,13 +249,13 @@ class TypedRoute<T extends RouteData> {
     required String path,
     List<TypedRoute<RouteData>> routes = const <TypedRoute<RouteData>>[],
   }) =>
-      TypedRoute<T>._(routes: routes, path: path);
+      TypedRoute<T>(routes: routes, path: path);
 
   /// Instantiate a [TypedRoute] with [routes].
   factory TypedRoute.shell({
     List<TypedRoute<RouteData>> routes = const <TypedRoute<RouteData>>[],
   }) =>
-      TypedRoute<T>._(routes: routes);
+      TypedRoute<T>(routes: routes);
 
   /// Child route definitions.
   ///
