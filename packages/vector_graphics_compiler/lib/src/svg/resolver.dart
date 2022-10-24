@@ -21,9 +21,10 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitClipNode(ClipNode clipNode, AffineMatrix data) {
+    final AffineMatrix childTransform = clipNode.concatTransform(data);
     final List<Path> transformedClips = <Path>[
       for (Path clip in clipNode.resolver(clipNode.clipId))
-        clip.transformed(data)
+        clip.transformed(childTransform)
     ];
     if (transformedClips.isEmpty) {
       return clipNode.child.accept(this, data);

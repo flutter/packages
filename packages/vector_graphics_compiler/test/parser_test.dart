@@ -4,6 +4,33 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Transformed clip', () async {
+    final VectorInstructions instructions = await parseWithoutOptimizers(
+      transformedClip,
+    );
+
+    expect(instructions.paths, <Path>[
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(0.0, 0.0),
+          LineToCommand(375.0, 0.0),
+          LineToCommand(375.0, 407.0),
+          LineToCommand(0.0, 407.0),
+          CloseCommand()
+        ],
+      ),
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(360.0, 395.5),
+          LineToCommand(16.0, 395.5),
+          LineToCommand(188.0, 1.0),
+          LineToCommand(360.0, 395.5),
+          CloseCommand()
+        ],
+      )
+    ]);
+  });
+
   test('Zero width stroke', () async {
     final VectorInstructions instructions = await parseWithoutOptimizers(
       '''
