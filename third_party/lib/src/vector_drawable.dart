@@ -1098,6 +1098,10 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
 
     if (style?.clipPath?.isNotEmpty == true) {
       for (Path clipPath in style!.clipPath!) {
+        if (transform != null) {
+          clipPath = clipPath.transform(transform!);
+        }
+
         canvas.save();
         canvas.clipPath(clipPath);
         if (children!.length > 1) {
