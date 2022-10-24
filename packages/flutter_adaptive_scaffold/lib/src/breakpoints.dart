@@ -91,8 +91,7 @@ class WidthPlatformBreakpoint extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
     final TargetPlatform host = Theme.of(context).platform;
-    final bool isRightPlatform =
-        platform?.contains(host) ?? true;
+    final bool isRightPlatform = platform?.contains(host) ?? true;
 
     // Null boundaries are unbounded, assign the max/min of their associated
     // direction on a number line.
@@ -100,9 +99,7 @@ class WidthPlatformBreakpoint extends Breakpoint {
     final double lowerBound = begin ?? double.negativeInfinity;
     final double upperBound = end ?? double.infinity;
 
-    return width >= lowerBound
-      && width < upperBound
-      && isRightPlatform;
+    return width >= lowerBound && width < upperBound && isRightPlatform;
   }
 }
 
