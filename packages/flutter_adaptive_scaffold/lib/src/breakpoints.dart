@@ -4,17 +4,13 @@
 
 import 'package:flutter/material.dart';
 
-/// A subset of all TargetPlatforms which are considered to be
-/// desktop platforms.
-const Set<TargetPlatform> desktop = <TargetPlatform>{
+const Set<TargetPlatform> _desktop = <TargetPlatform>{
   TargetPlatform.linux,
   TargetPlatform.macOS,
   TargetPlatform.windows
 };
 
-/// A subset of all TargetPlatforms which are considered to be
-/// mobile platforms.
-const Set<TargetPlatform> mobile = <TargetPlatform>{
+const Set<TargetPlatform> _mobile = <TargetPlatform>{
   TargetPlatform.android,
   TargetPlatform.fuchsia,
   TargetPlatform.iOS,
@@ -41,11 +37,11 @@ class Breakpoints {
 
   /// A desktop screen whose width is less than 600 dp and greater than 0 dp.
   static const Breakpoint smallDesktop =
-      WidthPlatformBreakpoint(begin: 0, end: 600, platform: desktop);
+      WidthPlatformBreakpoint(begin: 0, end: 600, platform: _desktop);
 
   /// A mobile screen whose width is less than 600 dp and greater than 0 dp.
   static const Breakpoint smallMobile =
-      WidthPlatformBreakpoint(begin: 0, end: 600, platform: mobile);
+      WidthPlatformBreakpoint(begin: 0, end: 600, platform: _mobile);
 
   /// A window whose width is between 600 dp and 840 dp.
   static const Breakpoint medium =
@@ -56,22 +52,22 @@ class Breakpoints {
 
   /// A desktop window whose width is between 600 dp and 840 dp.
   static const Breakpoint mediumDesktop =
-      WidthPlatformBreakpoint(begin: 600, end: 840, platform: desktop);
+      WidthPlatformBreakpoint(begin: 600, end: 840, platform: _desktop);
 
   /// A mobile window whose width is between 600 dp and 840 dp.
   static const Breakpoint mediumMobile =
-      WidthPlatformBreakpoint(begin: 600, end: 840, platform: mobile);
+      WidthPlatformBreakpoint(begin: 600, end: 840, platform: _mobile);
 
   /// A window whose width is greater than 840 dp.
   static const Breakpoint large = WidthPlatformBreakpoint(begin: 840);
 
   /// A desktop window whose width is greater than 840 dp.
   static const Breakpoint largeDesktop =
-      WidthPlatformBreakpoint(begin: 840, platform: desktop);
+      WidthPlatformBreakpoint(begin: 840, platform: _desktop);
 
   /// A mobile window whose width is greater than 840 dp.
   static const Breakpoint largeMobile =
-      WidthPlatformBreakpoint(begin: 840, platform: mobile);
+      WidthPlatformBreakpoint(begin: 840, platform: _mobile);
 }
 
 /// A class that can be used to quickly generate [Breakpoint]s that depend on
