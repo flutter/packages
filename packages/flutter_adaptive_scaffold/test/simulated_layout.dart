@@ -1,13 +1,7 @@
-
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
-import 'package:flutter_adaptive_scaffold/src/breakpoints.dart';
 
 import 'test_breakpoints.dart';
-
 
 AnimatedWidget leftOutIn(Widget child, Animation<double> animation) {
   return SlideTransition(
@@ -30,7 +24,6 @@ AnimatedWidget leftInOut(Widget child, Animation<double> animation) {
     child: child,
   );
 }
-
 
 class TestScaffold extends StatefulWidget {
   const TestScaffold({
@@ -128,47 +121,50 @@ enum SimulatedLayout {
     return MediaQuery(
       data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
           .copyWith(size: Size(_width, _height)),
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: SlotLayout(
-          config: <Breakpoint, SlotLayoutConfig>{
-            Breakpoints.small: SlotLayout.from(
-              key: const Key('Breakpoints.small'),
-              builder: (BuildContext context) => Container(),
-            ),
-            Breakpoints.smallMobile: SlotLayout.from(
-              key: const Key('Breakpoints.smallMobile'),
-              builder: (BuildContext context) => Container(),
-            ),
-            Breakpoints.smallDesktop: SlotLayout.from(
-              key: const Key('Breakpoints.smallDesktop'),
-              builder: (BuildContext context) => Container(),
-            ),
-            Breakpoints.medium: SlotLayout.from(
-              key: const Key('Breakpoints.medium'),
-              builder: (BuildContext context) => Container(),
-            ),
-            Breakpoints.mediumMobile: SlotLayout.from(
-              key: const Key('Breakpoints.mediumMobile'),
-              builder: (BuildContext context) => Container(),
-            ),
-            Breakpoints.mediumDesktop: SlotLayout.from(
-              key: const Key('Breakpoints.mediumDesktop'),
-              builder: (BuildContext context) => Container(),
-            ),
-            Breakpoints.large: SlotLayout.from(
-              key: const Key('Breakpoints.large'),
-              builder: (BuildContext context) => Container(),
-            ),
-            Breakpoints.largeMobile: SlotLayout.from(
-              key: const Key('Breakpoints.largeMobile'),
-              builder: (BuildContext context) => Container(),
-            ),
-            Breakpoints.largeDesktop: SlotLayout.from(
-              key: const Key('Breakpoints.largeDesktop'),
-              builder: (BuildContext context) => Container(),
-            ),
-          },
+      child: Theme(
+        data: ThemeData(),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: SlotLayout(
+            config: <Breakpoint, SlotLayoutConfig>{
+              Breakpoints.small: SlotLayout.from(
+                key: const Key('Breakpoints.small'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.smallMobile: SlotLayout.from(
+                key: const Key('Breakpoints.smallMobile'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.smallDesktop: SlotLayout.from(
+                key: const Key('Breakpoints.smallDesktop'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.medium: SlotLayout.from(
+                key: const Key('Breakpoints.medium'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.mediumMobile: SlotLayout.from(
+                key: const Key('Breakpoints.mediumMobile'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.mediumDesktop: SlotLayout.from(
+                key: const Key('Breakpoints.mediumDesktop'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.large: SlotLayout.from(
+                key: const Key('Breakpoints.large'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.largeMobile: SlotLayout.from(
+                key: const Key('Breakpoints.largeMobile'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.largeDesktop: SlotLayout.from(
+                key: const Key('Breakpoints.largeDesktop'),
+                builder: (BuildContext context) => Container(),
+              ),
+            },
+          ),
         ),
       ),
     );
