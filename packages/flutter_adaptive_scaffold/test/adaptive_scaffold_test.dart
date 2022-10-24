@@ -4,8 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/src/adaptive_scaffold.dart';
-import 'package:flutter_adaptive_scaffold/src/breakpoints.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'simulated_layout.dart';
+import 'test_breakpoints.dart';
 
 void main() {
   testWidgets('adaptive scaffold lays out slots as expected',
@@ -20,8 +21,8 @@ void main() {
     final Finder primaryNav = find.byKey(const Key('primaryNavigation'));
     final Finder primaryNav1 = find.byKey(const Key('primaryNavigation1'));
 
-    await tester.binding.setSurfaceSize(SimulatedLayout.mobile.size);
-    await tester.pumpWidget(SimulatedLayout.mobile.app());
+    await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
+    await tester.pumpWidget(SimulatedLayout.small.app());
     await tester.pumpAndSettle();
 
     expect(smallBody, findsOneWidget);
@@ -33,8 +34,8 @@ void main() {
     expect(tester.getTopLeft(smallSBody), const Offset(200, 0));
     expect(tester.getTopLeft(bottomNav), const Offset(0, 744));
 
-    await tester.binding.setSurfaceSize(SimulatedLayout.tablet.size);
-    await tester.pumpWidget(SimulatedLayout.tablet.app());
+    await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
+    await tester.pumpWidget(SimulatedLayout.medium.app());
     await tester.pumpAndSettle();
 
     expect(smallBody, findsNothing);
@@ -49,8 +50,8 @@ void main() {
     expect(tester.getTopLeft(primaryNav), Offset.zero);
     expect(tester.getBottomRight(primaryNav), const Offset(88, 800));
 
-    await tester.binding.setSurfaceSize(SimulatedLayout.desktop.size);
-    await tester.pumpWidget(SimulatedLayout.desktop.app());
+    await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
+    await tester.pumpWidget(SimulatedLayout.large.app());
     await tester.pumpAndSettle();
 
     expect(body, findsNothing);
@@ -71,10 +72,10 @@ void main() {
     final Finder b = find.byKey(const Key('body'));
     final Finder sBody = find.byKey(const Key('sBody'));
 
-    await tester.binding.setSurfaceSize(SimulatedLayout.mobile.size);
-    await tester.pumpWidget(SimulatedLayout.mobile.app());
-    await tester.binding.setSurfaceSize(SimulatedLayout.tablet.size);
-    await tester.pumpWidget(SimulatedLayout.tablet.app());
+    await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
+    await tester.pumpWidget(SimulatedLayout.small.app());
+    await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
+    await tester.pumpWidget(SimulatedLayout.medium.app());
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
@@ -112,11 +113,11 @@ void main() {
     final Finder b = find.byKey(const Key('body'));
     final Finder sBody = find.byKey(const Key('sBody'));
 
-    await tester.binding.setSurfaceSize(SimulatedLayout.mobile.size);
-    await tester.pumpWidget(SimulatedLayout.mobile.app(animations: false));
+    await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
+    await tester.pumpWidget(SimulatedLayout.small.app(animations: false));
 
-    await tester.binding.setSurfaceSize(SimulatedLayout.tablet.size);
-    await tester.pumpWidget(SimulatedLayout.tablet.app(animations: false));
+    await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
+    await tester.pumpWidget(SimulatedLayout.medium.app(animations: false));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
@@ -208,127 +209,4 @@ class PreferredSizeWidgetImpl extends StatelessWidget
 
   @override
   Size get preferredSize => const Size(200, 200);
-}
-
-class TestBreakpoint0 extends Breakpoint {
-  @override
-  bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 0 &&
-        MediaQuery.of(context).size.width < 800;
-  }
-}
-
-class TestBreakpoint800 extends Breakpoint {
-  @override
-  bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 800 &&
-        MediaQuery.of(context).size.width < 1000;
-  }
-}
-
-class TestBreakpoint1000 extends Breakpoint {
-  @override
-  bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 1000;
-  }
-}
-
-class NeverOnBreakpoint extends Breakpoint {
-  @override
-  bool isActive(BuildContext context) {
-    return false;
-  }
-}
-
-class TestScaffold extends StatefulWidget {
-  const TestScaffold({
-    super.key,
-    this.initialIndex = 0,
-    this.isAnimated = true,
-  });
-
-  final int initialIndex;
-  final bool isAnimated;
-
-  static const List<NavigationDestination> destinations =
-      <NavigationDestination>[
-    NavigationDestination(
-      key: Key('Inbox'),
-      icon: Icon(Icons.inbox),
-      label: 'Inbox',
-    ),
-    NavigationDestination(
-      key: Key('Articles'),
-      icon: Icon(Icons.article),
-      label: 'Articles',
-    ),
-    NavigationDestination(
-      key: Key('Chat'),
-      icon: Icon(Icons.chat),
-      label: 'Chat',
-    ),
-  ];
-
-  @override
-  State<TestScaffold> createState() => TestScaffoldState();
-}
-
-class TestScaffoldState extends State<TestScaffold> {
-  late int index = widget.initialIndex;
-
-  @override
-  Widget build(BuildContext context) {
-    return AdaptiveScaffold(
-      selectedIndex: index,
-      onSelectedIndexChange: (int index) {
-        setState(() {
-          this.index = index;
-        });
-      },
-      drawerBreakpoint: NeverOnBreakpoint(),
-      internalAnimations: widget.isAnimated,
-      smallBreakpoint: TestBreakpoint0(),
-      mediumBreakpoint: TestBreakpoint800(),
-      largeBreakpoint: TestBreakpoint1000(),
-      destinations: TestScaffold.destinations,
-      smallBody: (_) => Container(color: Colors.red),
-      body: (_) => Container(color: Colors.green),
-      largeBody: (_) => Container(color: Colors.blue),
-      smallSecondaryBody: (_) => Container(color: Colors.red),
-      secondaryBody: (_) => Container(color: Colors.green),
-      largeSecondaryBody: (_) => Container(color: Colors.blue),
-    );
-  }
-}
-
-enum SimulatedLayout {
-  mobile(width: 400, navSlotKey: 'bottomNavigation'),
-  tablet(width: 800, navSlotKey: 'primaryNavigation'),
-  desktop(width: 1100, navSlotKey: 'primaryNavigation1');
-
-  const SimulatedLayout({
-    required double width,
-    required this.navSlotKey,
-  }) : _width = width;
-
-  final double _width;
-  final double _height = 800;
-  final String navSlotKey;
-
-  Size get size => Size(_width, _height);
-
-  MaterialApp app({
-    int initialIndex = 0,
-    bool animations = true,
-  }) {
-    return MaterialApp(
-      home: MediaQuery(
-        data: MediaQueryData(size: size),
-        child: TestScaffold(
-          initialIndex: initialIndex,
-          isAnimated: animations,
-        ),
-      ),
-    );
-  }
 }
