@@ -3,16 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_adaptive_scaffold/src/breakpoints.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'simulated_layout.dart';
 
 void main() {
-  testWidgets('Desktop breakpoints do not show on mobile device',
+    testWidgets('Desktop breakpoints do not show on mobile device',
       (WidgetTester tester) async {
-    for(final TargetPlatform targetPlatform in mobile) {
-      debugDefaultTargetPlatformOverride = targetPlatform;
-
       // Pump a small layout on a mobile device. The small slot
       // should give the mobile slot layout, not the desktop layout.
       await tester.pumpWidget(SimulatedLayout.small.slot);
@@ -31,15 +28,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.largeMobile')), findsOneWidget);
       expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+  }, variant: TargetPlatformVariant.mobile());
 
-      debugDefaultTargetPlatformOverride = null;
-    }
-  });
-
-    testWidgets('Mobile breakpoints do not show on desktop device',
+  testWidgets('Mobile breakpoints do not show on desktop device',
       (WidgetTester tester) async {
-    for(final TargetPlatform targetPlatform in desktop) {
-      debugDefaultTargetPlatformOverride = targetPlatform;
       // Pump a small layout on a desktop device. The small slot
       // should give the mobile slot layout, not the desktop layout.
       await tester.pumpWidget(SimulatedLayout.small.slot);
@@ -59,7 +51,5 @@ void main() {
       expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsOneWidget);
       expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
 
-      debugDefaultTargetPlatformOverride = null;
-    }
-  });
+  }, variant: TargetPlatformVariant.desktop());
 }
