@@ -1,3 +1,7 @@
+## 0.0.8
+
+Make fuchsia a mobile platform.
+
 ## 0.0.7
 
 * Patch duplicate key error in SlotLayout.
