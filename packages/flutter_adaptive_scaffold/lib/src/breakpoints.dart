@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 /// A subset of all TargetPlatforms which are considered to be
 /// desktop platforms.
 const Set<TargetPlatform> desktop = <TargetPlatform>{
-  TargetPlatform.fuchsia,
   TargetPlatform.linux,
   TargetPlatform.macOS,
   TargetPlatform.windows
