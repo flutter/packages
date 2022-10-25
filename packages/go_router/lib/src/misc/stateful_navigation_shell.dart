@@ -81,7 +81,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     return index < 0 ? 0 : index;
   }
 
-  void _goToLocation(String location, Object? extra) {
+  void _go(String location, Object? extra) {
     GoRouter.of(context).go(location, extra: extra);
   }
 
@@ -95,7 +95,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
             ))
         .toList();
     _routeState = StatefulShellRouteState(
-      goToLocation: _goToLocation,
+      go: _go,
       route: widget.shellRoute,
       branchState: branchState,
       index: 0,
@@ -105,16 +105,16 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
   @override
   void didUpdateWidget(covariant StatefulNavigationShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateForCurrentTab();
+    _updateRouteState();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _updateForCurrentTab();
+    _updateRouteState();
   }
 
-  void _updateForCurrentTab() {
+  void _updateRouteState() {
     final int currentIndex = _findCurrentIndex();
     final GoRouter goRouter = GoRouter.of(context);
 
@@ -126,7 +126,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     );
 
     _routeState = StatefulShellRouteState(
-      goToLocation: _goToLocation,
+      go: _go,
       route: widget.shellRoute,
       branchState: branchState,
       index: currentIndex,

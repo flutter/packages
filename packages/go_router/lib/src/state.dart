@@ -90,11 +90,11 @@ class GoRouterState {
 class StatefulShellRouteState {
   /// Constructs a [StatefulShellRouteState].
   const StatefulShellRouteState({
-    required Function(String, Object?) goToLocation,
+    required Function(String, Object?) go,
     required this.route,
     required this.branchState,
     required this.index,
-  }) : _goToLocation = goToLocation;
+  }) : _go = go;
 
   /// The associated [StatefulShellRoute]
   final StatefulShellRoute route;
@@ -106,7 +106,7 @@ class StatefulShellRouteState {
   /// The index of the currently active route branch.
   final int index;
 
-  final Function(String, Object?) _goToLocation;
+  final Function(String, Object?) _go;
 
   /// Gets the [Navigator]s for each of the route branches.
   ///
@@ -120,8 +120,8 @@ class StatefulShellRouteState {
   /// This method will switch the currently active [Navigator] for the
   /// [StatefulShellRoute] by navigating to the current location of the
   /// specified branch, using the method [GoRouter.go].
-  void goToBranch(int index, {Object? extra}) {
-    _goToLocation(branchState[index]._location, extra);
+  void goBranch(int index, {Object? extra}) {
+    _go(branchState[index]._location, extra);
   }
 
   @override

@@ -189,7 +189,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   void _onItemTapped(
       BuildContext context, StatefulShellRouteState shellState, int index) {
-    shellState.goToBranch(index);
+    shellState.goBranch(index);
   }
 }
 
@@ -363,7 +363,7 @@ class TabbedRootScreen extends StatelessWidget {
 
   void _onTabTap(
       BuildContext context, StatefulShellRouteState shellState, int index) {
-    shellState.goToBranch(index);
+    shellState.goBranch(index);
   }
 }
 
