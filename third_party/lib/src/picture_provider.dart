@@ -422,7 +422,7 @@ abstract class PictureProvider<T, U> {
 /// An immutable key representing the current state of a [PictureProvider].
 @immutable
 class PictureKey<T> {
-  /// Creates a new immutable key reprenseting the current state of a
+  /// Creates a new immutable key representing the current state of a
   /// [PictureProvider] for the [PictureCache].
   const PictureKey(
     this.keyData, {
