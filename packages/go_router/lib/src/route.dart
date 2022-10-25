@@ -340,10 +340,7 @@ abstract class ShellRouteBase extends RouteBase {
   const ShellRouteBase._({super.routes}) : super._();
 
   /// Returns the key for the [Navigator] that is to be used for the specified
-  /// sub-route.
-  ///
-  /// The route passed as an argument to this method must be an immediate
-  /// sub-route to this shell route.
+  /// immediate sub-route of this shell route.
   GlobalKey<NavigatorState>? navigatorKeyForSubRoute(RouteBase subRoute);
 }
 
@@ -749,6 +746,12 @@ class StatefulShellRoute extends ShellRouteBase {
 
 /// Representation of a separate branch in a stateful navigation tree, used to
 /// configure [StatefulShellRoute].
+///
+/// The only required argument when creating a ShellRouteBranch is the
+/// [rootRoute], however in some cases you may also need to specify the
+/// [defaultLocation], for instance of you're using another shell route as the
+/// rootRoute. A [navigatorKey] can be useful to provide in case you need to
+/// use the [Navigator] created for this branch elsewhere.
 class ShellRouteBranch {
   /// Constructs a [ShellRouteBranch].
   ShellRouteBranch({
