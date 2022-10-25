@@ -1,10 +1,19 @@
+## NEXT
+
+- Update README
+- Removes dynamic calls in examples.
+
 ## 5.2.0
 
 - Introduced a new shell route class called `StatefulShellRoute`, to support using separate
-  navigators for child routes as well as preserving state in each navigation tree 
+  navigators for child routes as well as preserving state in each navigation tree
   (flutter/flutter#99124).
 - Updated documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
   describe the meaning of the child argument in the builder functions.
+
+## 5.1.1
+
+- Removes DebugGoRouteInformation.
 
 ## 5.1.0
 

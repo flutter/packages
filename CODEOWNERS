@@ -1,0 +1,31 @@
+# Below is a list of Flutter team members who are suggested reviewers
+# for contributions to packages in this repository.
+#
+# These names are just suggestions. It is fine to have your changes
+# reviewed by someone else.
+
+packages/animations/**                    @goderbauer
+packages/cross_file/**                    @ditman
+packages/css_colors/**                    @stuartmorgan
+packages/dynamic_layouts/**               @Piinks
+packages/extension_google_sign_in_as_googleapis_auth/**  @ditman
+packages/flutter_adaptive_scaffold/**     @gspencergoog
+packages/flutter_image/**                 @stuartmorgan
+packages/flutter_lints/**                 @goderbauer
+packages/flutter_markdown/**              @domesticmouse
+packages/flutter_migrate/**               @GaryQian
+packages/flutter_template_images/**       @stuartmorgan
+packages/go_router/**                     @chunhtai
+packages/go_router_builder/**             @chunhtai
+packages/google_identity_services_web/**  @ditman
+packages/imitation_game/**                @gaaclarke
+packages/metrics_center/**                @keyonghan
+packages/multicast_dns/**                 @dnfield
+packages/palette_generator/**             @gspencergoog
+packages/pigeon/**                        @tarrinneal @gaaclarke
+packages/pointer_interceptor/**           @ditman
+packages/rfw/**                           @Hixie
+packages/standard_message_codec/**        @jonahwilliams
+packages/web_benchmarks/**                @yjbanov
+packages/xdg_directories/**               @stuartmorgan
+third_party/packages/cupertino_icons/**   @jmagman

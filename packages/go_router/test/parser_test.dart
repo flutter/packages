@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/configuration.dart';
-import 'package:go_router/src/information_provider.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/matching.dart';
 import 'package:go_router/src/parser.dart';
@@ -54,7 +53,7 @@ void main() {
 
     RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
-            const DebugGoRouteInformation(location: '/'), context);
+            const RouteInformation(location: '/'), context);
     List<RouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matches[0].queryParams.isEmpty, isTrue);
@@ -65,8 +64,7 @@ void main() {
 
     final Object extra = Object();
     matchesObj = await parser.parseRouteInformationWithDependencies(
-        DebugGoRouteInformation(location: '/abc?def=ghi', state: extra),
-        context);
+        RouteInformation(location: '/abc?def=ghi', state: extra), context);
     matches = matchesObj.matches;
     expect(matches.length, 2);
     expect(matches[0].queryParams.length, 1);
@@ -194,7 +192,7 @@ void main() {
 
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
-            const DebugGoRouteInformation(location: '/def'), context);
+            const RouteInformation(location: '/def'), context);
     final List<RouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matches[0].queryParams.isEmpty, isTrue);
@@ -229,8 +227,7 @@ void main() {
     final BuildContext context = tester.element(find.byType(Router<Object>));
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
-            const DebugGoRouteInformation(location: '/123/family/456'),
-            context);
+            const RouteInformation(location: '/123/family/456'), context);
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
@@ -278,7 +275,7 @@ void main() {
     final BuildContext context = tester.element(find.byType(Router<Object>));
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
-            const DebugGoRouteInformation(location: '/random/uri'), context);
+            const RouteInformation(location: '/random/uri'), context);
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
@@ -319,7 +316,7 @@ void main() {
     final BuildContext context = tester.element(find.byType(Router<Object>));
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
-            const DebugGoRouteInformation(location: '/redirect'), context);
+            const RouteInformation(location: '/redirect'), context);
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
@@ -349,8 +346,7 @@ void main() {
     final BuildContext context = tester.element(find.byType(Router<Object>));
     expect(() async {
       await parser.parseRouteInformationWithDependencies(
-          const DebugGoRouteInformation(location: '::Not valid URI::'),
-          context);
+          const RouteInformation(location: '::Not valid URI::'), context);
     }, throwsA(isA<FormatException>()));
   });
 
@@ -373,7 +369,7 @@ void main() {
     final BuildContext context = tester.element(find.byType(Router<Object>));
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
-            const DebugGoRouteInformation(location: '/abd'), context);
+            const RouteInformation(location: '/abd'), context);
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(1));
@@ -417,7 +413,7 @@ void main() {
     final BuildContext context = tester.element(find.byType(Router<Object>));
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
-            const DebugGoRouteInformation(location: '/a'), context);
+            const RouteInformation(location: '/a'), context);
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(2));
