@@ -318,6 +318,97 @@ void main() {
       expect(find.byType(_HomeScreen), findsNothing);
       expect(find.byType(_DetailsScreen), findsOneWidget);
     });
+
+    testWidgets('Uses the correct restorationScopeId for ShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> shellNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final RouteConfiguration config = RouteConfiguration(
+        navigatorKey: rootNavigatorKey,
+        routes: <RouteBase>[
+          ShellRoute(
+            builder: (BuildContext context, GoRouterState state, Widget child) {
+              return _HomeScreen(child: child);
+            },
+            navigatorKey: shellNavigatorKey,
+            restorationScopeId: 'scope1',
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) {
+                  return _DetailsScreen();
+                },
+              ),
+            ],
+          ),
+        ],
+        redirectLimit: 10,
+        topRedirect: (BuildContext context, GoRouterState state) {
+          return null;
+        },
+      );
+
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        _createRouteMatch(config.routes.first, ''),
+        _createRouteMatch(config.routes.first.routes.first, '/a'),
+      ]);
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      expect(find.byKey(rootNavigatorKey), findsOneWidget);
+      expect(find.byKey(shellNavigatorKey), findsOneWidget);
+      expect(
+          (shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId,
+          'scope1');
+    });
+
+    testWidgets('Uses the correct restorationScopeId for StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> shellNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/a',
+        navigatorKey: rootNavigatorKey,
+        routes: <RouteBase>[
+          StatefulShellRoute(
+            builder: (BuildContext context, GoRouterState state, Widget child) {
+              return _HomeScreen(child: child);
+            },
+            branches: [
+              ShellRouteBranch(
+                navigatorKey: shellNavigatorKey,
+                restorationScopeId: 'scope1',
+                rootRoute: GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return _DetailsScreen();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(
+        routerConfig: goRouter,
+      ));
+
+      expect(find.byKey(rootNavigatorKey), findsOneWidget);
+      expect(find.byKey(shellNavigatorKey), findsOneWidget);
+      expect(
+          (shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId,
+          'scope1');
+    });
   });
 }
 
@@ -398,4 +489,17 @@ class _BuilderTestWidget extends StatelessWidget {
       // builder: (context, child) => ,
     );
   }
+}
+
+RouteMatch _createRouteMatch(RouteBase route, String location) {
+  return RouteMatch(
+    route: route,
+    subloc: location,
+    fullpath: location,
+    encodedParams: <String, String>{},
+    queryParams: <String, String>{},
+    queryParametersAll: <String, List<String>>{},
+    extra: null,
+    error: null,
+  );
 }

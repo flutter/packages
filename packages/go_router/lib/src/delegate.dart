@@ -135,7 +135,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   bool canPop() {
     // Loop through navigators in reverse and call canPop()
     final int matchCount = _matchList.matches.length;
-    RouteBase? childRoute;
+    late RouteBase subRoute;
     for (int i = matchCount - 1; i >= 0; i -= 1) {
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
@@ -146,11 +146,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         if (canPop) {
           return canPop;
         }
-      } else if (route is ShellRouteBase && childRoute != null) {
+      } else if (route is ShellRouteBase) {
         // For shell routes, find the navigator key that should be used for the
         // child route in the current match list
         final GlobalKey<NavigatorState>? navigatorKey =
-            route.navigatorKeyForSubRoute(childRoute);
+            route.navigatorKeyForSubRoute(subRoute);
 
         final bool canPop = navigatorKey?.currentState!.canPop() ?? false;
 
@@ -159,7 +159,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
           return canPop;
         }
       }
-      childRoute = route;
+      subRoute = route;
     }
     return navigatorKey.currentState?.canPop() ?? false;
   }

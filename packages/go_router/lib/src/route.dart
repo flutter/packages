@@ -446,6 +446,7 @@ class ShellRoute extends ShellRouteBase {
     this.pageBuilder,
     super.routes,
     GlobalKey<NavigatorState>? navigatorKey,
+    this.restorationScopeId,
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._() {
@@ -475,6 +476,10 @@ class ShellRoute extends ShellRouteBase {
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
   final GlobalKey<NavigatorState> navigatorKey;
+
+  /// Restoration ID to save and restore the state of the navigator, including
+  /// its history.
+  final String? restorationScopeId;
 
   @override
   GlobalKey<NavigatorState>? navigatorKeyForSubRoute(RouteBase subRoute) {
@@ -758,6 +763,7 @@ class ShellRouteBranch {
     required this.rootRoute,
     GlobalKey<NavigatorState>? navigatorKey,
     this.defaultLocation,
+    this.restorationScopeId,
   })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         assert(rootRoute is GoRoute || defaultLocation != null,
             'Provide a defaultLocation or use a GoRoute as rootRoute');
@@ -779,4 +785,8 @@ class ShellRouteBranch {
   /// using a [rootRoute] of a different type than [GoRoute], a default location
   /// must be specified.
   final String? defaultLocation;
+
+  /// Restoration ID to save and restore the state of the navigator, including
+  /// its history.
+  final String? restorationScopeId;
 }

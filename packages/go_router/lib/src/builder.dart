@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -200,15 +201,26 @@ class RouteBuilder {
       _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
           keyToPages, newParams, shellNavigatorKey);
 
-      Widget child = _buildNavigator(
-          pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey);
-
+      Widget child;
       if (route is StatefulShellRoute) {
+        final String? restorationScopeId = route.branches
+            .firstWhereOrNull(
+                (ShellRouteBranch e) => e.navigatorKey == shellNavigatorKey)
+            ?.restorationScopeId;
+        child = _buildNavigator(
+            pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
+            restorationScopeId: restorationScopeId);
         child = _buildStatefulNavigationShell(
           shellRoute: route,
           navigator: child as Navigator,
           shellRouterState: state,
         );
+      } else {
+        final String? restorationScopeId =
+            (route is ShellRoute) ? route.restorationScopeId : null;
+        child = _buildNavigator(
+            pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
+            restorationScopeId: restorationScopeId);
       }
 
       // Build the Page for this route
@@ -227,10 +239,11 @@ class RouteBuilder {
     List<Page<dynamic>> pages,
     Key? navigatorKey, {
     List<NavigatorObserver> observers = const <NavigatorObserver>[],
+    String? restorationScopeId,
   }) {
     return Navigator(
       key: navigatorKey,
-      restorationScopeId: restorationScopeId,
+      restorationScopeId: restorationScopeId ?? this.restorationScopeId,
       pages: pages,
       observers: observers,
       onPopPage: (Route<dynamic> route, dynamic result) {
