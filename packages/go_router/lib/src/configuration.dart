@@ -81,13 +81,15 @@ class RouteConfiguration {
               ],
             );
           } else if (route is StatefulShellRoute) {
-            checkParentNavigatorKeys(
-              route.routes,
-              <GlobalKey<NavigatorState>>[
-                ...allowedKeys,
-                ...route.navigatorKeys,
-              ],
-            );
+            for (final ShellRouteBranch branch in route.branches) {
+              checkParentNavigatorKeys(
+                [branch.rootRoute],
+                <GlobalKey<NavigatorState>>[
+                  ...allowedKeys,
+                  branch.navigatorKey,
+                ],
+              );
+            }
           }
         }
       }

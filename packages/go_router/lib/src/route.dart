@@ -720,14 +720,6 @@ class StatefulShellRoute extends ShellRouteBase {
   /// built for this route, using the builder function.
   final ShellRoutePageBuilder? pageBuilder;
 
-  /// The [GlobalKey]s to be used by the [Navigator]s built for this route.
-  ///
-  /// StatefulShellRoute builds a Navigator for each of its route branches.
-  /// Routes on a particular branch are then placed onto these Navigators
-  /// instead of the root Navigator.
-  List<GlobalKey<NavigatorState>> get navigatorKeys =>
-      branches.map((ShellRouteBranch e) => e.navigatorKey).toList();
-
   @override
   GlobalKey<NavigatorState>? navigatorKeyForSubRoute(RouteBase subRoute) {
     final int routeIndex = routes.indexOf(subRoute);
