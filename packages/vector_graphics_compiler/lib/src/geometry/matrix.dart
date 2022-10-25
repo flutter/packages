@@ -68,46 +68,14 @@ class AffineMatrix {
     );
   }
 
-  /// Create a new [AffineMatrix] with the translation components, if any,
-  /// removed.
-  AffineMatrix removeTranslation() {
-    return AffineMatrix(
-      a,
-      b,
-      c,
-      d,
-      0,
-      0,
-      _m4_10,
-    );
-  }
-
-  /// Return the x, y scale transform as a point if possible.
-  Point? getScale() {
-    if (b == 0.0 && c == 0.0 && _m4_10 == a) {
-      return Point(a, d);
-    }
-    return null;
-  }
-
-  /// Return a new [AffineMatrix] with any scaling removed, if possible.
-  AffineMatrix? removeScale() {
-    if (a == 1.0 && b == 1.0 && _m4_10 == 1.0) {
-      return this;
-    }
-    if (b == 0.0 && c == 0.0 && _m4_10 == a) {
-      return AffineMatrix(
-        1.0,
-        b,
-        c,
-        1.0,
-        e,
-        f,
-        1.0,
-      );
-    }
-    // Non-trivial transform.
-    return null;
+  /// Whether this matrix can be expressed be applied to a rect without any loss
+  /// of inforamtion.
+  ///
+  /// In other words, if this matrix is a simple translate and/or non-negative
+  /// scale with no rotation or skew, this property is true. Otherwise, it is
+  /// false.
+  bool get encodableInRect {
+    return a > 0 && b == 0 && c == 0 && d > 0 && _m4_10 == a;
   }
 
   /// Creates a new affine matrix rotated by `x` and `y`.

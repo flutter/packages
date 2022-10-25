@@ -205,6 +205,8 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitImageNode(ImageNode imageNode, AffineMatrix data) {
+    final AffineMatrix childTransform = imageNode.concatTransform(data);
+
     final SvgAttributes attributes = imageNode.attributes;
     final double left = double.parse(attributes.raw['x'] ?? '0');
     final double top = double.parse(attributes.raw['y'] ?? '0');
@@ -220,23 +222,11 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
     // Determine if this image can be drawn without any transforms because
     // it only has an offset and/or scale.
-    final AffineMatrix removedTranslation = data.removeTranslation();
-
-    final Point? scale = removedTranslation.getScale();
-    if (scale == null) {
-      // Non-trivial transform.
-      return ResolvedImageNode(
-        data: imageNode.data,
-        rect: rect,
-        transform: data,
-      );
-    }
-    final AffineMatrix removedScale = removedTranslation.removeScale()!;
-    if (removedScale == AffineMatrix.identity) {
+    if (childTransform.encodableInRect) {
       // trivial transform.
       return ResolvedImageNode(
         data: imageNode.data,
-        rect: data.transformRect(rect),
+        rect: childTransform.transformRect(rect),
         transform: null,
       );
     }
@@ -245,7 +235,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     return ResolvedImageNode(
       data: imageNode.data,
       rect: rect,
-      transform: data,
+      transform: childTransform,
     );
   }
 

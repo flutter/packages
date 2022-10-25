@@ -4,6 +4,8 @@
 
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
+
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
@@ -57,10 +59,30 @@ class _EmptyNode extends Node {
   void visitChildren(NodeCallback visitor) {}
 }
 
+/// A node that contains a transform operation in the tree of graphics
+/// operations.
+abstract class TransformableNode extends Node {
+  /// Constructs a new tree node with [transform].
+  TransformableNode(this.transform);
+
+  /// The descendant child's transform
+  final AffineMatrix transform;
+
+  @override
+  @mustCallSuper
+  AffineMatrix concatTransform(AffineMatrix currentTransform) {
+    if (transform == AffineMatrix.identity) {
+      return currentTransform;
+    }
+    return currentTransform.multiplied(transform);
+  }
+}
+
 /// A node that has attributes in the tree of graphics operations.
-abstract class AttributedNode extends Node {
-  /// Constructs a new tree node with [id] and [paint].
-  AttributedNode(this.attributes);
+abstract class AttributedNode extends TransformableNode {
+  /// Constructs a new tree node with [attributes].
+  AttributedNode(this.attributes, {AffineMatrix? precalculatedTransform})
+      : super(precalculatedTransform ?? attributes.transform);
 
   /// A collection of painting attributes.
   ///
@@ -116,13 +138,9 @@ class ParentNode extends AttributedNode {
   /// Creates a new [ParentNode].
   ParentNode(
     super.attributes, {
-    AffineMatrix? precalculatedTransform,
+    super.precalculatedTransform,
     List<Node>? children,
-  })  : transform = precalculatedTransform ?? attributes.transform,
-        _children = children ?? <Node>[];
-
-  /// The transform to apply to this subtree, if any.
-  final AffineMatrix transform;
+  }) : _children = children ?? <Node>[];
 
   /// The child nodes of this node.
   final List<Node> _children;
@@ -178,14 +196,6 @@ class ParentNode extends AttributedNode {
   }
 
   @override
-  AffineMatrix concatTransform(AffineMatrix currentTransform) {
-    if (transform == AffineMatrix.identity) {
-      return currentTransform;
-    }
-    return currentTransform.multiplied(transform);
-  }
-
-  @override
   AttributedNode applyAttributes(SvgAttributes newAttributes) {
     return ParentNode(
       newAttributes.applyParent(attributes),
@@ -237,15 +247,15 @@ class SaveLayerNode extends ParentNode {
 }
 
 /// A parent node that applies a clip to its children.
-class ClipNode extends Node {
+class ClipNode extends TransformableNode {
   /// Creates a new clip node that applies clip paths to [child].
   ClipNode({
     required this.resolver,
     required this.child,
     required this.clipId,
-    required this.transform,
+    required AffineMatrix transform,
     String? id,
-  });
+  }) : super(transform);
 
   /// Called by visitors to resolve [clipId] to a list of paths.
   final Resolver<List<Path>> resolver;
@@ -260,17 +270,6 @@ class ClipNode extends Node {
   /// The child to clip.
   final Node child;
 
-  /// The descendant child's transform
-  final AffineMatrix transform;
-
-  @override
-  AffineMatrix concatTransform(AffineMatrix currentTransform) {
-    if (transform == AffineMatrix.identity) {
-      return currentTransform;
-    }
-    return currentTransform.multiplied(transform);
-  }
-
   @override
   void visitChildren(NodeCallback visitor) {
     visitor(child);
@@ -283,15 +282,15 @@ class ClipNode extends Node {
 }
 
 /// A parent node that applies a mask to its child.
-class MaskNode extends Node {
+class MaskNode extends TransformableNode {
   /// Creates a new mask node that applies [mask] to [child] using [blendMode].
   MaskNode({
     required this.child,
     required this.maskId,
     this.blendMode,
     required this.resolver,
-    required this.transform,
-  });
+    required AffineMatrix transform,
+  }) : super(transform);
 
   /// The mask to apply.
   final String maskId;
@@ -302,19 +301,8 @@ class MaskNode extends Node {
   /// The blend mode to apply when saving a layer for the mask, if any.
   final BlendMode? blendMode;
 
-  /// The descendant child's transform
-  final AffineMatrix transform;
-
   /// Called by visitors to resolve [maskId] to an [AttributedNode].
   final Resolver<AttributedNode?> resolver;
-
-  @override
-  AffineMatrix concatTransform(AffineMatrix currentTransform) {
-    if (transform == AffineMatrix.identity) {
-      return currentTransform;
-    }
-    return currentTransform.multiplied(transform);
-  }
 
   @override
   void visitChildren(NodeCallback visitor) {
@@ -522,14 +510,14 @@ class ImageNode extends AttributedNode {
 }
 
 /// A leaf node in the tree that reprents an patterned-node.
-class PatternNode extends Node {
+class PatternNode extends TransformableNode {
   /// Creates a new pattern node that aaples [pattern] to [child].
   PatternNode({
     required this.child,
     required this.patternId,
     required this.resolver,
-    required this.transform,
-  });
+    required AffineMatrix transform,
+  }) : super(transform);
 
   /// This id will match any path or text element that has a non-null patternId.
   final String patternId;
@@ -537,19 +525,8 @@ class PatternNode extends Node {
   /// The child(ren) to apply the pattern to.
   final Node child;
 
-  /// The descendant child's transform.
-  final AffineMatrix transform;
-
   /// Called by visitors to resolve [patternId] to an [AttributedNode].
   final Resolver<AttributedNode?> resolver;
-
-  @override
-  AffineMatrix concatTransform(AffineMatrix currentTransform) {
-    if (transform == AffineMatrix.identity) {
-      return currentTransform;
-    }
-    return currentTransform.multiplied(transform);
-  }
 
   @override
   void visitChildren(NodeCallback visitor) {

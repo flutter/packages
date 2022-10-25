@@ -100,4 +100,21 @@ void main() {
 
     expect(visitCount, 2);
   });
+
+  test('Image transform', () async {
+    final Node node = await parseToNodeTree('''
+<svg width="100" height="100" viewBox="0 0 100 100"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <image xlink:href="data:image/png;base64,iVBO" transform="scale(1 -1) translate(50, -50)" x="0" y="0" width="50" height="50"/>
+</svg>''');
+    final Node resolvedNode =
+        node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final ResolvedImageNode imageNode =
+        queryChildren<ResolvedImageNode>(resolvedNode).single;
+    expect(
+      imageNode.transform,
+      const AffineMatrix(1.0, 0.0, 0.0, -1.0, 50.0, 50.0),
+    );
+  });
 }

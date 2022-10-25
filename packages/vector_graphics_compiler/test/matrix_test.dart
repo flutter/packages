@@ -125,29 +125,17 @@ void main() {
     expect(matrixA.hashCode != matrixB.hashCode, true);
   });
 
-  test('removeTranslation', () {
-    final AffineMatrix matrixA = AffineMatrix.identity.translated(1, 3);
-    final AffineMatrix matrixB = AffineMatrix.identity.translated(0, 3);
-    final AffineMatrix matrixC =
-        AffineMatrix.identity.translated(1, 3).scaled(10);
+  test('encodableInRect', () {
+    final AffineMatrix matrixA = AffineMatrix.identity.scaled(2, 3);
+    final AffineMatrix matrixB = AffineMatrix.identity.scaled(2, -2);
+    final AffineMatrix matrixC = AffineMatrix.identity.xSkewed(5);
+    final AffineMatrix matrixD = AffineMatrix.identity.ySkewed(5);
+    final AffineMatrix matrixE = AffineMatrix.identity.rotated(1.3);
 
-    expect(matrixA.removeTranslation(), AffineMatrix.identity);
-    expect(matrixB.removeTranslation(), AffineMatrix.identity);
-    expect(matrixC.removeTranslation(), AffineMatrix.identity.scaled(10));
-    expect(AffineMatrix.identity.removeTranslation(), AffineMatrix.identity);
-  });
-
-  test('removeScale', () {
-    final AffineMatrix matrixA = AffineMatrix.identity.scaled(2);
-    final AffineMatrix matrixB = AffineMatrix.identity.scaled(2, 3);
-    final AffineMatrix matrixC = AffineMatrix.identity.xSkewed(2);
-    final AffineMatrix matrixD = AffineMatrix.identity.ySkewed(2);
-    final AffineMatrix matrixE = AffineMatrix.identity.rotated(math.pi);
-
-    expect(matrixA.removeScale(), AffineMatrix.identity);
-    expect(matrixB.removeScale(), AffineMatrix.identity);
-    expect(matrixC.removeScale(), null);
-    expect(matrixD.removeScale(), null);
-    expect(matrixE.removeScale(), null);
+    expect(matrixA.encodableInRect, true);
+    expect(matrixB.encodableInRect, false);
+    expect(matrixC.encodableInRect, false);
+    expect(matrixD.encodableInRect, false);
+    expect(matrixE.encodableInRect, false);
   });
 }
