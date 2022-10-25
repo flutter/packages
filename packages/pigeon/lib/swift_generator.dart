@@ -145,7 +145,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
   final String apiName = api.name;
 
   const List<String> generatedComments = <String>[
-    'Generated protocol from Pigeon that represents a handler of messages from Flutter.'
+    ' Generated protocol from Pigeon that represents a handler of messages from Flutter.'
   ];
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
       generatorComments: generatedComments);
@@ -282,7 +282,7 @@ String _camelCase(String text) {
 void _writeFlutterApi(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
   const List<String> generatedComments = <String>[
-    'Generated class from Pigeon that represents Flutter messages that can be called from Swift.'
+    ' Generated class from Pigeon that represents Flutter messages that can be called from Swift.'
   ];
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
       generatorComments: generatedComments);
@@ -581,7 +581,7 @@ import FlutterMacOS
     }
 
     const List<String> generatedComments = <String>[
-      'Generated class from Pigeon that represents data sent in messages.'
+      ' Generated class from Pigeon that represents data sent in messages.'
     ];
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,

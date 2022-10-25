@@ -760,7 +760,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   writeImports();
   indent.addln('');
   indent.writeln(
-      '${_docCommentPrefix}Generated class from Pigeon.$_docCommentSuffix');
+      '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
   indent.writeln(
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
   if (options.useGeneratedAnnotation ?? false) {
