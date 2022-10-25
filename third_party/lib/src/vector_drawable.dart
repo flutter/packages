@@ -1205,11 +1205,11 @@ class DrawableRasterImage implements DrawableStyleable {
         halfDesiredSize.height - scaledHalfImageSize.height,
       );
       canvas.save();
-      canvas.translate(offset.dx + shift.dx, offset.dy + shift.dy);
-      canvas.scale(scale, scale);
       if (transform != null) {
         canvas.transform(transform!);
       }
+      canvas.translate(offset.dx + shift.dx, offset.dy + shift.dy);
+      canvas.scale(scale, scale);
     }
     canvas.drawImage(image, Offset.zero, Paint());
     if (scale != 1.0 || offset != Offset.zero || transform != null) {
