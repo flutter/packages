@@ -489,39 +489,39 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     }
 
     void writeEncode() {
-      indent.write('Object encode() ');
+      indent.write('List<Object?> encode() ');
       indent.scoped('{', '}', () {
         indent.writeln(
-          'final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};',
+          'final List<Object?> pigeonList = <Object?>[];',
         );
         for (final NamedType field in klass.fields) {
-          indent.write("pigeonMap['${field.name}'] = ");
+          indent.write('pigeonList.add(');
           final String conditional = field.type.isNullable ? '?' : '';
           if (customClassNames.contains(field.type.baseName)) {
             indent.addln(
-              '${field.name}$conditional.encode();',
+              '${field.name}$conditional.encode());',
             );
           } else if (customEnumNames.contains(field.type.baseName)) {
             indent.addln(
-              '${field.name}$conditional.index;',
+              '${field.name}$conditional.index);',
             );
           } else {
-            indent.addln('${field.name};');
+            indent.addln('${field.name});');
           }
         }
-        indent.writeln('return pigeonMap;');
+        indent.writeln('return pigeonList;');
       });
     }
 
     void writeDecode() {
-      void writeValueDecode(NamedType field) {
+      void writeValueDecode(NamedType field, int index) {
         if (customClassNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              "${field.type.baseName}.decode(pigeonMap['${field.name}']!)";
+              '${field.type.baseName}.decode(pigeonList[$index]!)';
           indent.format(
               field.type.isNullable
                   ? '''
-pigeonMap['${field.name}'] != null
+pigeonList[$index] != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -529,11 +529,11 @@ pigeonMap['${field.name}'] != null
               trailingNewline: false);
         } else if (customEnumNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              "${field.type.baseName}.values[pigeonMap['${field.name}']! as int]";
+              '${field.type.baseName}.values[pigeonList[$index]! as int]';
           indent.format(
               field.type.isNullable
                   ? '''
-pigeonMap['${field.name}'] != null
+pigeonList[$index] != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -544,17 +544,17 @@ pigeonMap['${field.name}'] != null
           final String castCall = _makeGenericCastCall(field.type);
           final String castCallPrefix = field.type.isNullable ? '?' : '!';
           indent.add(
-            "(pigeonMap['${field.name}'] as $genericType?)$castCallPrefix$castCall",
+            '(pigeonList[$index] as $genericType?)$castCallPrefix$castCall',
           );
         } else {
           final String genericdType = _addGenericTypesNullable(field.type);
           if (field.type.isNullable) {
             indent.add(
-              "pigeonMap['${field.name}'] as $genericdType",
+              'pigeonList[$index] as $genericdType',
             );
           } else {
             indent.add(
-              "pigeonMap['${field.name}']! as $genericdType",
+              'pigeonList[$index]! as $genericdType',
             );
           }
         }
@@ -565,14 +565,14 @@ pigeonMap['${field.name}'] != null
       );
       indent.scoped('{', '}', () {
         indent.writeln(
-          'final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;',
+          'final List<Object?> pigeonList = message as List<Object?>;',
         );
         indent.write('return ${klass.name}');
         indent.scoped('(', ');', () {
           for (int index = 0; index < klass.fields.length; index += 1) {
             final NamedType field = klass.fields[index];
             indent.write('${field.name}: ');
-            writeValueDecode(field);
+            writeValueDecode(field, index);
             indent.addln(',');
           }
         });
