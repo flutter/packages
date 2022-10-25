@@ -1,5 +1,10 @@
 # CHANGES
 
+## 1.1.6
+
+- Fix transforms on image tags, clipPaths.
+- Avoid painting zero-width strokes.
+
 ## 1.1.5
 
 - More permissive about color strings.
