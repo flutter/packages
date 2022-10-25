@@ -2,14 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final GlobalKey<NavigatorState> _tabANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'tabANav');
-final GlobalKey<NavigatorState> _tabBNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'tabBNav');
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each tab uses its own persistent navigator, i.e.
@@ -34,78 +31,115 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 
   final GoRouter _router = GoRouter(
     initialLocation: '/a',
+    restorationScopeId: 'sadfasf',
     routes: <RouteBase>[
-      /// Application shell - wraps the below routes in a scaffold with
-      /// a bottom tab navigator (ScaffoldWithNavBar). Each tab will use its own
-      /// Navigator, as specified by the parentNavigatorKey for each root route
-      /// (branch). For more customization options for the route branches, see
-      /// the default constructor for StatefulShellRoute.
-      StatefulShellRoute.rootRoutes(
-        builder: (BuildContext context, GoRouterState state,
-            Widget navigationContainer) {
-          return ScaffoldWithNavBar(body: navigationContainer);
-        },
-        routes: <GoRoute>[
-          /// The screen to display as the root in the first tab of the bottom
-          /// navigation bar.
-          GoRoute(
-            parentNavigatorKey: _tabANavigatorKey,
-            path: '/a',
-            builder: (BuildContext context, GoRouterState state) =>
-                const RootScreen(label: 'A', detailsPath: '/a/details'),
-            routes: <RouteBase>[
-              /// The details screen to display stacked on navigator of the
-              /// first tab. This will cover screen A but not the application
-              /// shell (bottom navigation bar).
-              GoRoute(
+      StatefulShellRoute(
+        branches: <ShellRouteBranch>[
+          /// The route branch for the first tab of the bottom navigation bar.
+          ShellRouteBranch(
+            navigatorKey: _tabANavigatorKey,
+            rootRoute: GoRoute(
+              /// The screen to display as the root in the first tab of the bottom
+              /// navigation bar.
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const RootScreen(label: 'A', detailsPath: '/a/details'),
+              routes: <RouteBase>[
+                /// The details screen to display stacked on navigator of the
+                /// first tab. This will cover screen A but not the application
+                /// shell (bottom navigation bar).
+                GoRoute(
                   path: 'details',
                   builder: (BuildContext context, GoRouterState state) =>
-                      const DetailsScreen(label: 'A')),
-            ],
+                      const DetailsScreen(label: 'A'),
+                ),
+              ],
+            ),
           ),
 
-          /// The screen to display as the root in the second tab of the bottom
-          /// navigation bar.
-          GoRoute(
-            parentNavigatorKey: _tabBNavigatorKey,
-            path: '/b',
-            builder: (BuildContext context, GoRouterState state) =>
-                const RootScreen(
-                    label: 'B',
-                    detailsPath: '/b/details/1',
-                    detailsPath2: '/b/details/2'),
-            routes: <RouteBase>[
-              /// The details screen to display stacked on navigator of the
-              /// second tab. This will cover screen B but not the application
-              /// shell (bottom navigation bar).
-              GoRoute(
-                path: 'details/:param',
-                builder: (BuildContext context, GoRouterState state) =>
-                    DetailsScreen(label: 'B', param: state.params['param']),
-              ),
-            ],
+          /// The route branch for the second tab of the bottom navigation bar.
+          ShellRouteBranch(
+            /// It's not necessary to provide a navigatorKey if it isn't also
+            /// needed elsewhere. If not provided, a default key will be used.
+            // navigatorKey: _tabBNavigatorKey,
+            rootRoute: GoRoute(
+              /// The screen to display as the root in the second tab of the bottom
+              /// navigation bar.
+              path: '/b',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const RootScreen(
+                      label: 'B',
+                      detailsPath: '/b/details/1',
+                      secondDetailsPath: '/b/details/2'),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'details/:param',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DetailsScreen(label: 'B', param: state.params['param']),
+                ),
+              ],
+            ),
+          ),
+
+          /// The route branch for the third tab of the bottom navigation bar.
+          ShellRouteBranch(
+            /// Since this route branch has a nested StatefulShellRoute as the
+            /// root route, we need to specify what the default location for the
+            /// branch is.
+            defaultLocation: '/c1',
+            rootRoute: StatefulShellRoute.rootRoutes(
+              /// This bottom tab uses a nested shell, wrapping sub routes in a
+              /// top TabBar. In this case, we're using the `rootRoutes`
+              /// convenience constructor.
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/c1',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const TabScreen(label: 'C1', detailsPath: '/c1/details'),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'details',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const DetailsScreen(label: 'C1', withScaffold: false),
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: '/c2',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const TabScreen(label: 'C2', detailsPath: '/c2/details'),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'details',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const DetailsScreen(label: 'C2', withScaffold: false),
+                    ),
+                  ],
+                ),
+              ],
+              builder: (BuildContext context, GoRouterState state,
+                  Widget ignoredNavigatorContainer) {
+                /// For this nested StatefulShellRoute we are using a custom
+                /// container (TabBarView) for the branch navigators, and thus
+                /// ignoring the default navigator contained passed to the
+                /// builder. Custom implementation can access the branch
+                /// navigators via the StatefulShellRouteState
+                /// (see TabbedRootScreen for details).
+                return const TabbedRootScreen();
+              },
+            ),
           ),
         ],
+        builder: (BuildContext context, GoRouterState state,
+            Widget navigatorContainer) {
+          return ScaffoldWithNavBar(body: navigatorContainer);
+        },
 
         /// If you need to customize the Page for StatefulShellRoute, pass a
         /// pageProvider function in addition to the builder, for example:
         // pageProvider:
         //     (BuildContext context, GoRouterState state, Widget statefulShell) {
         //   return NoTransitionPage<dynamic>(child: statefulShell);
-        // },
-
-        /// If you need to create a custom container for the branch routes, to
-        /// for instance setup animations, you can implement your builder
-        /// something like this:
-        // builder:
-        //     (BuildContext context, GoRouterState state, Widget ignoringThis) {
-        //   final StatefulShellRouteState shellRouteState =
-        //       StatefulShellRoute.of(context);
-        //   return ScaffoldWithNavBar(
-        //       body: _AnimatedRouteBranchContainer(
-        //     currentIndex: shellRouteState.index,
-        //     navigators: shellRouteState.navigators,
-        //   ));
         // },
       ),
     ],
@@ -143,20 +177,19 @@ class ScaffoldWithNavBar extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Section B'),
+          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
+          BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
         ],
         currentIndex: shellState.index,
-        onTap: (int tappedIndex) => _onItemTapped(
-          context,
-          shellState.branchState[tappedIndex],
-        ),
+        onTap: (int tappedIndex) =>
+            _onItemTapped(context, shellState, tappedIndex),
       ),
     );
   }
 
-  void _onItemTapped(BuildContext context, ShellRouteBranchState routeState) {
-    GoRouter.of(context).go(routeState.location);
+  void _onItemTapped(
+      BuildContext context, StatefulShellRouteState shellState, int index) {
+    shellState.goToBranch(index);
   }
 }
 
@@ -166,7 +199,7 @@ class RootScreen extends StatelessWidget {
   const RootScreen(
       {required this.label,
       required this.detailsPath,
-      this.detailsPath2,
+      this.secondDetailsPath,
       Key? key})
       : super(key: key);
 
@@ -177,7 +210,7 @@ class RootScreen extends StatelessWidget {
   final String detailsPath;
 
   /// The path to another detail page
-  final String? detailsPath2;
+  final String? secondDetailsPath;
 
   @override
   Widget build(BuildContext context) {
@@ -199,10 +232,17 @@ class RootScreen extends StatelessWidget {
               child: const Text('View details'),
             ),
             const Padding(padding: EdgeInsets.all(4)),
-            if (detailsPath2 != null)
+            TextButton(
+              onPressed: () {
+                GoRouter.of(context).push('/b/details/1');
+              },
+              child: const Text('Push b'),
+            ),
+            const Padding(padding: EdgeInsets.all(4)),
+            if (secondDetailsPath != null)
               TextButton(
                 onPressed: () {
-                  GoRouter.of(context).go(detailsPath2!);
+                  GoRouter.of(context).go(secondDetailsPath!);
                 },
                 child: const Text('View more details'),
               ),
@@ -219,6 +259,7 @@ class DetailsScreen extends StatefulWidget {
   const DetailsScreen({
     required this.label,
     this.param,
+    this.withScaffold = true,
     Key? key,
   }) : super(key: key);
 
@@ -227,6 +268,9 @@ class DetailsScreen extends StatefulWidget {
 
   /// Optional param
   final String? param;
+
+  /// Wrap in scaffold
+  final bool withScaffold;
 
   @override
   State<StatefulWidget> createState() => DetailsScreenState();
@@ -238,54 +282,139 @@ class DetailsScreenState extends State<DetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Details Screen - ${widget.label}'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            if (widget.param != null)
-              Text('Parameter: ${widget.param!}',
-                  style: Theme.of(context).textTheme.titleLarge),
-            const Padding(padding: EdgeInsets.all(4)),
-            Text('Details for ${widget.label} - Counter: $_counter',
+    if (widget.withScaffold) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Details Screen - ${widget.label}'),
+        ),
+        body: _build(context),
+      );
+    } else {
+      return _build(context);
+    }
+  }
+
+  Widget _build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (widget.param != null)
+            Text('Parameter: ${widget.param!}',
                 style: Theme.of(context).textTheme.titleLarge),
-            const Padding(padding: EdgeInsets.all(4)),
+          const Padding(padding: EdgeInsets.all(4)),
+          Text('Details for ${widget.label} - Counter: $_counter',
+              style: Theme.of(context).textTheme.titleLarge),
+          const Padding(padding: EdgeInsets.all(4)),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _counter++;
+              });
+            },
+            child: const Text('Increment counter'),
+          ),
+          if (!widget.withScaffold) ...<Widget>[
+            const Padding(padding: EdgeInsets.all(16)),
             TextButton(
               onPressed: () {
-                setState(() {
-                  _counter++;
-                });
+                GoRouter.of(context).pop();
               },
-              child: const Text('Increment counter'),
+              child: const Text('< Back',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             ),
-          ],
-        ),
+          ]
+        ],
       ),
     );
   }
 }
 
-// ignore: unused_element
-class _AnimatedRouteBranchContainer extends StatelessWidget {
-  const _AnimatedRouteBranchContainer(
-      {Key? key, required this.currentIndex, required this.navigators})
-      : super(key: key);
-
-  final int currentIndex;
-  final List<Widget?> navigators;
+/// Builds a nested shell using a [TabBar] and [TabBarView].
+class TabbedRootScreen extends StatelessWidget {
+  /// Constructs a TabbedRootScreen
+  const TabbedRootScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-        children: navigators.mapIndexed((int index, Widget? navigator) {
-      return AnimatedOpacity(
-        opacity: index == currentIndex ? 1 : 0,
-        duration: const Duration(milliseconds: 400),
-        child: navigator ?? const SizedBox.shrink(),
-      );
-    }).toList());
+    final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
+    final int branchCount = shellState.branchState.length;
+    final List<Widget> children = List<Widget>.generate(
+        branchCount, (int index) => TabbedRootScreenTab(index: index));
+
+    return DefaultTabController(
+      length: 2,
+      initialIndex: shellState.index,
+      child: Scaffold(
+        appBar: AppBar(
+            title: const Text('Tab root'),
+            bottom: TabBar(
+              tabs: List<Tab>.generate(
+                  branchCount, (int i) => Tab(text: 'Tab $i')),
+              onTap: (int tappedIndex) =>
+                  _onTabTap(context, shellState, tappedIndex),
+            )),
+        body: TabBarView(
+          children: children,
+        ),
+      ),
+    );
+  }
+
+  void _onTabTap(
+      BuildContext context, StatefulShellRouteState shellState, int index) {
+    shellState.goToBranch(index);
+  }
+}
+
+/// Widget wrapping the [Navigator] for a specific tab in [TabbedRootScreen].
+///
+/// This class is needed since [TabBarView] won't update its cached list of
+/// children while in a transition between tabs.
+class TabbedRootScreenTab extends StatelessWidget {
+  /// Constructs a TabbedRootScreenTab
+  const TabbedRootScreenTab({Key? key, required this.index}) : super(key: key);
+
+  /// The index of the tab
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
+    final Widget? navigator = shellState.branchState[index].navigator;
+    return navigator ?? const SizedBox.expand();
+  }
+}
+
+/// Widget for the pages in the top tab bar.
+class TabScreen extends StatelessWidget {
+  /// Creates a RootScreen
+  const TabScreen({required this.label, this.detailsPath, Key? key})
+      : super(key: key);
+
+  /// The label
+  final String label;
+
+  /// The path to the detail page
+  final String? detailsPath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text('Screen $label', style: Theme.of(context).textTheme.titleLarge),
+          const Padding(padding: EdgeInsets.all(4)),
+          if (detailsPath != null)
+            TextButton(
+              onPressed: () {
+                GoRouter.of(context).go(detailsPath!);
+              },
+              child: const Text('View details'),
+            ),
+        ],
+      ),
+    );
   }
 }
