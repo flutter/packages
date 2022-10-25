@@ -81,24 +81,41 @@ void main() {
     });
 
     test(
-        'throws when StatefulShellRoute is missing a navigator key for a '
-        'child route', () {
+        'throws when StatefulShellRoute sub-route uses incorrect parentNavigatorKey',
+        () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
       final GlobalKey<NavigatorState> keyA =
           GlobalKey<NavigatorState>(debugLabel: 'A');
-      final List<GoRoute> shellRouteChildren = <GoRoute>[
-        GoRoute(
-            path: '/a', builder: _mockScreenBuilder, parentNavigatorKey: keyA),
-        GoRoute(path: '/b', builder: _mockScreenBuilder),
-      ];
+      final GlobalKey<NavigatorState> keyB =
+          GlobalKey<NavigatorState>(debugLabel: 'B');
+
       expect(
         () {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute.rootRoutes(
-                  routes: shellRouteChildren, builder: _mockShellBuilder),
+              StatefulShellRoute(branches: <ShellRouteBranch>[
+                ShellRouteBranch(
+                  navigatorKey: keyA,
+                  rootRoute: GoRoute(
+                      path: '/a',
+                      builder: _mockScreenBuilder,
+                      routes: <RouteBase>[
+                        GoRoute(
+                            path: 'details',
+                            builder: _mockScreenBuilder,
+                            parentNavigatorKey: keyB),
+                      ]),
+                ),
+                ShellRouteBranch(
+                  navigatorKey: keyB,
+                  rootRoute: GoRoute(
+                      path: '/b',
+                      builder: _mockScreenBuilder,
+                      parentNavigatorKey: keyB),
+                ),
+              ], builder: _mockShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {

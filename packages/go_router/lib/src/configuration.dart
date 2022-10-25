@@ -83,7 +83,7 @@ class RouteConfiguration {
           } else if (route is StatefulShellRoute) {
             for (final ShellRouteBranch branch in route.branches) {
               checkParentNavigatorKeys(
-                [branch.rootRoute],
+                <RouteBase>[branch.rootRoute],
                 <GlobalKey<NavigatorState>>[
                   ...allowedKeys,
                   branch.navigatorKey,
@@ -179,6 +179,40 @@ class RouteConfiguration {
       }
     }
     return null;
+  }
+
+  /// Finds the root route of closest ShellRouteBranch ancestor of the provided
+  /// route.
+  RouteBase? findAncestorShellRouteBranchRoute<T extends RouteBase>(
+      RouteBase route) {
+    final List<RouteBase> ancestors = _ancestorsForRoute(route, routes);
+    final int shellRouteIndex =
+        ancestors.lastIndexWhere((RouteBase e) => e is StatefulShellRoute);
+    if (shellRouteIndex >= 0 && shellRouteIndex < (ancestors.length - 1)) {
+      return ancestors[shellRouteIndex + 1];
+    }
+    return null;
+  }
+
+  /// Tests if a route is a descendant of an ancestor route.
+  bool isDescendantOf({required RouteBase ancestor, required RouteBase route}) {
+    return _ancestorsForRoute(route, routes).contains(ancestor);
+  }
+
+  static List<RouteBase> _ancestorsForRoute<T extends RouteBase>(
+      RouteBase targetRoute, List<RouteBase> routes) {
+    for (final RouteBase route in routes) {
+      if (route.routes.contains(targetRoute)) {
+        return <RouteBase>[route];
+      } else {
+        final List<RouteBase> ancestors =
+            _ancestorsForRoute(targetRoute, route.routes);
+        if (ancestors.isNotEmpty) {
+          return <RouteBase>[route, ...ancestors];
+        }
+      }
+    }
+    return <RouteBase>[];
   }
 
   @override

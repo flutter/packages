@@ -54,7 +54,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // a non-null parentNavigatorKey or a ShellRoute with a non-null
     // parentNavigatorKey and pop from that Navigator instead of the root.
     final int matchCount = _matchList.matches.length;
-    RouteBase? childRoute;
+    late RouteBase subRoute;
     for (int i = matchCount - 1; i >= 0; i -= 1) {
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
@@ -67,11 +67,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         if (didPop) {
           return didPop;
         }
-      } else if (route is ShellRouteBase && childRoute != null) {
+      } else if (route is ShellRouteBase) {
         // For shell routes, find the navigator key that should be used for the
         // child route in the current match list
         final GlobalKey<NavigatorState>? navigatorKey =
-            route.navigatorKeyForSubRoute(childRoute);
+            route.navigatorKeyForSubRoute(subRoute);
 
         final bool didPop =
             await navigatorKey?.currentState!.maybePop() ?? false;
@@ -81,7 +81,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
           return didPop;
         }
       }
-      childRoute = route;
+      subRoute = route;
     }
 
     // Use the root navigator if no ShellRoute Navigators were found and didn't
@@ -99,6 +99,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   void push(RouteMatch match) {
     if (match.route is ShellRouteBase) {
       throw GoError('ShellRoutes cannot be pushed');
+    }
+    final RouteBase? ancestorBranchRootRoute =
+        _configuration.findAncestorShellRouteBranchRoute(_matchList.last.route);
+    if (ancestorBranchRootRoute != null) {
+      if (!_configuration.isDescendantOf(
+          ancestor: ancestorBranchRootRoute, route: match.route)) {
+        throw GoError('Cannot push a route that is not a descendant of the '
+            'current StatefulShellRoute branch');
+      }
     }
 
     // Remap the pageKey to allow any number of the same page on the stack

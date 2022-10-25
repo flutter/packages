@@ -8,6 +8,7 @@ import 'package:go_router/src/builder.dart';
 import 'package:go_router/src/configuration.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/matching.dart';
+import 'package:go_router/src/router.dart';
 
 void main() {
   group('RouteBuilder', () {
@@ -111,58 +112,30 @@ void main() {
     testWidgets('Builds StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> key =
           GlobalKey<NavigatorState>(debugLabel: 'key');
-      final RouteConfiguration config = RouteConfiguration(
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/nested',
         routes: <RouteBase>[
           StatefulShellRoute.rootRoutes(
-              builder:
-                  (BuildContext context, GoRouterState state, Widget child) =>
-                      child,
-              routes: <GoRoute>[
-                GoRoute(
-                  parentNavigatorKey: key,
-                  path: '/nested',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return _DetailsScreen();
-                  },
-                ),
-              ]),
+            builder:
+                (BuildContext context, GoRouterState state, Widget child) =>
+                    child,
+            routes: <GoRoute>[
+              GoRoute(
+                parentNavigatorKey: key,
+                path: '/nested',
+                builder: (BuildContext context, GoRouterState state) {
+                  return _DetailsScreen();
+                },
+              ),
+            ],
+          ),
         ],
-        redirectLimit: 10,
-        topRedirect: (BuildContext context, GoRouterState state) {
-          return null;
-        },
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first,
-          subloc: '',
-          fullpath: '',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          queryParametersAll: <String, List<String>>{},
-          extra: null,
-          error: null,
-        ),
-        RouteMatch(
-          route: config.routes.first.routes.first,
-          subloc: '/nested',
-          fullpath: '/nested',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          queryParametersAll: <String, List<String>>{},
-          extra: null,
-          error: null,
-        ),
-      ]);
-
-      await tester.pumpWidget(
-        _BuilderTestWidget(
-          routeConfiguration: config,
-          matches: matches,
-        ),
-      );
+      await tester.pumpWidget(MaterialApp.router(
+        routerConfig: goRouter,
+      ));
 
       expect(find.byType(_DetailsScreen), findsOneWidget);
       expect(find.byKey(key), findsOneWidget);

@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/misc/error_screen.dart';
+import 'package:go_router/src/misc/errors.dart';
 
 Future<GoRouter> createGoRouter(
   WidgetTester tester, {
@@ -23,6 +24,39 @@ Future<GoRouter> createGoRouter(
       ),
     ],
     refreshListenable: refreshListenable,
+  );
+  await tester.pumpWidget(MaterialApp.router(
+    routerConfig: router,
+  ));
+  return router;
+}
+
+Future<GoRouter> createGoRouterWithStatefulShellRoute(
+    WidgetTester tester) async {
+  final GoRouter router = GoRouter(
+    initialLocation: '/',
+    routes: <RouteBase>[
+      GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
+      GoRoute(path: '/a', builder: (_, __) => const DummyStatefulWidget()),
+      StatefulShellRoute.rootRoutes(routes: <GoRoute>[
+        GoRoute(
+            path: '/c',
+            builder: (_, __) => const DummyStatefulWidget(),
+            routes: <RouteBase>[
+              GoRoute(
+                  path: 'c1', builder: (_, __) => const DummyStatefulWidget()),
+              GoRoute(
+                  path: 'c2', builder: (_, __) => const DummyStatefulWidget()),
+            ]),
+        GoRoute(
+            path: '/d',
+            builder: (_, __) => const DummyStatefulWidget(),
+            routes: <RouteBase>[
+              GoRoute(
+                  path: 'd1', builder: (_, __) => const DummyStatefulWidget()),
+            ]),
+      ], builder: (_, __, Widget child) => child),
+    ],
   );
   await tester.pumpWidget(MaterialApp.router(
     routerConfig: router,
@@ -83,6 +117,59 @@ void main() {
         expect(
           goRouter.routerDelegate.matches.matches[2].pageKey,
           const Key('/a-p2'),
+        );
+      },
+    );
+
+    testWidgets(
+      'It should throw GoError if pushing a route that is descendant of a '
+      'different StatefulShellRoute branch',
+      (WidgetTester tester) async {
+        final GoRouter goRouter =
+            await createGoRouterWithStatefulShellRoute(tester);
+        goRouter.push('/c/c1');
+        await tester.pumpAndSettle();
+
+        expect(
+          () => goRouter.push('/d/d1'),
+          throwsA(isA<GoError>()),
+        );
+        await tester.pumpAndSettle();
+      },
+    );
+
+    testWidgets(
+      'It should throw GoError if pushing a route that is not descendant of '
+      'the current StatefulShellRoute',
+      (WidgetTester tester) async {
+        final GoRouter goRouter =
+            await createGoRouterWithStatefulShellRoute(tester);
+        goRouter.push('/c/c1');
+        await tester.pumpAndSettle();
+
+        expect(
+          () => goRouter.push('/a'),
+          throwsA(isA<GoError>()),
+        );
+        await tester.pumpAndSettle();
+      },
+    );
+
+    testWidgets(
+      'It should successfully push a route that is a descendant of the current '
+      'StatefulShellRoute branch',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = await createGoRouter(tester);
+        goRouter.push('/c/c1');
+        await tester.pumpAndSettle();
+
+        goRouter.push('/c/c2');
+        await tester.pumpAndSettle();
+
+        expect(goRouter.routerDelegate.matches.matches.length, 3);
+        expect(
+          goRouter.routerDelegate.matches.matches[2].pageKey,
+          const Key('/c/c2-p1'),
         );
       },
     );
