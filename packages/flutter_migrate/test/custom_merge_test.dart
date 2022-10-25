@@ -103,7 +103,7 @@ migration:
   unmanaged_files:
     - 'lib/main.dart'
     - 'ios/Runner.xcodeproj/project.pbxproj'
-      ''';
+''';
       const String target = '''
 version:
   revision: abcdefg12345target
@@ -120,7 +120,7 @@ migration:
   unmanaged_files:
     - 'lib/main.dart'
     - 'ios/Runner.xcodeproj/project.pbxproj'
-      ''';
+''';
       final File currentFile = fileSystem.file('.metadata_current');
       final File baseFile = fileSystem.file('.metadata_base');
       final File targetFile = fileSystem.file('.metadata_target');
@@ -224,7 +224,7 @@ migration:
     - 'lib/main.dart'
     - 'ios/Runner.xcodeproj/project.pbxproj'
     - 'extra/file'
-      ''';
+''';
       final File currentFile = fileSystem.file('.metadata_current');
       final File baseFile = fileSystem.file('.metadata_base');
       final File targetFile = fileSystem.file('.metadata_target');
