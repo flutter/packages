@@ -166,7 +166,7 @@ task:
     - name: downgraded_analyze
       depends_on: analyze
       analyze_script:
-        - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml
+        - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml --exclude=go_router_builder
     - name: readme_excerpts
       env:
         CIRRUS_CLONE_SUBMODULES: true
