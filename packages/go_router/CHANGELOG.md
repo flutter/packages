@@ -1,8 +1,8 @@
-## NEXT
+## 5.1.2
 
+- Hiding the internal implementation from external API.
 - Update README
 - Removes dynamic calls in examples.
-- Hiding the internal implementation from external API.
 
 ## 5.1.1
 
