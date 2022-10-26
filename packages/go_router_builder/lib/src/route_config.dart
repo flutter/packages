@@ -88,7 +88,7 @@ class RouteConfig {
     }
 
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
-    final InterfaceElement classElement = typeParamType.element2;
+    final InterfaceElement classElement = typeParamType.element;
 
     final RouteConfig value = RouteConfig._(path, classElement, parent);
 
@@ -363,11 +363,11 @@ GoRouteData.\$route(
 String _enumMapConst(InterfaceType type) {
   assert(type.isEnum);
 
-  final String enumName = type.element2.name;
+  final String enumName = type.element.name;
 
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
-  for (final FieldElement enumField in type.element2.fields
+  for (final FieldElement enumField in type.element.fields
       .where((FieldElement element) => element.isEnumConstant)) {
     buffer.writeln(
       '$enumName.${enumField.name}: ${escapeDartString(enumField.name.kebab)},',
