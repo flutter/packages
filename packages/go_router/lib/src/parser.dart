@@ -26,7 +26,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         redirector = redirect;
 
   /// The route configuration for the app.
-  @visibleForTesting
+  @internal
   final RouteConfiguration configuration;
 
   /// The route matcher.
