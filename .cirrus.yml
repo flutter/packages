@@ -166,6 +166,8 @@ task:
     - name: downgraded_analyze
       depends_on: analyze
       analyze_script:
+        # TODO(chunhtai): Includes go_router_builder once downgraded_analyze picks up the latest
+        # change https://github.com/flutter/flutter/issues/114106.
         - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml --exclude=go_router_builder
     - name: readme_excerpts
       env:
