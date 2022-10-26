@@ -130,28 +130,18 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   RouteConfiguration get routeConfiguration => _routeConfiguration;
 
   /// Gets the current location.
-  // TODO(chunhtai): deprecates this property once go_router_builder is migrated
-  String get location => _uri.toString();
-
-  /// Gets the current URI.
-  Uri get uri => _uri;
-  Uri _uri = Uri();
-
-  /// Gets the path parameters from the current uri.
-  Map<String, String> get pathParameters {
-    if (_routerDelegate.currentConfiguration.isEmpty) {
-      return const <String, String>{};
-    }
-    return _routerDelegate.currentConfiguration.last.decodedParams;
-  }
+  @Deprecated('Use GoRouterState.of(context).location instead')
+  String get location => _location;
+  String _location = '/';
 
   /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() => _routerDelegate.canPop();
 
   void _handleStateMayChange() {
-    final Uri newUri = _routerDelegate.currentConfiguration.location;
-    if (_uri != newUri) {
-      _uri = newUri;
+    final String newLocation =
+        _routerDelegate.currentConfiguration.location.toString();
+    if (_location != newLocation) {
+      _location = newLocation;
       notifyListeners();
     }
   }
