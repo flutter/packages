@@ -1,3 +1,7 @@
+## 4.2.4
+
++ Add `toString` to the genereated class
+
 ## 4.2.3
 
 * [java] Adds assert `args != null`.
