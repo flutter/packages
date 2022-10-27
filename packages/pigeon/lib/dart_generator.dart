@@ -468,6 +468,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
 
   void writeImports() {
     indent.writeln("import 'dart:async';");
+    indent.writeln("import 'dart:convert';");
     indent.writeln(
       "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
     );
@@ -579,6 +580,11 @@ pigeonMap['${field.name}'] != null
       });
     }
 
+    void writeToString() {
+      indent.writeln('@override');
+      indent.writeln('String toString() => jsonEncode(encode());');
+    }
+
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec);
 
@@ -599,6 +605,8 @@ pigeonMap['${field.name}'] != null
       writeEncode();
       indent.writeln('');
       writeDecode();
+      indent.writeln('');
+      writeToString();
     });
   }
 

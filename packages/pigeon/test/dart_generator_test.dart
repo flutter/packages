@@ -33,6 +33,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  dataType1? field1;'));
+    expect(code, contains('  String toString() => jsonEncode(encode());'));
   });
 
   test('gen one enum', () {
