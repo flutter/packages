@@ -28,7 +28,7 @@ void main() {
     final FlutterSearchReply reply = FlutterSearchReply()
       ..result = 'foo'
       ..error = 'bar';
-    final Object encoded = reply.encode();
+    final List<Object?> encoded = reply.encode();
     final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
     expect(reply.error, decoded.error);
@@ -38,7 +38,7 @@ void main() {
     final FlutterSearchReply reply = FlutterSearchReply()
       ..result = 'foo'
       ..error = null;
-    final Object encoded = reply.encode();
+    final List<Object?> encoded = reply.encode();
     final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
     expect(reply.error, decoded.error);

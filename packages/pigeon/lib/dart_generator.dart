@@ -106,7 +106,7 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
           indent.write('case ${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
             indent.writeln(
-                'return ${customClass.name}.decode(readValue(buffer)!);');
+                'return ${customClass.name}.decode(readValue(buffer)! as List<Object?>);');
           });
         }
         indent.write('default:');
@@ -525,11 +525,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
       void writeValueDecode(NamedType field, int index) {
         if (customClassNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              '${field.type.baseName}.decode(pigeonList[$index]!)';
+              '${field.type.baseName}.decode(message[$index]! as List<Object?>)';
           indent.format(
               field.type.isNullable
                   ? '''
-pigeonList[$index] != null
+message[$index] != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -537,11 +537,11 @@ pigeonList[$index] != null
               trailingNewline: false);
         } else if (customEnumNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              '${field.type.baseName}.values[pigeonList[$index]! as int]';
+              '${field.type.baseName}.values[message[$index]! as int]';
           indent.format(
               field.type.isNullable
                   ? '''
-pigeonList[$index] != null
+message[$index] != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -552,29 +552,26 @@ pigeonList[$index] != null
           final String castCall = _makeGenericCastCall(field.type);
           final String castCallPrefix = field.type.isNullable ? '?' : '!';
           indent.add(
-            '(pigeonList[$index] as $genericType?)$castCallPrefix$castCall',
+            '(message[$index] as $genericType?)$castCallPrefix$castCall',
           );
         } else {
           final String genericdType = _addGenericTypesNullable(field.type);
           if (field.type.isNullable) {
             indent.add(
-              'pigeonList[$index] as $genericdType',
+              'message[$index] as $genericdType',
             );
           } else {
             indent.add(
-              'pigeonList[$index]! as $genericdType',
+              'message[$index]! as $genericdType',
             );
           }
         }
       }
 
       indent.write(
-        'static ${klass.name} decode(Object message) ',
+        'static ${klass.name} decode(List<Object?> message) ',
       );
       indent.scoped('{', '}', () {
-        indent.writeln(
-          'final List<Object?> pigeonList = message as List<Object?>;',
-        );
         indent.write('return ${klass.name}');
         indent.scoped('(', ');', () {
           for (int index = 0; index < klass.fields.length; index += 1) {
