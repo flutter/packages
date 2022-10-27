@@ -212,8 +212,9 @@ class RouteBuilder {
             restorationScopeId: restorationScopeId);
         child = _buildStatefulNavigationShell(
           shellRoute: route,
-          navigator: child as Navigator,
           shellRouterState: state,
+          navigator: child as Navigator,
+          matchList: matchList,
         );
       } else {
         final String? restorationScopeId =
@@ -260,12 +261,14 @@ class RouteBuilder {
     required StatefulShellRoute shellRoute,
     required Navigator navigator,
     required GoRouterState shellRouterState,
+    required RouteMatchList matchList,
   }) {
     return StatefulNavigationShell(
       configuration: configuration,
       shellRoute: shellRoute,
-      activeNavigator: navigator,
       shellGoRouterState: shellRouterState,
+      navigator: navigator,
+      matchList: matchList,
     );
   }
 

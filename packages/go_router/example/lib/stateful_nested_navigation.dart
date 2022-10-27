@@ -51,7 +51,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 GoRoute(
                   path: 'details',
                   builder: (BuildContext context, GoRouterState state) =>
-                      const DetailsScreen(label: 'A'),
+                      DetailsScreen(label: 'A', extra: state.extra),
                 ),
               ],
             ),
@@ -75,7 +75,10 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 GoRoute(
                   path: 'details/:param',
                   builder: (BuildContext context, GoRouterState state) =>
-                      DetailsScreen(label: 'B', param: state.params['param']),
+                      DetailsScreen(
+                          label: 'B',
+                          param: state.params['param'],
+                          extra: state.extra),
                 ),
               ],
             ),
@@ -100,7 +103,10 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                     GoRoute(
                       path: 'details',
                       builder: (BuildContext context, GoRouterState state) =>
-                          const DetailsScreen(label: 'C1', withScaffold: false),
+                          DetailsScreen(
+                              label: 'C1',
+                              extra: state.extra,
+                              withScaffold: false),
                     ),
                   ],
                 ),
@@ -112,7 +118,10 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                     GoRoute(
                       path: 'details',
                       builder: (BuildContext context, GoRouterState state) =>
-                          const DetailsScreen(label: 'C2', withScaffold: false),
+                          DetailsScreen(
+                              label: 'C2',
+                              extra: state.extra,
+                              withScaffold: false),
                     ),
                   ],
                 ),
@@ -227,16 +236,9 @@ class RootScreen extends StatelessWidget {
             const Padding(padding: EdgeInsets.all(4)),
             TextButton(
               onPressed: () {
-                GoRouter.of(context).go(detailsPath);
+                GoRouter.of(context).go(detailsPath, extra: '$label-XYZ');
               },
               child: const Text('View details'),
-            ),
-            const Padding(padding: EdgeInsets.all(4)),
-            TextButton(
-              onPressed: () {
-                GoRouter.of(context).push('/b/details/1');
-              },
-              child: const Text('Push b'),
             ),
             const Padding(padding: EdgeInsets.all(4)),
             if (secondDetailsPath != null)
@@ -259,6 +261,7 @@ class DetailsScreen extends StatefulWidget {
   const DetailsScreen({
     required this.label,
     this.param,
+    this.extra,
     this.withScaffold = true,
     Key? key,
   }) : super(key: key);
@@ -268,6 +271,9 @@ class DetailsScreen extends StatefulWidget {
 
   /// Optional param
   final String? param;
+
+  /// Optional extra object
+  final Object? extra;
 
   /// Wrap in scaffold
   final bool withScaffold;
@@ -299,10 +305,6 @@ class DetailsScreenState extends State<DetailsScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          if (widget.param != null)
-            Text('Parameter: ${widget.param!}',
-                style: Theme.of(context).textTheme.titleLarge),
-          const Padding(padding: EdgeInsets.all(4)),
           Text('Details for ${widget.label} - Counter: $_counter',
               style: Theme.of(context).textTheme.titleLarge),
           const Padding(padding: EdgeInsets.all(4)),
@@ -314,6 +316,14 @@ class DetailsScreenState extends State<DetailsScreen> {
             },
             child: const Text('Increment counter'),
           ),
+          const Padding(padding: EdgeInsets.all(8)),
+          if (widget.param != null)
+            Text('Parameter: ${widget.param!}',
+                style: Theme.of(context).textTheme.titleMedium),
+          const Padding(padding: EdgeInsets.all(8)),
+          if (widget.extra != null)
+            Text('Extra: ${widget.extra!}',
+                style: Theme.of(context).textTheme.titleMedium),
           if (!widget.withScaffold) ...<Widget>[
             const Padding(padding: EdgeInsets.all(16)),
             TextButton(
@@ -350,7 +360,7 @@ class TabbedRootScreen extends StatelessWidget {
             title: const Text('Tab root'),
             bottom: TabBar(
               tabs: List<Tab>.generate(
-                  branchCount, (int i) => Tab(text: 'Tab $i')),
+                  branchCount, (int i) => Tab(text: 'Tab ${i + 1}')),
               onTap: (int tappedIndex) =>
                   _onTabTap(context, shellState, tappedIndex),
             )),

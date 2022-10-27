@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import '../configuration.dart';
+import '../matching.dart';
 import '../router.dart';
 import '../typedefs.dart';
 
@@ -49,8 +50,9 @@ class StatefulNavigationShell extends StatefulWidget {
   const StatefulNavigationShell({
     required this.configuration,
     required this.shellRoute,
-    required this.activeNavigator,
     required this.shellGoRouterState,
+    required this.navigator,
+    required this.matchList,
     super.key,
   });
 
@@ -60,11 +62,14 @@ class StatefulNavigationShell extends StatefulWidget {
   /// The associated [StatefulShellRoute]
   final StatefulShellRoute shellRoute;
 
-  /// The navigator for the currently active tab
-  final Navigator activeNavigator;
-
-  /// The [GoRouterState] for navigation shell.
+  /// The [GoRouterState] for the navigation shell.
   final GoRouterState shellGoRouterState;
+
+  /// The navigator for the currently active route branch
+  final Navigator navigator;
+
+  /// The RouteMatchList for the current location
+  final RouteMatchList matchList;
 
   @override
   State<StatefulWidget> createState() => StatefulNavigationShellState();
@@ -77,7 +82,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
   int _findCurrentIndex() {
     final List<ShellRouteBranchState> branchState = _routeState.branchState;
     final int index = branchState.indexWhere((ShellRouteBranchState e) =>
-        e.routeBranch.navigatorKey == widget.activeNavigator.key);
+        e.routeBranch.navigatorKey == widget.navigator.key);
     return index < 0 ? 0 : index;
   }
 
@@ -116,13 +121,15 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
 
   void _updateRouteState() {
     final int currentIndex = _findCurrentIndex();
-    final GoRouter goRouter = GoRouter.of(context);
+    final RouteMatchList matchList = widget.matchList;
+    final String location = matchList.location.toString();
+    final Object? extra = matchList.extra;
 
     final List<ShellRouteBranchState> branchState =
         _routeState.branchState.toList();
     branchState[currentIndex] = branchState[currentIndex].copy(
-      navigator: widget.activeNavigator,
-      lastLocation: goRouter.location,
+      navigator: widget.navigator,
+      lastRouteInformation: RouteInformation(location: location, state: extra),
     );
 
     _routeState = StatefulShellRouteState(

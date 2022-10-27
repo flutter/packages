@@ -2541,6 +2541,60 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen B Detail'), findsNothing);
     });
+
+    testWidgets(
+        'Maintains extra navigation information when navigating '
+        'between branches in StatefulShellRoute', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> sectionANavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> sectionBNavigatorKey =
+          GlobalKey<NavigatorState>();
+      StatefulShellRouteState? routeState;
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.rootRoutes(
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            routeState = StatefulShellRoute.of(context);
+            return child;
+          },
+          routes: <GoRoute>[
+            GoRoute(
+              parentNavigatorKey: sectionANavigatorKey,
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen A'),
+            ),
+            GoRoute(
+              parentNavigatorKey: sectionBNavigatorKey,
+              path: '/b',
+              builder: (BuildContext context, GoRouterState state) =>
+                  Text('Screen B - ${state.extra}'),
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      expect(find.text('Screen A'), findsOneWidget);
+
+      router.go('/b', extra: 'X');
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B - X'), findsOneWidget);
+
+      routeState!.goBranch(0);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen B - X'), findsNothing);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B - X'), findsOneWidget);
+    });
   });
 
   group('Imperative navigation', () {

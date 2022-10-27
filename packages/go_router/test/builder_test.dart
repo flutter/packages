@@ -383,7 +383,7 @@ void main() {
             builder: (BuildContext context, GoRouterState state, Widget child) {
               return _HomeScreen(child: child);
             },
-            branches: [
+            branches: <ShellRouteBranch>[
               ShellRouteBranch(
                 navigatorKey: shellNavigatorKey,
                 restorationScopeId: 'scope1',

@@ -121,7 +121,8 @@ class StatefulShellRouteState {
   /// [StatefulShellRoute] by navigating to the current location of the
   /// specified branch, using the method [GoRouter.go].
   void goBranch(int index, {Object? extra}) {
-    _go(branchState[index]._location, extra);
+    _go(branchState[index]._location,
+        extra ?? branchState[index]._lastRouteInformation?.state);
   }
 
   @override
@@ -150,41 +151,46 @@ class ShellRouteBranchState {
     required this.routeBranch,
     required String rootRoutePath,
     this.navigator,
-    String? lastLocation,
-  })  : _lastLocation = lastLocation,
+    RouteInformation? lastRouteInformation,
+  })  : _lastRouteInformation = lastRouteInformation,
         _rootRoutePath = rootRoutePath;
 
   /// Constructs a copy of this [ShellRouteBranchState], with updated values for
   /// some of the fields.
-  ShellRouteBranchState copy({Navigator? navigator, String? lastLocation}) {
+  ShellRouteBranchState copy(
+      {Navigator? navigator, RouteInformation? lastRouteInformation}) {
     return ShellRouteBranchState(
       routeBranch: routeBranch,
       rootRoutePath: _rootRoutePath,
       navigator: navigator ?? this.navigator,
-      lastLocation: lastLocation ?? _lastLocation,
+      lastRouteInformation: lastRouteInformation ?? _lastRouteInformation,
     );
   }
 
   /// The associated [ShellRouteBranch]
   final ShellRouteBranch routeBranch;
 
-  /// The [Navigator] for this route branch in a [StatefulShellRoute]. This
-  /// field will typically not be set until this route tree has been navigated
+  /// The [Navigator] for this route branch in a [StatefulShellRoute].
+  ///
+  /// This field will typically not be set until this route tree has been navigated
   /// to at least once.
   final Navigator? navigator;
 
   /// Gets the defaultLocation specified in [routeBranch] or falls back to
-  /// the root path of the associated [rootRoute].
+  /// the path of the root route of the branch.
   String get _defaultLocation => routeBranch.defaultLocation ?? _rootRoutePath;
 
-  final String? _lastLocation;
+  final RouteInformation? _lastRouteInformation;
 
   /// The full path at which root route for the route branch is reachable.
   final String _rootRoutePath;
 
-  /// Gets the current location for this branch or falls back to the default
-  /// location () if this branch hasn't been visited yet.
-  String get _location => _lastLocation ?? _defaultLocation;
+  /// Gets the current location for this branch.
+  ///
+  /// Returns the last location navigated to on this route branch. If this
+  /// branch hasn't been visited yet, the default location will be used
+  /// (see [ShellRouteBranch.defaultLocation]).
+  String get _location => _lastRouteInformation?.location ?? _defaultLocation;
 
   @override
   bool operator ==(Object other) {
@@ -197,10 +203,10 @@ class ShellRouteBranchState {
     return other.routeBranch == routeBranch &&
         other._rootRoutePath == _rootRoutePath &&
         other.navigator == navigator &&
-        other._lastLocation == _lastLocation;
+        other._lastRouteInformation == _lastRouteInformation;
   }
 
   @override
-  int get hashCode =>
-      Object.hash(routeBranch, _rootRoutePath, navigator, _lastLocation);
+  int get hashCode => Object.hash(
+      routeBranch, _rootRoutePath, navigator, _lastRouteInformation);
 }
