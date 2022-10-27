@@ -238,14 +238,7 @@ abstract class ShellRouteData extends RouteData {
 /// {@endtemplate}
 class TypedRoute<T extends RouteData> {
   /// {@macro typed_route}
-  const TypedRoute({
-    this.routes = const <TypedRoute<RouteData>>[],
-  });
-
-  /// Child route definitions.
-  ///
-  /// See [RouteBase.routes].
-  final List<TypedRoute<RouteData>> routes;
+  const TypedRoute();
 }
 
 /// {@template typed_go_route}
@@ -256,7 +249,7 @@ class TypedGoRoute<T extends RouteData> extends TypedRoute<T> {
   /// {@macro typed_go_route}
   const TypedGoRoute({
     required this.path,
-    super.routes,
+    this.routes = const <TypedRoute<RouteData>>[],
   });
 
   /// The path that corresponds to this route.
@@ -265,6 +258,11 @@ class TypedGoRoute<T extends RouteData> extends TypedRoute<T> {
   ///
   ///
   final String path;
+
+  /// Child route definitions.
+  ///
+  /// See [RouteBase.routes].
+  final List<TypedRoute<RouteData>> routes;
 }
 
 /// {@template typed_shell_route}
@@ -273,7 +271,14 @@ class TypedGoRoute<T extends RouteData> extends TypedRoute<T> {
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedShellRoute<T extends RouteData> extends TypedRoute<T> {
   /// {@macro typed_shell_route}
-  const TypedShellRoute({super.routes});
+  const TypedShellRoute({
+    this.routes = const <TypedRoute<RouteData>>[],
+  });
+
+  /// Child route definitions.
+  ///
+  /// See [RouteBase.routes].
+  final List<TypedRoute<RouteData>> routes;
 }
 
 /// Internal class used to signal that the default page behavior should be used.
