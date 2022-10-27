@@ -17,6 +17,11 @@ import 'base/logger.dart';
 /// This class is based on the `flutter analyze --suggestions --machine` flutter_tools command
 /// which dumps various variables as JSON.
 class FlutterToolsEnvironment {
+  /// Constructs a tools environment out of a mapping of Strings to Object values.
+  ///
+  /// Each key is the String URI-style description of a value in the Flutter tool
+  /// and is mapped to a String or boolean value. The mapping should align with the
+  /// JSON output of `flutter analuze --suggestions --machine`.
   FlutterToolsEnvironment({
     required Map<String, Object?> mapping,
   }) : _mapping = mapping;
@@ -36,9 +41,9 @@ class FlutterToolsEnvironment {
       throwToolExit(
           'Flutter tool exited while running `flutter analyze --suggestions --machine` with: ${result.stderr}');
     }
-    String commandOutput = result.stdout;
+    String commandOutput = (result.stdout as String).trim();
     Map<String, Object?> mapping = <String, Object?>{};
-    if (commandOutput.contains('{') && commandOutput.endsWith('}\n')) {
+    if (commandOutput.startsWith('{') && commandOutput.endsWith('}')) {
       commandOutput = commandOutput.substring(commandOutput.indexOf('{'));
       mapping = jsonDecode(commandOutput.replaceAll(r'\', r'\\'));
     }
@@ -57,23 +62,15 @@ class FlutterToolsEnvironment {
   /// Returns the String stored at the key and null if
   /// the key does not exist or is not a String.
   String? getString(String key) {
-    if (_mapping.containsKey(key) &&
-        _mapping[key] != null &&
-        _mapping[key] is String) {
-      return _mapping[key]! as String;
-    }
-    return null;
+    final Object? value = _mapping[key];
+    return value is String? ? value : null;
   }
 
   /// Returns the bool stored at the key and null if
   /// the key does not exist or is not a bool.
   bool? getBool(String key) {
-    if (_mapping.containsKey(key) &&
-        _mapping[key] != null &&
-        _mapping[key] is bool) {
-      return _mapping[key]! as bool;
-    }
-    return null;
+    final Object? value = _mapping[key];
+    return value is bool? ? value : null;
   }
 
   bool containsKey(String key) {
