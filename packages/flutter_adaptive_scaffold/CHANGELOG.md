@@ -1,3 +1,7 @@
+## 0.0.9
+
+Make drawer items scrollable.
+
 ## 0.0.8
 
 Make fuchsia a mobile platform.
