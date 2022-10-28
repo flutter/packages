@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter_migrate/src/base/common.dart';
 import 'package:flutter_migrate/src/base/context.dart';
 import 'package:flutter_migrate/src/base/file_system.dart';
@@ -24,31 +26,40 @@ void main() {
     fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
     appDir = fileSystem.systemTempDirectory.createTempSync('apptestdir');
     logger = BufferLogger.test();
-    processManager = const LocalProcessManager();
+    processManager = FakeProcessManager('''
+{
+  "FlutterProject.directory": "/Users/test/flutter",
+  "FlutterProject.metadataFile": "/Users/test/flutter/.metadata",
+  "FlutterProject.android.exists": false,
+  "FlutterProject.ios.exists": false,
+  "FlutterProject.web.exists": false,
+  "FlutterProject.macos.exists": false,
+  "FlutterProject.linux.exists": false,
+  "FlutterProject.windows.exists": false,
+  "FlutterProject.fuchsia.exists": false,
+  "FlutterProject.android.isKotlin": false,
+  "FlutterProject.ios.isSwift": false,
+  "FlutterProject.isModule": false,
+  "FlutterProject.isPlugin": false,
+  "FlutterProject.manifest.appname": "",
+  "FlutterVersion.frameworkRevision": "4e181f012c717777681862e4771af5a941774bb9",
+  "Platform.operatingSystem": "macos",
+  "Platform.isAndroid": false,
+  "Platform.isIOS": false,
+  "Platform.isWindows": false,
+  "Platform.isMacOS": true,
+  "Platform.isFuchsia": false,
+  "Platform.pathSeparator": "/",
+  "Cache.flutterRoot": "/Users/test/flutter"
+}
+''');
   });
 
   tearDown(() async {
     tryToDelete(appDir);
   });
 
-  Future<bool> flutterToolSupportsEnv() async {
-    final ProcessResult result = await processManager
-        .run(<String>['flutter', '--version'], workingDirectory: appDir.path);
-    final String versionOutput = result.stdout as String;
-    final List<String> versionSplit = versionOutput.substring(8, 14).split('.');
-    expect(versionSplit.length >= 2, true);
-    if (!(int.parse(versionSplit[0]) > 3 ||
-        int.parse(versionSplit[0]) == 3 && int.parse(versionSplit[1]) > 3)) {
-      // Apply not supported on stable version 3.3 and below
-      return false;
-    }
-    return true;
-  }
-
   testUsingContext('Environment initialization', () async {
-    if (!(await flutterToolSupportsEnv())) {
-      return;
-    }
     final FlutterToolsEnvironment env =
         await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
             processManager, logger);
@@ -90,4 +101,23 @@ void main() {
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,
   });
+}
+
+class FakeProcessManager extends LocalProcessManager {
+  FakeProcessManager(this.runResult);
+
+  final String runResult;
+
+  @override
+  Future<ProcessResult> run(
+    List<Object> command,
+    {String? workingDirectory,
+    Map<String, String>? environment,
+    bool includeParentEnvironment = true,
+    bool runInShell = false,
+    covariant Encoding? stdoutEncoding = systemEncoding,
+    covariant Encoding? stderrEncoding = systemEncoding}
+    ) async {
+      return ProcessResult(0, 0, runResult, '');
+    }
 }
