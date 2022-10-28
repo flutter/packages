@@ -71,17 +71,21 @@ class RouteMatchList {
   }
 
   /// Removes the last match.
-  void pop() {
+  void pop({bool asserts = true}) {
     _matches.removeLast();
 
-    _debugAssertNotEmpty();
+    if (asserts) {
+      _debugAssertNotEmpty();
+    }
 
     // Also pop ShellRoutes when there are no subsequent route matches
     while (_matches.isNotEmpty && _matches.last.route is ShellRoute) {
       _matches.removeLast();
     }
 
-    _debugAssertNotEmpty();
+    if (asserts) {
+      _debugAssertNotEmpty();
+    }
   }
 
   /// An optional object provided by the app during navigation.

@@ -45,6 +45,18 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   final bool routerNeglect;
 
   RouteMatchList _matchList = RouteMatchList.empty();
+
+  /// Stores the number of time each route route has been pushed.
+  ///
+  /// This is used to generate a unique key for each route.
+  ///
+  /// For example, it would could be equal to:
+  /// ```dart
+  /// {
+  ///   'family': 1,
+  ///   'family/:fid': 2,
+  /// }
+  /// ```
   final Map<String, int> _pushCounts = <String, int>{};
   final RouteConfiguration _configuration;
 
@@ -151,8 +163,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
   void replace(RouteMatch match) {
-    _matchList.matches.last = match;
-    notifyListeners();
+    // We pop the current page. There is no need to verify the match list is not
+    // empty during the pop because we are going to push a new page right away.
+    _matchList.pop(asserts: false);
+    push(match); // [push] will notify listeners.
   }
 
   /// For internal use; visible for testing only.
