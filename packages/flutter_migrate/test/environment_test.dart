@@ -21,11 +21,13 @@ void main() {
   late BufferLogger logger;
   late ProcessManager processManager;
   late Directory appDir;
+  late String separator;
 
   setUp(() {
     fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
     appDir = fileSystem.systemTempDirectory.createTempSync('apptestdir');
     logger = BufferLogger.test();
+    separator = isWindows ? r'\\' : '/';
     processManager = FakeProcessManager('''
 {
   "FlutterProject.directory": "/Users/test/flutter",
@@ -41,15 +43,15 @@ void main() {
   "FlutterProject.ios.isSwift": false,
   "FlutterProject.isModule": false,
   "FlutterProject.isPlugin": false,
-  "FlutterProject.manifest.appname": "",
+  "FlutterProject.manifest.appname": "test_app_name",
   "FlutterVersion.frameworkRevision": "4e181f012c717777681862e4771af5a941774bb9",
   "Platform.operatingSystem": "macos",
-  "Platform.isAndroid": false,
+  "Platform.isAndroid": true,
   "Platform.isIOS": false,
-  "Platform.isWindows": false,
-  "Platform.isMacOS": true,
+  "Platform.isWindows": ${isWindows ? 'true' : 'false'},
+  "Platform.isMacOS": ${isMacOS ? 'true' : 'false'},
   "Platform.isFuchsia": false,
-  "Platform.pathSeparator": "/",
+  "Platform.pathSeparator": "$separator",
   "Cache.flutterRoot": "/Users/test/flutter"
 }
 ''');
@@ -66,8 +68,8 @@ void main() {
     expect(env.getString('invalid key') == null, true);
     expect(env.getBool('invalid key') == null, true);
 
-    expect(env.getString('FlutterProject.directory') != null, true);
-    expect(env.getString('FlutterProject.metadataFile') != null, true);
+    expect(env.getString('FlutterProject.directory'), '/Users/test/flutter');
+    expect(env.getString('FlutterProject.metadataFile'), '/Users/test/flutter/.metadata');
     expect(env.getBool('FlutterProject.android.exists'), false);
     expect(env.getBool('FlutterProject.ios.exists'), false);
     expect(env.getBool('FlutterProject.web.exists'), false);
@@ -79,24 +81,16 @@ void main() {
     expect(env.getBool('FlutterProject.ios.isSwift'), false);
     expect(env.getBool('FlutterProject.isModule'), false);
     expect(env.getBool('FlutterProject.isPlugin'), false);
-    expect(env.getString('FlutterProject.manifest.appname') != null, true);
-    expect(env.getString('FlutterVersion.frameworkRevision') != null, true);
-    final String os = isWindows
-        ? 'windows'
-        : isMacOS
-            ? 'macos'
-            : isLinux
-                ? 'linux'
-                : '';
-    expect(env.getString('Platform.operatingSystem'), os);
-    expect(env.getBool('Platform.isAndroid') != null, true);
-    expect(env.getBool('Platform.isIOS') != null, true);
+    expect(env.getString('FlutterProject.manifest.appname'), 'test_app_name');
+    expect(env.getString('FlutterVersion.frameworkRevision'), '4e181f012c717777681862e4771af5a941774bb9');
+    expect(env.getString('Platform.operatingSystem'), 'macos');
+    expect(env.getBool('Platform.isAndroid'), true);
+    expect(env.getBool('Platform.isIOS'), false);
     expect(env.getBool('Platform.isWindows'), isWindows);
     expect(env.getBool('Platform.isMacOS'), isMacOS);
     expect(env.getBool('Platform.isFuchsia'), false);
-    final String separator = isWindows ? r'\\' : '/';
     expect(env.getString('Platform.pathSeparator'), separator);
-    expect(env.getString('Cache.flutterRoot') != null, true);
+    expect(env.getString('Cache.flutterRoot'), '/Users/test/flutter');
   }, overrides: <Type, Generator>{
     FileSystem: () => fileSystem,
     ProcessManager: () => processManager,
