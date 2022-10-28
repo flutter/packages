@@ -85,7 +85,12 @@ class GoRouterState {
   }
 }
 
-/// The current state for a [StatefulShellRoute].
+/// The snapshot of the current state of a [StatefulShellRoute].
+///
+/// Note that this an immutable class, that represents the snapshot of the state
+/// of a StatefulShellRoute at a given point in time. Therefore, instances of
+/// this object should not be stored, but instead fetched fresh when needed,
+/// using the method [StatefulShellRoute.of].
 @immutable
 class StatefulShellRouteState {
   /// Constructs a [StatefulShellRouteState].
@@ -142,8 +147,14 @@ class StatefulShellRouteState {
   int get hashCode => Object.hash(route, branchState, index);
 }
 
-/// The current state for a particular route branch
-/// ([ShellRouteBranch]) of a [StatefulShellRoute].
+/// The snapshot of the current state for a particular route branch
+/// ([ShellRouteBranch]) in a [StatefulShellRoute].
+///
+/// Note that this an immutable class, that represents the snapshot of the state
+/// of a ShellRouteBranchState at a given point in time. Therefore, instances of
+/// this object should not be stored, but instead fetched fresh when needed,
+/// via the [StatefulShellRouteState] returned by the method
+/// [StatefulShellRoute.of].
 @immutable
 class ShellRouteBranchState {
   /// Constructs a [ShellRouteBranchState].

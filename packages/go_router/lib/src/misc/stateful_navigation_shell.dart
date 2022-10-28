@@ -170,7 +170,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
       child: Builder(builder: (BuildContext context) {
         // This Builder Widget is mainly used to make it possible to access the
         // StatefulShellRouteState via the BuildContext in the ShellRouteBuilder
-        final ShellRouteBuilder shellRouteBuilder = widget.shellRoute.builder;
+        final ShellRouteBuilder shellRouteBuilder = widget.shellRoute.builder!;
         return shellRouteBuilder(
           context,
           widget.shellGoRouterState,

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -128,8 +129,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                   ],
                 ),
               ],
-              builder: (BuildContext context, GoRouterState state,
-                  Widget ignoredNavigatorContainer) {
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
                 /// For this nested StatefulShellRoute we are using a custom
                 /// container (TabBarView) for the branch navigators, and thus
                 /// ignoring the default navigator contained passed to the
@@ -141,14 +142,22 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
             ),
           ),
         ],
-        builder: (BuildContext context, GoRouterState state,
-            Widget navigatorContainer) {
-          return ScaffoldWithNavBar(body: navigatorContainer);
+        builder: (BuildContext context, GoRouterState state, Widget child) {
+          return ScaffoldWithNavBar(body: child);
         },
 
+        /// If you need to create a custom container for the branch routes, to
+        /// for instance setup animations, you can implement your builder
+        /// something like this (see _AnimatedRouteBranchContainer):
+        // builder: (BuildContext context, GoRouterState state, Widget child) {
+        //   return ScaffoldWithNavBar(
+        //     body: _AnimatedRouteBranchContainer(),
+        //   );
+        // },
+
         /// If you need to customize the Page for StatefulShellRoute, pass a
-        /// pageProvider function in addition to the builder, for example:
-        // pageProvider:
+        /// pageBuilder function in addition to the builder, for example:
+        // pageBuilder:
         //     (BuildContext context, GoRouterState state, Widget statefulShell) {
         //   return NoTransitionPage<dynamic>(child: statefulShell);
         // },
@@ -298,7 +307,10 @@ class DetailsScreenState extends State<DetailsScreen> {
         body: _build(context),
       );
     } else {
-      return _build(context);
+      return Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: _build(context),
+      );
     }
   }
 
@@ -350,9 +362,10 @@ class TabbedRootScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
-    final int branchCount = shellState.branchState.length;
-    final List<Widget> children = List<Widget>.generate(
-        branchCount, (int index) => TabbedRootScreenTab(index: index));
+    final List<TabbedRootScreenTab> children = shellState.branchState
+        .mapIndexed((int index, ShellRouteBranchState e) =>
+            TabbedRootScreenTab(index: index))
+        .toList();
 
     return DefaultTabController(
       length: 2,
@@ -361,8 +374,7 @@ class TabbedRootScreen extends StatelessWidget {
         appBar: AppBar(
             title: const Text('Tab root'),
             bottom: TabBar(
-              tabs: List<Tab>.generate(
-                  branchCount, (int i) => Tab(text: 'Tab ${i + 1}')),
+              tabs: children.map((TabbedRootScreenTab e) => e.tab).toList(),
               onTap: (int tappedIndex) =>
                   _onTabTap(context, shellState, tappedIndex),
             )),
@@ -382,7 +394,9 @@ class TabbedRootScreen extends StatelessWidget {
 /// Widget wrapping the [Navigator] for a specific tab in [TabbedRootScreen].
 ///
 /// This class is needed since [TabBarView] won't update its cached list of
-/// children while in a transition between tabs.
+/// children while in a transition between tabs. This is why we only pass the
+/// index of the branch as a parameter, and fetch the state fresh in the build
+/// method.
 class TabbedRootScreenTab extends StatelessWidget {
   /// Constructs a TabbedRootScreenTab
   const TabbedRootScreenTab({Key? key, required this.index}) : super(key: key);
@@ -390,8 +404,13 @@ class TabbedRootScreenTab extends StatelessWidget {
   /// The index of the tab
   final int index;
 
+  /// Gets the associated [Tab] object
+  Tab get tab => Tab(text: 'Tab ${index + 1}');
+
   @override
   Widget build(BuildContext context) {
+    // Note that we must fetch the state fresh here, since the
+    // TabbedRootScreenTab is "cached" by the TabBarView.
     final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
     final Widget? navigator = shellState.branchState[index].navigator;
     return navigator ?? const SizedBox.expand();
@@ -433,5 +452,31 @@ class TabScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+// ignore: unused_element
+class _AnimatedRouteBranchContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final StatefulShellRouteState shellRouteState =
+        StatefulShellRoute.of(context);
+    return Stack(
+        children: shellRouteState.navigators.mapIndexed(
+      (int index, Widget? navigator) {
+        return AnimatedScale(
+          scale: index == shellRouteState.index ? 1 : 1.5,
+          duration: const Duration(milliseconds: 400),
+          child: AnimatedOpacity(
+            opacity: index == shellRouteState.index ? 1 : 0,
+            duration: const Duration(milliseconds: 400),
+            child: Offstage(
+              offstage: index != shellRouteState.index,
+              child: navigator ?? const SizedBox.shrink(),
+            ),
+          ),
+        );
+      },
+    ).toList());
   }
 }
