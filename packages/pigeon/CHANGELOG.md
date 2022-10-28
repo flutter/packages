@@ -1,6 +1,6 @@
 ## 4.2.4
 
-+ Add `toString` to the genereated class
+* Adds `toString` to the generated classes.
 
 ## 4.2.3
 
