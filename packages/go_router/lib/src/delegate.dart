@@ -103,7 +103,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     final RouteBase? ancestorBranchRootRoute =
         _configuration.findAncestorShellRouteBranchRoute(_matchList.last.route);
     if (ancestorBranchRootRoute != null) {
-      if (!_configuration.isDescendantOf(
+      if (!_configuration.isDescendantOrSame(
           ancestor: ancestorBranchRootRoute, route: match.route)) {
         throw GoError('Cannot push a route that is not a descendant of the '
             'current StatefulShellRoute branch');

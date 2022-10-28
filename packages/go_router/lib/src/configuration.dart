@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
 import 'logging.dart';
+import 'matching.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
 
@@ -96,6 +97,37 @@ class RouteConfiguration {
 
       checkParentNavigatorKeys(
           routes, <GlobalKey<NavigatorState>>[navigatorKey]);
+
+      void checkShellRouteBranchDefaultLocations(
+          List<RouteBase> routes, RouteMatcher matcher) {
+        try {
+          for (final RouteBase route in routes) {
+            if (route is StatefulShellRoute) {
+              for (final ShellRouteBranch branch in route.branches) {
+                if (branch.defaultLocation == null) {
+                  continue;
+                }
+                final RouteBase defaultLocationRoute =
+                    matcher.findMatch(branch.defaultLocation!).last.route;
+
+                assert(branch.rootRoute == defaultLocationRoute ||
+                    isDescendantOrSame(
+                        ancestor: branch.rootRoute,
+                        route: defaultLocationRoute));
+              }
+            }
+            checkShellRouteBranchDefaultLocations(route.routes, matcher);
+          }
+        } on MatcherError catch (e) {
+          assert(
+              false,
+              'defaultLocation (${e.location}) of ShellRouteBranch must '
+              'be a valid location');
+        }
+      }
+
+      checkShellRouteBranchDefaultLocations(routes, RouteMatcher(this));
+
       return true;
     }());
   }
@@ -194,8 +226,9 @@ class RouteConfiguration {
     return null;
   }
 
-  /// Tests if a route is a descendant of an ancestor route.
-  bool isDescendantOf({required RouteBase ancestor, required RouteBase route}) {
+  /// Tests if a route is a descendant of, or same as, an ancestor route.
+  bool isDescendantOrSame(
+      {required RouteBase ancestor, required RouteBase route}) {
     return _ancestorsForRoute(route, routes).contains(ancestor);
   }
 
@@ -203,7 +236,7 @@ class RouteConfiguration {
       RouteBase targetRoute, List<RouteBase> routes) {
     for (final RouteBase route in routes) {
       if (route.routes.contains(targetRoute)) {
-        return <RouteBase>[route];
+        return <RouteBase>[route, targetRoute];
       } else {
         final List<RouteBase> ancestors =
             _ancestorsForRoute(targetRoute, route.routes);
