@@ -1,7 +1,8 @@
-## NEXT
+## 5.1.2
 
 - Update README
 - Removes dynamic calls in examples.
+- Fixes a bug with `replace` where it was not generated a new `pageKey`.
 
 ## 5.1.1
 
