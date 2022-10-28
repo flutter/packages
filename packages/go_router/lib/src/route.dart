@@ -632,11 +632,13 @@ class StatefulShellRoute extends ShellRouteBase {
     required List<ShellRouteBranch> branches,
     required ShellRouteBuilder builder,
     ShellRoutePageBuilder? pageBuilder,
+    bool preloadBranches = false,
   }) : this._(
           routes: _rootRoutes(branches),
           branches: branches,
           builder: builder,
           pageBuilder: pageBuilder,
+          preloadBranches: preloadBranches,
         );
 
   /// Constructs a [StatefulShellRoute] from a list of [GoRoute]s, each
@@ -651,6 +653,7 @@ class StatefulShellRoute extends ShellRouteBase {
     required List<GoRoute> routes,
     required ShellRouteBuilder builder,
     ShellRoutePageBuilder? pageBuilder,
+    bool preloadBranches = false,
   }) : this._(
           routes: routes,
           branches: routes.map((GoRoute e) {
@@ -658,6 +661,7 @@ class StatefulShellRoute extends ShellRouteBase {
                 rootRoute: e, navigatorKey: e.parentNavigatorKey);
           }).toList(),
           builder: builder,
+          preloadBranches: preloadBranches,
           pageBuilder: pageBuilder,
         );
 
@@ -665,6 +669,7 @@ class StatefulShellRoute extends ShellRouteBase {
     required super.routes,
     required this.branches,
     required this.builder,
+    required this.preloadBranches,
     this.pageBuilder,
   })  : assert(branches.isNotEmpty),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
@@ -721,6 +726,14 @@ class StatefulShellRoute extends ShellRouteBase {
   /// [builder], and the child parameter will be the stateful shell already
   /// built for this route, using the builder function.
   final ShellRoutePageBuilder? pageBuilder;
+
+  /// Whether the route branches should be preloaded when navigating to this
+  /// route for the first time.
+  ///
+  /// If this is true, all the [branches] will be preloaded by navigating to the
+  /// [ShellRouteBranch.rootRoute], or the route matching
+  /// [ShellRouteBranch.defaultLocation].
+  final bool preloadBranches;
 
   @override
   GlobalKey<NavigatorState>? navigatorKeyForSubRoute(RouteBase subRoute) {

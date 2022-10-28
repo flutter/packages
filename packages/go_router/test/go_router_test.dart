@@ -2595,6 +2595,68 @@ void main() {
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B - X'), findsOneWidget);
     });
+
+    testWidgets('Preloads routes correctly in a StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyA =
+          GlobalKey<DummyStatefulWidgetState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyB =
+          GlobalKey<DummyStatefulWidgetState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyC =
+          GlobalKey<DummyStatefulWidgetState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyD =
+          GlobalKey<DummyStatefulWidgetState>();
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.rootRoutes(
+          builder: (BuildContext context, GoRouterState state, Widget child) =>
+              child,
+          routes: <GoRoute>[
+            GoRoute(
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) =>
+                  DummyStatefulWidget(key: statefulWidgetKeyA),
+            ),
+            GoRoute(
+              path: '/b',
+              builder: (BuildContext context, GoRouterState state) =>
+                  DummyStatefulWidget(key: statefulWidgetKeyB),
+            ),
+          ],
+        ),
+        StatefulShellRoute.rootRoutes(
+          preloadBranches: true,
+          builder: (BuildContext context, GoRouterState state, Widget child) =>
+              child,
+          routes: <GoRoute>[
+            GoRoute(
+              path: '/c',
+              builder: (BuildContext context, GoRouterState state) =>
+                  DummyStatefulWidget(key: statefulWidgetKeyC),
+            ),
+            GoRoute(
+              path: '/d',
+              builder: (BuildContext context, GoRouterState state) =>
+                  DummyStatefulWidget(key: statefulWidgetKeyD),
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      expect(statefulWidgetKeyA.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyB.currentState?.counter, null);
+      expect(statefulWidgetKeyC.currentState?.counter, null);
+      expect(statefulWidgetKeyD.currentState?.counter, null);
+
+      router.go('/c');
+      await tester.pumpAndSettle();
+      expect(statefulWidgetKeyC.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyD.currentState?.counter, equals(0));
+    });
   });
 
   group('Imperative navigation', () {

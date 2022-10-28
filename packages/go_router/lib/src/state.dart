@@ -178,7 +178,7 @@ class ShellRouteBranchState {
 
   /// Gets the defaultLocation specified in [routeBranch] or falls back to
   /// the path of the root route of the branch.
-  String get _defaultLocation => routeBranch.defaultLocation ?? _rootRoutePath;
+  String get defaultLocation => routeBranch.defaultLocation ?? _rootRoutePath;
 
   final RouteInformation? _lastRouteInformation;
 
@@ -190,7 +190,7 @@ class ShellRouteBranchState {
   /// Returns the last location navigated to on this route branch. If this
   /// branch hasn't been visited yet, the default location will be used
   /// (see [ShellRouteBranch.defaultLocation]).
-  String get _location => _lastRouteInformation?.location ?? _defaultLocation;
+  String get _location => _lastRouteInformation?.location ?? defaultLocation;
 
   @override
   bool operator ==(Object other) {

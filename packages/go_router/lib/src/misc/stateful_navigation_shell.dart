@@ -30,6 +30,10 @@ class InheritedStatefulNavigationShell extends InheritedWidget {
   }
 }
 
+/// Builder function for a route branch navigator
+typedef ShellRouteBranchNavigatorBuilder = Navigator? Function(
+    BuildContext context, StatefulShellRouteState routeState, int branchIndex);
+
 /// Widget that manages and maintains the state of a [StatefulShellRoute],
 /// including the [Navigator]s of the configured route branches.
 ///
@@ -53,6 +57,7 @@ class StatefulNavigationShell extends StatefulWidget {
     required this.shellGoRouterState,
     required this.navigator,
     required this.matchList,
+    required this.branchNavigatorBuilder,
     super.key,
   });
 
@@ -70,6 +75,9 @@ class StatefulNavigationShell extends StatefulWidget {
 
   /// The RouteMatchList for the current location
   final RouteMatchList matchList;
+
+  /// Builder for route branch navigators (used for preloading).
+  final ShellRouteBranchNavigatorBuilder branchNavigatorBuilder;
 
   @override
   State<StatefulWidget> createState() => StatefulNavigationShellState();
@@ -90,13 +98,16 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     GoRouter.of(context).go(location, extra: extra);
   }
 
+  String _fullPathForRoute(RouteBase route) =>
+      widget.configuration.fullPathForRoute(route);
+
   @override
   void initState() {
     super.initState();
     final List<ShellRouteBranchState> branchState = widget.shellRoute.branches
         .map((ShellRouteBranch e) => ShellRouteBranchState(
               routeBranch: e,
-              rootRoutePath: widget.configuration.fullPathForRoute(e.rootRoute),
+              rootRoutePath: _fullPathForRoute(e.rootRoute),
             ))
         .toList();
     _routeState = StatefulShellRouteState(
@@ -131,6 +142,18 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
       navigator: widget.navigator,
       lastRouteInformation: RouteInformation(location: location, state: extra),
     );
+
+    if (widget.shellRoute.preloadBranches) {
+      for (int i = 0; i < branchState.length; i++) {
+        if (i != currentIndex && branchState[i].navigator == null) {
+          final Navigator? navigator =
+              widget.branchNavigatorBuilder(context, _routeState, i);
+          branchState[i] = branchState[i].copy(
+            navigator: navigator,
+          );
+        }
+      }
+    }
 
     _routeState = StatefulShellRouteState(
       go: _go,

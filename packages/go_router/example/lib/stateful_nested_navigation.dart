@@ -31,9 +31,11 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 
   final GoRouter _router = GoRouter(
     initialLocation: '/a',
-    restorationScopeId: 'sadfasf',
     routes: <RouteBase>[
       StatefulShellRoute(
+        /// To enable preloading of the root routes of the branches, pass true
+        /// for the parameter preloadBranches.
+        // preloadBranches: true,
         branches: <ShellRouteBranch>[
           /// The route branch for the first tab of the bottom navigation bar.
           ShellRouteBranch(
@@ -410,6 +412,11 @@ class TabScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// If preloading is enabled on the top StatefulShellRoute, this will be
+    /// printed directly after the app has been started, but only for the route
+    /// that is the default location ('/c1')
+    debugPrint('Building TabScreen - $label');
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
