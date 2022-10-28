@@ -69,7 +69,8 @@ void main() {
     expect(env.getBool('invalid key') == null, true);
 
     expect(env.getString('FlutterProject.directory'), '/Users/test/flutter');
-    expect(env.getString('FlutterProject.metadataFile'), '/Users/test/flutter/.metadata');
+    expect(env.getString('FlutterProject.metadataFile'),
+        '/Users/test/flutter/.metadata');
     expect(env.getBool('FlutterProject.android.exists'), false);
     expect(env.getBool('FlutterProject.ios.exists'), false);
     expect(env.getBool('FlutterProject.web.exists'), false);
@@ -82,7 +83,8 @@ void main() {
     expect(env.getBool('FlutterProject.isModule'), false);
     expect(env.getBool('FlutterProject.isPlugin'), false);
     expect(env.getString('FlutterProject.manifest.appname'), 'test_app_name');
-    expect(env.getString('FlutterVersion.frameworkRevision'), '4e181f012c717777681862e4771af5a941774bb9');
+    expect(env.getString('FlutterVersion.frameworkRevision'),
+        '4e181f012c717777681862e4771af5a941774bb9');
     expect(env.getString('Platform.operatingSystem'), 'macos');
     expect(env.getBool('Platform.isAndroid'), true);
     expect(env.getBool('Platform.isIOS'), false);
