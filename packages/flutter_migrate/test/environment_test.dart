@@ -109,15 +109,13 @@ class FakeProcessManager extends LocalProcessManager {
   final String runResult;
 
   @override
-  Future<ProcessResult> run(
-    List<Object> command,
-    {String? workingDirectory,
-    Map<String, String>? environment,
-    bool includeParentEnvironment = true,
-    bool runInShell = false,
-    covariant Encoding? stdoutEncoding = systemEncoding,
-    covariant Encoding? stderrEncoding = systemEncoding}
-    ) async {
-      return ProcessResult(0, 0, runResult, '');
-    }
+  Future<ProcessResult> run(List<Object> command,
+      {String? workingDirectory,
+      Map<String, String>? environment,
+      bool includeParentEnvironment = true,
+      bool runInShell = false,
+      covariant Encoding? stdoutEncoding = systemEncoding,
+      covariant Encoding? stderrEncoding = systemEncoding}) async {
+    return ProcessResult(0, 0, runResult, '');
+  }
 }
