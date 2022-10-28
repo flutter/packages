@@ -1,3 +1,7 @@
+## 4.2.4
+
+* [dart] Fixes enum parameter handling in Dart test API class.
+
 ## 4.2.3
 
 * [java] Adds assert `args != null`.
