@@ -368,7 +368,7 @@ class TabbedRootScreen extends StatelessWidget {
         .toList();
 
     return DefaultTabController(
-      length: 2,
+      length: children.length,
       initialIndex: shellState.index,
       child: Scaffold(
         appBar: AppBar(

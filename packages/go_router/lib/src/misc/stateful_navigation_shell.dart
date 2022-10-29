@@ -94,8 +94,13 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     return index < 0 ? 0 : index;
   }
 
-  void _go(String location, Object? extra) {
-    GoRouter.of(context).go(location, extra: extra);
+  void _switchActiveBranch(
+      ShellRouteBranchState branchState, RouteMatchList? matchList) {
+    if (matchList != null) {
+      GoRouter.of(context).routerDelegate.replaceMatchList(matchList);
+    } else {
+      GoRouter.of(context).go(branchState.defaultLocation);
+    }
   }
 
   String _fullPathForRoute(RouteBase route) =>
@@ -111,7 +116,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
             ))
         .toList();
     _routeState = StatefulShellRouteState(
-      go: _go,
+      switchActiveBranch: _switchActiveBranch,
       route: widget.shellRoute,
       branchState: branchState,
       index: 0,
@@ -132,15 +137,12 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
 
   void _updateRouteState() {
     final int currentIndex = _findCurrentIndex();
-    final RouteMatchList matchList = widget.matchList;
-    final String location = matchList.location.toString();
-    final Object? extra = matchList.extra;
 
     final List<ShellRouteBranchState> branchState =
         _routeState.branchState.toList();
     branchState[currentIndex] = branchState[currentIndex].copy(
       navigator: widget.navigator,
-      lastRouteInformation: RouteInformation(location: location, state: extra),
+      matchList: widget.matchList,
     );
 
     if (widget.shellRoute.preloadBranches) {
@@ -156,7 +158,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     }
 
     _routeState = StatefulShellRouteState(
-      go: _go,
+      switchActiveBranch: _switchActiveBranch,
       route: widget.shellRoute,
       branchState: branchState,
       index: currentIndex,

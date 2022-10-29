@@ -179,6 +179,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     notifyListeners();
   }
 
+  /// Replaces the entire page stack.
+  void replaceMatchList(RouteMatchList matchList) {
+    _matchList = matchList;
+    notifyListeners();
+  }
+
   /// For internal use; visible for testing only.
   @visibleForTesting
   RouteMatchList get matches => _matchList;
