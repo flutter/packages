@@ -100,15 +100,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (match.route is ShellRouteBase) {
       throw GoError('ShellRoutes cannot be pushed');
     }
-    final RouteBase? ancestorBranchRootRoute =
-        _configuration.findAncestorShellRouteBranchRoute(_matchList.last.route);
-    if (ancestorBranchRootRoute != null) {
-      if (!_configuration.isDescendantOrSame(
-          ancestor: ancestorBranchRootRoute, route: match.route)) {
-        throw GoError('Cannot push a route that is not a descendant of the '
-            'current StatefulShellRoute branch');
-      }
-    }
 
     // Remap the pageKey to allow any number of the same page on the stack
     final String fullPath = match.fullpath;

@@ -238,53 +238,6 @@ void main() {
     });
 
     test(
-        'throws when a branch of a StatefulShellRoute has a defaultLocation '
-        'that belongs to another branch', () {
-      final GlobalKey<NavigatorState> root =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> sectionANavigatorKey =
-          GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> sectionBNavigatorKey =
-          GlobalKey<NavigatorState>();
-      expect(
-        () {
-          RouteConfiguration(
-            navigatorKey: root,
-            routes: <RouteBase>[
-              StatefulShellRoute(branches: <ShellRouteBranch>[
-                ShellRouteBranch(
-                  defaultLocation: '/b',
-                  navigatorKey: sectionANavigatorKey,
-                  rootRoute: GoRoute(
-                    path: '/a',
-                    builder: _mockScreenBuilder,
-                  ),
-                ),
-                ShellRouteBranch(
-                  defaultLocation: '/b',
-                  navigatorKey: sectionBNavigatorKey,
-                  rootRoute: StatefulShellRoute(branches: <ShellRouteBranch>[
-                    ShellRouteBranch(
-                      rootRoute: GoRoute(
-                        path: '/b',
-                        builder: _mockScreenBuilder,
-                      ),
-                    ),
-                  ], builder: _mockShellBuilder),
-                ),
-              ], builder: _mockShellBuilder),
-            ],
-            redirectLimit: 10,
-            topRedirect: (BuildContext context, GoRouterState state) {
-              return null;
-            },
-          );
-        },
-        throwsAssertionError,
-      );
-    });
-
-    test(
         'does not throw when a branch of a StatefulShellRoute has correctly '
         'configured defaultLocations', () {
       final GlobalKey<NavigatorState> root =

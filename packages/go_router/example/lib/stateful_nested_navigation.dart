@@ -201,15 +201,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
         ],
         currentIndex: shellState.index,
-        onTap: (int tappedIndex) =>
-            _onItemTapped(context, shellState, tappedIndex),
+        onTap: (int tappedIndex) => shellState.goBranch(tappedIndex),
       ),
     );
-  }
-
-  void _onItemTapped(
-      BuildContext context, StatefulShellRouteState shellState, int index) {
-    shellState.goBranch(index);
   }
 }
 

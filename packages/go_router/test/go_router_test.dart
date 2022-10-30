@@ -2596,6 +2596,72 @@ void main() {
       expect(find.text('Screen B - X'), findsOneWidget);
     });
 
+    testWidgets(
+        'Pushed non-descendant routes are correctly restored when '
+        'navigating between branches in StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> sectionANavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> sectionBNavigatorKey =
+          GlobalKey<NavigatorState>();
+      StatefulShellRouteState? routeState;
+
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          path: '/common',
+          builder: (BuildContext context, GoRouterState state) =>
+              Text('Common - ${state.extra}'),
+        ),
+        StatefulShellRoute.rootRoutes(
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            routeState = StatefulShellRoute.of(context);
+            return child;
+          },
+          routes: <GoRoute>[
+            GoRoute(
+              parentNavigatorKey: sectionANavigatorKey,
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen A'),
+            ),
+            GoRoute(
+              parentNavigatorKey: sectionBNavigatorKey,
+              path: '/b',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen B'),
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      expect(find.text('Screen A'), findsOneWidget);
+
+      router.go('/b');
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsOneWidget);
+
+      router.push('/common', extra: 'X');
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Common - X'), findsOneWidget);
+
+      routeState!.goBranch(0);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsOneWidget);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Common - X'), findsOneWidget);
+    });
+
     testWidgets('Preloads routes correctly in a StatefulShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
