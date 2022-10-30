@@ -513,12 +513,11 @@ class ShellRoute extends ShellRouteBase {
 /// this shorthand constructor, the [GoRoute.parentNavigatorKey] will be used
 /// as the Navigator key.
 ///
-/// Like [ShellRoute], you can provide a builder ([ShellRouteBranchState]) and
-/// pageBuilder ([ShellRoutePageBuilder]) when creating a StatefulShellRoute.
-/// However, StatefulShellRoute differs in that the builder is mandatory and the
-/// pageBuilder will be used in addition to the builder. The child parameters of
-/// the builders are also a bit different, even though this should normally not
-/// affect how you implemented the builders.
+/// Like [ShellRoute], you can provide a [builder] and [pageBuilder] when
+/// creating a StatefulShellRoute. However, StatefulShellRoute differs in that
+/// the builder is mandatory and the pageBuilder will be used in addition to the
+/// builder. The child parameters of the builders are also a bit different, even
+/// though this should normally not affect how you implemented the builders.
 ///
 /// For the pageBuilder, the child parameter will simply be the stateful shell
 /// already built for this route, using the builder function. In the builder
@@ -532,12 +531,23 @@ class ShellRoute extends ShellRouteBase {
 /// wrapper Widget that provides access to the current [StatefulShellRouteState]
 /// associated with the route (via the method [StatefulShellRoute.of]). That
 /// state object exposes information such as the current branch index, the state
-/// of the route branches etc.
+/// of the route branches etc. It is also with the help this state object you
+/// can change the active branch, i.e. restore the navigation stack of another
+/// branch. This is accomplished using the method
+/// [StatefulShellRouteState.goBranch]. For example:
 ///
-/// For implementations where greater control is needed over the layout and
-/// animations of the Navigators, the child parameter in builder can be ignored,
-/// and a custom implementation can instead be built by using the Navigators
-/// (and other information from StatefulShellRouteState) directly. For example:
+/// ```
+/// void _onBottomNavigationBarItemTapped(BuildContext context, int index) {
+///   final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
+///   shellState.goBranch(index);
+/// }
+/// ```
+///
+/// Sometimes you need greater control over the layout and animations of the
+/// branch Navigators. In such cases, the child argument in the builder function
+/// can be ignored, and a custom implementation can instead be built using the
+/// branch Navigators (see [StatefulShellRouteState.navigators]) directly. For
+/// example:
 ///
 /// ```
 /// final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
@@ -551,7 +561,7 @@ class ShellRoute extends ShellRouteBase {
 /// BottomNavigationBar with two tabs is used, and each of the tabs gets its
 /// own Navigator. A container widget responsible for managing the Navigators
 /// for all route branches will then be passed as the child argument
-/// of the [builder] function.
+/// of the builder function.
 ///
 /// ```
 /// final GlobalKey<NavigatorState> _tabANavigatorKey =
@@ -609,8 +619,8 @@ class ShellRoute extends ShellRouteBase {
 /// ```
 ///
 /// When the [Page] for this route needs to be customized, you need to pass a
-/// function for [pageBuilder]. Note that this page provider doesn't replace
-/// the [builder] function, but instead receives the stateful shell built by
+/// function for pageBuilder. Note that this page builder doesn't replace
+/// the builder function, but instead receives the stateful shell built by
 /// [StatefulShellRoute] (using the builder function) as input. In other words,
 /// you need to specify both when customizing a page. For example:
 ///
