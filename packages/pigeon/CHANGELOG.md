@@ -1,3 +1,7 @@
+## 4.2.5
+
+* [dart] Fixes enum parameter handling in Dart test API class.
+
 ## 4.2.4
 
 * [kotlin] Fixes Kotlin generated sync host api error.
