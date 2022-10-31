@@ -186,7 +186,6 @@ class GoRouterStateRegistry extends ChangeNotifier {
   final Map<Page<Object?>, GoRouterState> registry =
       <Page<Object?>, GoRouterState>{};
 
-  final Set<Page<Object?>> _pagesWithAssociation = <Page<Object?>>{};
   final Map<Route<Object?>, Page<Object?>> _routePageAssociation =
       <ModalRoute<Object?>, Page<Object?>>{};
 
@@ -197,9 +196,7 @@ class GoRouterStateRegistry extends ChangeNotifier {
     final Page<Object?>? oldPage = _routePageAssociation[route];
     if (oldPage == null) {
       // This is a new association.
-      assert(!_pagesWithAssociation.contains(page));
       _routePageAssociation[route] = page;
-      _pagesWithAssociation.add(page);
       // If there is an association, the registry relies on the route to remove
       // entry from registry because it wants to preserve the GoRouterState
       // until the route finishes the popping animations.
@@ -208,35 +205,31 @@ class GoRouterStateRegistry extends ChangeNotifier {
         // the lifetime of this route.
         final Page<Object?> associatedPage =
             _routePageAssociation.remove(route)!;
-        assert(_pagesWithAssociation.contains(associatedPage));
         assert(registry.containsKey(associatedPage));
-        _pagesWithAssociation.remove(associatedPage);
         registry.remove(associatedPage);
       });
     } else if (oldPage != page) {
       // Need to update the association to avoid memory leak.
       _routePageAssociation[route] = page;
-      assert(_pagesWithAssociation.contains(oldPage));
       assert(registry.containsKey(oldPage));
-      _pagesWithAssociation.remove(oldPage);
       registry.remove(oldPage);
-      _pagesWithAssociation.add(page);
     }
     assert(_routePageAssociation[route] == page);
-    assert(_pagesWithAssociation.contains(page));
     return registry[page]!;
   }
 
   /// Updates this registry with new records.
   void updateRegistry(Map<Page<Object?>, GoRouterState> newRegistry) {
     bool shouldNotify = false;
+    final Set<Page<Object?>> pagesWithAssociation =
+        _routePageAssociation.values.toSet();
     for (final MapEntry<Page<Object?>, GoRouterState> entry
         in newRegistry.entries) {
       final GoRouterState? existingState = registry[entry.key];
       if (existingState != null) {
         if (existingState != entry.value) {
           shouldNotify =
-              shouldNotify || _pagesWithAssociation.contains(entry.key);
+              shouldNotify || pagesWithAssociation.contains(entry.key);
           registry[entry.key] = entry.value;
         }
         continue;
@@ -253,7 +246,7 @@ class GoRouterStateRegistry extends ChangeNotifier {
       // For those that have page route association, it will be removed by the
       // route future. Need to notify the listener so they can update the page
       // route association if its page has changed.
-      if (_pagesWithAssociation.contains(key)) {
+      if (pagesWithAssociation.contains(key)) {
         shouldNotify = true;
         return false;
       }
