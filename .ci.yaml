@@ -75,6 +75,34 @@ targets:
           {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
+  - name: Windows windows-build_all_packages master
+    bringup: true
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: build_all_packages.yaml
+      channel: master
+      version_file: flutter_master.version
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
+  - name: Windows windows-build_all_packages stable
+    bringup: true
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: build_all_packages.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
   - name: Linux ci_yaml packages roller
     recipe: infra/ci_yaml
     timeout: 30
