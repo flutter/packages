@@ -3,11 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
-import 'tessellator.dart';
-import 'masking_optimizer.dart';
-import 'clipping_optimizer.dart';
-import 'overdraw_optimizer.dart';
-import 'path_ops.dart' as path_ops;
 import 'package:xml/xml_events.dart';
 
 import '../geometry/basic_types.dart';
@@ -15,13 +10,18 @@ import '../geometry/matrix.dart';
 import '../geometry/path.dart';
 import '../paint.dart';
 import '../vector_instructions.dart';
+import 'clipping_optimizer.dart';
 import 'colors.dart';
+import 'masking_optimizer.dart';
 import 'node.dart';
 import 'numbers.dart' hide parseDoubleWithUnits;
 import 'numbers.dart' as numbers show parseDoubleWithUnits;
 import 'opacity_peephole.dart';
+import 'overdraw_optimizer.dart';
 import 'parsers.dart';
+import 'path_ops.dart' as path_ops;
 import 'resolver.dart';
+import 'tessellator.dart';
 import 'theme.dart';
 import 'visitor.dart';
 
@@ -1505,7 +1505,6 @@ class SvgParser {
       return null;
     }
 
-    Paint? definitionPaint;
     Color? strokeColor;
     String? shaderId;
     bool? hasPattern;
@@ -1522,14 +1521,11 @@ class SvgParser {
     return SvgStrokeAttributes._(
       _definitions,
       shaderId: shaderId,
-      color: (strokeColor ?? currentColor ?? definitionPaint?.stroke?.color)
-          ?.withOpacity(opacity),
-      cap: _parseCap(rawStrokeCap, definitionPaint?.stroke),
-      join: _parseJoin(rawLineJoin, definitionPaint?.stroke),
-      miterLimit:
-          parseDouble(rawMiterLimit) ?? definitionPaint?.stroke?.miterLimit,
-      width: parseDoubleWithUnits(rawStrokeWidth) ??
-          definitionPaint?.stroke?.width,
+      color: (strokeColor ?? currentColor)?.withOpacity(opacity),
+      cap: _parseCap(rawStrokeCap, null),
+      join: _parseJoin(rawLineJoin, null),
+      miterLimit: parseDouble(rawMiterLimit),
+      width: parseDoubleWithUnits(rawStrokeWidth),
       dashArray: _parseDashArray(rawStrokeDashArray),
       dashOffset: _parseDashOffset(rawStrokeDashOffset),
       hasPattern: hasPattern,
@@ -1634,6 +1630,7 @@ class _Resolver {
   final Map<String, List<Node>> _clips = <String, List<Node>>{};
 
   bool _sealed = false;
+
   void _seal() {
     assert(_deferredShaders.isEmpty);
     _sealed = true;
