@@ -161,7 +161,7 @@ class WikilinkSyntax extends md.InlineSyntax {
   @override
   bool onMatch(md.InlineParser parser, Match match) {
     final String link =  match[1]!;
-    final md.Element el = md.Element('wikilink', [md.Element.text('span', link)])
+    final md.Element el = md.Element('wikilink', <md.Element>[md.Element.text('span', link)])
       ..attributes['href'] = link.replaceAll(' ', '_');
 
     parser.addNode(el);
