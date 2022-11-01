@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes lint warnings in the test_app.
+
 ## 0.1.0+1
 
 * Fixes lint warnings.
