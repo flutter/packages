@@ -1,7 +1,7 @@
 # Example Catalog
 
-## [Routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
-`flutter run lib/main.dart`
+## [Simple](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/simple.dart)
+`flutter run lib/simple.dart`
 
 An example to demonstrate a simple two-pages app.
 

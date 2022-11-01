@@ -16,6 +16,7 @@ import 'state.dart';
 ///
 /// Subclasses must override one of [build], [buildPageWithState], or
 /// [redirect].
+/// {@category Type-safe routes}
 abstract class GoRouteData {
   /// Allows subclasses to have `const` constructors.
   ///

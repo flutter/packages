@@ -1,0 +1,4 @@
+linter:
+  rules:
+    # Allow type inference for sample code
+    always_specify_types: false
