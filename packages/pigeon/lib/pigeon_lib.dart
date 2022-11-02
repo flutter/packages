@@ -254,7 +254,8 @@ class PigeonOptions {
           : null,
       swiftOut: map['swiftOut'] as String?,
       swiftOptions: map.containsKey('swiftOptions')
-          ? SwiftOptions.fromMap((map['swiftOptions'] as Map<String, Object>?)!)
+          ? SwiftOptions.fromList(
+              (map['swiftOptions'] as Map<String, Object>?)!)
           : null,
       kotlinOut: map['kotlinOut'] as String?,
       kotlinOptions: map.containsKey('kotlinOptions')

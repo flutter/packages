@@ -24,12 +24,12 @@ class MultipleArityTests: XCTestCase {
     
     let expectation = XCTestExpectation(description: "subtraction")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertNotNil(outputMap)
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertNotNil(outputList)
       
-      let output = outputMap!["result"] as? Int32
+      let output = outputList![0] as? Int32
       XCTAssertEqual(3, output)
-      XCTAssertNil(outputMap?["error"])
+      XCTAssertNil(outputList?[0])
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)

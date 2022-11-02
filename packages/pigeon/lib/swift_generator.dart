@@ -24,15 +24,15 @@ class SwiftOptions {
   final Iterable<String>? copyrightHeader;
 
   /// Creates a [SwiftOptions] from a Map representation where:
-  /// `x = SwiftOptions.fromMap(x.toMap())`.
-  static SwiftOptions fromMap(Map<String, Object> map) {
+  /// `x = SwiftOptions.fromList(x.toMap())`.
+  static SwiftOptions fromList(Map<String, Object> map) {
     return SwiftOptions(
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
     );
   }
 
   /// Converts a [SwiftOptions] to a Map representation where:
-  /// `x = SwiftOptions.fromMap(x.toMap())`.
+  /// `x = SwiftOptions.fromList(x.toMap())`.
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
@@ -43,7 +43,7 @@ class SwiftOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [SwiftOptions].
   SwiftOptions merge(SwiftOptions options) {
-    return SwiftOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+    return SwiftOptions.fromList(mergeMaps(toMap(), options.toMap()));
   }
 }
 
@@ -75,7 +75,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
             indent.write('case ${customClass.enumeration}:');
             indent.scoped('', '', () {
               indent.write(
-                  'return ${customClass.name}.fromMap(self.readValue() as! [String: Any])');
+                  'return ${customClass.name}.fromList(self.readValue() as! [Any])');
             });
           }
           indent.write('default:');
@@ -98,7 +98,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
           indent.add('if let value = value as? ${customClass.name} ');
           indent.scoped('{', '} else ', () {
             indent.writeln('super.writeByte(${customClass.enumeration})');
-            indent.writeln('super.writeValue(value.toMap())');
+            indent.writeln('super.writeValue(value.toList())');
           }, addTrailingNewline: false);
         }
         indent.scoped('{', '}', () {
@@ -471,7 +471,7 @@ import FlutterMacOS
     indent.write('enum ${anEnum.name}: Int ');
     indent.scoped('{', '}', () {
       // We use explicit indexing here as use of the ordinal() method is
-      // discouraged. The toMap and fromMap API matches class API to allow
+      // discouraged. The toList and fromList API matches class API to allow
       // the same code to work with enums and classes, but this
       // can also be done directly in the host and flutter APIs.
       int index = 0;
@@ -493,8 +493,8 @@ import FlutterMacOS
       indent.addln(defaultNil);
     }
 
-    void writeToMap() {
-      indent.write('func toMap() -> [String: Any?] ');
+    void writeToList() {
+      indent.write('func toList() -> [Any?] ');
       indent.scoped('{', '}', () {
         indent.write('return ');
         indent.scoped('[', ']', () {
@@ -505,7 +505,7 @@ import FlutterMacOS
             final String nullsafe = field.type.isNullable ? '?' : '';
             if (!hostDatatype.isBuiltin &&
                 rootClassNameSet.contains(field.type.baseName)) {
-              toWriteValue = '$fieldName$nullsafe.toMap()';
+              toWriteValue = '$fieldName$nullsafe.toList()';
             } else if (!hostDatatype.isBuiltin &&
                 rootEnumNameSet.contains(field.type.baseName)) {
               toWriteValue = '$fieldName$nullsafe.rawValue';
@@ -515,59 +515,61 @@ import FlutterMacOS
 
             final String comma = klass.fields.last == field ? '' : ',';
 
-            indent.writeln('"${field.name}": $toWriteValue$comma');
+            indent.writeln('$toWriteValue$comma');
           }
         });
       });
     }
 
-    void writeFromMap() {
+    void writeFromList() {
       final String className = klass.name;
-      indent
-          .write('static func fromMap(_ map: [String: Any?]) -> $className? ');
+      indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
       indent.scoped('{', '}', () {
-        for (final NamedType field in klass.fields) {
+        klass.fields
+            .toList()
+            .asMap()
+            .forEach((int index, final NamedType field) {
           final HostDatatype hostDatatype = getHostDatatype(field);
 
-          final String mapValue = 'map["${field.name}"]';
+          final String listValue = 'list[$index]';
           final String fieldType = _swiftTypeForDartType(field.type);
 
           if (field.type.isNullable) {
             if (!hostDatatype.isBuiltin &&
                 rootClassNameSet.contains(field.type.baseName)) {
               indent.writeln('var ${field.name}: $fieldType? = nil');
-              indent.write(
-                  'if let ${field.name}Map = $mapValue as? [String: Any?] ');
+              indent.write('if let ${field.name}List = $listValue as? [Any?] ');
               indent.scoped('{', '}', () {
                 indent.writeln(
-                    '${field.name} = $fieldType.fromMap(${field.name}Map)');
+                    '${field.name} = $fieldType.fromList(${field.name}List)');
               });
             } else if (!hostDatatype.isBuiltin &&
                 rootEnumNameSet.contains(field.type.baseName)) {
               indent.writeln('var ${field.name}: $fieldType? = nil');
-              indent.write('if let ${field.name}RawValue = $mapValue as? Int ');
+              indent
+                  .write('if let ${field.name}RawValue = $listValue as? Int ');
               indent.scoped('{', '}', () {
                 indent.writeln(
                     '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
               });
             } else {
-              indent.writeln('let ${field.name} = $mapValue as? $fieldType ');
+              indent.writeln('let ${field.name} = $listValue as? $fieldType ');
             }
           } else {
             if (!hostDatatype.isBuiltin &&
                 rootClassNameSet.contains(field.type.baseName)) {
               indent.writeln(
-                  'let ${field.name} = $fieldType.fromMap($mapValue as! [String: Any?])!');
+                  'let ${field.name} = $fieldType.fromList($listValue as! [Any?])!');
             } else if (!hostDatatype.isBuiltin &&
                 rootEnumNameSet.contains(field.type.baseName)) {
               indent.writeln(
-                  'let ${field.name} = $fieldType(rawValue: $mapValue as! Int)!');
+                  'let ${field.name} = $fieldType(rawValue: $listValue as! Int)!');
             } else {
-              indent.writeln('let ${field.name} = $mapValue as! $fieldType');
+              indent.writeln('let ${field.name} = $listValue as! $fieldType');
             }
           }
-        }
+        });
 
         indent.writeln('');
         indent.write('return ');
@@ -592,8 +594,8 @@ import FlutterMacOS
       klass.fields.forEach(writeField);
 
       indent.writeln('');
-      writeFromMap();
-      writeToMap();
+      writeFromList();
+      writeToList();
     });
   }
 
@@ -606,24 +608,20 @@ import FlutterMacOS
   }
 
   void writeWrapResult() {
-    indent.write('private func wrapResult(_ result: Any?) -> [String: Any?] ');
+    indent.write('private func wrapResult(_ result: Any?) -> [Any?] ');
     indent.scoped('{', '}', () {
-      indent.writeln('return ["result": result]');
+      indent.writeln('return [result]');
     });
   }
 
   void writeWrapError() {
-    indent.write(
-        'private func wrapError(_ error: FlutterError) -> [String: Any?] ');
+    indent.write('private func wrapError(_ error: FlutterError) -> [Any?] ');
     indent.scoped('{', '}', () {
       indent.write('return ');
       indent.scoped('[', ']', () {
-        indent.write('"error": ');
-        indent.scoped('[', ']', () {
-          indent.writeln('"${Keys.errorCode}": error.code,');
-          indent.writeln('"${Keys.errorMessage}": error.message,');
-          indent.writeln('"${Keys.errorDetails}": error.details');
-        });
+        indent.writeln('error.code,');
+        indent.writeln('error.message,');
+        indent.writeln('error.details');
       });
     });
   }

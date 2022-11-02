@@ -30,9 +30,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: Int32? = nil'));
-    expect(code,
-        contains('static func fromMap(_ map: [String: Any?]) -> Foobar?'));
-    expect(code, contains('func toMap() -> [String: Any?]'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Foobar?'));
+    expect(code, contains('func toList() -> [Any?]'));
   });
 
   test('gen one enum', () {
@@ -436,10 +435,9 @@ void main() {
     expect(code, contains('struct Outer'));
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
-    expect(
-        code, contains('static func fromMap(_ map: [String: Any?]) -> Outer?'));
-    expect(code, contains('nested = Nested.fromMap(nestedMap)'));
-    expect(code, contains('func toMap() -> [String: Any?]'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Outer?'));
+    expect(code, contains('nested = Nested.fromList(nestedList)'));
+    expect(code, contains('func toList() -> [Any?]'));
   });
 
   test('gen one async Host Api', () {

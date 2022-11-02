@@ -30,12 +30,12 @@ class PrimitiveTests: XCTestCase {
     
     let expectation = XCTestExpectation(description: "anInt")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertNotNil(outputMap)
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertNotNil(outputList)
       
-      let output = outputMap!["result"] as? Int32
+      let output = outputList!.first as? Int32
       XCTAssertEqual(1, output)
-      XCTAssertNil(outputMap?["error"])
+      XCTAssertFalse(outputList!.count > 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -64,12 +64,12 @@ class PrimitiveTests: XCTestCase {
     
     let expectation = XCTestExpectation(description: "aBool")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertNotNil(outputMap)
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertNotNil(outputList)
       
-      let output = outputMap!["result"] as? Bool
+      let output = outputList!.first as? Bool
       XCTAssertEqual(true, output)
-      XCTAssertNil(outputMap?["error"])
+      XCTAssertFalse(outputList!.count > 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -98,12 +98,12 @@ class PrimitiveTests: XCTestCase {
     
     let expectation = XCTestExpectation(description: "aDouble")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertNotNil(outputMap)
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertNotNil(outputList)
       
-      let output = outputMap!["result"] as? Double
+      let output = outputList!.first as? Double
       XCTAssertEqual(1.0, output)
-      XCTAssertNil(outputMap?["error"])
+      XCTAssertFalse(outputList!.count > 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -133,12 +133,12 @@ class PrimitiveTests: XCTestCase {
     
     let expectation = XCTestExpectation(description: "aString")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertNotNil(outputMap)
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertNotNil(outputList)
       
-      let output = outputMap!["result"] as? String
+      let output = outputList!.first as? String
       XCTAssertEqual("hello", output)
-      XCTAssertNil(outputMap?["error"])
+      XCTAssertFalse(outputList!.count > 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -168,12 +168,12 @@ class PrimitiveTests: XCTestCase {
     
     let expectation = XCTestExpectation(description: "aList")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertNotNil(outputMap)
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertNotNil(outputList)
       
-      let output = outputMap!["result"] as? [Int]
+      let output = outputList!.first as? [Int]
       XCTAssertEqual([1, 2, 3], output)
-      XCTAssertNil(outputMap?["error"])
+      XCTAssertFalse(outputList!.count > 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -206,7 +206,7 @@ class PrimitiveTests: XCTestCase {
       let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
       XCTAssertNotNil(outputMap)
       
-      let output = outputMap!["result"] as? [String: Int]
+        let output = outputMap!.first as? [String: Int]
       XCTAssertEqual(["hello": 1, "world": 2], output)
       XCTAssertNil(outputMap?["error"])
       expectation.fulfill()

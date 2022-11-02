@@ -896,10 +896,8 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>> doit('));
-    expect(
-        code,
-        contains(
-            "return (replyMap['result'] as List<Object?>?)!.cast<int?>();"));
+    expect(code,
+        contains('return (replyList[0] as List<Object?>?)!.cast<int?>();'));
   });
 
   test('flutter generics argument non void return', () {
@@ -960,7 +958,7 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains("return (replyMap['result'] as int?);"));
+    expect(code, contains('return (replyList[0] as int?);'));
   });
 
   test('return nullable collection host', () {
@@ -985,10 +983,8 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>?> doit()'));
-    expect(
-        code,
-        contains(
-            "return (replyMap['result'] as List<Object?>?)?.cast<int?>();"));
+    expect(code,
+        contains('return (replyList[0] as List<Object?>?)?.cast<int?>();'));
   });
 
   test('return nullable async host', () {
@@ -1012,7 +1008,7 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains("return (replyMap['result'] as int?);"));
+    expect(code, contains('return (replyList[0] as int?);'));
   });
 
   test('return nullable flutter', () {

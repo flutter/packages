@@ -43,9 +43,12 @@ class AsyncHandlersTest: XCTestCase {
     
     let expectation = XCTestExpectation(description: "voidvoid callback")
     binaryMessenger.handlers[channelName]?(nil) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertNil(outputMap?["result"])
-      XCTAssertNil(outputMap?["error"])
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertNotNil(outputList)
+      XCTAssertNil(outputList?.first)
+        if (outputList != nil) {
+        XCTAssertFalse(outputList!.count > 1)
+      }
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -64,9 +67,11 @@ class AsyncHandlersTest: XCTestCase {
     
     let expectation = XCTestExpectation(description: "calculate callback")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      let output = outputMap?["result"] as? Value
-      XCTAssertEqual(output?.number, 2)
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertNotNil(outputList)
+      let output = outputList!.first as? Int
+      XCTAssertNotNil(output)
+      XCTAssertEqual(output, 2)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)

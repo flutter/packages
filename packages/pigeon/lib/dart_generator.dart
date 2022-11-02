@@ -226,32 +226,31 @@ final BinaryMessenger? _binaryMessenger;
         });
         final String returnType = _makeGenericTypeArguments(func.returnType);
         final String castCall = _makeGenericCastCall(func.returnType);
-        const String accessor = "replyMap['${Keys.result}']";
+        const String accessor = 'replyList[0]';
         final String nullHandler =
             func.returnType.isNullable ? (castCall.isEmpty ? '' : '?') : '!';
         final String returnStatement = func.returnType.isVoid
             ? 'return;'
             : 'return ($accessor as $returnType?)$nullHandler$castCall;';
         indent.format('''
-final Map<Object?, Object?>? replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object?, Object?>?;
-if (replyMap == null) {
+final List<Object?>? replyList =\n\t\tawait channel.send($sendArgument) as List<Object?>?;
+if (replyList == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
 \t\tmessage: 'Unable to establish connection on channel.',
 \t);
-} else if (replyMap['error'] != null) {
-\tfinal Map<Object?, Object?> error = (replyMap['${Keys.error}'] as Map<Object?, Object?>?)!;
+} else if (replyList.length > 1) {
 \tthrow PlatformException(
-\t\tcode: (error['${Keys.errorCode}'] as String?)!,
-\t\tmessage: error['${Keys.errorMessage}'] as String?,
-\t\tdetails: error['${Keys.errorDetails}'],
+\t\tcode: (replyList[0] as String?)!,
+\t\tmessage: replyList[1] as String?,
+\t\tdetails: replyList[2],
 \t);''');
         // On iOS we can return nil from functions to accommodate error
         // handling.  Returning a nil value and not returning an error is an
         // exception.
         if (!func.returnType.isNullable && !func.returnType.isVoid) {
           indent.format('''
-} else if (replyMap['${Keys.result}'] == null) {
+} else if (replyList[0] == null) {
 \tthrow PlatformException(
 \t\tcode: 'null-error',
 \t\tmessage: 'Host platform returned null value for non-null return value.',
