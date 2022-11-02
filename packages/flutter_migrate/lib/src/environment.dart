@@ -21,7 +21,7 @@ class FlutterToolsEnvironment {
   ///
   /// Each key is the String URI-style description of a value in the Flutter tool
   /// and is mapped to a String or boolean value. The mapping should align with the
-  /// JSON output of `flutter analuze --suggestions --machine`.
+  /// JSON output of `flutter analyze --suggestions --machine`.
   FlutterToolsEnvironment({
     required Map<String, Object?> mapping,
   }) : _mapping = mapping;

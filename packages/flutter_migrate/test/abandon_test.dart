@@ -30,8 +30,6 @@ void main() {
     processManager = const LocalProcessManager();
   });
 
-  setUpAll(() {});
-
   tearDown(() async {
     tryToDelete(appDir);
   });
