@@ -63,7 +63,8 @@ FutureOr<RouteMatchList> redirect(
       }
       FutureOr<RouteMatchList> processRouteLevelRedirect(
           String? routeRedirectLocation) {
-        if (routeRedirectLocation != null && routeRedirectLocation != prevLocation) {
+        if (routeRedirectLocation != null &&
+            routeRedirectLocation != prevLocation) {
           final RouteMatchList newMatch = _getNewMatches(
             routeRedirectLocation,
             prevMatchList.location,

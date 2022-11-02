@@ -1,7 +1,11 @@
+## 5.1.3
+
+- Allows redirection to return same location.
+
 ## 5.1.2
 
 - Exposes uri and path parameters from GoRouter and fixes its notifications.
-- Updates README
+- Updates README.
 - Removes dynamic calls in examples.
 
 ## 5.1.1
