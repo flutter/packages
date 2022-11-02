@@ -323,10 +323,9 @@ class _BuilderTestWidget extends StatelessWidget {
       configuration: configuration,
       builderWithNav: (
         BuildContext context,
-        GoRouterState state,
-        Navigator navigator,
+        Widget child,
       ) {
-        return navigator;
+        return child;
       },
       errorPageBuilder: (
         BuildContext context,
@@ -350,8 +349,8 @@ class _BuilderTestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: builder.tryBuild(
-          context, matches, () {}, false, routeConfiguration.navigatorKey),
+      home: builder.tryBuild(context, matches, () {}, false,
+          routeConfiguration.navigatorKey, <Page<Object?>, GoRouterState>{}),
       // builder: (context, child) => ,
     );
   }

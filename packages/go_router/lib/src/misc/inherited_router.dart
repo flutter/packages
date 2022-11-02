@@ -11,24 +11,16 @@ import '../router.dart';
 ///
 /// Used for to find the current GoRouter in the widget tree. This is useful
 /// when routing from anywhere in your app.
-class InheritedGoRouter extends InheritedWidget {
+class InheritedGoRouter extends InheritedNotifier<GoRouter> {
   /// Default constructor for the inherited go router.
   const InheritedGoRouter({
     required super.child,
     required this.goRouter,
     super.key,
-  });
+  }) : super(notifier: goRouter);
 
   /// The [GoRouter] that is made available to the widget tree.
   final GoRouter goRouter;
-
-  /// Used by the Router architecture as part of the InheritedWidget.
-  @override
-  // ignore: prefer_expression_function_bodies
-  bool updateShouldNotify(covariant InheritedGoRouter oldWidget) {
-    // avoid rebuilding the widget tree if the router has not changed
-    return goRouter != oldWidget.goRouter;
-  }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
