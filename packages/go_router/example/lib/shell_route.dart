@@ -151,8 +151,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   }
 
   static int _calculateSelectedIndex(BuildContext context) {
-    final GoRouter route = GoRouter.of(context);
-    final String location = route.location;
+    final String location = GoRouterState.of(context).location;
     if (location.startsWith('/a')) {
       return 0;
     }
