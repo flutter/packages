@@ -462,8 +462,7 @@ void defineTests() {
               .toList();
           expect(text[0], '| abc | def | | --- | | bar |');
         },
-        // TODO(mjordan56): Remove skip once the issue #341 in the markdown package
-        // is fixed and released. https://github.com/dart-lang/markdown/issues/341
+        // TODO(kevmoo): Remove skip once min pkg:markdown > 6.0.1
         skip: true,
       );
 
