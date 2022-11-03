@@ -1208,6 +1208,37 @@ void main() {
       expect(redirected, isTrue);
     });
 
+    testWidgets('redirect can redirect to same path',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+                path: 'dummy',
+                // Return same location.
+                redirect: (_, GoRouterState state) => state.location,
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen()),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          redirect: (BuildContext context, GoRouterState state) {
+        // Return same location.
+        return state.location;
+      });
+
+      expect(router.location, '/');
+      // Directly set the url through platform message.
+      await sendPlatformUrl('/dummy');
+      await tester.pumpAndSettle();
+      expect(router.location, '/dummy');
+    });
+
     testWidgets('top-level redirect w/ named routes',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
