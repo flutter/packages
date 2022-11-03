@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'utils.dart';
 
 void main() => defineTests();
@@ -390,25 +391,45 @@ void defineTests() {
 
           expectTableSize(3, 2);
 
-          expect(find.byType(RichText), findsNWidgets(6));
-          final List<String?> text = find
-              .byType(RichText)
-              .evaluate()
-              .map((Element e) => e.widget)
-              .cast<RichText>()
-              .map((RichText richText) => richText.text)
-              .cast<TextSpan>()
-              .map((TextSpan e) => e.text)
-              .toList();
-          expect(text[0], 'abc');
-          expect(text[1], 'def');
-          expect(text[2], 'bar');
-          expect(text[3], 'baz');
-          expect(text[4], 'bar');
-          expect(table.defaultColumnWidth, columnWidth);
+          final int count = find.byType(RichText).evaluate().length;
 
-          // Paragraph text
-          expect(text[5], 'bar');
+          if (count == 6) {
+            // For pkg:markdown <= v6.0.1
+            expect(find.byType(RichText), findsNWidgets(6));
+            final List<String?> text = find
+                .byType(RichText)
+                .evaluate()
+                .map((Element e) => e.widget)
+                .cast<RichText>()
+                .map((RichText richText) => richText.text)
+                .cast<TextSpan>()
+                .map((TextSpan e) => e.text)
+                .toList();
+            expect(text[0], 'abc');
+            expect(text[1], 'def');
+            expect(text[2], 'bar');
+            expect(text[3], 'baz');
+            expect(text[4], 'bar');
+            expect(table.defaultColumnWidth, columnWidth);
+
+            // Paragraph text
+            expect(text[5], 'bar');
+          } else {
+            // For pkg:markdown > v6.0.1
+            expect(find.byType(RichText), findsNWidgets(7));
+            final List<String?> text = find
+                .byType(RichText)
+                .evaluate()
+                .map((Element e) => e.widget)
+                .cast<RichText>()
+                .map((RichText richText) => richText.text)
+                .cast<TextSpan>()
+                .map((TextSpan e) => e.text)
+                .toList();
+            expect(
+                text, <String>['abc', 'def', 'bar', 'baz', 'bar', '', 'bar']);
+            expect(table.defaultColumnWidth, columnWidth);
+          }
         },
       );
 
@@ -468,22 +489,41 @@ void defineTests() {
 
           expectTableSize(3, 2);
 
-          expect(find.byType(RichText), findsNWidgets(5));
-          final List<String?> cellText = find
-              .byType(RichText)
-              .evaluate()
-              .map((Element e) => e.widget)
-              .cast<RichText>()
-              .map((RichText richText) => richText.text)
-              .cast<TextSpan>()
-              .map((TextSpan e) => e.text)
-              .toList();
-          expect(cellText[0], 'abc');
-          expect(cellText[1], 'def');
-          expect(cellText[2], 'bar');
-          expect(cellText[3], 'bar');
-          expect(cellText[4], 'baz');
-          expect(table.defaultColumnWidth, columnWidth);
+          final int count = find.byType(RichText).evaluate().length;
+
+          if (count == 5) {
+            // For pkg:markdown <= v6.0.1
+            expect(find.byType(RichText), findsNWidgets(5));
+            final List<String?> cellText = find
+                .byType(RichText)
+                .evaluate()
+                .map((Element e) => e.widget)
+                .cast<RichText>()
+                .map((RichText richText) => richText.text)
+                .cast<TextSpan>()
+                .map((TextSpan e) => e.text)
+                .toList();
+            expect(cellText[0], 'abc');
+            expect(cellText[1], 'def');
+            expect(cellText[2], 'bar');
+            expect(cellText[3], 'bar');
+            expect(cellText[4], 'baz');
+            expect(table.defaultColumnWidth, columnWidth);
+          } else {
+            // For pkg:markdown > v6.0.1
+            expect(find.byType(RichText), findsNWidgets(6));
+            final List<String?> cellText = find
+                .byType(RichText)
+                .evaluate()
+                .map((Element e) => e.widget)
+                .cast<RichText>()
+                .map((RichText richText) => richText.text)
+                .cast<TextSpan>()
+                .map((TextSpan e) => e.text)
+                .toList();
+            expect(cellText, <String>['abc', 'def', 'bar', '', 'bar', 'baz']);
+            expect(table.defaultColumnWidth, columnWidth);
+          }
         },
       );
 
