@@ -5,8 +5,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markdown/markdown.dart' as md show version;
 
 import 'utils.dart';
+
+// TODO(kevmoo): delete this once the min version of pkg:markdown is updated
+final bool _newMarkdown = md.version.compareTo('6.0.1') > 0;
 
 void main() => defineTests();
 
@@ -391,9 +395,7 @@ void defineTests() {
 
           expectTableSize(3, 2);
 
-          final int count = find.byType(RichText).evaluate().length;
-
-          if (count == 6) {
+          if (!_newMarkdown) {
             // For pkg:markdown <= v6.0.1
             expect(find.byType(RichText), findsNWidgets(6));
             final List<String?> text = find
@@ -462,8 +464,7 @@ void defineTests() {
               .toList();
           expect(text[0], '| abc | def | | --- | | bar |');
         },
-        // TODO(kevmoo): Remove skip once min pkg:markdown > 6.0.1
-        skip: true,
+        skip: !_newMarkdown,
       );
 
       testWidgets(
@@ -488,9 +489,7 @@ void defineTests() {
 
           expectTableSize(3, 2);
 
-          final int count = find.byType(RichText).evaluate().length;
-
-          if (count == 5) {
+          if (!_newMarkdown) {
             // For pkg:markdown <= v6.0.1
             expect(find.byType(RichText), findsNWidgets(5));
             final List<String?> cellText = find
