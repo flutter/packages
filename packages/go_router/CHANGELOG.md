@@ -1,3 +1,7 @@
+## NEXT
+
+- Fixes the documentation by removing the `ShellRoute`'s non-existing `path` parameter from it.
+
 ## 5.1.3
 
 - Allows redirection to return same location.
