@@ -110,7 +110,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
           .processRedirection(matchList, context)
           .then(
             (RouteMatchList matchList) =>
-                goRouter.routerDelegate.replaceMatchList(matchList),
+                goRouter.routerDelegate.setNewRoutePath(matchList),
             onError: (_) => goRouter.go(branchState.defaultLocation),
           );
     } else {

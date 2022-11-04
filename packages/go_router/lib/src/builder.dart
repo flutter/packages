@@ -220,13 +220,7 @@ class RouteBuilder {
             pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
             restorationScopeId: restorationScopeId);
         child = _buildStatefulNavigationShell(
-          shellRoute: route,
-          shellRouterState: state,
-          navigator: child as Navigator,
-          matchList: matchList,
-          pop: pop,
-          registry: registry,
-        );
+            route, child as Navigator, state, matchList, pop, registry);
       } else {
         final String? restorationScopeId =
             (route is ShellRoute) ? route.restorationScopeId : null;
@@ -269,12 +263,13 @@ class RouteBuilder {
   }
 
   StatefulNavigationShell _buildStatefulNavigationShell(
-      {required StatefulShellRoute shellRoute,
-      required Navigator navigator,
-      required GoRouterState shellRouterState,
-      required RouteMatchList matchList,
-      required VoidCallback pop,
-      required Map<Page<Object?>, GoRouterState> registry}) {
+    StatefulShellRoute shellRoute,
+    Navigator navigator,
+    GoRouterState shellRouterState,
+    RouteMatchList matchList,
+    VoidCallback pop,
+    Map<Page<Object?>, GoRouterState> registry,
+  ) {
     return StatefulNavigationShell(
         configuration: configuration,
         shellRoute: shellRoute,
