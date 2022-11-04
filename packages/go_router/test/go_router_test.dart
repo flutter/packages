@@ -2674,6 +2674,8 @@ void main() {
           GlobalKey<DummyStatefulWidgetState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyD =
           GlobalKey<DummyStatefulWidgetState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyE =
+          GlobalKey<DummyStatefulWidgetState>();
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.rootRoutes(
@@ -2707,12 +2709,33 @@ void main() {
               builder: (BuildContext context, GoRouterState state) =>
                   DummyStatefulWidget(key: statefulWidgetKeyD),
             ),
+            GoRoute(
+                path: '/e',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('E'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'details',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DummyStatefulWidget(key: statefulWidgetKeyE),
+                  ),
+                ]),
           ],
         ),
       ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        navigatorKey: rootNavigatorKey,
+        redirect: (_, GoRouterState state) {
+          if (state.location == '/e') {
+            return '/e/details';
+          }
+          return null;
+        },
+      );
       expect(statefulWidgetKeyA.currentState?.counter, equals(0));
       expect(statefulWidgetKeyB.currentState?.counter, null);
       expect(statefulWidgetKeyC.currentState?.counter, null);
@@ -2722,6 +2745,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(statefulWidgetKeyC.currentState?.counter, equals(0));
       expect(statefulWidgetKeyD.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyE.currentState?.counter, equals(0));
     });
   });
 

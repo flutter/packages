@@ -102,6 +102,18 @@ class StatefulShellRouteState {
     required this.index,
   }) : _switchActiveBranch = switchActiveBranch;
 
+  /// Constructs a copy of this [StatefulShellRouteState], with updated values
+  /// for some of the fields.
+  StatefulShellRouteState copy(
+      {List<ShellRouteBranchState>? branchState, int? index}) {
+    return StatefulShellRouteState(
+      switchActiveBranch: _switchActiveBranch,
+      route: route,
+      branchState: branchState ?? this.branchState,
+      index: index ?? this.index,
+    );
+  }
+
   /// The associated [StatefulShellRoute]
   final StatefulShellRoute route;
 
@@ -186,8 +198,8 @@ class ShellRouteBranchState {
 
   /// The [Navigator] for this route branch in a [StatefulShellRoute].
   ///
-  /// This field will typically not be set until this route tree has been navigated
-  /// to at least once.
+  /// This field will typically not be set until this route tree has been
+  /// navigated to at least once.
   final Navigator? navigator;
 
   /// Gets the defaultLocation specified in [routeBranch] or falls back to

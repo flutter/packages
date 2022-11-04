@@ -266,43 +266,20 @@ class RouteBuilder {
     required VoidCallback pop,
   }) {
     return StatefulNavigationShell(
-      configuration: configuration,
-      shellRoute: shellRoute,
-      shellGoRouterState: shellRouterState,
-      navigator: navigator,
-      matchList: matchList,
-      branchNavigatorBuilder: (BuildContext context,
-              StatefulShellRouteState routeState, int branchIndex) =>
-          _buildPreloadedNavigatorForRouteBranch(
-              context, routeState, branchIndex, pop),
-    );
-  }
-
-  Navigator? _buildPreloadedNavigatorForRouteBranch(BuildContext context,
-      StatefulShellRouteState routeState, int branchIndex, VoidCallback pop) {
-    final ShellRouteBranchState branchState =
-        routeState.branchState[branchIndex];
-    final ShellRouteBranch branch = branchState.routeBranch;
-    final String defaultLocation = branchState.defaultLocation;
-
-    // Build a RouteMatchList from the default location of the route branch and
-    // find the index of the branch root route in the match list
-    RouteMatchList routeMatchList =
-        RouteMatcher(configuration).findMatch(defaultLocation);
-    final int routeBranchIndex = routeMatchList.matches
-        .indexWhere((RouteMatch e) => e.route == branch.rootRoute);
-
-    // Keep only the routes from and below the root route in the match list
-    if (routeBranchIndex >= 0) {
-      routeMatchList =
-          RouteMatchList(routeMatchList.matches.sublist(routeBranchIndex));
-      // Build the pages and the Navigator for the route branch
-      final List<Page<dynamic>> pages =
-          buildPages(context, routeMatchList, pop, true, branch.navigatorKey);
-      return _buildNavigator(pop, pages, branch.navigatorKey,
-          restorationScopeId: branch.restorationScopeId);
-    }
-    return null;
+        configuration: configuration,
+        shellRoute: shellRoute,
+        shellGoRouterState: shellRouterState,
+        navigator: navigator,
+        matchList: matchList,
+        branchNavigatorBuilder: (BuildContext context,
+            RouteMatchList navigatorMatchList,
+            GlobalKey<NavigatorState> navigatorKey,
+            String? restorationScopeId) {
+          final List<Page<dynamic>> pages =
+              buildPages(context, navigatorMatchList, pop, true, navigatorKey);
+          return _buildNavigator(pop, pages, navigatorKey,
+              restorationScopeId: restorationScopeId);
+        });
   }
 
   /// Helper method that builds a [GoRouterState] object for the given [match]

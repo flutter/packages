@@ -6,7 +6,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import '../configuration.dart';
+import '../match.dart';
 import '../matching.dart';
+import '../parser.dart';
 import '../router.dart';
 import '../typedefs.dart';
 
@@ -31,8 +33,12 @@ class InheritedStatefulNavigationShell extends InheritedWidget {
 }
 
 /// Builder function for a route branch navigator
-typedef ShellRouteBranchNavigatorBuilder = Navigator? Function(
-    BuildContext context, StatefulShellRouteState routeState, int branchIndex);
+typedef ShellRouteBranchNavigatorBuilder = Navigator Function(
+  BuildContext context,
+  RouteMatchList navigatorMatchList,
+  GlobalKey<NavigatorState> navigatorKey,
+  String? restorationScopeId,
+);
 
 /// Widget that manages and maintains the state of a [StatefulShellRoute],
 /// including the [Navigator]s of the configured route branches.
@@ -48,7 +54,7 @@ typedef ShellRouteBranchNavigatorBuilder = Navigator? Function(
 /// provided as the child argument to the builder of the StatefulShellRoute.
 /// However, implementors can choose to disregard this and use an alternate
 /// container around the branch navigators
-/// (see [StatefulShellRouteState.navigators]) instead.
+/// (see [StatefulShellRouteState.children]) instead.
 class StatefulNavigationShell extends StatefulWidget {
   /// Constructs an [StatefulNavigationShell].
   const StatefulNavigationShell({
@@ -87,6 +93,8 @@ class StatefulNavigationShell extends StatefulWidget {
 class StatefulNavigationShellState extends State<StatefulNavigationShell> {
   late StatefulShellRouteState _routeState;
 
+  bool _branchesPreloaded = false;
+
   int _findCurrentIndex() {
     final List<ShellRouteBranchState> branchState = _routeState.branchState;
     final int index = branchState.indexWhere((ShellRouteBranchState e) =>
@@ -96,10 +104,73 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
 
   void _switchActiveBranch(
       ShellRouteBranchState branchState, RouteMatchList? matchList) {
-    if (matchList != null) {
-      GoRouter.of(context).routerDelegate.replaceMatchList(matchList);
+    final GoRouter goRouter = GoRouter.of(context);
+    if (matchList != null && matchList.isNotEmpty) {
+      goRouter.routeInformationParser
+          .processRedirection(matchList, context)
+          .then(
+            (RouteMatchList matchList) =>
+                goRouter.routerDelegate.replaceMatchList(matchList),
+            onError: (_) => goRouter.go(branchState.defaultLocation),
+          );
     } else {
-      GoRouter.of(context).go(branchState.defaultLocation);
+      goRouter.go(branchState.defaultLocation);
+    }
+  }
+
+  Future<ShellRouteBranchState> _preloadBranch(
+      ShellRouteBranchState branchState) {
+    // Parse a RouteMatchList from the default location of the route branch and
+    // handle any redirects
+    final GoRouteInformationParser parser =
+        GoRouter.of(context).routeInformationParser;
+    final Future<RouteMatchList> routeMatchList =
+        parser.parseRouteInformationWithDependencies(
+            RouteInformation(location: branchState.defaultLocation), context);
+
+    ShellRouteBranchState createBranchNavigator(RouteMatchList matchList) {
+      // Find the index of the branch root route in the match list
+      final ShellRouteBranch branch = branchState.routeBranch;
+      final int shellRouteIndex = matchList.matches
+          .indexWhere((RouteMatch e) => e.route == widget.shellRoute);
+      // Keep only the routes from and below the root route in the match list and
+      // use that to build the Navigator for the branch
+      Navigator? navigator;
+      if (shellRouteIndex >= 0 &&
+          shellRouteIndex < (matchList.matches.length - 1)) {
+        final RouteMatchList navigatorMatchList =
+            RouteMatchList(matchList.matches.sublist(shellRouteIndex + 1));
+        navigator = widget.branchNavigatorBuilder(context, navigatorMatchList,
+            branch.navigatorKey, branch.restorationScopeId);
+      }
+      return branchState.copy(navigator: navigator, matchList: matchList);
+    }
+
+    return routeMatchList.then(createBranchNavigator);
+  }
+
+  void _updateRouteBranchState(int index, ShellRouteBranchState branchState,
+      {int? currentIndex}) {
+    final List<ShellRouteBranchState> branchStates =
+        _routeState.branchState.toList();
+    branchStates[index] = branchState;
+
+    _routeState = _routeState.copy(
+      branchState: branchStates,
+      index: currentIndex,
+    );
+  }
+
+  void _preloadBranches() {
+    final List<ShellRouteBranchState> states = _routeState.branchState;
+    for (int i = 0; i < states.length; i++) {
+      if (states[i].navigator == null) {
+        _preloadBranch(states[i]).then((ShellRouteBranchState branchState) {
+          setState(() {
+            _updateRouteBranchState(i, branchState);
+          });
+        });
+      }
     }
   }
 
@@ -126,43 +197,30 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
   @override
   void didUpdateWidget(covariant StatefulNavigationShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateRouteState();
+    _updateRouteStateFromWidget();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _updateRouteState();
+    _updateRouteStateFromWidget();
   }
 
-  void _updateRouteState() {
-    final int currentIndex = _findCurrentIndex();
+  void _updateRouteStateFromWidget() {
+    final int index = _findCurrentIndex();
 
-    final List<ShellRouteBranchState> branchState =
-        _routeState.branchState.toList();
-    branchState[currentIndex] = branchState[currentIndex].copy(
-      navigator: widget.navigator,
-      matchList: widget.matchList,
-    );
+    _updateRouteBranchState(
+        index,
+        _routeState.branchState[index].copy(
+          navigator: widget.navigator,
+          matchList: widget.matchList,
+        ),
+        currentIndex: index);
 
-    if (widget.shellRoute.preloadBranches) {
-      for (int i = 0; i < branchState.length; i++) {
-        if (i != currentIndex && branchState[i].navigator == null) {
-          final Navigator? navigator =
-              widget.branchNavigatorBuilder(context, _routeState, i);
-          branchState[i] = branchState[i].copy(
-            navigator: navigator,
-          );
-        }
-      }
+    if (widget.shellRoute.preloadBranches && !_branchesPreloaded) {
+      _preloadBranches();
+      _branchesPreloaded = true;
     }
-
-    _routeState = StatefulShellRouteState(
-      switchActiveBranch: _switchActiveBranch,
-      route: widget.shellRoute,
-      branchState: branchState,
-      index: currentIndex,
-    );
   }
 
   @override
@@ -202,7 +260,7 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
 
   Widget _buildRouteBranchContainer(
       BuildContext context, int index, ShellRouteBranchState routeBranch) {
-    final Navigator? navigator = routeBranch.navigator;
+    final Widget? navigator = routeBranch.navigator;
     if (navigator == null) {
       return const SizedBox.shrink();
     }
