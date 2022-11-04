@@ -1,4 +1,4 @@
-## NEXT
+## 5.1.4
 
 - Fixes the documentation by removing the `ShellRoute`'s non-existing `path` parameter from it.
 
