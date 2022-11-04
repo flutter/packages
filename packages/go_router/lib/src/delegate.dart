@@ -148,9 +148,18 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return navigatorKey.currentState?.canPop() ?? false;
   }
 
+  void _debugAssertMatchListNotEmpty() {
+    assert(
+      _matchList.isNotEmpty,
+      'You have popped the last page off of the stack,'
+      ' there are no pages left to show',
+    );
+  }
+
   /// Pop the top page off the GoRouter's page stack.
   void pop() {
     _matchList.pop();
+    _debugAssertMatchListNotEmpty();
     notifyListeners();
   }
 
@@ -159,10 +168,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
   void replace(RouteMatch match) {
-    // We pop the current page. There is no need to verify the match list is not
-    // empty during the pop because we are going to push a new page right away.
-    _matchList.pop(asserts: false);
-    push(match); // [push] will notify listeners.
+    _matchList.pop();
+    push(match); // [push] will notify the listeners.
   }
 
   /// For internal use; visible for testing only.
