@@ -341,7 +341,7 @@ void _writeFlutterApi(
                   _addGenericTypesNullable(func.returnType);
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
-                  ? 'return <Object?, Object?>{};'
+                  ? 'return <Object?>[];'
                   : func.returnType.isVoid
                       ? 'return;'
                       : 'return null;';
@@ -394,7 +394,7 @@ void _writeFlutterApi(
                 }
                 const String returnExpression = 'output';
                 final String returnStatement = isMockHandler
-                    ? "return <Object?, Object?>{'${Keys.result}': $returnExpression};"
+                    ? 'return <Object?>[$returnExpression];'
                     : 'return $returnExpression;';
                 indent.writeln(returnStatement);
               }

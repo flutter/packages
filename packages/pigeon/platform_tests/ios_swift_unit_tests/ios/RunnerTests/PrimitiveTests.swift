@@ -203,12 +203,12 @@ class PrimitiveTests: XCTestCase {
     
     let expectation = XCTestExpectation(description: "aMap")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
+      let output = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertTrue(output?.count == 1)
+
+      let outputMap = output?.first as? [String: Int]
       XCTAssertNotNil(outputMap)
-      
-        let output = outputMap!.first as? [String: Int]
-      XCTAssertEqual(["hello": 1, "world": 2], output)
-      XCTAssertNil(outputMap?["error"])
+      XCTAssertEqual(["hello": 1, "world": 2], outputMap)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)

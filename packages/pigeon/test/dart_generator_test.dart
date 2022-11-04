@@ -574,7 +574,7 @@ void main() {
     expect(mainCode, isNot(contains('abstract class ApiMock')));
     expect(mainCode, isNot(contains('.ApiMock.doSomething')));
     expect(mainCode, isNot(contains("'${Keys.result}': output")));
-    expect(mainCode, isNot(contains('return <Object, Object>{};')));
+    expect(mainCode, isNot(contains('return <Object>[];')));
     generateTestDart(
       const DartOptions(),
       root,
@@ -587,8 +587,8 @@ void main() {
     expect(testCode, isNot(contains('class Api {')));
     expect(testCode, contains('abstract class ApiMock'));
     expect(testCode, isNot(contains('.ApiMock.doSomething')));
-    expect(testCode, contains("'${Keys.result}': output"));
-    expect(testCode, contains('return <Object?, Object?>{};'));
+    expect(testCode, contains('output'));
+    expect(testCode, contains('return <Object?>[];'));
   });
 
   test('gen one async Flutter Api', () {

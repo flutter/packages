@@ -85,7 +85,7 @@ void main() {
         await const BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.MessageApi.search',
           StandardMessageCodec(),
-        ).send(<Object?>[null]) as Map<Object?, Object?>?;
+        ).send(<Object?>[null]) as List<Object?>?;
         expect(true, isFalse); // should not reach here
       } catch (error) {
         expect(error, isAssertionError);
@@ -98,7 +98,5 @@ void main() {
       }
       expect(mock.log, <String>['initialize']);
     },
-    // TODO(ianh): skip can be removed after first stable release in 2021
-    skip: Platform.environment['CHANNEL'] == 'stable',
   );
 }

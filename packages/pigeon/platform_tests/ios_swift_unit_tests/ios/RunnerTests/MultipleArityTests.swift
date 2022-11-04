@@ -29,7 +29,7 @@ class MultipleArityTests: XCTestCase {
       
       let output = outputList![0] as? Int32
       XCTAssertEqual(3, output)
-      XCTAssertNil(outputList?[0])
+        XCTAssertTrue(outputList?.count == 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
