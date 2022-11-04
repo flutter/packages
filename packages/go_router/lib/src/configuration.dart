@@ -98,6 +98,8 @@ class RouteConfiguration {
       checkParentNavigatorKeys(
           routes, <GlobalKey<NavigatorState>>[navigatorKey]);
 
+      // Check to see that the configured defaultLocation of ShellRouteBranches
+      // points to a descendant route of the route branch.
       void checkShellRouteBranchDefaultLocations(
           List<RouteBase> routes, RouteMatcher matcher) {
         try {
@@ -107,13 +109,15 @@ class RouteConfiguration {
                 if (branch.defaultLocation == null) {
                   continue;
                 }
-                final RouteMatchList matchList =
-                    matcher.findMatch(branch.defaultLocation!);
+                final RouteBase defaultLocationRoute =
+                    matcher.findMatch(branch.defaultLocation!).last.route;
                 assert(
-                    matchList.isNotEmpty,
-                    'defaultLocation '
-                    '(${branch.defaultLocation}) of ShellRouteBranch must be a '
-                    'valid location');
+                    _debugIsDescendantOrSame(
+                        ancestor: branch.rootRoute,
+                        route: defaultLocationRoute),
+                    'The defaultLocation (${branch.defaultLocation}) of '
+                    'ShellRouteBranch must match a descendant route of the '
+                    'branch');
               }
             }
             checkShellRouteBranchDefaultLocations(route.routes, matcher);
@@ -211,6 +215,28 @@ class RouteConfiguration {
       }
     }
     return null;
+  }
+
+  /// Tests if a route is a descendant of, or same as, an ancestor route.
+  bool _debugIsDescendantOrSame(
+      {required RouteBase ancestor, required RouteBase route}) {
+    return _debugAncestorsForRoute(route, routes).contains(ancestor);
+  }
+
+  static List<RouteBase> _debugAncestorsForRoute<T extends RouteBase>(
+      RouteBase targetRoute, List<RouteBase> routes) {
+    for (final RouteBase route in routes) {
+      if (route.routes.contains(targetRoute)) {
+        return <RouteBase>[route, targetRoute];
+      } else {
+        final List<RouteBase> ancestors =
+            _debugAncestorsForRoute(targetRoute, route.routes);
+        if (ancestors.isNotEmpty) {
+          return <RouteBase>[route, ...ancestors];
+        }
+      }
+    }
+    return <RouteBase>[];
   }
 
   @override
