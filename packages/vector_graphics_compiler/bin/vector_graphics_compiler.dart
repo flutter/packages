@@ -7,7 +7,8 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:vector_graphics_compiler/src/svg/colors.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
-import 'package:vector_graphics_compiler/src/isolate_processor.dart';
+
+import 'util/isolate_processor.dart';
 
 final ArgParser argParser = ArgParser()
   ..addOption(

@@ -5,7 +5,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:vector_graphics_compiler/src/isolate_processor.dart';
+import '../bin/util/isolate_processor.dart';
 import '../bin/vector_graphics_compiler.dart' as cli;
 
 void main() {

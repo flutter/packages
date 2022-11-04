@@ -26,9 +26,10 @@ export 'src/vector_instructions.dart';
 export 'src/svg/tessellator.dart' show initializeLibTesselator;
 export 'src/svg/path_ops.dart' show initializeLibPathOps;
 
-export 'src/initialize_tessellator.dart'
-    show initializeTessellatorFromFlutterCache;
-export 'src/initialize_path_ops.dart' show initializePathOpsFromFlutterCache;
+export 'src/_initialize_tessellator_io.dart'
+    if (dart.library.html) 'src/_initialize_tessellator_web.dart';
+export 'src/_initialize_path_ops_io.dart'
+    if (dart.library.html) 'src/_initialize_path_ops_web.dart';
 
 /// Parses an SVG string into a [VectorInstructions] object, with all optional
 /// optimizers disabled.

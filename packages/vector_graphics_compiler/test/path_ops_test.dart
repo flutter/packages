@@ -4,7 +4,7 @@
 
 import 'package:test/test.dart';
 import 'package:vector_graphics_compiler/src/svg/path_ops.dart';
-import 'package:vector_graphics_compiler/src/initialize_path_ops.dart'
+import 'package:vector_graphics_compiler/src/_initialize_path_ops_io.dart'
     as vector_graphics;
 
 void main() {
