@@ -1,8 +1,16 @@
+## 5.1.4
+
+- Fixes a bug with `replace` where it was not generated a new `pageKey`.
+
+## 5.1.3
+
+- Allows redirection to return same location.
+
 ## 5.1.2
 
-- Update README
+- Exposes uri and path parameters from GoRouter and fixes its notifications.
+- Updates README.
 - Removes dynamic calls in examples.
-- Fixes a bug with `replace` where it was not generated a new `pageKey`.
 
 ## 5.1.1
 
