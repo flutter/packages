@@ -1,3 +1,7 @@
+## 0.6.13
+
+* Support changes in the latest `package:markdown`.
+
 ## 0.6.12
 
 * Markdown Lists now take into account `fitContent` instead of always expanding to the maximum horizontally ([flutter/flutter#108976](https://github.com/flutter/flutter/issues/108976)).
