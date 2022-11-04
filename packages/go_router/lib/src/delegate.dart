@@ -86,12 +86,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     // Use the root navigator if no ShellRoute Navigators were found and didn't
     // pop
-    final NavigatorState? navigator = navigatorKey.currentState;
-
-    if (navigator == null) {
-      return SynchronousFuture<bool>(false);
-    }
-
+    final NavigatorState navigator = navigatorKey.currentState!;
     return navigator.maybePop();
   }
 
@@ -143,7 +138,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         final GlobalKey<NavigatorState>? navigatorKey =
             route.navigatorKeyForSubRoute(subRoute);
 
-        final bool canPop = navigatorKey?.currentState!.canPop() ?? false;
+        final bool canPop = navigatorKey?.currentState?.canPop() ?? false;
 
         // Continue if canPop is false.
         if (canPop) {
@@ -204,6 +199,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   Future<void> setNewRoutePath(RouteMatchList configuration) {
     _matchList = configuration;
     assert(_matchList.isNotEmpty);
+    notifyListeners();
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
     return SynchronousFuture<void>(null);

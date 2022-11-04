@@ -5,6 +5,9 @@
 .pub/
 .dart_tool/
 
+# Gradle?
+.uuid
+
 pubspec.lock
 
 Podfile.lock

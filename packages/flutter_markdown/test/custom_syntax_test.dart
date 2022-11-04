@@ -160,9 +160,10 @@ class WikilinkSyntax extends md.InlineSyntax {
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    final md.Element el = md.Element.withTag('wikilink');
-    el.attributes['href'] = match[1]!.replaceAll(' ', '_');
-    el.children!.add(md.Element.text('span', match[1]!));
+    final String link = match[1]!;
+    final md.Element el =
+        md.Element('wikilink', <md.Element>[md.Element.text('span', link)])
+          ..attributes['href'] = link.replaceAll(' ', '_');
 
     parser.addNode(el);
     return true;

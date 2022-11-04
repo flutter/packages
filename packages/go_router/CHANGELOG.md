@@ -5,7 +5,15 @@
   (flutter/flutter#99124).
 - Updated documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
   describe the meaning of the child argument in the builder functions.
-- Update README
+
+## 5.1.3
+
+- Allows redirection to return same location.
+
+## 5.1.2
+
+- Exposes uri and path parameters from GoRouter and fixes its notifications.
+- Updates README.
 - Removes dynamic calls in examples.
 
 ## 5.1.1
