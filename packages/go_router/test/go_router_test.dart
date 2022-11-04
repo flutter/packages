@@ -2881,6 +2881,62 @@ void main() {
       expect(statefulWidgetKeyD.currentState?.counter, equals(0));
       expect(statefulWidgetKeyE.currentState?.counter, equals(0));
     });
+
+    testWidgets(
+        'Redirects are correctly handled when switching branch in a '
+        'StatefulShellRoute', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      StatefulShellRouteState? routeState;
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.rootRoutes(
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            routeState = StatefulShellRoute.of(context);
+            return child;
+          },
+          routes: <GoRoute>[
+            GoRoute(
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen A'),
+            ),
+            GoRoute(
+              path: '/b',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen B'),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'details',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen B Detail'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        navigatorKey: rootNavigatorKey,
+        redirect: (_, GoRouterState state) {
+          if (state.location == '/b') {
+            return '/b/details';
+          }
+          return null;
+        },
+      );
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen B Detail'), findsNothing);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B Detail'), findsOneWidget);
+    });
   });
 
   group('Imperative navigation', () {
