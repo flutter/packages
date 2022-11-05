@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:typed_data';
-
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'http.dart';
@@ -26,7 +25,7 @@ abstract class BytesLoader {
   const BytesLoader();
 
   /// Load the byte data for a vector graphic binary asset.
-  Future<ByteData> loadBytes(BuildContext context);
+  Future<ByteData> loadBytes(BuildContext? context);
 
   /// Create an object that can be used to uniquely identify this asset
   /// and loader combination.
@@ -35,7 +34,7 @@ abstract class BytesLoader {
   /// instance. If the loader looks up additional dependencies using the
   /// [context] argument of [loadBytes], then those objects should be
   /// incorporated into a new cache key.
-  Object cacheKey(BuildContext context) => this;
+  Object cacheKey(BuildContext? context) => this;
 }
 
 /// Loads vector graphics data from an asset bundle.
@@ -67,9 +66,19 @@ class AssetBytesLoader extends BytesLoader {
   /// If unspecified, [DefaultAssetBundle.of] the current context will be used.
   final AssetBundle? assetBundle;
 
+  AssetBundle _resolveBundle(BuildContext? context) {
+    if (assetBundle != null) {
+      return assetBundle!;
+    }
+    if (context != null) {
+      return DefaultAssetBundle.of(context);
+    }
+    return rootBundle;
+  }
+
   @override
-  Future<ByteData> loadBytes(BuildContext context) {
-    return (assetBundle ?? DefaultAssetBundle.of(context)).load(assetName);
+  Future<ByteData> loadBytes(BuildContext? context) {
+    return _resolveBundle(context).load(assetName);
   }
 
   @override
@@ -84,11 +93,11 @@ class AssetBytesLoader extends BytesLoader {
   }
 
   @override
-  Object cacheKey(BuildContext context) {
+  Object cacheKey(BuildContext? context) {
     return _AssetByteLoaderCacheKey(
       assetName,
       packageName,
-      assetBundle ?? DefaultAssetBundle.of(context),
+      _resolveBundle(context),
     );
   }
 
@@ -143,7 +152,7 @@ class NetworkBytesLoader extends BytesLoader {
   final Uri url;
 
   @override
-  Future<ByteData> loadBytes(BuildContext context) async {
+  Future<ByteData> loadBytes(BuildContext? context) async {
     final Uint8List bytes = await httpGet(url, headers: headers);
     return bytes.buffer.asByteData();
   }

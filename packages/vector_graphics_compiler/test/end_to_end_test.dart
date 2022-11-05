@@ -19,7 +19,7 @@ class TestBytesLoader extends BytesLoader {
   final ByteData data;
 
   @override
-  Future<ByteData> loadBytes(BuildContext context) async {
+  Future<ByteData> loadBytes(BuildContext? context) async {
     return data;
   }
 

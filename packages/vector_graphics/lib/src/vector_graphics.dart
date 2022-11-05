@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:typed_data';
 import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart';
 
@@ -558,12 +559,14 @@ class VectorGraphicUtilities {
   /// they are done with it.
   Future<PictureInfo> loadPicture(
     BytesLoader loader,
-    BuildContext context,
+    BuildContext? context,
   ) async {
-    // This intentionally does not use the picture cache so that disposal does not
-    // happen automatically.
-    final Locale? locale = Localizations.maybeLocaleOf(context);
-    final TextDirection? textDirection = Directionality.maybeOf(context);
+    TextDirection textDirection = TextDirection.ltr;
+    Locale locale = ui.PlatformDispatcher.instance.locale;
+    if (context != null) {
+      locale = Localizations.maybeLocaleOf(context) ?? locale;
+      textDirection = Directionality.maybeOf(context) ?? textDirection;
+    }
     return loader.loadBytes(context).then((ByteData data) {
       try {
         return decodeVectorGraphics(

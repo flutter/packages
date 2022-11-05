@@ -406,6 +406,39 @@ void main() {
     expect(debugLastTextDirection, TextDirection.rtl);
   });
 
+  testWidgets('Loads a picture with loadPicture and null build context',
+      (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+    final Completer<PictureInfo> completer = Completer<PictureInfo>();
+    await tester.pumpWidget(
+      Localizations(
+        delegates: const <LocalizationsDelegate<Object>>[
+          DefaultWidgetsLocalizations.delegate
+        ],
+        locale: const Locale('fr', 'CH'),
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: Builder(builder: (BuildContext context) {
+              vg
+                  .loadPicture(
+                      AssetBytesLoader('foo.svg', assetBundle: testBundle),
+                      null)
+                  .then(completer.complete);
+              return const Center();
+            }),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(await completer.future, isA<PictureInfo>());
+    expect(debugLastLocale, PlatformDispatcher.instance.locale);
+    expect(debugLastTextDirection, TextDirection.ltr);
+  });
+
   testWidgets('Throws a helpful exception if decoding fails',
       (WidgetTester tester) async {
     final Uint8List data = Uint8List(256);
@@ -507,7 +540,7 @@ class DelayedBytesLoader extends BytesLoader {
   final Future<ByteData> data;
 
   @override
-  Future<ByteData> loadBytes(BuildContext context) async {
+  Future<ByteData> loadBytes(BuildContext? context) async {
     return await data;
   }
 
@@ -527,7 +560,7 @@ class TestBytesLoader extends BytesLoader {
   final String? source;
 
   @override
-  Future<ByteData> loadBytes(BuildContext context) async {
+  Future<ByteData> loadBytes(BuildContext? context) async {
     return data;
   }
 

@@ -308,7 +308,7 @@ class TestBytesLoader extends BytesLoader {
   final ByteData data;
 
   @override
-  Future<ByteData> loadBytes(BuildContext context) async {
+  Future<ByteData> loadBytes(BuildContext? context) async {
     return data;
   }
 
@@ -327,7 +327,7 @@ class ControlledAssetBytesLoader extends AssetBytesLoader {
   final Completer<void> completer = Completer<void>();
 
   @override
-  Future<ByteData> loadBytes(BuildContext context) async {
+  Future<ByteData> loadBytes(BuildContext? context) async {
     await completer.future;
     return super.loadBytes(context);
   }
