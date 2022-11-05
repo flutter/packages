@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
-import 'package:pool/pool.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'package:vector_graphics_compiler/src/debug_format.dart';
 
@@ -90,7 +90,7 @@ class IsolateProcessor {
     required String? libtessellator,
     SvgTheme theme = const SvgTheme(),
   }) async {
-    PoolResource? resource;
+    PoolHandle? resource;
     try {
       resource = await _pool.request();
       await Isolate.run(() async {
@@ -135,4 +135,45 @@ class Pair {
 
   /// The path the vector graphic will be written to.
   final String outputPath;
+}
+
+class Pool {
+  Pool(this.concurrency);
+
+  final int concurrency;
+  final List<PoolHandle> active = <PoolHandle>[];
+  final List<Completer<PoolHandle>> pending = <Completer<PoolHandle>>[];
+
+  Future<PoolHandle> request() async {
+    if (active.length < concurrency) {
+      final PoolHandle handle = PoolHandle(this);
+      active.add(handle);
+      return handle;
+    }
+    final Completer<PoolHandle> completer = Completer<PoolHandle>();
+    pending.add(completer);
+    return completer.future;
+  }
+
+  void _clearAndCheckPending(PoolHandle oldHandle) {
+    assert(active.contains(oldHandle));
+    active.remove(oldHandle);
+    while (active.length < concurrency && pending.isNotEmpty) {
+      final Completer<PoolHandle> completer = pending.removeAt(0);
+      final PoolHandle handle = PoolHandle(this);
+      active.add(handle);
+      completer.complete(handle);
+    }
+  }
+}
+
+class PoolHandle {
+  PoolHandle(this.pool);
+
+  Pool? pool;
+
+  void release() {
+    assert(pool != null);
+    pool?._clearAndCheckPending(this);
+  }
 }
