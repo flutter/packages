@@ -35,7 +35,7 @@ class PrimitiveTests: XCTestCase {
       
       let output = outputList!.first as? Int32
       XCTAssertEqual(1, output)
-      XCTAssertFalse(outputList!.count > 1)
+      XCTAssertTrue(outputList!.count == 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -69,7 +69,7 @@ class PrimitiveTests: XCTestCase {
       
       let output = outputList!.first as? Bool
       XCTAssertEqual(true, output)
-      XCTAssertFalse(outputList!.count > 1)
+      XCTAssertTrue(outputList!.count == 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -103,7 +103,7 @@ class PrimitiveTests: XCTestCase {
       
       let output = outputList!.first as? Double
       XCTAssertEqual(1.0, output)
-      XCTAssertFalse(outputList!.count > 1)
+      XCTAssertTrue(outputList!.count == 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -138,7 +138,7 @@ class PrimitiveTests: XCTestCase {
       
       let output = outputList!.first as? String
       XCTAssertEqual("hello", output)
-      XCTAssertFalse(outputList!.count > 1)
+      XCTAssertTrue(outputList!.count == 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -173,7 +173,7 @@ class PrimitiveTests: XCTestCase {
       
       let output = outputList!.first as? [Int]
       XCTAssertEqual([1, 2, 3], output)
-      XCTAssertFalse(outputList!.count > 1)
+      XCTAssertTrue(outputList!.count == 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
