@@ -159,7 +159,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Pop the top page off the GoRouter's page stack.
   void pop() {
     _matchList.pop();
-    _debugAssertMatchListNotEmpty();
+    assert(() {
+      _debugAssertMatchListNotEmpty();
+      return true;
+    }());
     notifyListeners();
   }
 
