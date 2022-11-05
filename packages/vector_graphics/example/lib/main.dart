@@ -43,7 +43,7 @@ class NetworkSvgLoader extends BytesLoader {
   final String url;
 
   @override
-  Future<ByteData> loadBytes(BuildContext context) async {
+  Future<ByteData> loadBytes(BuildContext? context) async {
     return await compute((String svgUrl) async {
       final http.Response request = await http.get(Uri.parse(svgUrl));
       final TimelineTask task = TimelineTask()..start('encodeSvg');
