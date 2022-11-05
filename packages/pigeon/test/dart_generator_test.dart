@@ -193,7 +193,7 @@ void main() {
     expect(
       code.replaceAll('\n', ' ').replaceAll('  ', ''),
       contains(
-        'nested: message[0] != null ? Input.decode(message[0]! as List<Object?>) : null',
+        'nested: result[0] != null ? Input.decode(result[0]! as List<Object?>) : null',
       ),
     );
   });
@@ -235,7 +235,7 @@ void main() {
     expect(
       code.replaceAll('\n', ' ').replaceAll('  ', ''),
       contains(
-        'nested: Input.decode(message[0]! as List<Object?>)',
+        'nested: Input.decode(result[0]! as List<Object?>)',
       ),
     );
   });
@@ -418,7 +418,7 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('pigeonList.add(enum1?.index);'));
-    expect(code, contains('? Enum.values[message[0]! as int]'));
+    expect(code, contains('? Enum.values[result[0]! as int]'));
     expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
   });
 
@@ -485,7 +485,7 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('pigeonList.add(enum1.index);'));
-    expect(code, contains('enum1: Enum.values[message[0]! as int]'));
+    expect(code, contains('enum1: Enum.values[result[0]! as int]'));
   });
 
   test('host void argument', () {

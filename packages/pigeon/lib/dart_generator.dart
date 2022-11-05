@@ -516,7 +516,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
             indent.addln('${field.name});');
           }
         }
-        indent.writeln('return pigeonList;');
+        indent.writeln('return <Object?>[pigeonList];');
       });
     }
 
@@ -524,11 +524,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
       void writeValueDecode(NamedType field, int index) {
         if (customClassNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              '${field.type.baseName}.decode(message[$index]! as List<Object?>)';
+              '${field.type.baseName}.decode(result[$index]! as List<Object?>)';
           indent.format(
               field.type.isNullable
                   ? '''
-message[$index] != null
+result[$index] != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -536,11 +536,11 @@ message[$index] != null
               trailingNewline: false);
         } else if (customEnumNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              '${field.type.baseName}.values[message[$index]! as int]';
+              '${field.type.baseName}.values[result[$index]! as int]';
           indent.format(
               field.type.isNullable
                   ? '''
-message[$index] != null
+result[$index] != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -551,17 +551,17 @@ message[$index] != null
           final String castCall = _makeGenericCastCall(field.type);
           final String castCallPrefix = field.type.isNullable ? '?' : '!';
           indent.add(
-            '(message[$index] as $genericType?)$castCallPrefix$castCall',
+            '(result[$index] as $genericType?)$castCallPrefix$castCall',
           );
         } else {
           final String genericdType = _addGenericTypesNullable(field.type);
           if (field.type.isNullable) {
             indent.add(
-              'message[$index] as $genericdType',
+              'result[$index] as $genericdType',
             );
           } else {
             indent.add(
-              'message[$index]! as $genericdType',
+              'result[$index]! as $genericdType',
             );
           }
         }
@@ -572,6 +572,8 @@ message[$index] != null
       );
       indent.scoped('{', '}', () {
         indent.writeln('message as List<Object?>;');
+        indent.writeln(
+            'final List<Object?> result = message.first! as List<Object?>;');
         indent.write('return ${klass.name}');
         indent.scoped('(', ');', () {
           for (int index = 0; index < klass.fields.length; index += 1) {

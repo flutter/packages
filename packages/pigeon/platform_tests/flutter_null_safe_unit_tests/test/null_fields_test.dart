@@ -45,8 +45,10 @@ void main() {
   test('test request decode with values', () {
     final NullFieldsSearchRequest request =
         NullFieldsSearchRequest.decode(<dynamic>[
-      'query',
-      1,
+      <dynamic>[
+        'query',
+        1,
+      ]
     ]);
 
     expect(request.query, 'query');
@@ -55,8 +57,10 @@ void main() {
   test('test request decode with null', () {
     final NullFieldsSearchRequest request =
         NullFieldsSearchRequest.decode(<dynamic>[
-      null,
-      1,
+      <dynamic>[
+        null,
+        1,
+      ]
     ]);
 
     expect(request.query, isNull);
@@ -64,14 +68,18 @@ void main() {
 
   test('test reply decode with values', () {
     final NullFieldsSearchReply reply = NullFieldsSearchReply.decode(<dynamic>[
-      'result',
-      'error',
-      <int>[1, 2, 3],
       <dynamic>[
-        'query',
-        1,
-      ],
-      NullFieldsSearchReplyType.success.index,
+        'result',
+        'error',
+        <int>[1, 2, 3],
+        <dynamic>[
+          <dynamic>[
+            'query',
+            1,
+          ]
+        ],
+        NullFieldsSearchReplyType.success.index,
+      ]
     ]);
 
     expect(reply.result, 'result');
@@ -83,11 +91,13 @@ void main() {
 
   test('test reply decode with nulls', () {
     final NullFieldsSearchReply reply = NullFieldsSearchReply.decode(<dynamic>[
-      null,
-      null,
-      null,
-      null,
-      null,
+      <dynamic>[
+        null,
+        null,
+        null,
+        null,
+        null,
+      ]
     ]);
 
     expect(reply.result, isNull);
@@ -102,8 +112,10 @@ void main() {
         NullFieldsSearchRequest(query: 'query', identifier: 1);
 
     expect(request.encode(), <Object?>[
-      'query',
-      1,
+      <dynamic>[
+        'query',
+        1,
+      ]
     ]);
   });
 
@@ -112,8 +124,10 @@ void main() {
         NullFieldsSearchRequest(identifier: 1);
 
     expect(request.encode(), <Object?>[
-      null,
-      1,
+      <Object?>[
+        null,
+        1,
+      ]
     ]);
   });
 
@@ -127,14 +141,18 @@ void main() {
     );
 
     expect(reply.encode(), <Object?>[
-      'result',
-      'error',
-      <int>[1, 2, 3],
       <Object?>[
-        'query',
-        1,
-      ],
-      NullFieldsSearchReplyType.success.index,
+        'result',
+        'error',
+        <int>[1, 2, 3],
+        <Object?>[
+          <Object?>[
+            'query',
+            1,
+          ]
+        ],
+        NullFieldsSearchReplyType.success.index,
+      ]
     ]);
   });
 
@@ -142,11 +160,13 @@ void main() {
     final NullFieldsSearchReply reply = NullFieldsSearchReply();
 
     expect(reply.encode(), <Object?>[
-      null,
-      null,
-      null,
-      null,
-      null,
+      <Object?>[
+        null,
+        null,
+        null,
+        null,
+        null,
+      ]
     ]);
   });
 }
