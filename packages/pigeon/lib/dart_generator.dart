@@ -496,7 +496,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     }
 
     void writeEncode() {
-      indent.write('List<Object?> encode() ');
+      indent.write('Object encode() ');
       indent.scoped('{', '}', () {
         indent.writeln(
           'final List<Object?> pigeonList = <Object?>[];',
@@ -568,9 +568,10 @@ message[$index] != null
       }
 
       indent.write(
-        'static ${klass.name} decode(List<Object?> message) ',
+        'static ${klass.name} decode(Object message) ',
       );
       indent.scoped('{', '}', () {
+        indent.writeln('message as List<Object?>;');
         indent.write('return ${klass.name}');
         indent.scoped('(', ');', () {
           for (int index = 0; index < klass.fields.length; index += 1) {

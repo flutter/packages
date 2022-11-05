@@ -28,7 +28,7 @@ void main() {
     final FlutterSearchReply reply = FlutterSearchReply()
       ..result = 'foo'
       ..error = 'bar';
-    final List<Object?> encoded = reply.encode();
+    final List<Object?> encoded = reply.encode() as List<Object?>;
     final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
     expect(reply.error, decoded.error);
@@ -38,7 +38,7 @@ void main() {
     final FlutterSearchReply reply = FlutterSearchReply()
       ..result = 'foo'
       ..error = null;
-    final List<Object?> encoded = reply.encode();
+    final List<Object?> encoded = reply.encode() as List<Object?>;
     final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
     expect(reply.error, decoded.error);
@@ -55,7 +55,6 @@ void main() {
         .thenAnswer((Invocation realInvocation) => sendResult);
     final Api api = Api(binaryMessenger: mockMessenger);
     final FlutterSearchReply readReply = await api.search(request);
-    // final Object? replyDecoded = readReply.encode();
     expect(readReply, isNotNull);
     expect(reply.result, readReply.result);
   });
