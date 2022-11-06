@@ -1,3 +1,7 @@
+## 5.1.6
+
+- Fixes `parentNavigatorKey` not working with multiple nested `GoRoute` in `ShellRoute`.
+
 ## 5.1.5
 
 - Adds migration guide for 5.1.2 to readme.
