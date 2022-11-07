@@ -120,14 +120,14 @@ class GoRoute extends RouteBase {
   /// - One of either [builder] or [pageBuilder] must be provided.
   GoRoute({
     required this.path,
-    this.name,
+    required this.name,
     this.builder,
     this.pageBuilder,
     this.parentNavigatorKey,
     this.redirect,
     List<RouteBase> routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
-        assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
+        assert(name.isNotEmpty, 'GoRoute name cannot be empty'),
         assert(pageBuilder != null || builder != null || redirect != null,
             'builder, pageBuilder, or redirect must be provided'),
         super._(
@@ -197,7 +197,7 @@ class GoRoute extends RouteBase {
   ///
   /// See the [named routes example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/named_routes.dart)
   /// for a complete runnable app.
-  final String? name;
+  final String name;
 
   /// The path of this go route.
   ///
