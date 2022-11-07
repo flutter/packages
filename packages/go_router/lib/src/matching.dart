@@ -237,6 +237,7 @@ RouteMatchList errorScreen(Uri uri, String errorMessage) {
       error: error,
       route: GoRoute(
         path: uri.toString(),
+        name: uri.toString(),
         pageBuilder: (BuildContext context, GoRouterState state) {
           throw UnimplementedError();
         },

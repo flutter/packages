@@ -89,6 +89,7 @@ abstract class GoRouteData {
   /// Should not be used directly.
   static GoRoute $route<T extends GoRouteData>({
     required String path,
+    required String name,
     required T Function(GoRouterState) factory,
     List<GoRoute> routes = const <GoRoute>[],
   }) {
@@ -115,6 +116,7 @@ abstract class GoRouteData {
 
     return GoRoute(
       path: path,
+      name: name,
       builder: builder,
       pageBuilder: pageBuilder,
       redirect: redirect,
