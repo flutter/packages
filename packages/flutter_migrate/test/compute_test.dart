@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_migrate/src/base/file_system.dart';
+import 'package:flutter_migrate/src/base/io.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
 import 'package:flutter_migrate/src/base/project.dart';
 import 'package:flutter_migrate/src/base/signals.dart';
@@ -27,6 +28,7 @@ void main() {
   late Directory newerTargetFlutterDirectory;
   late Directory currentDir;
   late FlutterToolsEnvironment environment;
+  late ProcessManager processManager;
 
   const String oldSdkRevision = '5391447fae6209bb21a89e6a5a6583cac1af9b4b';
   const String newSdkRevision = '85684f9300908116a78138ea4c6036c35c9a1236';
@@ -35,10 +37,11 @@ void main() {
     fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
     currentDir = createResolvedTempDirectorySync('current_app.');
     logger = BufferLogger.test();
+    processManager = const LocalProcessManager();
     utils = MigrateUtils(
       logger: logger,
       fileSystem: fileSystem,
-      processManager: const LocalProcessManager(),
+      processManager: processManager,
     );
     await MigrateProject.installProject('version:1.22.6_stable', currentDir);
     final FlutterProjectFactory flutterFactory = FlutterProjectFactory();
@@ -59,7 +62,7 @@ void main() {
     newerTargetFlutterDirectory =
         createResolvedTempDirectorySync('newerTargetFlutterDir.');
     environment =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(logger);
+        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(processManager, logger);
     await context.migrateUtils
         .cloneFlutter(oldSdkRevision, targetFlutterDirectory.absolute.path);
     await context.migrateUtils.cloneFlutter(
