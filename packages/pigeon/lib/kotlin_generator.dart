@@ -85,10 +85,9 @@ void _writeCodec(Indent indent, Api api, Root root) {
         for (final EnumeratedClass customClass in codecClasses) {
           indent.write('${customClass.enumeration}.toByte() -> ');
           indent.scoped('{', '}', () {
-            indent.write(
-                'return (readValue(buffer) as? Map<String, Any?>)?.let ');
+            indent.write('return (readValue(buffer) as? List<Any?>)?.let ');
             indent.scoped('{', '}', () {
-              indent.writeln('${customClass.name}.fromMap(it)');
+              indent.writeln('${customClass.name}.fromList(it)');
             });
           });
         }
@@ -105,7 +104,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
           indent.write('is ${customClass.name} -> ');
           indent.scoped('{', '}', () {
             indent.writeln('stream.write(${customClass.enumeration})');
-            indent.writeln('writeValue(stream, value.toMap())');
+            indent.writeln('writeValue(stream, value.toList())');
           });
         }
         indent.writeln('else -> super.writeValue(stream, value)');
@@ -214,7 +213,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
 
               indent.write('channel.setMessageHandler ');
               indent.scoped('{ $messageVarName, reply ->', '}', () {
-                indent.writeln('val wrapped = hashMapOf<String, Any?>()');
+                indent.writeln('val wrapped = mutableListOf<Any?>()');
 
                 indent.write('try ');
                 indent.scoped('{', '}', () {
@@ -244,15 +243,14 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                     }
                   } else if (method.returnType.isVoid) {
                     indent.writeln(call);
-                    indent.writeln('wrapped["${Keys.result}"] = null');
+                    indent.writeln('wrapped.add(null)');
                   } else {
-                    indent.writeln('wrapped["${Keys.result}"] = $call');
+                    indent.writeln('wrapped.add($call)');
                   }
                 }, addTrailingNewline: false);
                 indent.add(' catch (exception: Error) ');
                 indent.scoped('{', '', () {
-                  indent.writeln(
-                      'wrapped["${Keys.error}"] = wrapError(exception)');
+                  indent.writeln('wrapped.add(wrapError(exception))');
                   if (method.isAsynchronous) {
                     indent.writeln('reply.reply(wrapped)');
                   }
@@ -479,7 +477,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.scoped('{', '}', () {
       // We use explicit indexing here as use of the ordinal() method is
-      // discouraged. The toMap and fromMap API matches class API to allow
+      // discouraged. The toList and fromList API matches class API to allow
       // the same code to work with enums and classes, but this
       // can also be done directly in the host and flutter APIs.
       int index = 0;
@@ -514,48 +512,49 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
       indent.add(defaultNil);
     }
 
-    void writeToMap() {
-      indent.write('fun toMap(): Map<String, Any?> ');
+    void writeToList() {
+      indent.write('fun toList(): MutableList<MutableList<Any?>> ');
       indent.scoped('{', '}', () {
-        indent.writeln('val map = mutableMapOf<String, Any?>()');
+        indent.writeln('val list = mutableListOf<Any?>()');
 
         for (final NamedType field in klass.fields) {
           final HostDatatype hostDatatype = getHostDatatype(field);
           String toWriteValue = '';
           final String fieldName = field.name;
-          final String prefix = field.type.isNullable ? 'it' : fieldName;
           if (!hostDatatype.isBuiltin &&
               rootClassNameSet.contains(field.type.baseName)) {
-            toWriteValue = '$prefix.toMap()';
+            toWriteValue = '$fieldName?.toList()';
           } else if (!hostDatatype.isBuiltin &&
               rootEnumNameSet.contains(field.type.baseName)) {
-            toWriteValue = '$prefix.raw';
+            toWriteValue = '$fieldName?.raw';
           } else {
-            toWriteValue = prefix;
+            toWriteValue = fieldName;
           }
 
           if (field.type.isNullable) {
-            indent.writeln(
-                '$fieldName?.let { map["${field.name}"] = $toWriteValue }');
+            indent.writeln('list.add($toWriteValue)');
           } else {
-            indent.writeln('map["${field.name}"] = $toWriteValue');
+            indent.writeln('list.add($toWriteValue)');
           }
         }
-
-        indent.writeln('return map');
+        indent.writeln('return mutableListOf<MutableList<Any?>>(list)');
       });
     }
 
-    void writeFromMap() {
+    void writeFromList() {
       final String className = klass.name;
 
       indent.write('companion object ');
       indent.scoped('{', '}', () {
         indent.writeln('@Suppress("UNCHECKED_CAST")');
-        indent.write('fun fromMap(map: Map<String, Any?>): $className ');
+        indent.write('fun fromList(result: List<Any?>): $className ');
 
         indent.scoped('{', '}', () {
-          for (final NamedType field in klass.fields) {
+          indent.writeln('val list = result.first() as List<Any?>');
+          klass.fields
+              .toList()
+              .asMap()
+              .forEach((int index, final NamedType field) {
             final HostDatatype hostDatatype = getHostDatatype(field);
 
             // The StandardMessageCodec can give us [Integer, Long] for
@@ -563,45 +562,45 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
             // longs in Pigeon with Kotlin.
             final bool isInt = field.type.baseName == 'int';
 
-            final String mapValue = 'map["${field.name}"]';
+            final String listValue = 'list[$index]';
             final String fieldType = _kotlinTypeForDartType(field.type);
 
             if (field.type.isNullable) {
               if (!hostDatatype.isBuiltin &&
                   rootClassNameSet.contains(field.type.baseName)) {
                 indent.write('val ${field.name}: $fieldType? = ');
-                indent.add('($mapValue as? Map<String, Any?>)?.let ');
+                indent.add('($listValue as? List<Any?>)?.let ');
                 indent.scoped('{', '}', () {
-                  indent.writeln('$fieldType.fromMap(it)');
+                  indent.writeln('$fieldType.fromList(it)');
                 });
               } else if (!hostDatatype.isBuiltin &&
                   rootEnumNameSet.contains(field.type.baseName)) {
                 indent.write('val ${field.name}: $fieldType? = ');
-                indent.add('($mapValue as? Int)?.let ');
+                indent.add('($listValue as? Int)?.let ');
                 indent.scoped('{', '}', () {
                   indent.writeln('$fieldType.ofRaw(it)');
                 });
               } else if (isInt) {
-                indent.write('val ${field.name} = $mapValue');
+                indent.write('val ${field.name} = $listValue');
                 indent.addln(
                     '.let { if (it is Int) it.toLong() else it as? Long }');
               } else {
-                indent.writeln('val ${field.name} = $mapValue as? $fieldType');
+                indent.writeln('val ${field.name} = $listValue as? $fieldType');
               }
             } else {
               if (!hostDatatype.isBuiltin &&
                   rootClassNameSet.contains(field.type.baseName)) {
                 indent.writeln(
-                    'val ${field.name} = $fieldType.fromMap($mapValue as Map<String, Any?>)');
+                    'val ${field.name} = $fieldType.fromList($listValue as List<Any?>)');
               } else if (!hostDatatype.isBuiltin &&
                   rootEnumNameSet.contains(field.type.baseName)) {
                 indent.write(
-                    'val ${field.name} = $fieldType.ofRaw($mapValue as Int)!!');
+                    'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
               } else {
-                indent.writeln('val ${field.name} = $mapValue as $fieldType');
+                indent.writeln('val ${field.name} = $listValue as $fieldType');
               }
             }
-          }
+          });
 
           indent.writeln('');
           indent.write('return $className(');
@@ -634,8 +633,8 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
     });
 
     indent.scoped(') {', '}', () {
-      writeFromMap();
-      writeToMap();
+      writeFromList();
+      writeToList();
     });
   }
 
@@ -648,26 +647,21 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
   }
 
   void writeWrapResult() {
-    indent.write('private fun wrapResult(result: Any?): Map<String, Any?> ');
+    indent.write('private fun wrapResult(result: Any?): List<Any?> ');
     indent.scoped('{', '}', () {
-      indent.writeln('return hashMapOf("result" to result)');
+      indent.writeln('return listOf(result)');
     });
   }
 
   void writeWrapError() {
-    indent.write(
-        'private fun wrapError(exception: Throwable): Map<String, Any> ');
+    indent.write('private fun wrapError(exception: Throwable): List<Any> ');
     indent.scoped('{', '}', () {
       indent.write('return ');
-      indent.scoped('hashMapOf<String, Any>(', ')', () {
-        indent.write('"error" to ');
-        indent.scoped('hashMapOf<String, Any>(', ')', () {
-          indent.writeln(
-              '"${Keys.errorCode}" to exception.javaClass.simpleName,');
-          indent.writeln('"${Keys.errorMessage}" to exception.toString(),');
-          indent.writeln(
-              '"${Keys.errorDetails}" to "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
-        });
+      indent.scoped('listOf<Any>(', ')', () {
+        indent.writeln('exception.javaClass.simpleName,');
+        indent.writeln('exception.toString(),');
+        indent.writeln(
+            '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
       });
     });
   }

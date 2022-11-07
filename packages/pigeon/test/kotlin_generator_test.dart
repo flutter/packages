@@ -31,8 +31,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
-    expect(code, contains('fun fromMap(map: Map<String, Any?>): Foobar'));
-    expect(code, contains('fun toMap(): Map<String, Any?>'));
+    expect(code, contains('fun fromList(result: List<Any?>): Foobar'));
+    expect(code, contains('fun toList(): MutableList<MutableList<Any?>>'));
   });
 
   test('gen one enum', () {
@@ -350,8 +350,8 @@ void main() {
     generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
-    expect(code, contains('wrapped["result"] = api.doSomething()'));
-    expect(code, contains('wrapped["error"] = wrapError(exception)'));
+    expect(code, contains('wrapped.add(api.doSomething())'));
+    expect(code, contains('wrapped.add(wrapError(exception))'));
     expect(code, contains('reply(wrapped)'));
   });
 
@@ -461,13 +461,11 @@ void main() {
     expect(code, contains('data class Outer'));
     expect(code, contains('data class Nested'));
     expect(code, contains('val nested: Nested? = null'));
-    expect(code, contains('fun fromMap(map: Map<String, Any?>): Outer'));
+    expect(code, contains('fun fromList(result: List<Any?>): Outer'));
     expect(
-        code,
-        contains(
-            'val nested: Nested? = (map["nested"] as? Map<String, Any?>)?.let'));
-    expect(code, contains('Nested.fromMap(it)'));
-    expect(code, contains('fun toMap(): Map<String, Any?>'));
+        code, contains('val nested: Nested? = (list[0] as? List<Any?>)?.let'));
+    expect(code, contains('Nested.fromList(it)'));
+    expect(code, contains('fun toList(): MutableList<MutableList<Any?>>'));
   });
 
   test('gen one async Host Api', () {
@@ -754,7 +752,7 @@ void main() {
     generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
-    expect(code, contains('wrapped["result"] = api.doit()'));
+    expect(code, contains('wrapped.add(api.doit())'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -818,7 +816,7 @@ void main() {
         code,
         contains(
             'val yArg = args[1].let { if (it is Int) it.toLong() else it as Long }'));
-    expect(code, contains('wrapped["result"] = api.add(xArg, yArg)'));
+    expect(code, contains('wrapped.add(api.add(xArg, yArg))'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 

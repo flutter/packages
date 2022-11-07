@@ -101,11 +101,16 @@ internal class AllDatatypesTest: TestCase() {
     @Test
     fun testIntegerToLong() {
         val everything = Everything(anInt = 123L)
-        val map = everything.toMap()
-        assertTrue(map.containsKey("anInt"))
+        val list = everything.toList()
+        assertNotNull(list)
+        val result = list.first()
+        assertNotNull(result)
+        assertNull(result.first())
+        assertNotNull(result[1])
+        assertTrue(result[1] == 123L)
 
-        val map2 = hashMapOf("anInt" to 123)
-        val everything2 = Everything.fromMap(map2)
+        val list2 = listOf<Any?>(listOf(null, 123, null, null, null, null, null, null, null, null, null, null, null))
+        val everything2 = Everything.fromList(list2)
 
         assertEquals(everything.anInt, everything2.anInt)
     }
