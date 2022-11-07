@@ -11,6 +11,7 @@ import '../geometry/path.dart';
 import '../paint.dart';
 import '../vector_instructions.dart';
 import 'clipping_optimizer.dart';
+import 'color_mapper.dart';
 import 'colors.dart';
 import 'masking_optimizer.dart';
 import 'node.dart';
@@ -226,9 +227,11 @@ class _Elements {
           'stop-opacity',
           def: '1',
         )!;
-        final Color stopColor =
-            parserState.parseColor(parserState.attribute('stop-color')) ??
-                Color.opaqueBlack;
+        final Color stopColor = parserState.parseColor(
+                parserState.attribute('stop-color'),
+                attributeName: 'stop-color',
+                id: parserState._currentAttributes.id) ??
+            Color.opaqueBlack;
         colors.add(stopColor.withOpacity(parseDouble(rawOpacity)!));
 
         final String rawOffset = parserState.attribute(
@@ -617,7 +620,8 @@ class _SvgGroupTuple {
 /// Parse an SVG to the initial Node tree.
 @visibleForTesting
 Future<Node> parseToNodeTree(String source) {
-  return SvgParser(source, const SvgTheme(), null, true)._parseToNodeTree();
+  return SvgParser(source, const SvgTheme(), null, true, null)
+      ._parseToNodeTree();
 }
 
 /// Reads an SVG XML string and via the [parse] method creates a set of
@@ -629,10 +633,13 @@ class SvgParser {
     this.theme,
     this._key,
     this._warningsAsErrors,
+    this._colorMapper,
   ) : _eventIterator = parseEvents(xml).iterator;
 
   /// The theme used when parsing SVG elements.
   final SvgTheme theme;
+
+  final ColorMapper? _colorMapper;
 
   final Iterator<XmlEvent> _eventIterator;
   final String? _key;
@@ -692,11 +699,11 @@ class SvgParser {
           }
           continue;
         }
+        _currentStartElement = event;
         _currentAttributes = _createSvgAttributes(
           attributeMap,
           currentColor: depth == 0 ? theme.currentColor : null,
         );
-        _currentStartElement = event;
         depth += 1;
         isSelfClosing = event.isSelfClosing;
       }
@@ -1196,9 +1203,11 @@ class SvgParser {
     bool explicitOpacity,
     Color? defaultFillColor,
     Color? currentColor,
+    String? id,
   ) {
-    final Color? color =
-        parseColor(rawFill) ?? currentColor ?? defaultFillColor;
+    final Color? color = parseColor(rawFill, attributeName: 'fill', id: id) ??
+        currentColor ??
+        defaultFillColor;
 
     if (explicitOpacity && color != null) {
       return color.withOpacity(opacity);
@@ -1297,7 +1306,27 @@ class SvgParser {
   }
 
   /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
-  Color? parseColor(String? colorString, {Color? currentColor}) {
+  Color? parseColor(
+    String? colorString, {
+    Color? currentColor,
+    required String attributeName,
+    required String? id,
+  }) {
+    final Color? parsed = _parseColor(colorString, currentColor: currentColor);
+    if (parsed == null || _colorMapper == null) {
+      return parsed;
+    }
+    // Do not use _currentAttributes, since they may not be up to date when this
+    // is called.
+    return _colorMapper!.substitute(
+      id,
+      _currentStartElement!.localName,
+      attributeName,
+      parsed,
+    );
+  }
+
+  Color? _parseColor(String? colorString, {Color? currentColor}) {
     if (colorString == null || colorString.isEmpty) {
       return null;
     }
@@ -1471,6 +1500,7 @@ class SvgParser {
     Map<String, String> attributeMap,
     double? uniformOpacity,
     Color? currentColor,
+    String? id,
   ) {
     final String? rawStroke = attributeMap['stroke'];
     if (rawStroke == 'none') {
@@ -1515,7 +1545,7 @@ class SvgParser {
         hasPattern = true;
       }
     } else {
-      strokeColor = parseColor(rawStroke);
+      strokeColor = parseColor(rawStroke, attributeName: 'stroke', id: id);
     }
 
     return SvgStrokeAttributes._(
@@ -1536,6 +1566,7 @@ class SvgParser {
     Map<String, String> attributeMap,
     double? uniformOpacity,
     Color? currentColor,
+    String? id,
   ) {
     final String rawFill = attributeMap['fill'] ?? '';
 
@@ -1570,6 +1601,7 @@ class SvgParser {
       uniformOpacity != null || rawFillOpacity != '',
       Color.opaqueBlack,
       currentColor,
+      id,
     );
 
     if (fillColor == null) {
@@ -1591,17 +1623,20 @@ class SvgParser {
     Map<String, String> attributeMap, {
     Color? currentColor,
   }) {
+    final String? id = attributeMap['id'];
     final double? opacity =
         parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0).toDouble();
-    final Color? color = parseColor(attributeMap['color']) ?? currentColor;
+    final Color? color =
+        parseColor(attributeMap['color'], attributeName: 'color', id: id) ??
+            currentColor;
     return SvgAttributes._(
         raw: attributeMap,
-        id: attributeMap['id'],
+        id: id,
         href: attributeMap['href'],
         opacity: opacity,
         color: color,
-        stroke: _parseStrokeAttributes(attributeMap, opacity, color),
-        fill: _parseFillAttributes(attributeMap, opacity, color),
+        stroke: _parseStrokeAttributes(attributeMap, opacity, color, id),
+        fill: _parseFillAttributes(attributeMap, opacity, color, id),
         fillRule:
             parseRawFillRule(attributeMap['fill-rule']) ?? PathFillType.nonZero,
         clipRule: parseRawFillRule(attributeMap['clip-rule']),
@@ -1615,7 +1650,8 @@ class SvgParser {
         textDecoration: parseTextDecoration(attributeMap['text-decoration']),
         textDecorationStyle:
             parseTextDecorationStyle(attributeMap['text-decoration-style']),
-        textDecorationColor: parseColor(attributeMap['text-decoration-color']),
+        textDecorationColor: parseColor(attributeMap['text-decoration-color'],
+            attributeName: 'text-decoration-color', id: id),
         textAnchorMultiplier: parseTextAnchor(attributeMap['text-anchor']));
   }
 }

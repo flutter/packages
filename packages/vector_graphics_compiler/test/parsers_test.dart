@@ -12,9 +12,41 @@ import 'package:test/test.dart';
 
 void main() {
   test('Colors', () {
-    final SvgParser parser = SvgParser('', const SvgTheme(), 'test_key', true);
-    expect(parser.parseColor('null'), null);
-    expect(parser.parseColor('red'), const Color.fromARGB(255, 255, 0, 0));
+    final SvgParser parser = SvgParser(
+      '',
+      const SvgTheme(),
+      'test_key',
+      true,
+      null,
+    );
+    expect(parser.parseColor('null', attributeName: 'foo', id: null), null);
+    expect(parser.parseColor('red', attributeName: 'foo', id: null),
+        const Color.fromARGB(255, 255, 0, 0));
+  });
+
+  test('Colors - mapped', () async {
+    final TestColorMapper mapper = TestColorMapper();
+    final SvgParser parser = SvgParser(
+      '<svg viewBox="0 0 10 10"><rect id="rect1" x="1" y="1" width="5" height="5" fill="red" /></svg>',
+      const SvgTheme(),
+      'test_key',
+      true,
+      mapper,
+    )
+      ..enableMaskingOptimizer = false
+      ..enableClippingOptimizer = false
+      ..enableOverdrawOptimizer = false;
+    final VectorInstructions instructions = await parser.parse();
+
+    // TestMapper just always returns this color.
+    expect(instructions.paints.single.fill!.color,
+        const Color.fromARGB(255, 255, 0, 255));
+
+    // TestMapper should have gotten the ID/element name/attribute name from the rect.
+    expect(mapper.lastId, 'rect1');
+    expect(mapper.lastElementName, 'rect');
+    expect(mapper.lastAttributeName, 'fill');
+    expect(mapper.lastColor, const Color.fromARGB(255, 255, 0, 0));
   });
 
   test('Multiple matrix translates', () {
@@ -128,4 +160,25 @@ void main() {
   test('Point conversion', () {
     expect(parseDoubleWithUnits('1pt', theme: const SvgTheme()), 1 + 1 / 3);
   });
+}
+
+class TestColorMapper extends ColorMapper {
+  String? lastId;
+  late String lastElementName;
+  late String lastAttributeName;
+  late Color lastColor;
+
+  @override
+  Color substitute(
+    String? id,
+    String elementName,
+    String attributeName,
+    Color color,
+  ) {
+    lastId = id;
+    lastElementName = elementName;
+    lastAttributeName = attributeName;
+    lastColor = color;
+    return const Color.fromARGB(255, 255, 0, 255);
+  }
 }

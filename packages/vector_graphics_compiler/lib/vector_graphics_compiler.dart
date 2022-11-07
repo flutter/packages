@@ -11,6 +11,7 @@ import 'src/geometry/image.dart';
 import 'src/geometry/vertices.dart';
 import 'src/geometry/path.dart';
 import 'src/paint.dart';
+import 'src/svg/color_mapper.dart';
 import 'src/svg/theme.dart';
 import 'src/svg/parser.dart';
 import 'src/vector_instructions.dart';
@@ -20,6 +21,7 @@ export 'src/geometry/matrix.dart';
 export 'src/geometry/path.dart';
 export 'src/geometry/vertices.dart';
 export 'src/paint.dart';
+export 'src/svg/color_mapper.dart';
 export 'src/svg/theme.dart';
 export 'src/svg/resolver.dart';
 export 'src/vector_instructions.dart';
@@ -59,8 +61,15 @@ Future<VectorInstructions> parse(
   bool enableMaskingOptimizer = true,
   bool enableClippingOptimizer = true,
   bool enableOverdrawOptimizer = true,
+  ColorMapper? colorMapper,
 }) async {
-  final SvgParser parser = SvgParser(xml, theme, key, warningsAsErrors);
+  final SvgParser parser = SvgParser(
+    xml,
+    theme,
+    key,
+    warningsAsErrors,
+    colorMapper,
+  );
   parser.enableMaskingOptimizer = enableMaskingOptimizer;
   parser.enableClippingOptimizer = enableClippingOptimizer;
   parser.enableOverdrawOptimizer = enableOverdrawOptimizer;
@@ -127,6 +136,7 @@ Future<Uint8List> encodeSvg({
   bool enableClippingOptimizer = true,
   bool enableOverdrawOptimizer = true,
   bool warningsAsErrors = false,
+  ColorMapper? colorMapper,
 }) async {
   const VectorGraphicsCodec codec = VectorGraphicsCodec();
   final VectorInstructions instructions = await parse(
@@ -137,6 +147,7 @@ Future<Uint8List> encodeSvg({
     enableClippingOptimizer: enableClippingOptimizer,
     enableOverdrawOptimizer: enableOverdrawOptimizer,
     warningsAsErrors: warningsAsErrors,
+    colorMapper: colorMapper,
   );
 
   final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
