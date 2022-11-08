@@ -13,22 +13,22 @@ import 'package:go_router/go_router.dart';
 /// The buttons use context.go() to navigate to each destination. On mobile
 /// devices, each destination is deep-linkable and on the web, can be navigated
 /// to using the address bar.
-void main() => runApp(SimpleApp());
+void main() => runApp(const SimpleApp());
 
 /// The route configuration.
-final _router = GoRouter(
+final GoRouter _router = GoRouter(
   initialLocation: '/details',
-  routes: [
+  routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder: (context, state) {
-        return HomeScreen();
+      builder: (BuildContext context, GoRouterState state) {
+        return const HomeScreen();
       },
-      routes: [
+      routes: <RouteBase>[
         GoRoute(
           path: 'details',
-          builder: (context, state) {
-            return DetailsScreen();
+          builder: (BuildContext context, GoRouterState state) {
+            return const DetailsScreen();
           },
         ),
       ],
@@ -38,6 +38,9 @@ final _router = GoRouter(
 
 /// The main app.
 class SimpleApp extends StatelessWidget {
+  /// Constructs a [SimpleApp]
+  const SimpleApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -46,7 +49,11 @@ class SimpleApp extends StatelessWidget {
   }
 }
 
+/// The home screen
 class HomeScreen extends StatelessWidget {
+  /// Constructs a [HomeScreen]
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +61,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             ElevatedButton(
               onPressed: () => context.go('/details'),
               child: const Text('Go to the Details screen'),
@@ -66,7 +73,11 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+/// The details screen
 class DetailsScreen extends StatelessWidget {
+  /// Constructs a [DetailsScreen]
+  const DetailsScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +85,7 @@ class DetailsScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <ElevatedButton>[
             ElevatedButton(
               onPressed: () => context.go('/'),
               child: const Text('Go back to the Home screen'),

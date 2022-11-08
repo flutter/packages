@@ -7,7 +7,7 @@ import 'package:go_router_examples/simple.dart' as example;
 
 void main() {
   testWidgets('example works', (WidgetTester tester) async {
-    await tester.pumpWidget(example.SimpleApp());
+    await tester.pumpWidget(const example.SimpleApp());
     expect(find.text('Go to page 2'), findsOneWidget);
 
     await tester.tap(find.text('Go to page 2'));

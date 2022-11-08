@@ -11,24 +11,24 @@ import 'package:go_router/go_router.dart';
 /// To learn more about animation in Flutter, check out the [Introduction to
 /// animations](https://docs.flutter.dev/development/ui/animations) page on
 /// flutter.dev.
-void main() => runApp(SimpleApp());
+void main() => runApp(const SimpleApp());
 
 /// The route configuration.
-final _router = GoRouter(
-  routes: [
+final GoRouter _router = GoRouter(
+  routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder: (context, state) {
-        return HomeScreen();
+      builder: (BuildContext context, GoRouterState state) {
+        return const HomeScreen();
       },
-      routes: [
+      routes: <RouteBase>[
         GoRoute(
           path: 'details',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage<void>(
               key: state.pageKey,
-              child: DetailsScreen(),
-              transitionDuration: Duration(milliseconds: 150),
+              child: const DetailsScreen(),
+              transitionDuration: const Duration(milliseconds: 150),
               transitionsBuilder: (BuildContext context,
                   Animation<double> animation,
                   Animation<double> secondaryAnimation,
@@ -51,6 +51,9 @@ final _router = GoRouter(
 
 /// The main app.
 class SimpleApp extends StatelessWidget {
+  /// Constructs a [SimpleApp]
+  const SimpleApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -59,7 +62,11 @@ class SimpleApp extends StatelessWidget {
   }
 }
 
+/// The home screen
 class HomeScreen extends StatelessWidget {
+  /// Constructs a [HomeScreen]
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +74,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             ElevatedButton(
               onPressed: () => context.go('/details'),
               child: const Text('Go to the Details screen'),
@@ -79,7 +86,11 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+/// The details screen
 class DetailsScreen extends StatelessWidget {
+  /// Constructs a [DetailsScreen]
+  const DetailsScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,7 +98,7 @@ class DetailsScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             ElevatedButton(
               onPressed: () => context.go('/'),
               child: const Text('Go back to the Home screen'),
