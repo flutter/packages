@@ -57,6 +57,7 @@ VectorGraphic createCompatVectorGraphic({
   ColorFilter? colorFilter,
   Animation<double>? opacity,
   RenderingStrategy strategy = RenderingStrategy.picture,
+  bool clipViewbox = true,
 }) {
   return VectorGraphic._(
     key: key,
@@ -71,6 +72,7 @@ VectorGraphic createCompatVectorGraphic({
     colorFilter: colorFilter,
     opacity: opacity,
     strategy: strategy,
+    clipViewbox: clipViewbox,
   );
 }
 
@@ -102,6 +104,7 @@ class VectorGraphic extends StatefulWidget {
     this.placeholderBuilder,
     this.colorFilter,
     this.opacity,
+    this.clipViewbox = true,
   }) : strategy = RenderingStrategy.raster;
 
   /// A specialized constructor for flutter_svg interop.
@@ -118,6 +121,7 @@ class VectorGraphic extends StatefulWidget {
     this.colorFilter,
     this.opacity,
     this.strategy = RenderingStrategy.picture,
+    this.clipViewbox = true,
   });
 
   /// A delegate for fetching the raw bytes of the vector graphic.
@@ -218,6 +222,14 @@ class VectorGraphic extends StatefulWidget {
   /// By default this is [RenderingStrategy.raster].
   final RenderingStrategy strategy;
 
+  /// Whether the graphic should be clipped to its viewbox.
+  ///
+  /// If true, this adds a clip sized to the dimensions of the graphic before
+  /// drawing. This prevents the graphic from accidentally drawing outside of
+  /// its specified dimensions. Some graphics intentionally draw outside of
+  /// their specified dimensions and thus must not be clipped.
+  final bool clipViewbox;
+
   @override
   State<VectorGraphic> createState() => _VectorGraphicWidgetState();
 }
@@ -232,21 +244,24 @@ class _PictureData {
 
 @immutable
 class _PictureKey {
-  const _PictureKey(this.cacheKey, this.locale, this.textDirection);
+  const _PictureKey(
+      this.cacheKey, this.locale, this.textDirection, this.clipViewbox);
 
   final Object cacheKey;
   final Locale? locale;
   final TextDirection? textDirection;
+  final bool clipViewbox;
 
   @override
-  int get hashCode => Object.hash(cacheKey, locale, textDirection);
+  int get hashCode => Object.hash(cacheKey, locale, textDirection, clipViewbox);
 
   @override
   bool operator ==(Object other) =>
       other is _PictureKey &&
       other.cacheKey == cacheKey &&
       other.locale == locale &&
-      other.textDirection == textDirection;
+      other.textDirection == textDirection &&
+      other.clipViewbox == clipViewbox;
 }
 
 class _VectorGraphicWidgetState extends State<VectorGraphic> {
@@ -304,6 +319,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         data,
         locale: key.locale,
         textDirection: key.textDirection,
+        clipViewbox: key.clipViewbox,
         loader: loader,
       );
     }).then((PictureInfo pictureInfo) {
@@ -319,7 +335,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   void _loadAssetBytes() {
     // First check if we have an avilable picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
-    final _PictureKey key = _PictureKey(loaderKey, locale, textDirection);
+    final _PictureKey key =
+        _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
     final _PictureData? data = _livePictureCache[key];
     if (data != null) {
       data.count += 1;
@@ -559,8 +576,9 @@ class VectorGraphicUtilities {
   /// they are done with it.
   Future<PictureInfo> loadPicture(
     BytesLoader loader,
-    BuildContext? context,
-  ) async {
+    BuildContext? context, {
+    bool clipViewbox = true,
+  }) async {
     TextDirection textDirection = TextDirection.ltr;
     Locale locale = ui.PlatformDispatcher.instance.locale;
     if (context != null) {
@@ -574,6 +592,7 @@ class VectorGraphicUtilities {
           locale: locale,
           textDirection: textDirection,
           loader: loader,
+          clipViewbox: clipViewbox,
         );
       } catch (e) {
         debugPrint('Failed to decode $loader');

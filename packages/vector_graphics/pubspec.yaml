@@ -16,6 +16,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
+  vector_graphics_compiler: 0.0.5
 
 # # Comment out before publishing
 # dependency_overrides:

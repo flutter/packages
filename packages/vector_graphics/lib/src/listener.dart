@@ -44,6 +44,7 @@ Future<PictureInfo> decodeVectorGraphics(
   ByteData data, {
   required Locale? locale,
   required TextDirection? textDirection,
+  required bool clipViewbox,
   required BytesLoader loader,
 }) async {
   try {
@@ -56,6 +57,7 @@ Future<PictureInfo> decodeVectorGraphics(
         FlutterVectorGraphicsListener(
       locale: locale,
       textDirection: textDirection,
+      clipViewbox: clipViewbox,
     );
     DecodeResponse response = _codec.decode(data, listener);
     if (response.complete) {
@@ -116,6 +118,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   factory FlutterVectorGraphicsListener({
     Locale? locale,
     TextDirection? textDirection,
+    bool clipViewbox = true,
   }) {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final ui.Canvas canvas = ui.Canvas(recorder);
@@ -124,6 +127,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       recorder,
       locale,
       textDirection,
+      clipViewbox,
     );
   }
 
@@ -132,10 +136,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     this._recorder,
     this._locale,
     this._textDirection,
+    this._clipViewbox,
   );
 
   final Locale? _locale;
   final TextDirection? _textDirection;
+  final bool _clipViewbox;
 
   final ui.PictureRecorder _recorder;
   final ui.Canvas _canvas;
@@ -354,7 +360,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       ui.PictureRecorder? patternRecorder, ui.Canvas canvas) {
     final FlutterVectorGraphicsListener patternListener =
         FlutterVectorGraphicsListener._(
-            canvas, patternRecorder!, _locale, _textDirection);
+            canvas, patternRecorder!, _locale, _textDirection, _clipViewbox);
 
     patternListener._size =
         ui.Size(currentPattern!._width, currentPattern._height);
@@ -438,7 +444,9 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onSize(double width, double height) {
-    _canvas.clipRect(ui.Offset.zero & ui.Size(width, height));
+    if (_clipViewbox) {
+      _canvas.clipRect(ui.Offset.zero & ui.Size(width, height));
+    }
     _size = ui.Size(width, height);
   }
 

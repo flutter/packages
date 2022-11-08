@@ -33,6 +33,7 @@ void main() {
       buffer.done(),
       locale: const Locale('fr', 'CH'),
       textDirection: TextDirection.ltr,
+      clipViewbox: true,
       loader: TestBytesLoader(Uint8List(0).buffer.asByteData()),
     );
   });
