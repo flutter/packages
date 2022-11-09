@@ -76,6 +76,51 @@ GoRoute(
 )
 ```
 
+# Nested navigation
+Some apps display destinations in a subsection of the screen, for example, an
+app using a BottomNavigationBar that stays on-screen when navigating between
+destinations.
+
+To add an additional Navigator, use
+[ShellRoute](https://pub.dev/documentation/go_router/ShellRoute-class.html)
+and provide a builder that returns a widget:
+
+```dart
+ShellRoute(
+  builder:
+      (BuildContext context, GoRouterState state, Widget child) {
+    return Scaffold(
+      body: child,
+      onTap: (idx) {
+          /* ... */
+      },
+      currentIndex: /* ... */,
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          /* ... */
+        ],
+      ),
+    );
+  },
+  routes: <RouteBase>[
+    GoRoute(
+      path: 'details',
+      builder: (BuildContext context, GoRouterState state) {
+        return const DetailsScreen();
+      },
+    ),
+  ],
+),
+```
+
+The `child` widget is a Navigator configured to display the matching sub-routes.
+
+For more details, see the [ShellRoute API
+documentation](https://pub.dev/documentation/go_router/latest/go_router/ShellRoute-class.html).
+For a complete example, see the [ShellRoute
+sample](https://github.com/flutter/packages/tree/main/packages/go_router/example/lib/shell_route.dart)
+in the example/ directory.
+
 # Initial location
 
 The initial location is shown when the app first opens and there is no deep link
