@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -84,7 +85,7 @@ class RouteConfiguration {
           } else if (route is StatefulShellRoute) {
             for (final ShellRouteBranch branch in route.branches) {
               checkParentNavigatorKeys(
-                <RouteBase>[branch.rootRoute],
+                branch.routes,
                 <GlobalKey<NavigatorState>>[
                   ...allowedKeys,
                   branch.navigatorKey,
@@ -107,17 +108,21 @@ class RouteConfiguration {
             if (route is StatefulShellRoute) {
               for (final ShellRouteBranch branch in route.branches) {
                 if (branch.defaultLocation == null) {
-                  continue;
+                  // Recursively search for the first GoRoute descendant. Will
+                  // throw assertion error if not found.
+                  findShellRouteBranchDefaultLocation(branch);
+                } else {
+                  final RouteBase defaultLocationRoute =
+                      matcher.findMatch(branch.defaultLocation!).last.route;
+                  final RouteBase? match = branch.routes.firstWhereOrNull(
+                      (RouteBase e) => _debugIsDescendantOrSame(
+                          ancestor: e, route: defaultLocationRoute));
+                  assert(
+                      match != null,
+                      'The defaultLocation (${branch.defaultLocation}) of '
+                      'ShellRouteBranch must match a descendant route of the '
+                      'branch');
                 }
-                final RouteBase defaultLocationRoute =
-                    matcher.findMatch(branch.defaultLocation!).last.route;
-                assert(
-                    _debugIsDescendantOrSame(
-                        ancestor: branch.rootRoute,
-                        route: defaultLocationRoute),
-                    'The defaultLocation (${branch.defaultLocation}) of '
-                    'ShellRouteBranch must match a descendant route of the '
-                    'branch');
               }
             }
             checkShellRouteBranchDefaultLocations(route.routes, matcher);
@@ -192,9 +197,28 @@ class RouteConfiguration {
         .toString();
   }
 
-  /// Returns the full path to the specified route.
-  String fullPathForRoute(RouteBase route) {
-    return _fullPathForRoute(route, '', routes) ?? '';
+  /// Recursively traverses the routes of the provided ShellRouteBranch to find
+  /// the first GoRoute, from which a full path will be derived.
+  String findShellRouteBranchDefaultLocation(ShellRouteBranch branch) {
+    final GoRoute? route = _findFirstGoRoute(branch.routes);
+    final String? defaultLocation =
+        route != null ? _fullPathForRoute(route, '', routes) : null;
+    assert(
+        defaultLocation != null,
+        'The default location of a ShellRouteBranch'
+        ' must be configured or derivable from GoRoute descendant');
+    return defaultLocation!;
+  }
+
+  static GoRoute? _findFirstGoRoute(List<RouteBase> routes) {
+    for (final RouteBase route in routes) {
+      final GoRoute? match =
+          route is GoRoute ? route : _findFirstGoRoute(route.routes);
+      if (match != null) {
+        return match;
+      }
+    }
+    return null;
   }
 
   static String? _fullPathForRoute(

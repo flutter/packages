@@ -37,23 +37,30 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
     routes: <RouteBase>[
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
       GoRoute(path: '/a', builder: (_, __) => const DummyStatefulWidget()),
-      StatefulShellRoute.rootRoutes(routes: <GoRoute>[
-        GoRoute(
-            path: '/c',
-            builder: (_, __) => const DummyStatefulWidget(),
-            routes: <RouteBase>[
-              GoRoute(
-                  path: 'c1', builder: (_, __) => const DummyStatefulWidget()),
-              GoRoute(
-                  path: 'c2', builder: (_, __) => const DummyStatefulWidget()),
-            ]),
-        GoRoute(
-            path: '/d',
-            builder: (_, __) => const DummyStatefulWidget(),
-            routes: <RouteBase>[
-              GoRoute(
-                  path: 'd1', builder: (_, __) => const DummyStatefulWidget()),
-            ]),
+      StatefulShellRoute(branches: <ShellRouteBranch>[
+        ShellRouteBranch(routes: <RouteBase>[
+          GoRoute(
+              path: '/c',
+              builder: (_, __) => const DummyStatefulWidget(),
+              routes: <RouteBase>[
+                GoRoute(
+                    path: 'c1',
+                    builder: (_, __) => const DummyStatefulWidget()),
+                GoRoute(
+                    path: 'c2',
+                    builder: (_, __) => const DummyStatefulWidget()),
+              ]),
+        ]),
+        ShellRouteBranch(routes: <RouteBase>[
+          GoRoute(
+              path: '/d',
+              builder: (_, __) => const DummyStatefulWidget(),
+              routes: <RouteBase>[
+                GoRoute(
+                    path: 'd1',
+                    builder: (_, __) => const DummyStatefulWidget()),
+              ]),
+        ]),
       ], builder: (_, __, Widget child) => child),
     ],
   );

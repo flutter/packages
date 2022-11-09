@@ -314,7 +314,7 @@ class StatefulShellRouteState {
   /// [StatefulShellRoute] by replacing the current navigation stack with the
   /// one of the route branch at the provided index. If resetLocation is true,
   /// the branch will be reset to its default location (see
-  /// [ShellRouteBranchState.defaultLocation]).
+  /// [ShellRouteBranch.defaultLocation]).
   void goBranch(int index, {bool resetLocation = false}) {
     _switchActiveBranch(branchState[index],
         resetLocation ? null : branchState[index]._matchList);
@@ -350,11 +350,9 @@ class ShellRouteBranchState {
   /// Constructs a [ShellRouteBranchState].
   const ShellRouteBranchState({
     required this.routeBranch,
-    required String rootRoutePath,
     this.navigator,
     RouteMatchList? matchList,
-  })  : _matchList = matchList,
-        _rootRoutePath = rootRoutePath;
+  }) : _matchList = matchList;
 
   /// Constructs a copy of this [ShellRouteBranchState], with updated values for
   /// some of the fields.
@@ -362,7 +360,6 @@ class ShellRouteBranchState {
       {Navigator? navigator, RouteMatchList? matchList}) {
     return ShellRouteBranchState(
       routeBranch: routeBranch,
-      rootRoutePath: _rootRoutePath,
       navigator: navigator ?? this.navigator,
       matchList: matchList ?? _matchList,
     );
@@ -377,15 +374,8 @@ class ShellRouteBranchState {
   /// navigated to at least once.
   final Navigator? navigator;
 
-  /// Gets the defaultLocation specified in [routeBranch] or falls back to
-  /// the path of the root route of the branch.
-  String get defaultLocation => routeBranch.defaultLocation ?? _rootRoutePath;
-
   /// The current navigation stack for the branch.
   final RouteMatchList? _matchList;
-
-  /// The full path at which root route for the route branch is reachable.
-  final String _rootRoutePath;
 
   @override
   bool operator ==(Object other) {
@@ -396,12 +386,10 @@ class ShellRouteBranchState {
       return false;
     }
     return other.routeBranch == routeBranch &&
-        other._rootRoutePath == _rootRoutePath &&
         other.navigator == navigator &&
         other._matchList == _matchList;
   }
 
   @override
-  int get hashCode =>
-      Object.hash(routeBranch, _rootRoutePath, navigator, _matchList);
+  int get hashCode => Object.hash(routeBranch, navigator, _matchList);
 }
