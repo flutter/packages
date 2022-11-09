@@ -10,11 +10,12 @@ flutter:
     - shaders/solid_color.frag
     - shaders/blank.frag
 
-dev_dependencies:
+dependencies:
   flutter:
     sdk: flutter
+
+dev_dependencies:
   flutter_shaders:
     path: ../
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0

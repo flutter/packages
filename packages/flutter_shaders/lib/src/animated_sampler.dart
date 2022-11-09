@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 /// A callback for the [AnimatedSamplerBuilder] widget.
-typedef AnimatedSamplerBuilder = void Function(ui.Image, Size, Offset offset, ui.Canvas);
+typedef AnimatedSamplerBuilder = void Function(
+    ui.Image, Size, Offset offset, ui.Canvas);
 
 /// A widget that allows access to a snapshot of the child widgets for painting
 /// with a sampler applied to a [FragmentProgram].
@@ -52,7 +53,8 @@ typedef AnimatedSamplerBuilder = void Function(ui.Image, Size, Offset offset, ui
 ///      caching during expensive animations.
 class AnimatedSampler extends StatelessWidget {
   /// Create a new [AnimatedSampler].
-  const AnimatedSampler(this.builder, {
+  const AnimatedSampler(
+    this.builder, {
     required this.child,
     super.key,
     this.enabled = true,
@@ -80,7 +82,7 @@ class AnimatedSampler extends StatelessWidget {
 }
 
 class _ShaderSamplerImpl extends SingleChildRenderObjectWidget {
-  const _ShaderSamplerImpl(this.builder, { super.child, required this.enabled });
+  const _ShaderSamplerImpl(this.builder, {super.child, required this.enabled});
 
   final AnimatedSamplerBuilder builder;
   final bool enabled;
@@ -95,7 +97,8 @@ class _ShaderSamplerImpl extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(BuildContext context, covariant RenderObject renderObject) {
+  void updateRenderObject(
+      BuildContext context, covariant RenderObject renderObject) {
     (renderObject as _RenderShaderSamplerBuilderWidget)
       ..devicePixelRatio = MediaQuery.of(context).devicePixelRatio
       ..builder = builder
@@ -106,16 +109,14 @@ class _ShaderSamplerImpl extends SingleChildRenderObjectWidget {
 // A render object that conditionally converts its child into a [ui.Image]
 // and then paints it in place of the child.
 class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
-
   // Create a new [_RenderSnapshotWidget].
   _RenderShaderSamplerBuilderWidget({
     required double devicePixelRatio,
     required AnimatedSamplerBuilder builder,
     required bool enabled,
-  }) : _devicePixelRatio = devicePixelRatio,
-       _builder = builder,
-       _enabled = enabled;
-
+  })  : _devicePixelRatio = devicePixelRatio,
+        _builder = builder,
+        _enabled = enabled;
 
   /// The device pixel ratio used to create the child image.
   double get devicePixelRatio => _devicePixelRatio;
@@ -175,14 +176,16 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
   // children from this layer.
   ui.Image? _paintAndDetachToImage() {
     final OffsetLayer offsetLayer = OffsetLayer();
-    final PaintingContext context = PaintingContext(offsetLayer, Offset.zero & size);
+    final PaintingContext context =
+        PaintingContext(offsetLayer, Offset.zero & size);
     super.paint(context, Offset.zero);
     // This ignore is here because this method is protected by the `PaintingContext`. Adding a new
     // method that performs the work of `_paintAndDetachToImage` would avoid the need for this, but
     // that would conflict with our goals of minimizing painting context.
     // ignore: invalid_use_of_protected_member
     context.stopRecordingIfNeeded();
-    final ui.Image image = offsetLayer.toImageSync(Offset.zero & size, pixelRatio: devicePixelRatio);
+    final ui.Image image = offsetLayer.toImageSync(Offset.zero & size,
+        pixelRatio: devicePixelRatio);
     offsetLayer.dispose();
     return image;
   }

@@ -7,7 +7,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 
 /// A callback used by [ShaderBuilder].
-typedef ShaderBuilderCallback = Widget Function(BuildContext, ui.FragmentShader, Widget?);
+typedef ShaderBuilderCallback = Widget Function(
+    BuildContext, ui.FragmentShader, Widget?);
 
 /// A widget that loads and caches [FragmentProgram]s based on the asset key.
 ///
@@ -37,7 +38,8 @@ typedef ShaderBuilderCallback = Widget Function(BuildContext, ui.FragmentShader,
 /// ```
 class ShaderBuilder extends StatefulWidget {
   /// Create a new [ShaderBuilder].
-  const ShaderBuilder(this.builder, {
+  const ShaderBuilder(
+    this.builder, {
     super.key,
     required this.assetKey,
     this.child,
@@ -66,10 +68,12 @@ class ShaderBuilder extends StatefulWidget {
     if (_ShaderBuilderState._shaderCache.containsKey(assetKey)) {
       return Future<void>.value();
     }
-    return ui.FragmentProgram.fromAsset(assetKey).then((ui.FragmentProgram program) {
-     _ShaderBuilderState._shaderCache[assetKey] = program;
+    return ui.FragmentProgram.fromAsset(assetKey).then(
+        (ui.FragmentProgram program) {
+      _ShaderBuilderState._shaderCache[assetKey] = program;
     }, onError: (Object error, StackTrace stackTrace) {
-      FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stackTrace));
+      FlutterError.reportError(
+          FlutterErrorDetails(exception: error, stack: stackTrace));
     });
   }
 }
@@ -78,7 +82,8 @@ class _ShaderBuilderState extends State<ShaderBuilder> {
   ui.FragmentProgram? program;
   ui.FragmentShader? shader;
 
-  static final Map<String, ui.FragmentProgram> _shaderCache = <String, ui.FragmentProgram>{};
+  static final Map<String, ui.FragmentProgram> _shaderCache =
+      <String, ui.FragmentProgram>{};
 
   @override
   void initState() {
@@ -111,7 +116,8 @@ class _ShaderBuilderState extends State<ShaderBuilder> {
         _shaderCache[assetKey] = program;
       });
     }, onError: (Object error, StackTrace stackTrace) {
-      FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stackTrace));
+      FlutterError.reportError(
+          FlutterErrorDetails(exception: error, stack: stackTrace));
     });
   }
 
