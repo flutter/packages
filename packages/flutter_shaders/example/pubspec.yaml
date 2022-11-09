@@ -19,3 +19,4 @@ flutter:
     - shaders/sampler.frag
     - shaders/solid_color.frag
     - shaders/blank.frag
+    - packages/flutter_shaders/shaders/pixelation.frag
