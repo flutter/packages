@@ -1,3 +1,7 @@
+## 5.1.6
+
+- Update documentation
+
 ## 5.1.5
 
 - Adds migration guide for 5.1.2 to readme.
