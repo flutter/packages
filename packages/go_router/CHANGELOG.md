@@ -6,15 +6,26 @@
 - Updated documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
   describe the meaning of the child argument in the builder functions.
 
+## 5.1.5
+
+- Adds migration guide for 5.1.2 to readme.
+
+## 5.1.4
+
+- Fixes the documentation by removing the `ShellRoute`'s non-existing `path` parameter from it.
+
 ## 5.1.3
 
 - Allows redirection to return same location.
 
 ## 5.1.2
 
-- Exposes uri and path parameters from GoRouter and fixes its notifications.
+- Adds GoRouterState to context.
+- Fixes GoRouter notification.
 - Updates README.
 - Removes dynamic calls in examples.
+- **BREAKING CHANGE**
+  - Remove NavigatorObserver mixin from GoRouter
 
 ## 5.1.1
 

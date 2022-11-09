@@ -434,7 +434,6 @@ abstract class ShellRouteBase extends RouteBase {
 ///
 /// ```
 /// ShellRoute(
-///   path: '/',
 ///   builder: (BuildContext context, GoRouterState state, Widget child) {
 ///     return Scaffold(
 ///       appBar: AppBar(
