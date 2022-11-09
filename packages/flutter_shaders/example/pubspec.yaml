@@ -4,12 +4,6 @@ publish_to: none
 environment:
   sdk: '>=2.19.0-0.dev <3.0.0'
 
-flutter:
-  shaders:
-    - shaders/sampler.frag
-    - shaders/solid_color.frag
-    - shaders/blank.frag
-
 dependencies:
   flutter:
     sdk: flutter
@@ -19,3 +13,9 @@ dev_dependencies:
     path: ../
   flutter_test:
     sdk: flutter
+
+flutter:
+  shaders:
+    - shaders/sampler.frag
+    - shaders/solid_color.frag
+    - shaders/blank.frag
