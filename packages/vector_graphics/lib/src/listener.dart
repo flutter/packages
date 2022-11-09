@@ -108,6 +108,29 @@ class _PatternState {
   ui.PictureRecorder? recorder;
 }
 
+/// Used by [FlutterVectorGraphicsListener] for testing purposes.
+@visibleForTesting
+abstract class PictureFactory {
+  /// Allows const subclasses.
+  const PictureFactory();
+
+  /// Create a picture recorder.
+  ui.PictureRecorder createPictureRecorder();
+
+  /// Create a canvas from the recorder.
+  ui.Canvas createCanvas(ui.PictureRecorder recorder);
+}
+
+class _DefaultPictureFactory implements PictureFactory {
+  const _DefaultPictureFactory();
+
+  @override
+  ui.Canvas createCanvas(ui.PictureRecorder recorder) => ui.Canvas(recorder);
+
+  @override
+  ui.PictureRecorder createPictureRecorder() => ui.PictureRecorder();
+}
+
 /// A listener implementation for the vector graphics codec that converts the
 /// format into a [ui.Picture].
 class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
@@ -119,12 +142,14 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     Locale? locale,
     TextDirection? textDirection,
     bool clipViewbox = true,
+    @visibleForTesting
+        PictureFactory pictureFactory = const _DefaultPictureFactory(),
   }) {
-    final ui.PictureRecorder recorder = ui.PictureRecorder();
-    final ui.Canvas canvas = ui.Canvas(recorder);
+    final ui.PictureRecorder recorder = pictureFactory.createPictureRecorder();
     return FlutterVectorGraphicsListener._(
-      canvas,
+      pictureFactory,
       recorder,
+      pictureFactory.createCanvas(recorder),
       locale,
       textDirection,
       clipViewbox,
@@ -132,12 +157,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   FlutterVectorGraphicsListener._(
-    this._canvas,
+    this._pictureFactory,
     this._recorder,
+    this._canvas,
     this._locale,
     this._textDirection,
     this._clipViewbox,
   );
+
+  final PictureFactory _pictureFactory;
 
   final Locale? _locale;
   final TextDirection? _textDirection;
@@ -349,8 +377,9 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       double height, Float64List transform) {
     assert(_currentPattern == null);
     _currentPattern = _PatternConfig(patternId, width, height, transform);
-    _patterns[patternId]!.recorder = ui.PictureRecorder();
-    final ui.Canvas newCanvas = ui.Canvas(_patterns[patternId]!.recorder!);
+    _patterns[patternId]!.recorder = _pictureFactory.createPictureRecorder();
+    final ui.Canvas newCanvas =
+        _pictureFactory.createCanvas(_patterns[patternId]!.recorder!);
     newCanvas.clipRect(ui.Offset(x, y) & ui.Size(width, height));
     _patterns[patternId]!.canvas = newCanvas;
   }
@@ -360,7 +389,13 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       ui.PictureRecorder? patternRecorder, ui.Canvas canvas) {
     final FlutterVectorGraphicsListener patternListener =
         FlutterVectorGraphicsListener._(
-            canvas, patternRecorder!, _locale, _textDirection, _clipViewbox);
+      _pictureFactory,
+      patternRecorder!,
+      canvas,
+      _locale,
+      _textDirection,
+      _clipViewbox,
+    );
 
     patternListener._size =
         ui.Size(currentPattern!._width, currentPattern._height);
@@ -561,10 +596,11 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       _canvas.save();
       _canvas.transform(transform);
     }
-    paintImage(
-      canvas: _canvas,
-      rect: ui.Rect.fromLTWH(x, y, width, height),
-      image: image,
+    _canvas.drawImageRect(
+      image,
+      ui.Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
+      ui.Rect.fromLTWH(x, y, width, height),
+      Paint(),
     );
     if (transform != null) {
       _canvas.restore();
