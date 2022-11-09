@@ -165,8 +165,12 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
         },
 
         /// If you need to create a custom container for the branch routes, to
-        /// for instance setup animations, you can implement your builder
-        /// something like this (see _AnimatedRouteBranchContainer):
+        /// for instance setup custom animations, you can implement your builder
+        /// something like below (see _AnimatedRouteBranchContainer). Note that
+        /// in this case, you should not add the Widget provided in the child
+        /// parameter of the builder to the widget tree. Instead, you should use
+        /// the child widgets of each branch
+        /// (see StatefulShellRouteState.children).
         // builder: (BuildContext context, GoRouterState state, Widget child) {
         //   return ScaffoldWithNavBar(
         //     body: _AnimatedRouteBranchContainer(),
@@ -424,7 +428,7 @@ class TabbedRootScreenTab extends StatelessWidget {
     // Note that we must fetch the state fresh here, since the
     // TabbedRootScreenTab is "cached" by the TabBarView.
     final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
-    final Widget? navigator = shellState.branchState[index].navigator;
+    final Widget? navigator = shellState.branchState[index].child;
     return navigator ?? const SizedBox.expand();
   }
 }
@@ -474,7 +478,7 @@ class _AnimatedRouteBranchContainer extends StatelessWidget {
     final StatefulShellRouteState shellRouteState =
         StatefulShellRoute.of(context);
     return Stack(
-        children: shellRouteState.navigators.mapIndexed(
+        children: shellRouteState.children.mapIndexed(
       (int index, Widget? navigator) {
         return AnimatedScale(
           scale: index == shellRouteState.index ? 1 : 1.5,

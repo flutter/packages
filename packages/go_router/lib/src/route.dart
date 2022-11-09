@@ -540,16 +540,16 @@ class ShellRoute extends ShellRouteBase {
 /// ```
 ///
 /// Sometimes you need greater control over the layout and animations of the
-/// branch Navigators. In such cases, the child argument in the builder function
-/// can be ignored, and a custom implementation can instead be built using the
-/// branch Navigators (see [StatefulShellRouteState.navigators]) directly. For
-/// example:
+/// Widgets representing the branch Navigators. In such cases, the child
+/// argument in the builder function can be ignored, and a custom implementation
+/// can instead be built using the child widgets of the branches
+/// (see [StatefulShellRouteState.children]) directly. For example:
 ///
 /// ```
 /// final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
-/// final int currentIndex = shellState.currentBranchIndex;
-/// final List<Widget?> navigators = shellRouteState.branchNavigators;
-/// return MyCustomShell(currentIndex, navigators);
+/// final int currentIndex = shellState.index;
+/// final List<Widget?> children = shellRouteState.children;
+/// return MyCustomShell(currentIndex, children);
 /// ```
 ///
 /// Below is a simple example of how a router configuration with

@@ -151,7 +151,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
         navigator = widget.branchNavigatorBuilder(context, navigatorMatchList,
             branch.navigatorKey, branch.restorationScopeId);
       }
-      return branchState.copy(navigator: navigator, matchList: matchList);
+      return branchState.copy(child: navigator, matchList: matchList);
     }
 
     return routeMatchList.then(createBranchNavigator);
@@ -172,7 +172,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
   void _preloadBranches() {
     final List<ShellRouteBranchState> states = _routeState.branchState;
     for (int i = 0; i < states.length; i++) {
-      if (states[i].navigator == null) {
+      if (states[i].child == null) {
         _preloadBranch(states[i]).then((ShellRouteBranchState branchState) {
           setState(() {
             _updateRouteBranchState(i, branchState);
@@ -188,7 +188,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     _updateRouteBranchState(
       index,
       _routeState.branchState[index].copy(
-        navigator: widget.navigator,
+        child: widget.navigator,
         matchList: widget.matchList,
       ),
       currentIndex: index,
@@ -275,7 +275,7 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
 
   Widget _buildRouteBranchContainer(
       BuildContext context, int index, ShellRouteBranchState routeBranch) {
-    final Widget? navigator = routeBranch.navigator;
+    final Widget? navigator = routeBranch.child;
     if (navigator == null) {
       return const SizedBox.shrink();
     }

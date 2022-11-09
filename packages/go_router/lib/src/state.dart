@@ -307,12 +307,18 @@ class StatefulShellRouteState {
 
   final void Function() _resetState;
 
-  /// Gets the [Navigator]s for each of the route branches.
+  /// Gets the [Widget]s representing each of the route branches.
   ///
-  /// Note that the Navigator for a particular branch may be null if the branch
-  /// hasn't been visited yet.
-  List<Widget?> get navigators =>
-      branchState.map((ShellRouteBranchState e) => e.navigator).toList();
+  /// The Widget returned from this method contains the [Navigator]s of the
+  /// branches. Note that the Widget for a particular branch may be null if the
+  /// branch hasn't been visited yet. Also note that the Widgets returned by this
+  /// method should only be added to the widget tree if using a custom
+  /// branch container Widget implementation, where the child parameter in the
+  /// [ShellRouteBuilder] of the [StatefulShellRoute] is ignored (i.e. not added
+  /// to the widget tree).
+  /// See [ShellRouteBranchState.child].
+  List<Widget?> get children =>
+      branchState.map((ShellRouteBranchState e) => e.child).toList();
 
   /// Navigate to the current location of the branch with the provided index.
   ///
@@ -362,17 +368,16 @@ class ShellRouteBranchState {
   /// Constructs a [ShellRouteBranchState].
   const ShellRouteBranchState({
     required this.routeBranch,
-    this.navigator,
+    this.child,
     RouteMatchList? matchList,
   }) : _matchList = matchList;
 
   /// Constructs a copy of this [ShellRouteBranchState], with updated values for
   /// some of the fields.
-  ShellRouteBranchState copy(
-      {Navigator? navigator, RouteMatchList? matchList}) {
+  ShellRouteBranchState copy({Widget? child, RouteMatchList? matchList}) {
     return ShellRouteBranchState(
       routeBranch: routeBranch,
-      navigator: navigator ?? this.navigator,
+      child: child ?? this.child,
       matchList: matchList ?? _matchList,
     );
   }
@@ -380,11 +385,15 @@ class ShellRouteBranchState {
   /// The associated [ShellRouteBranch]
   final ShellRouteBranch routeBranch;
 
-  /// The [Navigator] for this route branch in a [StatefulShellRoute].
+  /// The [Widget] representing this route branch in a [StatefulShellRoute].
   ///
-  /// This field will typically not be set until this route tree has been
-  /// navigated to at least once.
-  final Navigator? navigator;
+  /// The Widget returned from this method contains the [Navigator] of the
+  /// branch. This field may be null until this route branch has been navigated
+  /// to at least once. Note that the Widget returned by this method should only
+  /// be added to the widget tree if using a custom branch container Widget
+  /// implementation, where the child parameter in the [ShellRouteBuilder] of
+  /// the [StatefulShellRoute] is ignored (i.e. not added to the widget tree).
+  final Widget? child;
 
   /// The current navigation stack for the branch.
   final RouteMatchList? _matchList;
@@ -398,10 +407,10 @@ class ShellRouteBranchState {
       return false;
     }
     return other.routeBranch == routeBranch &&
-        other.navigator == navigator &&
+        other.child == child &&
         other._matchList == _matchList;
   }
 
   @override
-  int get hashCode => Object.hash(routeBranch, navigator, _matchList);
+  int get hashCode => Object.hash(routeBranch, child, _matchList);
 }
