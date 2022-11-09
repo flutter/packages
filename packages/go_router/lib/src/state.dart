@@ -270,22 +270,25 @@ class GoRouterStateRegistry extends ChangeNotifier {
 class StatefulShellRouteState {
   /// Constructs a [StatefulShellRouteState].
   const StatefulShellRouteState({
-    required Function(ShellRouteBranchState, RouteMatchList?)
-        switchActiveBranch,
     required this.route,
     required this.branchState,
     required this.index,
-  }) : _switchActiveBranch = switchActiveBranch;
+    required void Function(ShellRouteBranchState, RouteMatchList?)
+        switchActiveBranch,
+    required void Function() resetState,
+  })  : _switchActiveBranch = switchActiveBranch,
+        _resetState = resetState;
 
   /// Constructs a copy of this [StatefulShellRouteState], with updated values
   /// for some of the fields.
   StatefulShellRouteState copy(
       {List<ShellRouteBranchState>? branchState, int? index}) {
     return StatefulShellRouteState(
-      switchActiveBranch: _switchActiveBranch,
       route: route,
       branchState: branchState ?? this.branchState,
       index: index ?? this.index,
+      switchActiveBranch: _switchActiveBranch,
+      resetState: _resetState,
     );
   }
 
@@ -299,7 +302,10 @@ class StatefulShellRouteState {
   /// The index of the currently active route branch.
   final int index;
 
-  final Function(ShellRouteBranchState, RouteMatchList?) _switchActiveBranch;
+  final void Function(ShellRouteBranchState, RouteMatchList?)
+      _switchActiveBranch;
+
+  final void Function() _resetState;
 
   /// Gets the [Navigator]s for each of the route branches.
   ///
@@ -318,6 +324,12 @@ class StatefulShellRouteState {
   void goBranch(int index, {bool resetLocation = false}) {
     _switchActiveBranch(branchState[index],
         resetLocation ? null : branchState[index]._matchList);
+  }
+
+  /// Resets this StatefulShellRouteState by clearing all navigation state of
+  /// the branches, and returning the current branch to its default location.
+  void reset() {
+    _resetState();
   }
 
   @override

@@ -200,18 +200,30 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
+  void _resetState() {
+    final ShellRouteBranchState currentBranchState =
+        _routeState.branchState[_routeState.index];
+    _setupInitialStatefulShellRouteState(index: _routeState.index);
+    GoRouter.of(context).go(_defaultBranchLocation(currentBranchState));
+  }
+
+  void _setupInitialStatefulShellRouteState({int index = 0}) {
     final List<ShellRouteBranchState> branchState = widget.shellRoute.branches
         .map((ShellRouteBranch e) => ShellRouteBranchState(routeBranch: e))
         .toList();
     _routeState = StatefulShellRouteState(
-      switchActiveBranch: _switchActiveBranch,
       route: widget.shellRoute,
       branchState: branchState,
-      index: 0,
+      index: index,
+      switchActiveBranch: _switchActiveBranch,
+      resetState: _resetState,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _setupInitialStatefulShellRouteState();
   }
 
   @override
