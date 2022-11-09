@@ -13,11 +13,10 @@ import 'package:go_router/go_router.dart';
 /// The buttons use context.go() to navigate to each destination. On mobile
 /// devices, each destination is deep-linkable and on the web, can be navigated
 /// to using the address bar.
-void main() => runApp(const SimpleApp());
+void main() => runApp(const MyApp());
 
 /// The route configuration.
 final GoRouter _router = GoRouter(
-  initialLocation: '/details',
   routes: <RouteBase>[
     GoRoute(
       path: '/',
@@ -37,9 +36,9 @@ final GoRouter _router = GoRouter(
 );
 
 /// The main app.
-class SimpleApp extends StatelessWidget {
-  /// Constructs a [SimpleApp]
-  const SimpleApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  /// Constructs a [MyApp]
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

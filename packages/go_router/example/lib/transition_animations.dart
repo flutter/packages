@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 /// To learn more about animation in Flutter, check out the [Introduction to
 /// animations](https://docs.flutter.dev/development/ui/animations) page on
 /// flutter.dev.
-void main() => runApp(const SimpleApp());
+void main() => runApp(const MyApp());
 
 /// The route configuration.
 final GoRouter _router = GoRouter(
@@ -50,9 +50,9 @@ final GoRouter _router = GoRouter(
 );
 
 /// The main app.
-class SimpleApp extends StatelessWidget {
-  /// Constructs a [SimpleApp]
-  const SimpleApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  /// Constructs a [MyApp]
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

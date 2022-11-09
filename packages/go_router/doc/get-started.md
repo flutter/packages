@@ -31,6 +31,8 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-For a complete sample, see the [simple example app][] in the example directory.
+For a complete sample, see the [Getting started sample][] in the example directory.
+For more on how to configure GoRouter, see [Configuration].
 
-[simple example app]: https://github.com/flutter/packages/tree/main/packages/go_router/example/lib/simple.dart
+[Getting started sample]: https://github.com/flutter/packages/tree/main/packages/go_router/example/lib/main.dart
+[Configuration]: https://pub.dev/documentation/go_router/topics/Configuration-topic.html 

@@ -18,9 +18,9 @@ import 'typedefs.dart';
 /// The `routes` list specifies the top-level routes for the app. It must not be
 /// empty and must contain an [GoRouter] to match `/`.
 ///
-/// See the
-/// [Simple](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/simple.dart)
-/// example for an example of an app with a simple route configuration.
+/// See the [Get
+/// started](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
+/// example, which shows an app with a simple route configuration.
 ///
 /// The [redirect] callback allows the app to redirect to a new location.
 /// Alternatively, you can specify a redirect for an individual route using
