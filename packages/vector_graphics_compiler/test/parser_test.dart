@@ -4,6 +4,19 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Image in defs', () async {
+    final VectorInstructions instructions = await parseWithoutOptimizers(
+      imageInDefs,
+    );
+    expect(instructions.images.single.format, 0);
+    expect(instructions.images.single.data.length, 331);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.clip, objectId: 0),
+      DrawCommand(DrawCommandType.image, objectId: 0),
+      DrawCommand(DrawCommandType.restore)
+    ]);
+  });
+
   test('Transformed clip', () async {
     final VectorInstructions instructions = await parseWithoutOptimizers(
       transformedClip,

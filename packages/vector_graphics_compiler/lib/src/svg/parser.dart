@@ -422,12 +422,14 @@ class _Elements {
       final Uint8List data = base64.decode(xlinkHref
           .substring(commaLocation)
           .replaceAll(_whitespacePattern, ''));
+      final ImageNode image = ImageNode(data, parserState._currentAttributes);
       parserState.currentGroup!.addChild(
-        ImageNode(data, parserState._currentAttributes),
+        image,
         clipResolver: parserState._definitions.getClipPath,
         maskResolver: parserState._definitions.getDrawable,
         patternResolver: parserState._definitions.getDrawable,
       );
+      parserState.checkForIri(image);
       return null;
     }
     if (warningsAsErrors) {
