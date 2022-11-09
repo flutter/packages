@@ -1,0 +1,21 @@
+name: example
+publish_to: none
+
+environment:
+  sdk: '>=2.19.0-0.dev <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_shaders:
+    path: ../
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  shaders:
+    - shaders/sampler.frag
+    - shaders/solid_color.frag
+    - shaders/blank.frag
