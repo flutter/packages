@@ -20,4 +20,4 @@ jobs:
     - run: flutter pub get
     - run: flutter format --set-exit-if-changed .
     - run: flutter analyze .
-    - run: flutter test --coverage
+
