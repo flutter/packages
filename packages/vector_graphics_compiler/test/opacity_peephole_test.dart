@@ -13,7 +13,7 @@ import 'package:vector_graphics_compiler/src/svg/resolver.dart';
 import 'helpers.dart';
 
 Future<Node> parseAndResolve(String source) async {
-  final Node node = await parseToNodeTree(source);
+  final Node node = parseToNodeTree(source);
   final ResolvingVisitor visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
 }

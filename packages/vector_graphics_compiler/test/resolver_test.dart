@@ -17,7 +17,7 @@ void main() {
   test(
       'Resolves PathNodes to ResolvedPathNodes by flattening the transform '
       'and computing bounds', () async {
-    final Node node = await parseToNodeTree('''
+    final Node node = parseToNodeTree('''
 <svg viewBox="0 0 200 200">
   <g transform="translate(10, 10)">
     <rect x="0" y="0" width="10" height="10" fill="white" />
@@ -48,7 +48,7 @@ void main() {
   });
 
   test('Resolving Nodes replaces empty text with Node.zero', () async {
-    final Node node = await parseToNodeTree('''
+    final Node node = parseToNodeTree('''
   <svg viewBox="0 0 200 200">
     <text></text>
   </svg>''');
@@ -61,7 +61,7 @@ void main() {
   });
 
   test('Resolving Nodes removes unresolved masks', () async {
-    final Node node = await parseToNodeTree('''
+    final Node node = parseToNodeTree('''
 <svg viewBox="0 0 200 200">
   <g mask="foo">
     <rect x="0" y="0" width="100" height="100" fill="white" />
@@ -102,7 +102,7 @@ void main() {
   });
 
   test('Image transform', () async {
-    final Node node = await parseToNodeTree('''
+    final Node node = parseToNodeTree('''
 <svg width="100" height="100" viewBox="0 0 100 100"
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink">

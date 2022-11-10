@@ -36,7 +36,7 @@ void main() {
       ..enableMaskingOptimizer = false
       ..enableClippingOptimizer = false
       ..enableOverdrawOptimizer = false;
-    final VectorInstructions instructions = await parser.parse();
+    final VectorInstructions instructions = parser.parse();
 
     // TestMapper just always returns this color.
     expect(instructions.paints.single.fill!.color,

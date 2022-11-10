@@ -28,7 +28,7 @@ import 'visitor.dart';
 
 final Set<String> _unhandledElements = <String>{'title', 'desc'};
 
-typedef _ParseFunc = Future<void>? Function(
+typedef _ParseFunc = void Function(
     SvgParser parserState, bool warningsAsErrors);
 typedef _PathFunc = Path? Function(SvgParser parserState);
 
@@ -59,7 +59,7 @@ const Map<String, _PathFunc> _svgPathFuncs = <String, _PathFunc>{
 
 // ignore: avoid_classes_with_only_static_members
 class _Elements {
-  static Future<void>? svg(SvgParser parserState, bool warningsAsErrors) {
+  static void svg(SvgParser parserState, bool warningsAsErrors) {
     final _Viewport viewBox = parserState._parseViewBox();
 
     // TODO(dnfield): Support nested SVG elements. https://github.com/dnfield/flutter_svg/issues/132
@@ -79,7 +79,7 @@ class _Elements {
           ),
         ),
       );
-      return null;
+      return;
     }
     parserState._root = ViewportNode(
       parserState._currentAttributes,
@@ -88,12 +88,12 @@ class _Elements {
       transform: viewBox.transform,
     );
     parserState.addGroup(parserState._currentStartElement!, parserState._root!);
-    return null;
+    return;
   }
 
-  static Future<void>? g(SvgParser parserState, bool warningsAsErrors) {
+  static void g(SvgParser parserState, bool warningsAsErrors) {
     if (parserState._currentStartElement?.isSelfClosing == true) {
-      return null;
+      return;
     }
     final ParentNode parent = parserState.currentGroup!;
 
@@ -109,16 +109,16 @@ class _Elements {
       patternResolver: parserState._definitions.getDrawable,
     );
     parserState.addGroup(parserState._currentStartElement!, group);
-    return null;
+    return;
   }
 
-  static Future<void>? symbol(SvgParser parserState, bool warningsAsErrors) {
+  static void symbol(SvgParser parserState, bool warningsAsErrors) {
     final ParentNode group = ParentNode(parserState._currentAttributes);
     parserState.addGroup(parserState._currentStartElement!, group);
-    return null;
+    return;
   }
 
-  static Future<void>? pattern(SvgParser parserState, bool warningsAsErrors) {
+  static void pattern(SvgParser parserState, bool warningsAsErrors) {
     final SvgAttributes attributes = parserState._currentAttributes;
     final String rawWidth = parserState.attribute('width') ?? '';
     final String rawHeight = parserState.attribute('height') ?? '';
@@ -163,14 +163,14 @@ class _Elements {
 
     final ParentNode group = ParentNode(newAttributes);
     parserState.addGroup(parserState._currentStartElement!, group);
-    return null;
+    return;
   }
 
-  static Future<void>? use(SvgParser parserState, bool warningsAsErrors) {
+  static void use(SvgParser parserState, bool warningsAsErrors) {
     final ParentNode? parent = parserState.currentGroup;
     final String xlinkHref = parserState._currentAttributes.href!;
     if (xlinkHref.isEmpty) {
-      return null;
+      return;
     }
 
     final AffineMatrix transform =
@@ -210,10 +210,10 @@ class _Elements {
       patternId: parserState._definitions.getPattern(parserState),
       patternResolver: parserState._definitions.getDrawable,
     );
-    return null;
+    return;
   }
 
-  static Future<void>? parseStops(
+  static void parseStops(
     SvgParser parserState,
     List<Color> colors,
     List<double> offsets,
@@ -241,10 +241,10 @@ class _Elements {
         offsets.add(parseDecimalOrPercentage(rawOffset));
       }
     }
-    return null;
+    return;
   }
 
-  static Future<void>? radialGradient(
+  static void radialGradient(
     SvgParser parserState,
     bool warningsAsErrors,
   ) {
@@ -290,10 +290,10 @@ class _Elements {
       ),
       parserState._currentAttributes.href,
     );
-    return null;
+    return;
   }
 
-  static Future<void>? linearGradient(
+  static void linearGradient(
     SvgParser parserState,
     bool warningsAsErrors,
   ) {
@@ -341,10 +341,10 @@ class _Elements {
       parserState._currentAttributes.href,
     );
 
-    return null;
+    return;
   }
 
-  static Future<void>? clipPath(SvgParser parserState, bool warningsAsErrors) {
+  static void clipPath(SvgParser parserState, bool warningsAsErrors) {
     final String id = parserState.buildUrlIri();
     final List<Node> pathNodes = <Node>[];
     for (XmlEvent event in parserState._readSubtree()) {
@@ -391,18 +391,18 @@ class _Elements {
       id,
       pathNodes,
     );
-    return null;
+    return;
   }
 
   static final RegExp _whitespacePattern = RegExp(r'\s');
 
-  static Future<void>? image(
+  static void image(
     SvgParser parserState,
     bool warningsAsErrors,
   ) {
     final String? xlinkHref = parserState._currentAttributes.href;
     if (xlinkHref == null) {
-      return null;
+      return;
     }
 
     if (xlinkHref.startsWith('data:')) {
@@ -416,7 +416,7 @@ class _Elements {
           throw UnimplementedError(
               'Image data format not supported: $mimeType');
         }
-        return null;
+        return;
       }
 
       final Uint8List data = base64.decode(xlinkHref
@@ -430,12 +430,12 @@ class _Elements {
         patternResolver: parserState._definitions.getDrawable,
       );
       parserState.checkForIri(image);
-      return null;
+      return;
     }
     if (warningsAsErrors) {
       throw UnimplementedError('Image data format not supported: $xlinkHref');
     }
-    return null;
+    return;
   }
 
   static Future<void> text(
@@ -621,7 +621,7 @@ class _SvgGroupTuple {
 
 /// Parse an SVG to the initial Node tree.
 @visibleForTesting
-Future<Node> parseToNodeTree(String source) {
+Node parseToNodeTree(String source) {
   return SvgParser(source, const SvgTheme(), null, true, null)
       ._parseToNodeTree();
 }
@@ -723,14 +723,14 @@ class SvgParser {
     }
   }
 
-  Future<void> _parseTree() async {
+  void _parseTree() {
     for (XmlEvent event in _readSubtree()) {
       if (event is XmlStartElementEvent) {
         if (startElement(event)) {
           continue;
         }
         final _ParseFunc? parseFunc = _svgElementParsers[event.name];
-        await parseFunc?.call(this, _warningsAsErrors);
+        parseFunc?.call(this, _warningsAsErrors);
         if (parseFunc == null) {
           if (!event.isSelfClosing) {
             _discardSubtree();
@@ -751,8 +751,8 @@ class SvgParser {
   }
 
   /// Drive the XML reader to EOF and produce [VectorInstructions].
-  Future<VectorInstructions> parse() async {
-    await _parseTree();
+  VectorInstructions parse() {
+    _parseTree();
 
     /// Resolve the tree
     final ResolvingVisitor resolvingVisitor = ResolvingVisitor();
@@ -801,8 +801,8 @@ class SvgParser {
     return commandVisitor.toInstructions();
   }
 
-  Future<Node> _parseToNodeTree() async {
-    await _parseTree();
+  Node _parseToNodeTree() {
+    _parseTree();
     return _root!;
   }
 

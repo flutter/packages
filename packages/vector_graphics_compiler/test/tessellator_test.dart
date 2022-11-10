@@ -18,7 +18,7 @@ void main() {
   });
 
   test('Can convert simple shape to indexed vertices', () async {
-    final Node node = await parseToNodeTree('''
+    final Node node = parseToNodeTree('''
 <svg viewBox="0 0 200 200">
   <rect x="0" y="0" width="10" height="10" fill="white" />
 </svg>''');
