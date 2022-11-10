@@ -32,9 +32,4 @@ class TestCommandRunner extends CommandRunner<void> {
               '  flutter run [options]\n'
               '    Run your Flutter application on an attached device or in an emulator.',
         );
-
-  @override
-  Future<void> run(Iterable<String> args) {
-    return super.run(args);
-  }
 }
