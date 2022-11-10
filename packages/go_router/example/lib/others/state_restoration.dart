@@ -27,7 +27,7 @@ class _AppState extends State<App> with RestorationMixin {
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    // todo: implement restoreState for you app
+    // Implement restoreState for your app
   }
 
   @override
