@@ -24,6 +24,7 @@ void main() {
   late BufferLogger logger;
   late MigrateUtils utils;
   late MigrateContext context;
+  late MigrateResult result;
   late Directory targetFlutterDirectory;
   late Directory newerTargetFlutterDirectory;
   late Directory currentDir;
@@ -47,10 +48,10 @@ void main() {
     final FlutterProjectFactory flutterFactory = FlutterProjectFactory();
     final FlutterProject flutterProject =
         flutterFactory.fromDirectory(currentDir);
+    result = MigrateResult.empty();
     context = MigrateContext(
-      migrateResult: MigrateResult.empty(),
       flutterProject: flutterProject,
-      blacklistPrefixes: <String>{},
+      skippedPrefixes: <String>{},
       logger: logger,
       verbose: true,
       fileSystem: fileSystem,
@@ -84,7 +85,7 @@ void main() {
           createResolvedTempDirectorySync('migrate_working_dir.');
       final Directory targetDir =
           createResolvedTempDirectorySync('target_dir.');
-      context.migrateResult.generatedTargetTemplateDirectory = targetDir;
+      result.generatedTargetTemplateDirectory = targetDir;
       workingDir.createSync(recursive: true);
       final MigrateTargetFlutterProject targetProject =
           MigrateTargetFlutterProject(
@@ -97,6 +98,7 @@ void main() {
 
       await targetProject.createProject(
         context,
+        result,
         oldSdkRevision, //targetRevision
         targetFlutterDirectory, //targetFlutterDirectory
       );
@@ -114,7 +116,7 @@ void main() {
       final Directory workingDir =
           createResolvedTempDirectorySync('migrate_working_dir.');
       final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
-      context.migrateResult.generatedBaseTemplateDirectory = baseDir;
+      result.generatedBaseTemplateDirectory = baseDir;
       workingDir.createSync(recursive: true);
       final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
         path: null,
@@ -126,6 +128,7 @@ void main() {
 
       await baseProject.createProject(
         context,
+        result,
         <String>[oldSdkRevision], //revisionsList
         <String, List<MigratePlatformConfig>>{
           oldSdkRevision: <MigratePlatformConfig>[
@@ -154,8 +157,8 @@ void main() {
       final Directory targetDir =
           createResolvedTempDirectorySync('target_dir.');
       final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
-      context.migrateResult.generatedTargetTemplateDirectory = targetDir;
-      context.migrateResult.generatedBaseTemplateDirectory = baseDir;
+      result.generatedTargetTemplateDirectory = targetDir;
+      result.generatedBaseTemplateDirectory = baseDir;
       workingDir.createSync(recursive: true);
 
       final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
@@ -176,6 +179,7 @@ void main() {
 
       await baseProject.createProject(
         context,
+        result,
         <String>[oldSdkRevision], //revisionsList
         <String, List<MigratePlatformConfig>>{
           oldSdkRevision: <MigratePlatformConfig>[
@@ -198,6 +202,7 @@ void main() {
 
       await targetProject.createProject(
         context,
+        result,
         oldSdkRevision, //revisionsList
         targetFlutterDirectory, //targetFlutterDirectory
       );
@@ -226,10 +231,10 @@ void main() {
       final FlutterProjectFactory flutterFactory = FlutterProjectFactory();
       final FlutterProject flutterProject =
           flutterFactory.fromDirectory(currentDir);
+      result = MigrateResult.empty();
       context = MigrateContext(
-        migrateResult: MigrateResult.empty(),
         flutterProject: flutterProject,
-        blacklistPrefixes: <String>{},
+        skippedPrefixes: <String>{},
         logger: logger,
         verbose: true,
         fileSystem: fileSystem,
@@ -258,7 +263,7 @@ void main() {
       expect(revisions.config.platformConfigs.isEmpty, false);
       expect(revisions.config.platformConfigs.length, 3);
       expect(
-          revisions.config.platformConfigs.containsKey(SupportedPlatform.root),
+          revisions.config.platformConfigs.containsKey(null),
           true);
       expect(
           revisions.config.platformConfigs
@@ -351,7 +356,7 @@ migration:
 
       expect(revisions.config.platformConfigs.length, 7);
       expect(
-          revisions.config.platformConfigs.containsKey(SupportedPlatform.root),
+          revisions.config.platformConfigs.containsKey(null),
           true);
       expect(
           revisions.config.platformConfigs
@@ -376,7 +381,7 @@ migration:
 
       expect(
           revisions
-              .config.platformConfigs[SupportedPlatform.root]!.createRevision,
+              .config.platformConfigs[null]!.createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
           revisions.config.platformConfigs[SupportedPlatform.android]!
@@ -405,7 +410,7 @@ migration:
 
       expect(
           revisions
-              .config.platformConfigs[SupportedPlatform.root]!.baseRevision,
+              .config.platformConfigs[null]!.baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
           revisions
@@ -448,8 +453,8 @@ migration:
       final Directory targetDir =
           createResolvedTempDirectorySync('target_dir.');
       final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
-      context.migrateResult.generatedTargetTemplateDirectory = targetDir;
-      context.migrateResult.generatedBaseTemplateDirectory = baseDir;
+      result.generatedTargetTemplateDirectory = targetDir;
+      result.generatedBaseTemplateDirectory = baseDir;
       workingDir.createSync(recursive: true);
 
       final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
@@ -470,6 +475,7 @@ migration:
 
       await baseProject.createProject(
         context,
+        result,
         <String>[oldSdkRevision], //revisionsList
         <String, List<MigratePlatformConfig>>{
           oldSdkRevision: <MigratePlatformConfig>[
@@ -492,6 +498,7 @@ migration:
 
       await targetProject.createProject(
         context,
+        result,
         newSdkRevision, //revisionsList
         newerTargetFlutterDirectory, //targetFlutterDirectory
       );
@@ -506,7 +513,7 @@ migration:
 
       final Map<String, DiffResult> diffResults =
           await baseProject.diff(context, targetProject);
-      context.migrateResult.diffMap.addAll(diffResults);
+      result.diffMap.addAll(diffResults);
       expect(diffResults.length, 62);
 
       final List<String> expectedFiles = <String>[
@@ -667,8 +674,8 @@ migration:
       final Directory targetDir =
           createResolvedTempDirectorySync('target_dir.');
       final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
-      context.migrateResult.generatedTargetTemplateDirectory = targetDir;
-      context.migrateResult.generatedBaseTemplateDirectory = baseDir;
+      result.generatedTargetTemplateDirectory = targetDir;
+      result.generatedBaseTemplateDirectory = baseDir;
       workingDir.createSync(recursive: true);
 
       final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
@@ -689,6 +696,7 @@ migration:
 
       await baseProject.createProject(
         context,
+        result,
         <String>[oldSdkRevision], //revisionsList
         <String, List<MigratePlatformConfig>>{
           oldSdkRevision: <MigratePlatformConfig>[
@@ -712,6 +720,7 @@ migration:
 
       await targetProject.createProject(
         context,
+        result,
         newSdkRevision, //revisionsList
         newerTargetFlutterDirectory, //targetFlutterDirectory
       );
@@ -725,11 +734,12 @@ migration:
               .existsSync(),
           true);
 
-      context.migrateResult.diffMap
+      result.diffMap
           .addAll(await baseProject.diff(context, targetProject));
 
       await MigrateFlutterProject.merge(
         context,
+        result,
         baseProject,
         targetProject,
         <String>[], // unmanagedFiles
@@ -737,54 +747,54 @@ migration:
         false, // preferTwoWayMerge
       );
 
-      expect(context.migrateResult.mergeResults.length, 12);
-      expect(context.migrateResult.mergeResults[0].localPath, '.metadata');
-      expect(context.migrateResult.mergeResults[1].localPath,
+      expect(result.mergeResults.length, 12);
+      expect(result.mergeResults[0].localPath, '.metadata');
+      expect(result.mergeResults[1].localPath,
           'ios/Runner/Info.plist');
-      expect(context.migrateResult.mergeResults[2].localPath,
+      expect(result.mergeResults[2].localPath,
           'ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata');
-      expect(context.migrateResult.mergeResults[3].localPath,
+      expect(result.mergeResults[3].localPath,
           'ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme');
-      expect(context.migrateResult.mergeResults[4].localPath,
+      expect(result.mergeResults[4].localPath,
           'ios/Flutter/AppFrameworkInfo.plist');
-      expect(context.migrateResult.mergeResults[5].localPath, 'pubspec.yaml');
-      expect(context.migrateResult.mergeResults[6].localPath, '.gitignore');
-      expect(context.migrateResult.mergeResults[7].localPath,
+      expect(result.mergeResults[5].localPath, 'pubspec.yaml');
+      expect(result.mergeResults[6].localPath, '.gitignore');
+      expect(result.mergeResults[7].localPath,
           'android/app/build.gradle');
-      expect(context.migrateResult.mergeResults[8].localPath,
+      expect(result.mergeResults[8].localPath,
           'android/app/src/main/res/values/styles.xml');
-      expect(context.migrateResult.mergeResults[9].localPath,
+      expect(result.mergeResults[9].localPath,
           'android/app/src/main/AndroidManifest.xml');
-      expect(context.migrateResult.mergeResults[10].localPath,
+      expect(result.mergeResults[10].localPath,
           'android/gradle/wrapper/gradle-wrapper.properties');
-      expect(context.migrateResult.mergeResults[11].localPath,
+      expect(result.mergeResults[11].localPath,
           'android/build.gradle');
 
-      expect(context.migrateResult.mergeResults[0].exitCode, 0);
-      expect(context.migrateResult.mergeResults[1].exitCode, 0);
-      expect(context.migrateResult.mergeResults[2].exitCode, 0);
-      expect(context.migrateResult.mergeResults[3].exitCode, 0);
-      expect(context.migrateResult.mergeResults[4].exitCode, 0);
-      expect(context.migrateResult.mergeResults[5].exitCode, 0);
-      expect(context.migrateResult.mergeResults[6].exitCode, 0);
-      expect(context.migrateResult.mergeResults[7].exitCode, 0);
-      expect(context.migrateResult.mergeResults[8].exitCode, 0);
-      expect(context.migrateResult.mergeResults[9].exitCode, 0);
-      expect(context.migrateResult.mergeResults[10].exitCode, 0);
-      expect(context.migrateResult.mergeResults[11].exitCode, 0);
+      expect(result.mergeResults[0].exitCode, 0);
+      expect(result.mergeResults[1].exitCode, 0);
+      expect(result.mergeResults[2].exitCode, 0);
+      expect(result.mergeResults[3].exitCode, 0);
+      expect(result.mergeResults[4].exitCode, 0);
+      expect(result.mergeResults[5].exitCode, 0);
+      expect(result.mergeResults[6].exitCode, 0);
+      expect(result.mergeResults[7].exitCode, 0);
+      expect(result.mergeResults[8].exitCode, 0);
+      expect(result.mergeResults[9].exitCode, 0);
+      expect(result.mergeResults[10].exitCode, 0);
+      expect(result.mergeResults[11].exitCode, 0);
 
-      expect(context.migrateResult.mergeResults[0].hasConflict, false);
-      expect(context.migrateResult.mergeResults[1].hasConflict, false);
-      expect(context.migrateResult.mergeResults[2].hasConflict, false);
-      expect(context.migrateResult.mergeResults[3].hasConflict, false);
-      expect(context.migrateResult.mergeResults[4].hasConflict, false);
-      expect(context.migrateResult.mergeResults[5].hasConflict, false);
-      expect(context.migrateResult.mergeResults[6].hasConflict, false);
-      expect(context.migrateResult.mergeResults[7].hasConflict, false);
-      expect(context.migrateResult.mergeResults[8].hasConflict, false);
-      expect(context.migrateResult.mergeResults[9].hasConflict, false);
-      expect(context.migrateResult.mergeResults[10].hasConflict, false);
-      expect(context.migrateResult.mergeResults[11].hasConflict, false);
+      expect(result.mergeResults[0].hasConflict, false);
+      expect(result.mergeResults[1].hasConflict, false);
+      expect(result.mergeResults[2].hasConflict, false);
+      expect(result.mergeResults[3].hasConflict, false);
+      expect(result.mergeResults[4].hasConflict, false);
+      expect(result.mergeResults[5].hasConflict, false);
+      expect(result.mergeResults[6].hasConflict, false);
+      expect(result.mergeResults[7].hasConflict, false);
+      expect(result.mergeResults[8].hasConflict, false);
+      expect(result.mergeResults[9].hasConflict, false);
+      expect(result.mergeResults[10].hasConflict, false);
+      expect(result.mergeResults[11].hasConflict, false);
     });
   });
 }

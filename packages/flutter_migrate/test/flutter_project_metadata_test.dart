@@ -139,11 +139,11 @@ migration:
         FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, isNull);
     expect(
-        projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]
+        projectMetadata.migrateConfig.platformConfigs[null]
             ?.createRevision,
         'abcdefg');
     expect(
-        projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]
+        projectMetadata.migrateConfig.platformConfigs[null]
             ?.baseRevision,
         'baserevision');
     expect(projectMetadata.migrateConfig.unmanagedFiles[0], 'file1');
@@ -180,11 +180,11 @@ migration:
         FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, FlutterProjectType.app);
     expect(
-        projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]
+        projectMetadata.migrateConfig.platformConfigs[null]
             ?.createRevision,
         'abcdefg');
     expect(
-        projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]
+        projectMetadata.migrateConfig.platformConfigs[null]
             ?.baseRevision,
         'baserevision');
     // Tool uses default unamanged files list when malformed.
@@ -223,11 +223,11 @@ migration:
         FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, FlutterProjectType.app);
     expect(
-        projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]
+        projectMetadata.migrateConfig.platformConfigs[null]
             ?.createRevision,
         'abcdefg');
     expect(
-        projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]
+        projectMetadata.migrateConfig.platformConfigs[null]
             ?.baseRevision,
         'baserevision');
     expect(

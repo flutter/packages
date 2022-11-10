@@ -16,7 +16,6 @@ enum SupportedPlatform {
   web,
   windows,
   fuchsia,
-  root, // Special platform to represent the root project directory
 }
 
 class FlutterProjectFactory {
@@ -61,10 +60,8 @@ class FlutterProject {
   File get metadataFile => directory.childFile('.metadata');
 
   /// Returns a list of platform names that are supported by the project.
-  List<SupportedPlatform> getSupportedPlatforms({bool includeRoot = false}) {
-    final List<SupportedPlatform> platforms = includeRoot
-        ? <SupportedPlatform>[SupportedPlatform.root]
-        : <SupportedPlatform>[];
+  List<SupportedPlatform?> getSupportedPlatforms() {
+    final List<SupportedPlatform?> platforms = <SupportedPlatform?>[];
     if (directory.childDirectory('android').existsSync()) {
       platforms.add(SupportedPlatform.android);
     }

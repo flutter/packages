@@ -226,10 +226,10 @@ ${migrateConfig.getOutputFileString()}''';
 /// used to add support for new platforms, so the base and create revision may not always be the same.
 class MigrateConfig {
   MigrateConfig(
-      {Map<SupportedPlatform, MigratePlatformConfig>? platformConfigs,
+      {Map<SupportedPlatform?, MigratePlatformConfig>? platformConfigs,
       this.unmanagedFiles = kDefaultUnmanagedFiles})
       : platformConfigs =
-            platformConfigs ?? <SupportedPlatform, MigratePlatformConfig>{};
+            platformConfigs ?? <SupportedPlatform?, MigratePlatformConfig>{};
 
   /// A mapping of the files that are unmanaged by defult for each platform.
   static const List<String> kDefaultUnmanagedFiles = <String>[
@@ -238,7 +238,7 @@ class MigrateConfig {
   ];
 
   /// The metadata for each platform supported by the project.
-  final Map<SupportedPlatform, MigratePlatformConfig> platformConfigs;
+  final Map<SupportedPlatform?, MigratePlatformConfig> platformConfigs;
 
   /// A list of paths relative to this file the migrate tool should ignore.
   ///
@@ -252,7 +252,7 @@ class MigrateConfig {
   /// Parses the project for all supported platforms and populates the [MigrateConfig]
   /// to reflect the project.
   void populate({
-    List<SupportedPlatform>? platforms,
+    List<SupportedPlatform?>? platforms,
     required Directory projectDirectory,
     String? currentRevision,
     String? createRevision,
@@ -261,9 +261,12 @@ class MigrateConfig {
     required Logger logger,
   }) {
     final FlutterProject flutterProject = FlutterProject(projectDirectory);
-    platforms ??= flutterProject.getSupportedPlatforms(includeRoot: true);
+    platforms ??= flutterProject.getSupportedPlatforms();
+    if (!platforms.contains(null)) {
+      platforms.add(null);
+    }
 
-    for (final SupportedPlatform platform in platforms) {
+    for (final SupportedPlatform? platform in platforms) {
       if (platformConfigs.containsKey(platform)) {
         if (update) {
           platformConfigs[platform]!.baseRevision = currentRevision;
@@ -287,10 +290,10 @@ class MigrateConfig {
     }
 
     String platformsString = '';
-    for (final MapEntry<SupportedPlatform, MigratePlatformConfig> entry
+    for (final MapEntry<SupportedPlatform?, MigratePlatformConfig> entry
         in platformConfigs.entries) {
       platformsString +=
-          '\n    - platform: ${entry.key.toString().split('.').last}\n      create_revision: ${entry.value.createRevision == null ? 'null' : "${entry.value.createRevision}"}\n      base_revision: ${entry.value.baseRevision == null ? 'null' : "${entry.value.baseRevision}"}';
+          '\n    - platform: ${entry.key == null ? 'root' : entry.key.toString().split('.').last}\n      create_revision: ${entry.value.createRevision == null ? 'null' : "${entry.value.createRevision}"}\n      base_revision: ${entry.value.baseRevision == null ? 'null' : "${entry.value.baseRevision}"}';
     }
 
     return isEmpty
@@ -327,7 +330,7 @@ migration:
                 'base_revision': String,
               },
               logger)) {
-            final SupportedPlatform platformValue = SupportedPlatform.values
+            final SupportedPlatform? platformValue = platformYamlMap['platform'] == 'root' ? null : SupportedPlatform.values
                 .firstWhere((SupportedPlatform val) =>
                     val.toString() ==
                     'SupportedPlatform.${platformYamlMap['platform'] as String}');
@@ -360,7 +363,9 @@ class MigratePlatformConfig {
       {required this.platform, this.createRevision, this.baseRevision});
 
   /// The platform this config describes.
-  SupportedPlatform platform;
+  ///
+  /// Null platform means this describes the project root
+  SupportedPlatform? platform;
 
   /// The Flutter SDK revision this platform was created by.
   ///

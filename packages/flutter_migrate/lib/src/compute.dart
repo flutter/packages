@@ -13,24 +13,27 @@ import 'flutter_project_metadata.dart';
 import 'result.dart';
 import 'utils.dart';
 
-// This defines files and directories that should be skipped regardless
-// of gitignore and config settings. Using `/` as a stand-in for path separator.
+// This defines paths of files and directories relative to the project root
+// that should be skipped regardless of .gitignore and config settings.
+// Paths use `/` as a stand-in for path separator.
 const List<String> _skippedFiles = <String>[
   'ios/Runner.xcodeproj/project.pbxproj', // Xcode managed configs that may not merge cleanly.
   'README.md', // changes to this shouldn't be overwritten since is is user owned.
 ];
 
 const List<String> _skippedDirectories = <String>[
-  '.dart_tool', // ignore the .dart_tool generated dir
-  '.git', // ignore the git metadata
-  'lib', // Files here are always user owned and we don't want to overwrite their apps.
-  'test', // Files here are typically user owned and flutter-side changes are not relevant.
+  '.dart_tool', // The .dart_tool generated dir.
+  '.git', // Git metadata.
   'assets', // Common directory for user assets.
-  'build' // Build artifacts
+  'build', // Build artifacts.
+  'lib', // Always user owned and we don't want to overwrite their apps.
+  'test', // Typically user owned and flutter-side changes are not relevant.
 ];
 
+// Returns true for paths relative to the project root that should be skipped
+// by the migrate tool.
 bool _skipped(String localPath, FileSystem fileSystem,
-    {Set<String>? blacklistPrefixes}) {
+    {Set<String>? skippedPrefixes}) {
   for (final String path in _skippedFiles) {
     if (path.replaceAll('/', fileSystem.path.separator) == localPath) {
       return true;
@@ -45,28 +48,25 @@ bool _skipped(String localPath, FileSystem fileSystem,
       return true;
     }
   }
-  if (blacklistPrefixes != null) {
-    for (final String prefix in blacklistPrefixes) {
-      if (localPath.startsWith('$prefix${fileSystem.path.separator}')) {
-        return true;
-      }
-    }
+  if (skippedPrefixes != null) {
+    return skippedPrefixes.any((String prefix) => localPath.startsWith('$prefix${fileSystem.path.separator}'));
   }
   return false;
 }
 
-const List<String> _skippedMergeFileExt = <String>[
+const List<String> _skippedMergeFileExtensions = <String>[
   // Don't merge image files
-  '.png',
+  '.bmp',
+  '.gif',
   '.jpg',
   '.jpeg',
-  '.gif',
-  '.bmp',
+  '.png',
   '.svg',
   // Don't merge compiled artifacts and executables
+  '.dll',
+  '.exe',
   '.jar',
   '.so',
-  '.exe',
 ];
 
 const Set<String> _alwaysMigrateFiles = <String>{
@@ -80,7 +80,7 @@ const Set<String> _alwaysMigrateFiles = <String>{
 
 /// True for files that should not be merged. Typically, images and binary files.
 bool _skippedMerge(String localPath) {
-  for (final String ext in _skippedMergeFileExt) {
+  for (final String ext in _skippedMergeFileExtensions) {
     if (localPath.endsWith(ext) && !_alwaysMigrateFiles.contains(localPath)) {
       return true;
     }
@@ -91,9 +91,8 @@ bool _skippedMerge(String localPath) {
 /// Data class holds the common context that is used throughout the steps of a migrate computation.
 class MigrateContext {
   MigrateContext({
-    required this.migrateResult,
     required this.flutterProject,
-    required this.blacklistPrefixes,
+    required this.skippedPrefixes,
     required this.logger,
     required this.verbose,
     required this.fileSystem,
@@ -103,14 +102,13 @@ class MigrateContext {
     this.targetProject,
   });
 
-  MigrateResult migrateResult;
-  FlutterProject flutterProject;
-  Set<String> blacklistPrefixes;
-  Logger logger;
-  bool verbose;
-  FileSystem fileSystem;
-  Status status;
-  MigrateUtils migrateUtils;
+  final FlutterProject flutterProject;
+  final Set<String> skippedPrefixes;
+  final Logger logger;
+  final bool verbose;
+  final FileSystem fileSystem;
+  final Status status;
+  final MigrateUtils migrateUtils;
 
   MigrateBaseFlutterProject? baseProject;
   MigrateTargetFlutterProject? targetProject;
@@ -136,8 +134,6 @@ String platformToSubdirectoryPrefix(SupportedPlatform platform) {
       return 'windows';
     case SupportedPlatform.fuchsia:
       return 'fuchsia';
-    case SupportedPlatform.root:
-      return 'root';
   }
 }
 
@@ -172,7 +168,7 @@ Future<MigrateResult?> computeMigration({
   String? baseRevision,
   String? targetRevision,
   bool deleteTempDirectories = true,
-  List<SupportedPlatform>? platforms,
+  List<SupportedPlatform?>? platforms,
   bool preferTwoWayMerge = false,
   bool allowFallbackBaseRevision = false,
   required FileSystem fileSystem,
@@ -195,21 +191,22 @@ Future<MigrateResult?> computeMigration({
 
   // Find the path prefixes to ignore. This allows subdirectories of platforms
   // not part of the migration to be skipped.
-  platforms ??= flutterProject.getSupportedPlatforms(includeRoot: true);
-  final Set<String> blacklistPrefixes = <String>{};
+  platforms ??= flutterProject.getSupportedPlatforms();
+  final Set<String> skippedPrefixes = <String>{};
   for (final SupportedPlatform platform in SupportedPlatform.values) {
-    blacklistPrefixes.add(platformToSubdirectoryPrefix(platform));
+    skippedPrefixes.add(platformToSubdirectoryPrefix(platform));
   }
-  for (final SupportedPlatform platform in platforms) {
-    blacklistPrefixes.remove(platformToSubdirectoryPrefix(platform));
+  for (final SupportedPlatform? platform in platforms) {
+    if (platform != null) {
+      skippedPrefixes.remove(platformToSubdirectoryPrefix(platform));
+    }
   }
-  blacklistPrefixes.remove('root');
-  blacklistPrefixes.remove(null);
+  skippedPrefixes.remove(null);
 
+  final MigrateResult result = MigrateResult.empty();
   final MigrateContext context = MigrateContext(
-    migrateResult: MigrateResult.empty(),
     flutterProject: flutterProject,
-    blacklistPrefixes: blacklistPrefixes,
+    skippedPrefixes: skippedPrefixes,
     logger: logger,
     verbose: verbose,
     fileSystem: fileSystem,
@@ -272,13 +269,13 @@ Future<MigrateResult?> computeMigration({
           color: TerminalColor.grey);
     }
   }
-  context.migrateResult.generatedBaseTemplateDirectory = baseProjectDir;
-  context.migrateResult.generatedTargetTemplateDirectory = targetProjectDir;
+  result.generatedBaseTemplateDirectory = baseProjectDir;
+  result.generatedTargetTemplateDirectory = targetProjectDir;
 
   await migrateUtils.gitInit(
-      context.migrateResult.generatedBaseTemplateDirectory!.absolute.path);
+      result.generatedBaseTemplateDirectory!.absolute.path);
   await migrateUtils.gitInit(
-      context.migrateResult.generatedTargetTemplateDirectory!.absolute.path);
+      result.generatedTargetTemplateDirectory!.absolute.path);
 
   final String name = environment['FlutterProject.manifest.appname']! as String;
   final String androidLanguage =
@@ -307,6 +304,7 @@ Future<MigrateResult?> computeMigration({
   context.baseProject = baseProject;
   await baseProject.createProject(
     context,
+    result,
     revisionConfig.revisionsList,
     revisionConfig.revisionToConfigs,
     baseRevision ??
@@ -332,6 +330,7 @@ Future<MigrateResult?> computeMigration({
   context.targetProject = targetProject;
   await targetProject.createProject(
     context,
+    result,
     revisionConfig.targetRevision,
     targetFlutterDirectory,
   );
@@ -346,7 +345,7 @@ Future<MigrateResult?> computeMigration({
       indent: 2, color: TerminalColor.grey);
   status.resume();
 
-  context.migrateResult.diffMap
+  result.diffMap
       .addAll(await baseProject.diff(context, targetProject));
 
   // Check for any new files that were added in the target reference app that did not
@@ -355,8 +354,8 @@ Future<MigrateResult?> computeMigration({
   logger.printStatus('Finding newly added files',
       indent: 2, color: TerminalColor.grey);
   status.resume();
-  context.migrateResult.addedFiles
-      .addAll(await baseProject.newlyAddedFiles(context, targetProject));
+  result.addedFiles
+      .addAll(await baseProject.newlyAddedFiles(context, result, targetProject));
 
   // Merge any base->target changed files with the version in the developer's project.
   // Files that the developer left unchanged are fully updated to match the target reference.
@@ -367,6 +366,7 @@ Future<MigrateResult?> computeMigration({
   status.resume();
   await MigrateFlutterProject.merge(
     context,
+    result,
     baseProject,
     targetProject,
     unmanagedFiles,
@@ -382,18 +382,18 @@ Future<MigrateResult?> computeMigration({
   if (deleteTempDirectories) {
     // Don't delete user-provided directories
     if (!customBaseProjectDir) {
-      context.migrateResult.tempDirectories
-          .add(context.migrateResult.generatedBaseTemplateDirectory!);
+      result.tempDirectories
+          .add(result.generatedBaseTemplateDirectory!);
     }
     if (!customTargetProjectDir) {
-      context.migrateResult.tempDirectories
-          .add(context.migrateResult.generatedTargetTemplateDirectory!);
+      result.tempDirectories
+          .add(result.generatedTargetTemplateDirectory!);
     }
-    context.migrateResult.tempDirectories
-        .addAll(context.migrateResult.sdkDirs.values);
+    result.tempDirectories
+        .addAll(result.sdkDirs.values);
   }
   status.stop();
-  return context.migrateResult;
+  return result;
 }
 
 /// Returns a base revision to fallback to in case a true base revision is unknown.
@@ -444,7 +444,7 @@ abstract class MigrateFlutterProject {
   final String name;
   final String androidLanguage;
   final String iosLanguage;
-  final List<SupportedPlatform>? platformWhitelist;
+  final List<SupportedPlatform?>? platformWhitelist;
 
   /// Run git diff over each matching pair of files in the this project and the provided target project.
   Future<Map<String, DiffResult>> diff(
@@ -463,7 +463,7 @@ abstract class MigrateFlutterProject {
       final String localPath = getLocalPath(
           thisFile.path, directory.absolute.path, context.fileSystem);
       if (_skipped(localPath, context.fileSystem,
-          blacklistPrefixes: context.blacklistPrefixes)) {
+          skippedPrefixes: context.skippedPrefixes)) {
         continue;
       }
       if (await context.migrateUtils
@@ -501,7 +501,10 @@ abstract class MigrateFlutterProject {
 
   /// Find all files that exist in the target reference app but not in the base reference app.
   Future<List<FilePendingMigration>> newlyAddedFiles(
-      MigrateContext context, MigrateFlutterProject other) async {
+      MigrateContext context,
+      MigrateResult result, 
+      MigrateFlutterProject other,
+    ) async {
     final List<FilePendingMigration> addedFiles = <FilePendingMigration>[];
     final List<FileSystemEntity> otherFiles =
         other.directory.listSync(recursive: true);
@@ -514,15 +517,15 @@ abstract class MigrateFlutterProject {
           otherFile.path, other.directory.absolute.path, context.fileSystem);
       if (directory.childFile(localPath).existsSync() ||
           _skipped(localPath, context.fileSystem,
-              blacklistPrefixes: context.blacklistPrefixes)) {
+              skippedPrefixes: context.skippedPrefixes)) {
         continue;
       }
       if (await context.migrateUtils.isGitIgnored(
           otherFile.absolute.path, other.directory.absolute.path)) {
-        context.migrateResult.diffMap[localPath] =
+        result.diffMap[localPath] =
             DiffResult(diffType: DiffType.ignored);
       }
-      context.migrateResult.diffMap[localPath] =
+      result.diffMap[localPath] =
           DiffResult(diffType: DiffType.addition);
       if (context.flutterProject.directory.childFile(localPath).existsSync()) {
         // Don't store as added file if file already exists in the project.
@@ -542,6 +545,7 @@ abstract class MigrateFlutterProject {
   /// Loops through each existing file and intelligently merges it with the base->target changes.
   static Future<void> merge(
     MigrateContext context,
+    MigrateResult result,
     MigrateFlutterProject baseProject,
     MigrateFlutterProject targetProject,
     List<String> unmanagedFiles,
@@ -580,13 +584,13 @@ abstract class MigrateFlutterProject {
       final String localPath =
           getLocalPath(currentFile.path, projectRootPath, context.fileSystem);
       missingAlwaysMigrateFiles.remove(localPath);
-      if (context.migrateResult.diffMap.containsKey(localPath) &&
-              context.migrateResult.diffMap[localPath]!.diffType ==
+      if (result.diffMap.containsKey(localPath) &&
+              result.diffMap[localPath]!.diffType ==
                   DiffType.ignored ||
           await context.migrateUtils.isGitIgnored(currentFile.path,
               context.flutterProject.directory.absolute.path) ||
           _skipped(localPath, context.fileSystem,
-              blacklistPrefixes: context.blacklistPrefixes) ||
+              skippedPrefixes: context.skippedPrefixes) ||
           _skippedMerge(localPath)) {
         continue;
       }
@@ -606,37 +610,37 @@ abstract class MigrateFlutterProject {
 
       // Current file unchanged by user, thus we consider it owned by the tool.
       if (userDiff.exitCode == 0 || alwaysMigrate) {
-        if ((context.migrateResult.diffMap.containsKey(localPath) ||
+        if ((result.diffMap.containsKey(localPath) ||
                 alwaysMigrate) &&
-            context.migrateResult.diffMap[localPath] != null) {
+            result.diffMap[localPath] != null) {
           // File changed between base and target
-          if (context.migrateResult.diffMap[localPath]!.diffType ==
+          if (result.diffMap[localPath]!.diffType ==
               DiffType.deletion) {
             // File is deleted in new template
-            context.migrateResult.deletedFiles
+            result.deletedFiles
                 .add(FilePendingMigration(localPath, currentFile));
             continue;
           }
-          if (context.migrateResult.diffMap[localPath]!.exitCode != 0 ||
+          if (result.diffMap[localPath]!.exitCode != 0 ||
               alwaysMigrate) {
             // Accept the target version wholesale
-            MergeResult result;
+            MergeResult mergeResult;
             try {
-              result = StringMergeResult.explicit(
+              mergeResult = StringMergeResult.explicit(
                 mergedString: targetTemplateFile.readAsStringSync(),
                 hasConflict: false,
                 exitCode: 0,
                 localPath: localPath,
               );
             } on FileSystemException {
-              result = BinaryMergeResult.explicit(
+              mergeResult = BinaryMergeResult.explicit(
                 mergedBytes: targetTemplateFile.readAsBytesSync(),
                 hasConflict: false,
                 exitCode: 0,
                 localPath: localPath,
               );
             }
-            context.migrateResult.mergeResults.add(result);
+            result.mergeResults.add(mergeResult);
             continue;
           }
         }
@@ -644,20 +648,20 @@ abstract class MigrateFlutterProject {
       }
 
       // File changed by user
-      if (context.migrateResult.diffMap.containsKey(localPath)) {
-        MergeResult? result;
+      if (result.diffMap.containsKey(localPath)) {
+        MergeResult? mergeResult;
         // Default to two way merge as it does not require the base file to exist.
         MergeType mergeType =
-            context.migrateResult.mergeTypeMap[localPath] ?? MergeType.twoWay;
+            result.mergeTypeMap[localPath] ?? MergeType.twoWay;
         for (final CustomMerge customMerge in customMerges) {
           if (customMerge.localPath == localPath) {
-            result = customMerge.merge(
+            mergeResult = customMerge.merge(
                 currentFile, baseTemplateFile, targetTemplateFile);
             mergeType = MergeType.custom;
             break;
           }
         }
-        if (result == null) {
+        if (mergeResult == null) {
           late String basePath;
           late String currentPath;
           late String targetPath;
@@ -673,20 +677,18 @@ abstract class MigrateFlutterProject {
                 basePath = currentFile.path;
                 currentPath = currentFile.path;
                 targetPath = context.fileSystem.path.join(
-                    context
-                        .migrateResult.generatedTargetTemplateDirectory!.path,
+                    result.generatedTargetTemplateDirectory!.path,
                     localPath);
                 break;
               }
             case MergeType.threeWay:
               {
                 basePath = context.fileSystem.path.join(
-                    context.migrateResult.generatedBaseTemplateDirectory!.path,
+                    result.generatedBaseTemplateDirectory!.path,
                     localPath);
                 currentPath = currentFile.path;
                 targetPath = context.fileSystem.path.join(
-                    context
-                        .migrateResult.generatedTargetTemplateDirectory!.path,
+                    result.generatedTargetTemplateDirectory!.path,
                     localPath);
                 break;
               }
@@ -696,7 +698,7 @@ abstract class MigrateFlutterProject {
               }
           }
           if (mergeType != MergeType.custom) {
-            result = await context.migrateUtils.gitMergeFile(
+            mergeResult = await context.migrateUtils.gitMergeFile(
               base: basePath,
               current: currentPath,
               target: targetPath,
@@ -704,10 +706,10 @@ abstract class MigrateFlutterProject {
             );
           }
         }
-        if (result != null) {
+        if (mergeResult != null) {
           // Don't include if result is identical to the current file.
-          if (result is StringMergeResult) {
-            if (result.mergedString == currentFile.readAsStringSync()) {
+          if (mergeResult is StringMergeResult) {
+            if (mergeResult.mergedString == currentFile.readAsStringSync()) {
               context.status.pause();
               context.logger
                   .printStatus('$localPath was merged with a $mergeType.');
@@ -715,12 +717,12 @@ abstract class MigrateFlutterProject {
               continue;
             }
           } else {
-            if ((result as BinaryMergeResult).mergedBytes ==
+            if ((mergeResult as BinaryMergeResult).mergedBytes ==
                 currentFile.readAsBytesSync()) {
               continue;
             }
           }
-          context.migrateResult.mergeResults.add(result);
+          result.mergeResults.add(mergeResult);
         }
         if (context.verbose) {
           context.status.pause();
@@ -734,13 +736,12 @@ abstract class MigrateFlutterProject {
 
     // Add files that are in the target, marked as always migrate, and missing in the current project.
     for (final String localPath in missingAlwaysMigrateFiles) {
-      final File targetTemplateFile = context
-          .migrateResult.generatedTargetTemplateDirectory!
+      final File targetTemplateFile = result.generatedTargetTemplateDirectory!
           .childFile(localPath);
       if (targetTemplateFile.existsSync() &&
           !_skipped(localPath, context.fileSystem,
-              blacklistPrefixes: context.blacklistPrefixes)) {
-        context.migrateResult.addedFiles
+              skippedPrefixes: context.skippedPrefixes)) {
+        result.addedFiles
             .add(FilePendingMigration(localPath, targetTemplateFile));
       }
     }
@@ -761,6 +762,7 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
   /// Creates the base reference app based off of the migrate config in the .metadata file.
   Future<void> createProject(
     MigrateContext context,
+    MigrateResult result,
     List<String> revisionsList,
     Map<String, List<MigratePlatformConfig>> revisionToConfigs,
     String fallbackRevision,
@@ -804,7 +806,7 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
             } else {
               sdkDir = context.fileSystem.systemTempDirectory
                   .createTempSync('flutter_$activeRevision');
-              context.migrateResult.sdkDirs[activeRevision] = sdkDir;
+              result.sdkDirs[activeRevision] = sdkDir;
               context.status.pause();
               context.logger.printStatus('Cloning SDK $activeRevision',
                   indent: 2, color: TerminalColor.grey);
@@ -832,18 +834,17 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
           name: name,
           androidLanguage: androidLanguage,
           iosLanguage: iosLanguage,
-          outputDirectory: context
-              .migrateResult.generatedBaseTemplateDirectory!.absolute.path,
+          outputDirectory: result.generatedBaseTemplateDirectory!.absolute.path,
           platforms: platforms,
         );
         if (newDirectoryPath !=
-            context.migrateResult.generatedBaseTemplateDirectory?.path) {
-          context.migrateResult.generatedBaseTemplateDirectory =
+            result.generatedBaseTemplateDirectory?.path) {
+          result.generatedBaseTemplateDirectory =
               context.fileSystem.directory(newDirectoryPath);
         }
         // Determine merge type for each newly generated file.
-        final List<FileSystemEntity> generatedBaseFiles = context
-            .migrateResult.generatedBaseTemplateDirectory!
+        final List<FileSystemEntity> generatedBaseFiles =
+          result.generatedBaseTemplateDirectory!
             .listSync(recursive: true);
         for (final FileSystemEntity entity in generatedBaseFiles) {
           if (entity is! File) {
@@ -852,20 +853,19 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
           final File baseTemplateFile = entity.absolute;
           final String localPath = getLocalPath(
               baseTemplateFile.path,
-              context
-                  .migrateResult.generatedBaseTemplateDirectory!.absolute.path,
+              result.generatedBaseTemplateDirectory!.absolute.path,
               context.fileSystem);
-          if (!context.migrateResult.mergeTypeMap.containsKey(localPath)) {
+          if (!result.mergeTypeMap.containsKey(localPath)) {
             // Use two way merge when the base revision is the same as the target revision.
-            context.migrateResult.mergeTypeMap[localPath] =
+            result.mergeTypeMap[localPath] =
                 revision == targetRevision
                     ? MergeType.twoWay
                     : MergeType.threeWay;
           }
         }
         if (newDirectoryPath !=
-            context.migrateResult.generatedBaseTemplateDirectory?.path) {
-          context.migrateResult.generatedBaseTemplateDirectory =
+            result.generatedBaseTemplateDirectory?.path) {
+          result.generatedBaseTemplateDirectory =
               context.fileSystem.directory(newDirectoryPath);
           break; // The create command is old and does not distinguish between platforms so it only needs to be called once.
         }
@@ -887,6 +887,7 @@ class MigrateTargetFlutterProject extends MigrateFlutterProject {
   /// Creates the base reference app based off of the migrate config in the .metadata file.
   Future<void> createProject(
     MigrateContext context,
+    MigrateResult result,
     String targetRevision,
     Directory targetFlutterDirectory,
   ) async {
@@ -906,8 +907,7 @@ class MigrateTargetFlutterProject extends MigrateFlutterProject {
         name: name,
         androidLanguage: androidLanguage,
         iosLanguage: iosLanguage,
-        outputDirectory: context
-            .migrateResult.generatedTargetTemplateDirectory!.absolute.path,
+        outputDirectory: result.generatedTargetTemplateDirectory!.absolute.path,
       );
     }
   }
@@ -920,7 +920,7 @@ class MigrateRevisions {
     required MigrateContext context,
     required String? baseRevision,
     required bool allowFallbackBaseRevision,
-    required List<SupportedPlatform> platforms,
+    required List<SupportedPlatform?> platforms,
     required FlutterToolsEnvironment environment,
   }) {
     _computeRevisions(context, baseRevision, allowFallbackBaseRevision,
@@ -938,7 +938,7 @@ class MigrateRevisions {
     MigrateContext context,
     String? baseRevision,
     bool allowFallbackBaseRevision,
-    List<SupportedPlatform> platforms,
+    List<SupportedPlatform?> platforms,
     FlutterToolsEnvironment environment,
   ) {
     final FlutterProjectMetadata metadata = FlutterProjectMetadata(
@@ -972,7 +972,7 @@ class MigrateRevisions {
         if (platforms != null && !platforms.contains(platform.platform)) {
           continue;
         }
-        if (platform.platform == SupportedPlatform.root) {
+        if (platform.platform == null) {
           rootBaseRevision = effectiveRevision;
         }
         revisions.add(effectiveRevision);
@@ -984,10 +984,12 @@ class MigrateRevisions {
     } else {
       rootBaseRevision = baseRevision;
       revisionToConfigs[baseRevision] = <MigratePlatformConfig>[];
-      for (final SupportedPlatform platform in platforms) {
+      for (final SupportedPlatform? platform in platforms) {
         revisionToConfigs[baseRevision]!.add(MigratePlatformConfig(
             platform: platform, baseRevision: baseRevision));
       }
+      revisionToConfigs[baseRevision]!.add(MigratePlatformConfig(
+            platform: null, baseRevision: baseRevision));
     }
     // Reorder such that the root revision is created first.
     revisions.remove(rootBaseRevision);
