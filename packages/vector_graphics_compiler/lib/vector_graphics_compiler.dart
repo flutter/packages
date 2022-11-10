@@ -35,7 +35,7 @@ export 'src/_initialize_path_ops_io.dart'
 
 /// Parses an SVG string into a [VectorInstructions] object, with all optional
 /// optimizers disabled.
-Future<VectorInstructions> parseWithoutOptimizers(
+VectorInstructions parseWithoutOptimizers(
   String xml, {
   String key = '',
   bool warningsAsErrors = false,
@@ -53,7 +53,7 @@ Future<VectorInstructions> parseWithoutOptimizers(
 }
 
 /// Parses an SVG string into a [VectorInstructions] object.
-Future<VectorInstructions> parse(
+VectorInstructions parse(
   String xml, {
   String key = '',
   bool warningsAsErrors = false,
@@ -62,7 +62,7 @@ Future<VectorInstructions> parse(
   bool enableClippingOptimizer = true,
   bool enableOverdrawOptimizer = true,
   ColorMapper? colorMapper,
-}) async {
+}) {
   final SvgParser parser = SvgParser(
     xml,
     theme,
@@ -128,7 +128,7 @@ void _encodeShader(
 
 /// String input, String filename
 /// Encode an SVG [input] string into a vector_graphics binary format.
-Future<Uint8List> encodeSvg({
+Uint8List encodeSvg({
   required String xml,
   required String debugName,
   SvgTheme theme = const SvgTheme(),
@@ -137,9 +137,8 @@ Future<Uint8List> encodeSvg({
   bool enableOverdrawOptimizer = true,
   bool warningsAsErrors = false,
   ColorMapper? colorMapper,
-}) async {
-  const VectorGraphicsCodec codec = VectorGraphicsCodec();
-  final VectorInstructions instructions = await parse(
+}) {
+  return _encodeInstructions(parse(
     xml,
     key: debugName,
     theme: theme,
@@ -148,8 +147,11 @@ Future<Uint8List> encodeSvg({
     enableOverdrawOptimizer: enableOverdrawOptimizer,
     warningsAsErrors: warningsAsErrors,
     colorMapper: colorMapper,
-  );
+  ));
+}
 
+Uint8List _encodeInstructions(VectorInstructions instructions) {
+  const VectorGraphicsCodec codec = VectorGraphicsCodec();
   final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
 
   codec.writeSize(buffer, instructions.width, instructions.height);

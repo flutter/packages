@@ -12,7 +12,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'helpers.dart';
 import 'test_svg_strings.dart';
 
-Future<Node> parseAndResolve(String source) async {
+Node parseAndResolve(String source) {
   final Node node = parseToNodeTree(source);
   final ResolvingVisitor visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
@@ -29,8 +29,8 @@ void main() {
   });
 
   test('Only resolve MaskNode if the mask is described by a singular PathNode',
-      () async {
-    final Node node = await parseAndResolve(
+      () {
+    final Node node = parseAndResolve(
         ''' <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <mask id="a" maskUnits="userSpaceOnUse" x="3" y="7" width="18" height="11">
     <path fill-rule="evenodd" clip-rule="evenodd" d="M15.094 17.092a.882.882 0 01-.623-1.503l2.656-2.66H4.28a.883.883 0 010-1.765h12.846L14.47 8.503a.88.88 0 011.245-1.245l4.611 4.611a.252.252 0 010 .354l-4.611 4.611a.876.876 0 01-.622.258z" fill="#fff" />
@@ -50,8 +50,8 @@ void main() {
   });
 
   test("Don't resolve MaskNode if the mask is described by multiple PathNodes",
-      () async {
-    final Node node = await parseAndResolve('''<svg viewBox="-10 -10 120 120">
+      () {
+    final Node node = parseAndResolve('''<svg viewBox="-10 -10 120 120">
       <mask id="myMask">
         <rect x="0" y="0" width="100" height="100" fill="white" />
         <path d="M10,35 A20,20,0,0,1,50,35 A20,20,0,0,1,90,35 Q90,65,50,95 Q10,65,10,35 Z" fill="black" />
@@ -70,8 +70,8 @@ void main() {
 
   test(
       "Don't resolve a MaskNode if one of PathNodes it's applied to has stroke.width set",
-      () async {
-    final Node node = await parseAndResolve(
+      () {
+    final Node node = parseAndResolve(
         ''' <svg xmlns="http://www.w3.org/2000/svg" width="94" height="92" viewBox="0 0 94 92" fill="none">
         <mask id="c" maskUnits="userSpaceOnUse" x="46" y="16" width="15" height="15">
            <path d="M58.645 16.232L46.953 28.72l2.024 1.895 11.691-12.486" fill="#fff"/>
@@ -91,9 +91,8 @@ void main() {
     expect(maskNodesNew.length, 1);
   });
 
-  test("Don't resolve MaskNode if intersection of Mask and Path is empty",
-      () async {
-    final Node node = await parseAndResolve(
+  test("Don't resolve MaskNode if intersection of Mask and Path is empty", () {
+    final Node node = parseAndResolve(
         '''<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="a">
         <path  d="M58.645 16.232L46.953 28.72l2.024 1.895 11.691-12.486"/>
@@ -108,8 +107,8 @@ void main() {
         queryChildren<ResolvedMaskNode>(newNode);
     expect(maskNodesNew.length, 1);
   });
-  test('ParentNode and PathNode count should stay the same', () async {
-    final Node node = await parseAndResolve(xmlString);
+  test('ParentNode and PathNode count should stay the same', () {
+    final Node node = parseAndResolve(xmlString);
 
     final List<ResolvedPathNode> pathNodesOld =
         queryChildren<ResolvedPathNode>(node);
@@ -126,9 +125,9 @@ void main() {
     expect(parentNodesOld.length, parentNodesNew.length);
   });
 
-  test('Masks on groups', () async {
+  test('Masks on groups', () {
     final VectorInstructions instructions =
-        await parse(groupMask, enableMaskingOptimizer: false);
+        parse(groupMask, enableMaskingOptimizer: false);
     expect(instructions.paths, <Path>[
       parseSvgPathData(
               'M 17.438 8.438 C 17.748 8.438 18 8.69 18 9 L 18 16.313 C 17.99834725871 17.24440923535 17.24341005121 17.99889920517 16.312 18 L 1.688 18 C 0.75620021668 17.99889792932 0.00110207068 17.24379978332 0 16.312 L 0 9 C 0.01271270943 8.69855860173 0.26079065383 8.46072235233 0.5625 8.46072235233 C 0.86420934617 8.46072235233 1.11228729057 8.69855860173 1.125 9 L 1.125 16.313 C 1.125 16.622 1.377 16.875 1.688 16.875 L 16.312 16.875 C 16.622 16.875 16.875 16.622 16.875 16.312 L 16.875 9 C 16.875 8.69 17.127 8.437 17.438 8.437 Z M 9 0 C 9.169 0 9.316 0.079 9.418 0.196 L 9.423 0.192 L 13.361 4.692 C 13.443 4.795 13.5 4.921 13.5 5.062 C 13.5 5.373 13.248 5.625 12.937 5.625 C 12.77572417052 5.6238681172 12.62300981305 5.55226042805 12.519 5.429 L 12.514 5.433 L 9.563 2.06 L 9.563 11.812 C 9.56299999183 12.12293630838 9.31093630838 12.3749999852 9 12.3749999852 C 8.68906369162 12.3749999852 8.43700000817 12.12293630838 8.437 11.812 L 8.437 2.06 L 5.486 5.433 C 5.37775998399 5.5529360201 5.22453705399 5.62248401669 5.063 5.625 C 4.75206368585 5.625 4.5 5.37293631415 4.5 5.062 C 4.5 4.921 4.557 4.795 4.644 4.696 L 4.639 4.692 L 8.577 0.192 C 8.68524001601 0.0720639799 8.83846294601 0.00251598331 9 0 Z',
@@ -144,7 +143,7 @@ void main() {
           .transformed(const AffineMatrix(1, 0, 0, 1, 3, 3)),
     ]);
 
-    final VectorInstructions instructionsWithOptimizer = await parse(groupMask);
+    final VectorInstructions instructionsWithOptimizer = parse(groupMask);
     expect(instructionsWithOptimizer.paths, groupMaskForMaskingOptimizer);
 
     expect(instructions.paints, const <Paint>[
@@ -165,8 +164,8 @@ void main() {
     ]);
   });
 
-  test('Handles masks with blends and gradients correctly', () async {
-    final VectorInstructions instructions = await parse(
+  test('Handles masks with blends and gradients correctly', () {
+    final VectorInstructions instructions = parse(
       blendAndMask,
       enableClippingOptimizer: false,
       enableMaskingOptimizer: false,
@@ -180,8 +179,7 @@ void main() {
       ],
     );
 
-    final VectorInstructions instructionsWithOptimizer =
-        await parse(blendAndMask);
+    final VectorInstructions instructionsWithOptimizer = parse(blendAndMask);
     expect(instructionsWithOptimizer.paths, blendsAndMasksForMaskingOptimizer);
 
     const LinearGradient gradient1 = LinearGradient(

@@ -93,7 +93,7 @@ class IsolateProcessor {
     PoolHandle? resource;
     try {
       resource = await _pool.request();
-      await Isolate.run(() async {
+      await Isolate.run(() {
         if (maskingOptimizerEnabled ||
             clippingOptimizerEnabled ||
             overdrawOptimizerEnabled) {
@@ -103,7 +103,7 @@ class IsolateProcessor {
           _loadTessellator(libtessellator);
         }
 
-        final Uint8List bytes = await encodeSvg(
+        final Uint8List bytes = encodeSvg(
           xml: File(pair.inputPath).readAsStringSync(),
           debugName: pair.inputPath,
           theme: theme,

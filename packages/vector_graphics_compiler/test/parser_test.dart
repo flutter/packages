@@ -4,8 +4,8 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
-  test('Image in defs', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Image in defs', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       imageInDefs,
     );
     expect(instructions.images.single.format, 0);
@@ -17,8 +17,8 @@ void main() {
     ]);
   });
 
-  test('Transformed clip', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Transformed clip', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       transformedClip,
     );
 
@@ -44,8 +44,8 @@ void main() {
     ]);
   });
 
-  test('Zero width stroke', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Zero width stroke', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       '''
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="main-svg" width="100" height="100" viewBox="0 0 100 100">
     <rect style="stroke: rgb(68, 68, 68); stroke-opacity: 1; fill: rgb(255, 255, 255); fill-opacity: 1; stroke-width: 0;" width="90" height="90" x="5" y="5" />
@@ -57,8 +57,8 @@ void main() {
         instructions.paints.single.fill, const Fill(color: Color(0xFFFFFFFF)));
   });
 
-  test('text anchor', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('text anchor', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       textAnchors,
     );
 
@@ -102,8 +102,8 @@ void main() {
     ]);
   });
 
-  test('text decorations', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('text decorations', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       textDecorations,
     );
 
@@ -147,8 +147,8 @@ void main() {
     ]);
   });
 
-  test('Stroke property set but does not draw stroke', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Stroke property set but does not draw stroke', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       strokePropertyButNoStroke,
     );
     expect(instructions.paths.single.commands, const <PathCommand>[
@@ -164,18 +164,18 @@ void main() {
     );
   });
 
-  test('Clip with use', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Clip with use', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       basicClip,
     );
-    final VectorInstructions instructions2 = await parseWithoutOptimizers(
+    final VectorInstructions instructions2 = parseWithoutOptimizers(
       useClip,
     );
     expect(instructions, instructions2);
   });
 
-  test('stroke-dasharray="none"', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('stroke-dasharray="none"', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       '''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <path d="M1 20L20 20L20 39L30 30L1 26z" stroke="black" fill="red" stroke-width="2" stroke-dasharray="none"/>
@@ -202,8 +202,8 @@ void main() {
     ]);
   });
 
-  test('Dashed path', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Dashed path', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       '''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <path d="M1 20L20 20L20 39L30 30L1 26z" stroke="black" fill="red" stroke-width="2" stroke-dasharray="5 3 5 5"/>
@@ -261,8 +261,8 @@ void main() {
     ]);
   });
 
-  test('text with transform', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('text with transform', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><text transform="rotate(10 -100 50)">a</text></svg>',
     );
     expect(instructions.paints.single, const Paint(fill: Fill()));
@@ -286,8 +286,8 @@ void main() {
     );
   });
 
-  test('Missing references', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Missing references', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       missingRefs,
     );
     expect(
@@ -304,8 +304,8 @@ void main() {
     );
   });
 
-  test('focal radial', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('focal radial', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       focalRadial,
     );
 
@@ -347,8 +347,8 @@ void main() {
     );
   });
 
-  test('Transformed userSpaceOnUse radial', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Transformed userSpaceOnUse radial', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       xformUsosRadial,
     );
     expect(
@@ -391,9 +391,8 @@ void main() {
     );
   });
 
-  test('Transformed objectBoundingBox gradient onto transformed path',
-      () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Transformed objectBoundingBox gradient onto transformed path', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       xformObbGradient,
     );
     expect(
@@ -428,7 +427,7 @@ void main() {
     );
   });
 
-  test('Opaque blend mode gets a save layer', () async {
+  test('Opaque blend mode gets a save layer', () {
     const String svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <rect x="0" y="0" width="100" height="100" fill="red" />
@@ -437,7 +436,7 @@ void main() {
   </g>
 </svg>
 ''';
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+    final VectorInstructions instructions = parseWithoutOptimizers(
       svg,
     );
 
@@ -451,13 +450,13 @@ void main() {
     ]);
   });
 
-  test('Stroke properties respected in toStroke', () async {
+  test('Stroke properties respected in toStroke', () {
     const String svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 102">
   <path fill="none" stroke="red" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.7" d="M70.822 65.557l5.376 5.296 8.389-8.676" />
 </svg>
 ''';
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+    final VectorInstructions instructions = parseWithoutOptimizers(
       svg,
     );
     expect(
@@ -473,8 +472,8 @@ void main() {
     );
   });
 
-  test('gradients can handle inheriting unit mode', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('gradients can handle inheriting unit mode', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       linearGradientThatInheritsUnitMode,
     );
     expect(instructions.paints, const <Paint>[
@@ -523,8 +522,8 @@ void main() {
     ]);
   });
 
-  test('group opacity results in save layer', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('group opacity results in save layer', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       groupOpacity,
     );
     expect(instructions.paths, <Path>[
@@ -544,11 +543,11 @@ void main() {
     ]);
   });
 
-  test('xlink gradient Out of order', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('xlink gradient Out of order', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       xlinkGradient,
     );
-    final VectorInstructions instructions2 = await parseWithoutOptimizers(
+    final VectorInstructions instructions2 = parseWithoutOptimizers(
       xlinkGradientOoO,
     );
 
@@ -557,11 +556,11 @@ void main() {
     expect(instructions.commands, instructions2.commands);
   });
 
-  test('xlink use Out of order', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('xlink use Out of order', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       simpleUseCircles,
     );
-    final VectorInstructions instructions2 = await parseWithoutOptimizers(
+    final VectorInstructions instructions2 = parseWithoutOptimizers(
       simpleUseCirclesOoO,
     );
 
@@ -571,8 +570,8 @@ void main() {
     expect(instructions.commands.toSet(), instructions2.commands.toSet());
   });
 
-  test('xlink gradient with transform', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('xlink gradient with transform', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       xlinkGradient,
     );
     expect(instructions.paths, <Path>[
@@ -605,8 +604,8 @@ void main() {
     ]);
   });
 
-  test('Out of order def', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Out of order def', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       outOfOrderGradientDef,
     );
     expect(instructions.paths, <Path>[
@@ -635,8 +634,8 @@ void main() {
     ]);
   });
 
-  test('Handles masks correctly', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Handles masks correctly', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       basicMask,
     );
     expect(
@@ -669,13 +668,13 @@ void main() {
     ]);
   });
 
-  test('Handles viewBox transformations correctly', () async {
+  test('Handles viewBox transformations correctly', () {
     const String svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -12 120 120">
   <rect x="11" y="36" width="31" height="20" fill="red" />
 </svg>
 ''';
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+    final VectorInstructions instructions = parseWithoutOptimizers(
       svg,
     );
     expect(instructions.paths, <Path>[
@@ -686,13 +685,13 @@ void main() {
     ]);
   });
 
-  test('Parses rrects correctly', () async {
+  test('Parses rrects correctly', () {
     const String svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
   <rect x="11" y="36" width="31" height="20" rx="2.5" fill="red" />
 </svg>
 ''';
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+    final VectorInstructions instructions = parseWithoutOptimizers(
       svg,
     );
     expect(instructions.paths, <Path>[
@@ -702,8 +701,8 @@ void main() {
     ]);
   });
 
-  test('Path with empty paint does not draw anything', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Path with empty paint does not draw anything', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       '''
 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 192 192" width="24">
   <path fill="none" d="M0 0h192v192H0z" />
@@ -714,8 +713,8 @@ void main() {
     expect(instructions.commands.isEmpty, true);
   });
 
-  test('Use circles test', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Use circles test', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       simpleUseCircles,
       key: 'useCircles',
       warningsAsErrors: true,
@@ -786,8 +785,8 @@ void main() {
     );
   });
 
-  test('Parses pattern used as fill and stroke', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Parses pattern used as fill and stroke', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       starPatternCircles,
       warningsAsErrors: true,
     );
@@ -804,7 +803,7 @@ void main() {
     ]);
   });
 
-  test('Parses text with pattern as fill', () async {
+  test('Parses text with pattern as fill', () {
     const String textWithPattern = ''' <svg width="600" height="400">
     <defs>
           <pattern id="textPattern" x="7" y="7" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -814,7 +813,7 @@ void main() {
     <text x="0" y="50%" font-size="200" fill="url(#textPattern)">Text</text>
 </svg>''';
 
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+    final VectorInstructions instructions = parseWithoutOptimizers(
       textWithPattern,
       warningsAsErrors: true,
     );
@@ -827,14 +826,14 @@ void main() {
     ]);
   });
 
-  test('Defaults image height/width when not specified', () async {
+  test('Defaults image height/width when not specified', () {
     // 1x1 PNG image from png-pixel.com.
     const String svgStr = '''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg==" />
 </svg>''';
 
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+    final VectorInstructions instructions = parseWithoutOptimizers(
       svgStr,
       key: 'image',
       warningsAsErrors: true,
@@ -843,8 +842,8 @@ void main() {
     expect(instructions.drawImages.first.rect, const Rect.fromLTWH(0, 0, 1, 1));
   });
 
-  test('Ghostscript Tiger - dedupes paints', () async {
-    final VectorInstructions instructions = await parseWithoutOptimizers(
+  test('Ghostscript Tiger - dedupes paints', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
       ghostscriptTiger,
       key: 'ghostscriptTiger',
       warningsAsErrors: true,

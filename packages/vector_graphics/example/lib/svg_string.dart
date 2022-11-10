@@ -50,8 +50,8 @@ class _MyAppState extends State<MyApp> {
       _debounce?.cancel();
     }
     _debounce = Timer(const Duration(milliseconds: 250), () {
-      compute((String svg) async {
-        final Uint8List compiledBytes = await encodeSvg(
+      compute((String svg) {
+        final Uint8List compiledBytes = encodeSvg(
           xml: svg,
           debugName: '<string>',
           enableClippingOptimizer: false,

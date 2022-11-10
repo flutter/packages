@@ -9,7 +9,7 @@ import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
-Future<Node> parseAndResolve(String source) async {
+Node parseAndResolve(String source) {
   final Node node = parseToNodeTree(source);
   final ResolvingVisitor visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
@@ -35,8 +35,8 @@ void main() {
     }
   });
 
-  test('Only resolve ClipNode if .clips has one PathNode', () async {
-    final Node node = await parseAndResolve(
+  test('Only resolve ClipNode if .clips has one PathNode', () {
+    final Node node = parseAndResolve(
         ''' <svg width="200px" height="200x" viewBox="0 0 200 200">
   <defs>
     <clipPath id="a">
@@ -59,7 +59,7 @@ void main() {
   test(
       "Don't resolve a ClipNode if one of the PathNodes it's applied to has stroke.width set",
       () async {
-    final Node node = await parseAndResolve(''' <svg width="10" height="10">
+    final Node node = parseAndResolve(''' <svg width="10" height="10">
   <clipPath id="clip0">
     <path d="M2 3h7.9v2H1" />
   </clipPath>
@@ -77,7 +77,7 @@ void main() {
 
   test("Don't resolve ClipNode if intersection of Clip and Path is empty",
       () async {
-    final Node node = await parseAndResolve(
+    final Node node = parseAndResolve(
         '''<svg width="200px" height="200x" viewBox="0 0 200 200">
   <defs>
     <clipPath id="a">
@@ -98,7 +98,7 @@ void main() {
   });
 
   test('ParentNode and PathNode count should stay the same', () async {
-    final Node node = await parseAndResolve(pathAndParent);
+    final Node node = parseAndResolve(pathAndParent);
 
     final List<ResolvedPathNode> pathNodesOld =
         queryChildren<ResolvedPathNode>(node);
@@ -115,8 +115,8 @@ void main() {
     expect(parentNodesOld.length, parentNodesNew.length);
   });
 
-  test('Does not combine clips with multiple fill rules', () async {
-    final VectorInstructions instructions = await parse(multiClip);
+  test('Does not combine clips with multiple fill rules', () {
+    final VectorInstructions instructions = parse(multiClip);
     expect(instructions.paths, <Path>[
       parseSvgPathData(
           'M 250,75 L 323,301 131,161 369,161 177,301 z', PathFillType.evenOdd),
@@ -141,10 +141,10 @@ void main() {
     ]);
   });
 
-  test('Combines clips where possible', () async {
+  test('Combines clips where possible', () {
     final VectorInstructions instructions =
-        await parse(basicClip, enableClippingOptimizer: false);
-    final VectorInstructions instructionsWithOptimizer = await parse(basicClip);
+        parse(basicClip, enableClippingOptimizer: false);
+    final VectorInstructions instructionsWithOptimizer = parse(basicClip);
 
     expect(instructionsWithOptimizer.paths, basicClipsForClippingOptimzer);
 
@@ -162,7 +162,7 @@ void main() {
     ]);
   });
 
-  test('Preserves fill type changes', () async {
+  test('Preserves fill type changes', () {
     const String svg = '''
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#a)">
@@ -174,7 +174,7 @@ void main() {
         </clipPath>
     </defs>
 </svg>''';
-    final VectorInstructions instructions = await parse(svg);
+    final VectorInstructions instructions = parse(svg);
 
     expect(
       instructions.paths.single.fillType,

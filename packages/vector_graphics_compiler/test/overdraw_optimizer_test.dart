@@ -10,7 +10,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'helpers.dart';
 import 'test_svg_strings.dart';
 
-Future<Node> parseAndResolve(String source) async {
+Node parseAndResolve(String source) {
   final Node node = parseToNodeTree(source);
   final ResolvingVisitor visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
@@ -25,9 +25,9 @@ void main() {
 
   test(
       'Basic case of two opaque shapes overlapping with a stroke (cannot be optimized yet)',
-      () async {
-    final Node node = await parseAndResolve(basicOverlapWithStroke);
-    final VectorInstructions instructions = await parse(basicOverlapWithStroke);
+      () {
+    final Node node = parseAndResolve(basicOverlapWithStroke);
+    final VectorInstructions instructions = parse(basicOverlapWithStroke);
 
     final List<ResolvedPathNode> pathNodesOld =
         queryChildren<ResolvedPathNode>(node);
@@ -70,9 +70,9 @@ void main() {
     ]);
   });
 
-  test('Basic case of two opaque shapes overlapping', () async {
-    final Node node = await parseAndResolve(basicOverlap);
-    final VectorInstructions instructions = await parse(basicOverlap);
+  test('Basic case of two opaque shapes overlapping', () {
+    final Node node = parseAndResolve(basicOverlap);
+    final VectorInstructions instructions = parse(basicOverlap);
 
     final List<ResolvedPathNode> pathNodesOld =
         queryChildren<ResolvedPathNode>(node);
@@ -120,9 +120,9 @@ void main() {
     ]);
   });
 
-  test('Basic case of two shapes with opacity < 1.0 overlapping', () async {
-    final Node node = await parseAndResolve(opacityOverlap);
-    final VectorInstructions instructions = await parse(opacityOverlap);
+  test('Basic case of two shapes with opacity < 1.0 overlapping', () {
+    final Node node = parseAndResolve(opacityOverlap);
+    final VectorInstructions instructions = parse(opacityOverlap);
 
     final OverdrawOptimizer visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
@@ -186,9 +186,9 @@ void main() {
     ]);
   });
 
-  test('Solid shape overlapping semi-transparent shape', () async {
-    final Node node = await parseAndResolve(solidOverTrasnparent);
-    final VectorInstructions instructions = await parse(solidOverTrasnparent);
+  test('Solid shape overlapping semi-transparent shape', () {
+    final Node node = parseAndResolve(solidOverTrasnparent);
+    final VectorInstructions instructions = parse(solidOverTrasnparent);
 
     final OverdrawOptimizer visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
@@ -233,9 +233,9 @@ void main() {
     ]);
   });
 
-  test('Semi-transparent shape overlapping solid shape', () async {
-    final Node node = await parseAndResolve(transparentOverSolid);
-    final VectorInstructions instructions = await parse(transparentOverSolid);
+  test('Semi-transparent shape overlapping solid shape', () {
+    final Node node = parseAndResolve(transparentOverSolid);
+    final VectorInstructions instructions = parse(transparentOverSolid);
 
     final OverdrawOptimizer visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
@@ -299,9 +299,9 @@ void main() {
     ]);
   });
 
-  test('Multiple opaque and semi-trasnparent shapes', () async {
-    final Node node = await parseAndResolve(complexOpacityTest);
-    final VectorInstructions instructions = await parse(complexOpacityTest);
+  test('Multiple opaque and semi-trasnparent shapes', () {
+    final Node node = parseAndResolve(complexOpacityTest);
+    final VectorInstructions instructions = parse(complexOpacityTest);
 
     final OverdrawOptimizer visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);

@@ -36,7 +36,7 @@ void main() {
   testWidgets('Can endcode and decode simple SVGs with no errors',
       (WidgetTester tester) async {
     for (final String svg in allSvgTestStrings) {
-      final Uint8List bytes = await encodeSvg(
+      final Uint8List bytes = encodeSvg(
         xml: svg,
         debugName: 'test.svg',
         warningsAsErrors: true,
@@ -89,7 +89,7 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(
+    final Uint8List bytes = encodeSvg(
       xml: svg,
       debugName: 'test',
       enableClippingOptimizer: false,
@@ -153,7 +153,7 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(
+    final Uint8List bytes = encodeSvg(
       xml: svg,
       debugName: 'test',
       enableClippingOptimizer: false,
@@ -237,7 +237,7 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(
+    final Uint8List bytes = encodeSvg(
       xml: svg,
       debugName: 'test',
       enableClippingOptimizer: false,
@@ -266,7 +266,7 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(
+    final Uint8List bytes = encodeSvg(
       xml: svg,
       debugName: 'test',
       enableClippingOptimizer: false,
@@ -295,7 +295,7 @@ void main() {
 </svg>
 ''';
 
-    final Uint8List bytes = await encodeSvg(
+    final Uint8List bytes = encodeSvg(
       xml: svg,
       debugName: 'test',
       enableClippingOptimizer: false,
