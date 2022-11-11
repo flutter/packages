@@ -23,8 +23,3 @@ supported plugin languages. It covers:
 Dart unit tests for null-safe mode. This is a legacy structure from before
 NNBD was the only mode Pigeon supported; these should be folded back into
 the main tests.
-
-## Other \*\_unit\_tests
-
-Legacy test harness, each covering only one platform. These will be removed
-as their tests migrate to `test_plugin`.
