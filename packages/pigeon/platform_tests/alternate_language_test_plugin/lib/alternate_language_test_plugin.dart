@@ -1,8 +1,8 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-import 'alternate_language_test_plugin_platform_interface.dart';
+// TODO(tarrinneal): Add integration tests.
 
-class AlternateLanguageTestPlugin {
-  Future<String?> getPlatformVersion() {
-    return AlternateLanguageTestPluginPlatform.instance.getPlatformVersion();
-  }
-}
+/// A host plugin for Pigeon tests.
+class AlternateLanguageTestPlugin {}

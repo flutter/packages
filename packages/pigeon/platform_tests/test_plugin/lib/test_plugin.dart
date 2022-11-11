@@ -1,8 +1,8 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-import 'test_plugin_platform_interface.dart';
+// TODO(tarrinneal): Add integration tests.
 
-class TestPlugin {
-  Future<String?> getPlatformVersion() {
-    return TestPluginPlatform.instance.getPlatformVersion();
-  }
-}
+/// A host plugin for Pigeon tests.
+class TestPlugin {}
