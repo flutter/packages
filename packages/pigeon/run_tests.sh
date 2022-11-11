@@ -112,8 +112,8 @@ gen_ios_unittests_code() {
     --input $input \
     --objc_prefix "$prefix" \
     --dart_out /dev/null \
-    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/$name.gen.h \
-    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/$name.gen.m
+    --objc_header_out platform_tests/alternate_language_test_plugin/ios/Classes/$name.gen.h \
+    --objc_source_out platform_tests/alternate_language_test_plugin/ios/Classes/$name.gen.m
 }
 
 gen_android_unittests_code() {
@@ -236,12 +236,12 @@ run_ios_unittests() {
   gen_ios_unittests_code ./pigeons/voidflutter.dart "VF"
   gen_ios_unittests_code ./pigeons/voidhost.dart "VH"
   pushd $PWD
-  cd platform_tests/ios_unit_tests
-  flutter build ios --simulator
+  cd platform_tests/alternate_language_test_plugin/example
+  flutter build ios --simulator --no-codesign
   cd ios
   xcodebuild \
     -workspace Runner.xcworkspace \
-    -scheme RunnerTests \
+    -scheme Runner \
     -sdk iphonesimulator \
     -destination 'platform=iOS Simulator,name=iPhone 8' \
     test

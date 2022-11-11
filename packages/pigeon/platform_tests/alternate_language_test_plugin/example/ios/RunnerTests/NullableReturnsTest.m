@@ -4,8 +4,9 @@
 
 #import <XCTest/XCTest.h>
 #import "EchoMessenger.h"
+#import <alternate_language_test_plugin/nullable_returns.gen.h>
+
 #import "MockBinaryMessenger.h"
-#import "nullable_returns.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface MockNullableArgHostApi : NSObject <NRNullableArgHostApi>

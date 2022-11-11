@@ -4,8 +4,9 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+#import <alternate_language_test_plugin/multiple_arity.gen.h>
+
 #import "HandlerBinaryMessenger.h"
-#import "multiple_arity.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface MultipleAritytest : XCTestCase

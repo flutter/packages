@@ -4,8 +4,9 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+#import <alternate_language_test_plugin/primitive.gen.h>
+
 #import "EchoMessenger.h"
-#import "primitive.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface PrimitiveTest : XCTestCase
