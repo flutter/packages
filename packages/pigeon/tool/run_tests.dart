@@ -9,16 +9,7 @@
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io'
-    show
-        Directory,
-        File,
-        Platform,
-        Process,
-        ProcessResult,
-        exit,
-        stderr,
-        stdout;
+import 'dart:io' show File, Platform, Process, exit, stderr, stdout;
 import 'dart:math';
 
 import 'package:args/args.dart';
