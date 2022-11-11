@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter_migrate/src/base/file_system.dart';
-import 'package:flutter_migrate/src/base/io.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
 import 'package:flutter_migrate/src/base/project.dart';
 import 'package:flutter_migrate/src/base/signals.dart';
 import 'package:flutter_migrate/src/compute.dart';
 import 'package:flutter_migrate/src/environment.dart';
 import 'package:flutter_migrate/src/flutter_project_metadata.dart';
+import 'package:flutter_migrate/src/migrate_logger.dart';
 import 'package:flutter_migrate/src/result.dart';
 import 'package:flutter_migrate/src/utils.dart';
 import 'package:process/process.dart';
@@ -49,13 +49,15 @@ void main() {
     final FlutterProject flutterProject =
         flutterFactory.fromDirectory(currentDir);
     result = MigrateResult.empty();
+    final MigrateLogger migrateLogger = MigrateLogger(logger: logger);
+    migrateLogger.start();
     context = MigrateContext(
       flutterProject: flutterProject,
       skippedPrefixes: <String>{},
       logger: logger,
       verbose: true,
       fileSystem: fileSystem,
-      status: logger.startSpinner(),
+      migrateLogger: migrateLogger,
       migrateUtils: utils,
     );
     targetFlutterDirectory =
@@ -232,13 +234,15 @@ void main() {
       final FlutterProject flutterProject =
           flutterFactory.fromDirectory(currentDir);
       result = MigrateResult.empty();
+      final MigrateLogger migrateLogger = MigrateLogger(logger: logger);
+      migrateLogger.start();
       context = MigrateContext(
         flutterProject: flutterProject,
         skippedPrefixes: <String>{},
         logger: logger,
         verbose: true,
         fileSystem: fileSystem,
-        status: logger.startSpinner(),
+        migrateLogger: migrateLogger,
         migrateUtils: utils,
       );
     });
