@@ -5,8 +5,9 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+#import <alternate_language_test_plugin/non_null_fields.gen.h>
+
 #import "EchoMessenger.h"
-#import "non_null_fields.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface NonNullFieldsTest : XCTestCase
