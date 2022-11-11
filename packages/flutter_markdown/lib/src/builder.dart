@@ -470,9 +470,27 @@ class MarkdownBuilder implements md.NodeVisitor {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
         TextAlign? align;
+        // `style` was using in pkg:markdown <= 6.0.1
+        // Can be removed when min pkg:markedwn > 6.0.1
         final String? style = element.attributes['style'];
         if (style == null) {
-          align = tag == 'th' ? styleSheet.tableHeadAlign : TextAlign.left;
+          // `align` is using in pkg:markdown > 6.0.1
+          final String? alignAttribute = element.attributes['align'];
+          if (alignAttribute == null) {
+            align = tag == 'th' ? styleSheet.tableHeadAlign : TextAlign.left;
+          } else {
+            switch (alignAttribute) {
+              case 'left':
+                align = TextAlign.left;
+                break;
+              case 'center':
+                align = TextAlign.center;
+                break;
+              case 'right':
+                align = TextAlign.right;
+                break;
+            }
+          }
         } else {
           final RegExp regExp = RegExp(r'text-align: (left|center|right)');
           final Match match = regExp.matchAsPrefix(style)!;

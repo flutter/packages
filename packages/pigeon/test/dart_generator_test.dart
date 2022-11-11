@@ -1309,4 +1309,51 @@ name: foobar
     final String code = sink.toString();
     expect(code, contains('extends StandardMessageCodec'));
   });
+
+  test('host test code handles enums', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+            name: 'Api',
+            location: ApiLocation.host,
+            dartHostTestHandler: 'ApiMock',
+            methods: <Method>[
+              Method(
+                  name: 'doit',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  arguments: <NamedType>[
+                    NamedType(
+                        type: const TypeDeclaration(
+                          baseName: 'Enum',
+                          isNullable: false,
+                        ),
+                        name: 'anEnum')
+                  ])
+            ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[
+        Enum(
+          name: 'Enum',
+          members: <String>[
+            'one',
+            'two',
+          ],
+        )
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateTestDart(
+      const DartOptions(),
+      root,
+      sink,
+      dartOutPath: 'code.dart',
+      testOutPath: 'test.dart',
+    );
+    final String testCode = sink.toString();
+    expect(
+        testCode,
+        contains(
+            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0] as int]'));
+  });
 }

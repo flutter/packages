@@ -88,7 +88,10 @@ class RouteConfig {
     }
 
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
-    final InterfaceElement classElement = typeParamType.element2;
+    // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
+    // 5.2+ (when Flutter 3.4+ is on stable).
+    // ignore: deprecated_member_use
+    final InterfaceElement classElement = typeParamType.element;
 
     final RouteConfig value = RouteConfig._(path, classElement, parent);
 
@@ -142,7 +145,7 @@ extension $_extensionName on $_className {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
-} 
+}
 ''';
 
   /// Returns this [RouteConfig] and all child [RouteConfig] instances.
@@ -363,11 +366,17 @@ GoRouteData.\$route(
 String _enumMapConst(InterfaceType type) {
   assert(type.isEnum);
 
-  final String enumName = type.element2.name;
+  // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
+  // 5.2+ (when Flutter 3.4+ is on stable).
+  // ignore: deprecated_member_use
+  final String enumName = type.element.name;
 
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
-  for (final FieldElement enumField in type.element2.fields
+  // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
+  // 5.2+ (when Flutter 3.4+ is on stable).
+  // ignore: deprecated_member_use
+  for (final FieldElement enumField in type.element.fields
       .where((FieldElement element) => element.isEnumConstant)) {
     buffer.writeln(
       '$enumName.${enumField.name}: ${escapeDartString(enumField.name.kebab)},',
