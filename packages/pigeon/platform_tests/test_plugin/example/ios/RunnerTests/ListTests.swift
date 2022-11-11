@@ -3,16 +3,16 @@
 // found in the LICENSE file.
 
 import XCTest
-@testable import Runner
+@testable import test_plugin
 
 class ListTests: XCTestCase {
-  
+
   func testListInList() throws {
     let inside = TestMessage(testList: [1, 2, 3])
     let top = TestMessage(testList: [inside])
     let binaryMessenger = EchoBinaryMessenger(codec: EchoApiCodec.shared)
     let api = EchoApi(binaryMessenger: binaryMessenger)
-    
+
     let expectation = XCTestExpectation(description: "callback")
     api.echo(msg: top) { result in
       XCTAssertEqual(1, result.testList?.count)
@@ -22,5 +22,5 @@ class ListTests: XCTestCase {
     }
     wait(for: [expectation], timeout: 1.0)
   }
-  
+
 }

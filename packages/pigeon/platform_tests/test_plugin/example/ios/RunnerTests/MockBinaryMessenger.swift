@@ -3,20 +3,20 @@
 // found in the LICENSE file.
 
 import Flutter
-@testable import Runner
+@testable import test_plugin
 
 class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
   let codec: FlutterMessageCodec
   var result: T?
   private(set) var handlers: [String: FlutterBinaryMessageHandler] = [:]
-  
+
   init(codec: FlutterMessageCodec) {
     self.codec = codec
     super.init()
   }
-  
+
   func send(onChannel channel: String, message: Data?) {}
-  
+
   func send(
     onChannel channel: String,
     message: Data?,
@@ -26,7 +26,7 @@ class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
       callback?(codec.encode(result))
     }
   }
-  
+
   func setMessageHandlerOnChannel(
     _ channel: String,
     binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
@@ -34,6 +34,6 @@ class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
     handlers[channel] = handler
     return .init(handlers.count)
   }
-  
+
   func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
 }

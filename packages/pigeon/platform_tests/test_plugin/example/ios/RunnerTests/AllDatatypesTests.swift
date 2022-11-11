@@ -3,17 +3,17 @@
 // found in the LICENSE file.
 
 import XCTest
-@testable import Runner
+@testable import test_plugin
 
 class AllDatatypesTests: XCTestCase {
-  
+
   func testAllNull() throws {
     let everything = Everything()
     let binaryMessenger = EchoBinaryMessenger(codec: FlutterEverythingCodec.shared)
     let api = FlutterEverything(binaryMessenger: binaryMessenger)
-    
+
     let expectation = XCTestExpectation(description: "callback")
-    
+
     api.echo(everything: everything) { result in
       XCTAssertNil(result.aBool)
       XCTAssertNil(result.anInt)
@@ -30,10 +30,10 @@ class AllDatatypesTests: XCTestCase {
       XCTAssertNil(result.mapWithObject)
       expectation.fulfill()
     }
-    
+
     wait(for: [expectation], timeout: 1.0)
   }
-  
+
   func testAllEquals() throws {
     let everything = Everything(
       aBool: false,
@@ -52,9 +52,9 @@ class AllDatatypesTests: XCTestCase {
     )
     let binaryMessenger = EchoBinaryMessenger(codec: FlutterEverythingCodec.shared)
     let api = FlutterEverything(binaryMessenger: binaryMessenger)
-    
+
     let expectation = XCTestExpectation(description: "callback")
-    
+
     api.echo(everything: everything) { result in
       XCTAssertEqual(result.aBool, everything.aBool)
       XCTAssertEqual(result.anInt, everything.anInt)
@@ -69,10 +69,10 @@ class AllDatatypesTests: XCTestCase {
       XCTAssertEqual(result.nestedList, everything.nestedList)
       XCTAssertEqual(result.mapWithAnnotations, everything.mapWithAnnotations)
       XCTAssert(equalsDictionary(result.mapWithObject, everything.mapWithObject))
-      
+
       expectation.fulfill()
     }
-    
+
     wait(for: [expectation], timeout: 1.0)
   }
 }
