@@ -115,7 +115,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
           indent.write('case (byte)${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
             indent.writeln(
-                'return ${customClass.name}.fromMap((Map<String, Object>) readValue(buffer));');
+                'return ${customClass.name}.fromList((ArrayList<ArrayList>) readValue(buffer));');
           });
         }
         indent.write('default:');
@@ -133,7 +133,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
         indent.scoped('{', '} else ', () {
           indent.writeln('stream.write(${customClass.enumeration});');
           indent.writeln(
-              'writeValue(stream, ((${customClass.name}) value).toMap());');
+              'writeValue(stream, ((${customClass.name}) value).toList());');
         });
       }
       indent.scoped('{', '}', () {
@@ -217,7 +217,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
           final String returnType = method.returnType.isVoid
               ? 'Void'
               : _javaTypeForDartType(method.returnType);
-          indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
+          indent.writeln('ArrayList wrapped = new ArrayList<>();');
           indent.write('try ');
           indent.scoped('{', '}', () {
             final List<String> methodArgument = <String>[];
@@ -260,11 +260,14 @@ void _writeHostApi(Indent indent, Api api, Root root) {
               indent.format('''
 Result<$returnType> $resultName = new Result<$returnType>() {
 \tpublic void success($returnType result) {
-\t\twrapped.put("${Keys.result}", $resultValue);
+\t\twrapped.add($resultValue);
 \t\treply.reply(wrapped);
 \t}
 \tpublic void error(Throwable error) {
-\t\twrapped.put("${Keys.error}", wrapError(error));
+\t\tArrayList<Object> wrappedError = wrapError(error);
+\t\twrapped.add(wrappedError.get(0));
+\t\twrapped.add(wrappedError.get(1));
+\t\twrapped.add(wrappedError.get(2));
 \t\treply.reply(wrapped);
 \t}
 };
@@ -277,16 +280,19 @@ Result<$returnType> $resultName = new Result<$returnType>() {
               indent.writeln('$call;');
             } else if (method.returnType.isVoid) {
               indent.writeln('$call;');
-              indent.writeln('wrapped.put("${Keys.result}", null);');
+              indent.writeln('wrapped.add(null);');
             } else {
               indent.writeln('$returnType output = $call;');
-              indent.writeln('wrapped.put("${Keys.result}", output);');
+              indent.writeln('wrapped.add(output);');
             }
           });
           indent.write('catch (Error | RuntimeException exception) ');
           indent.scoped('{', '}', () {
-            indent
-                .writeln('wrapped.put("${Keys.error}", wrapError(exception));');
+            indent.writeln(
+                'ArrayList<Object> wrappedError = wrapError(exception);');
+            indent.writeln('wrapped.add(wrappedError.get(0));');
+            indent.writeln('wrapped.add(wrappedError.get(1));');
+            indent.writeln('wrapped.add(wrappedError.get(2));');
             if (method.isAsynchronous) {
               indent.writeln('reply.reply(wrapped);');
             }
@@ -513,7 +519,7 @@ String _castObject(
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
   } else if (!hostDatatype.isBuiltin &&
       classes.map((Class x) => x.name).contains(field.type.baseName)) {
-    return '($varName == null) ? null : ${hostDatatype.datatype}.fromMap((Map)$varName)';
+    return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<ArrayList>)$varName)';
   } else {
     return '(${hostDatatype.datatype})$varName';
   }
@@ -615,10 +621,11 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       });
     }
 
-    void writeToMap() {
-      indent.write('@NonNull Map<String, Object> toMap() ');
+    void writeToList() {
+      indent.write('@NonNull ArrayList<ArrayList> toList() ');
       indent.scoped('{', '}', () {
-        indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
+        indent.writeln(
+            'ArrayList<Object> toListResult = new ArrayList<Object>();');
         for (final NamedType field in klass.fields) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
               field,
@@ -629,29 +636,37 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           final String fieldName = field.name;
           if (!hostDatatype.isBuiltin &&
               rootClassNameSet.contains(field.type.baseName)) {
-            toWriteValue = '($fieldName == null) ? null : $fieldName.toMap()';
+            toWriteValue = '($fieldName == null) ? null : $fieldName.toList()';
           } else if (!hostDatatype.isBuiltin &&
               rootEnumNameSet.contains(field.type.baseName)) {
             toWriteValue = '$fieldName == null ? null : $fieldName.index';
           } else {
             toWriteValue = field.name;
           }
-          indent.writeln('toMapResult.put("${field.name}", $toWriteValue);');
+          indent.writeln('toListResult.add($toWriteValue);');
         }
-        indent.writeln('return toMapResult;');
+        indent.writeln(
+            'ArrayList<ArrayList> wrapped = new ArrayList<ArrayList>();');
+        indent.writeln('wrapped.add(toListResult);');
+        indent.writeln('return wrapped;');
       });
     }
 
-    void writeFromMap() {
+    void writeFromList() {
       indent.write(
-          'static @NonNull ${klass.name} fromMap(@NonNull Map<String, Object> map) ');
+          'static @NonNull ${klass.name} fromList(@NonNull ArrayList<ArrayList> list) ');
       indent.scoped('{', '}', () {
         const String result = 'pigeonResult';
         indent.writeln('${klass.name} $result = new ${klass.name}();');
-        for (final NamedType field in klass.fields) {
+        indent.writeln('ArrayList<Object> unwrapped = list.get(0);');
+        indent.writeln('');
+        klass.fields
+            .toList()
+            .asMap()
+            .forEach((int index, final NamedType field) {
           final String fieldVariable = field.name;
           final String setter = _makeSetter(field);
-          indent.writeln('Object $fieldVariable = map.get("${field.name}");');
+          indent.writeln('Object $fieldVariable = unwrapped.get($index);');
           if (rootEnumNameSet.contains(field.type.baseName)) {
             indent.writeln(
                 '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName)});');
@@ -659,7 +674,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
             indent.writeln(
                 '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
           }
-        }
+        });
         indent.writeln('return $result;');
       });
     }
@@ -719,8 +734,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       }
 
       writeBuilder();
-      writeToMap();
-      writeFromMap();
+      writeToList();
+      writeFromList();
     });
   }
 
@@ -742,12 +757,12 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
   void writeWrapError() {
     indent.format('''
-@NonNull private static Map<String, Object> wrapError(@NonNull Throwable exception) {
-\tMap<String, Object> errorMap = new HashMap<>();
-\terrorMap.put("${Keys.errorMessage}", exception.toString());
-\terrorMap.put("${Keys.errorCode}", exception.getClass().getSimpleName());
-\terrorMap.put("${Keys.errorDetails}", "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
-\treturn errorMap;
+@NonNull private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
+\tArrayList<Object> errorList = new ArrayList<>();
+\terrorList.add(exception.toString());
+\terrorList.add(exception.getClass().getSimpleName());
+\terrorList.add("Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\treturn errorList;
 }''');
   }
 

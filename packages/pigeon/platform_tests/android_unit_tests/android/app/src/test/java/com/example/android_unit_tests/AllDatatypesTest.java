@@ -26,8 +26,8 @@ public class AllDatatypesTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList<Object> args =
-                  (ArrayList<Object>) FlutterEverything.getCodec().decodeMessage(message);
+              ArrayList args =
+                  (ArrayList) FlutterEverything.getCodec().decodeMessage(message);
               ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);
@@ -100,8 +100,8 @@ public class AllDatatypesTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList<Object> args =
-                  (ArrayList<Object>) FlutterEverything.getCodec().decodeMessage(message);
+              ArrayList args =
+                  (ArrayList) FlutterEverything.getCodec().decodeMessage(message);
               ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);
@@ -139,10 +139,14 @@ public class AllDatatypesTest {
   public void integerToLong() {
     Everything everything = new Everything();
     everything.setAnInt(123L);
-    Map<String, Object> map = everything.toMap();
-    assertTrue(map.containsKey("anInt"));
-    map.put("anInt", 123);
-    Everything readEverything = Everything.fromMap(map);
+    ArrayList<ArrayList> list = everything.toList();
+    assertNotNull(list);
+    ArrayList unwrapped = list.get(0);
+    assertNotNull(unwrapped);
+    assertNull(unwrapped.get(0));
+    assertNotNull(unwrapped.get(1));
+    // list.add(1, 123);
+    Everything readEverything = Everything.fromList(list);
     assertEquals(readEverything.getAnInt(), everything.getAnInt());
   }
 }
