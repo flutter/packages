@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <Flutter/Flutter.h>
-#import <XCTest/XCTest.h>
-#import <alternate_language_test_plugin/enum.gen.h>
+@import Flutter;
+@import XCTest;
+
+@import alternate_language_test_plugin;
 
 #import "EchoMessenger.h"
 
