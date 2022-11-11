@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package com.example.android_kotlin_unit_tests
+package com.example.test_plugin
 
 import io.flutter.plugin.common.BinaryMessenger
 import io.mockk.every
@@ -11,27 +11,25 @@ import io.mockk.slot
 import io.mockk.verify
 import junit.framework.TestCase
 import org.junit.Test
-import java.nio.ByteBuffer
-import java.util.ArrayList
 
-internal class EnumTest: TestCase() {
+class NullableReturnsTest: TestCase() {
     @Test
-    fun testEchoHost() {
-        val binaryMessenger = mockk<BinaryMessenger>()
-        val api = mockk<EnumApi2Host>()
+    fun testNullableParameterHost() {
+        val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
+        val api = mockk<NullableReturnHostApi>(relaxed = true)
 
-        val channelName = "dev.flutter.pigeon.EnumApi2Host.echo"
-        val input = DataWithEnum(EnumState.SUCCESS)
+        val output = 1L
 
+        val channelName = "dev.flutter.pigeon.NullableReturnHostApi.doit"
         val handlerSlot = slot<BinaryMessenger.BinaryMessageHandler>()
 
         every { binaryMessenger.setMessageHandler(channelName, capture(handlerSlot)) } returns Unit
-        every { api.echo(any()) } returnsArgument 0
+        every { api.doit() } returns output
 
-        EnumApi2Host.setUp(binaryMessenger, api)
+        NullableReturnHostApi.setUp(binaryMessenger, api)
 
-        val codec = EnumApi2Host.codec
-        val message = codec.encodeMessage(listOf(input))
+        val codec = PrimitiveHostApi.codec
+        val message = codec.encodeMessage(null)
         message?.rewind()
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
@@ -39,37 +37,33 @@ internal class EnumTest: TestCase() {
             val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertTrue(wrapped.containsKey("result"))
-                assertEquals(input, wrapped["result"])
+                assertEquals(output, wrapped["result"])
             }
         }
 
         verify { binaryMessenger.setMessageHandler(channelName, handlerSlot.captured) }
-        verify { api.echo(input) }
+        verify { api.doit() }
     }
 
     @Test
-    fun testEchoFlutter() {
+    fun testNullableParameterFlutter() {
         val binaryMessenger = mockk<BinaryMessenger>()
-        val api = EnumApi2Flutter(binaryMessenger)
+        val api = NullableReturnFlutterApi(binaryMessenger)
 
-        val input = DataWithEnum(EnumState.SUCCESS)
+        val output = 12L
 
         every { binaryMessenger.send(any(), any(), any()) } answers {
-            val codec = EnumApi2Flutter.codec
-            val message = arg<ByteBuffer>(1)
+            val codec = NullableReturnFlutterApi.codec
             val reply = arg<BinaryMessenger.BinaryReply>(2)
-            message.position(0)
-            val args = codec.decodeMessage(message) as ArrayList<*>
-            val replyData = codec.encodeMessage(args[0])
+            val replyData = codec.encodeMessage(output)
             replyData?.position(0)
             reply.reply(replyData)
         }
 
         var didCall = false
-        api.echo(input) {
+        api.doit {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(output, it)
         }
 
         assertTrue(didCall)

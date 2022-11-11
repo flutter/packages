@@ -27,6 +27,8 @@ import 'package:meta/meta.dart';
 const String _testFlag = 'test';
 const String _listFlag = 'list';
 
+const String testPluginRelativePath = 'platform_tests/test_plugin';
+
 @immutable
 class _TestInfo {
   const _TestInfo({required this.function, this.description});
@@ -100,8 +102,10 @@ Future<int> _runAndroidUnitTests() async {
 }
 
 Future<int> _runAndroidKotlinUnitTests() async {
-  const String androidKotlinUnitTestsPath =
-      './platform_tests/android_kotlin_unit_tests';
+  const String androidKotlinUnitTestsPath = './$testPluginRelativePath';
+  // TODO(stuartmorgan): Move generation to a separate script in tool/ that can
+  // easily be run manually as well (e.g., to look at generated code without
+  // running tests, or to update generated code when running tests in an IDE).
   const List<String> tests = <String>[
     'all_datatypes',
     'all_void',
@@ -129,18 +133,19 @@ Future<int> _runAndroidKotlinUnitTests() async {
     generateCode = await _runPigeon(
       input: './pigeons/$test.dart',
       kotlinOut:
-          '$androidKotlinUnitTestsPath/android/app/src/main/kotlin/com/example/android_kotlin_unit_tests/${snakeToPascalCase(test)}.kt',
-      kotlinPackage: 'com.example.android_kotlin_unit_tests',
+          '$androidKotlinUnitTestsPath/android/src/main/kotlin/com/example/test_plugin/${snakeToPascalCase(test)}.kt',
+      kotlinPackage: 'com.example.test_plugin',
     );
     if (generateCode != 0) {
       return generateCode;
     }
   }
 
+  const String examplePath = '$androidKotlinUnitTestsPath/example';
   final Process gradlewExists = await _streamOutput(Process.start(
     './gradlew',
     <String>[],
-    workingDirectory: '$androidKotlinUnitTestsPath/android',
+    workingDirectory: '$examplePath/android',
     runInShell: true,
   ));
   final int gradlewExistsCode = await gradlewExists.exitCode;
@@ -148,7 +153,7 @@ Future<int> _runAndroidKotlinUnitTests() async {
     final Process compile = await _streamOutput(Process.start(
       'flutter',
       <String>['build', 'apk', '--debug'],
-      workingDirectory: androidKotlinUnitTestsPath,
+      workingDirectory: examplePath,
       runInShell: true,
     ));
     final int compileCode = await compile.exitCode;
@@ -160,9 +165,9 @@ Future<int> _runAndroidKotlinUnitTests() async {
   final Process run = await _streamOutput(Process.start(
     './gradlew',
     <String>[
-      'test',
+      'testDebugUnitTest',
     ],
-    workingDirectory: '$androidKotlinUnitTestsPath/android',
+    workingDirectory: '$examplePath/android',
   ));
 
   return run.exitCode;
