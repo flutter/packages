@@ -4,8 +4,9 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+#import <alternate_language_test_plugin/enum.gen.h>
+
 #import "EchoMessenger.h"
-#import "enum.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface EnumTest : XCTestCase

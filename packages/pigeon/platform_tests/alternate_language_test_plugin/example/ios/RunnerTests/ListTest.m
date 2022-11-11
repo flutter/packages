@@ -4,8 +4,9 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+#import <alternate_language_test_plugin/list.gen.h>
+
 #import "EchoMessenger.h"
-#import "list.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface ListTest : XCTestCase

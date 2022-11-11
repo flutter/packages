@@ -4,8 +4,9 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+#import <alternate_language_test_plugin/null_fields.gen.h>
+
 #import "EchoMessenger.h"
-#import "null_fields.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface NullFieldsSearchRequest ()
