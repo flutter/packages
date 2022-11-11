@@ -5,23 +5,16 @@
 package com.example.alternate_language_test_plugin;
 
 import androidx.annotation.NonNull;
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
 
 /**
- * This plugin is currently a no-op since only unit tests have been set up.
- * In the future, this will register Pigeon APIs used in integration tests.
+ * This plugin is currently a no-op since only unit tests have been set up. In the future, this will
+ * register Pigeon APIs used in integration tests.
  */
 public class AlternateLanguageTestPlugin implements FlutterPlugin {
   @Override
-  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-  }
+  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {}
 
   @Override
-  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-  }
+  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {}
 }
