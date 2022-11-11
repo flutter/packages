@@ -51,6 +51,8 @@ void main() {
     result = MigrateResult.empty();
     final MigrateLogger migrateLogger = MigrateLogger(logger: logger);
     migrateLogger.start();
+    environment =
+        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(processManager, logger);
     context = MigrateContext(
       flutterProject: flutterProject,
       skippedPrefixes: <String>{},
@@ -59,13 +61,12 @@ void main() {
       fileSystem: fileSystem,
       migrateLogger: migrateLogger,
       migrateUtils: utils,
+      environment: environment,
     );
     targetFlutterDirectory =
         createResolvedTempDirectorySync('targetFlutterDir.');
     newerTargetFlutterDirectory =
         createResolvedTempDirectorySync('newerTargetFlutterDir.');
-    environment =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(processManager, logger);
     await context.migrateUtils
         .cloneFlutter(oldSdkRevision, targetFlutterDirectory.absolute.path);
     await context.migrateUtils.cloneFlutter(
@@ -244,6 +245,7 @@ void main() {
         fileSystem: fileSystem,
         migrateLogger: migrateLogger,
         migrateUtils: utils,
+        environment: environment,
       );
     });
 

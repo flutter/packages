@@ -6,7 +6,6 @@ import 'base/common.dart';
 import 'base/file_system.dart';
 import 'base/logger.dart';
 import 'base/project.dart';
-import 'base/terminal.dart';
 import 'custom_merge.dart';
 import 'environment.dart';
 import 'flutter_project_metadata.dart';
@@ -89,6 +88,22 @@ bool _skippedMerge(String localPath) {
   return false;
 }
 
+// Compile the set of path prefixes that should be ignored as configured
+// in the command arguments.
+Set<String> _getSkippedPrefixes(List<SupportedPlatform?> platforms) {
+  final Set<String> skippedPrefixes = <String>{};
+  for (final SupportedPlatform platform in SupportedPlatform.values) {
+    skippedPrefixes.add(platformToSubdirectoryPrefix(platform));
+  }
+  for (final SupportedPlatform? platform in platforms) {
+    if (platform != null) {
+      skippedPrefixes.remove(platformToSubdirectoryPrefix(platform));
+    }
+  }
+  skippedPrefixes.remove(null);
+  return skippedPrefixes;
+}
+
 /// Data class holds the common context that is used throughout the steps of a migrate computation.
 class MigrateContext {
   MigrateContext({
@@ -99,6 +114,7 @@ class MigrateContext {
     required this.fileSystem,
     required this.migrateLogger,
     required this.migrateUtils,
+    required this.environment,
     this.baseProject,
     this.targetProject,
   });
@@ -110,6 +126,7 @@ class MigrateContext {
   final FileSystem fileSystem;
   final MigrateLogger migrateLogger;
   final MigrateUtils migrateUtils;
+  final FlutterToolsEnvironment environment;
 
   MigrateBaseFlutterProject? baseProject;
   MigrateTargetFlutterProject? targetProject;
@@ -138,6 +155,29 @@ String platformToSubdirectoryPrefix(SupportedPlatform platform) {
   }
 }
 
+class MigrateCommandParameters {
+  MigrateCommandParameters({
+    this.baseAppPath,
+    this.targetAppPath,
+    this.baseRevision,
+    this.targetRevision,
+    this.preferTwoWayMerge = false,
+    this.verbose = false,
+    this.allowFallbackBaseRevision = false,
+    this.deleteTempDirectories = true,
+    this.platforms,
+  });
+  final String? baseAppPath;
+  final String? targetAppPath;
+  final String? baseRevision;
+  final String? targetRevision;
+  final bool preferTwoWayMerge;
+  final bool verbose;
+  final bool allowFallbackBaseRevision;
+  final bool deleteTempDirectories;
+  final List<SupportedPlatform?>? platforms;
+}
+
 /// Computes the changes that migrates the current flutter project to the target revision.
 ///
 /// This is the entry point to the core migration computations.
@@ -162,16 +202,8 @@ String platformToSubdirectoryPrefix(SupportedPlatform platform) {
 ///
 /// Structure: This method builds upon a MigrateResult instance
 Future<MigrateResult?> computeMigration({
-  bool verbose = false,
   FlutterProject? flutterProject,
-  String? baseAppPath,
-  String? targetAppPath,
-  String? baseRevision,
-  String? targetRevision,
-  bool deleteTempDirectories = true,
-  List<SupportedPlatform?>? platforms,
-  bool preferTwoWayMerge = false,
-  bool allowFallbackBaseRevision = false,
+  required MigrateCommandParameters commandParameters,
   required FileSystem fileSystem,
   required Logger logger,
   required MigrateUtils migrateUtils,
@@ -181,44 +213,35 @@ Future<MigrateResult?> computeMigration({
 
   final MigrateLogger migrateLogger = MigrateLogger(logger: logger);
   migrateLogger.logStep('start');
-
-  migrateLogger.logStep('revisions');
   // Find the path prefixes to ignore. This allows subdirectories of platforms
   // not part of the migration to be skipped.
-  platforms ??= flutterProject.getSupportedPlatforms();
-  final Set<String> skippedPrefixes = <String>{};
-  for (final SupportedPlatform platform in SupportedPlatform.values) {
-    skippedPrefixes.add(platformToSubdirectoryPrefix(platform));
-  }
-  for (final SupportedPlatform? platform in platforms) {
-    if (platform != null) {
-      skippedPrefixes.remove(platformToSubdirectoryPrefix(platform));
-    }
-  }
-  skippedPrefixes.remove(null);
+  final List<SupportedPlatform?> platforms = commandParameters.platforms ?? flutterProject.getSupportedPlatforms();
+  final Set<String> skippedPrefixes = _getSkippedPrefixes(platforms);
 
   final MigrateResult result = MigrateResult.empty();
   final MigrateContext context = MigrateContext(
     flutterProject: flutterProject,
     skippedPrefixes: skippedPrefixes,
     logger: logger,
-    verbose: verbose,
+    verbose: commandParameters.verbose,
     migrateLogger: migrateLogger,
     fileSystem: fileSystem,
     migrateUtils: migrateUtils,
+    environment: environment,
   );
 
+  migrateLogger.logStep('revisions');
   final MigrateRevisions revisionConfig = MigrateRevisions(
     context: context,
-    baseRevision: baseRevision,
-    allowFallbackBaseRevision: allowFallbackBaseRevision,
+    baseRevision: commandParameters.baseRevision,
+    allowFallbackBaseRevision: commandParameters.allowFallbackBaseRevision,
     platforms: platforms,
     environment: environment,
   );
 
-  // Extract the files/paths that should be ignored by the migrate tool.
+  // Extract the unamanged files/paths that should be ignored by the migrate tool.
   // These paths are absolute paths.
-  if (verbose) {
+  if (commandParameters.verbose) {
     migrateLogger.logStep('unmanaged');
   }
   final List<String> unmanagedFiles = <String>[];
@@ -231,115 +254,31 @@ Future<MigrateResult?> computeMigration({
       unmanagedFiles.add(fileSystem.path.join(basePath, localPath));
     }
   }
+
   migrateLogger.logStep('generating_base');
-
   // Generate the base templates
-  final bool customBaseProjectDir = baseAppPath != null;
-  final bool customTargetProjectDir = targetAppPath != null;
-  Directory? baseProjectDir;
-  Directory? targetProjectDir;
-  if (customBaseProjectDir) {
-    baseProjectDir = fileSystem.directory(baseAppPath);
-  } else {
-    baseProjectDir =
-        fileSystem.systemTempDirectory.createTempSync('baseProject');
-    if (verbose) {
-      logger.printStatus('Created temporary directory: ${baseProjectDir.path}',
-          indent: 2, color: TerminalColor.grey);
-    }
-  }
-  if (customTargetProjectDir) {
-    targetProjectDir = fileSystem.directory(targetAppPath);
-  } else {
-    targetProjectDir =
-        fileSystem.systemTempDirectory.createTempSync('targetProject');
-    if (verbose) {
-      logger.printStatus(
-          'Created temporary directory: ${targetProjectDir.path}',
-          indent: 2,
-          color: TerminalColor.grey);
-    }
-  }
-  result.generatedBaseTemplateDirectory = baseProjectDir;
-  result.generatedTargetTemplateDirectory = targetProjectDir;
-
-  await migrateUtils.gitInit(
-      result.generatedBaseTemplateDirectory!.absolute.path);
-  await migrateUtils.gitInit(
-      result.generatedTargetTemplateDirectory!.absolute.path);
-
-  final String name = environment['FlutterProject.manifest.appname']! as String;
-  final String androidLanguage =
-      environment['FlutterProject.android.isKotlin']! as bool
-          ? 'kotlin'
-          : 'java';
-  final String iosLanguage =
-      environment['FlutterProject.ios.isSwift']! as bool ? 'swift' : 'objc';
-
-  final Directory targetFlutterDirectory =
-      fileSystem.directory(environment.getString('Cache.flutterRoot'));
-
-  // Create the base reference vanilla app.
-  //
-  // This step clones the base flutter sdk, and uses it to create a new vanilla app.
-  // The vanilla base app is used as part of a 3 way merge between the base app, target
-  // app, and the current user-owned app.
-  final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
-    path: baseAppPath,
-    directory: baseProjectDir,
-    name: name,
-    androidLanguage: androidLanguage,
-    iosLanguage: iosLanguage,
-    platformWhitelist: platforms,
+  final ReferenceProjects referenceProjects = await _generateBaseAndTargetReferenceProjects(
+    context: context,
+    result: result,
+    revisionConfig: revisionConfig,
+    platforms: platforms,
+    commandParameters: commandParameters,
   );
-  context.baseProject = baseProject;
-  await baseProject.createProject(
-    context,
-    result,
-    revisionConfig.revisionsList,
-    revisionConfig.revisionToConfigs,
-    baseRevision ??
-        revisionConfig.metadataRevision ??
-        _getFallbackBaseRevision(
-            allowFallbackBaseRevision, verbose, migrateLogger),
-    revisionConfig.targetRevision,
-    targetFlutterDirectory,
-  );
-
-  // Create target reference app when not provided.
-  //
-  // This step directly calls flutter create with the target (the current installed revision)
-  // flutter sdk.
-  final MigrateTargetFlutterProject targetProject = MigrateTargetFlutterProject(
-    path: targetAppPath,
-    directory: targetProjectDir,
-    name: name,
-    androidLanguage: androidLanguage,
-    iosLanguage: iosLanguage,
-    platformWhitelist: platforms,
-  );
-  context.targetProject = targetProject;
-  await targetProject.createProject(
-    context,
-    result,
-    revisionConfig.targetRevision,
-    targetFlutterDirectory,
-  );
-
-  await migrateUtils.gitInit(flutterProject.directory.absolute.path);
+  result.generatedBaseTemplateDirectory = referenceProjects.baseProject.directory;
+  result.generatedTargetTemplateDirectory = referenceProjects.targetProject.directory;
 
   // Generate diffs. These diffs are used to determine if a file is newly added, needs merging,
   // or deleted (rare). Only files with diffs between the base and target revisions need to be
   // migrated. If files are unchanged between base and target, then there are no changes to merge.
   migrateLogger.logStep('diff');
   result.diffMap
-      .addAll(await baseProject.diff(context, targetProject));
+      .addAll(await referenceProjects.baseProject.diff(context, referenceProjects.targetProject));
 
   // Check for any new files that were added in the target reference app that did not
   // exist in the base reference app.
   migrateLogger.logStep('new_files');
   result.addedFiles
-      .addAll(await baseProject.newlyAddedFiles(context, result, targetProject));
+      .addAll(await referenceProjects.baseProject.newlyAddedFiles(context, result, referenceProjects.targetProject));
 
   // Merge any base->target changed files with the version in the developer's project.
   // Files that the developer left unchanged are fully updated to match the target reference.
@@ -348,28 +287,20 @@ Future<MigrateResult?> computeMigration({
   await MigrateFlutterProject.merge(
     context,
     result,
-    baseProject,
-    targetProject,
+    referenceProjects.baseProject,
+    referenceProjects.targetProject,
     unmanagedFiles,
     unmanagedDirectories,
-    preferTwoWayMerge,
+    commandParameters.preferTwoWayMerge,
   );
 
   // Clean up any temp directories generated by this tool.
   migrateLogger.logStep('cleaning');
-  if (deleteTempDirectories) {
-    // Don't delete user-provided directories
-    if (!customBaseProjectDir) {
-      result.tempDirectories
-          .add(result.generatedBaseTemplateDirectory!);
-    }
-    if (!customTargetProjectDir) {
-      result.tempDirectories
-          .add(result.generatedTargetTemplateDirectory!);
-    }
-    result.tempDirectories
-        .addAll(result.sdkDirs.values);
-  }
+  _registerTempDirectoriesForCleaning(
+    commandParameters: commandParameters,
+    result: result,
+    referenceProjects: referenceProjects
+  );
   migrateLogger.stop();
   return result;
 }
@@ -400,6 +331,147 @@ String _getFallbackBaseRevision(bool allowFallbackBaseRevision, bool verbose,
     migrateLogger.logStep('fallback');
   }
   return '5391447fae6209bb21a89e6a5a6583cac1af9b4b';
+}
+
+class ReferenceProjects {
+  ReferenceProjects({
+    required this.baseProject,
+    required this.targetProject,
+    required this.customBaseProjectDir,
+    required this.customTargetProjectDir,
+  });
+
+  MigrateBaseFlutterProject baseProject;
+  MigrateTargetFlutterProject targetProject;
+
+  // Whether a user provided base and target projects were provided.
+  bool customBaseProjectDir;
+  bool customTargetProjectDir;
+}
+
+// Generate the base templates
+Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
+  required MigrateContext context,
+  required MigrateResult result,
+  required MigrateRevisions revisionConfig,
+  required List<SupportedPlatform?> platforms,
+  required MigrateCommandParameters commandParameters,
+}) async {
+  // Use user-provided projects if provided, if not, generate them internally.
+  final bool customBaseProjectDir = commandParameters.baseAppPath != null;
+  final bool customTargetProjectDir = commandParameters.targetAppPath != null;
+  Directory? baseProjectDir;
+  Directory? targetProjectDir;
+  if (customBaseProjectDir) {
+    baseProjectDir = context.fileSystem.directory(commandParameters.baseAppPath);
+  } else {
+    baseProjectDir =
+        context.fileSystem.systemTempDirectory.createTempSync('baseProject');
+    if (context.verbose) {
+      context.migrateLogger.printStatus('Created temporary directory: ${baseProjectDir.path}');
+    }
+  }
+  if (customTargetProjectDir) {
+    targetProjectDir = context.fileSystem.directory(commandParameters.targetAppPath);
+  } else {
+    targetProjectDir =
+        context.fileSystem.systemTempDirectory.createTempSync('targetProject');
+    if (context.verbose) {
+      context.migrateLogger.printStatus(
+          'Created temporary directory: ${targetProjectDir.path}');
+    }
+  }
+
+  // Git init to enable running further git commands on the reference projects.
+  await context.migrateUtils.gitInit(
+      baseProjectDir.absolute.path);
+  await context.migrateUtils.gitInit(
+      targetProjectDir.absolute.path);
+
+  final String name = context.environment['FlutterProject.manifest.appname']! as String;
+  final String androidLanguage =
+      context.environment['FlutterProject.android.isKotlin']! as bool
+          ? 'kotlin'
+          : 'java';
+  final String iosLanguage =
+      context.environment['FlutterProject.ios.isSwift']! as bool ? 'swift' : 'objc';
+
+  final Directory targetFlutterDirectory =
+      context.fileSystem.directory(context.environment.getString('Cache.flutterRoot'));
+
+  // Create the base reference vanilla app.
+  //
+  // This step clones the base flutter sdk, and uses it to create a new vanilla app.
+  // The vanilla base app is used as part of a 3 way merge between the base app, target
+  // app, and the current user-owned app.
+  final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
+    path: commandParameters.baseAppPath,
+    directory: baseProjectDir,
+    name: name,
+    androidLanguage: androidLanguage,
+    iosLanguage: iosLanguage,
+    platformWhitelist: platforms,
+  );
+  context.baseProject = baseProject;
+  await baseProject.createProject(
+    context,
+    result,
+    revisionConfig.revisionsList,
+    revisionConfig.revisionToConfigs,
+    commandParameters.baseRevision ??
+        revisionConfig.metadataRevision ??
+        _getFallbackBaseRevision(
+            commandParameters.allowFallbackBaseRevision, commandParameters.verbose, context.migrateLogger),
+    revisionConfig.targetRevision,
+    targetFlutterDirectory,
+  );
+
+  // Create target reference app when not provided.
+  //
+  // This step directly calls flutter create with the target (the current installed revision)
+  // flutter sdk.
+  final MigrateTargetFlutterProject targetProject = MigrateTargetFlutterProject(
+    path: commandParameters.targetAppPath,
+    directory: targetProjectDir,
+    name: name,
+    androidLanguage: androidLanguage,
+    iosLanguage: iosLanguage,
+    platformWhitelist: platforms,
+  );
+  context.targetProject = targetProject;
+  await targetProject.createProject(
+    context,
+    result,
+    revisionConfig.targetRevision,
+    targetFlutterDirectory,
+  );
+
+  return ReferenceProjects(
+    baseProject: baseProject,
+    targetProject: targetProject,
+    customBaseProjectDir: customBaseProjectDir,
+    customTargetProjectDir: customTargetProjectDir,
+  );
+}
+
+void _registerTempDirectoriesForCleaning({
+  required MigrateCommandParameters commandParameters,
+  required MigrateResult result,
+  required ReferenceProjects referenceProjects,
+}) {
+  if (commandParameters.deleteTempDirectories) {
+    // Don't delete user-provided directories
+    if (!referenceProjects.customBaseProjectDir) {
+      result.tempDirectories
+          .add(result.generatedBaseTemplateDirectory!);
+    }
+    if (!referenceProjects.customTargetProjectDir) {
+      result.tempDirectories
+          .add(result.generatedTargetTemplateDirectory!);
+    }
+    result.tempDirectories
+        .addAll(result.sdkDirs.values);
+  }
 }
 
 /// A reference flutter project.
