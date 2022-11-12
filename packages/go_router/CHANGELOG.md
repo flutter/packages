@@ -1,6 +1,6 @@
 ## 5.1.6
 
-- Fixes `parentNavigatorKey` not working with multiple nested `GoRoute` in `ShellRoute`.
+- Fixes crashes when multiple `GoRoute`s use the same `parentNavigatorKey` in a route subtree.
 
 ## 5.1.5
 
