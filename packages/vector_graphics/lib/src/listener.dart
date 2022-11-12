@@ -3,9 +3,9 @@
 // found in the LICENSE file.
 
 import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'loader.dart';
@@ -18,13 +18,13 @@ class PictureInfo {
   PictureInfo._(this.picture, this.size);
 
   /// A picture generated from a vector graphics image.
-  final ui.Picture picture;
+  final Picture picture;
 
   /// The target size of the picture.
   ///
   /// This information should be used to scale and position
   /// the picture based on the available space and alignment.
-  final ui.Size size;
+  final Size size;
 }
 
 /// Internal testing only.
@@ -37,7 +37,7 @@ Locale? _debugLastLocale;
 TextDirection? get debugLastTextDirection => _debugLastTextDirection;
 TextDirection? _debugLastTextDirection;
 
-/// Decode a vector graphics binary asset into a [ui.Picture].
+/// Decode a vector graphics binary asset into a [Picture].
 ///
 /// Throws a [StateError] if the data is invalid.
 Future<PictureInfo> decodeVectorGraphics(
@@ -46,7 +46,7 @@ Future<PictureInfo> decodeVectorGraphics(
   required TextDirection? textDirection,
   required bool clipViewbox,
   required BytesLoader loader,
-}) async {
+}) {
   try {
     assert(() {
       _debugLastTextDirection = textDirection;
@@ -61,13 +61,14 @@ Future<PictureInfo> decodeVectorGraphics(
     );
     DecodeResponse response = _codec.decode(data, listener);
     if (response.complete) {
-      return listener.toPicture();
+      return SynchronousFuture<PictureInfo>(listener.toPicture());
     }
-    await listener.waitForImageDecode();
-    response = _codec.decode(data, listener, response: response);
-    assert(response.complete);
+    return listener.waitForImageDecode().then((_) {
+      response = _codec.decode(data, listener, response: response);
+      assert(response.complete);
 
-    return listener.toPicture();
+      return listener.toPicture();
+    });
   } catch (e) {
     throw VectorGraphicsDecodeException._(loader, e);
   }
@@ -99,13 +100,13 @@ class _PatternConfig {
 /// Pattern state that holds information about how to construct the pattern.
 class _PatternState {
   /// The canvas that the element should draw to for a given [PatternConfig].
-  ui.Canvas? canvas;
+  Canvas? canvas;
 
   /// The image shader created by the pattern.
-  ui.ImageShader? shader;
+  ImageShader? shader;
 
   /// The recorder that will capture the newly created canvas.
-  ui.PictureRecorder? recorder;
+  PictureRecorder? recorder;
 }
 
 /// Used by [FlutterVectorGraphicsListener] for testing purposes.
@@ -115,24 +116,24 @@ abstract class PictureFactory {
   const PictureFactory();
 
   /// Create a picture recorder.
-  ui.PictureRecorder createPictureRecorder();
+  PictureRecorder createPictureRecorder();
 
   /// Create a canvas from the recorder.
-  ui.Canvas createCanvas(ui.PictureRecorder recorder);
+  Canvas createCanvas(PictureRecorder recorder);
 }
 
 class _DefaultPictureFactory implements PictureFactory {
   const _DefaultPictureFactory();
 
   @override
-  ui.Canvas createCanvas(ui.PictureRecorder recorder) => ui.Canvas(recorder);
+  Canvas createCanvas(PictureRecorder recorder) => Canvas(recorder);
 
   @override
-  ui.PictureRecorder createPictureRecorder() => ui.PictureRecorder();
+  PictureRecorder createPictureRecorder() => PictureRecorder();
 }
 
 /// A listener implementation for the vector graphics codec that converts the
-/// format into a [ui.Picture].
+/// format into a [Picture].
 class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   /// Create a new [FlutterVectorGraphicsListener].
   ///
@@ -145,7 +146,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     @visibleForTesting
         PictureFactory pictureFactory = const _DefaultPictureFactory(),
   }) {
-    final ui.PictureRecorder recorder = pictureFactory.createPictureRecorder();
+    final PictureRecorder recorder = pictureFactory.createPictureRecorder();
     return FlutterVectorGraphicsListener._(
       pictureFactory,
       recorder,
@@ -171,33 +172,33 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   final TextDirection? _textDirection;
   final bool _clipViewbox;
 
-  final ui.PictureRecorder _recorder;
-  final ui.Canvas _canvas;
+  final PictureRecorder _recorder;
+  final Canvas _canvas;
 
-  final List<ui.Paint> _paints = <ui.Paint>[];
-  final List<ui.Path> _paths = <ui.Path>[];
-  final List<ui.Shader> _shaders = <ui.Shader>[];
+  final List<Paint> _paints = <Paint>[];
+  final List<Path> _paths = <Path>[];
+  final List<Shader> _shaders = <Shader>[];
   final List<_TextConfig> _textConfig = <_TextConfig>[];
-  final List<Future<ui.Image>> _pendingImages = <Future<ui.Image>>[];
-  final Map<int, ui.Image> _images = <int, ui.Image>{};
+  final List<Future<Image>> _pendingImages = <Future<Image>>[];
+  final Map<int, Image> _images = <int, Image>{};
   final Map<int, _PatternState> _patterns = <int, _PatternState>{};
-  ui.Path? _currentPath;
-  ui.Size _size = ui.Size.zero;
+  Path? _currentPath;
+  Size _size = Size.zero;
   bool _done = false;
 
   _PatternConfig? _currentPattern;
 
-  static final ui.Paint _emptyPaint = ui.Paint();
-  static final ui.Paint _grayscaleDstInPaint = ui.Paint()
-    ..blendMode = ui.BlendMode.dstIn
-    ..colorFilter = const ui.ColorFilter.matrix(<double>[
+  static final Paint _emptyPaint = Paint();
+  static final Paint _grayscaleDstInPaint = Paint()
+    ..blendMode = BlendMode.dstIn
+    ..colorFilter = const ColorFilter.matrix(<double>[
       0, 0, 0, 0, 0, //
       0, 0, 0, 0, 0,
       0, 0, 0, 0, 0,
       0.2126, 0.7152, 0.0722, 0, 0,
     ]); //convert to grayscale (https://www.w3.org/Graphics/Color/sRGB) and use them as transparency
 
-  /// Convert the vector graphics asset this listener decoded into a [ui.Picture].
+  /// Convert the vector graphics asset this listener decoded into a [Picture].
   ///
   /// This method can only be called once for a given listener instance.
   PictureInfo toPicture() {
@@ -206,7 +207,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     try {
       return PictureInfo._(_recorder.endRecording(), _size);
     } finally {
-      for (final ui.Image image in _images.values) {
+      for (final Image image in _images.values) {
         image.dispose();
       }
       _images.clear();
@@ -225,8 +226,8 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawPath(int pathId, int? paintId, int? patternId) async {
-    final ui.Path path = _paths[pathId];
-    ui.Paint? paint;
+    final Path path = _paths[pathId];
+    Paint? paint;
     if (paintId != null) {
       paint = _paints[paintId];
     }
@@ -234,7 +235,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       if (paintId != null) {
         paint!.shader = _patterns[patternId]!.shader;
       } else {
-        final ui.Paint newPaint = ui.Paint();
+        final Paint newPaint = Paint();
         newPaint.shader = _patterns[patternId]!.shader;
         paint = newPaint;
       }
@@ -250,18 +251,18 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawVertices(Float32List vertices, Uint16List? indices, int? paintId) {
-    final ui.Vertices vertexData = ui.Vertices.raw(
-      ui.VertexMode.triangles,
+    final Vertices vertexData = Vertices.raw(
+      VertexMode.triangles,
       vertices,
       indices: indices,
     );
-    ui.Paint? paint;
+    Paint? paint;
     if (paintId != null) {
       paint = _paints[paintId];
     }
     _canvas.drawVertices(
       vertexData,
-      ui.BlendMode.srcOver,
+      BlendMode.srcOver,
       paint ?? _emptyPaint,
     );
     vertexData.dispose();
@@ -280,9 +281,9 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     required int? shaderId,
   }) {
     assert(_paints.length == id, 'Expect ID to be ${_paints.length}');
-    final ui.Paint paint = ui.Paint()..color = ui.Color(color);
+    final Paint paint = Paint()..color = Color(color);
     if (blendMode != 0) {
-      paint.blendMode = ui.BlendMode.values[blendMode];
+      paint.blendMode = BlendMode.values[blendMode];
     }
 
     if (shaderId != null) {
@@ -290,12 +291,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     }
 
     if (paintStyle == 1) {
-      paint.style = ui.PaintingStyle.stroke;
+      paint.style = PaintingStyle.stroke;
       if (strokeCap != null && strokeCap != 0) {
-        paint.strokeCap = ui.StrokeCap.values[strokeCap];
+        paint.strokeCap = StrokeCap.values[strokeCap];
       }
       if (strokeJoin != null && strokeJoin != 0) {
-        paint.strokeJoin = ui.StrokeJoin.values[strokeJoin];
+        paint.strokeJoin = StrokeJoin.values[strokeJoin];
       }
       if (strokeMiterLimit != null && strokeMiterLimit != 4.0) {
         paint.strokeMiterLimit = strokeMiterLimit;
@@ -339,8 +340,8 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     assert(_currentPath == null);
     assert(_paths.length == id, 'Expected Id to be $id');
 
-    final ui.Path path = ui.Path();
-    path.fillType = ui.PathFillType.values[fillType];
+    final Path path = Path();
+    path.fillType = PathFillType.values[fillType];
     _paths.add(path);
     _currentPath = path;
   }
@@ -378,15 +379,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     assert(_currentPattern == null);
     _currentPattern = _PatternConfig(patternId, width, height, transform);
     _patterns[patternId]!.recorder = _pictureFactory.createPictureRecorder();
-    final ui.Canvas newCanvas =
+    final Canvas newCanvas =
         _pictureFactory.createCanvas(_patterns[patternId]!.recorder!);
-    newCanvas.clipRect(ui.Offset(x, y) & ui.Size(width, height));
+    newCanvas.clipRect(Offset(x, y) & Size(width, height));
     _patterns[patternId]!.canvas = newCanvas;
   }
 
   /// Creates ImageShader for active pattern.
   void onPatternFinished(_PatternConfig? currentPattern,
-      ui.PictureRecorder? patternRecorder, ui.Canvas canvas) {
+      PictureRecorder? patternRecorder, Canvas canvas) {
     final FlutterVectorGraphicsListener patternListener =
         FlutterVectorGraphicsListener._(
       _pictureFactory,
@@ -398,17 +399,17 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     );
 
     patternListener._size =
-        ui.Size(currentPattern!._width, currentPattern._height);
+        Size(currentPattern!._width, currentPattern._height);
 
     final PictureInfo pictureInfo = patternListener.toPicture();
     _currentPattern = null;
-    final ui.Image image = pictureInfo.picture.toImageSync(
+    final Image image = pictureInfo.picture.toImageSync(
         currentPattern._width.round(), currentPattern._height.round());
 
-    final ui.ImageShader pattern = ui.ImageShader(
+    final ImageShader pattern = ImageShader(
       image,
-      ui.TileMode.repeated,
-      ui.TileMode.repeated,
+      TileMode.repeated,
+      TileMode.repeated,
       currentPattern._transform,
     );
 
@@ -429,17 +430,17 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   ) {
     assert(_shaders.length == id);
 
-    final ui.Offset from = ui.Offset(fromX, fromY);
-    final ui.Offset to = ui.Offset(toX, toY);
-    final List<ui.Color> colorValues = <ui.Color>[
-      for (int i = 0; i < colors.length; i++) ui.Color(colors[i])
+    final Offset from = Offset(fromX, fromY);
+    final Offset to = Offset(toX, toY);
+    final List<Color> colorValues = <Color>[
+      for (int i = 0; i < colors.length; i++) Color(colors[i])
     ];
-    final ui.Gradient gradient = ui.Gradient.linear(
+    final Gradient gradient = Gradient.linear(
       from,
       to,
       colorValues,
       offsets,
-      ui.TileMode.values[tileMode],
+      TileMode.values[tileMode],
     );
     _shaders.add(gradient);
   }
@@ -459,18 +460,18 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   ) {
     assert(_shaders.length == id);
 
-    final ui.Offset center = ui.Offset(centerX, centerY);
-    final ui.Offset? focal = focalX == null ? null : ui.Offset(focalX, focalY!);
-    final List<ui.Color> colorValues = <ui.Color>[
-      for (int i = 0; i < colors.length; i++) ui.Color(colors[i])
+    final Offset center = Offset(centerX, centerY);
+    final Offset? focal = focalX == null ? null : Offset(focalX, focalY!);
+    final List<Color> colorValues = <Color>[
+      for (int i = 0; i < colors.length; i++) Color(colors[i])
     ];
     final bool hasFocal = focal != center && focal != null;
-    final ui.Gradient gradient = ui.Gradient.radial(
+    final Gradient gradient = Gradient.radial(
       center,
       radius,
       colorValues,
       offsets,
-      ui.TileMode.values[tileMode],
+      TileMode.values[tileMode],
       transform,
       hasFocal ? focal : null,
     );
@@ -480,9 +481,9 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onSize(double width, double height) {
     if (_clipViewbox) {
-      _canvas.clipRect(ui.Offset.zero & ui.Size(width, height));
+      _canvas.clipRect(Offset.zero & Size(width, height));
     }
-    _size = ui.Size(width, height);
+    _size = Size(width, height);
   }
 
   @override
@@ -500,15 +501,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     Float64List? transform,
     int id,
   ) {
-    final List<ui.TextDecoration> decorations = <ui.TextDecoration>[];
+    final List<TextDecoration> decorations = <TextDecoration>[];
     if (decoration & kUnderlineMask != 0) {
-      decorations.add(ui.TextDecoration.underline);
+      decorations.add(TextDecoration.underline);
     }
     if (decoration & kOverlineMask != 0) {
-      decorations.add(ui.TextDecoration.overline);
+      decorations.add(TextDecoration.overline);
     }
     if (decoration & kLineThroughMask != 0) {
-      decorations.add(ui.TextDecoration.lineThrough);
+      decorations.add(TextDecoration.lineThrough);
     }
 
     _textConfig.add(_TextConfig(
@@ -517,26 +518,26 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       x,
       xAnchorMultiplier,
       y,
-      ui.FontWeight.values[fontWeight],
+      FontWeight.values[fontWeight],
       fontSize,
-      ui.TextDecoration.combine(decorations),
-      ui.TextDecorationStyle.values[decorationStyle],
-      ui.Color(decorationColor),
+      TextDecoration.combine(decorations),
+      TextDecorationStyle.values[decorationStyle],
+      Color(decorationColor),
       transform,
     ));
   }
 
   @override
   void onDrawText(int textId, int paintId, int? patternId) async {
-    final ui.Paint paint = _paints[paintId];
+    final Paint paint = _paints[paintId];
     if (patternId != null) {
       paint.shader = _patterns[patternId]!.shader;
     }
     final _TextConfig textConfig = _textConfig[textId];
-    final ui.ParagraphBuilder builder = ui.ParagraphBuilder(ui.ParagraphStyle(
+    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
       textDirection: _textDirection,
     ));
-    builder.pushStyle(ui.TextStyle(
+    builder.pushStyle(TextStyle(
       locale: _locale,
       foreground: paint,
       fontWeight: textConfig.fontWeight,
@@ -548,8 +549,8 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     ));
     builder.addText(textConfig.text);
 
-    final ui.Paragraph paragraph = builder.build();
-    paragraph.layout(const ui.ParagraphConstraints(
+    final Paragraph paragraph = builder.build();
+    paragraph.layout(const ParagraphConstraints(
       width: double.infinity,
     ));
 
@@ -559,7 +560,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     }
     _canvas.drawParagraph(
       paragraph,
-      ui.Offset(
+      Offset(
         textConfig.dx - paragraph.longestLine * textConfig.xAnchorMultiplier,
         textConfig.dy - paragraph.alphabeticBaseline,
       ),
@@ -573,13 +574,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onImage(int imageId, int format, Uint8List data) {
     assert(format == 0); // Only PNG is supported.
-    _pendingImages.add(ui.ImmutableBuffer.fromUint8List(data)
-        .then((ui.ImmutableBuffer buffer) async {
-      final ui.ImageDescriptor descriptor =
-          await ui.ImageDescriptor.encoded(buffer);
-      final ui.Codec codec = await descriptor.instantiateCodec();
-      final ui.FrameInfo info = await codec.getNextFrame();
-      final ui.Image image = info.image;
+    _pendingImages.add(ImmutableBuffer.fromUint8List(data)
+        .then((ImmutableBuffer buffer) async {
+      final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
+      final Codec codec = await descriptor.instantiateCodec();
+      final FrameInfo info = await codec.getNextFrame();
+      final Image image = info.image;
       buffer.dispose();
       descriptor.dispose();
       codec.dispose();
@@ -591,15 +591,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onDrawImage(int imageId, double x, double y, double width, double height,
       Float64List? transform) {
-    final ui.Image image = _images[imageId]!;
+    final Image image = _images[imageId]!;
     if (transform != null) {
       _canvas.save();
       _canvas.transform(transform);
     }
     _canvas.drawImageRect(
       image,
-      ui.Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
-      ui.Rect.fromLTWH(x, y, width, height),
+      Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
+      Rect.fromLTWH(x, y, width, height),
       Paint(),
     );
     if (transform != null) {
@@ -629,10 +629,10 @@ class _TextConfig {
   final double dx;
   final double xAnchorMultiplier;
   final double dy;
-  final ui.FontWeight fontWeight;
-  final ui.TextDecoration decoration;
-  final ui.TextDecorationStyle decorationStyle;
-  final ui.Color decorationColor;
+  final FontWeight fontWeight;
+  final TextDecoration decoration;
+  final TextDecorationStyle decorationStyle;
+  final Color decorationColor;
   final Float64List? transform;
 }
 
