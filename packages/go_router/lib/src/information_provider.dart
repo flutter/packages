@@ -5,7 +5,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'parser.dart';
 
 /// The [RouteInformationProvider] created by go_router.
 class GoRouteInformationProvider extends RouteInformationProvider
@@ -44,10 +43,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   @override
-  RouteInformation get value => DebugGoRouteInformation(
-        location: _value.location,
-        state: _value.state,
-      );
+  RouteInformation get value => _value;
   RouteInformation _value;
 
   set value(RouteInformation other) {
@@ -109,11 +105,4 @@ class GoRouteInformationProvider extends RouteInformationProvider
     _platformReportsNewRouteInformation(RouteInformation(location: route));
     return SynchronousFuture<bool>(true);
   }
-}
-
-/// A debug class that is used for asserting the [GoRouteInformationProvider] is
-/// in use with the [GoRouteInformationParser].
-class DebugGoRouteInformation extends RouteInformation {
-  /// Creates a [DebugGoRouteInformation].
-  const DebugGoRouteInformation({super.location, super.state});
 }

@@ -249,7 +249,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                   }
                 }, addTrailingNewline: false);
                 indent.add(' catch (exception: Error) ');
-                indent.scoped('{', '', () {
+                indent.scoped('{', '}', () {
                   indent.writeln('wrapped.add(wrapError(exception))');
                   if (method.isAsynchronous) {
                     indent.writeln('reply.reply(wrapped)');
@@ -260,7 +260,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                 }
               });
             }, addTrailingNewline: false);
-            indent.scoped('} else {', '}', () {
+            indent.scoped(' else {', '}', () {
               indent.writeln('channel.setMessageHandler(null)');
             });
           });

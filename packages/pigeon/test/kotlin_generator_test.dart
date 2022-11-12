@@ -126,6 +126,23 @@ void main() {
     expect(code, contains('interface Api'));
     expect(code, contains('fun doSomething(input: Input): Output'));
     expect(code, contains('channel.setMessageHandler'));
+    expect(code, contains('''
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val wrapped = hashMapOf<String, Any?>()
+            try {
+              val args = message as List<Any?>
+              val inputArg = args[0] as Input
+              wrapped["result"] = api.doSomething(inputArg)
+            } catch (exception: Error) {
+              wrapped["error"] = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+    '''));
   });
 
   test('all the simple datatypes header', () {

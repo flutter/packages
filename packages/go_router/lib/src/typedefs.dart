@@ -44,8 +44,7 @@ typedef GoRouterNavigatorBuilder = Widget Function(
 /// Signature of a go router builder function with navigator.
 typedef GoRouterBuilderWithNav = Widget Function(
   BuildContext context,
-  GoRouterState state,
-  Navigator navigator,
+  Widget child,
 );
 
 /// The signature of the redirect callback.

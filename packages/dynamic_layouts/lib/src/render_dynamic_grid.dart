@@ -13,6 +13,8 @@ import 'base_grid_layout.dart';
 ///
 /// [RenderDynamicSliverGrid] places its children in arbitrary positions determined by
 /// the [DynamicSliverGridLayout] provided by the [gridDelegate].
+///
+/// {@macro dynamicLayouts.garbageCollection}
 class RenderDynamicSliverGrid extends RenderSliverGrid {
   /// Creates a sliver that contains multiple box children whose size and
   /// position are managed by a delegate.
@@ -348,11 +350,9 @@ class RenderDynamicSliverGrid extends RenderSliverGrid {
     //
     // 2 - Currently, Flutter only supports collecting garbage in sequential
     //     order. Dynamic layout patterns can break this assumption. In order to
-    //     truly collect garbage efficiently, support for nonsequential garbage
+    //     truly collect garbage efficiently, support for non-sequential garbage
     //     collection is necessary.
-    // TODO(all): document this behavior so users are aware of this temporary
-    //   also - file a bug in https://github.com/flutter/flutter/labels/p%3A%20dynamic_layouts
-    // trade off
+    // TODO(all): https://github.com/flutter/flutter/issues/112234
     collectGarbage(0, trailingGarbage);
 
     assert(debugAssertChildListIsNonEmptyAndContiguous());

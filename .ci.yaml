@@ -45,7 +45,8 @@ targets:
       version_file: flutter_master.version
       dependencies: >
         [
-          {"dependency": "vs_build", "version": "version:vs2019"}
+          {"dependency": "vs_build", "version": "version:vs2019"},
+          {"dependency": "open_jdk", "version": "version:11"}
         ]
 
   - name: Windows win32-platform_tests master - packages
@@ -67,6 +68,34 @@ targets:
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
+  - name: Windows windows-build_all_packages master
+    bringup: true
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: build_all_packages.yaml
+      channel: master
+      version_file: flutter_master.version
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
+  - name: Windows windows-build_all_packages stable
+    bringup: true
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: build_all_packages.yaml
       channel: stable
       version_file: flutter_stable.version
       dependencies: >
