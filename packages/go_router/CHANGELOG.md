@@ -1,3 +1,7 @@
+## 5.1.6
+
+- Fixes crashes when multiple `GoRoute`s use the same `parentNavigatorKey` in a route subtree.
+
 ## 5.1.5
 
 - Adds migration guide for 5.1.2 to readme.
