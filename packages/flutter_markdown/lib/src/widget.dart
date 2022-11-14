@@ -151,6 +151,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   const MarkdownWidget({
     Key? key,
     required this.data,
+    this.anchorsController,
     this.selectable = false,
     this.styleSheet,
     this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
@@ -267,12 +268,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// specification on soft line breaks when lines of text are joined.
   final bool softLineBreak;
 
-  /// Index of anchor widget for children passed in [build].
-  /// Used so that [ItemScrollController] can scroll to an anchor inside
-  /// [RelativeAnchorsMarkdown]
-  int? getIndexForAnchor(String anchorId) => _getIndexForAnchor(anchorId);
-
-  List<IndexedAnchorData> getIndexedAnchors() => _getIndexedAnchors();
+  final AnchorsController? anchorsController;
 
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
@@ -282,10 +278,6 @@ abstract class MarkdownWidget extends StatefulWidget {
   @override
   _MarkdownWidgetState createState() => _MarkdownWidgetState();
 }
-
-// TODO: Horrible hack, should be only temporary.
-late int? Function(String anchorId) _getIndexForAnchor;
-late List<IndexedAnchorData> Function() _getIndexedAnchors;
 
 class _MarkdownWidgetState extends State<MarkdownWidget>
     implements MarkdownBuilderDelegate {
@@ -351,8 +343,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       softLineBreak: widget.softLineBreak,
     );
 
-    _getIndexForAnchor = builder.getIndexForAnchor;
-    _getIndexedAnchors = builder.getIndexedAnchors;
+    widget.anchorsController?.registerMarkdownBuilder(builder);
 
     _children = builder.build(astNodes);
   }
@@ -407,6 +398,7 @@ class MarkdownBody extends MarkdownWidget {
   const MarkdownBody({
     Key? key,
     required String data,
+    AnchorsController? anchorsController,
     bool selectable = false,
     MarkdownStyleSheet? styleSheet,
     MarkdownStyleSheetBaseTheme? styleSheetTheme,
@@ -432,6 +424,7 @@ class MarkdownBody extends MarkdownWidget {
   }) : super(
           key: key,
           data: data,
+          anchorsController: anchorsController,
           selectable: selectable,
           styleSheet: styleSheet,
           styleSheetTheme: styleSheetTheme,
@@ -470,17 +463,42 @@ class MarkdownBody extends MarkdownWidget {
 }
 
 class AnchorsController {
-  ItemPositionsListener? _itemPositionsListener;
-  ItemScrollController? _itemScrollController;
+  factory AnchorsController({
+    ItemPositionsListener? itemPositionsListener,
+    ItemScrollController? itemScrollController,
+  }) {
+    return AnchorsController._(
+      itemPositionsListener ?? ItemPositionsListener.create(),
+      itemScrollController ?? ItemScrollController(),
+    );
+  }
+
+  AnchorsController._(
+    this._itemPositionsListener,
+    this._itemScrollController,
+  ) {
+    _itemPositionsListener.itemPositions.addListener(() {
+      _anchorPositions.value =
+          _filterAnchorPositions(_itemPositionsListener.itemPositions.value);
+    });
+  }
+
+  final ItemPositionsListener _itemPositionsListener;
+  final ItemScrollController _itemScrollController;
   int? Function(String anchorId)? _getIndexOfAnchor;
   List<IndexedAnchorData> Function()? _getIndexedAnchors;
-  List<IndexedAnchorData>? _indexedAnchors;
+  // TODO: We used this before? Should we cache _getIndexedAnchors?
+  // List<IndexedAnchorData>? _indexedAnchors;
+  List<IndexedAnchorData> get _indexedAnchors => _getIndexedAnchors != null
+      ? _getIndexedAnchors!()
+      : <IndexedAnchorData>[];
 
-  ValueNotifier<Iterable<AnchorPosition>> _anchorPositions =
-      ValueNotifier<Iterable<AnchorPosition>>(const []);
+  final ValueNotifier<Iterable<AnchorPosition>> _anchorPositions =
+      ValueNotifier<Iterable<AnchorPosition>>(const <AnchorPosition>[]);
 
-  List<IndexedAnchorData> getIndexedAnchors() {
-    return _indexedAnchors ?? [];
+  void registerMarkdownBuilder(MarkdownBuilder builder) {
+    _getIndexOfAnchor = builder.getIndexForAnchor;
+    _getIndexedAnchors = builder.getIndexedAnchors;
   }
 
   Future<void> scrollToAnchor(String anchorId) {
@@ -488,7 +506,7 @@ class AnchorsController {
     if (index == null) {
       throw ArgumentError('Unknown anchorId');
     }
-    return _itemScrollController!.scrollTo(
+    return _itemScrollController.scrollTo(
       index: index,
       duration: const Duration(milliseconds: 100),
     );
@@ -499,31 +517,21 @@ class AnchorsController {
     return _anchorPositions;
   }
 
-  void _replaceItemPositionsListener(
-      ItemPositionsListener itemPositionsListener) {
-    _itemPositionsListener = itemPositionsListener;
-    // We should also remove the previous listener closure of the old ItemPositionsListener
-    _itemPositionsListener!.itemPositions.addListener(() {
-      _indexedAnchors = _getIndexedAnchors!();
-      _anchorPositions.value =
-          _filterAnchorPositions(itemPositionsListener.itemPositions.value);
-    });
-  }
-
   Iterable<AnchorPosition> _filterAnchorPositions(
       Iterable<ItemPosition> itemPositions) {
-    List<AnchorPosition> _anchorPositions = [];
+    final List<AnchorPosition> _anchorPositions = <AnchorPosition>[];
 
-    for (final itemPosition in itemPositions) {
-      final anchorsWithIndex = _indexedAnchors!
-          .where((indexedAnchor) => itemPosition.index == indexedAnchor.index);
+    for (final ItemPosition itemPosition in itemPositions) {
+      final Iterable<IndexedAnchorData> anchorsWithIndex =
+          _indexedAnchors.where((IndexedAnchorData indexedAnchor) =>
+              itemPosition.index == indexedAnchor.index);
 
       if (anchorsWithIndex.isEmpty) {
         continue;
       }
-      final anchorWithIndex = anchorsWithIndex.first;
+
       _anchorPositions.add(AnchorPosition(
-          anchor: anchorWithIndex,
+          anchor: anchorsWithIndex.first,
           itemLeadingEdge: itemPosition.itemLeadingEdge,
           itemTrailingEdge: itemPosition.itemTrailingEdge));
     }
@@ -532,8 +540,18 @@ class AnchorsController {
   }
 }
 
-/// [ItemPosition] for [AnchorData].
-/// See [ItemPosition] for more information.
+/// The Position of an Anchor on screen.
+/// Can be observed by using [AnchorsController.anchorPositions].
+/// ```dart
+/// // Table of contents heading at the top of the screen
+/// AnchorPosition(
+///   anchor: AnchorData('table-of-contents', 'table of contents'),
+///   itemLeadingEdge: 0.0,
+///   itemTrailingEdge: 0.1,
+/// );
+/// ```
+/// Akin to an [ItemPosition] returned by [ScrollablePositionedList],
+/// but only specific for [AnchorData].
 class AnchorPosition {
   AnchorPosition({
     required this.anchor,
@@ -560,6 +578,7 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
   const RelativeAnchorsMarkdown({
     Key? key,
     required String data,
+    required this.anchorsController,
     bool selectable = false,
     MarkdownStyleSheet? styleSheet,
     MarkdownStyleSheetBaseTheme? styleSheetTheme,
@@ -582,13 +601,13 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
     this.padding = const EdgeInsets.all(16.0),
     this.itemPositionsListener,
     this.itemScrollController,
-    required this.anchorsController,
     this.physics,
     this.shrinkWrap = false,
     bool softLineBreak = false,
   }) : super(
           key: key,
           data: data,
+          anchorsController: anchorsController,
           selectable: selectable,
           styleSheet: styleSheet,
           styleSheetTheme: styleSheetTheme,
@@ -637,10 +656,10 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
   @override
   Widget build(BuildContext context, List<Widget>? children) {
     // TODO: Temporary hack
-    anchorsController._getIndexOfAnchor = getIndexForAnchor;
-    anchorsController._replaceItemPositionsListener(itemPositionsListener!);
-    anchorsController._itemScrollController = itemScrollController!;
-    anchorsController._getIndexedAnchors = getIndexedAnchors;
+    // anchorsController._getIndexOfAnchor = getIndexForAnchor;
+    // anchorsController._replaceItemPositionsListener(itemPositionsListener!);
+    // anchorsController._itemScrollController = itemScrollController!;
+    // anchorsController._getIndexedAnchors = getIndexedAnchors;
 
     children!;
     return ScrollablePositionedList.builder(
@@ -669,6 +688,7 @@ class Markdown extends MarkdownWidget {
   const Markdown({
     Key? key,
     required String data,
+    AnchorsController? anchorsController,
     bool selectable = false,
     MarkdownStyleSheet? styleSheet,
     MarkdownStyleSheetBaseTheme? styleSheetTheme,
@@ -696,6 +716,7 @@ class Markdown extends MarkdownWidget {
   }) : super(
           key: key,
           data: data,
+          anchorsController: anchorsController,
           selectable: selectable,
           styleSheet: styleSheet,
           styleSheetTheme: styleSheetTheme,
