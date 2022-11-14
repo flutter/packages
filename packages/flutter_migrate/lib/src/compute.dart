@@ -32,7 +32,7 @@ const List<String> _skippedDirectories = <String>[
 ];
 
 // Returns true for paths relative to the project root that should be skipped
-// by the migrate tool.
+// completely by the migrate tool.
 bool _skipped(String localPath, FileSystem fileSystem,
     {Set<String>? skippedPrefixes}) {
   for (final String path in _skippedFiles) {
@@ -55,7 +55,7 @@ bool _skipped(String localPath, FileSystem fileSystem,
   return false;
 }
 
-const List<String> _skippedMergeFileExtensions = <String>[
+const List<String> _doNotMergeFileExtensions = <String>[
   // Don't merge image files
   '.bmp',
   '.gif',
@@ -79,14 +79,14 @@ const Set<String> _alwaysMigrateFiles = <String>{
   '.gitignore',
 };
 
-/// True for files that should not be merged. Typically, images and binary files.
-bool _skippedMerge(String localPath) {
-  for (final String ext in _skippedMergeFileExtensions) {
+/// False for files that should not be merged. Typically, images and binary files.
+bool _mergable(String localPath) {
+  for (final String ext in _doNotMergeFileExtensions) {
     if (localPath.endsWith(ext) && !_alwaysMigrateFiles.contains(localPath)) {
-      return true;
+      return false;
     }
   }
-  return false;
+  return true;
 }
 
 // Compile the set of path prefixes that should be ignored as configured
@@ -623,7 +623,7 @@ abstract class MigrateFlutterProject {
               context.flutterProject.directory.absolute.path) ||
           _skipped(localPath, context.fileSystem,
               skippedPrefixes: context.skippedPrefixes) ||
-          _skippedMerge(localPath)) {
+          !_mergable(localPath)) {
         continue;
       }
       final File baseTemplateFile = baseProject.directory.childFile(localPath);
