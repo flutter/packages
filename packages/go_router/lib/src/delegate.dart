@@ -46,7 +46,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   RouteMatchList _matchList = RouteMatchList.empty();
 
-  /// Stores the number of time each route route has been pushed.
+  /// Stores the number of times each route route has been pushed.
   ///
   /// This is used to generate a unique key for each route.
   ///
