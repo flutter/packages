@@ -29,7 +29,6 @@ const List<String> _skippedDirectories = <String>[
   'build', // Build artifacts.
   'lib', // Always user owned and we don't want to overwrite their apps.
   'test', // Typically user owned and flutter-side changes are not relevant.
-  'android/app/src/main/res' // Contains icons and other user resources.
 ];
 
 // Returns true for paths relative to the project root that should be skipped
