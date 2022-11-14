@@ -49,15 +49,13 @@ void main() {
     final FlutterProject flutterProject =
         flutterFactory.fromDirectory(currentDir);
     result = MigrateResult.empty();
-    final MigrateLogger migrateLogger = MigrateLogger(logger: logger);
+    final MigrateLogger migrateLogger = MigrateLogger(logger: logger, verbose: true);
     migrateLogger.start();
     environment =
         await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(processManager, logger);
     context = MigrateContext(
       flutterProject: flutterProject,
       skippedPrefixes: <String>{},
-      logger: logger,
-      verbose: true,
       fileSystem: fileSystem,
       migrateLogger: migrateLogger,
       migrateUtils: utils,
@@ -235,13 +233,11 @@ void main() {
       final FlutterProject flutterProject =
           flutterFactory.fromDirectory(currentDir);
       result = MigrateResult.empty();
-      final MigrateLogger migrateLogger = MigrateLogger(logger: logger);
+      final MigrateLogger migrateLogger = MigrateLogger(logger: logger, verbose: true);
       migrateLogger.start();
       context = MigrateContext(
         flutterProject: flutterProject,
         skippedPrefixes: <String>{},
-        logger: logger,
-        verbose: true,
         fileSystem: fileSystem,
         migrateLogger: migrateLogger,
         migrateUtils: utils,

@@ -10,6 +10,7 @@ const int kDefaultStatusIndent = 2;
 class MigrateLogger {
   MigrateLogger({
     required this.logger,
+    this.verbose = false,
     this.silent = false,
   });
   
@@ -19,6 +20,7 @@ class MigrateLogger {
   // to assure the developer that the command is still working due to
   // the long expected runtime.
   Status? status;
+  final bool verbose;
   final bool silent;
 
   void start() {
@@ -38,7 +40,6 @@ class MigrateLogger {
     'new_files': 'Finding newly added files',
     'merging': 'Merging changes with existing project.',
     'cleaning': 'Cleaning up temp directories.',
-    'fallback': 'Could not determine base revision, falling back on `v1.0.0`, revision 5391447fae6209bb21a89e6a5a6583cac1af9b4b',
     'modified_count': 'Could not determine base revision, falling back on `v1.0.0`, revision 5391447fae6209bb21a89e6a5a6583cac1af9b4b',
   };
   
@@ -62,5 +63,11 @@ class MigrateLogger {
       return;
     }
     printStatus(_stepStringsMap[key]!);
+  }
+
+  void printIfVerbose(String message, {int indent = kDefaultStatusIndent}) {
+    if (verbose) {
+      printStatus(message, indent: indent);
+    }
   }
 }

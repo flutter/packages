@@ -14,7 +14,8 @@ import 'result.dart';
 import 'utils.dart';
 
 // This defines paths of files and directories relative to the project root
-// that should be skipped regardless of .gitignore and config settings.
+// that should be ignored by the migrate tool regardless of .gitignore and
+// config settings.
 // Paths use `/` as a stand-in for path separator.
 const List<String> _skippedFiles = <String>[
   'ios/Runner.xcodeproj/project.pbxproj', // Xcode managed configs that may not merge cleanly.
@@ -109,8 +110,6 @@ class MigrateContext {
   MigrateContext({
     required this.flutterProject,
     required this.skippedPrefixes,
-    required this.logger,
-    required this.verbose,
     required this.fileSystem,
     required this.migrateLogger,
     required this.migrateUtils,
@@ -121,8 +120,6 @@ class MigrateContext {
 
   final FlutterProject flutterProject;
   final Set<String> skippedPrefixes;
-  final Logger logger;
-  final bool verbose;
   final FileSystem fileSystem;
   final MigrateLogger migrateLogger;
   final MigrateUtils migrateUtils;
@@ -180,7 +177,7 @@ class MigrateCommandParameters {
 
 /// Computes the changes that migrates the current flutter project to the target revision.
 ///
-/// This is the entry point to the core migration computations.
+/// This is the entry point to the core migration computations and drives the migration process.
 ///
 /// This method attempts to find a base revision, which is the revision of the Flutter SDK
 /// the app was generated with or the last revision the app was migrated to. The base revision
@@ -211,7 +208,7 @@ Future<MigrateResult?> computeMigration({
 }) async {
   flutterProject ??= FlutterProject.current(fileSystem);
 
-  final MigrateLogger migrateLogger = MigrateLogger(logger: logger);
+  final MigrateLogger migrateLogger = MigrateLogger(logger: logger, verbose: commandParameters.verbose);
   migrateLogger.logStep('start');
   // Find the path prefixes to ignore. This allows subdirectories of platforms
   // not part of the migration to be skipped.
@@ -222,8 +219,6 @@ Future<MigrateResult?> computeMigration({
   final MigrateContext context = MigrateContext(
     flutterProject: flutterProject,
     skippedPrefixes: skippedPrefixes,
-    logger: logger,
-    verbose: commandParameters.verbose,
     migrateLogger: migrateLogger,
     fileSystem: fileSystem,
     migrateUtils: migrateUtils,
@@ -241,9 +236,7 @@ Future<MigrateResult?> computeMigration({
 
   // Extract the unamanged files/paths that should be ignored by the migrate tool.
   // These paths are absolute paths.
-  if (commandParameters.verbose) {
-    migrateLogger.logStep('unmanaged');
-  }
+  migrateLogger.logStep('unmanaged');
   final List<String> unmanagedFiles = <String>[];
   final List<String> unmanagedDirectories = <String>[];
   final String basePath = flutterProject.directory.path;
@@ -278,7 +271,7 @@ Future<MigrateResult?> computeMigration({
   // exist in the base reference app.
   migrateLogger.logStep('new_files');
   result.addedFiles
-      .addAll(await referenceProjects.baseProject.newlyAddedFiles(context, result, referenceProjects.targetProject));
+      .addAll(await referenceProjects.baseProject.computeNewlyAddedFiles(context, result, referenceProjects.targetProject));
 
   // Merge any base->target changed files with the version in the developer's project.
   // Files that the developer left unchanged are fully updated to match the target reference.
@@ -306,8 +299,7 @@ Future<MigrateResult?> computeMigration({
 }
 
 /// Returns a base revision to fallback to in case a true base revision is unknown.
-String _getFallbackBaseRevision(bool allowFallbackBaseRevision, bool verbose,
-    MigrateLogger migrateLogger) {
+String _getFallbackBaseRevision(bool allowFallbackBaseRevision, MigrateLogger migrateLogger) {
   if (!allowFallbackBaseRevision) {
     migrateLogger.stop();
     migrateLogger.printError(
@@ -327,12 +319,12 @@ String _getFallbackBaseRevision(bool allowFallbackBaseRevision, bool verbose,
   // TODO(garyq): Use things like dart sdk version and other hints to better fine-tune this fallback.
   //
   // We fall back on flutter v1.0.0 if .metadata doesn't exist.
-  if (verbose) {
-    migrateLogger.logStep('fallback');
-  }
+  migrateLogger.printIfVerbose('Could not determine base revision, falling back on `v1.0.0`, revision 5391447fae6209bb21a89e6a5a6583cac1af9b4b');
   return '5391447fae6209bb21a89e6a5a6583cac1af9b4b';
 }
 
+/// Simple data class that holds the base and target reference
+/// projects.
 class ReferenceProjects {
   ReferenceProjects({
     required this.baseProject,
@@ -349,7 +341,10 @@ class ReferenceProjects {
   bool customTargetProjectDir;
 }
 
-// Generate the base templates
+// Generate reference base and target flutter projects.
+//
+// This function generates reference vaniilla projects by using `flutter create` with
+// the base revision Flutter SDK as well as the target revision SDK.
 Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   required MigrateContext context,
   required MigrateResult result,
@@ -367,19 +362,15 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   } else {
     baseProjectDir =
         context.fileSystem.systemTempDirectory.createTempSync('baseProject');
-    if (context.verbose) {
-      context.migrateLogger.printStatus('Created temporary directory: ${baseProjectDir.path}');
-    }
+    context.migrateLogger.printIfVerbose('Created temporary directory: ${baseProjectDir.path}');
   }
   if (customTargetProjectDir) {
     targetProjectDir = context.fileSystem.directory(commandParameters.targetAppPath);
   } else {
     targetProjectDir =
         context.fileSystem.systemTempDirectory.createTempSync('targetProject');
-    if (context.verbose) {
-      context.migrateLogger.printStatus(
-          'Created temporary directory: ${targetProjectDir.path}');
-    }
+    context.migrateLogger.printIfVerbose(
+        'Created temporary directory: ${targetProjectDir.path}');
   }
 
   // Git init to enable running further git commands on the reference projects.
@@ -421,7 +412,7 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
     commandParameters.baseRevision ??
         revisionConfig.metadataRevision ??
         _getFallbackBaseRevision(
-            commandParameters.allowFallbackBaseRevision, commandParameters.verbose, context.migrateLogger),
+            commandParameters.allowFallbackBaseRevision, context.migrateLogger),
     revisionConfig.targetRevision,
     targetFlutterDirectory,
   );
@@ -454,6 +445,7 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   );
 }
 
+// Registers any generated temporary directories for optional deletion upon tool exit.
 void _registerTempDirectoriesForCleaning({
   required MigrateCommandParameters commandParameters,
   required MigrateResult result,
@@ -526,8 +518,8 @@ abstract class MigrateFlutterProject {
         final DiffResult diff =
             await context.migrateUtils.diffFiles(thisFile, otherFile);
         diffMap[localPath] = diff;
-        if (context.verbose && diff.diff != '') {
-          context.migrateLogger.printStatus(
+        if (diff.diff != '') {
+          context.migrateLogger.printIfVerbose(
               'Found ${diff.exitCode} changes in $localPath',
               indent: 4);
           modifiedFilesCount++;
@@ -538,15 +530,13 @@ abstract class MigrateFlutterProject {
         diffMap[localPath] = DiffResult(diffType: DiffType.deletion);
       }
     }
-    if (context.verbose) {
-      context.migrateLogger.printStatus(
-          '$modifiedFilesCount files were modified between base and target apps.');
-    }
+    context.migrateLogger.printIfVerbose(
+        '$modifiedFilesCount files were modified between base and target apps.');
     return diffMap;
   }
 
   /// Find all files that exist in the target reference app but not in the base reference app.
-  Future<List<FilePendingMigration>> newlyAddedFiles(
+  Future<List<FilePendingMigration>> computeNewlyAddedFiles(
       MigrateContext context,
       MigrateResult result, 
       MigrateFlutterProject other,
@@ -579,10 +569,8 @@ abstract class MigrateFlutterProject {
       }
       addedFiles.add(FilePendingMigration(localPath, otherFile));
     }
-    if (context.verbose) {
-      context.migrateLogger.printStatus(
-          '${addedFiles.length} files were newly added in the target app.');
-    }
+    context.migrateLogger.printIfVerbose(
+        '${addedFiles.length} files were newly added in the target app.');
     return addedFiles;
   }
 
@@ -597,7 +585,7 @@ abstract class MigrateFlutterProject {
     bool preferTwoWayMerge,
   ) async {
     final List<CustomMerge> customMerges = <CustomMerge>[
-      MetadataCustomMerge(logger: context.logger),
+      MetadataCustomMerge(logger: context.migrateLogger.logger),
     ];
     // For each existing file in the project, we attempt to 3 way merge if it is changed by the user.
     final List<FileSystemEntity> currentFiles =
@@ -755,7 +743,7 @@ abstract class MigrateFlutterProject {
           if (mergeResult is StringMergeResult) {
             if (mergeResult.mergedString == currentFile.readAsStringSync()) {
               context.migrateLogger
-                  .printStatus('$localPath was merged with a $mergeType.');
+                  .printIfVerbose('$localPath was merged with a $mergeType.');
               continue;
             }
           } else {
@@ -766,10 +754,8 @@ abstract class MigrateFlutterProject {
           }
           result.mergeResults.add(mergeResult);
         }
-        if (context.verbose) {
-          context.migrateLogger
-              .printStatus('$localPath was merged with a $mergeType.');
-        }
+        context.migrateLogger
+            .printStatus('$localPath was merged with a $mergeType.');
         continue;
       }
     }
@@ -821,10 +807,11 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
         final List<String> platforms = <String>[];
         for (final MigratePlatformConfig config
             in revisionToConfigs[revision]!) {
+          if (config.platform == null) {
+            continue;
+          }
           platforms.add(config.platform.toString().split('.').last);
         }
-        platforms.remove(
-            'root'); // Root does not need to be listed and is not a valid platform
 
         // In the case of the revision being invalid or not a hash of the master branch,
         // we want to fallback in the following order:
@@ -935,9 +922,7 @@ class MigrateTargetFlutterProject extends MigrateFlutterProject {
       // Create target
       context.migrateLogger.printStatus(
           'Creating target app with revision $targetRevision.');
-      if (context.verbose) {
-        context.logger.printStatus('Creating target app.');
-      }
+      context.migrateLogger.printIfVerbose('Creating target app.');
       await context.migrateUtils.createFromTemplates(
         targetFlutterDirectory.childDirectory('bin').absolute.path,
         name: name,
@@ -979,14 +964,14 @@ class MigrateRevisions {
   ) {
     final FlutterProjectMetadata metadata = FlutterProjectMetadata(
         context.flutterProject.directory.childFile('.metadata'),
-        context.logger);
+        context.migrateLogger.logger);
     config = metadata.migrateConfig;
 
     // We call populate in case MigrateConfig is empty. If it is filled, populate should not do anything.
     config.populate(
       projectDirectory: context.flutterProject.directory,
       update: false,
-      logger: context.logger,
+      logger: context.migrateLogger.logger,
     );
 
     metadataRevision = metadata.versionRevision;
@@ -1003,7 +988,7 @@ class MigrateRevisions {
         final String effectiveRevision = platform.baseRevision == null
             ? metadataRevision ??
                 _getFallbackBaseRevision(allowFallbackBaseRevision,
-                    context.verbose, context.migrateLogger)
+                    context.migrateLogger)
             : platform.baseRevision!;
         if (platforms != null && !platforms.contains(platform.platform)) {
           continue;
@@ -1033,11 +1018,9 @@ class MigrateRevisions {
     if (rootBaseRevision != '') {
       revisionsList.insert(0, rootBaseRevision);
     }
-    if (context.verbose) {
-      context.logger.printStatus('Potential base revisions: $revisionsList');
-    }
+    context.migrateLogger.printIfVerbose('Potential base revisions: $revisionsList');
     fallbackRevision = _getFallbackBaseRevision(
-        true, context.verbose, context.migrateLogger);
+        true, context.migrateLogger);
     if (revisionsList.contains(fallbackRevision) &&
         baseRevision != fallbackRevision &&
         metadataRevision != fallbackRevision) {
