@@ -1,0 +1,29 @@
+name: test_plugin
+description: Pigeon test harness for primary plugin languages.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+  flutter: ">=2.5.0"
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.example.test_plugin
+        pluginClass: TestPlugin
+      ios:
+        pluginClass: TestPlugin
+      macos:
+        pluginClass: TestPlugin
+      windows:
+        pluginClass: TestPluginCApi
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
