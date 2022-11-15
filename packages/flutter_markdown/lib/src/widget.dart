@@ -501,14 +501,23 @@ class AnchorsController {
     _getIndexedAnchors = builder.getIndexedAnchors;
   }
 
-  Future<void> scrollToAnchor(String anchorId) {
+  Future<void> scrollToAnchor(
+    String anchorId, {
+    double alignment = 0,
+    required Duration duration,
+    Curve curve = Curves.linear,
+    List<double> opacityAnimationWeights = const <double>[40, 20, 40],
+  }) {
     final int? index = _getIndexOfAnchor!(anchorId);
     if (index == null) {
       throw ArgumentError('Unknown anchorId');
     }
     return _itemScrollController.scrollTo(
       index: index,
-      duration: const Duration(milliseconds: 100),
+      alignment: alignment,
+      duration: duration,
+      curve: curve,
+      opacityAnimationWeights: opacityAnimationWeights,
     );
   }
 
