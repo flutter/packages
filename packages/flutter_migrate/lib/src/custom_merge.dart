@@ -83,7 +83,7 @@ class MetadataCustomMerge extends CustomMerge {
       MigrateConfig current, MigrateConfig target) {
     // Create the superset of current and target platforms with baseRevision updated to be that of target.
     final Map<SupportedPlatform?, MigratePlatformConfig> platformConfigs =
-        <SupportedPlatform, MigratePlatformConfig>{};
+        <SupportedPlatform?, MigratePlatformConfig>{};
     for (final MapEntry<SupportedPlatform?, MigratePlatformConfig> entry
         in current.platformConfigs.entries) {
       if (target.platformConfigs.containsKey(entry.key)) {

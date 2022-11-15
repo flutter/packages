@@ -233,6 +233,8 @@ void main() {
       final FlutterProject flutterProject =
           flutterFactory.fromDirectory(currentDir);
       result = MigrateResult.empty();
+      environment =
+        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(processManager, logger);
       final MigrateLogger migrateLogger = MigrateLogger(logger: logger, verbose: true);
       migrateLogger.start();
       context = MigrateContext(
