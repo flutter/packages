@@ -11,13 +11,13 @@ GoRouter has a number of features to make navigation straightforward:
 - Displaying multiple screens for a destination (sub-routes)
 - Redirection support - you can re-route the user to a different URL based on
   application state, for example to a sign-in when the user is not
-  authenticated.
+  authenticated
 - Support for multiple Navigators via
   [ShellRoute](https://pub.dev/documentation/go_router/ShellRoute-class.html) -
   you can display an inner Navigator that displays its own pages based on the
   matched route. For example, to display a BottomNavigationBar that stays
   visible at the bottom of the
-  screen.
+  screen
 - Support for both Material and Cupertino apps
 - Backwards-compatibility with Navigator API
 
