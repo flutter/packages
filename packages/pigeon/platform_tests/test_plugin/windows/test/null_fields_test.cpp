@@ -20,13 +20,13 @@ using flutter::EncodableValue;
 // This gives useful test failure messages instead of silent crashes when the
 // value isn't present, or has the wrong type.
 template <class T>
-const T *ExpectAndGet(const EncodableMap &map, const std::string &key) {
+const T* ExpectAndGet(const EncodableMap& map, const std::string& key) {
   auto it = map.find(EncodableValue(key));
   EXPECT_TRUE(it != map.end()) << "Could not find value for '" << key << '"';
   if (it == map.end()) {
     return nullptr;
   }
-  const T *value_ptr = std::get_if<T>(&(it->second));
+  const T* value_ptr = std::get_if<T>(&(it->second));
   EXPECT_NE(value_ptr, nullptr)
       << "Value for '" << key << "' has incorrect type";
   return value_ptr;
@@ -37,20 +37,20 @@ const T *ExpectAndGet(const EncodableMap &map, const std::string &key) {
 class NullFieldsTest : public ::testing::Test {
  protected:
   // Wrapper for access to private NullFieldsSearchRequest map constructor.
-  NullFieldsSearchRequest RequestFromMap(const EncodableMap &map) {
+  NullFieldsSearchRequest RequestFromMap(const EncodableMap& map) {
     return NullFieldsSearchRequest(map);
   }
 
   // Wrapper for access to private NullFieldsSearchRequest map constructor.
-  NullFieldsSearchReply ReplyFromMap(const EncodableMap &map) {
+  NullFieldsSearchReply ReplyFromMap(const EncodableMap& map) {
     return NullFieldsSearchReply(map);
   }
   // Wrapper for access to private NullFieldsSearchRequest::ToEncodableMap.
-  EncodableMap MapFromRequest(const NullFieldsSearchRequest &request) {
+  EncodableMap MapFromRequest(const NullFieldsSearchRequest& request) {
     return request.ToEncodableMap();
   }
   // Wrapper for access to private NullFieldsSearchRequest map constructor.
-  EncodableMap MapFromReply(const NullFieldsSearchReply &reply) {
+  EncodableMap MapFromReply(const NullFieldsSearchReply& reply) {
     return reply.ToEncodableMap();
   }
 };
@@ -194,12 +194,12 @@ TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   EXPECT_EQ(map.size(), 5);
   EXPECT_EQ(*ExpectAndGet<std::string>(map, "result"), "result");
   EXPECT_EQ(*ExpectAndGet<std::string>(map, "error"), "error");
-  const EncodableList &indices = *ExpectAndGet<EncodableList>(map, "indices");
+  const EncodableList& indices = *ExpectAndGet<EncodableList>(map, "indices");
   EXPECT_EQ(indices.size(), 3);
   EXPECT_EQ(indices[0].LongValue(), 1L);
   EXPECT_EQ(indices[1].LongValue(), 2L);
   EXPECT_EQ(indices[2].LongValue(), 3L);
-  const EncodableMap &request_map = *ExpectAndGet<EncodableMap>(map, "request");
+  const EncodableMap& request_map = *ExpectAndGet<EncodableMap>(map, "request");
   EXPECT_EQ(*ExpectAndGet<std::string>(request_map, "query"), "hello");
   EXPECT_EQ(*ExpectAndGet<int>(map, "type"), 0);
 }
