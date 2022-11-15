@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter_migrate/src/base/common.dart';
 import 'package:flutter_migrate/src/base/file_system.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
 import 'package:flutter_migrate/src/base/project.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_migrate/src/result.dart';
 import 'package:flutter_migrate/src/utils.dart';
 import 'package:process/process.dart';
 
+import 'environment_test.dart';
 import 'src/common.dart';
 import 'src/context.dart';
 import 'src/test_utils.dart';
@@ -30,6 +32,8 @@ void main() {
   late Directory currentDir;
   late FlutterToolsEnvironment environment;
   late ProcessManager processManager;
+  late FakeProcessManager envProcessManager;
+  late String separator;
 
   const String oldSdkRevision = '5391447fae6209bb21a89e6a5a6583cac1af9b4b';
   const String newSdkRevision = '85684f9300908116a78138ea4c6036c35c9a1236';
@@ -51,8 +55,36 @@ void main() {
     result = MigrateResult.empty();
     final MigrateLogger migrateLogger = MigrateLogger(logger: logger, verbose: true);
     migrateLogger.start();
+    separator = isWindows ? r'\\' : '/';
+    envProcessManager = FakeProcessManager('''
+{
+  "FlutterProject.directory": "/Users/test/flutter",
+  "FlutterProject.metadataFile": "/Users/test/flutter/.metadata",
+  "FlutterProject.android.exists": false,
+  "FlutterProject.ios.exists": false,
+  "FlutterProject.web.exists": false,
+  "FlutterProject.macos.exists": false,
+  "FlutterProject.linux.exists": false,
+  "FlutterProject.windows.exists": false,
+  "FlutterProject.fuchsia.exists": false,
+  "FlutterProject.android.isKotlin": false,
+  "FlutterProject.ios.isSwift": false,
+  "FlutterProject.isModule": false,
+  "FlutterProject.isPlugin": false,
+  "FlutterProject.manifest.appname": "test_app_name",
+  "FlutterVersion.frameworkRevision": "4e181f012c717777681862e4771af5a941774bb9",
+  "Platform.operatingSystem": "macos",
+  "Platform.isAndroid": true,
+  "Platform.isIOS": false,
+  "Platform.isWindows": ${isWindows ? 'true' : 'false'},
+  "Platform.isMacOS": ${isMacOS ? 'true' : 'false'},
+  "Platform.isFuchsia": false,
+  "Platform.pathSeparator": "$separator",
+  "Cache.flutterRoot": "/Users/test/flutter"
+}
+''');
     environment =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(processManager, logger);
+        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(envProcessManager, logger);
     context = MigrateContext(
       flutterProject: flutterProject,
       skippedPrefixes: <String>{},
@@ -233,8 +265,6 @@ void main() {
       final FlutterProject flutterProject =
           flutterFactory.fromDirectory(currentDir);
       result = MigrateResult.empty();
-      environment =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(processManager, logger);
       final MigrateLogger migrateLogger = MigrateLogger(logger: logger, verbose: true);
       migrateLogger.start();
       context = MigrateContext(
