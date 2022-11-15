@@ -145,7 +145,7 @@ void main() {
               .childFile('build.gradle')
               .existsSync(),
           true);
-    });
+    }, timeout: const Timeout(Duration(seconds: 500)));
 
     testUsingContext('MigrateBaseFlutterProject creates', () async {
       final Directory workingDir =
@@ -183,7 +183,7 @@ void main() {
               .childFile('build.gradle')
               .existsSync(),
           true);
-    });
+    }, timeout: const Timeout(Duration(seconds: 500)));
 
     testUsingContext('Migrate___FlutterProject skips when path exists',
         () async {
@@ -249,7 +249,7 @@ void main() {
               .childFile('build.gradle')
               .existsSync(),
           false);
-    });
+    }, timeout: const Timeout(Duration(seconds: 500)));
   });
 
   group('MigrateRevisions', () {
@@ -695,7 +695,7 @@ migration:
 +            android:value="2" />
      </application>
  </manifest>'''));
-    });
+    }, timeout: const Timeout(Duration(seconds: 500)));
 
     testUsingContext('Merge succeeds', () async {
       final Directory workingDir =
@@ -820,6 +820,6 @@ migration:
       expect(result.mergeResults[9].hasConflict, false);
       expect(result.mergeResults[10].hasConflict, false);
       expect(result.mergeResults[11].hasConflict, false);
-    });
+    }, timeout: const Timeout(Duration(seconds: 500)));
   });
 }
