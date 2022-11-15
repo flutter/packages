@@ -9,7 +9,7 @@ GoRoute(
  ),
 ```
 
-To navigate to a route using it's name, call [`goNamed`](https://pub.dev/documentation/go_router/latest/go_router/GoRouter/goNamed.html):
+To navigate to a route using its name, call [`goNamed`](https://pub.dev/documentation/go_router/latest/go_router/GoRouter/goNamed.html):
 
 ```dart
 TextButton(
@@ -32,6 +32,8 @@ TextButton(
 ),
 ```
 
+To learn more about navigation, see the [Navigation][] topic.
+
 ## Redirecting to a named route
 To redirect to a named route, use the `namedLocation` API:
 
@@ -44,3 +46,8 @@ redirect: (BuildContext context, GoRouterState state) {
   }   
 },
 ```
+
+To learn more about redirection, see the [Redirection][] topic.
+
+[Navigation]: https://pub.dev/documentation/go_router/latest/topics/Navigation-topic.html
+[Redirection]: https://pub.dev/documentation/go_router/latest/topics/Redirection-topic.html

@@ -119,6 +119,7 @@ abstract class RouteBase {
 /// {@category Configuration}
 /// {@category Transition animations}
 /// {@category Named routes}
+/// {@category Redirection}
 class GoRoute extends RouteBase {
   /// Constructs a [GoRoute].
   /// - [path] and [name] cannot be empty strings.

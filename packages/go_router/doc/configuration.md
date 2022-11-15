@@ -28,6 +28,12 @@ GoRoute(
 ),
 ```
 
+To navigate to this route, use
+[go()](https://pub.dev/documentation/go_router/latest/go_router/GoRouter/go.html).
+To learn more about how navigation, visit the
+[Navigation](https://pub.dev/documentation/go_router/topics/Configuration-topic.html)
+topic.
+
 # Parameters
 To specify a path parameter, prefix a path segment with a `:` character,
 followed by a unique name, for example, `:userId`. You can access the value of
@@ -41,7 +47,10 @@ GoRoute(
 ),
 ```
 
-Similarly, to access a query parameter, use [GoRouterState][]:
+Similarly, to access a [query
+string](https://en.wikipedia.org/wiki/Query_string) parameter (the part of URL
+after the `?`), use [GoRouterState][]. For example, a URL path such as
+`/users?filter=admins` can read the `filter` parameter:
 
 ```dart
 GoRoute(
@@ -91,14 +100,9 @@ ShellRoute(
       (BuildContext context, GoRouterState state, Widget child) {
     return Scaffold(
       body: child,
-      onTap: (idx) {
-          /* ... */
-      },
-      currentIndex: /* ... */,
+      /* ... */
       bottomNavigationBar: BottomNavigationBar(
-        items: [
-          /* ... */
-        ],
+      /* ... */
       ),
     );
   },
@@ -132,6 +136,17 @@ GoRouter constructor:
 GoRouter(
   initialLocation: '/details',
   /* ... */
+);
+```
+
+# Logging
+
+To enable log output, enable the `debugLogDiagnostics` parameter:
+
+```dart
+final _router = GoRouter(
+  routes: [/* ... */],
+  debugLogDiagnostics: true,
 );
 ```
 

@@ -30,9 +30,6 @@ dartdoc:
     "Named routes":
       markdown: doc/named-routes.md
       name: Type-safe routes
-    "Logging":
-      markdown: doc/logging.md
-      name: Logging
     "Error handling":
       markdown: doc/error-handling.md
       name: Error handling
@@ -47,7 +44,6 @@ dartdoc:
     - "Transition animations"
     - "Type-safe routes"
     - "Named routes"
-    - "Logging"
     - "Error handling"
   showUndocumentedCategories: true
   ignore:

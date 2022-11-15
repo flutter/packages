@@ -30,15 +30,15 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-GoRouter leverages the Router API to provide backwards compatibility with the
+GoRouter leverages the Router API to provide backward compatibility with the
 Navigator, so any calls to `Navigator.of(context).push()` or
 `Navigator.of(context).pop()` will continue to work, but these destinations
 aren't deep-linkable. You can gradually add more routes to the GoRouter
 configuration.
 
 # Upgrade an app that uses named routes
-An app using named routes can be migrated to go_router by changing each entry in
-the map to a GoRoute object and changing any calls to
+An app that uses named routes can be migrated to go_router by changing each
+entry in the map to a GoRoute object and changing any calls to
 `Navigator.of(context).pushNamed` to `context.go()`.
 
 For example, if you are starting with an app like this:

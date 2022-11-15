@@ -41,7 +41,6 @@ import 'typedefs.dart';
 /// {@category Redirection}
 /// {@category Web}
 /// {@category Deep linking}
-/// {@category Logging}
 /// {@category Error handling}
 /// {@category Named routes}
 class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {

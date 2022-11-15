@@ -1,14 +1,14 @@
 Instead of using URL strings to navigate, go_router supports
 type-safe routes using the go_router_builder package. 
 
-To get started, add go_router_builder, build_runner, and build_verify to the
-dev_dependencies section of your pubspec.yaml:
+To get started, add [go_router_builder][], [build_runner][], and
+[build_verify][] to the dev_dependencies section of your pubspec.yaml:
 
 ```yaml
-dependency_overrides:
-  go_router_builder: ^1.0.15
-  build_runner: ^2.3.0
-  build_verify: ^3.0.0
+dev_dependencies:
+  go_router_builder: any
+  build_runner: any
+  build_verify: any
 ```
 
 Then extend the [GoRouteData](https://pub.dev/documentation/go_router/latest/go_router/GoRouteData-class.html) class for each route in your app and add the
@@ -71,3 +71,7 @@ TextButton(
 
 For more information, visit the [go_router_builder
 package documentation](https://pub.dev/documentation/go_router_builder/latest/).
+
+[go_router_builder]: https://pub.dev/packages/go_router_builder
+[build_runner]: https://pub.dev/packages/build_runner
+[build_verify]: https://pub.dev/packages/build_verify

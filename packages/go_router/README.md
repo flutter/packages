@@ -7,7 +7,7 @@ other navigation-related scenarios.
 ## Features
 GoRouter has a number of features to make navigation straightforward:
 
-- Parsing path and query parameters using a template syntax (For example, "user/:id')
+- Parsing path and query parameters using a template syntax (for example, "user/:id')
 - Displaying multiple screens for a destination (sub-routes)
 - Redirection support - you can re-route the user to a different URL based on
   application state, for example to a sign-in when the user is not
@@ -38,12 +38,12 @@ See the API documentation for details on the following topics:
 - [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
 
 ## Migration guides
-- [Migrating to 2.0](https://flutter.dev/go/go-router-v2-breaking-changes)
-- [Migrating to 2.5](https://flutter.dev/go/go-router-v2-5-breaking-changes)
-- [Migrating to 3.0](https://flutter.dev/go/go-router-v3-breaking-changes)
-- [Migrating to 4.0](https://flutter.dev/go/go-router-v4-breaking-changes)
-- [Migrating to 5.0](https://flutter.dev/go/go-router-v5-breaking-changes)
 - [Migrating to 5.1.2](https://flutter.dev/go/go-router-v5-1-2-breaking-changes)
+- [Migrating to 5.0](https://flutter.dev/go/go-router-v5-breaking-changes)
+- [Migrating to 4.0](https://flutter.dev/go/go-router-v4-breaking-changes)
+- [Migrating to 3.0](https://flutter.dev/go/go-router-v3-breaking-changes)
+- [Migrating to 2.5](https://flutter.dev/go/go-router-v2-5-breaking-changes)
+- [Migrating to 2.0](https://flutter.dev/go/go-router-v2-breaking-changes)
 
 ## Changelog
 See the
@@ -51,5 +51,5 @@ See the
 for a list of new features and breaking changes.
 
 ## Roadmap
-See the [github project](https://github.com/orgs/flutter/projects/17/) for a 
-prioritized list of known issues.
+See the [GitHub project](https://github.com/orgs/flutter/projects/17/) for a 
+prioritized list of feature requests and known issues.
