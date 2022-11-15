@@ -27,6 +27,8 @@ import 'package:meta/meta.dart';
 const String _testFlag = 'test';
 const String _listFlag = 'list';
 
+const String testPluginRelativePath = 'platform_tests/test_plugin';
+
 @immutable
 class _TestInfo {
   const _TestInfo({required this.function, this.description});
