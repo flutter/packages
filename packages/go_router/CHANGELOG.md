@@ -24,7 +24,6 @@
 - Adds GoRouterState to context.
 - Fixes GoRouter notification.
 - Updates README.
-
 - Removes dynamic calls in examples.
 - **BREAKING CHANGE**
   - Remove NavigatorObserver mixin from GoRouter
