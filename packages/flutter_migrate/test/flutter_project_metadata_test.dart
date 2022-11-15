@@ -138,13 +138,9 @@ migration:
     final FlutterProjectMetadata projectMetadata =
         FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, isNull);
-    expect(
-        projectMetadata.migrateConfig.platformConfigs[null]
-            ?.createRevision,
+    expect(projectMetadata.migrateConfig.platformConfigs[null]?.createRevision,
         'abcdefg');
-    expect(
-        projectMetadata.migrateConfig.platformConfigs[null]
-            ?.baseRevision,
+    expect(projectMetadata.migrateConfig.platformConfigs[null]?.baseRevision,
         'baserevision');
     expect(projectMetadata.migrateConfig.unmanagedFiles[0], 'file1');
 
@@ -179,13 +175,9 @@ migration:
     final FlutterProjectMetadata projectMetadata =
         FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, FlutterProjectType.app);
-    expect(
-        projectMetadata.migrateConfig.platformConfigs[null]
-            ?.createRevision,
+    expect(projectMetadata.migrateConfig.platformConfigs[null]?.createRevision,
         'abcdefg');
-    expect(
-        projectMetadata.migrateConfig.platformConfigs[null]
-            ?.baseRevision,
+    expect(projectMetadata.migrateConfig.platformConfigs[null]?.baseRevision,
         'baserevision');
     // Tool uses default unamanged files list when malformed.
     expect(projectMetadata.migrateConfig.unmanagedFiles[0], 'lib/main.dart');
@@ -222,13 +214,9 @@ migration:
     final FlutterProjectMetadata projectMetadata =
         FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, FlutterProjectType.app);
-    expect(
-        projectMetadata.migrateConfig.platformConfigs[null]
-            ?.createRevision,
+    expect(projectMetadata.migrateConfig.platformConfigs[null]?.createRevision,
         'abcdefg');
-    expect(
-        projectMetadata.migrateConfig.platformConfigs[null]
-            ?.baseRevision,
+    expect(projectMetadata.migrateConfig.platformConfigs[null]?.baseRevision,
         'baserevision');
     expect(
         projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.ios]

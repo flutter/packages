@@ -13,7 +13,6 @@ class MigrateLogger {
     this.verbose = false,
     this.silent = false,
   });
-  
 
   final Logger logger;
   // We keep a spinner going and print periodic progress messages
@@ -40,9 +39,10 @@ class MigrateLogger {
     'new_files': 'Finding newly added files',
     'merging': 'Merging changes with existing project.',
     'cleaning': 'Cleaning up temp directories.',
-    'modified_count': 'Could not determine base revision, falling back on `v1.0.0`, revision 5391447fae6209bb21a89e6a5a6583cac1af9b4b',
+    'modified_count':
+        'Could not determine base revision, falling back on `v1.0.0`, revision 5391447fae6209bb21a89e6a5a6583cac1af9b4b',
   };
-  
+
   void printStatus(String message, {int indent = kDefaultStatusIndent}) {
     if (silent) {
       return;

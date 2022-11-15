@@ -330,8 +330,11 @@ migration:
                 'base_revision': String,
               },
               logger)) {
-            final SupportedPlatform? platformValue = platformYamlMap['platform'] == 'root' ? null : SupportedPlatform.values
-                .firstWhere((SupportedPlatform val) =>
+            final SupportedPlatform? platformValue = platformYamlMap[
+                        'platform'] ==
+                    'root'
+                ? null
+                : SupportedPlatform.values.firstWhere((SupportedPlatform val) =>
                     val.toString() ==
                     'SupportedPlatform.${platformYamlMap['platform'] as String}');
             platformConfigs[platformValue] = MigratePlatformConfig(

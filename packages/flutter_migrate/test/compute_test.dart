@@ -53,7 +53,8 @@ void main() {
     final FlutterProject flutterProject =
         flutterFactory.fromDirectory(currentDir);
     result = MigrateResult.empty();
-    final MigrateLogger migrateLogger = MigrateLogger(logger: logger, verbose: true);
+    final MigrateLogger migrateLogger =
+        MigrateLogger(logger: logger, verbose: true);
     migrateLogger.start();
     separator = isWindows ? r'\\' : '/';
     envProcessManager = FakeProcessManager('''
@@ -84,7 +85,8 @@ void main() {
 }
 ''');
     environment =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(envProcessManager, logger);
+        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
+            envProcessManager, logger);
     context = MigrateContext(
       flutterProject: flutterProject,
       skippedPrefixes: <String>{},
@@ -265,7 +267,8 @@ void main() {
       final FlutterProject flutterProject =
           flutterFactory.fromDirectory(currentDir);
       result = MigrateResult.empty();
-      final MigrateLogger migrateLogger = MigrateLogger(logger: logger, verbose: true);
+      final MigrateLogger migrateLogger =
+          MigrateLogger(logger: logger, verbose: true);
       migrateLogger.start();
       context = MigrateContext(
         flutterProject: flutterProject,
@@ -296,9 +299,7 @@ void main() {
       expect(revisions.config.unmanagedFiles.isEmpty, false);
       expect(revisions.config.platformConfigs.isEmpty, false);
       expect(revisions.config.platformConfigs.length, 3);
-      expect(
-          revisions.config.platformConfigs.containsKey(null),
-          true);
+      expect(revisions.config.platformConfigs.containsKey(null), true);
       expect(
           revisions.config.platformConfigs
               .containsKey(SupportedPlatform.android),
@@ -389,9 +390,7 @@ migration:
           true);
 
       expect(revisions.config.platformConfigs.length, 7);
-      expect(
-          revisions.config.platformConfigs.containsKey(null),
-          true);
+      expect(revisions.config.platformConfigs.containsKey(null), true);
       expect(
           revisions.config.platformConfigs
               .containsKey(SupportedPlatform.android),
@@ -413,9 +412,7 @@ migration:
               .containsKey(SupportedPlatform.windows),
           true);
 
-      expect(
-          revisions
-              .config.platformConfigs[null]!.createRevision,
+      expect(revisions.config.platformConfigs[null]!.createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
           revisions.config.platformConfigs[SupportedPlatform.android]!
@@ -442,9 +439,7 @@ migration:
               .createRevision,
           '36427af29421f406ac95ff55ea31d1dc49a45b5f');
 
-      expect(
-          revisions
-              .config.platformConfigs[null]!.baseRevision,
+      expect(revisions.config.platformConfigs[null]!.baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
           revisions
@@ -768,8 +763,7 @@ migration:
               .existsSync(),
           true);
 
-      result.diffMap
-          .addAll(await baseProject.diff(context, targetProject));
+      result.diffMap.addAll(await baseProject.diff(context, targetProject));
 
       await MigrateFlutterProject.merge(
         context,
@@ -783,8 +777,7 @@ migration:
 
       expect(result.mergeResults.length, 12);
       expect(result.mergeResults[0].localPath, '.metadata');
-      expect(result.mergeResults[1].localPath,
-          'ios/Runner/Info.plist');
+      expect(result.mergeResults[1].localPath, 'ios/Runner/Info.plist');
       expect(result.mergeResults[2].localPath,
           'ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata');
       expect(result.mergeResults[3].localPath,
@@ -793,16 +786,14 @@ migration:
           'ios/Flutter/AppFrameworkInfo.plist');
       expect(result.mergeResults[5].localPath, 'pubspec.yaml');
       expect(result.mergeResults[6].localPath, '.gitignore');
-      expect(result.mergeResults[7].localPath,
-          'android/app/build.gradle');
+      expect(result.mergeResults[7].localPath, 'android/app/build.gradle');
       expect(result.mergeResults[8].localPath,
           'android/app/src/main/res/values/styles.xml');
       expect(result.mergeResults[9].localPath,
           'android/app/src/main/AndroidManifest.xml');
       expect(result.mergeResults[10].localPath,
           'android/gradle/wrapper/gradle-wrapper.properties');
-      expect(result.mergeResults[11].localPath,
-          'android/build.gradle');
+      expect(result.mergeResults[11].localPath, 'android/build.gradle');
 
       expect(result.mergeResults[0].exitCode, 0);
       expect(result.mergeResults[1].exitCode, 0);
