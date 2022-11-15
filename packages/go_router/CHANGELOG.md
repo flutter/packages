@@ -1,6 +1,10 @@
+## 5.1.7
+
+- Adds documentation using dartdoc topics
+
 ## 5.1.6
 
-- Update documentation
+- Fixes crashes when multiple `GoRoute`s use the same `parentNavigatorKey` in a route subtree.
 
 ## 5.1.5
 
