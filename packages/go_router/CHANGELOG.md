@@ -1,8 +1,11 @@
-
-## 5.1.6
+## 5.1.7
 
 - Adds helpers for go_router_builder for ShellRoute support
 - Update README
+
+## 5.1.6
+
+- Fixes crashes when multiple `GoRoute`s use the same `parentNavigatorKey` in a route subtree.
 
 ## 5.1.5
 
