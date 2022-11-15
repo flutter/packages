@@ -9,7 +9,6 @@
 
 // For getPlatformVersion; remove unless needed for your plugin implementation.
 #include <VersionHelpers.h>
-
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
@@ -21,7 +20,7 @@ namespace test_plugin {
 
 // static
 void TestPlugin::RegisterWithRegistrar(
-    flutter::PluginRegistrarWindows *registrar) {
+    flutter::PluginRegistrarWindows* registrar) {
   auto channel =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
           registrar->messenger(), "test_plugin",
@@ -30,7 +29,7 @@ void TestPlugin::RegisterWithRegistrar(
   auto plugin = std::make_unique<TestPlugin>();
 
   channel->SetMethodCallHandler(
-      [plugin_pointer = plugin.get()](const auto &call, auto result) {
+      [plugin_pointer = plugin.get()](const auto& call, auto result) {
         plugin_pointer->HandleMethodCall(call, std::move(result));
       });
 
@@ -42,7 +41,7 @@ TestPlugin::TestPlugin() {}
 TestPlugin::~TestPlugin() {}
 
 void TestPlugin::HandleMethodCall(
-    const flutter::MethodCall<flutter::EncodableValue> &method_call,
+    const flutter::MethodCall<flutter::EncodableValue>& method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   if (method_call.method_name().compare("getPlatformVersion") == 0) {
     std::ostringstream version_stream;

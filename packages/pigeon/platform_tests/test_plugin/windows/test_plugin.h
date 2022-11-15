@@ -14,7 +14,7 @@ namespace test_plugin {
 
 class TestPlugin : public flutter::Plugin {
  public:
-  static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
+  static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
   TestPlugin();
 
@@ -27,7 +27,7 @@ class TestPlugin : public flutter::Plugin {
  private:
   // Called when a method is called on this plugin's channel from Dart.
   void HandleMethodCall(
-      const flutter::MethodCall<flutter::EncodableValue> &method_call,
+      const flutter::MethodCall<flutter::EncodableValue>& method_call,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 };
 
