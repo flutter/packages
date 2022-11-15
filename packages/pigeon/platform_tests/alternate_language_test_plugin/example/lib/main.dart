@@ -31,7 +31,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initPlatformState() async {
     // TODO(tarrinneal): Call TestPlugin methods here for manual integration
-    // testing, once they exist.
+    // testing, once they exist. See
+    // https://github.com/flutter/flutter/issues/111505
   }
 
   @override
@@ -42,7 +43,8 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Pigeon integration tests'),
         ),
         body: const Center(
-          child: Text('TODO'),
+          child: Text(
+              'TODO, see https://github.com/flutter/flutter/issues/111505'),
         ),
       ),
     );
