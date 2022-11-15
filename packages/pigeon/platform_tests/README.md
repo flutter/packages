@@ -5,6 +5,8 @@ of Pigeon-generated code. The [test script](../tool/run_tests.dart) generates
 native code from [pigeons/](../pigeons/) into the native test scaffolding, and
 then drives the tests there.
 
+To run these tests, use [`run_tests.dart`](../tool/run_tests.dart)
+
 ## test\_plugin
 
 The new unified test harness for all platforms. Tests in this plugin use the
