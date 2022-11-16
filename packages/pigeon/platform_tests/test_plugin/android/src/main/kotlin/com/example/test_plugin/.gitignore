@@ -1,0 +1,5 @@
+# TODO(stuartmorgan): Remove this, so that review will show the effects of
+# changes on generated files. This will need a way to avoid unnecessary churn,
+# such as a flag to suppress version stamp generation.
+*.kt
+!TestPlugin.kt
