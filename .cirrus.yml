@@ -118,18 +118,6 @@ task:
           - else
           -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
           - fi
-        publishable_bug_workaround_script:
-          # Workaround for https://github.com/dart-lang/pub/issues/3618
-          # TODO(stuartmorgan): Remove this once that issue is fixed.
-          - cd packages/pigeon
-          - pushd mock_handler_tester; flutter pub get; popd
-          - pushd e2e_tests/test_objc; flutter pub get; popd
-          - pushd platform_tests/ios_swift_unit_tests; flutter pub get; popd
-          - pushd platform_tests/windows_unit_tests; flutter pub get; popd
-          - pushd platform_tests/ios_unit_tests; flutter pub get; popd
-          - pushd platform_tests/flutter_null_safe_unit_tests; flutter pub get; popd
-          - pushd platform_tests/android_kotlin_unit_tests; flutter pub get; popd
-          - pushd platform_tests/android_unit_tests; flutter pub get; popd
         publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
     - name: dart_unit_tests
       env:
