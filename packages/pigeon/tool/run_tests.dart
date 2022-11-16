@@ -463,7 +463,7 @@ Future<int> _runPigeon(
 }
 
 Future<int> _runWindowsUnitTests() async {
-  const String windowsUnitTestsPath = './platform_tests/windows_unit_tests';
+  const String windowsUnitTestsPath = './$testPluginRelativePath';
   const List<String> tests = <String>[
     'all_datatypes',
     'all_void',
@@ -495,16 +495,17 @@ Future<int> _runWindowsUnitTests() async {
     }
   }
 
+  const String examplePath = '$windowsUnitTestsPath/example';
   final Process compile = await _streamOutput(Process.start(
       'flutter', <String>['build', 'windows', '--debug'],
-      workingDirectory: '$windowsUnitTestsPath/example', runInShell: true));
+      workingDirectory: examplePath, runInShell: true));
   final int compileCode = await compile.exitCode;
   if (compileCode != 0) {
     return compileCode;
   }
 
   final Process run = await _streamOutput(Process.start(
-      '$windowsUnitTestsPath/example/build/windows/plugins/windows_unit_tests/Debug/windows_unit_tests_test.exe',
+      '$examplePath/build/windows/plugins/test_plugin/Debug/test_plugin_test.exe',
       <String>[]));
 
   return run.exitCode;
