@@ -1,0 +1,51 @@
+dartdoc:
+  categories:
+    "Get started":
+      markdown: doc/get-started.md
+      name: Get started
+    "Upgrading":
+      markdown: doc/upgrading.md
+      name: Upgrade an existing app
+    "Configuration":
+      markdown: doc/configuration.md
+      name: Configuration
+    "Navigation":
+      markdown: doc/navigation.md
+      name: Navigation
+    "Redirection":
+      markdown: doc/redirection.md
+      name: Redirection
+    "Web":
+      markdown: doc/web.md
+      name: Web
+    "Deep linking":
+      markdown: doc/deep-linking.md
+      name: Deep linking
+    "Transition animations":
+      markdown: doc/transition-animations.md
+      name: Transition animations
+    "Type-safe routes":
+      markdown: doc/type-safe-routes.md
+      name: Type-safe routes
+    "Named routes":
+      markdown: doc/named-routes.md
+      name: Type-safe routes
+    "Error handling":
+      markdown: doc/error-handling.md
+      name: Error handling
+  categoryOrder:
+    - "Get started"
+    - "Upgrading"
+    - "Configuration"
+    - "Navigation"
+    - "Redirection"
+    - "Web"
+    - "Deep linking"
+    - "Transition animations"
+    - "Type-safe routes"
+    - "Named routes"
+    - "Error handling"
+  showUndocumentedCategories: true
+  ignore:
+    - broken-link
+    - missing-from-search-index
