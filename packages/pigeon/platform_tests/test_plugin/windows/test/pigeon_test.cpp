@@ -11,9 +11,8 @@
 #include <string>
 
 #include "message.g.h"
-#include "windows_unit_tests_plugin.h"
 
-namespace windows_unit_tests {
+namespace test_plugin {
 namespace test {
 
 namespace {
@@ -80,18 +79,6 @@ class Writer : public flutter::ByteStreamWriter {
 };
 }  // namespace
 
-TEST(PigeonTests, Placeholder) {
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
-
-  // Expect a success response.
-  EXPECT_CALL(*result, SuccessInternal(Pointee(EncodableValue(true))));
-
-  WindowsUnitTestsPlugin plugin;
-  plugin.HandleMethodCall(flutter::MethodCall<>("placeholder", nullptr),
-                          std::move(result));
-}
-
 TEST(PigeonTests, CallInitialize) {
   MockBinaryMessenger mock_messenger;
   MockApi mock_api;
@@ -148,4 +135,4 @@ TEST(PigeonTests, CallSearch) {
 }
 
 }  // namespace test
-}  // namespace windows_unit_tests
+}  // namespace test_plugin

@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PLATFORM_TESTS_WINDOWS_UNIT_TESTS_WINDOWS_TEST_UTILS_FAKE_HOST_MESSENGER_H_
-#define PLATFORM_TESTS_WINDOWS_UNIT_TESTS_WINDOWS_TEST_UTILS_FAKE_HOST_MESSENGER_H_
+#ifndef PLATFORM_TESTS_TEST_PLUGIN_WINDOWS_TEST_UTILS_FAKE_HOST_MESSENGER_H_
+#define PLATFORM_TESTS_TEST_PLUGIN_WINDOWS_TEST_UTILS_FAKE_HOST_MESSENGER_H_
 
 #include <flutter/binary_messenger.h>
 #include <flutter/encodable_value.h>
@@ -48,4 +48,4 @@ class FakeHostMessenger : public flutter::BinaryMessenger {
 
 }  // namespace testing
 
-#endif  // PLATFORM_TESTS_WINDOWS_UNIT_TESTS_WINDOWS_TEST_UTILS_FAKE_HOST_MESSENGER_H_
+#endif  // PLATFORM_TESTS_TEST_PLUGIN_WINDOWS_TEST_UTILS_FAKE_HOST_MESSENGER_H_
