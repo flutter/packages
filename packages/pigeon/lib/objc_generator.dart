@@ -281,7 +281,7 @@ void _writeCodec(
         indent.write('case ${customClass.enumeration}: ');
         indent.writeScoped('', '', () {
           indent.writeln(
-              'return [${_className(options.prefix, customClass.name)} fromMap:[self readValue]];');
+              'return [${_className(options.prefix, customClass.name)} fromList:[self readValue]];');
         });
       }
       indent.write('default:');
@@ -302,7 +302,7 @@ void _writeCodec(
           'if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
       indent.scoped('{', '} else ', () {
         indent.writeln('[self writeByte:${customClass.enumeration}];');
-        indent.writeln('[self writeValue:[value toMap]];');
+        indent.writeln('[self writeValue:[value toList]];');
       });
     }
     indent.scoped('{', '}', () {
@@ -608,23 +608,23 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   indent.writeln('NS_ASSUME_NONNULL_END');
 }
 
-String _dictGetter(
-    List<String> classNames, String dict, NamedType field, String? prefix) {
+String _listGetter(List<String> classNames, String list, NamedType field,
+    int index, String? prefix) {
   if (classNames.contains(field.type.baseName)) {
     String className = field.type.baseName;
     if (prefix != null) {
       className = '$prefix$className';
     }
-    return '[$className nullableFromMap:GetNullableObject($dict, @"${field.name}")]';
+    return '[$className fromList:[$list objectAtIndex:$index ]]';
   } else {
-    return 'GetNullableObject($dict, @"${field.name}")';
+    return '$list[$index]';
   }
 }
 
 String _dictValue(
     List<String> classNames, List<String> enumNames, NamedType field) {
   if (classNames.contains(field.type.baseName)) {
-    return '(self.${field.name} ? [self.${field.name} toMap] : [NSNull null])';
+    return '(self.${field.name} ? [self.${field.name} toList] : [NSNull null])';
   } else if (enumNames.contains(field.type.baseName)) {
     return '@(self.${field.name})';
   } else {
@@ -849,7 +849,7 @@ void _writeFlutterApiSource(
       indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
       indent.writeln('binaryMessenger:self.binaryMessenger');
       indent.write('codec:${_getCodecGetterName(options.prefix, api.name)}()');
-      indent.write('];');
+      indent.addln('];');
       indent.dec();
       indent.dec();
       indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
@@ -902,19 +902,19 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
 
   void writeHelperFunctions() {
     indent.format('''
-static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) {
-\tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
+static NSMutableArray *wrapResult(id result, FlutterError *error) {
+\tNSMutableArray *resultList = [[NSMutableArray alloc] init];
 \tif (error) {
-\t\terrorDict = @{
-\t\t\t\t@"${Keys.errorCode}": (error.code ?: [NSNull null]),
-\t\t\t\t@"${Keys.errorMessage}": (error.message ?: [NSNull null]),
-\t\t\t\t@"${Keys.errorDetails}": (error.details ?: [NSNull null]),
-\t\t\t\t};
+
+\t\t[resultList addObject:(error.code ?: [NSNull null])];
+\t\t[resultList addObject:(error.message ?: [NSNull null])];
+\t\t[resultList addObject:(error.details ?: [NSNull null])];
+
+\t} else {
+\t\t[resultList addObject:(result ?: [NSNull null])];
 \t}
-\treturn @{
-\t\t\t@"${Keys.result}": (result ?: [NSNull null]),
-\t\t\t@"${Keys.error}": errorDict,
-\t\t\t};
+
+\treturn resultList;
 }''');
     indent.format('''
 static id GetNullableObject(NSDictionary* dict, id key) {
@@ -931,10 +931,10 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   void writeDataClassExtension(Class klass) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
-    indent.writeln('+ ($className *)fromMap:(NSDictionary *)dict;');
+    indent.writeln('+ ($className *)fromList:(NSMutableArray *)list;');
     indent.writeln(
-        '+ (nullable $className *)nullableFromMap:(NSDictionary *)dict;');
-    indent.writeln('- (NSDictionary *)toMap;');
+        '+ (nullable $className *)nullableFromList:(NSMutableArray *)list;');
+    indent.writeln('- (NSMutableArray *)toList;');
     indent.writeln('@end');
   }
 
@@ -953,47 +953,52 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       });
     }
 
-    void writeFromMap() {
-      indent.write('+ ($className *)fromMap:(NSDictionary *)dict ');
+    void writeFromList() {
+      indent.write('+ ($className *)fromList:(NSMutableArray *)list ');
       indent.scoped('{', '}', () {
         const String resultName = 'pigeonResult';
         indent.writeln('$className *$resultName = [[$className alloc] init];');
-        for (final NamedType field in klass.fields) {
+        klass.fields
+            .toList()
+            .asMap()
+            .forEach((int index, final NamedType field) {
           if (enumNames.contains(field.type.baseName)) {
             indent.writeln(
-                '$resultName.${field.name} = [${_dictGetter(classNames, 'dict', field, options.prefix)} integerValue];');
+                '$resultName.${field.name} = [${_listGetter(classNames, 'list', field, index, options.prefix)} integerValue];');
           } else {
             indent.writeln(
-                '$resultName.${field.name} = ${_dictGetter(classNames, 'dict', field, options.prefix)};');
+                '$resultName.${field.name} = ${_listGetter(classNames, 'list', field, index, options.prefix)};');
             if (!field.type.isNullable) {
               indent
                   .writeln('NSAssert($resultName.${field.name} != nil, @"");');
             }
           }
-        }
+        });
         indent.writeln('return $resultName;');
       });
       indent.writeln(
-          '+ (nullable $className *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [$className fromMap:dict] : nil; }');
+          '+ (nullable $className *)nullableFromList:(NSMutableArray *)list { return (list) ? [$className fromList:list] : nil; }');
     }
 
-    void writeToMap() {
-      indent.write('- (NSDictionary *)toMap ');
+    void writeToList() {
+      indent.write('- (NSMutableArray *)toList ');
       indent.scoped('{', '}', () {
-        indent.write('return');
-        indent.scoped(' @{', '};', () {
-          for (final NamedType field in klass.fields) {
-            indent.writeln(
-                '@"${field.name}" : ${_dictValue(classNames, enumNames, field)},');
-          }
+        indent.writeln('NSMutableArray *list = [[NSMutableArray alloc] init];');
+        klass.fields
+            .toList()
+            .asMap()
+            .forEach((int index, final NamedType field) {
+          indent.writeln(
+              '[list addObject:${_dictValue(classNames, enumNames, field)}];');
         });
+        indent.writeln('return list;');
       });
     }
 
     indent.writeln('@implementation $className');
     writeInitializer();
-    writeFromMap();
-    writeToMap();
+    writeFromList();
+    writeToList();
     indent.writeln('@end');
   }
 

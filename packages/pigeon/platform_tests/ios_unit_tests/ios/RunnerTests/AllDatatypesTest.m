@@ -21,17 +21,17 @@
   FlutterEverything *api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoEverything:everything
-           completion:^(Everything *_Nonnull result, NSError *_Nullable error) {
-             XCTAssertNil(result.aBool);
-             XCTAssertNil(result.anInt);
-             XCTAssertNil(result.aDouble);
-             XCTAssertNil(result.aString);
-             XCTAssertNil(result.aByteArray);
-             XCTAssertNil(result.a4ByteArray);
-             XCTAssertNil(result.a8ByteArray);
-             XCTAssertNil(result.aFloatArray);
-             XCTAssertNil(result.aList);
-             XCTAssertNil(result.aMap);
+           completion:^(NSMutableArray *result) {
+             XCTAssertNil(result[0]);
+             XCTAssertNil(result[1]);
+             XCTAssertNil(result[2]);
+             XCTAssertNil(result[3]);
+             XCTAssertNil(result[4]);
+             XCTAssertNil(result[5]);
+             XCTAssertNil(result[6]);
+             XCTAssertNil(result[7]);
+             XCTAssertNil(result[8]);
+             XCTAssertNil(result[9]);
              [expectation fulfill];
            }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
@@ -39,6 +39,8 @@
 
 - (void)testAllEquals {
   Everything *everything = [[Everything alloc] init];
+    NSMutableArray *list = [[NSMutableArray alloc] init];
+    Everything *newEverything = [[Everything fromList: list] init];
   everything.aBool = @NO;
   everything.anInt = @(1);
   everything.aDouble = @(2.0);
@@ -59,7 +61,9 @@
   FlutterEverything *api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoEverything:everything
-           completion:^(Everything *_Nonnull result, NSError *_Nullable error) {
+           completion:^(NSMutableArray *result) {
+      NSMutableArray *trueResult = result[0];
+      Everything *newEverything = [[Everything fromList: trueResult] init];
              XCTAssertEqual(result.aBool, everything.aBool);
              XCTAssertEqual(result.anInt, everything.anInt);
              XCTAssertEqual(result.aDouble, everything.aDouble);
