@@ -317,7 +317,7 @@ Future<int> _runMacOSSwiftUnitTests() async {
 }
 
 Future<int> _runIosSwiftUnitTests() async {
-  const String iosSwiftUnitTestsPath = './platform_tests/ios_swift_unit_tests';
+  const String iosSwiftUnitTestsPath = './$testPluginRelativePath';
   const List<String> tests = <String>[
     'all_datatypes',
     'all_void',
@@ -343,17 +343,18 @@ Future<int> _runIosSwiftUnitTests() async {
     generateCode = await _runPigeon(
       input: './pigeons/$test.dart',
       iosSwiftOut:
-          '$iosSwiftUnitTestsPath/ios/Runner/${snakeToPascalCase(test)}.gen.swift',
+          '$iosSwiftUnitTestsPath/ios/Classes/${snakeToPascalCase(test)}.gen.swift',
     );
     if (generateCode != 0) {
       return generateCode;
     }
   }
 
+  const String examplePath = '$iosSwiftUnitTestsPath/example';
   final Process compile = await _streamOutput(Process.start(
     'flutter',
     <String>['build', 'ios', '--simulator'],
-    workingDirectory: iosSwiftUnitTestsPath,
+    workingDirectory: examplePath,
     runInShell: true,
   ));
   final int compileCode = await compile.exitCode;
@@ -367,14 +368,14 @@ Future<int> _runIosSwiftUnitTests() async {
       '-workspace',
       'Runner.xcworkspace',
       '-scheme',
-      'RunnerTests',
+      'Runner',
       '-sdk',
       'iphonesimulator',
       '-destination',
       'platform=iOS Simulator,name=iPhone 8',
       'test',
     ],
-    workingDirectory: '$iosSwiftUnitTestsPath/ios',
+    workingDirectory: '$examplePath/ios',
   ));
 
   return run.exitCode;
