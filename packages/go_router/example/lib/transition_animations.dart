@@ -5,14 +5,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// This sample app shows an app with two screens.
+/// To use a custom transition animation, provide a `pageBuilder` with a
+/// CustomTransitionPage.
 ///
-/// The first route '/' is mapped to [HomeScreen], and the second route
-/// '/details' is mapped to [DetailsScreen].
-///
-/// The buttons use context.go() to navigate to each destination. On mobile
-/// devices, each destination is deep-linkable and on the web, can be navigated
-/// to using the address bar.
+/// To learn more about animation in Flutter, check out the [Introduction to
+/// animations](https://docs.flutter.dev/development/ui/animations) page on
+/// flutter.dev.
 void main() => runApp(const MyApp());
 
 /// The route configuration.
@@ -26,8 +24,24 @@ final GoRouter _router = GoRouter(
       routes: <RouteBase>[
         GoRoute(
           path: 'details',
-          builder: (BuildContext context, GoRouterState state) {
-            return const DetailsScreen();
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage<void>(
+              key: state.pageKey,
+              child: const DetailsScreen(),
+              transitionDuration: const Duration(milliseconds: 150),
+              transitionsBuilder: (BuildContext context,
+                  Animation<double> animation,
+                  Animation<double> secondaryAnimation,
+                  Widget child) {
+                // Change the opacity of the screen using a Curve based on the the animation's
+                // value
+                return FadeTransition(
+                  opacity:
+                      CurveTween(curve: Curves.easeInOut).animate(animation),
+                  child: child,
+                );
+              },
+            );
           },
         ),
       ],
@@ -84,7 +98,7 @@ class DetailsScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <ElevatedButton>[
+          children: <Widget>[
             ElevatedButton(
               onPressed: () => context.go('/'),
               child: const Text('Go back to the Home screen'),

@@ -1,6 +1,10 @@
-## 5.1.7
+## 5.1.8
 
 - Fixes a bug with `replace` where it was not generated a new `pageKey`.
+
+## 5.1.7
+
+- Adds documentation using dartdoc topics
 
 ## 5.1.6
 
