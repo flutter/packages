@@ -34,7 +34,6 @@ See the API documentation for details on the following topics:
 - [Transition animations](https://pub.dev/documentation/go_router/latest/topics/Transition%20animations-topic.html)
 - [Type-safe routes](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html)
 - [Named routes](https://pub.dev/documentation/go_router/latest/topics/Named%20routes-topic.html)
-- [Logging](https://pub.dev/documentation/go_router/latest/topics/Logging-topic.html)
 - [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
 
 ## Migration guides
