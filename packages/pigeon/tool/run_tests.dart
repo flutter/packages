@@ -9,16 +9,7 @@
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io'
-    show
-        Directory,
-        File,
-        Platform,
-        Process,
-        ProcessResult,
-        exit,
-        stderr,
-        stdout;
+import 'dart:io' show File, Platform, Process, exit, stderr, stdout;
 import 'dart:math';
 
 import 'package:args/args.dart';
@@ -281,28 +272,48 @@ Future<int> _runIosUnitTests() async {
 }
 
 Future<int> _runMacOSSwiftUnitTests() async {
-  const String macosSwiftUnitTestsPath =
-      './platform_tests/macos_swift_unit_tests';
-  final int generateCode = await _runPigeon(
-    input: '$macosSwiftUnitTestsPath/pigeons/messages.dart',
-    iosSwiftOut: '$macosSwiftUnitTestsPath/macos/Classes/messages.g.swift',
-  );
-  if (generateCode != 0) {
-    return generateCode;
-  }
-  final Directory oldCwd = Directory.current;
-  try {
-    Directory.current = Directory('$macosSwiftUnitTestsPath/macos');
-    final ProcessResult lintResult =
-        Process.runSync('pod', <String>['lib', 'lint']);
-    if (lintResult.exitCode != 0) {
-      return lintResult.exitCode;
+  const String macosSwiftUnitTestsPath = './$testPluginRelativePath';
+  const List<String> tests = <String>[
+    'all_void',
+  ];
+  int generateCode = 0;
+
+  for (final String test in tests) {
+    generateCode = await _runPigeon(
+      input: './pigeons/$test.dart',
+      iosSwiftOut:
+          '$macosSwiftUnitTestsPath/macos/Classes/${snakeToPascalCase(test)}.gen.swift',
+    );
+    if (generateCode != 0) {
+      return generateCode;
     }
-  } finally {
-    Directory.current = oldCwd;
   }
 
-  return 0;
+  const String examplePath = '$macosSwiftUnitTestsPath/example';
+  final Process compile = await _streamOutput(Process.start(
+    'flutter',
+    <String>['build', 'macos'],
+    workingDirectory: examplePath,
+    runInShell: true,
+  ));
+  final int compileCode = await compile.exitCode;
+  if (compileCode != 0) {
+    return compileCode;
+  }
+
+  final Process run = await _streamOutput(Process.start(
+    'xcodebuild',
+    <String>[
+      '-workspace',
+      'Runner.xcworkspace',
+      '-scheme',
+      'Runner',
+      'test',
+    ],
+    workingDirectory: '$examplePath/macos',
+  ));
+
+  return run.exitCode;
 }
 
 Future<int> _runIosSwiftUnitTests() async {
