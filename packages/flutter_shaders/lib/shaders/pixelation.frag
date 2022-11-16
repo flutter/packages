@@ -5,6 +5,8 @@
 
 precision highp float;
 
+#include <flutter/runtime_effect.glsl>
+
 layout(location = 0) uniform vec2 uPixels;
 layout(location = 1) uniform vec2 uSize;
 layout(location = 2) uniform sampler2D uTexture;
@@ -12,7 +14,7 @@ layout(location = 2) uniform sampler2D uTexture;
 out vec4 fragColor;
 
 void main() {
-  vec2 uv = gl_FragCoord.xy / uSize;
+  vec2 uv = FlutterFragCoord().xy / uSize;
   vec2 puv = round(uv * uPixels) / uPixels;
   fragColor = texture(uTexture, puv);
 }
