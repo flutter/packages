@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router_examples/main.dart' as example;
+import 'package:go_router_examples/transition_animations.dart' as example;
 
 void main() {
   testWidgets('example works', (WidgetTester tester) async {
