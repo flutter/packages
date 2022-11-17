@@ -1,6 +1,6 @@
 ## 5.1.10
 
-- Fix link of ShellRoute in README.
+- Fixes link of ShellRoute in README.
 
 ## 5.1.9
 
