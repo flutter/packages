@@ -608,8 +608,6 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
     MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
     this.padding = const EdgeInsets.all(16.0),
-    this.itemPositionsListener,
-    this.itemScrollController,
     this.physics,
     this.shrinkWrap = false,
     bool softLineBreak = false,
@@ -639,16 +637,6 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
   /// The amount of space by which to inset the children.
   final EdgeInsets padding;
 
-  /// Provides a listenable iterable of [itemPositions] of items that are on
-  /// screen and their locations.
-  final ItemPositionsListener? itemPositionsListener;
-
-  /// An object that can be used to jump or scroll to a particular position in
-  /// the [RelativeAnchorsMarkdown] widget.
-  ///
-  /// See also: [ScrollablePositionedList.itemScrollController]
-  final ItemScrollController? itemScrollController;
-
   final AnchorsController anchorsController;
 
   /// How the scroll view should respond to user input.
@@ -671,8 +659,8 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
       itemBuilder: (BuildContext context, int index) => children[index],
       physics: physics,
       shrinkWrap: shrinkWrap,
-      itemScrollController: itemScrollController,
-      itemPositionsListener: itemPositionsListener,
+      itemScrollController: anchorsController._itemScrollController,
+      itemPositionsListener: anchorsController._itemPositionsListener,
     );
   }
 }
