@@ -17,7 +17,7 @@ linter:
     always_specify_types: true
     avoid_dynamic_calls: true
     avoid_redundant_argument_values: true
-    avoid_print: false  # For now, the compiler is printing.
+    avoid_print: true
     prefer_single_quotes: true
     # flutter_style_todos: true TODO(dnfield): enable this eventually
     hash_and_equals: true

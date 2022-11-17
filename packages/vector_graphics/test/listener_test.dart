@@ -7,12 +7,14 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/vector_graphics_compat.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   const String svgString = '''
 <svg width="10" height="10">
   <rect x="0" y="0" height="15" width="15" fill="black" />
@@ -33,6 +35,11 @@ void main() {
       enableOverdrawOptimizer: false,
     );
     vectorGraphicBuffer = bytes.buffer.asByteData();
+  });
+
+  setUp(() {
+    imageCache.clear();
+    imageCache.clearLiveImages();
   });
 
   test('decode without clip', () async {

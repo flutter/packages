@@ -16,6 +16,11 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 const VectorGraphicsCodec codec = VectorGraphicsCodec();
 
 void main() {
+  setUp(() {
+    imageCache.clear();
+    imageCache.clearLiveImages();
+  });
+
   test('Can decode a message without a stroke and vertices', () {
     final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final FlutterVectorGraphicsListener listener =
@@ -541,13 +546,24 @@ void main() {
       null,
     );
     final UniqueKey key = UniqueKey();
+    final TestBytesLoader loader = TestBytesLoader(buffer.done());
+    // See listener.dart.
+    final int imageKey = Object.hash(loader.hashCode, 0, 0);
+
+    expect(imageCache.currentSize, 0);
+    expect(imageCache.statusForKey(imageKey).untracked, true);
+
     await tester.pumpWidget(RepaintBoundary(
-        key: key,
-        child: VectorGraphic(
-          loader: TestBytesLoader(buffer.done()),
-          width: 100,
-          height: 100,
-        )));
+      key: key,
+      child: VectorGraphic(
+        loader: loader,
+        width: 100,
+        height: 100,
+      ),
+    ));
+
+    expect(imageCache.currentSize, 0);
+    expect(imageCache.statusForKey(imageKey).pending, true);
 
     // A blank image, because the image hasn't loaded yet.
     await expectLater(
@@ -555,8 +571,16 @@ void main() {
       matchesGoldenFile('vg_with_image_blank.png'),
     );
 
+    expect(imageCache.currentSize, 1);
+    expect(imageCache.statusForKey(imageKey).live, false);
+    expect(imageCache.statusForKey(imageKey).keepAlive, true);
+
     await tester.runAsync(() => vg.waitForPendingDecodes());
     await tester.pump();
+
+    expect(imageCache.currentSize, 1);
+    expect(imageCache.statusForKey(imageKey).live, false);
+    expect(imageCache.statusForKey(imageKey).keepAlive, true);
 
     // A blue square, becuase the image is available now.
     await expectLater(

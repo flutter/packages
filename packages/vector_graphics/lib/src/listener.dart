@@ -7,6 +7,13 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart'
+    show
+        imageCache,
+        ImageStreamCompleter,
+        OneFrameImageStreamCompleter,
+        ImageInfo,
+        ImageStreamListener;
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'loader.dart';
@@ -73,6 +80,7 @@ Future<PictureInfo> decodeVectorGraphics(
     Future<PictureInfo> process() {
       final FlutterVectorGraphicsListener listener =
           FlutterVectorGraphicsListener(
+        id: loader.hashCode,
         locale: locale,
         textDirection: textDirection,
         clipViewbox: clipViewbox,
@@ -190,6 +198,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   /// The [locale] and [textDirection] are used to configure any text created
   /// by the vector_graphic.
   factory FlutterVectorGraphicsListener({
+    int id = 0,
     Locale? locale,
     TextDirection? textDirection,
     bool clipViewbox = true,
@@ -198,6 +207,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }) {
     final PictureRecorder recorder = pictureFactory.createPictureRecorder();
     return FlutterVectorGraphicsListener._(
+      id,
       pictureFactory,
       recorder,
       pictureFactory.createCanvas(recorder),
@@ -208,6 +218,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   FlutterVectorGraphicsListener._(
+    this._id,
     this._pictureFactory,
     this._recorder,
     this._canvas,
@@ -215,6 +226,8 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     this._textDirection,
     this._clipViewbox,
   );
+
+  final int _id;
 
   final PictureFactory _pictureFactory;
 
@@ -229,7 +242,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   final List<Path> _paths = <Path>[];
   final List<Shader> _shaders = <Shader>[];
   final List<_TextConfig> _textConfig = <_TextConfig>[];
-  final List<Future<Image>> _pendingImages = <Future<Image>>[];
+  final List<Future<void>> _pendingImages = <Future<void>>[];
   final Map<int, Image> _images = <int, Image>{};
   final Map<int, _PatternState> _patterns = <int, _PatternState>{};
   Path? _currentPath;
@@ -440,6 +453,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       PictureRecorder? patternRecorder, Canvas canvas) {
     final FlutterVectorGraphicsListener patternListener =
         FlutterVectorGraphicsListener._(
+      0,
       _pictureFactory,
       patternRecorder!,
       canvas,
@@ -621,21 +635,45 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     }
   }
 
+  int _createImageKey(int imageId, int format) {
+    return Object.hash(_id, imageId, format);
+  }
+
   @override
   void onImage(int imageId, int format, Uint8List data) {
     assert(format == 0); // Only PNG is supported.
-    _pendingImages.add(ImmutableBuffer.fromUint8List(data)
-        .then((ImmutableBuffer buffer) async {
-      final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
-      final Codec codec = await descriptor.instantiateCodec();
-      final FrameInfo info = await codec.getNextFrame();
-      final Image image = info.image;
-      buffer.dispose();
-      descriptor.dispose();
-      codec.dispose();
-      _images[imageId] = image;
-      return image;
-    }));
+    final Completer<void> completer = Completer<void>();
+    _pendingImages.add(completer.future);
+    final ImageStreamCompleter? cacheCompleter =
+        imageCache.putIfAbsent(_createImageKey(imageId, format), () {
+      return OneFrameImageStreamCompleter(ImmutableBuffer.fromUint8List(data)
+          .then((ImmutableBuffer buffer) async {
+        try {
+          final ImageDescriptor descriptor =
+              await ImageDescriptor.encoded(buffer);
+          final Codec codec = await descriptor.instantiateCodec();
+          final FrameInfo info = await codec.getNextFrame();
+          final Image image = info.image;
+          descriptor.dispose();
+          codec.dispose();
+          return ImageInfo(image: image);
+        } finally {
+          buffer.dispose();
+        }
+      }));
+    });
+    // an error occurred.
+    if (cacheCompleter == null) {
+      completer.completeError('Failed to load image');
+      return;
+    }
+    late ImageStreamListener listener;
+    listener = ImageStreamListener((ImageInfo image, bool synchronousCall) {
+      cacheCompleter.removeListener(listener);
+      _images[imageId] = image.image;
+      completer.complete();
+    });
+    cacheCompleter.addListener(listener);
   }
 
   @override

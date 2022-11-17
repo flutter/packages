@@ -13,6 +13,11 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 const VectorGraphicsCodec codec = VectorGraphicsCodec();
 
 void main() {
+  setUp(() {
+    imageCache.clear();
+    imageCache.clearLiveImages();
+  });
+
   testWidgets(
       'Does not reload identical bytes when forced to re-create state object',
       (WidgetTester tester) async {
