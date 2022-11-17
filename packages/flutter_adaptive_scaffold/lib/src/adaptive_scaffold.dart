@@ -478,25 +478,25 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             : null,
         drawer: widget.drawerBreakpoint.isActive(context) && widget.useDrawer
             ? Drawer(
-                child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    return SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                        child: IntrinsicHeight(
-                          child: NavigationRail(
-                            extended: true,
-                            selectedIndex: widget.selectedIndex,
-                            destinations: widget.destinations
-                                .map((_) => AdaptiveScaffold.toRailDestination(_))
-                                .toList(),
-                            onDestinationSelected: widget.onSelectedIndexChange,
-                          ),
+                child: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints constraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints:
+                          BoxConstraints(minHeight: constraints.maxHeight),
+                      child: IntrinsicHeight(
+                        child: NavigationRail(
+                          extended: true,
+                          selectedIndex: widget.selectedIndex,
+                          destinations: widget.destinations
+                              .map((_) => AdaptiveScaffold.toRailDestination(_))
+                              .toList(),
+                          onDestinationSelected: widget.onSelectedIndexChange,
                         ),
                       ),
-                    );
-                  }
-                ),
+                    ),
+                  );
+                }),
               )
             : null,
         body: AdaptiveLayout(
