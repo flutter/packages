@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -37,6 +38,13 @@ Locale? _debugLastLocale;
 TextDirection? get debugLastTextDirection => _debugLastTextDirection;
 TextDirection? _debugLastTextDirection;
 
+/// Internal testing only.
+@visibleForTesting
+Iterable<Future<void>> get debugGetPendingDecodeTasks =>
+    _pendingDecodes.values.map((Completer<void> e) => e.future);
+final Map<BytesLoader, Completer<void>> _pendingDecodes =
+    <BytesLoader, Completer<void>>{};
+
 /// Decode a vector graphics binary asset into a [Picture].
 ///
 /// Throws a [StateError] if the data is invalid.
@@ -48,28 +56,70 @@ Future<PictureInfo> decodeVectorGraphics(
   required BytesLoader loader,
 }) {
   try {
+    // We might be in a test that's using a fake async zone. Make sure that any
+    // real async work gets scheduled in the root zone so that it will not get
+    // blocked by microtasks in the fake async zone, but do not unnecessarily
+    // create zones outside of tests.
+    bool useZone = false;
     assert(() {
       _debugLastTextDirection = textDirection;
       _debugLastLocale = locale;
+      useZone = Zone.current != Zone.root &&
+          Zone.current.scheduleMicrotask != Zone.root.scheduleMicrotask;
       return true;
     }());
-    final FlutterVectorGraphicsListener listener =
-        FlutterVectorGraphicsListener(
-      locale: locale,
-      textDirection: textDirection,
-      clipViewbox: clipViewbox,
-    );
-    DecodeResponse response = _codec.decode(data, listener);
-    if (response.complete) {
-      return SynchronousFuture<PictureInfo>(listener.toPicture());
-    }
-    return listener.waitForImageDecode().then((_) {
-      response = _codec.decode(data, listener, response: response);
-      assert(response.complete);
 
-      return listener.toPicture();
-    });
-  } catch (e) {
+    @pragma('vm:prefer-inline')
+    Future<PictureInfo> process() {
+      final FlutterVectorGraphicsListener listener =
+          FlutterVectorGraphicsListener(
+        locale: locale,
+        textDirection: textDirection,
+        clipViewbox: clipViewbox,
+      );
+      DecodeResponse response = _codec.decode(data, listener);
+      if (response.complete) {
+        return SynchronousFuture<PictureInfo>(listener.toPicture());
+      }
+      assert(() {
+        _pendingDecodes[loader] = Completer<void>();
+        return true;
+      }());
+      return listener.waitForImageDecode().then((_) {
+        response = _codec.decode(data, listener, response: response);
+        assert(response.complete);
+        assert(() {
+          _pendingDecodes.remove(loader)?.complete();
+          return true;
+        }());
+        return listener.toPicture();
+      });
+    }
+
+    if (!kDebugMode || !useZone) {
+      return process();
+    }
+
+    return Zone.current
+        .fork(
+          specification: ZoneSpecification(
+            scheduleMicrotask:
+                (Zone self, ZoneDelegate parent, Zone zone, void Function() f) {
+              Zone.root.scheduleMicrotask(f);
+            },
+            createTimer: (Zone self, ZoneDelegate parent, Zone zone,
+                Duration duration, void Function() f) {
+              return Zone.root.createTimer(duration, f);
+            },
+            createPeriodicTimer: (Zone self, ZoneDelegate parent, Zone zone,
+                Duration period, void Function(Timer timer) f) {
+              return Zone.root.createPeriodicTimer(period, f);
+            },
+          ),
+        )
+        .run<Future<PictureInfo>>(process);
+  } catch (e, s) {
+    _pendingDecodes.remove(loader)?.completeError(e, s);
     throw VectorGraphicsDecodeException._(loader, e);
   }
 }

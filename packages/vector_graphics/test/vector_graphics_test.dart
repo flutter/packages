@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert' show base64Decode;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -494,32 +495,75 @@ void main() {
             .having((OpacityLayer layer) => layer.alpha, 'alpha', 128));
   }, skip: !kIsWeb);
 
-  testWidgets('Construct vector graphic with drawPicture strategy',
-      (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+  testWidgets(
+    'Construct vector graphic with drawPicture strategy',
+    (WidgetTester tester) async {
+      final TestAssetBundle testBundle = TestAssetBundle();
 
-    await tester.pumpWidget(
-      DefaultAssetBundle(
-        bundle: testBundle,
-        child: Directionality(
-          textDirection: TextDirection.ltr,
-          child: createCompatVectorGraphic(
-            loader: const AssetBytesLoader('foo.svg'),
-            colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
-            opacity: const AlwaysStoppedAnimation<double>(0.5),
+      await tester.pumpWidget(
+        DefaultAssetBundle(
+          bundle: testBundle,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: createCompatVectorGraphic(
+              loader: const AssetBytesLoader('foo.svg'),
+              colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
+              opacity: const AlwaysStoppedAnimation<double>(0.5),
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(tester.layers.last, isA<PictureLayer>());
-    // Opacity and color filter are drawn as savelayer
-    expect(tester.layers, isNot(contains(isA<OpacityLayer>())));
-    expect(tester.layers, isNot(contains(isA<ColorFilterLayer>())));
-  },
-      skip:
-          kIsWeb); // picture rasterization works differently on HTML due to saveLayer bugs in HTML backend
+      expect(tester.layers.last, isA<PictureLayer>());
+      // Opacity and color filter are drawn as savelayer
+      expect(tester.layers, isNot(contains(isA<OpacityLayer>())));
+      expect(tester.layers, isNot(contains(isA<ColorFilterLayer>())));
+    },
+    skip: kIsWeb,
+  ); // picture rasterization works differently on HTML due to saveLayer bugs in HTML backend
+
+  testWidgets('Can render VG with image', (WidgetTester tester) async {
+    const String bluePngPixel =
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwIAMCbHYQAAAABJRU5ErkJggg==';
+
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    const VectorGraphicsCodec codec = VectorGraphicsCodec();
+    codec.writeSize(buffer, 100, 100);
+
+    codec.writeDrawImage(
+      buffer,
+      codec.writeImage(buffer, 0, base64Decode(bluePngPixel)),
+      0,
+      0,
+      100,
+      100,
+      null,
+    );
+    final UniqueKey key = UniqueKey();
+    await tester.pumpWidget(RepaintBoundary(
+        key: key,
+        child: VectorGraphic(
+          loader: TestBytesLoader(buffer.done()),
+          width: 100,
+          height: 100,
+        )));
+
+    // A blank image, because the image hasn't loaded yet.
+    await expectLater(
+      find.byKey(key),
+      matchesGoldenFile('vg_with_image_blank.png'),
+    );
+
+    await tester.runAsync(() => vg.waitForPendingDecodes());
+    await tester.pump();
+
+    // A blue square, becuase the image is available now.
+    await expectLater(
+      find.byKey(key),
+      matchesGoldenFile('vg_with_image_blue.png'),
+    );
+  }, skip: kIsWeb);
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {
