@@ -129,13 +129,13 @@ void main() {
     expect(code, contains('''
         if (api != null) {
           channel.setMessageHandler { message, reply ->
-            val wrapped = hashMapOf<String, Any?>()
+            val wrapped = mutableListOf<Any?>()
             try {
               val args = message as List<Any?>
               val inputArg = args[0] as Input
-              wrapped["result"] = api.doSomething(inputArg)
+              wrapped.add(api.doSomething(inputArg))
             } catch (exception: Error) {
-              wrapped["error"] = wrapError(exception)
+              wrapped.add(wrapError(exception))
             }
             reply.reply(wrapped)
           }
