@@ -16,6 +16,7 @@ import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 
 import 'shared/generation.dart';
+import 'shared/native_project_runners.dart';
 import 'shared/process_utils.dart';
 
 const String _testFlag = 'test';
@@ -121,29 +122,16 @@ Future<int> _runAndroidKotlinUnitTests() async {
   }
 
   const String examplePath = '$androidKotlinUnitTestsPath/example';
-  final int gradlewExistsCode = await runProcess(
-    './gradlew',
-    <String>[],
-    workingDirectory: '$examplePath/android',
-  );
+  const String androidProjectPath = '$examplePath/android';
+  final int gradlewExistsCode = await runGradleBuild(androidProjectPath);
   if (gradlewExistsCode != 0) {
-    final int compileCode = await runProcess(
-      'flutter',
-      <String>['build', 'apk', '--debug'],
-      workingDirectory: examplePath,
-    );
+    final int compileCode = await runFlutterBuild(examplePath, 'apk');
     if (compileCode != 0) {
       return compileCode;
     }
   }
 
-  return runProcess(
-    './gradlew',
-    <String>[
-      'testDebugUnitTest',
-    ],
-    workingDirectory: '$examplePath/android',
-  );
+  return runGradleBuild(androidProjectPath, 'testDebugUnitTest');
 }
 
 Future<int> _runDartCompilationTests() async {
@@ -191,11 +179,8 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
     return generateTestCode;
   }
 
-  final int analyzeCode = await runProcess(
-    'flutter',
-    <String>['analyze'],
-    workingDirectory: flutterUnitTestsPath,
-  );
+  final int analyzeCode =
+      await runFlutterCommand(flutterUnitTestsPath, 'analyze');
   if (analyzeCode != 0) {
     return analyzeCode;
   }
@@ -233,11 +218,7 @@ Future<int> _runFlutterUnitTests() async {
     return analyzeCode;
   }
 
-  final int testCode = await runProcess(
-    'flutter',
-    <String>['test'],
-    workingDirectory: flutterUnitTestsPath,
-  );
+  final int testCode = await runFlutterCommand(flutterUnitTestsPath, 'test');
   if (testCode != 0) {
     return testCode;
   }
@@ -272,25 +253,14 @@ Future<int> _runMacOSSwiftUnitTests() async {
   }
 
   const String examplePath = '$macosSwiftUnitTestsPath/example';
-  final int compileCode = await runProcess(
-    'flutter',
-    <String>['build', 'macos'],
-    workingDirectory: examplePath,
-  );
+  final int compileCode = await runFlutterBuild(examplePath, 'macos');
   if (compileCode != 0) {
     return compileCode;
   }
 
-  return runProcess(
-    'xcodebuild',
-    <String>[
-      '-workspace',
-      'Runner.xcworkspace',
-      '-scheme',
-      'Runner',
-      'test',
-    ],
-    workingDirectory: '$examplePath/macos',
+  return runXcodeBuild(
+    '$examplePath/macos',
+    extraArguments: <String>['test'],
   );
 }
 
@@ -329,29 +299,20 @@ Future<int> _runIosSwiftUnitTests() async {
   }
 
   const String examplePath = '$iosSwiftUnitTestsPath/example';
-  final int compileCode = await runProcess(
-    'flutter',
-    <String>['build', 'ios', '--simulator'],
-    workingDirectory: examplePath,
+  final int compileCode = await runFlutterBuild(
+    examplePath,
+    'ios',
+    flags: <String>['--simulator'],
   );
   if (compileCode != 0) {
     return compileCode;
   }
 
-  return runProcess(
-    'xcodebuild',
-    <String>[
-      '-workspace',
-      'Runner.xcworkspace',
-      '-scheme',
-      'Runner',
-      '-sdk',
-      'iphonesimulator',
-      '-destination',
-      'platform=iOS Simulator,name=iPhone 8',
-      'test',
-    ],
-    workingDirectory: '$examplePath/ios',
+  return runXcodeBuild(
+    '$examplePath/ios',
+    sdk: 'iphonesimulator',
+    destination: 'platform=iOS Simulator,name=iPhone 8',
+    extraArguments: <String>['test'],
   );
 }
 
@@ -366,11 +327,7 @@ Future<int> _runMockHandlerTests() async {
     return generateCode;
   }
 
-  final int testCode = await runProcess(
-    'flutter',
-    <String>['test'],
-    workingDirectory: unitTestsPath,
-  );
+  final int testCode = await runFlutterCommand(unitTestsPath, 'test');
   if (testCode != 0) {
     return testCode;
   }
@@ -411,9 +368,7 @@ Future<int> _runWindowsUnitTests() async {
   }
 
   const String examplePath = '$windowsUnitTestsPath/example';
-  final int compileCode = await runProcess(
-      'flutter', <String>['build', 'windows', '--debug'],
-      workingDirectory: examplePath);
+  final int compileCode = await runFlutterBuild(examplePath, 'windows');
   if (compileCode != 0) {
     return compileCode;
   }
