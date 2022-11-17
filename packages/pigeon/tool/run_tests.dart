@@ -14,6 +14,7 @@ import 'dart:math';
 
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart' as p;
 
 import 'shared/generation.dart';
 import 'shared/native_project_runners.dart';
@@ -21,10 +22,9 @@ import 'shared/process_utils.dart';
 
 const String _testFlag = 'test';
 const String _listFlag = 'list';
+const String _skipGenerationFlag = 'skip-generation';
 
 const String testPluginRelativePath = 'platform_tests/test_plugin';
-const String secondaryTestPluginRelativePath =
-    'alternate_language_platform_tests/test_plugin';
 
 @immutable
 class _TestInfo {
@@ -69,59 +69,12 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
       description: 'Unit tests on generated Dart mock handler code.'),
 };
 
-String snakeToPascalCase(String snake) {
-  final List<String> parts = snake.split('_');
-  return parts
-      .map((String part) =>
-          part.substring(0, 1).toUpperCase() + part.substring(1))
-      .join();
-}
-
 Future<int> _runAndroidUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
 }
 
 Future<int> _runAndroidKotlinUnitTests() async {
-  const String androidKotlinUnitTestsPath = './$testPluginRelativePath';
-  // TODO(stuartmorgan): Move generation to a separate script in tool/ that can
-  // easily be run manually as well (e.g., to look at generated code without
-  // running tests, or to update generated code when running tests in an IDE).
-  const List<String> tests = <String>[
-    'all_datatypes',
-    'all_void',
-    'android_unittests',
-    'async_handlers',
-    'background_platform_channels',
-    'enum_args',
-    'enum',
-    'host2flutter',
-    'list',
-    'message',
-    'multiple_arity',
-    'non_null_fields',
-    'null_fields',
-    'nullable_returns',
-    'primitive',
-    'void_arg_flutter',
-    'void_arg_host',
-    'voidflutter',
-    'voidhost'
-  ];
-  int generateCode = 0;
-
-  for (final String test in tests) {
-    generateCode = await runPigeon(
-      input: './pigeons/$test.dart',
-      kotlinOut:
-          '$androidKotlinUnitTestsPath/android/src/main/kotlin/com/example/test_plugin/${snakeToPascalCase(test)}.kt',
-      kotlinPackage: 'com.example.test_plugin',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-  }
-
-  const String examplePath = '$androidKotlinUnitTestsPath/example';
+  const String examplePath = './$testPluginRelativePath/example';
   const String androidProjectPath = '$examplePath/android';
   final int gradlewExistsCode = await runGradleBuild(androidProjectPath);
   if (gradlewExistsCode != 0) {
@@ -235,24 +188,7 @@ Future<int> _runIosUnitTests() async {
 }
 
 Future<int> _runMacOSSwiftUnitTests() async {
-  const String macosSwiftUnitTestsPath = './$testPluginRelativePath';
-  const List<String> tests = <String>[
-    'all_void',
-  ];
-  int generateCode = 0;
-
-  for (final String test in tests) {
-    generateCode = await runPigeon(
-      input: './pigeons/$test.dart',
-      iosSwiftOut:
-          '$macosSwiftUnitTestsPath/macos/Classes/${snakeToPascalCase(test)}.gen.swift',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-  }
-
-  const String examplePath = '$macosSwiftUnitTestsPath/example';
+  const String examplePath = './$testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'macos');
   if (compileCode != 0) {
     return compileCode;
@@ -265,40 +201,7 @@ Future<int> _runMacOSSwiftUnitTests() async {
 }
 
 Future<int> _runIosSwiftUnitTests() async {
-  const String iosSwiftUnitTestsPath = './$testPluginRelativePath';
-  const List<String> tests = <String>[
-    'all_datatypes',
-    'all_void',
-    'async_handlers',
-    'enum_args',
-    'enum',
-    'host2flutter',
-    'list',
-    'message',
-    'multiple_arity',
-    'non_null_fields',
-    'null_fields',
-    'nullable_returns',
-    'primitive',
-    'void_arg_flutter',
-    'void_arg_host',
-    'voidflutter',
-    'voidhost'
-  ];
-  int generateCode = 0;
-
-  for (final String test in tests) {
-    generateCode = await runPigeon(
-      input: './pigeons/$test.dart',
-      iosSwiftOut:
-          '$iosSwiftUnitTestsPath/ios/Classes/${snakeToPascalCase(test)}.gen.swift',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-  }
-
-  const String examplePath = '$iosSwiftUnitTestsPath/example';
+  const String examplePath = './$testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(
     examplePath,
     'ios',
@@ -335,39 +238,7 @@ Future<int> _runMockHandlerTests() async {
 }
 
 Future<int> _runWindowsUnitTests() async {
-  const String windowsUnitTestsPath = './$testPluginRelativePath';
-  const List<String> tests = <String>[
-    'all_datatypes',
-    'all_void',
-    'async_handlers',
-    'enum',
-    'host2flutter',
-    'list',
-    'message',
-    'multiple_arity',
-    'non_null_fields',
-    'null_fields',
-    'nullable_returns',
-    'primitive',
-    'void_arg_flutter',
-    'void_arg_host',
-    'voidflutter',
-    'voidhost'
-  ];
-  int generateCode = 0;
-
-  for (final String test in tests) {
-    generateCode = await runPigeon(
-        input: './pigeons/$test.dart',
-        cppHeaderOut: '$windowsUnitTestsPath/windows/test/$test.g.h',
-        cppSourceOut: '$windowsUnitTestsPath/windows/test/$test.g.cpp',
-        cppNamespace: '${test}_pigeontest');
-    if (generateCode != 0) {
-      return generateCode;
-    }
-  }
-
-  const String examplePath = '$windowsUnitTestsPath/example';
+  const String examplePath = './$testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'windows');
   if (compileCode != 0) {
     return compileCode;
@@ -383,6 +254,11 @@ Future<void> main(List<String> args) async {
     ..addOption(_testFlag, abbr: 't', help: 'Only run specified test.')
     ..addFlag(_listFlag,
         negatable: false, abbr: 'l', help: 'List available tests.')
+    // Temporarily provide a way for run_test.sh to bypass generation, since
+    // it generates before doing anything else.
+    // TODO(stuartmorgan): Remove this once run_test.sh is fully migrated to
+    // this script.
+    ..addFlag(_skipGenerationFlag, negatable: false, hide: true)
     ..addFlag('help',
         negatable: false, abbr: 'h', help: 'Print this reference.');
 
@@ -407,6 +283,17 @@ ${parser.usage}''');
     exit(0);
   } else if (argResults.wasParsed(_testFlag)) {
     testsToRun = <String>[argResults[_testFlag]];
+  }
+
+  if (!argResults.wasParsed(_skipGenerationFlag)) {
+    final String baseDir = p.dirname(p.dirname(Platform.script.path));
+    print('# Generating platform_test/ output...');
+    final int generateExitCode = await generatePigeons(baseDir: baseDir);
+    if (generateExitCode == 0) {
+      print('Generation complete!');
+    } else {
+      print('Generation failed; see above for errors.');
+    }
   }
 
   // If no tests are provided, run a default based on the host platform. This is

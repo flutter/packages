@@ -7,31 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0D02163D27BC7B48009BD76F /* nullable_returns.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D02163C27BC7B48009BD76F /* nullable_returns.gen.m */; };
-		0D21E59A27D0502D0051D07D /* background_platform_channels.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D21E59827D0502D0051D07D /* background_platform_channels.gen.m */; };
+		0D02163D27BC7B48009BD76F /* NullableReturns.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D02163C27BC7B48009BD76F /* NullableReturns.gen.m */; };
+		0D21E59A27D0502D0051D07D /* BackgroundPlatformChannels.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D21E59827D0502D0051D07D /* BackgroundPlatformChannels.gen.m */; };
 		0D36469D27C6BE3C0069B7BF /* NullableReturnsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D36469C27C6BE3C0069B7BF /* NullableReturnsTest.m */; };
 		0D3646A027C6DCEC0069B7BF /* MockBinaryMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D36469F27C6DCEC0069B7BF /* MockBinaryMessenger.m */; };
 		0D50127523FF75B100CD5B95 /* RunnerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D50127423FF75B100CD5B95 /* RunnerTests.m */; };
-		0D6FD3C526A76D400046D8BD /* primitive.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D6FD3C426A76D400046D8BD /* primitive.gen.m */; };
+		0D6FD3C526A76D400046D8BD /* Primitive.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D6FD3C426A76D400046D8BD /* Primitive.gen.m */; };
 		0D6FD3C726A777C00046D8BD /* PrimitiveTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D6FD3C626A777C00046D8BD /* PrimitiveTest.m */; };
 		0D7A910A268D4A050056B5E1 /* ListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A9109268D4A050056B5E1 /* ListTest.m */; };
-		0D7A910D268E5D700056B5E1 /* all_void.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A910C268E5D700056B5E1 /* all_void.gen.m */; };
+		0D7A910D268E5D700056B5E1 /* AllVoid.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A910C268E5D700056B5E1 /* AllVoid.gen.m */; };
 		0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */; };
-		0DA5DFD626CC39D600D2354B /* multiple_arity.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFD526CC39D600D2354B /* multiple_arity.gen.m */; };
+		0DA5DFD626CC39D600D2354B /* MultipleArity.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFD526CC39D600D2354B /* MultipleArity.gen.m */; };
 		0DA5DFD826CC3A2100D2354B /* MultipleArityTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFD726CC3A2100D2354B /* MultipleArityTest.m */; };
 		0DA5DFDB26CC3B3700D2354B /* HandlerBinaryMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */; };
 		0DBD8C3E279B73F700E4FDBA /* NonNullFieldsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DBD8C3D279B73F700E4FDBA /* NonNullFieldsTest.m */; };
-		0DBD8C41279B741800E4FDBA /* non_null_fields.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DBD8C3F279B741800E4FDBA /* non_null_fields.gen.m */; };
-		0DD2E6BA2684031300A7D764 /* void_arg_host.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A62684031200A7D764 /* void_arg_host.gen.m */; };
-		0DD2E6BB2684031300A7D764 /* list.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A72684031200A7D764 /* list.gen.m */; };
-		0DD2E6BC2684031300A7D764 /* host2flutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6AB2684031300A7D764 /* host2flutter.gen.m */; };
-		0DD2E6BD2684031300A7D764 /* async_handlers.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6AF2684031300A7D764 /* async_handlers.gen.m */; };
-		0DD2E6BE2684031300A7D764 /* message.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B02684031300A7D764 /* message.gen.m */; };
-		0DD2E6BF2684031300A7D764 /* enum.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B12684031300A7D764 /* enum.gen.m */; };
-		0DD2E6C02684031300A7D764 /* all_datatypes.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B22684031300A7D764 /* all_datatypes.gen.m */; };
-		0DD2E6C12684031300A7D764 /* voidhost.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B52684031300A7D764 /* voidhost.gen.m */; };
-		0DD2E6C22684031300A7D764 /* voidflutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B62684031300A7D764 /* voidflutter.gen.m */; };
-		0DD2E6C32684031300A7D764 /* void_arg_flutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B82684031300A7D764 /* void_arg_flutter.gen.m */; };
+		0DBD8C41279B741800E4FDBA /* NonNullFields.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DBD8C3F279B741800E4FDBA /* NonNullFields.gen.m */; };
+		0DD2E6BA2684031300A7D764 /* VoidArgHost.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A62684031200A7D764 /* VoidArgHost.gen.m */; };
+		0DD2E6BB2684031300A7D764 /* List.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A72684031200A7D764 /* List.gen.m */; };
+		0DD2E6BC2684031300A7D764 /* Host2flutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6AB2684031300A7D764 /* Host2flutter.gen.m */; };
+		0DD2E6BD2684031300A7D764 /* AsyncHandlers.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6AF2684031300A7D764 /* AsyncHandlers.gen.m */; };
+		0DD2E6BE2684031300A7D764 /* Message.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B02684031300A7D764 /* Message.gen.m */; };
+		0DD2E6BF2684031300A7D764 /* Enum.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B12684031300A7D764 /* Enum.gen.m */; };
+		0DD2E6C02684031300A7D764 /* AllDatatypes.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B22684031300A7D764 /* AllDatatypes.gen.m */; };
+		0DD2E6C12684031300A7D764 /* Voidhost.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B52684031300A7D764 /* Voidhost.gen.m */; };
+		0DD2E6C22684031300A7D764 /* Voidflutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B62684031300A7D764 /* Voidflutter.gen.m */; };
+		0DD2E6C32684031300A7D764 /* VoidArgFlutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B82684031300A7D764 /* VoidArgFlutter.gen.m */; };
 		0DF4E5C5266ECF4A00AEA855 /* AllDatatypesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DF4E5C4266ECF4A00AEA855 /* AllDatatypesTest.m */; };
 		0DF4E5C8266ED80900AEA855 /* EchoMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DF4E5C7266ED80900AEA855 /* EchoMessenger.m */; };
 		0DF4E5CB266FDAE300AEA855 /* EnumTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DF4E5CA266FDAE300AEA855 /* EnumTest.m */; };
@@ -42,7 +42,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		CEA7789327DE9EEB00FE0824 /* null_fields.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA7789127DE9EEB00FE0824 /* null_fields.gen.m */; };
+		CEA7789327DE9EEB00FE0824 /* NullFields.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA7789127DE9EEB00FE0824 /* NullFields.gen.m */; };
 		CEA7789527DE9F1800FE0824 /* NullFieldsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA7789427DE9F1800FE0824 /* NullFieldsTest.m */; };
 /* End PBXBuildFile section */
 
@@ -70,51 +70,51 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0D02163B27BC7B48009BD76F /* nullable_returns.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nullable_returns.gen.h; sourceTree = "<group>"; };
-		0D02163C27BC7B48009BD76F /* nullable_returns.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = nullable_returns.gen.m; sourceTree = "<group>"; };
-		0D21E59827D0502D0051D07D /* background_platform_channels.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = background_platform_channels.gen.m; sourceTree = "<group>"; };
-		0D21E59927D0502D0051D07D /* background_platform_channels.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = background_platform_channels.gen.h; sourceTree = "<group>"; };
+		0D02163B27BC7B48009BD76F /* NullableReturns.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullableReturns.gen.h; sourceTree = "<group>"; };
+		0D02163C27BC7B48009BD76F /* NullableReturns.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NullableReturns.gen.m; sourceTree = "<group>"; };
+		0D21E59827D0502D0051D07D /* BackgroundPlatformChannels.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundPlatformChannels.gen.m; sourceTree = "<group>"; };
+		0D21E59927D0502D0051D07D /* BackgroundPlatformChannels.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundPlatformChannels.gen.h; sourceTree = "<group>"; };
 		0D36469C27C6BE3C0069B7BF /* NullableReturnsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NullableReturnsTest.m; sourceTree = "<group>"; };
 		0D36469E27C6DCEC0069B7BF /* MockBinaryMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockBinaryMessenger.h; sourceTree = "<group>"; };
 		0D36469F27C6DCEC0069B7BF /* MockBinaryMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockBinaryMessenger.m; sourceTree = "<group>"; };
 		0D50127223FF75B100CD5B95 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D50127423FF75B100CD5B95 /* RunnerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RunnerTests.m; sourceTree = "<group>"; };
 		0D50127623FF75B100CD5B95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0D6FD3C326A76D400046D8BD /* primitive.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = primitive.gen.h; sourceTree = "<group>"; };
-		0D6FD3C426A76D400046D8BD /* primitive.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = primitive.gen.m; sourceTree = "<group>"; };
+		0D6FD3C326A76D400046D8BD /* Primitive.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Primitive.gen.h; sourceTree = "<group>"; };
+		0D6FD3C426A76D400046D8BD /* Primitive.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Primitive.gen.m; sourceTree = "<group>"; };
 		0D6FD3C626A777C00046D8BD /* PrimitiveTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PrimitiveTest.m; sourceTree = "<group>"; };
 		0D7A9109268D4A050056B5E1 /* ListTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListTest.m; sourceTree = "<group>"; };
-		0D7A910B268E5D700056B5E1 /* all_void.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = all_void.gen.h; sourceTree = "<group>"; };
-		0D7A910C268E5D700056B5E1 /* all_void.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = all_void.gen.m; sourceTree = "<group>"; };
+		0D7A910B268E5D700056B5E1 /* AllVoid.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllVoid.gen.h; sourceTree = "<group>"; };
+		0D7A910C268E5D700056B5E1 /* AllVoid.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllVoid.gen.m; sourceTree = "<group>"; };
 		0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsyncHandlersTest.m; sourceTree = "<group>"; };
-		0DA5DFD426CC39D600D2354B /* multiple_arity.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = multiple_arity.gen.h; sourceTree = "<group>"; };
-		0DA5DFD526CC39D600D2354B /* multiple_arity.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = multiple_arity.gen.m; sourceTree = "<group>"; };
+		0DA5DFD426CC39D600D2354B /* MultipleArity.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultipleArity.gen.h; sourceTree = "<group>"; };
+		0DA5DFD526CC39D600D2354B /* MultipleArity.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultipleArity.gen.m; sourceTree = "<group>"; };
 		0DA5DFD726CC3A2100D2354B /* MultipleArityTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultipleArityTest.m; sourceTree = "<group>"; };
 		0DA5DFD926CC3B3700D2354B /* HandlerBinaryMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HandlerBinaryMessenger.h; sourceTree = "<group>"; };
 		0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HandlerBinaryMessenger.m; sourceTree = "<group>"; };
 		0DBD8C3D279B73F700E4FDBA /* NonNullFieldsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NonNullFieldsTest.m; sourceTree = "<group>"; };
-		0DBD8C3F279B741800E4FDBA /* non_null_fields.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = non_null_fields.gen.m; sourceTree = "<group>"; };
-		0DBD8C40279B741800E4FDBA /* non_null_fields.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = non_null_fields.gen.h; sourceTree = "<group>"; };
-		0DD2E6A62684031200A7D764 /* void_arg_host.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = void_arg_host.gen.m; sourceTree = "<group>"; };
-		0DD2E6A72684031200A7D764 /* list.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = list.gen.m; sourceTree = "<group>"; };
-		0DD2E6A82684031200A7D764 /* host2flutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = host2flutter.gen.h; sourceTree = "<group>"; };
-		0DD2E6A92684031200A7D764 /* voidhost.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voidhost.gen.h; sourceTree = "<group>"; };
-		0DD2E6AA2684031300A7D764 /* all_datatypes.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = all_datatypes.gen.h; sourceTree = "<group>"; };
-		0DD2E6AB2684031300A7D764 /* host2flutter.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = host2flutter.gen.m; sourceTree = "<group>"; };
-		0DD2E6AC2684031300A7D764 /* void_arg_flutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = void_arg_flutter.gen.h; sourceTree = "<group>"; };
-		0DD2E6AD2684031300A7D764 /* list.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.gen.h; sourceTree = "<group>"; };
-		0DD2E6AE2684031300A7D764 /* async_handlers.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async_handlers.gen.h; sourceTree = "<group>"; };
-		0DD2E6AF2684031300A7D764 /* async_handlers.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = async_handlers.gen.m; sourceTree = "<group>"; };
-		0DD2E6B02684031300A7D764 /* message.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = message.gen.m; sourceTree = "<group>"; };
-		0DD2E6B12684031300A7D764 /* enum.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = enum.gen.m; sourceTree = "<group>"; };
-		0DD2E6B22684031300A7D764 /* all_datatypes.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = all_datatypes.gen.m; sourceTree = "<group>"; };
-		0DD2E6B32684031300A7D764 /* voidflutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voidflutter.gen.h; sourceTree = "<group>"; };
-		0DD2E6B42684031300A7D764 /* message.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = message.gen.h; sourceTree = "<group>"; };
-		0DD2E6B52684031300A7D764 /* voidhost.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = voidhost.gen.m; sourceTree = "<group>"; };
-		0DD2E6B62684031300A7D764 /* voidflutter.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = voidflutter.gen.m; sourceTree = "<group>"; };
-		0DD2E6B72684031300A7D764 /* enum.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = enum.gen.h; sourceTree = "<group>"; };
-		0DD2E6B82684031300A7D764 /* void_arg_flutter.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = void_arg_flutter.gen.m; sourceTree = "<group>"; };
-		0DD2E6B92684031300A7D764 /* void_arg_host.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = void_arg_host.gen.h; sourceTree = "<group>"; };
+		0DBD8C3F279B741800E4FDBA /* NonNullFields.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NonNullFields.gen.m; sourceTree = "<group>"; };
+		0DBD8C40279B741800E4FDBA /* NonNullFields.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NonNullFields.gen.h; sourceTree = "<group>"; };
+		0DD2E6A62684031200A7D764 /* VoidArgHost.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoidArgHost.gen.m; sourceTree = "<group>"; };
+		0DD2E6A72684031200A7D764 /* List.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = List.gen.m; sourceTree = "<group>"; };
+		0DD2E6A82684031200A7D764 /* Host2flutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Host2flutter.gen.h; sourceTree = "<group>"; };
+		0DD2E6A92684031200A7D764 /* Voidhost.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voidhost.gen.h; sourceTree = "<group>"; };
+		0DD2E6AA2684031300A7D764 /* AllDatatypes.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllDatatypes.gen.h; sourceTree = "<group>"; };
+		0DD2E6AB2684031300A7D764 /* Host2flutter.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Host2flutter.gen.m; sourceTree = "<group>"; };
+		0DD2E6AC2684031300A7D764 /* VoidArgFlutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoidArgFlutter.gen.h; sourceTree = "<group>"; };
+		0DD2E6AD2684031300A7D764 /* List.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = List.gen.h; sourceTree = "<group>"; };
+		0DD2E6AE2684031300A7D764 /* AsyncHandlers.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncHandlers.gen.h; sourceTree = "<group>"; };
+		0DD2E6AF2684031300A7D764 /* AsyncHandlers.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncHandlers.gen.m; sourceTree = "<group>"; };
+		0DD2E6B02684031300A7D764 /* Message.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.gen.m; sourceTree = "<group>"; };
+		0DD2E6B12684031300A7D764 /* Enum.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Enum.gen.m; sourceTree = "<group>"; };
+		0DD2E6B22684031300A7D764 /* AllDatatypes.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllDatatypes.gen.m; sourceTree = "<group>"; };
+		0DD2E6B32684031300A7D764 /* Voidflutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voidflutter.gen.h; sourceTree = "<group>"; };
+		0DD2E6B42684031300A7D764 /* Message.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.gen.h; sourceTree = "<group>"; };
+		0DD2E6B52684031300A7D764 /* Voidhost.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Voidhost.gen.m; sourceTree = "<group>"; };
+		0DD2E6B62684031300A7D764 /* Voidflutter.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Voidflutter.gen.m; sourceTree = "<group>"; };
+		0DD2E6B72684031300A7D764 /* Enum.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Enum.gen.h; sourceTree = "<group>"; };
+		0DD2E6B82684031300A7D764 /* VoidArgFlutter.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoidArgFlutter.gen.m; sourceTree = "<group>"; };
+		0DD2E6B92684031300A7D764 /* VoidArgHost.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoidArgHost.gen.h; sourceTree = "<group>"; };
 		0DF4E5C4266ECF4A00AEA855 /* AllDatatypesTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AllDatatypesTest.m; sourceTree = "<group>"; };
 		0DF4E5C6266ED80900AEA855 /* EchoMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EchoMessenger.h; sourceTree = "<group>"; };
 		0DF4E5C7266ED80900AEA855 /* EchoMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EchoMessenger.m; sourceTree = "<group>"; };
@@ -133,8 +133,8 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CEA7789127DE9EEB00FE0824 /* null_fields.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = null_fields.gen.m; sourceTree = "<group>"; };
-		CEA7789227DE9EEB00FE0824 /* null_fields.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = null_fields.gen.h; sourceTree = "<group>"; };
+		CEA7789127DE9EEB00FE0824 /* NullFields.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NullFields.gen.m; sourceTree = "<group>"; };
+		CEA7789227DE9EEB00FE0824 /* NullFields.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullFields.gen.h; sourceTree = "<group>"; };
 		CEA7789427DE9F1800FE0824 /* NullFieldsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NullFieldsTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -213,40 +213,40 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
-				CEA7789227DE9EEB00FE0824 /* null_fields.gen.h */,
-				CEA7789127DE9EEB00FE0824 /* null_fields.gen.m */,
-				0D21E59927D0502D0051D07D /* background_platform_channels.gen.h */,
-				0D21E59827D0502D0051D07D /* background_platform_channels.gen.m */,
-				0D02163B27BC7B48009BD76F /* nullable_returns.gen.h */,
-				0D02163C27BC7B48009BD76F /* nullable_returns.gen.m */,
-				0DBD8C40279B741800E4FDBA /* non_null_fields.gen.h */,
-				0DBD8C3F279B741800E4FDBA /* non_null_fields.gen.m */,
-				0DA5DFD426CC39D600D2354B /* multiple_arity.gen.h */,
-				0DA5DFD526CC39D600D2354B /* multiple_arity.gen.m */,
-				0D6FD3C326A76D400046D8BD /* primitive.gen.h */,
-				0D6FD3C426A76D400046D8BD /* primitive.gen.m */,
-				0D7A910B268E5D700056B5E1 /* all_void.gen.h */,
-				0D7A910C268E5D700056B5E1 /* all_void.gen.m */,
-				0DD2E6AA2684031300A7D764 /* all_datatypes.gen.h */,
-				0DD2E6B22684031300A7D764 /* all_datatypes.gen.m */,
-				0DD2E6AE2684031300A7D764 /* async_handlers.gen.h */,
-				0DD2E6AF2684031300A7D764 /* async_handlers.gen.m */,
-				0DD2E6B72684031300A7D764 /* enum.gen.h */,
-				0DD2E6B12684031300A7D764 /* enum.gen.m */,
-				0DD2E6A82684031200A7D764 /* host2flutter.gen.h */,
-				0DD2E6AB2684031300A7D764 /* host2flutter.gen.m */,
-				0DD2E6AD2684031300A7D764 /* list.gen.h */,
-				0DD2E6A72684031200A7D764 /* list.gen.m */,
-				0DD2E6B42684031300A7D764 /* message.gen.h */,
-				0DD2E6B02684031300A7D764 /* message.gen.m */,
-				0DD2E6AC2684031300A7D764 /* void_arg_flutter.gen.h */,
-				0DD2E6B82684031300A7D764 /* void_arg_flutter.gen.m */,
-				0DD2E6B92684031300A7D764 /* void_arg_host.gen.h */,
-				0DD2E6A62684031200A7D764 /* void_arg_host.gen.m */,
-				0DD2E6B32684031300A7D764 /* voidflutter.gen.h */,
-				0DD2E6B62684031300A7D764 /* voidflutter.gen.m */,
-				0DD2E6A92684031200A7D764 /* voidhost.gen.h */,
-				0DD2E6B52684031300A7D764 /* voidhost.gen.m */,
+				CEA7789227DE9EEB00FE0824 /* NullFields.gen.h */,
+				CEA7789127DE9EEB00FE0824 /* NullFields.gen.m */,
+				0D21E59927D0502D0051D07D /* BackgroundPlatformChannels.gen.h */,
+				0D21E59827D0502D0051D07D /* BackgroundPlatformChannels.gen.m */,
+				0D02163B27BC7B48009BD76F /* NullableReturns.gen.h */,
+				0D02163C27BC7B48009BD76F /* NullableReturns.gen.m */,
+				0DBD8C40279B741800E4FDBA /* NonNullFields.gen.h */,
+				0DBD8C3F279B741800E4FDBA /* NonNullFields.gen.m */,
+				0DA5DFD426CC39D600D2354B /* MultipleArity.gen.h */,
+				0DA5DFD526CC39D600D2354B /* MultipleArity.gen.m */,
+				0D6FD3C326A76D400046D8BD /* Primitive.gen.h */,
+				0D6FD3C426A76D400046D8BD /* Primitive.gen.m */,
+				0D7A910B268E5D700056B5E1 /* AllVoid.gen.h */,
+				0D7A910C268E5D700056B5E1 /* AllVoid.gen.m */,
+				0DD2E6AA2684031300A7D764 /* AllDatatypes.gen.h */,
+				0DD2E6B22684031300A7D764 /* AllDatatypes.gen.m */,
+				0DD2E6AE2684031300A7D764 /* AsyncHandlers.gen.h */,
+				0DD2E6AF2684031300A7D764 /* AsyncHandlers.gen.m */,
+				0DD2E6B72684031300A7D764 /* Enum.gen.h */,
+				0DD2E6B12684031300A7D764 /* Enum.gen.m */,
+				0DD2E6A82684031200A7D764 /* Host2flutter.gen.h */,
+				0DD2E6AB2684031300A7D764 /* Host2flutter.gen.m */,
+				0DD2E6AD2684031300A7D764 /* List.gen.h */,
+				0DD2E6A72684031200A7D764 /* List.gen.m */,
+				0DD2E6B42684031300A7D764 /* Message.gen.h */,
+				0DD2E6B02684031300A7D764 /* Message.gen.m */,
+				0DD2E6AC2684031300A7D764 /* VoidArgFlutter.gen.h */,
+				0DD2E6B82684031300A7D764 /* VoidArgFlutter.gen.m */,
+				0DD2E6B92684031300A7D764 /* VoidArgHost.gen.h */,
+				0DD2E6A62684031200A7D764 /* VoidArgHost.gen.m */,
+				0DD2E6B32684031300A7D764 /* Voidflutter.gen.h */,
+				0DD2E6B62684031300A7D764 /* Voidflutter.gen.m */,
+				0DD2E6A92684031200A7D764 /* Voidhost.gen.h */,
+				0DD2E6B52684031300A7D764 /* Voidhost.gen.m */,
 				7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */,
 				7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
@@ -424,26 +424,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0DBD8C41279B741800E4FDBA /* non_null_fields.gen.m in Sources */,
-				0DD2E6BD2684031300A7D764 /* async_handlers.gen.m in Sources */,
-				0D7A910D268E5D700056B5E1 /* all_void.gen.m in Sources */,
-				0DD2E6C12684031300A7D764 /* voidhost.gen.m in Sources */,
-				0DD2E6BB2684031300A7D764 /* list.gen.m in Sources */,
+				0DBD8C41279B741800E4FDBA /* NonNullFields.gen.m in Sources */,
+				0DD2E6BD2684031300A7D764 /* AsyncHandlers.gen.m in Sources */,
+				0D7A910D268E5D700056B5E1 /* AllVoid.gen.m in Sources */,
+				0DD2E6C12684031300A7D764 /* Voidhost.gen.m in Sources */,
+				0DD2E6BB2684031300A7D764 /* List.gen.m in Sources */,
 				978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */,
-				0DD2E6C32684031300A7D764 /* void_arg_flutter.gen.m in Sources */,
-				0DD2E6C22684031300A7D764 /* voidflutter.gen.m in Sources */,
-				0DD2E6C02684031300A7D764 /* all_datatypes.gen.m in Sources */,
-				0D6FD3C526A76D400046D8BD /* primitive.gen.m in Sources */,
+				0DD2E6C32684031300A7D764 /* VoidArgFlutter.gen.m in Sources */,
+				0DD2E6C22684031300A7D764 /* Voidflutter.gen.m in Sources */,
+				0DD2E6C02684031300A7D764 /* AllDatatypes.gen.m in Sources */,
+				0D6FD3C526A76D400046D8BD /* Primitive.gen.m in Sources */,
 				97C146F31CF9000F007C117D /* main.m in Sources */,
-				0DD2E6BC2684031300A7D764 /* host2flutter.gen.m in Sources */,
-				0DA5DFD626CC39D600D2354B /* multiple_arity.gen.m in Sources */,
-				CEA7789327DE9EEB00FE0824 /* null_fields.gen.m in Sources */,
-				0DD2E6BE2684031300A7D764 /* message.gen.m in Sources */,
-				0D21E59A27D0502D0051D07D /* background_platform_channels.gen.m in Sources */,
-				0DD2E6BA2684031300A7D764 /* void_arg_host.gen.m in Sources */,
+				0DD2E6BC2684031300A7D764 /* Host2flutter.gen.m in Sources */,
+				0DA5DFD626CC39D600D2354B /* MultipleArity.gen.m in Sources */,
+				CEA7789327DE9EEB00FE0824 /* NullFields.gen.m in Sources */,
+				0DD2E6BE2684031300A7D764 /* Message.gen.m in Sources */,
+				0D21E59A27D0502D0051D07D /* BackgroundPlatformChannels.gen.m in Sources */,
+				0DD2E6BA2684031300A7D764 /* VoidArgHost.gen.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
-				0D02163D27BC7B48009BD76F /* nullable_returns.gen.m in Sources */,
-				0DD2E6BF2684031300A7D764 /* enum.gen.m in Sources */,
+				0D02163D27BC7B48009BD76F /* NullableReturns.gen.m in Sources */,
+				0DD2E6BF2684031300A7D764 /* Enum.gen.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

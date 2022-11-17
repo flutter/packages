@@ -83,38 +83,38 @@ add_executable(${TEST_RUNNER}
   test/pigeon_test.cpp
   test/primitive_test.cpp
   # Generated sources.
-  test/all_datatypes.g.cpp
-  test/all_datatypes.g.h
-  test/all_void.g.cpp
-  test/all_void.g.h
-  test/async_handlers.g.cpp
-  test/async_handlers.g.h
-  test/enum.g.cpp
-  test/enum.g.h
-  test/host2flutter.g.cpp
-  test/host2flutter.g.h
-  test/list.g.cpp
-  test/list.g.h
-  test/message.g.cpp
-  test/message.g.h
-  test/multiple_arity.g.cpp
-  test/multiple_arity.g.h
-  test/non_null_fields.g.cpp
-  test/non_null_fields.g.h
-  test/null_fields.g.cpp
-  test/null_fields.g.h
-  test/nullable_returns.g.cpp
-  test/nullable_returns.g.h
-  test/primitive.g.cpp
-  test/primitive.g.h
-  test/void_arg_flutter.g.cpp
-  test/void_arg_flutter.g.h
-  test/void_arg_host.g.cpp
-  test/void_arg_host.g.h
-  test/voidflutter.g.cpp
-  test/voidflutter.g.h
-  test/voidhost.g.cpp
-  test/voidhost.g.h
+  test/all_datatypes.gen.cpp
+  test/all_datatypes.gen.h
+  test/all_void.gen.cpp
+  test/all_void.gen.h
+  test/async_handlers.gen.cpp
+  test/async_handlers.gen.h
+  test/enum.gen.cpp
+  test/enum.gen.h
+  test/host2flutter.gen.cpp
+  test/host2flutter.gen.h
+  test/list.gen.cpp
+  test/list.gen.h
+  test/message.gen.cpp
+  test/message.gen.h
+  test/multiple_arity.gen.cpp
+  test/multiple_arity.gen.h
+  test/non_null_fields.gen.cpp
+  test/non_null_fields.gen.h
+  test/null_fields.gen.cpp
+  test/null_fields.gen.h
+  test/nullable_returns.gen.cpp
+  test/nullable_returns.gen.h
+  test/primitive.gen.cpp
+  test/primitive.gen.h
+  test/void_arg_flutter.gen.cpp
+  test/void_arg_flutter.gen.h
+  test/void_arg_host.gen.cpp
+  test/void_arg_host.gen.h
+  test/voidflutter.gen.cpp
+  test/voidflutter.gen.h
+  test/voidhost.gen.cpp
+  test/voidhost.gen.h
   # Test utilities.
   test/utils/echo_messenger.cpp
   test/utils/echo_messenger.h
