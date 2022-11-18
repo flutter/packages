@@ -107,7 +107,10 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
-    expect(code, contains('pigeonResult.enum1 = [list[1] integerValue];'));
+    expect(
+        code,
+        contains(
+            'pigeonResult.enum1 = [(list[1] == [NSNull null] ? 0 : list[1]) integerValue];'));
   });
 
   test('primitive enum host', () {
@@ -386,7 +389,7 @@ void main() {
     expect(
         code,
         contains(
-            'pigeonResult.nested = [Input fromList:[list objectAtIndex:0 ]];'));
+            'pigeonResult.nested = [Input fromList:(list[0] == [NSNull null] ? nil : list[0])];'));
     expect(
         code,
         contains(

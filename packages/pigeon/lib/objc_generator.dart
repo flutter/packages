@@ -615,7 +615,7 @@ String _listGetter(List<String> classNames, String list, NamedType field,
     if (prefix != null) {
       className = '$prefix$className';
     }
-    return '[$className fromList:[$list objectAtIndex:$index ]]';
+    return '[$className fromList:($list[$index] == [NSNull null] ? nil : $list[$index])]';
   } else {
     return '$list[$index]';
   }
@@ -958,13 +958,21 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       indent.scoped('{', '}', () {
         const String resultName = 'pigeonResult';
         indent.writeln('$className *$resultName = [[$className alloc] init];');
+        final int len = klass.fields.length;
+        indent.scoped('if (list == nil) {', '}', () {
+          indent.writeln('list = [[NSMutableArray alloc] init];');
+          indent.write('for (int i = 0; i < $len; i++) ');
+          indent.scoped('{', '}', () {
+            indent.writeln('[list addObject: [NSNull null]];');
+          });
+        });
         klass.fields
             .toList()
             .asMap()
             .forEach((int index, final NamedType field) {
           if (enumNames.contains(field.type.baseName)) {
             indent.writeln(
-                '$resultName.${field.name} = [${_listGetter(classNames, 'list', field, index, options.prefix)} integerValue];');
+                '$resultName.${field.name} = [(${_listGetter(classNames, 'list', field, index, options.prefix)} == [NSNull null] ? 0 : ${_listGetter(classNames, 'list', field, index, options.prefix)}) integerValue];');
           } else {
             indent.writeln(
                 '$resultName.${field.name} = ${_listGetter(classNames, 'list', field, index, options.prefix)};');
