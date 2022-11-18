@@ -2107,6 +2107,75 @@ void main() {
       expect(matches.last.decodedParams['pid'], pid);
     });
 
+    testWidgets('StatefulShellRoute supports nested routes with params',
+        (WidgetTester tester) async {
+      StatefulShellRouteState? routeState;
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute(
+          builder: (BuildContext context, _, Widget child) {
+            routeState = StatefulShellRoute.of(context);
+            return child;
+          },
+          branches: <ShellRouteBranch>[
+            ShellRouteBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen A'),
+              ),
+            ]),
+            ShellRouteBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/family/:fid',
+                builder: (BuildContext context, GoRouterState state) =>
+                    FamilyScreen(state.params['fid']!),
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: 'person/:pid',
+                    builder: (BuildContext context, GoRouterState state) {
+                      final String fid = state.params['fid']!;
+                      final String pid = state.params['pid']!;
+
+                      return PersonScreen(fid, pid);
+                    },
+                  ),
+                ],
+              ),
+            ]),
+          ],
+        ),
+      ];
+
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/a');
+      const String fid = 'f1';
+      const String pid = 'p2';
+      const String loc = '/family/$fid/person/$pid';
+
+      router.go(loc);
+      await tester.pumpAndSettle();
+      List<RouteMatch> matches = router.routerDelegate.matches.matches;
+
+      expect(router.location, loc);
+      expect(matches, hasLength(3));
+      expect(find.byType(PersonScreen), findsOneWidget);
+      expect(matches.last.decodedParams['fid'], fid);
+      expect(matches.last.decodedParams['pid'], pid);
+
+      routeState?.goBranch(0);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.byType(PersonScreen), findsNothing);
+
+      routeState?.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.byType(PersonScreen), findsOneWidget);
+      matches = router.routerDelegate.matches.matches;
+      expect(matches.last.decodedParams['fid'], fid);
+      expect(matches.last.decodedParams['pid'], pid);
+    });
+
     testWidgets('goNames should allow dynamics values for queryParams',
         (WidgetTester tester) async {
       const Map<String, dynamic> queryParametersAll = <String, List<dynamic>>{

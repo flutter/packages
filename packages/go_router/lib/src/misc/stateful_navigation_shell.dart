@@ -95,6 +95,21 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
 
   bool _branchesPreloaded = false;
 
+  // TODO(tolo): Temporary workaround due to duplication of encodedParams in redirection.dart
+  RouteMatchList _removeDuplicatedParams(RouteMatchList matchList) {
+    final Set<String> existingParams = <String>{};
+    final List<RouteMatch> matches = <RouteMatch>[];
+    for (final RouteMatch match in matchList.matches) {
+      final Map<String, String> params = <String, String>{
+        ...match.encodedParams
+      };
+      params.removeWhere((String key, _) => existingParams.contains(key));
+      existingParams.addAll(params.keys);
+      matches.add(match.copy(encodedParams: params));
+    }
+    return RouteMatchList(matches);
+  }
+
   int _findCurrentIndex() {
     final List<ShellRouteBranchState> branchState = _routeState.branchState;
     final int index = branchState.indexWhere((ShellRouteBranchState e) =>
@@ -137,6 +152,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
             context);
 
     ShellRouteBranchState createBranchNavigator(RouteMatchList matchList) {
+      matchList = _removeDuplicatedParams(matchList);
       // Find the index of the branch root route in the match list
       final ShellRouteBranch branch = branchState.routeBranch;
       final int shellRouteIndex = matchList.matches
@@ -189,7 +205,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
       index,
       _routeState.branchState[index].copy(
         child: widget.navigator,
-        matchList: widget.matchList,
+        matchList: _removeDuplicatedParams(widget.matchList),
       ),
       currentIndex: index,
     );

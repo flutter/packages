@@ -33,6 +33,22 @@ class RouteMatch {
           return true;
         }());
 
+  /// Creates a copy of this RouteMatch, with updated values for some of the
+  /// fields.
+  RouteMatch copy({Map<String, String>? encodedParams}) {
+    return RouteMatch(
+      route: route,
+      subloc: subloc,
+      fullpath: fullpath,
+      encodedParams: encodedParams ?? this.encodedParams,
+      queryParams: queryParams,
+      queryParametersAll: queryParametersAll,
+      extra: extra,
+      error: error,
+      pageKey: pageKey,
+    );
+  }
+
   // ignore: public_member_api_docs
   static RouteMatch? match({
     required RouteBase route,
