@@ -27,7 +27,7 @@ void main() {
   late ByteData vectorGraphicBuffer;
 
   setUpAll(() async {
-    final Uint8List bytes = await encodeSvg(
+    final Uint8List bytes = encodeSvg(
       xml: svgString,
       debugName: 'test',
       enableClippingOptimizer: false,

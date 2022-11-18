@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.0.0
+
+* Stable release.
+* Use `ImageCache` for images.
+* Bug fixes for image rendering.
+* Better support for synchronous usage in testing.
+* Make clipping the viewbox optional.
+
 ## 0.0.3
 
   * Improvements to CLI utilities.

@@ -22,7 +22,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-# Comment out before publishing
 dependency_overrides:
   vector_graphics_compiler:
     path: ../../vector_graphics_compiler

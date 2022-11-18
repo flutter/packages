@@ -27,3 +27,4 @@ Optimizations:
 - Opacity peepholing
 - Transformation inlining (except for text and radial gradients)
 - Group collapsing
+- Mask and clip elimination
