@@ -20,6 +20,9 @@ import 'package:pigeon/pigeon.dart';
 /// This comment is to test enum documentation comments.
 ///
 /// This comment also tests multiple line comments.
+///////////////////////////
+/// This comment also tests comments that start with '/'
+///////////////////////////
 enum MessageRequestState {
   pending,
   success,

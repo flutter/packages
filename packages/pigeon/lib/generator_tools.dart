@@ -474,7 +474,10 @@ void addDocumentationComments(
       indent.writeln(commentSpec.openCommentToken);
       currentLineOpenToken = commentSpec.blockContinuationToken;
     }
-    for (final String line in allComments) {
+    for (String line in allComments) {
+      if (line.isNotEmpty && line[0] != ' ') {
+        line = ' $line';
+      }
       indent.writeln(
         '$currentLineOpenToken$line',
       );
