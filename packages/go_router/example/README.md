@@ -1,9 +1,9 @@
 # Example Catalog
 
-## [Routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
+## [Get started](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
 `flutter run lib/main.dart`
 
-An example to demonstrate a simple two-pages app.
+An example to demonstrate a simple two-page app.
 
 ## [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
 `flutter run lib/sub_routes.dart`

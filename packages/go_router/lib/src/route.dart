@@ -115,6 +115,12 @@ abstract class RouteBase {
 /// The Page depends on the application type: [MaterialPage] for
 /// [MaterialApp], [CupertinoPage] for [CupertinoApp], or
 /// [NoTransitionPage] for [WidgetsApp].
+///
+/// {@category Get started}
+/// {@category Configuration}
+/// {@category Transition animations}
+/// {@category Named routes}
+/// {@category Redirection}
 class GoRoute extends RouteBase {
   /// Constructs a [GoRoute].
   /// - [path] and [name] cannot be empty strings.
@@ -455,6 +461,7 @@ abstract class ShellRouteBase extends RouteBase {
 /// ),
 /// ```
 ///
+/// {@category Configuration}
 class ShellRoute extends ShellRouteBase {
   /// Constructs a [ShellRoute].
   ShellRoute({

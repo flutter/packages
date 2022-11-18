@@ -6,6 +6,26 @@
 - Updated documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
   describe the meaning of the child argument in the builder functions.
 
+## 5.1.10
+
+- Fixes link of ShellRoute in README.
+
+## 5.1.9
+
+- Fixes broken links in documentation.
+
+## 5.1.8
+
+- Fixes a bug with `replace` where it was not generated a new `pageKey`.
+
+## 5.1.7
+
+- Adds documentation using dartdoc topics.
+
+## 5.1.6
+
+- Fixes crashes when multiple `GoRoute`s use the same `parentNavigatorKey` in a route subtree.
+
 ## 5.1.5
 
 - Adds migration guide for 5.1.2 to readme.
