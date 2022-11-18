@@ -7,7 +7,7 @@
 // Generates the pigeon output files needed for platform_test tests.
 //
 // Eventually this may get more options to control which files are generated,
-// but for now it always generates everything needed for the platforrm unit
+// but for now it always generates everything needed for the platform unit
 // tests.
 
 import 'dart:io' show Platform, exit;
