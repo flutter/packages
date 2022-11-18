@@ -29,6 +29,25 @@ String _snakeToPascalCase(String snake) {
       .join();
 }
 
+// Remaps some file names for Java output, since the filename on Java will be
+// the name of the generated top-level class. In some cases this is necessary
+// (e.g., "list", which collides with the Java List class in tests), and in
+// others it is just preserving previous behavior from the earlier Bash version
+// of the generation to minimize churn during the migration.
+// TODO(stuartmorgan): Remove the need for this when addressing
+// https://github.com/flutter/flutter/issues/115168.
+String _javaFilenameForName(String inputName) {
+  const Map<String, String> specialCases = <String, String>{
+    'android_unittests': 'Pigeon',
+    'host2flutter': 'Host2Flutter',
+    'list': 'PigeonList',
+    'message': 'MessagePigeon',
+    'voidflutter': 'VoidFlutter',
+    'voidhost': 'VoidHost',
+  };
+  return specialCases[inputName] ?? _snakeToPascalCase(inputName);
+}
+
 Future<int> generatePigeons({required String baseDir}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
@@ -109,9 +128,12 @@ Future<int> generatePigeons({required String baseDir}) async {
       input: './pigeons/$input.dart',
       dartOut: '$alternateOutputBase/lib/$input.gen.dart',
       // Android
+      // This doesn't use the '.gen' suffix since Java has strict file naming
+      // rules.
       javaOut: skipLanguages.contains(GeneratorLanguages.java)
           ? null
-          : '$alternateOutputBase/android/src/main/java/com/example/alternate_language_test_plugin/$pascalCaseName.gen.java',
+          : '$alternateOutputBase/android/src/main/java/com/example/'
+              'alternate_language_test_plugin/${_javaFilenameForName(input)}.java',
       javaPackage: 'com.example.alternate_language_test_plugin',
       // iOS
       objcHeaderOut: skipLanguages.contains(GeneratorLanguages.objc)
