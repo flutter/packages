@@ -4,8 +4,8 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
-#import "MockBinaryMessenger.h"
 #import "AsyncHandlers.gen.h"
+#import "MockBinaryMessenger.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface Value ()

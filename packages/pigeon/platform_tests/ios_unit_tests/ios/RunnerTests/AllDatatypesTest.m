@@ -4,8 +4,8 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
-#import "EchoMessenger.h"
 #import "AllDatatypes.gen.h"
+#import "EchoMessenger.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface AllDatatypesTest : XCTestCase
