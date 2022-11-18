@@ -76,8 +76,8 @@ Future<int> _runAndroidUnitTests() async {
 Future<int> _runAndroidKotlinUnitTests() async {
   const String examplePath = './$testPluginRelativePath/example';
   const String androidProjectPath = '$examplePath/android';
-  final int gradlewExistsCode = await runGradleBuild(androidProjectPath);
-  if (gradlewExistsCode != 0) {
+  final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
+  if (!gradleFile.existsSync()) {
     final int compileCode = await runFlutterBuild(examplePath, 'apk');
     if (compileCode != 0) {
       return compileCode;
