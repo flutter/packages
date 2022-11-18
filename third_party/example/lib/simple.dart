@@ -2,25 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 const String svgString = '''
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
-    <defs>
-        <linearGradient id="triangleGradient">
-            <stop offset="20%" stop-color="#000000" stop-opacity=".55" />
-            <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
-        </linearGradient>
-        <linearGradient id="rectangleGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-            <stop offset="20%" stop-color="#000000" stop-opacity=".15" />
-            <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
-        </linearGradient>
-    </defs>
-    <path fill="#42A5F5" fill-opacity=".8" d="M37.7 128.9 9.8 101 100.4 10.4 156.2 10.4"/>
-    <path fill="#42A5F5" fill-opacity=".8" d="M156.2 94 100.4 94 79.5 114.9 107.4 142.8"/>
-    <path fill="#0D47A1" d="M79.5 170.7 100.4 191.6 156.2 191.6 156.2 191.6 107.4 142.8"/>
-    <g transform="matrix(0.7071, -0.7071, 0.7071, 0.7071, -77.667, 98.057)">
-        <rect width="39.4" height="39.4" x="59.8" y="123.1" fill="#42A5F5" />
-        <rect width="39.4" height="5.5" x="59.8" y="162.5" fill="url(#rectangleGradient)" />
+<!-- tests a viewPort where min-x/min-y are not zero -->
+<?xml version="1.0" standalone="no"?><!-- Generator: Gravit.io -->
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="57 42 20 20">
+    <g>
+        <g>
+            <path d=" M 64.767 62 C 60.484 62 57 58.516 57 54.233 C 57 49.95 60.484 46.465 64.767 46.465 C 69.05 46.465 72.535 49.95 72.535 54.233 C 72.535 58.516 69.05 62 64.767 62 Z  M 64.767 49.37 C 62.086 49.37 59.905 51.552 59.905 54.233 C 59.905 56.914 62.086 59.095 64.767 59.095 C 67.448 59.095 69.63 56.914 69.63 54.233 C 69.63 51.552 67.448 49.37 64.767 49.37 Z " fill="rgb(111,161,234)"/>
+            <path d=" M 77 49.767 L 74.095 49.767 L 74.095 44.905 L 69.233 44.905 L 69.233 42 L 77 42 L 77 49.767 Z " fill="rgb(111,161,234)"/>
+            <rect x="70.937" y="42.145" width="2.905" height="8.93" transform="matrix(-0.707,-0.707,0.707,-0.707,90.618,130.756)" fill="rgb(111,161,234)"/>
+        </g>
     </g>
-    <path d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#triangleGradient)" />
 </svg>
 ''';
 

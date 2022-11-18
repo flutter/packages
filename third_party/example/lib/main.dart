@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 const List<String> _assetNames = <String>[
@@ -101,7 +100,10 @@ class _MyHomePageState extends State<_MyHomePage> {
           textDirection: TextDirection.ltr,
           child: SvgPicture.asset(
             iconNames[i],
-            color: Colors.blueGrey[(i + 1) * 100],
+            colorFilter: ColorFilter.mode(
+              Colors.blueGrey[(i + 1) * 100] ?? Colors.blueGrey,
+              BlendMode.srcIn,
+            ),
             matchTextDirection: true,
           ),
         ),
@@ -124,7 +126,6 @@ class _MyHomePageState extends State<_MyHomePage> {
   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <image xlink:href="https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png" height="200" width="200"/>
 </svg>'''));
-    _painters.add(AvdPicture.asset('assets/android_vd/battery_charging.xml'));
   }
 
   @override
@@ -147,7 +148,7 @@ class _MyHomePageState extends State<_MyHomePage> {
         ),
         Expanded(
           child: GridView.extent(
-            shrinkWrap: true,
+            // shrinkWrap: true,
             maxCrossAxisExtent: _dimension,
             padding: const EdgeInsets.all(4.0),
             mainAxisSpacing: 4.0,

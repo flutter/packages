@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2.0.0
+
+- Use parsing backend from `vector_graphics_compiler`.
+  - Out of order defs now supported.
+  - Patterns supported.
+  - Many optimizations added.
+  - **REGRESSION**: Lost support for `dx` and `dy` on `text`. See
+    https://github.com/dnfield/vector_graphics/issues/44 if this is important to
+    you.
+- Parse SVG data in background isolate by default.
+- Use widgets/rendering strategy from `vector_graphics`.
+- Much less caching.
+- More tests work without special handling - most of parsing is now sync,
+  and the loaders know how to avoid using `compute` in tests. For SVGs that
+  contain images, `vg.waitForPendingDecodes` is available.
+
+**DEPRECATIONS**
+
+- The `VectorDrawable` classes have gone away.
+- The `AvdPicture` and related classes/parser have gone away.
+- The `PictureCache` and `PictureStream` classes have gone away.
+- The `PicturePovider` class exists only for access to a no-op cache.
+- Several static members on `SvgPicture` and the `svg` utility class have gone
+  away.
+
 ## 1.1.6
 
 - Fix transforms on image tags, clipPaths.

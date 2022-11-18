@@ -27,11 +27,13 @@ flutter:
     - assets/android_vd/
 
 environment:
-  sdk: '>=2.12.0-0 <3.0.0'
-  flutter: ">=1.24.0-6.0.pre"
+  sdk: '>=2.17.0-0 <3.0.0'
+  flutter: ">=3.4.0-34.1.pre"
 
 # dependency_overrides:
-#  sky_engine:
-#    path: /Users/dnfield/engine/src/out/host_debug_unopt/gen/dart-pkg/sky_engine
-#  sky_services:
-#    path: /Users/dnfield/engine/src/out/host_debug_unopt/gen/dart-pkg/sky_services
+#   vector_graphics_codec:
+#     path: ../../vector_graphics/packages/vector_graphics_codec
+#   vector_graphics_compiler:
+#     path: ../../vector_graphics/packages/vector_graphics_compiler
+#   vector_graphics:
+#     path: ../../vector_graphics/packages/vector_graphics
