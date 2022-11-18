@@ -286,7 +286,7 @@ ${parser.usage}''');
   }
 
   if (!argResults.wasParsed(_skipGenerationFlag)) {
-    final String baseDir = p.dirname(p.dirname(Platform.script.path));
+    final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
     print('# Generating platform_test/ output...');
     final int generateExitCode = await generatePigeons(baseDir: baseDir);
     if (generateExitCode == 0) {

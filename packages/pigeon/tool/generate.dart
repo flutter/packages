@@ -17,7 +17,7 @@ import 'package:path/path.dart' as p;
 import 'shared/generation.dart';
 
 Future<void> main(List<String> args) async {
-  final String baseDir = p.dirname(p.dirname(Platform.script.path));
+  final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
 
   print('Generating platform_test/ output...');
   final int exitCode = await generatePigeons(baseDir: baseDir);
