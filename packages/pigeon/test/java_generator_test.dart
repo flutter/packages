@@ -6,7 +6,6 @@ import 'package:pigeon/ast.dart';
 import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/pigeon.dart';
 import 'package:test/test.dart';
-import 'package:pigeon/generator_tools.dart';
 
 void main() {
   test('gen one class', () {
