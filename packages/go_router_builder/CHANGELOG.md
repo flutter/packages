@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Supports default value for the route parameters.
+
 ## 1.0.15
 
 * Avoids using deprecated DartType.element2.
