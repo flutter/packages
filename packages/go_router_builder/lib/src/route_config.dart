@@ -315,11 +315,15 @@ GoRouteData.\$route(
 
     final StringBuffer buffer = StringBuffer('queryParams: {\n');
 
-    for (final String param
-        in _ctorQueryParams.map((ParameterElement e) => e.name)) {
+    for (final ParameterElement param in _ctorQueryParams) {
+      final String parameterName = param.name;
+      String condition = '$parameterName != null';
+      if (param.hasDefaultValue) {
+        condition += '&& $parameterName != ${param.defaultValueCode!}';
+      }
       buffer.writeln(
-        'if ($param != null) ${escapeDartString(param.kebab)}: '
-        '${_encodeFor(param)},',
+        'if ($condition) ${escapeDartString(parameterName.kebab)}: '
+        '${_encodeFor(parameterName)},',
       );
     }
 

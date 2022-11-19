@@ -94,7 +94,11 @@ String _stateValueAccess(ParameterElement element) {
   }
 
   if (element.isOptional) {
-    return 'queryParams[${escapeDartString(element.name.kebab)}]';
+    String value = 'queryParams[${escapeDartString(element.name.kebab)}]';
+    if (element.hasDefaultValue) {
+      value += ' ?? ${element.defaultValueCode!}';
+    }
+    return value;
   }
 
   throw InvalidGenerationSourceError(
@@ -106,8 +110,10 @@ String _stateValueAccess(ParameterElement element) {
 abstract class _TypeHelper {
   const _TypeHelper();
 
+  /// Decodes the value from its string representation in the URL.
   String _decode(ParameterElement parameterElement);
 
+  /// Encodes the value from its string representation in the URL.
   String _encode(String fieldName, DartType type);
 
   bool _matchesType(DartType type);
@@ -253,13 +259,16 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
   String _decode(ParameterElement parameterElement) {
     final DartType paramType = parameterElement.type;
 
-    if (paramType.isNullableType) {
-      return '$convertMapValueHelperName('
+    if (!parameterElement.isRequired) {
+      String decoded = '$convertMapValueHelperName('
           '${escapeDartString(parameterElement.name.kebab)}, '
           'state.queryParams, '
           '${helperName(paramType)})';
+      if (parameterElement.hasDefaultValue) {
+        decoded += ' ?? ${parameterElement.defaultValueCode!}';
+      }
+      return decoded;
     }
-
     return '${helperName(paramType)}'
         '(state.${_stateValueAccess(parameterElement)})';
   }
