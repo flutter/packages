@@ -1174,6 +1174,10 @@ name: foobar
       ' enum comment',
     ];
     int count = 0;
+
+    final List<String> unspacedComments = <String>['////////'];
+    int unspacedCount = 0;
+
     final Root root = Root(
       apis: <Api>[
         Api(
@@ -1219,7 +1223,10 @@ name: foobar
       enums: <Enum>[
         Enum(
           name: 'enum',
-          documentationComments: <String>[comments[count++]],
+          documentationComments: <String>[
+            comments[count++],
+            unspacedComments[unspacedCount++]
+          ],
           members: <String>[
             'one',
             'two',
@@ -1233,6 +1240,7 @@ name: foobar
     for (final String comment in comments) {
       expect(code, contains('///$comment'));
     }
+    expect(code, contains('/// ///'));
   });
 
   test('doesnt create codecs if no custom datatypes', () {

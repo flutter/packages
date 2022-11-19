@@ -6,6 +6,7 @@ import 'package:pigeon/ast.dart';
 import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/pigeon.dart';
 import 'package:test/test.dart';
+import 'package:pigeon/generator_tools.dart';
 
 void main() {
   test('gen one class', () {
@@ -1139,6 +1140,9 @@ void main() {
     ];
     int count = 0;
 
+    final List<String> unspacedComments = <String>['////////'];
+    int unspacedCount = 0;
+
     final Root root = Root(
       apis: <Api>[
         Api(
@@ -1185,7 +1189,10 @@ void main() {
       enums: <Enum>[
         Enum(
           name: 'enum',
-          documentationComments: <String>[comments[count++]],
+          documentationComments: <String>[
+            comments[count++],
+            unspacedComments[unspacedCount++]
+          ],
           members: <String>[
             'one',
             'two',
@@ -1204,6 +1211,7 @@ void main() {
               .hasMatch(code),
           true);
     }
+    expect(code, isNot(contains('*//')));
   });
 
   test('doesnt create codecs if no custom datatypes', () {
