@@ -63,16 +63,19 @@ class BoolRoute extends GoRouteData {
   BoolRoute({
     required this.requiredBoolField,
     this.boolField,
+    this.boolFieldWithDefaultValue = true,
   });
 
   final bool requiredBoolField;
   final bool? boolField;
+  final bool boolFieldWithDefaultValue;
 
   @override
   Widget build(BuildContext context) => BasePage<bool>(
         dataTitle: 'BoolRoute',
         param: requiredBoolField,
         queryParam: boolField,
+        queryParamWithDefaultValue: boolFieldWithDefaultValue,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -109,16 +112,19 @@ class DoubleRoute extends GoRouteData {
   DoubleRoute({
     required this.requiredDoubleField,
     this.doubleField,
+    this.doubleFieldWithDefaultValue = 1.0,
   });
 
   final double requiredDoubleField;
   final double? doubleField;
+  final double doubleFieldWithDefaultValue;
 
   @override
   Widget build(BuildContext context) => BasePage<double>(
         dataTitle: 'DoubleRoute',
         param: requiredDoubleField,
         queryParam: doubleField,
+        queryParamWithDefaultValue: doubleFieldWithDefaultValue,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -132,16 +138,19 @@ class IntRoute extends GoRouteData {
   IntRoute({
     required this.requiredIntField,
     this.intField,
+    this.intFieldWithDefaultValue = 1,
   });
 
   final int requiredIntField;
   final int? intField;
+  final int intFieldWithDefaultValue;
 
   @override
   Widget build(BuildContext context) => BasePage<int>(
         dataTitle: 'IntRoute',
         param: requiredIntField,
         queryParam: intField,
+        queryParamWithDefaultValue: intFieldWithDefaultValue,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -155,16 +164,19 @@ class NumRoute extends GoRouteData {
   NumRoute({
     required this.requiredNumField,
     this.numField,
+    this.numFieldWithDefaultValue = 1,
   });
 
   final num requiredNumField;
   final num? numField;
+  final num numFieldWithDefaultValue;
 
   @override
   Widget build(BuildContext context) => BasePage<num>(
         dataTitle: 'NumRoute',
         param: requiredNumField,
         queryParam: numField,
+        queryParamWithDefaultValue: numFieldWithDefaultValue,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -178,16 +190,19 @@ class EnumRoute extends GoRouteData {
   EnumRoute({
     required this.requiredEnumField,
     this.enumField,
+    this.enumFieldWithDefaultValue = PersonDetails.favoriteFood,
   });
 
   final PersonDetails requiredEnumField;
   final PersonDetails? enumField;
+  final PersonDetails enumFieldWithDefaultValue;
 
   @override
   Widget build(BuildContext context) => BasePage<PersonDetails>(
         dataTitle: 'EnumRoute',
         param: requiredEnumField,
         queryParam: enumField,
+        queryParamWithDefaultValue: enumFieldWithDefaultValue,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -201,16 +216,19 @@ class EnhancedEnumRoute extends GoRouteData {
   EnhancedEnumRoute({
     required this.requiredEnumField,
     this.enumField,
+    this.enumFieldWithDefaultValue = SportDetails.football,
   });
 
   final SportDetails requiredEnumField;
   final SportDetails? enumField;
+  final SportDetails enumFieldWithDefaultValue;
 
   @override
   Widget build(BuildContext context) => BasePage<SportDetails>(
         dataTitle: 'EnhancedEnumRoute',
         param: requiredEnumField,
         queryParam: enumField,
+        queryParamWithDefaultValue: enumFieldWithDefaultValue,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -224,16 +242,19 @@ class StringRoute extends GoRouteData {
   StringRoute({
     required this.requiredStringField,
     this.stringField,
+    this.stringFieldWithDefaultValue = 'defaultValue',
   });
 
   final String requiredStringField;
   final String? stringField;
+  final String stringFieldWithDefaultValue;
 
   @override
   Widget build(BuildContext context) => BasePage<String>(
         dataTitle: 'StringRoute',
         param: requiredStringField,
         queryParam: stringField,
+        queryParamWithDefaultValue: stringFieldWithDefaultValue,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -271,12 +292,14 @@ class BasePage<T> extends StatelessWidget {
     required this.dataTitle,
     required this.param,
     this.queryParam,
+    this.queryParamWithDefaultValue,
     super.key,
   });
 
   final String dataTitle;
   final T param;
   final T? queryParam;
+  final T? queryParamWithDefaultValue;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -336,6 +359,9 @@ class BasePage<T> extends StatelessWidget {
               Text(dataTitle),
               Text('Param: $param'),
               Text('Query param: $queryParam'),
+              Text(
+                'Query param with default value: $queryParamWithDefaultValue',
+              ),
               SelectableText(GoRouter.of(context).location),
             ],
           ),
