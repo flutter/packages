@@ -151,7 +151,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   const MarkdownWidget({
     Key? key,
     required this.data,
-    this.anchorsController,
+    this.anchorController,
     this.selectable = false,
     this.styleSheet,
     this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
@@ -268,7 +268,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// specification on soft line breaks when lines of text are joined.
   final bool softLineBreak;
 
-  final AnchorsController? anchorsController;
+  final AnchorController? anchorController;
 
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
@@ -343,7 +343,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       softLineBreak: widget.softLineBreak,
     );
 
-    widget.anchorsController?.registerMarkdownBuilder(builder);
+    widget.anchorController?.registerMarkdownBuilder(builder);
 
     _children = builder.build(astNodes);
   }
@@ -398,7 +398,7 @@ class MarkdownBody extends MarkdownWidget {
   const MarkdownBody({
     Key? key,
     required String data,
-    AnchorsController? anchorsController,
+    AnchorController? anchorController,
     bool selectable = false,
     MarkdownStyleSheet? styleSheet,
     MarkdownStyleSheetBaseTheme? styleSheetTheme,
@@ -424,7 +424,7 @@ class MarkdownBody extends MarkdownWidget {
   }) : super(
           key: key,
           data: data,
-          anchorsController: anchorsController,
+          anchorController: anchorController,
           selectable: selectable,
           styleSheet: styleSheet,
           styleSheetTheme: styleSheetTheme,
@@ -462,18 +462,18 @@ class MarkdownBody extends MarkdownWidget {
   }
 }
 
-class AnchorsController {
-  factory AnchorsController({
+class AnchorController {
+  factory AnchorController({
     ItemPositionsListener? itemPositionsListener,
     ItemScrollController? itemScrollController,
   }) {
-    return AnchorsController._(
+    return AnchorController._(
       itemPositionsListener ?? ItemPositionsListener.create(),
       itemScrollController ?? ItemScrollController(),
     );
   }
 
-  AnchorsController._(
+  AnchorController._(
     this._itemPositionsListener,
     this._itemScrollController,
   ) {
@@ -550,7 +550,7 @@ class AnchorsController {
 }
 
 /// The Position of an Anchor on screen.
-/// Can be observed by using [AnchorsController.anchorPositions].
+/// Can be observed by using [AnchorController.anchorPositions].
 /// ```dart
 /// // Table of contents heading at the top of the screen
 /// AnchorPosition(
@@ -587,7 +587,7 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
   const RelativeAnchorsMarkdown({
     Key? key,
     required String data,
-    required this.anchorsController,
+    required this.anchorController,
     bool selectable = false,
     MarkdownStyleSheet? styleSheet,
     MarkdownStyleSheetBaseTheme? styleSheetTheme,
@@ -614,7 +614,7 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
   }) : super(
           key: key,
           data: data,
-          anchorsController: anchorsController,
+          anchorController: anchorController,
           selectable: selectable,
           styleSheet: styleSheet,
           styleSheetTheme: styleSheetTheme,
@@ -637,7 +637,7 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
   /// The amount of space by which to inset the children.
   final EdgeInsets padding;
 
-  final AnchorsController anchorsController;
+  final AnchorController anchorController;
 
   /// How the scroll view should respond to user input.
   ///
@@ -659,8 +659,8 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
       itemBuilder: (BuildContext context, int index) => children[index],
       physics: physics,
       shrinkWrap: shrinkWrap,
-      itemScrollController: anchorsController._itemScrollController,
-      itemPositionsListener: anchorsController._itemPositionsListener,
+      itemScrollController: anchorController._itemScrollController,
+      itemPositionsListener: anchorController._itemPositionsListener,
     );
   }
 }
@@ -679,7 +679,7 @@ class Markdown extends MarkdownWidget {
   const Markdown({
     Key? key,
     required String data,
-    AnchorsController? anchorsController,
+    AnchorController? anchorController,
     bool selectable = false,
     MarkdownStyleSheet? styleSheet,
     MarkdownStyleSheetBaseTheme? styleSheetTheme,
@@ -707,7 +707,7 @@ class Markdown extends MarkdownWidget {
   }) : super(
           key: key,
           data: data,
-          anchorsController: anchorsController,
+          anchorController: anchorController,
           selectable: selectable,
           styleSheet: styleSheet,
           styleSheetTheme: styleSheetTheme,
