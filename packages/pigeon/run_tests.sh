@@ -252,13 +252,11 @@ run_ios_e2e_tests() {
   DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
   DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
   DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
-  PIGEON_JAVA="e2e_tests/test_objc/android/app/src/main/java/io/flutter/plugins/Pigeon.java"
   $run_pigeon \
     --input pigeons/message.dart \
     --dart_out $DARTLE_DART \
     --objc_header_out $DARTLE_H \
     --objc_source_out $DARTLE_M \
-    --java_out $PIGEON_JAVA
   dart format $DARTLE_DART
 
   pushd $PWD
