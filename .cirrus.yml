@@ -107,6 +107,7 @@ task:
           # has been fixed, this can be removed and there can just be a single
           # run with --require-excerpts and no exclusions.
           - ./script/tool_runner.sh readme-check --require-excerpts --exclude=script/configs/temp_exclude_excerpt.yaml
+        dependabot_script: $PLUGIN_TOOL_COMMAND dependabot-check
         version_script:
           # For pre-submit, pass the PR labels to the script to allow for
           # check overrides.
@@ -119,6 +120,14 @@ task:
           -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
           - fi
         publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
+        federated_safety_script:
+          # This check is only meaningful for PRs, as it validates changes
+          # rather than state.
+          - if [[ $CIRRUS_PR == "" ]]; then
+          -   ./script/tool_runner.sh federation-safety-check
+          - else
+          -   echo "Only run in presubmit"
+          - fi
     - name: dart_unit_tests
       env:
         matrix:
