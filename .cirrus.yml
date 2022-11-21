@@ -229,6 +229,19 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
+    - name: linux-platform_tests
+      # Don't run full platform tests on both channels in pre-submit.
+      skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      build_script:
+        - ./script/tool_runner.sh build-examples --linux
+      native_test_script:
+        - xvfb-run ./script/tool_runner.sh native-test --linux --no-integration
+      drive_script:
+        - xvfb-run ./script/tool_runner.sh drive-examples --linux
 
 # Heavy-workload Linux tasks.
 # These use machines with more CPUs and memory, so will reduce parallelization
@@ -260,8 +273,16 @@ task:
         # extension_google_sign_in_as_googleapis_auth is currently not building, see
         # https://github.com/flutter/flutter/issues/89301
         - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
+      lint_script:
+        - ./script/tool_runner.sh lint-android # must come after build-examples
       native_unit_test_scipt:
         - ./script/tool_runner.sh native-test --android --no-integration
+      # Upload the full lint results to Cirrus to display in the results UI.
+      always:
+        android-lint_artifacts:
+          path: "**/reports/lint-results-debug.xml"
+          type: text/xml
+          format: android-lint
     - name: android-build_all_packages
       env:
         BUILD_ALL_ARGS: "apk"
@@ -299,25 +320,13 @@ task:
         - cd ../..
         - flutter packages get
         - dart testing/web_benchmarks_test.dart
-    ### Linux desktop tasks ###
-    - name: linux-platform_tests
-      # Don't run full platform tests on both channels in pre-submit.
-      skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
-      env:
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      build_script:
-        - ./script/tool_runner.sh build-examples --linux
-      native_test_script:
-        - ./script/tool_runner.sh native-test --linux --no-integration
 
+# ARM macOS tasks.
 task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   << : *MACOS_ARM_TEMPLATE
   matrix:
     - name: macos-custom_package_tests
-      # Run on macOS x64 image with Java runtime installed.
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
@@ -349,6 +358,16 @@ task:
         - ./script/tool_runner.sh build-examples --ios
       native_test_script:
         - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 13,OS=latest"
+      drive_script:
+        # `drive-examples` contains integration tests, which changes the UI of the application.
+        # This UI change sometimes affects `xctest`.
+        # So we run `drive-examples` after `native-test`; changing the order will result ci failure.
+        - ./script/tool_runner.sh drive-examples --ios
+      xcode_analyze_script:
+        - ./script/tool_runner.sh xcode-analyze --ios
+      xcode_analyze_deprecation_script:
+        # Ensure we don't accidentally introduce deprecated code.
+        - ./script/tool_runner.sh xcode-analyze --ios --ios-min-version=13.0
     ### iOS tasks ###
     - name: ios-build_all_packages
       env:
@@ -368,8 +387,15 @@ task:
         PATH: $PATH:/usr/local/bin
       build_script:
         - ./script/tool_runner.sh build-examples --macos
+      xcode_analyze_script:
+        - ./script/tool_runner.sh xcode-analyze --macos
+      xcode_analyze_deprecation_script:
+        # Ensure we don't accidentally introduce deprecated code.
+        - ./script/tool_runner.sh xcode-analyze --macos --macos-min-version=12.3
       native_test_script:
         - ./script/tool_runner.sh native-test --macos
+      drive_script:
+        - ./script/tool_runner.sh drive-examples --macos
 
 # Intel macOS tasks.
 task:
