@@ -5,14 +5,15 @@
 import 'package:flutter/material.dart';
 
 const Set<TargetPlatform> _desktop = <TargetPlatform>{
-  TargetPlatform.fuchsia,
   TargetPlatform.linux,
   TargetPlatform.macOS,
   TargetPlatform.windows
 };
+
 const Set<TargetPlatform> _mobile = <TargetPlatform>{
+  TargetPlatform.android,
+  TargetPlatform.fuchsia,
   TargetPlatform.iOS,
-  TargetPlatform.android
 };
 
 /// A group of standard breakpoints built according to the material
@@ -89,18 +90,16 @@ class WidthPlatformBreakpoint extends Breakpoint {
 
   @override
   bool isActive(BuildContext context) {
-    bool size = false;
-    final bool isRightPlatform =
-        platform?.contains(Theme.of(context).platform) ?? true;
-    if (begin != null && end != null) {
-      size = MediaQuery.of(context).size.width >= begin! &&
-          MediaQuery.of(context).size.width < end!;
-    } else if (begin != null && end == null) {
-      size = MediaQuery.of(context).size.width >= begin!;
-    } else if (begin == null && end != null) {
-      size = MediaQuery.of(context).size.width < end!;
-    }
-    return size && isRightPlatform;
+    final TargetPlatform host = Theme.of(context).platform;
+    final bool isRightPlatform = platform?.contains(host) ?? true;
+
+    // Null boundaries are unbounded, assign the max/min of their associated
+    // direction on a number line.
+    final double width = MediaQuery.of(context).size.width;
+    final double lowerBound = begin ?? double.negativeInfinity;
+    final double upperBound = end ?? double.infinity;
+
+    return width >= lowerBound && width < upperBound && isRightPlatform;
   }
 }
 

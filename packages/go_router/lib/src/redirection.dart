@@ -26,9 +26,10 @@ FutureOr<RouteMatchList> redirect(
     {List<RouteMatchList>? redirectHistory,
     Object? extra}) {
   FutureOr<RouteMatchList> processRedirect(RouteMatchList prevMatchList) {
+    final String prevLocation = prevMatchList.location.toString();
     FutureOr<RouteMatchList> processTopLevelRedirect(
         String? topRedirectLocation) {
-      if (topRedirectLocation != null) {
+      if (topRedirectLocation != null && topRedirectLocation != prevLocation) {
         final RouteMatchList newMatch = _getNewMatches(
           topRedirectLocation,
           prevMatchList.location,
@@ -62,7 +63,8 @@ FutureOr<RouteMatchList> redirect(
       }
       FutureOr<RouteMatchList> processRouteLevelRedirect(
           String? routeRedirectLocation) {
-        if (routeRedirectLocation != null) {
+        if (routeRedirectLocation != null &&
+            routeRedirectLocation != prevLocation) {
           final RouteMatchList newMatch = _getNewMatches(
             routeRedirectLocation,
             prevMatchList.location,
@@ -102,7 +104,7 @@ FutureOr<RouteMatchList> redirect(
       context,
       GoRouterState(
         configuration,
-        location: prevMatchList.location.toString(),
+        location: prevLocation,
         name: null,
         // No name available at the top level trim the query params off the
         // sub-location to match route.redirect

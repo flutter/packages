@@ -343,7 +343,7 @@ Future<bool> hasUncommittedChanges(
         'There are uncommitted changes in your project. Please git commit, abandon, or stash your changes before trying again.');
     logger.printStatus(
         'You may commit your changes using \'git add .\' and \'git commit -m "<message"\'');
-    return false;
+    return true;
   }
   return false;
 }

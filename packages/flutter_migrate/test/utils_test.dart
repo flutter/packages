@@ -108,6 +108,20 @@ void main() {
       expect(await utils.hasUncommittedChanges(projectRootPath), true);
     });
 
+    testWithoutContext('logging hasUncommittedChanges true on dirty repo',
+        () async {
+      expect(projectRoot.existsSync(), true);
+      expect(projectRoot.childDirectory('.git').existsSync(), false);
+      await utils.gitInit(projectRootPath);
+      expect(projectRoot.childDirectory('.git').existsSync(), true);
+
+      projectRoot.childFile('some_file.dart')
+        ..createSync()
+        ..writeAsStringSync('void main() {}', flush: true);
+
+      expect(await hasUncommittedChanges(projectRootPath, logger, utils), true);
+    });
+
     testWithoutContext('diffFiles', () async {
       expect(projectRoot.existsSync(), true);
       expect(projectRoot.childDirectory('.git').existsSync(), false);

@@ -1,0 +1,25 @@
+name: alternate_language_test_plugin
+description: Pigeon test harness for alternate plugin languages.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+  flutter: ">=2.5.0"
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.example.alternate_language_test_plugin
+        pluginClass: AlternateLanguageTestPlugin
+      ios:
+        pluginClass: AlternateLanguageTestPlugin
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

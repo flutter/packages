@@ -51,18 +51,5 @@ void defineTests() {
         expectTextStrings(tester.allWidgets, <String>['<']);
       },
     );
-
-    testWidgets(
-      "doesn't convert existing HTML entities when parsing",
-      (WidgetTester tester) async {
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: '&amp; &copy; &#60; &#x0007B;'),
-          ),
-        );
-        expectTextStrings(
-            tester.allWidgets, <String>['&amp; &copy; &#60; &#x0007B;']);
-      },
-    );
   });
 }

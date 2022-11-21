@@ -276,6 +276,8 @@ void _writeFlutterApi(
   bool isMockHandler = false,
 }) {
   assert(api.location == ApiLocation.flutter);
+  final List<String> customEnumNames =
+      root.enums.map((Enum x) => x.name).toList();
   String codecName = _standardMessageCodec;
   if (getCodecClasses(api, root).isNotEmpty) {
     codecName = _getCodecName(api);
@@ -358,8 +360,14 @@ void _writeFlutterApi(
                       _makeGenericTypeArguments(arg.type);
                   final String castCall = _makeGenericCastCall(arg.type);
 
-                  indent.writeln(
-                      'final $argType? $argName = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
+                  final String leftHandSide = 'final $argType? $argName';
+                  if (customEnumNames.contains(arg.type.baseName)) {
+                    indent.writeln(
+                        '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count] as int];');
+                  } else {
+                    indent.writeln(
+                        '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
+                  }
                   if (!arg.type.isNullable) {
                     indent.writeln(
                         "assert($argName != null, 'Argument for $channelName was null, expected non-null $argType.');");

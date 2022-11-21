@@ -1,4 +1,4 @@
-gcp_credentials: ENCRYPTED[!f1177d1ddb5330ffaa9ea11c9c9e8e0c542185e895c36071f18cec923dd31c50ece6d18da89c2f6f1cd2d1a98d0c2eea!]
+gcp_credentials: ENCRYPTED[!9e38557f08108136b3625b7e62c64cc9eccc50365ffeaaa55c6be52f1d8fd6225af5badc69983ca08484274f02f34424!]
 
 # Run on PRs and main branch post submit only. Don't run tests when tagging.
 only_if: $CIRRUS_TAG == '' && ($CIRRUS_PR != '' || $CIRRUS_BRANCH == 'main')
@@ -61,6 +61,22 @@ flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
     # Run doctor to allow auditing of what version of Flutter the run is using.
     - flutter doctor -v
   << : *TOOL_SETUP_TEMPLATE
+
+# Ensures that the latest versions of all of the 1P packages can be used
+# together. See script/configs/exclude_all_packages_app.yaml for exceptions.
+build_all_packages_app_template: &BUILD_ALL_PACKAGES_APP_TEMPLATE
+  create_all_packages_app_script:
+    - $PLUGIN_TOOL_COMMAND all-plugins-app --output-dir=. --exclude script/configs/exclude_all_packages_app.yaml
+  build_all_packages_debug_script:
+    - cd all_plugins
+    - if [[ "$BUILD_ALL_ARGS" == "web" ]]; then
+    -   echo "Skipping; web does not support debug builds"
+    - else
+    -   flutter build $BUILD_ALL_ARGS --debug
+    - fi
+  build_all_packages_release_script:
+    - cd all_plugins
+    - flutter build $BUILD_ALL_ARGS --release
 
 # Light-workload Linux tasks.
 # These use default machines, with fewer CPUs, to reduce pressure on the
@@ -188,6 +204,22 @@ task:
         - else
         -   ./script/tool_runner.sh custom-test --exclude=pigeon,flutter_image
         - fi
+    ### Web tasks ###
+    - name: web-build_all_packages
+      env:
+        BUILD_ALL_ARGS: "web"
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
+    ### Linux desktop tasks ###
+    - name: linux-build_all_packages
+      env:
+        BUILD_ALL_ARGS: "linux"
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
 
 # Heavy-workload Linux tasks.
 # These use machines with more CPUs and memory, so will reduce parallelization
@@ -221,6 +253,13 @@ task:
         - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
       native_unit_test_scipt:
         - ./script/tool_runner.sh native-test --android --no-integration
+    - name: android-build_all_packages
+      env:
+        BUILD_ALL_ARGS: "apk"
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
     ### Web tasks ###
     - name: web-platform_tests
       env:
@@ -268,22 +307,6 @@ task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   << : *MACOS_ARM_TEMPLATE
   matrix:
-    ### iOS tasks ###
-    - name: ios-platform_tests
-      # Don't run full platform tests on both channels in pre-submit.
-      skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
-      env:
-        PATH: $PATH:/usr/local/bin
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      create_simulator_script:
-        - xcrun simctl list
-        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-0 | xargs xcrun simctl boot
-      build_script:
-        - ./script/tool_runner.sh build-examples --ios
-      native_test_script:
-        - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 13,OS=latest"
     - name: macos-custom_package_tests
       # Run on macOS x64 image with Java runtime installed.
       env:
@@ -301,6 +324,30 @@ task:
         - else
         -   ./script/tool_runner.sh custom-test --exclude=flutter_image,script/configs/linux_only_custom_test.yaml
         - fi
+    ### iOS tasks ###
+    - name: ios-platform_tests
+      # Don't run full platform tests on both channels in pre-submit.
+      skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      create_simulator_script:
+        - xcrun simctl list
+        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-0 | xargs xcrun simctl boot
+      build_script:
+        - ./script/tool_runner.sh build-examples --ios
+      native_test_script:
+        - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 13,OS=latest"
+    ### iOS tasks ###
+    - name: ios-build_all_packages
+      env:
+        BUILD_ALL_ARGS: "ios --no-codesign"
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
     ### macOS desktop tasks ###
     - name: macos-platform_tests
       # Don't run full platform tests on both channels in pre-submit.
@@ -314,3 +361,20 @@ task:
         - ./script/tool_runner.sh build-examples --macos
       native_test_script:
         - ./script/tool_runner.sh native-test --macos
+
+# Intel macOS tasks.
+task:
+  << : *MACOS_INTEL_TEMPLATE
+  << : *FLUTTER_UPGRADE_TEMPLATE
+  matrix:
+    ### macOS desktop tasks ###
+    # macos-platform_tests builds all the packages on ARM, so this build is run
+    # on Intel to give us build coverage of both host types.
+    - name: macos-build_all_packages
+      env:
+        BUILD_ALL_ARGS: "macos"
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      setup_script:
+      << : *BUILD_ALL_PACKAGES_APP_TEMPLATE

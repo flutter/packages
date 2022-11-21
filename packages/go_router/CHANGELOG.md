@@ -1,8 +1,47 @@
 ## 5.2.0
 
-- Update README
-- Removes dynamic calls in examples.
 - Adds `popUntil` method to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`. 
+
+## 5.1.10
+
+- Fixes link of ShellRoute in README.
+
+## 5.1.9
+
+- Fixes broken links in documentation.
+
+## 5.1.8
+
+- Fixes a bug with `replace` where it was not generated a new `pageKey`.
+
+## 5.1.7
+
+- Adds documentation using dartdoc topics.
+
+## 5.1.6
+
+- Fixes crashes when multiple `GoRoute`s use the same `parentNavigatorKey` in a route subtree.
+
+## 5.1.5
+
+- Adds migration guide for 5.1.2 to readme.
+
+## 5.1.4
+
+- Fixes the documentation by removing the `ShellRoute`'s non-existing `path` parameter from it.
+
+## 5.1.3
+
+- Allows redirection to return same location.
+
+## 5.1.2
+
+- Adds GoRouterState to context.
+- Fixes GoRouter notification.
+- Updates README.
+- Removes dynamic calls in examples.
+- **BREAKING CHANGE**
+  - Remove NavigatorObserver mixin from GoRouter
 
 ## 5.1.1
 

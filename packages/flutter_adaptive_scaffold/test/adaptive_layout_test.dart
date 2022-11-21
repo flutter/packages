@@ -142,6 +142,35 @@ void main() {
     expect(begin, findsNothing);
     expect(end, findsOneWidget);
   });
+
+  testWidgets('AnimatedSwitcher does not spawn duplicate keys on rapid resize',
+      (WidgetTester tester) async {
+    // Populate the smaller slot layout and let the animation settle.
+    await tester.pumpWidget(slot(300));
+    await tester.pumpAndSettle();
+    expect(begin, findsOneWidget);
+    expect(end, findsNothing);
+
+    // Jumping back between two layouts before allowing an animation to complete.
+    // Produces a chain of widgets in AnimatedSwitcher that includes duplicate
+    // widgets with the same global key.
+    for (int i = 0; i < 2; i++) {
+      // Resize between the two slot layouts, but do not pump the animation
+      // until completion.
+      await tester.pumpWidget(slot(500));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(begin, findsOneWidget);
+      expect(end, findsOneWidget);
+
+      await tester.pumpWidget(slot(300));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(begin, findsOneWidget);
+      expect(end, findsOneWidget);
+    }
+    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // https://github.com/flutter/flutter/pull/107476
+  }, skip: true);
+
   testWidgets('slot layout can tolerate rapid changes in breakpoints',
       (WidgetTester tester) async {
     await tester.pumpWidget(slot(300));
@@ -159,7 +188,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
-    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // TODO(a-wallen): Remove skip when AnimatedSwitcher fix rolls into stable.
     // https://github.com/flutter/flutter/pull/107476
   }, skip: true);
 
@@ -216,7 +245,7 @@ void main() {
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
     expect(
         tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
-    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // TODO(a-wallen): Remove skip when AnimatedSwitcher fix rolls into stable.
     // https://github.com/flutter/flutter/pull/107476
   }, skip: true);
 
@@ -237,7 +266,7 @@ void main() {
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
     expect(
         tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
-    // TODO(gspencergoog): Remove skip when AnimatedSwitcher fix rolls into stable.
+    // TODO(a-wallen): Remove skip when AnimatedSwitcher fix rolls into stable.
     // https://github.com/flutter/flutter/pull/107476
   }, skip: true);
 }

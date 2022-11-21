@@ -60,9 +60,9 @@ class RouteConfiguration {
               checkParentNavigatorKeys(
                 route.routes,
                 <GlobalKey<NavigatorState>>[
-                  // Once a parentNavigatorKey is used, only the navigator keys
-                  // above it can be used.
-                  ...allowedKeys.sublist(0, allowedKeys.indexOf(parentKey)),
+                  // Once a parentNavigatorKey is used, only that navigator key
+                  // or keys above it can be used.
+                  ...allowedKeys.sublist(0, allowedKeys.indexOf(parentKey) + 1),
                 ],
               );
             } else {

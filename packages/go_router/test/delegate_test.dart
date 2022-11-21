@@ -175,6 +175,35 @@ void main() {
         );
       },
     );
+    testWidgets(
+      'It should return different pageKey when replace is called',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = await createGoRouter(tester);
+        expect(goRouter.routerDelegate.matches.matches.length, 1);
+        expect(
+          goRouter.routerDelegate.matches.matches[0].pageKey,
+          null,
+        );
+
+        goRouter.push('/a');
+        await tester.pumpAndSettle();
+
+        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(
+          goRouter.routerDelegate.matches.matches.last.pageKey,
+          const Key('/a-p1'),
+        );
+
+        goRouter.replace('/a');
+        await tester.pumpAndSettle();
+
+        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(
+          goRouter.routerDelegate.matches.matches.last.pageKey,
+          const Key('/a-p2'),
+        );
+      },
+    );
   });
 
   group('replaceNamed', () {

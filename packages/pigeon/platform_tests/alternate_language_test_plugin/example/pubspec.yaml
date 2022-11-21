@@ -1,0 +1,19 @@
+name: alternate_language_test_plugin_example
+description: Pigeon test harness for alternate plugin languages.
+publish_to: 'none'
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  alternate_language_test_plugin:
+    path: ../
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

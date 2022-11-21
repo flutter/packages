@@ -9,6 +9,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markdown/markdown.dart' as md show version;
+
+// TODO(Zhiguang): delete this once the min version of pkg:markdown is updated
+final bool newMarkdown = md.version.compareTo('6.0.1') > 0;
 
 final TextTheme textTheme = Typography.material2018()
     .black

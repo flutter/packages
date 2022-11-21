@@ -77,7 +77,7 @@ class App extends StatelessWidget {
       final bool loggedIn = _loginInfo.loggedIn;
       final bool loggingIn = state.subloc == '/login';
       if (!loggedIn) {
-        return loggingIn ? null : '/login';
+        return '/login';
       }
 
       // if the user is logged in but still on the login page, send them to

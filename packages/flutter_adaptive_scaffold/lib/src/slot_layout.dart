@@ -100,7 +100,8 @@ class _SlotLayoutState extends State<SlotLayout>
         layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
           final Stack elements = Stack(
             children: <Widget>[
-              if (hasAnimation) ...previousChildren,
+              if (hasAnimation && previousChildren.isNotEmpty)
+                previousChildren.first,
               if (currentChild != null) currentChild,
             ],
           );

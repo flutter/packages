@@ -114,6 +114,12 @@ abstract class RouteBase {
 /// The Page depends on the application type: [MaterialPage] for
 /// [MaterialApp], [CupertinoPage] for [CupertinoApp], or
 /// [NoTransitionPage] for [WidgetsApp].
+///
+/// {@category Get started}
+/// {@category Configuration}
+/// {@category Transition animations}
+/// {@category Named routes}
+/// {@category Redirection}
 class GoRoute extends RouteBase {
   /// Constructs a [GoRoute].
   /// - [path] and [name] cannot be empty strings.
@@ -406,7 +412,6 @@ class GoRoute extends RouteBase {
 ///
 /// ```
 /// ShellRoute(
-///   path: '/',
 ///   builder: (BuildContext context, GoRouterState state, Widget child) {
 ///     return Scaffold(
 ///       appBar: AppBar(
@@ -428,6 +433,7 @@ class GoRoute extends RouteBase {
 /// ),
 /// ```
 ///
+/// {@category Configuration}
 class ShellRoute extends RouteBase {
   /// Constructs a [ShellRoute].
   ShellRoute({

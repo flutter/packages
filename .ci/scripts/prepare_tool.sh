@@ -8,4 +8,4 @@ git fetch origin main
 
 # Pinned version of the plugin tools, to avoid breakage in this repository
 # when pushing updates from flutter/plugins.
-dart pub global activate flutter_plugin_tools 0.12.0
+dart pub global activate flutter_plugin_tools 0.12.1

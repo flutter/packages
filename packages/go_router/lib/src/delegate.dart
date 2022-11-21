@@ -45,6 +45,18 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   final bool routerNeglect;
 
   RouteMatchList _matchList = RouteMatchList.empty();
+
+  /// Stores the number of times each route route has been pushed.
+  ///
+  /// This is used to generate a unique key for each route.
+  ///
+  /// For example, it would could be equal to:
+  /// ```dart
+  /// {
+  ///   'family': 1,
+  ///   'family/:fid': 2,
+  /// }
+  /// ```
   final Map<String, int> _pushCounts = <String, int>{};
   final RouteConfiguration _configuration;
 
@@ -78,12 +90,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     // Use the root navigator if no ShellRoute Navigators were found and didn't
     // pop
-    final NavigatorState? navigator = navigatorKey.currentState;
-
-    if (navigator == null) {
-      return SynchronousFuture<bool>(false);
-    }
-
+    final NavigatorState navigator = navigatorKey.currentState!;
     return navigator.maybePop();
   }
 
@@ -122,14 +129,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       final RouteMatch match = _matchList.matches[i];
       final RouteBase route = match.route;
       if (route is GoRoute && route.parentNavigatorKey != null) {
-        final bool canPop = route.parentNavigatorKey!.currentState!.canPop();
+        final bool canPop =
+            route.parentNavigatorKey!.currentState?.canPop() ?? false;
 
         // Continue if canPop is false.
         if (canPop) {
           return canPop;
         }
       } else if (route is ShellRoute) {
-        final bool canPop = route.navigatorKey.currentState!.canPop();
+        final bool canPop = route.navigatorKey.currentState?.canPop() ?? false;
 
         // Continue if canPop is false.
         if (canPop) {
@@ -140,9 +148,21 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return navigatorKey.currentState?.canPop() ?? false;
   }
 
+  void _debugAssertMatchListNotEmpty() {
+    assert(
+      _matchList.isNotEmpty,
+      'You have popped the last page off of the stack,'
+      ' there are no pages left to show',
+    );
+  }
+
   /// Pop the top page off the GoRouter's page stack.
   void pop() {
     _matchList.pop();
+    assert(() {
+      _debugAssertMatchListNotEmpty();
+      return true;
+    }());
     notifyListeners();
   }
 
@@ -163,8 +183,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
   void replace(RouteMatch match) {
-    _matchList.matches.last = match;
-    notifyListeners();
+    _matchList.pop();
+    push(match); // [push] will notify the listeners.
   }
 
   /// For internal use; visible for testing only.
@@ -195,6 +215,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   Future<void> setNewRoutePath(RouteMatchList configuration) {
     _matchList = configuration;
     assert(_matchList.isNotEmpty);
+    notifyListeners();
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
     return SynchronousFuture<void>(null);

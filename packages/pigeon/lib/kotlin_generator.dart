@@ -250,7 +250,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                   }
                 }, addTrailingNewline: false);
                 indent.add(' catch (exception: Error) ');
-                indent.scoped('{', '', () {
+                indent.scoped('{', '}', () {
                   indent.writeln(
                       'wrapped["${Keys.error}"] = wrapError(exception)');
                   if (method.isAsynchronous) {
@@ -262,7 +262,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                 }
               });
             }, addTrailingNewline: false);
-            indent.scoped('} else {', '}', () {
+            indent.scoped(' else {', '}', () {
               indent.writeln('channel.setMessageHandler(null)');
             });
           });

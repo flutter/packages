@@ -119,12 +119,12 @@ gen_ios_unittests_code() {
 gen_android_unittests_code() {
   local input=$1
   local javaName=$2
-  local javaOut="platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/$javaName.java"
+  local javaOut="platform_tests/alternate_language_test_plugin/android/src/main/java/com/example/alternate_language_test_plugin/$javaName.java"
   $run_pigeon \
     --input $input \
     --dart_out /dev/null \
     --java_out $javaOut \
-    --java_package "com.example.android_unit_tests"
+    --java_package "com.example.alternate_language_test_plugin"
 
   java -jar ci/$java_formatter --replace $javaOut
   java -jar ci/$java_linter -c "ci/$google_checks" "$javaOut"
@@ -298,7 +298,7 @@ run_android_unittests() {
   gen_android_unittests_code ./pigeons/void_arg_host.dart VoidArgHost
   gen_android_unittests_code ./pigeons/voidflutter.dart VoidFlutter
   gen_android_unittests_code ./pigeons/voidhost.dart VoidHost
-  cd platform_tests/android_unit_tests
+  cd platform_tests/alternate_language_test_plugin/example
   if [ ! -f "android/gradlew" ]; then
     flutter build apk --debug
   fi
@@ -334,11 +334,13 @@ while getopts "t:l?h" opt; do
     should_run_macos_swift_unittests=false
     should_run_android_kotlin_unittests=false
     case $OPTARG in
+    # TODO(stuartmorgan): Rename to include "java".
     android_unittests) should_run_android_unittests=true ;;
     dart_compilation_tests) should_run_dart_compilation_tests=true ;;
     dart_unittests) should_run_dart_unittests=true ;;
     flutter_unittests) should_run_flutter_unittests=true ;;
     ios_e2e_tests) should_run_ios_e2e_tests=true ;;
+    # TODO(stuartmorgan): Rename to include "objc".
     ios_unittests) should_run_ios_unittests=true ;;
     ios_swift_unittests) should_run_ios_swift_unittests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;

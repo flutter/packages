@@ -126,6 +126,23 @@ void main() {
     expect(code, contains('interface Api'));
     expect(code, contains('fun doSomething(input: Input): Output'));
     expect(code, contains('channel.setMessageHandler'));
+    expect(code, contains('''
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val wrapped = hashMapOf<String, Any?>()
+            try {
+              val args = message as List<Any?>
+              val inputArg = args[0] as Input
+              wrapped["result"] = api.doSomething(inputArg)
+            } catch (exception: Error) {
+              wrapped["error"] = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+    '''));
   });
 
   test('all the simple datatypes header', () {
@@ -1002,6 +1019,9 @@ void main() {
     ];
     int count = 0;
 
+    final List<String> unspacedComments = <String>['////////'];
+    int unspacedCount = 0;
+
     final Root root = Root(
       apis: <Api>[
         Api(
@@ -1048,7 +1068,10 @@ void main() {
       enums: <Enum>[
         Enum(
           name: 'enum',
-          documentationComments: <String>[comments[count++]],
+          documentationComments: <String>[
+            comments[count++],
+            unspacedComments[unspacedCount++]
+          ],
           members: <String>[
             'one',
             'two',
@@ -1067,6 +1090,7 @@ void main() {
               .hasMatch(code),
           true);
     }
+    expect(code, isNot(contains('*//')));
   });
 
   test('doesnt create codecs if no custom datatypes', () {

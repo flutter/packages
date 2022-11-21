@@ -5,24 +5,23 @@ declarative UI descriptions that can be obtained at runtime.
 
 ### Status
 
-This package is experimental, in that it was created without a clear
-idea of what problem it solves, in order to see if it was interesting
-to people using Flutter and to learn more about the problem space.
+This package was created without a clear idea of what problem it solves,
+in order to see if it was interesting to people using Flutter and to
+learn more about the problem space.
 
-There is currently no commitment to adding new features or fixing bugs,
-though we will consider pull requests (please cc @Hixie). We might abandon
-this package without prior notice.
+So far it has received only minimal feedback, which either means it's perfectly
+addressing the needs that people have from it or that it is completely out
+of touch with what people want. We would love to know which, so if you consider
+this package, please describe your experiences, positive or negative, on
+[issue 90218](https://github.com/flutter/flutter/issues/90218). This will help us
+determine whether to spend more effort on this package, or whether we should look at
+creating other packages.
 
 We plan to keep the format and supported widget set backwards compatible,
 so that once a file works, it will keep working. _However_, this is best-effort
 only. To guarantee that files keep working as you expect, submit
 tests to this package (e.g. the binary file and the corresponding screenshot,
 as a golden test).
-
-If you use this project, please describe your experiences, positive or negative, on
-[issue 90218](https://github.com/flutter/flutter/issues/90218). This will help us
-determine whether to spend more effort on this package, whether we should look at
-creating other packages, and so forth.
 
 ## Getting started
 

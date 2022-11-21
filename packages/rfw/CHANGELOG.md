@@ -1,3 +1,7 @@
+## 1.0.7
+
+* Update README.
+
 ## 1.0.6
 
 * Temporarily lowers test coverage minimum to fix flutter roll.

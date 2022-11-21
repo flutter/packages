@@ -9,8 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
 
 Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final GoRouter goRouter = GoRouter(
@@ -144,14 +142,16 @@ Future<GoRouter> createRouter(
   String initialLocation = '/',
   int redirectLimit = 5,
   GlobalKey<NavigatorState>? navigatorKey,
+  GoRouterWidgetBuilder? errorBuilder,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
     redirect: redirect,
     initialLocation: initialLocation,
     redirectLimit: redirectLimit,
-    errorBuilder: (BuildContext context, GoRouterState state) =>
-        TestErrorScreen(state.error!),
+    errorBuilder: errorBuilder ??
+        (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
     navigatorKey: navigatorKey,
   );
   await tester.pumpWidget(
@@ -218,26 +218,6 @@ class DummyScreen extends StatelessWidget {
 Widget dummy(BuildContext context, GoRouterState state) => const DummyScreen();
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
-extension Extension on GoRouter {
-  Page<dynamic> _pageFor(RouteMatch match) {
-    final RouteMatchList matchList = routerDelegate.matches;
-    final int i = matchList.matches.indexOf(match);
-    final List<Page<dynamic>> pages = routerDelegate.builder
-        .buildPages(
-          DummyBuildContext(),
-          matchList,
-          () {},
-          false,
-          navigatorKey,
-        )
-        .toList();
-    return pages[i];
-  }
-
-  Widget screenFor(RouteMatch match) =>
-      (_pageFor(match) as MaterialPage<void>).child;
-}
 
 class DummyBuildContext implements BuildContext {
   @override
