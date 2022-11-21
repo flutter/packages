@@ -76,11 +76,7 @@ class RouteBuilder {
                 registry: _registry, child: result);
           } on _RouteBuilderError catch (e) {
             return _buildErrorNavigator(
-                context,
-                e,
-                matchList.uri,
-                pop,
-                configuration.navigatorKey);
+                context, e, matchList.uri, pop, configuration.navigatorKey);
           }
         },
       ),
