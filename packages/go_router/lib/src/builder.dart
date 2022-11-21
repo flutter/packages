@@ -78,7 +78,7 @@ class RouteBuilder {
             return _buildErrorNavigator(
                 context,
                 e,
-                Uri.parse(matchList.uri.toString()),
+                matchList.uri,
                 pop,
                 configuration.navigatorKey);
           }
