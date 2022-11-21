@@ -146,8 +146,18 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   bool canPop() => _routerDelegate.canPop();
 
   void _handleStateMayChange() {
-    final String newLocation =
-        _routerDelegate.currentConfiguration.location.toString();
+    final String newLocation;
+    if (routerDelegate.currentConfiguration.isNotEmpty &&
+        routerDelegate.currentConfiguration.matches.last
+            is ImperativeRouteMatch) {
+      newLocation = (routerDelegate.currentConfiguration.matches.last
+              as ImperativeRouteMatch)
+          .matches
+          .uri
+          .toString();
+    } else {
+      newLocation = _routerDelegate.currentConfiguration.uri.toString();
+    }
     if (_location != newLocation) {
       _location = newLocation;
       notifyListeners();
@@ -207,7 +217,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matches) {
-      _routerDelegate.push(matches.last);
+      _routerDelegate.push(matches);
     });
   }
 
@@ -239,7 +249,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matchList) {
-      routerDelegate.replace(matchList.matches.last);
+      routerDelegate.replace(matchList);
     });
   }
 
