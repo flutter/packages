@@ -22,3 +22,170 @@ updates:
     labels:
       - "team"
       - "team: infra"
+
+  - package-ecosystem: "gradle"
+    directory: "/packages/animations/example/android/app"
+    commit-message:
+      prefix: "[animations]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/dynamic_layouts/example/android/app"
+    commit-message:
+      prefix: "[dynamic_lyts]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/extension_google_sign_in_as_googleapis_auth/example/android/app"
+    commit-message:
+      prefix: "[ext_sign_in]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/flutter_adaptive_scaffold/example/android/app"
+    commit-message:
+      prefix: "[scaffold]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/flutter_markdown/example/android/app"
+    commit-message:
+      prefix: "[markdown]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/go_router/example/android/app"
+    commit-message:
+      prefix: "[go_router]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/imitation_game/imitation_tests/smiley/flutter/smiley/android/app"
+    commit-message:
+      prefix: "[imitation]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/palette_generator/example/android/app"
+    commit-message:
+      prefix: "[palette_gen]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/pigeon/platform_tests/test_plugin/android"
+    commit-message:
+      prefix: "[pigeon]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "com.android.tools.build:gradle"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "junit:junit"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "org.mockito:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "androidx.test:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "org.robolectric:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/pigeon/platform_tests/test_plugin/example/android/app"
+    commit-message:
+      prefix: "[pigeon]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/pigeon/platform_tests/alternate_language_test_plugin/android"
+    commit-message:
+      prefix: "[pigeon]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "com.android.tools.build:gradle"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "junit:junit"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "org.mockito:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "androidx.test:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "org.robolectric:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/pigeon/platform_tests/alternate_language_test_plugin/example/android/app"
+    commit-message:
+      prefix: "[pigeon]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/rfw/example/hello/android/app"
+    commit-message:
+      prefix: "[rfw]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/rfw/example/local/android/app"
+    commit-message:
+      prefix: "[rfw]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+  - package-ecosystem: "gradle"
+    directory: "/packages/rfw/example/remote/android/app"
+    commit-message:
+      prefix: "[rfw]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
