@@ -14,11 +14,13 @@ Future<Process> _streamOutput(Future<Process> processFuture) async {
 Future<int> runProcess(String command, List<String> arguments,
     {String? workingDirectory,
     bool streamOutput = true,
-    bool logFailure = false}) async {
+    bool logFailure = false,
+    bool runInShell = false}) async {
   final Future<Process> future = Process.start(
     command,
     arguments,
     workingDirectory: workingDirectory,
+    runInShell: runInShell,
   );
   final Process process = await (streamOutput ? _streamOutput(future) : future);
   final int exitCode = await process.exitCode;
