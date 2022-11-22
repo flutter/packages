@@ -3,9 +3,9 @@ tasks:
     script: .ci/scripts/prepare_tool.sh
   - name: create all_packages app
     script: .ci/scripts/create_all_packages_app.sh
-  - name: build all_packages app debug
+  - name: build all_packages debug
     script: .ci/scripts/build_all_packages_app.sh
-    args: ["windows", "debug"]
-  - name: build all_plugins app release
+    args: ["macos", "debug"]
+  - name: build all_plugins release
     script: .ci/scripts/build_all_packages_app.sh
-    args: ["windows", "release"]
+    args: ["macos", "release"]
