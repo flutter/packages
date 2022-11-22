@@ -35,6 +35,7 @@ platform_properties:
 targets:
   - name: Mac_x64 build_all_packages master
     recipe: packages/packages
+    bringup: true # New target: https://github.com/flutter/packages/pull/2840
     timeout: 30
     properties:
       add_recipes_cq: "true"
@@ -44,6 +45,7 @@ targets:
 
   - name: Mac_x64 build_all_packages stable
     recipe: packages/packages
+    bringup: true # New target: https://github.com/flutter/packages/pull/2840
     timeout: 30
     properties:
       add_recipes_cq: "true"
