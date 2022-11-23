@@ -9,7 +9,7 @@
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Platform, exit;
+import 'dart:io' show File, Platform, Process, exit, stderr, stdout;
 import 'dart:math';
 
 import 'package:args/args.dart';
@@ -68,6 +68,13 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
       function: _runMockHandlerTests,
       description: 'Unit tests on generated Dart mock handler code.'),
 };
+
+Future<Process> _streamOutput(Future<Process> processFuture) async {
+  final Process process = await processFuture;
+  stdout.addStream(process.stdout);
+  stderr.addStream(process.stderr);
+  return process;
+}
 
 Future<int> _runAndroidUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
@@ -239,16 +246,19 @@ Future<int> _runMockHandlerTests() async {
 
 Future<int> _runWindowsUnitTests() async {
   const String examplePath = './$testPluginRelativePath/example';
-  final int compileCode = await runProcess(
+  final Process compile = await _streamOutput(Process.start(
       'flutter', <String>['build', 'windows', '--debug'],
-      workingDirectory: examplePath, runInShell: true);
+      workingDirectory: examplePath, runInShell: true));
+  final int compileCode = await compile.exitCode;
   if (compileCode != 0) {
     return compileCode;
   }
 
-  return runProcess(
+  final Process run = await _streamOutput(Process.start(
       '$examplePath/build/windows/plugins/test_plugin/Debug/test_plugin_test.exe',
-      <String>[]);
+      <String>[]));
+
+  return run.exitCode;
 }
 
 Future<void> main(List<String> args) async {
