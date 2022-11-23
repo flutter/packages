@@ -36,11 +36,11 @@ internal class EnumTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertTrue(wrapped.containsKey("result"))
-                assertEquals(input, wrapped["result"])
+                assertNotNull(wrapped[0])
+                assertEquals(input, wrapped[0])
             }
         }
 

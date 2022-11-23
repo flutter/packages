@@ -36,10 +36,10 @@ class MultipleArityTests: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(inputX - inputY, wrapped["result"])
+                assertEquals(inputX - inputY, wrapped[0])
             }
         }
     }

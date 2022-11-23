@@ -36,10 +36,10 @@ class PrimitiveTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(input.toLong(), wrapped["result"])
+                assertEquals(input.toLong(), wrapped[0])
             }
         }
 
@@ -84,10 +84,10 @@ class PrimitiveTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(input, wrapped["result"])
+                assertEquals(input, wrapped[0])
             }
         }
 
@@ -132,10 +132,10 @@ class PrimitiveTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(input, wrapped["result"])
+                assertEquals(input, wrapped[0])
             }
         }
 
@@ -164,10 +164,10 @@ class PrimitiveTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(input, wrapped["result"])
+                assertEquals(input, wrapped[0])
             }
         }
 
@@ -212,10 +212,10 @@ class PrimitiveTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(input, wrapped["result"])
+                assertEquals(input, wrapped[0])
             }
         }
 
@@ -260,10 +260,10 @@ class PrimitiveTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(input, wrapped["result"])
+                assertEquals(input, wrapped[0])
             }
         }
 
@@ -308,10 +308,10 @@ class PrimitiveTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertTrue(input.contentEquals(wrapped["result"] as IntArray))
+                assertTrue(input.contentEquals(wrapped[0] as IntArray))
             }
         }
 
@@ -356,10 +356,10 @@ class PrimitiveTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(input, wrapped["result"])
+                assertEquals(input, wrapped[0])
             }
         }
 
@@ -404,10 +404,10 @@ class PrimitiveTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(input, wrapped["result"])
+                assertEquals(input, wrapped[0])
             }
         }
 
