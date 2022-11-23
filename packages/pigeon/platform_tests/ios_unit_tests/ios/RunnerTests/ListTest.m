@@ -5,7 +5,7 @@
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
 #import "EchoMessenger.h"
-#import "list.gen.h"
+#import "List.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface ListTest : XCTestCase
@@ -15,18 +15,18 @@
 @implementation ListTest
 
 - (void)testListInList {
-  LSTTestMessage *top = [[LSTTestMessage alloc] init];
-  LSTTestMessage *inside = [[LSTTestMessage alloc] init];
+  TestMessage *top = [[TestMessage alloc] init];
+  TestMessage *inside = [[TestMessage alloc] init];
   inside.testList = @[ @1, @2, @3 ];
   top.testList = @[ inside ];
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:LSTEchoApiGetCodec()];
-  LSTEchoApi *api = [[LSTEchoApi alloc] initWithBinaryMessenger:binaryMessenger];
+      [[EchoBinaryMessenger alloc] initWithCodec:EchoApiGetCodec()];
+  EchoApi *api = [[EchoApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoMsg:top
-      completion:^(LSTTestMessage *_Nonnull result, NSError *_Nullable err) {
+      completion:^(TestMessage *_Nonnull result, NSError *_Nullable err) {
         XCTAssertEqual(1u, result.testList.count);
-        XCTAssertTrue([result.testList[0] isKindOfClass:[LSTTestMessage class]]);
+        XCTAssertTrue([result.testList[0] isKindOfClass:[TestMessage class]]);
         XCTAssertEqualObjects(inside.testList, [result.testList[0] testList]);
         [expectation fulfill];
       }];
