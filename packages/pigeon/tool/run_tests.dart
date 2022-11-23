@@ -14,9 +14,13 @@ import 'dart:math';
 
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart' as p;
+
+import 'shared/generation.dart';
 
 const String _testFlag = 'test';
 const String _listFlag = 'list';
+const String _skipGenerationFlag = 'skip-generation';
 
 const String testPluginRelativePath = 'platform_tests/test_plugin';
 
@@ -528,6 +532,11 @@ Future<void> main(List<String> args) async {
     ..addOption(_testFlag, abbr: 't', help: 'Only run specified test.')
     ..addFlag(_listFlag,
         negatable: false, abbr: 'l', help: 'List available tests.')
+    // Temporarily provide a way for run_test.sh to bypass generation, since
+    // it generates before doing anything else.
+    // TODO(stuartmorgan): Remove this once run_test.sh is fully migrated to
+    // this script.
+    ..addFlag(_skipGenerationFlag, negatable: false, hide: true)
     ..addFlag('help',
         negatable: false, abbr: 'h', help: 'Print this reference.');
 
@@ -552,6 +561,17 @@ ${parser.usage}''');
     exit(0);
   } else if (argResults.wasParsed(_testFlag)) {
     testsToRun = <String>[argResults[_testFlag]];
+  }
+
+  if (!argResults.wasParsed(_skipGenerationFlag) && Platform.isWindows) {
+    final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
+    print('# Generating platform_test/ output...');
+    final int generateExitCode = await generatePigeons(baseDir: baseDir);
+    if (generateExitCode == 0) {
+      print('Generation complete!');
+    } else {
+      print('Generation failed; see above for errors.');
+    }
   }
 
   // If no tests are provided, run a default based on the host platform. This is

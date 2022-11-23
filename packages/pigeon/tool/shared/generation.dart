@@ -101,13 +101,13 @@ Future<int> generatePigeons({required String baseDir}) async {
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       // Windows
-      cppHeaderOut: skipLanguages.contains(GeneratorLanguages.cpp)
+      /** XXX cppHeaderOut: skipLanguages.contains(GeneratorLanguages.cpp)
           ? null
           : '$outputBase/windows/test/$input.gen.h',
       cppSourceOut: skipLanguages.contains(GeneratorLanguages.cpp)
           ? null
           : '$outputBase/windows/test/$input.gen.cpp',
-      cppNamespace: '${input}_pigeontest',
+      cppNamespace: '${input}_pigeontest',*/
     );
     if (generateCode != 0) {
       return generateCode;
