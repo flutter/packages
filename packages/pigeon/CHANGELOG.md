@@ -1,3 +1,7 @@
+## 4.2.7
+
+* Add runWithOptions entrypoint to allow external libraries to use the pigeon easier
+
 ## 4.2.6
 
 * Fixes bug with parsing documentation comments that start with '/'.
