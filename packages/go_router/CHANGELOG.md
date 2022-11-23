@@ -1,3 +1,8 @@
+## 5.2.0
+
+- Fixes `GoRouterState.location` and `GoRouterState.param` to return correct value.
+- Cleans up `RouteMatch` and `RouteMatchList` API.
+
 ## 5.1.10
 
 - Fixes link of ShellRoute in README.

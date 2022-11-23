@@ -2,14 +2,14 @@ group 'com.example.test_plugin'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.7.21'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.android.tools.build:gradle:7.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -58,6 +58,6 @@ android {
 
     dependencies {
         testImplementation 'junit:junit:4.+'
-        testImplementation "io.mockk:mockk:1.12.4"
+        testImplementation "io.mockk:mockk:1.13.2"
     }
 }
