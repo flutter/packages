@@ -9,14 +9,20 @@
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Platform, Process, exit, stderr, stdout;
+import 'dart:io' show File, Platform, exit;
 import 'dart:math';
 
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart' as p;
+
+import 'shared/generation.dart';
+import 'shared/native_project_runners.dart';
+import 'shared/process_utils.dart';
 
 const String _testFlag = 'test';
 const String _listFlag = 'list';
+const String _skipGenerationFlag = 'skip-generation';
 
 const String testPluginRelativePath = 'platform_tests/test_plugin';
 
@@ -63,105 +69,22 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
       description: 'Unit tests on generated Dart mock handler code.'),
 };
 
-String snakeToPascalCase(String snake) {
-  final List<String> parts = snake.split('_');
-  return parts
-      .map((String part) =>
-          part.substring(0, 1).toUpperCase() + part.substring(1))
-      .join();
-}
-
-Future<Process> _streamOutput(Future<Process> processFuture) async {
-  final Process process = await processFuture;
-  stdout.addStream(process.stdout);
-  stderr.addStream(process.stderr);
-  return process;
-}
-
-Future<int> _runProcess(String command, List<String> arguments,
-    {String? workingDirectory}) async {
-  final Process process = await _streamOutput(Process.start(
-    command,
-    arguments,
-    workingDirectory: workingDirectory,
-  ));
-  return process.exitCode;
-}
-
 Future<int> _runAndroidUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
 }
 
 Future<int> _runAndroidKotlinUnitTests() async {
-  const String androidKotlinUnitTestsPath = './$testPluginRelativePath';
-  // TODO(stuartmorgan): Move generation to a separate script in tool/ that can
-  // easily be run manually as well (e.g., to look at generated code without
-  // running tests, or to update generated code when running tests in an IDE).
-  const List<String> tests = <String>[
-    'all_datatypes',
-    'all_void',
-    'android_unittests',
-    'async_handlers',
-    'background_platform_channels',
-    'enum_args',
-    'enum',
-    'host2flutter',
-    'list',
-    'message',
-    'multiple_arity',
-    'non_null_fields',
-    'null_fields',
-    'nullable_returns',
-    'primitive',
-    'void_arg_flutter',
-    'void_arg_host',
-    'voidflutter',
-    'voidhost'
-  ];
-  int generateCode = 0;
-
-  for (final String test in tests) {
-    generateCode = await _runPigeon(
-      input: './pigeons/$test.dart',
-      kotlinOut:
-          '$androidKotlinUnitTestsPath/android/src/main/kotlin/com/example/test_plugin/${snakeToPascalCase(test)}.kt',
-      kotlinPackage: 'com.example.test_plugin',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-  }
-
-  const String examplePath = '$androidKotlinUnitTestsPath/example';
-  final Process gradlewExists = await _streamOutput(Process.start(
-    './gradlew',
-    <String>[],
-    workingDirectory: '$examplePath/android',
-    runInShell: true,
-  ));
-  final int gradlewExistsCode = await gradlewExists.exitCode;
-  if (gradlewExistsCode != 0) {
-    final Process compile = await _streamOutput(Process.start(
-      'flutter',
-      <String>['build', 'apk', '--debug'],
-      workingDirectory: examplePath,
-      runInShell: true,
-    ));
-    final int compileCode = await compile.exitCode;
+  const String examplePath = './$testPluginRelativePath/example';
+  const String androidProjectPath = '$examplePath/android';
+  final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
+  if (!gradleFile.existsSync()) {
+    final int compileCode = await runFlutterBuild(examplePath, 'apk');
     if (compileCode != 0) {
       return compileCode;
     }
   }
 
-  final Process run = await _streamOutput(Process.start(
-    './gradlew',
-    <String>[
-      'testDebugUnitTest',
-    ],
-    workingDirectory: '$examplePath/android',
-  ));
-
-  return run.exitCode;
+  return runGradleBuild(androidProjectPath, 'testDebugUnitTest');
 }
 
 Future<int> _runDartCompilationTests() async {
@@ -169,15 +92,15 @@ Future<int> _runDartCompilationTests() async {
 }
 
 Future<int> _runDartUnitTests() async {
-  int exitCode = await _runProcess('dart', <String>['analyze', 'bin']);
+  int exitCode = await runProcess('dart', <String>['analyze', 'bin']);
   if (exitCode != 0) {
     return exitCode;
   }
-  exitCode = await _runProcess('dart', <String>['analyze', 'lib']);
+  exitCode = await runProcess('dart', <String>['analyze', 'lib']);
   if (exitCode != 0) {
     return exitCode;
   }
-  exitCode = await _runProcess('dart', <String>['test']);
+  exitCode = await runProcess('dart', <String>['test']);
   return exitCode;
 }
 
@@ -188,7 +111,7 @@ Future<int> _generateDart(Map<String, String> jobs) async {
   for (final MapEntry<String, String> job in jobs.entries) {
     // TODO(gaaclarke): Make this run the jobs in parallel.  A bug in Dart
     // blocked this (https://github.com/dart-lang/pub/pull/3285).
-    final int result = await _runPigeon(
+    final int result = await runPigeon(
         input: job.key, dartOut: job.value, streamOutput: false);
     if (result != 0) {
       return result;
@@ -200,7 +123,7 @@ Future<int> _generateDart(Map<String, String> jobs) async {
 Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
   final String messagePath = '$flutterUnitTestsPath/lib/message.gen.dart';
   final String messageTestPath = '$flutterUnitTestsPath/test/message_test.dart';
-  final int generateTestCode = await _runPigeon(
+  final int generateTestCode = await runPigeon(
     input: 'pigeons/message.dart',
     dartOut: messagePath,
     dartTestOut: messageTestPath,
@@ -209,11 +132,8 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
     return generateTestCode;
   }
 
-  final int analyzeCode = await _runProcess(
-    'flutter',
-    <String>['analyze'],
-    workingDirectory: flutterUnitTestsPath,
-  );
+  final int analyzeCode =
+      await runFlutterCommand(flutterUnitTestsPath, 'analyze');
   if (analyzeCode != 0) {
     return analyzeCode;
   }
@@ -251,11 +171,7 @@ Future<int> _runFlutterUnitTests() async {
     return analyzeCode;
   }
 
-  final int testCode = await _runProcess(
-    'flutter',
-    <String>['test'],
-    workingDirectory: flutterUnitTestsPath,
-  );
+  final int testCode = await runFlutterCommand(flutterUnitTestsPath, 'test');
   if (testCode != 0) {
     return testCode;
   }
@@ -272,118 +188,40 @@ Future<int> _runIosUnitTests() async {
 }
 
 Future<int> _runMacOSSwiftUnitTests() async {
-  const String macosSwiftUnitTestsPath = './$testPluginRelativePath';
-  const List<String> tests = <String>[
-    'all_void',
-  ];
-  int generateCode = 0;
-
-  for (final String test in tests) {
-    generateCode = await _runPigeon(
-      input: './pigeons/$test.dart',
-      iosSwiftOut:
-          '$macosSwiftUnitTestsPath/macos/Classes/${snakeToPascalCase(test)}.gen.swift',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-  }
-
-  const String examplePath = '$macosSwiftUnitTestsPath/example';
-  final Process compile = await _streamOutput(Process.start(
-    'flutter',
-    <String>['build', 'macos'],
-    workingDirectory: examplePath,
-    runInShell: true,
-  ));
-  final int compileCode = await compile.exitCode;
+  const String examplePath = './$testPluginRelativePath/example';
+  final int compileCode = await runFlutterBuild(examplePath, 'macos');
   if (compileCode != 0) {
     return compileCode;
   }
 
-  final Process run = await _streamOutput(Process.start(
-    'xcodebuild',
-    <String>[
-      '-workspace',
-      'Runner.xcworkspace',
-      '-scheme',
-      'Runner',
-      'test',
-    ],
-    workingDirectory: '$examplePath/macos',
-  ));
-
-  return run.exitCode;
+  return runXcodeBuild(
+    '$examplePath/macos',
+    extraArguments: <String>['test'],
+  );
 }
 
 Future<int> _runIosSwiftUnitTests() async {
-  const String iosSwiftUnitTestsPath = './$testPluginRelativePath';
-  const List<String> tests = <String>[
-    'all_datatypes',
-    'all_void',
-    'async_handlers',
-    'enum_args',
-    'enum',
-    'host2flutter',
-    'list',
-    'message',
-    'multiple_arity',
-    'non_null_fields',
-    'null_fields',
-    'nullable_returns',
-    'primitive',
-    'void_arg_flutter',
-    'void_arg_host',
-    'voidflutter',
-    'voidhost'
-  ];
-  int generateCode = 0;
-
-  for (final String test in tests) {
-    generateCode = await _runPigeon(
-      input: './pigeons/$test.dart',
-      iosSwiftOut:
-          '$iosSwiftUnitTestsPath/ios/Classes/${snakeToPascalCase(test)}.gen.swift',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-  }
-
-  const String examplePath = '$iosSwiftUnitTestsPath/example';
-  final Process compile = await _streamOutput(Process.start(
-    'flutter',
-    <String>['build', 'ios', '--simulator'],
-    workingDirectory: examplePath,
-    runInShell: true,
-  ));
-  final int compileCode = await compile.exitCode;
+  const String examplePath = './$testPluginRelativePath/example';
+  final int compileCode = await runFlutterBuild(
+    examplePath,
+    'ios',
+    flags: <String>['--simulator'],
+  );
   if (compileCode != 0) {
     return compileCode;
   }
 
-  final Process run = await _streamOutput(Process.start(
-    'xcodebuild',
-    <String>[
-      '-workspace',
-      'Runner.xcworkspace',
-      '-scheme',
-      'Runner',
-      '-sdk',
-      'iphonesimulator',
-      '-destination',
-      'platform=iOS Simulator,name=iPhone 8',
-      'test',
-    ],
-    workingDirectory: '$examplePath/ios',
-  ));
-
-  return run.exitCode;
+  return runXcodeBuild(
+    '$examplePath/ios',
+    sdk: 'iphonesimulator',
+    destination: 'platform=iOS Simulator,name=iPhone 8',
+    extraArguments: <String>['test'],
+  );
 }
 
 Future<int> _runMockHandlerTests() async {
   const String unitTestsPath = './mock_handler_tester';
-  final int generateCode = await _runPigeon(
+  final int generateCode = await runPigeon(
     input: './pigeons/message.dart',
     dartOut: './mock_handler_tester/test/message.dart',
     dartTestOut: './mock_handler_tester/test/test.dart',
@@ -392,135 +230,23 @@ Future<int> _runMockHandlerTests() async {
     return generateCode;
   }
 
-  final int testCode = await _runProcess(
-    'flutter',
-    <String>['test'],
-    workingDirectory: unitTestsPath,
-  );
+  final int testCode = await runFlutterCommand(unitTestsPath, 'test');
   if (testCode != 0) {
     return testCode;
   }
   return 0;
 }
 
-Future<int> _runPigeon(
-    {required String input,
-    String? kotlinOut,
-    String? kotlinPackage,
-    String? iosSwiftOut,
-    String? cppHeaderOut,
-    String? cppSourceOut,
-    String? cppNamespace,
-    String? dartOut,
-    String? dartTestOut,
-    bool streamOutput = true}) async {
-  const bool hasDart = false;
-  final List<String> args = <String>[
-    'run',
-    'pigeon',
-    '--input',
-    input,
-    '--copyright_header',
-    './copyright_header.txt',
-  ];
-  if (kotlinOut != null) {
-    args.addAll(<String>['--experimental_kotlin_out', kotlinOut]);
-  }
-  if (kotlinPackage != null) {
-    args.addAll(<String>['--experimental_kotlin_package', kotlinPackage]);
-  }
-  if (iosSwiftOut != null) {
-    args.addAll(<String>['--experimental_swift_out', iosSwiftOut]);
-  }
-  if (cppHeaderOut != null) {
-    args.addAll(<String>[
-      '--experimental_cpp_header_out',
-      cppHeaderOut,
-    ]);
-  }
-  if (cppSourceOut != null) {
-    args.addAll(<String>[
-      '--experimental_cpp_source_out',
-      cppSourceOut,
-    ]);
-  }
-  if (cppNamespace != null) {
-    args.addAll(<String>[
-      '--cpp_namespace',
-      cppNamespace,
-    ]);
-  }
-  if (dartOut != null) {
-    args.addAll(<String>['--dart_out', dartOut]);
-  }
-  if (dartTestOut != null) {
-    args.addAll(<String>['--dart_test_out', dartTestOut]);
-  }
-  if (!hasDart) {
-    args.add('--one_language');
-  }
-  final Process generate = streamOutput
-      ? await _streamOutput(Process.start('dart', args))
-      : await Process.start('dart', args);
-  final int generateCode = await generate.exitCode;
-  if (generateCode != 0) {
-    if (!streamOutput) {
-      print('dart $args failed:');
-      generate.stdout.pipe(stdout);
-      generate.stderr.pipe(stderr);
-    }
-    return generateCode;
-  }
-  return 0;
-}
-
 Future<int> _runWindowsUnitTests() async {
-  const String windowsUnitTestsPath = './$testPluginRelativePath';
-  const List<String> tests = <String>[
-    'all_datatypes',
-    'all_void',
-    'async_handlers',
-    'enum',
-    'host2flutter',
-    'list',
-    'message',
-    'multiple_arity',
-    'non_null_fields',
-    'null_fields',
-    'nullable_returns',
-    'primitive',
-    'void_arg_flutter',
-    'void_arg_host',
-    'voidflutter',
-    'voidhost'
-  ];
-  int generateCode = 0;
-
-  for (final String test in tests) {
-    generateCode = await _runPigeon(
-        input: './pigeons/$test.dart',
-        cppHeaderOut: '$windowsUnitTestsPath/windows/test/$test.g.h',
-        cppSourceOut: '$windowsUnitTestsPath/windows/test/$test.g.cpp',
-        cppNamespace: '${test}_pigeontest');
-    if (generateCode != 0) {
-      return generateCode;
-    }
-  }
-
-  const String examplePath = '$windowsUnitTestsPath/example';
-  final Process compile = await _streamOutput(Process.start(
-      'flutter', <String>['build', 'windows', '--debug'],
-      workingDirectory: examplePath, runInShell: true));
-  final int compileCode = await compile.exitCode;
+  const String examplePath = './$testPluginRelativePath/example';
+  final int compileCode = await runFlutterBuild(examplePath, 'windows');
   if (compileCode != 0) {
     return compileCode;
   }
 
-  final Process run = await _streamOutput(Process.start(
+  return runProcess(
       '$examplePath/build/windows/plugins/test_plugin/Debug/test_plugin_test.exe',
-      <String>[]));
-
-  return run.exitCode;
+      <String>[]);
 }
 
 Future<void> main(List<String> args) async {
@@ -528,6 +254,11 @@ Future<void> main(List<String> args) async {
     ..addOption(_testFlag, abbr: 't', help: 'Only run specified test.')
     ..addFlag(_listFlag,
         negatable: false, abbr: 'l', help: 'List available tests.')
+    // Temporarily provide a way for run_test.sh to bypass generation, since
+    // it generates before doing anything else.
+    // TODO(stuartmorgan): Remove this once run_test.sh is fully migrated to
+    // this script.
+    ..addFlag(_skipGenerationFlag, negatable: false, hide: true)
     ..addFlag('help',
         negatable: false, abbr: 'h', help: 'Print this reference.');
 
@@ -552,6 +283,17 @@ ${parser.usage}''');
     exit(0);
   } else if (argResults.wasParsed(_testFlag)) {
     testsToRun = <String>[argResults[_testFlag]];
+  }
+
+  if (!argResults.wasParsed(_skipGenerationFlag)) {
+    final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
+    print('# Generating platform_test/ output...');
+    final int generateExitCode = await generatePigeons(baseDir: baseDir);
+    if (generateExitCode == 0) {
+      print('Generation complete!');
+    } else {
+      print('Generation failed; see above for errors.');
+    }
   }
 
   // If no tests are provided, run a default based on the host platform. This is
