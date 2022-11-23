@@ -1327,7 +1327,7 @@ ${_argParser.usage}''';
     }
   }
 
-  // The 'main' entrypoint used by the command-line tool.  [args] are the
+  /// The 'main' entrypoint used by the command-line tool.  [args] are the
   /// command-line arguments.  The optional parameter [generators] allows you to
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
