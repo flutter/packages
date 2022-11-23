@@ -122,6 +122,9 @@ Future<int> generatePigeons({required String baseDir}) async {
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
     );
+    if (generateCode != 0) {
+      return generateCode;
+    }
 
     // Generate the alternate language test plugin output.
     generateCode = await runPigeon(
