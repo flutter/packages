@@ -503,8 +503,8 @@ Future<int> _runWindowsUnitTests() async {
   for (final String test in tests) {
     generateCode = await _runPigeon(
         input: './pigeons/$test.dart',
-        cppHeaderOut: '$windowsUnitTestsPath/windows/test/$test.g.h',
-        cppSourceOut: '$windowsUnitTestsPath/windows/test/$test.g.cpp',
+        cppHeaderOut: '$windowsUnitTestsPath/windows/test/$test.gen.h',
+        cppSourceOut: '$windowsUnitTestsPath/windows/test/$test.gen.cpp',
         cppNamespace: '${test}_pigeontest');
     if (generateCode != 0) {
       return generateCode;
