@@ -10,7 +10,7 @@
 #include <memory>
 #include <string>
 
-#include "message.g.h"
+#include "message.gen.h"
 
 namespace test_plugin {
 namespace test {

@@ -5,7 +5,7 @@
 #include <flutter/encodable_value.h>
 #include <gtest/gtest.h>
 
-#include "null_fields.g.h"
+#include "null_fields.gen.h"
 
 namespace null_fields_pigeontest {
 
