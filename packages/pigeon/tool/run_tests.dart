@@ -239,9 +239,7 @@ Future<int> _runMockHandlerTests() async {
 
 Future<int> _runWindowsUnitTests() async {
   const String examplePath = './$testPluginRelativePath/example';
-  final int compileCode = await runProcess(
-      'flutter', <String>['build', 'windows', '--debug'],
-      workingDirectory: examplePath, runInShell: true);
+  final int compileCode = await runFlutterBuild(examplePath, 'windows');
   if (compileCode != 0) {
     return compileCode;
   }
