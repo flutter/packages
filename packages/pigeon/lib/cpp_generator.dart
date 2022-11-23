@@ -108,7 +108,7 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
         indent.write('case ${customClass.enumeration}:');
         indent.writeScoped('', '', () {
           indent.writeln(
-              'return flutter::CustomEncodableValue(${customClass.name}(std::get<flutter::EncodableMap>(ReadValue(stream))));');
+              'return flutter::CustomEncodableValue(${customClass.name}(std::get<flutter::EncodableList>(ReadValue(stream))));');
         });
       }
       indent.write('default:');
@@ -131,7 +131,7 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
         indent.scoped('{', '}', () {
           indent.writeln('stream->WriteByte(${customClass.enumeration});');
           indent.writeln(
-              'WriteValue(std::any_cast<${customClass.name}>(*custom_value).ToEncodableMap(), stream);');
+              'WriteValue(std::any_cast<${customClass.name}>(*custom_value).List(), stream);');
           indent.writeln('return;');
         });
       }
@@ -232,8 +232,8 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
     });
 
     indent.scoped(' private:', '', () {
-      indent.writeln('${klass.name}(flutter::EncodableMap map);');
-      indent.writeln('flutter::EncodableMap ToEncodableMap() const;');
+      indent.writeln('${klass.name}(flutter::EncodableList list);');
+      indent.writeln('flutter::EncodableList ToEncodableList() const;');
       for (final Class friend in root.classes) {
         if (friend != klass &&
             friend.fields.any(
@@ -317,42 +317,46 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
   }
 
   // Serialization.
-  indent.write('flutter::EncodableMap ${klass.name}::ToEncodableMap() const ');
+  indent
+      .write('flutter::EncodableList ${klass.name}::ToEncodableList() const ');
   indent.scoped('{', '}', () {
-    indent.scoped('return flutter::EncodableMap{', '};', () {
-      for (final NamedType field in klass.fields) {
-        final HostDatatype hostDatatype = getFieldHostDatatype(
-            field,
-            root.classes,
-            root.enums,
-            (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+    indent.scoped('return flutter::EncodableList{', '};', () {
+      indent.writeScoped('flutter::EncodableList{', '};', () {
+        for (final NamedType field in klass.fields) {
+          final HostDatatype hostDatatype = getFieldHostDatatype(
+              field,
+              root.classes,
+              root.enums,
+              (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
 
-        final String instanceVariable = _makeInstanceVariableName(field);
+          final String instanceVariable = _makeInstanceVariableName(field);
 
-        final String encodableKey = 'flutter::EncodableValue("${field.name}")';
-        String encodableValue = '';
-        if (!hostDatatype.isBuiltin &&
-            rootClassNameSet.contains(field.type.baseName)) {
-          final String operator = field.type.isNullable ? '->' : '.';
-          encodableValue = '$instanceVariable${operator}ToEncodableMap()';
-        } else if (!hostDatatype.isBuiltin &&
-            rootEnumNameSet.contains(field.type.baseName)) {
-          final String nonNullValue =
-              field.type.isNullable ? '(*$instanceVariable)' : instanceVariable;
-          encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
-        } else {
-          final String operator = field.type.isNullable ? '*' : '';
-          encodableValue =
-              'flutter::EncodableValue($operator$instanceVariable)';
+          // final String encodableKey = 'flutter::EncodableValue("${field.name}")';
+          String encodableValue = '';
+          if (!hostDatatype.isBuiltin &&
+              rootClassNameSet.contains(field.type.baseName)) {
+            final String operator = field.type.isNullable ? '->' : '.';
+            encodableValue = '$instanceVariable${operator}ToEncodableList()';
+          } else if (!hostDatatype.isBuiltin &&
+              rootEnumNameSet.contains(field.type.baseName)) {
+            final String nonNullValue = field.type.isNullable
+                ? '(*$instanceVariable)'
+                : instanceVariable;
+            encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
+          } else {
+            final String operator = field.type.isNullable ? '*' : '';
+            encodableValue =
+                'flutter::EncodableValue($operator$instanceVariable)';
+          }
+
+          if (field.type.isNullable) {
+            encodableValue =
+                '$instanceVariable ? $encodableValue : flutter::EncodableValue()';
+          }
+
+          indent.writeln('{$encodableValue},');
         }
-
-        if (field.type.isNullable) {
-          encodableValue =
-              '$instanceVariable ? $encodableValue : flutter::EncodableValue()';
-        }
-
-        indent.writeln('{$encodableKey, $encodableValue},');
-      }
+      });
     });
   });
   indent.addln('');
@@ -362,16 +366,16 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
   indent.addln('');
 
   // Deserialization.
-  indent.write('${klass.name}::${klass.name}(flutter::EncodableMap map) ');
+  indent.write('${klass.name}::${klass.name}(flutter::EncodableList wrapped) ');
   indent.scoped('{', '}', () {
-    for (final NamedType field in klass.fields) {
+    indent.writeln('flutter::EncodeableList list = wrapped.front();');
+    klass.fields.toList().asMap().forEach((int index, final NamedType field) {
       final String instanceVariableName = _makeInstanceVariableName(field);
       final String pointerFieldName =
           '${_pointerPrefix}_${_makeVariableName(field)}';
       final String encodableFieldName =
           '${_encodablePrefix}_${_makeVariableName(field)}';
-      indent.writeln(
-          'auto& $encodableFieldName = map.at(flutter::EncodableValue("${field.name}"));');
+      indent.writeln('auto& $encodableFieldName = list[$index];');
       if (rootEnumNameSet.contains(field.type.baseName)) {
         indent.writeln(
             'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t$instanceVariableName = (${field.type.baseName})*$pointerFieldName;');
@@ -392,7 +396,7 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
                 .map((Class x) => x.name)
                 .contains(field.type.baseName)) {
           indent.write(
-              'if (const flutter::EncodableMap* $pointerFieldName = std::get_if<flutter::EncodableMap>(&$encodableFieldName)) ');
+              'if (const flutter::EncodableList* $pointerFieldName = std::get_if<flutter::EncodableList>(&$encodableFieldName)) '); //might need to change reference
           indent.scoped('{', '}', () {
             indent.writeln(
                 '$instanceVariableName = ${hostDatatype.datatype}(*$pointerFieldName);');
@@ -405,7 +409,7 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
           });
         }
       }
-    }
+    });
   });
   indent.addln('');
 }
@@ -471,9 +475,9 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
       indent.writeln(
           'static void SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api);');
       indent.writeln(
-          'static flutter::EncodableMap WrapError(std::string_view error_message);');
+          'static flutter::EncodableList WrapError(std::string_view error_message);');
       indent.writeln(
-          'static flutter::EncodableMap WrapError(const FlutterError& error);');
+          'static flutter::EncodableList WrapError(const FlutterError& error);');
     });
     indent.scoped(' protected:', '', () {
       indent.writeln('${api.name}() = default;');
@@ -514,7 +518,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           indent.write(
               'channel->SetMessageHandler([api](const flutter::EncodableValue& message, const flutter::MessageReply<flutter::EncodableValue>& reply) ');
           indent.scoped('{', '});', () {
-            indent.writeln('flutter::EncodableMap wrapped;');
+            indent.writeln('flutter::EncodableList wrapped;');
             indent.write('try ');
             indent.scoped('{', '}', () {
               final List<String> methodArgument = <String>[];
@@ -588,7 +592,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.write('if ($encodableArgName.IsNull()) ');
                     indent.scoped('{', '}', () {
                       indent.writeln(
-                          'wrapped.emplace(flutter::EncodableValue("${Keys.error}"), WrapError("$argName unexpectedly null."));');
+                          'wrapped = WrapError("$argName unexpectedly null.");');
                       indent.writeln('reply(wrapped);');
                       indent.writeln('return;');
                     });
@@ -605,14 +609,10 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 final String errorGetter;
                 final String prefix = (reply != '') ? '\t' : '';
 
-                const String resultKey =
-                    'flutter::EncodableValue("${Keys.result}")';
-                const String errorKey =
-                    'flutter::EncodableValue("${Keys.error}")';
                 const String nullValue = 'flutter::EncodableValue()';
                 if (returnType.isVoid) {
                   elseBody =
-                      '$prefix\twrapped.emplace($resultKey, $nullValue);${indent.newline}';
+                      '$prefix\twrapped.emplace($nullValue);${indent.newline}';
                   ifCondition = 'output.has_value()';
                   errorGetter = 'value';
                 } else {
@@ -631,19 +631,19 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     elseBody = '''
 $prefix\tauto output_optional = $extractedValue;
 $prefix\tif (output_optional) {
-$prefix\t\twrapped.emplace($resultKey, $wrapperType(std::move(output_optional).value()));
+$prefix\t\twrapped.emplace($wrapperType(std::move(output_optional).value()));
 $prefix\t} else {
-$prefix\t\twrapped.emplace($resultKey, $nullValue);
+$prefix\t\twrapped.emplace($nullValue);
 $prefix\t}${indent.newline}''';
                   } else {
                     elseBody =
-                        '$prefix\twrapped.emplace($resultKey, $wrapperType($extractedValue));${indent.newline}';
+                        '$prefix\twrapped.emplace($wrapperType($extractedValue));${indent.newline}';
                   }
                   ifCondition = 'output.has_error()';
                   errorGetter = 'error';
                 }
                 return '${prefix}if ($ifCondition) {${indent.newline}'
-                    '$prefix\twrapped.emplace($errorKey, WrapError(output.$errorGetter()));${indent.newline}'
+                    '$prefix\twrapped = WrapError(output.$errorGetter());${indent.newline}'
                     '$prefix$reply'
                     '$prefix} else {${indent.newline}'
                     '$elseBody'
@@ -675,8 +675,7 @@ $prefix\t}${indent.newline}''';
             });
             indent.write('catch (const std::exception& exception) ');
             indent.scoped('{', '}', () {
-              indent.writeln(
-                  'wrapped.emplace(flutter::EncodableValue("${Keys.error}"), WrapError(exception.what()));');
+              indent.writeln('wrapped = WrapError(exception.what());');
               if (method.isAsynchronous) {
                 indent.writeln('reply(wrapped);');
               }
@@ -821,7 +820,7 @@ else if (const int64_t* ${pointerVariable}_64 = std::get_if<int64_t>(&args))
 \t$output = *${pointerVariable}_64;''');
           } else if (!isBuiltin) {
             indent.write(
-                'if (const flutter::EncodableMap* $pointerVariable = std::get_if<flutter::EncodableMap>(&args)) ');
+                'if (const flutter::EncodableList* $pointerVariable = std::get_if<flutter::EncodableList>(&args)) ');
             indent.scoped('{', '}', () {
               indent.writeln('$output = $returnTypeName(*$pointerVariable);');
             });
@@ -1150,18 +1149,18 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
 
       indent.addln('');
       indent.format('''
-flutter::EncodableMap ${api.name}::WrapError(std::string_view error_message) {
-\treturn flutter::EncodableMap({
-\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(std::string(error_message))},
-\t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue("Error")},
-\t\t{flutter::EncodableValue("${Keys.errorDetails}"), flutter::EncodableValue()}
+flutter::EncodableList ${api.name}::WrapError(std::string_view error_message) {
+\treturn flutter::EncodableList({
+\t\t{flutter::EncodableValue(std::string(error_message))},
+\t\t{flutter::EncodableValue("Error")},
+\t\t{flutter::EncodableValue()}
 \t});
 }
-flutter::EncodableMap ${api.name}::WrapError(const FlutterError& error) {
-\treturn flutter::EncodableMap({
-\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(error.message())},
-\t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue(error.code())},
-\t\t{flutter::EncodableValue("${Keys.errorDetails}"), error.details()}
+flutter::EncodableList ${api.name}::WrapError(const FlutterError& error) {
+\treturn flutter::EncodableList({
+\t\t{flutter::EncodableValue(error.message())},
+\t\t{flutter::EncodableValue(error.code())},
+\t\t{error.details()}
 \t});
 }''');
       indent.addln('');
