@@ -12,7 +12,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Map;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -90,8 +89,7 @@ public class AsyncTest {
               @SuppressWarnings("unchecked")
               ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
               assertTrue(wrapped.size() > 1);
-              assertEquals(
-                  "java.lang.Exception: error", (String) wrapped.get(0));
+              assertEquals("java.lang.Exception: error", (String) wrapped.get(0));
               didCall[0] = true;
             });
     assertTrue(didCall[0]);

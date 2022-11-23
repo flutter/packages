@@ -11,7 +11,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Map;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 

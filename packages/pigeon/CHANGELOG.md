@@ -1,3 +1,7 @@
+## 4.2.7
+
+* Updates serialisation to use lists instead of maps.
+
 ## 4.2.6
 
 * Fixes bug with parsing documentation comments that start with '/'.

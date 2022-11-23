@@ -75,7 +75,7 @@
   binaryMessenger.handlers[channelName](nil, ^(NSData *data) {
     NSArray *outputList = [binaryMessenger.codec decode:data];
     XCTAssertEqualObjects(outputList[0], [NSNull null]);
-//    XCTAssertEqualObjects(outputMap[@"error"], [NSNull null]);
+    //    XCTAssertEqualObjects(outputMap[@"error"], [NSNull null]);
     [expectation fulfill];
   });
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
@@ -138,7 +138,7 @@
     NSArray *outputList = [binaryMessenger.codec decode:data];
     XCTAssertNotNil(outputList);
     XCTAssertEqualObjects(outputList[0], @"hey");
-      XCTAssertEqualObjects(outputList[1], @"ho");
+    XCTAssertEqualObjects(outputList[1], @"ho");
     [expectation fulfill];
   });
   [self waitForExpectationsWithTimeout:1.0 handler:nil];

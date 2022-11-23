@@ -9,8 +9,6 @@ import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.Test;
 
 public class NullFieldsTest {
@@ -69,7 +67,8 @@ public class NullFieldsTest {
     list.add(1L);
     ArrayList<ArrayList> wrapped = new ArrayList<ArrayList>();
     wrapped.add(list);
-    NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromList(wrapped);
+    NullFields.NullFieldsSearchRequest request =
+        NullFields.NullFieldsSearchRequest.fromList(wrapped);
     assertEquals(request.getQuery(), "hello");
   }
 
@@ -81,7 +80,8 @@ public class NullFieldsTest {
 
     ArrayList<ArrayList> wrapped = new ArrayList<ArrayList>();
     wrapped.add(list);
-    NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromList(wrapped);
+    NullFields.NullFieldsSearchRequest request =
+        NullFields.NullFieldsSearchRequest.fromList(wrapped);
     assertNull(request.getQuery());
   }
 
@@ -174,9 +174,9 @@ public class NullFieldsTest {
             .setType(NullFields.NullFieldsSearchReplyType.SUCCESS)
             .build();
 
-            ArrayList<ArrayList> wrapped = reply.toList();
-            @SuppressWarnings("unchecked")
-            ArrayList<Object> unwrapped = wrapped.get(0);
+    ArrayList<ArrayList> wrapped = reply.toList();
+    @SuppressWarnings("unchecked")
+    ArrayList<Object> unwrapped = wrapped.get(0);
     assertEquals(unwrapped.get(0), "result");
     assertEquals(unwrapped.get(1), "error");
     assertEquals(unwrapped.get(2), Arrays.asList(1L, 2L, 3L));
@@ -195,9 +195,9 @@ public class NullFieldsTest {
             .setType(null)
             .build();
 
-            ArrayList<ArrayList> wrapped = reply.toList();
-            @SuppressWarnings("unchecked")
-            ArrayList<Object> unwrapped = wrapped.get(0);
+    ArrayList<ArrayList> wrapped = reply.toList();
+    @SuppressWarnings("unchecked")
+    ArrayList<Object> unwrapped = wrapped.get(0);
 
     assertNull(unwrapped.get(0));
     assertNull(unwrapped.get(1));

@@ -22,8 +22,8 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoEverything:everything
            completion:^(Everything *_Nonnull result, NSError *_Nullable error) {
-      XCTAssertNil(error);
-      XCTAssertNotNil(result);
+             XCTAssertNil(error);
+             XCTAssertNotNil(result);
              XCTAssert([result.aBool isEqual:[NSNull null]]);
              XCTAssert([result.anInt isEqual:[NSNull null]]);
              XCTAssert([result.aDouble isEqual:[NSNull null]]);

@@ -28,8 +28,7 @@ public class PrimitiveTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList args =
-                  (ArrayList) PrimitiveFlutterApi.getCodec().decodeMessage(message);
+              ArrayList args = (ArrayList) PrimitiveFlutterApi.getCodec().decodeMessage(message);
               Object arg = args.get(0);
               if (arg instanceof Long) {
                 Long longArg = (Long) arg;

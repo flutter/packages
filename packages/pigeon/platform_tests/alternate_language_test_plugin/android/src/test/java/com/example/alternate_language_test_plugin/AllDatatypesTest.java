@@ -13,7 +13,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import org.junit.Test;
 
 public class AllDatatypesTest {
@@ -26,8 +25,7 @@ public class AllDatatypesTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList args =
-                  (ArrayList) FlutterEverything.getCodec().decodeMessage(message);
+              ArrayList args = (ArrayList) FlutterEverything.getCodec().decodeMessage(message);
               ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);
@@ -100,8 +98,7 @@ public class AllDatatypesTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList args =
-                  (ArrayList) FlutterEverything.getCodec().decodeMessage(message);
+              ArrayList args = (ArrayList) FlutterEverything.getCodec().decodeMessage(message);
               ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);
