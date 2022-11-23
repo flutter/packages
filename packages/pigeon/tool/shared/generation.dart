@@ -90,7 +90,7 @@ Future<int> generatePigeons({required String baseDir}) async {
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
-      dartOut: '$outputBase/lib/$input.gen.dart',
+      // XXX dartOut: '$outputBase/lib/$input.gen.dart',
       // Android
       kotlinOut: skipLanguages.contains(GeneratorLanguages.kotlin)
           ? null
