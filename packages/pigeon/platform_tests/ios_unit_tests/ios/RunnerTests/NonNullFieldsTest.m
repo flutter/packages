@@ -6,7 +6,7 @@
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
 #import "EchoMessenger.h"
-#import "NonNullFields.gen.h"
+#import "non_null_fields.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface NonNullFieldsTest : XCTestCase
@@ -16,7 +16,7 @@
 @implementation NonNullFieldsTest
 
 - (void)testMake {
-  NonNullFieldSearchRequest *request = [NonNullFieldSearchRequest makeWithQuery:@"hello"];
+  NNFNonNullFieldSearchRequest *request = [NNFNonNullFieldSearchRequest makeWithQuery:@"hello"];
   XCTAssertEqualObjects(@"hello", request.query);
 }
 

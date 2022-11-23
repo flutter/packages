@@ -5,7 +5,7 @@
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
 #import "HandlerBinaryMessenger.h"
-#import "MultipleArity.gen.h"
+#import "multiple_arity.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface MultipleAritytest : XCTestCase

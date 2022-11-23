@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #import <XCTest/XCTest.h>
-#import "Message.gen.h"
+#import "message.gen.h"
 
 @interface ACMessageSearchReply ()
 + (ACMessageSearchReply *)fromMap:(NSDictionary *)dict;
