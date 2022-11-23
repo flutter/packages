@@ -190,7 +190,7 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
 
   @override
   String _encode(String fieldName, DartType type) =>
-      '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]!';
+      '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]';
 
   @override
   bool _matchesType(DartType type) => type.isEnum;
@@ -232,8 +232,7 @@ class _TypeHelperString extends _TypeHelper {
       'state.${_stateValueAccess(parameterElement)}';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}';
+  String _encode(String fieldName, DartType type) => fieldName;
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreString;
@@ -341,7 +340,9 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
   }
 }
 
-extension on DartType {
+/// Extension helpers on [DartType].
+extension DartTypeExtension on DartType {
+  /// Convenient helper for nullability checks.
   String get ensureNotNull => isNullableType ? '!' : '';
 }
 

@@ -410,7 +410,7 @@ extension $IterableRouteExtension on IterableRoute {
                 boolIterableField?.map((e) => e.toString()).toList(),
           if (enumIterableField != null)
             'enum-iterable-field': enumIterableField
-                ?.map((e) => _$SportDetailsEnumMap[e]!)
+                ?.map((e) => _$SportDetailsEnumMap[e])
                 .toList(),
           if (intListField != null)
             'int-list-field': intListField?.map((e) => e.toString()).toList(),
@@ -423,7 +423,7 @@ extension $IterableRouteExtension on IterableRoute {
             'bool-list-field': boolListField?.map((e) => e.toString()).toList(),
           if (enumListField != null)
             'enum-list-field':
-                enumListField?.map((e) => _$SportDetailsEnumMap[e]!).toList(),
+                enumListField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
           if (intSetField != null)
             'int-set-field': intSetField?.map((e) => e.toString()).toList(),
           if (doubleSetField != null)
@@ -435,7 +435,7 @@ extension $IterableRouteExtension on IterableRoute {
             'bool-set-field': boolSetField?.map((e) => e.toString()).toList(),
           if (enumSetField != null)
             'enum-set-field':
-                enumSetField?.map((e) => _$SportDetailsEnumMap[e]!).toList(),
+                enumSetField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
         },
       );
 
