@@ -1,3 +1,8 @@
+## 5.3.0
+
+- Adds `redirectWithState` to `GoRouteData`.
+- `GoRouteData.redirect` is now deprecated in favor of `GoRouteData.redirectWithState`.
+
 ## 5.2.0
 
 - Fixes `GoRouterState.location` and `GoRouterState.param` to return correct value.
