@@ -15,7 +15,7 @@ import 'state.dart';
 /// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
 ///
 /// Subclasses must override one of [build], [buildPageWithState], or
-/// [redirect].
+/// [redirectWithState].
 /// {@category Type-safe routes}
 abstract class GoRouteData {
   /// Allows subclasses to have `const` constructors.
@@ -26,7 +26,7 @@ abstract class GoRouteData {
   /// Creates the [Widget] for `this` route.
   ///
   /// Subclasses must override one of [build], [buildPageWithState], or
-  /// [redirect].
+  /// [redirectWithState].
   ///
   /// Corresponds to [GoRoute.builder].
   Widget build(BuildContext context) => throw UnimplementedError(
@@ -38,7 +38,7 @@ abstract class GoRouteData {
   /// Subclasses can override this function to provide a custom [Page].
   ///
   /// Subclasses must override one of [build], [buildPageWithState] or
-  /// [redirect].
+  /// [redirectWithState].
   ///
   /// Corresponds to [GoRoute.pageBuilder].
   ///
@@ -55,7 +55,7 @@ abstract class GoRouteData {
   /// Subclasses can override this function to provide a custom [Page].
   ///
   /// Subclasses must override one of [build], [buildPageWithState] or
-  /// [redirect].
+  /// [redirectWithState].
   ///
   /// Corresponds to [GoRoute.pageBuilder].
   ///
@@ -68,10 +68,25 @@ abstract class GoRouteData {
   /// An optional redirect function for this route.
   ///
   /// Subclasses must override one of [build], [buildPageWithState], or
-  /// [redirect].
+  /// [redirectWithState].
   ///
   /// Corresponds to [GoRoute.redirect].
+  @Deprecated(
+    'This method has been deprecated in favor of redirectWithState. '
+    'This feature was deprecated after v5.3.0.',
+  )
   FutureOr<String?> redirect() => null;
+
+  /// An optional redirect function for this route.
+  ///
+  /// Subclasses must override one of [build], [buildPageWithState], or
+  /// [redirectWithState].
+  ///
+  /// Corresponds to [GoRoute.redirect].
+  FutureOr<String?> redirectWithState(
+          BuildContext context, GoRouterState state) =>
+      // ignore: deprecated_member_use_from_same_package
+      redirect();
 
   /// A helper function used by generated code.
   ///
@@ -112,7 +127,7 @@ abstract class GoRouteData {
         factoryImpl(state).buildPageWithState(context, state);
 
     FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).redirect();
+        factoryImpl(state).redirectWithState(context, state);
 
     return GoRoute(
       path: path,
