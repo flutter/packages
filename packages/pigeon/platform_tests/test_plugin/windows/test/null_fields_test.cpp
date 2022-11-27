@@ -36,22 +36,22 @@ const T* ExpectAndGet(const EncodableMap& map, const std::string& key) {
 
 class NullFieldsTest : public ::testing::Test {
  protected:
-  // Wrapper for access to private NullFieldsSearchRequest map constructor.
-  NullFieldsSearchRequest RequestFromMap(const EncodableMap& map) {
-    return NullFieldsSearchRequest(map);
+  // Wrapper for access to private NullFieldsSearchRequest list constructor.
+  NullFieldsSearchRequest RequestFromList(const EncodableList& list) {
+    return NullFieldsSearchRequest(list);
   }
 
   // Wrapper for access to private NullFieldsSearchRequest map constructor.
-  NullFieldsSearchReply ReplyFromMap(const EncodableMap& map) {
-    return NullFieldsSearchReply(map);
+  NullFieldsSearchReply ReplyFromMap(const EncodableList& list) {
+    return NullFieldsSearchReply(list);
   }
   // Wrapper for access to private NullFieldsSearchRequest::ToEncodableMap.
-  EncodableMap MapFromRequest(const NullFieldsSearchRequest& request) {
-    return request.ToEncodableMap();
+  EncodableList ListFromRequest(const NullFieldsSearchRequest& request) {
+    return request.ToEncodableList();
   }
   // Wrapper for access to private NullFieldsSearchRequest map constructor.
-  EncodableMap MapFromReply(const NullFieldsSearchReply& reply) {
-    return reply.ToEncodableMap();
+  EncodableList ListFromReply(const NullFieldsSearchReply& reply) {
+    return reply.ToEncodableList();
   }
 };
 

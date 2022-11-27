@@ -131,7 +131,7 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
         indent.scoped('{', '}', () {
           indent.writeln('stream->WriteByte(${customClass.enumeration});');
           indent.writeln(
-              'WriteValue(std::any_cast<${customClass.name}>(*custom_value).List(), stream);');
+              'WriteValue(std::any_cast<${customClass.name}>(*custom_value).ToEncodableList(), stream);');
           indent.writeln('return;');
         });
       }
@@ -321,42 +321,39 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
       .write('flutter::EncodableList ${klass.name}::ToEncodableList() const ');
   indent.scoped('{', '}', () {
     indent.scoped('return flutter::EncodableList{', '};', () {
-      indent.writeScoped('flutter::EncodableList{', '};', () {
-        for (final NamedType field in klass.fields) {
-          final HostDatatype hostDatatype = getFieldHostDatatype(
-              field,
-              root.classes,
-              root.enums,
-              (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+      for (final NamedType field in klass.fields) {
+        final HostDatatype hostDatatype = getFieldHostDatatype(
+            field,
+            root.classes,
+            root.enums,
+            (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
 
-          final String instanceVariable = _makeInstanceVariableName(field);
+        final String instanceVariable = _makeInstanceVariableName(field);
 
-          // final String encodableKey = 'flutter::EncodableValue("${field.name}")';
-          String encodableValue = '';
-          if (!hostDatatype.isBuiltin &&
-              rootClassNameSet.contains(field.type.baseName)) {
-            final String operator = field.type.isNullable ? '->' : '.';
-            encodableValue = '$instanceVariable${operator}ToEncodableList()';
-          } else if (!hostDatatype.isBuiltin &&
-              rootEnumNameSet.contains(field.type.baseName)) {
-            final String nonNullValue = field.type.isNullable
-                ? '(*$instanceVariable)'
-                : instanceVariable;
-            encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
-          } else {
-            final String operator = field.type.isNullable ? '*' : '';
-            encodableValue =
-                'flutter::EncodableValue($operator$instanceVariable)';
-          }
-
-          if (field.type.isNullable) {
-            encodableValue =
-                '$instanceVariable ? $encodableValue : flutter::EncodableValue()';
-          }
-
-          indent.writeln('{$encodableValue},');
+        // final String encodableKey = 'flutter::EncodableValue("${field.name}")';
+        String encodableValue = '';
+        if (!hostDatatype.isBuiltin &&
+            rootClassNameSet.contains(field.type.baseName)) {
+          final String operator = field.type.isNullable ? '->' : '.';
+          encodableValue = '$instanceVariable${operator}ToEncodableList()';
+        } else if (!hostDatatype.isBuiltin &&
+            rootEnumNameSet.contains(field.type.baseName)) {
+          final String nonNullValue =
+              field.type.isNullable ? '(*$instanceVariable)' : instanceVariable;
+          encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
+        } else {
+          final String operator = field.type.isNullable ? '*' : '';
+          encodableValue =
+              'flutter::EncodableValue($operator$instanceVariable)';
         }
-      });
+
+        if (field.type.isNullable) {
+          encodableValue =
+              '$instanceVariable ? $encodableValue : flutter::EncodableValue()';
+        }
+
+        indent.writeln('{$encodableValue},');
+      }
     });
   });
   indent.addln('');
@@ -366,9 +363,8 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
   indent.addln('');
 
   // Deserialization.
-  indent.write('${klass.name}::${klass.name}(flutter::EncodableList wrapped) ');
+  indent.write('${klass.name}::${klass.name}(flutter::EncodableList list) ');
   indent.scoped('{', '}', () {
-    indent.writeln('flutter::EncodeableList list = wrapped.front();');
     klass.fields.toList().asMap().forEach((int index, final NamedType field) {
       final String instanceVariableName = _makeInstanceVariableName(field);
       final String pointerFieldName =
@@ -612,7 +608,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 const String nullValue = 'flutter::EncodableValue()';
                 if (returnType.isVoid) {
                   elseBody =
-                      '$prefix\twrapped.emplace($nullValue);${indent.newline}';
+                      '$prefix\twrapped.push_back($nullValue);${indent.newline}';
                   ifCondition = 'output.has_value()';
                   errorGetter = 'value';
                 } else {
@@ -631,13 +627,13 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     elseBody = '''
 $prefix\tauto output_optional = $extractedValue;
 $prefix\tif (output_optional) {
-$prefix\t\twrapped.emplace($wrapperType(std::move(output_optional).value()));
+$prefix\t\twrapped.push_back($wrapperType(std::move(output_optional).value()));
 $prefix\t} else {
-$prefix\t\twrapped.emplace($nullValue);
+$prefix\t\twrapped.push_back($nullValue);
 $prefix\t}${indent.newline}''';
                   } else {
                     elseBody =
-                        '$prefix\twrapped.emplace($wrapperType($extractedValue));${indent.newline}';
+                        '$prefix\twrapped.push_back($wrapperType($extractedValue));${indent.newline}';
                   }
                   ifCondition = 'output.has_error()';
                   errorGetter = 'error';
