@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "test/multiple_arity.gen.h"
+#include "pigeon/multiple_arity.gen.h"
 #include "test/utils/fake_host_messenger.h"
 
 namespace multiple_arity_pigeontest {

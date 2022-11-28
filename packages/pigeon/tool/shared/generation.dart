@@ -103,10 +103,10 @@ Future<int> generatePigeons({required String baseDir}) async {
       // Windows
       cppHeaderOut: skipLanguages.contains(GeneratorLanguages.cpp)
           ? null
-          : '$outputBase/windows/test/$input.gen.h',
+          : '$outputBase/windows/pigeon/$input.gen.h',
       cppSourceOut: skipLanguages.contains(GeneratorLanguages.cpp)
           ? null
-          : '$outputBase/windows/test/$input.gen.cpp',
+          : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
     );
     if (generateCode != 0) {

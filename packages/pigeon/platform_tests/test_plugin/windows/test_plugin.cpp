@@ -10,15 +10,22 @@
 
 #include <memory>
 
+#include "pigeon/all_datatypes.gen.h"
+#include "pigeon/all_void.gen.h"
+
 namespace test_plugin {
+
+using all_datatypes_pigeontest::Everything;
+using all_datatypes_pigeontest::HostEverything;
+using all_void_pigeontest::AllVoidHostApi;
 
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
   auto plugin = std::make_unique<TestPlugin>();
 
-  // This plugin is currently a no-op since only unit tests have been set up.
-  //  In the future, this will register Pigeon APIs used in integration tests.
+  AllVoidHostApi::SetUp(registrar->messenger(), plugin.get());
+  HostEverything::SetUp(registrar->messenger(), plugin.get());
 
   registrar->AddPlugin(std::move(plugin));
 }
@@ -26,5 +33,21 @@ void TestPlugin::RegisterWithRegistrar(
 TestPlugin::TestPlugin() {}
 
 TestPlugin::~TestPlugin() {}
+
+std::optional<all_void_pigeontest::FlutterError> TestPlugin::Doit() {
+  // No-op.
+  return std::nullopt;
+}
+
+// HostEverything.
+all_datatypes_pigeontest::ErrorOr<Everything> TestPlugin::GiveMeEverything() {
+  // Currently unused in integration tests, so just return an empty object.
+  return Everything();
+}
+
+all_datatypes_pigeontest::ErrorOr<Everything> TestPlugin::Echo(
+    const Everything& everything) {
+  return everything;
+}
 
 }  // namespace test_plugin
