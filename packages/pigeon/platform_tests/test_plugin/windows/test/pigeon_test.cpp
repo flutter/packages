@@ -10,7 +10,7 @@
 #include <memory>
 #include <string>
 
-#include "message.gen.h"
+#include "pigeon/message.gen.h"
 
 namespace test_plugin {
 namespace test {
