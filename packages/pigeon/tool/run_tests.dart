@@ -24,7 +24,8 @@ const String _testFlag = 'test';
 const String _listFlag = 'list';
 const String _skipGenerationFlag = 'skip-generation';
 
-const String testPluginRelativePath = 'platform_tests/test_plugin';
+const String _testPluginRelativePath = 'platform_tests/test_plugin';
+const String _integrationTestFileRelativePath = 'integration_test/test.dart';
 
 @immutable
 class _TestInfo {
@@ -52,18 +53,18 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'flutter_unittests': _TestInfo(
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
-  'ios_e2e_tests': _TestInfo(
-      function: _runIosE2eTests,
-      description: 'End-to-end Objective-C tests run on iOS Simulator'),
   'ios_unittests': _TestInfo(
       function: _runIosUnitTests,
       description: 'Unit tests on generated Objective-C code.'),
   'ios_swift_unittests': _TestInfo(
       function: _runIosSwiftUnitTests,
       description: 'Unit tests on generated Swift code.'),
-  'mac_swift_unittests': _TestInfo(
+  'macos_swift_unittests': _TestInfo(
       function: _runMacOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code on macOS.'),
+  'macos_swift_integration_tests': _TestInfo(
+      function: _runMacOSSwiftIntegrationTests,
+      description: 'Integration tests on generated Swift code on macOS.'),
   'mock_handler_tests': _TestInfo(
       function: _runMockHandlerTests,
       description: 'Unit tests on generated Dart mock handler code.'),
@@ -74,7 +75,7 @@ Future<int> _runAndroidUnitTests() async {
 }
 
 Future<int> _runAndroidKotlinUnitTests() async {
-  const String examplePath = './$testPluginRelativePath/example';
+  const String examplePath = './$_testPluginRelativePath/example';
   const String androidProjectPath = '$examplePath/android';
   final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
   if (!gradleFile.existsSync()) {
@@ -179,16 +180,12 @@ Future<int> _runFlutterUnitTests() async {
   return 0;
 }
 
-Future<int> _runIosE2eTests() async {
-  throw UnimplementedError('See run_tests.sh.');
-}
-
 Future<int> _runIosUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
 }
 
 Future<int> _runMacOSSwiftUnitTests() async {
-  const String examplePath = './$testPluginRelativePath/example';
+  const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'macos');
   if (compileCode != 0) {
     return compileCode;
@@ -200,8 +197,17 @@ Future<int> _runMacOSSwiftUnitTests() async {
   );
 }
 
+Future<int> _runMacOSSwiftIntegrationTests() async {
+  const String examplePath = './$_testPluginRelativePath/example';
+  return runFlutterCommand(
+    examplePath,
+    'test',
+    <String>[_integrationTestFileRelativePath, '-d', 'macos'],
+  );
+}
+
 Future<int> _runIosSwiftUnitTests() async {
-  const String examplePath = './$testPluginRelativePath/example';
+  const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(
     examplePath,
     'ios',
@@ -238,7 +244,7 @@ Future<int> _runMockHandlerTests() async {
 }
 
 Future<int> _runWindowsUnitTests() async {
-  const String examplePath = './$testPluginRelativePath/example';
+  const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'windows');
   if (compileCode != 0) {
     return compileCode;
