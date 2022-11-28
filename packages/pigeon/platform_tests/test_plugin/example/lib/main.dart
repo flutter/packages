@@ -5,7 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
-import 'package:test_plugin/all_void.gen.dart';
+import 'package:shared_test_plugin_code/generated.dart';
 import 'package:test_plugin/test_plugin.dart';
 
 void main() {

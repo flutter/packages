@@ -77,6 +77,8 @@ Future<int> generatePigeons({required String baseDir}) async {
   final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');
   final String alternateOutputBase =
       p.join(baseDir, 'platform_tests', 'alternate_language_test_plugin');
+  final String sharedDartOutputBase =
+      p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
   // TODO(stuartmorgan): Eliminate this and use alternateOutputBase.
   // See https://github.com/flutter/packages/pull/2816.
   final String iosObjCBase =
@@ -90,7 +92,7 @@ Future<int> generatePigeons({required String baseDir}) async {
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
-      dartOut: '$outputBase/lib/$input.gen.dart',
+      dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
       // Android
       kotlinOut: skipLanguages.contains(GeneratorLanguages.kotlin)
           ? null
@@ -129,7 +131,6 @@ Future<int> generatePigeons({required String baseDir}) async {
     // Generate the alternate language test plugin output.
     generateCode = await runPigeon(
       input: './pigeons/$input.dart',
-      dartOut: '$alternateOutputBase/lib/$input.gen.dart',
       // Android
       // This doesn't use the '.gen' suffix since Java has strict file naming
       // rules.
