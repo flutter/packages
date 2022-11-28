@@ -38,6 +38,9 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'windows_unittests': _TestInfo(
       function: _runWindowsUnitTests,
       description: 'Unit tests on generated Windows C++ code.'),
+  'windows_integration_tests': _TestInfo(
+      function: _runWindowsIntegrationTests,
+      description: 'Integration tests on generated Windows C++ code.'),
   'android_unittests': _TestInfo(
       function: _runAndroidUnitTests,
       description: 'Unit tests on generated Java code.'),
@@ -255,6 +258,15 @@ Future<int> _runWindowsUnitTests() async {
       <String>[]);
 }
 
+Future<int> _runWindowsIntegrationTests() async {
+  const String examplePath = './$_testPluginRelativePath/example';
+  return runFlutterCommand(
+    examplePath,
+    'test',
+    <String>[_integrationTestFileRelativePath, '-d', 'windows'],
+  );
+}
+
 Future<void> main(List<String> args) async {
   final ArgParser parser = ArgParser()
     ..addOption(_testFlag, abbr: 't', help: 'Only run specified test.')
@@ -306,7 +318,7 @@ ${parser.usage}''');
   // the mode used by CI.
   if (testsToRun.isEmpty) {
     if (Platform.isWindows) {
-      testsToRun = <String>['windows_unittests'];
+      testsToRun = <String>['windows_unittests', 'windows_integration_tests'];
     } else {
       // TODO(gaaclarke): migrate from run_tests.sh to this script.
     }

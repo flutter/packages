@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "test/primitive.gen.h"
+#include "pigeon/primitive.gen.h"
 #include "test/utils/fake_host_messenger.h"
 
 namespace primitive_pigeontest {

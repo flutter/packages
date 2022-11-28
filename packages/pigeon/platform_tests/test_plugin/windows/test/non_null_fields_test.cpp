@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "non_null_fields.gen.h"
+#include "pigeon/non_null_fields.gen.h"
 
 namespace non_null_fields_pigeontest {
 
