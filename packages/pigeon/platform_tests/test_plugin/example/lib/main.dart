@@ -22,7 +22,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // ignore: unused_field
   final TestPlugin _testPlugin = TestPlugin();
-  late AllVoidHostApi api;
+  late final AllVoidHostApi api;
   String status = 'Calling...';
 
   @override

@@ -16,10 +16,6 @@ public class TestPlugin: NSObject, FlutterPlugin, AllVoidHostApi, HostEverything
     HostEverythingSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result(FlutterMethodNotImplemented)
-  }
-
   // MARK: AllVoidHostApi implementation
 
   func doit() {

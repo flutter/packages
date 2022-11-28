@@ -53,9 +53,6 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'flutter_unittests': _TestInfo(
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
-  'ios_e2e_tests': _TestInfo(
-      function: _runIosE2eTests,
-      description: 'End-to-end Objective-C tests run on iOS Simulator'),
   'ios_unittests': _TestInfo(
       function: _runIosUnitTests,
       description: 'Unit tests on generated Objective-C code.'),
@@ -181,10 +178,6 @@ Future<int> _runFlutterUnitTests() async {
   }
 
   return 0;
-}
-
-Future<int> _runIosE2eTests() async {
-  throw UnimplementedError('See run_tests.sh.');
 }
 
 Future<int> _runIosUnitTests() async {
