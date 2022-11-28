@@ -20,7 +20,7 @@ class MigrateStartCommand extends MigrateCommand {
     bool verbose = false,
     required this.logger,
     required this.fileSystem,
-    required ProcessManager processManager,
+    required this.processManager,
   })  : _verbose = verbose,
         migrateUtils = MigrateUtils(
           logger: logger,
@@ -113,6 +113,8 @@ class MigrateStartCommand extends MigrateCommand {
 
   final MigrateUtils migrateUtils;
 
+  final ProcessManager processManager;
+
   @override
   final String name = 'start';
 
@@ -123,7 +125,7 @@ class MigrateStartCommand extends MigrateCommand {
   @override
   Future<CommandResult> runCommand() async {
     final FlutterToolsEnvironment environment =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(logger);
+        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(processManager, logger);
     if (!_validateEnvironment(environment)) {
       return const CommandResult(ExitStatus.fail);
     }
@@ -191,10 +193,8 @@ class MigrateStartCommand extends MigrateCommand {
       }
     }
 
-    // final MigrateResult? migrateResult = null;
-    final MigrateResult? migrateResult = await computeMigration(
+    final MigrateCommandParameters commandParameters = MigrateCommandParameters(
       verbose: _verbose,
-      flutterProject: project,
       baseAppPath: stringArg('base-app-directory'),
       targetAppPath: stringArg('target-app-directory'),
       baseRevision: stringArg('base-revision'),
@@ -204,6 +204,12 @@ class MigrateStartCommand extends MigrateCommand {
       preferTwoWayMerge: boolArg('prefer-two-way-merge') ?? false,
       allowFallbackBaseRevision:
           boolArg('allow-fallback-base-revision') ?? false,
+    );
+
+    // final MigrateResult? migrateResult = null;
+    final MigrateResult? migrateResult = await computeMigration(
+      flutterProject: project,
+      commandParameters: commandParameters,
       fileSystem: fileSystem,
       logger: logger,
       migrateUtils: migrateUtils,
