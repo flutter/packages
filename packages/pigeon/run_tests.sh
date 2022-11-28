@@ -166,7 +166,11 @@ run_ios_swift_unittests() {
 }
 
 run_macos_swift_unittests() {
-  dart run tool/run_tests.dart -t mac_swift_unittests --skip-generation
+  dart run tool/run_tests.dart -t macos_swift_unittests --skip-generation
+}
+
+run_macos_swift_e2e_tests() {
+  dart run tool/run_tests.dart -t macos_swift_integration_tests --skip-generation
 }
 
 run_android_kotlin_unittests() {
@@ -255,6 +259,7 @@ should_run_ios_unittests=true
 should_run_ios_swift_unittests=true
 should_run_mock_handler_tests=true
 should_run_macos_swift_unittests=true
+should_run_macos_swift_e2e_tests=true
 should_run_android_kotlin_unittests=true
 while getopts "t:l?h" opt; do
   case $opt in
@@ -268,6 +273,7 @@ while getopts "t:l?h" opt; do
     should_run_ios_swift_unittests=false
     should_run_mock_handler_tests=false
     should_run_macos_swift_unittests=false
+    should_run_macos_swift_e2e_tests=false
     should_run_android_kotlin_unittests=false
     case $OPTARG in
     # TODO(stuartmorgan): Rename to include "java".
@@ -281,6 +287,7 @@ while getopts "t:l?h" opt; do
     ios_swift_unittests) should_run_ios_swift_unittests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
     macos_swift_unittests) should_run_macos_swift_unittests=true ;;
+    macos_swift_e2e_tests) should_run_macos_swift_e2e_tests=true ;;
     android_kotlin_unittests) should_run_android_kotlin_unittests=true ;;
     *)
       echo "unrecognized test: $OPTARG"
@@ -300,6 +307,7 @@ while getopts "t:l?h" opt; do
   ios_swift_unittests      - Unit tests on generated Swift code.
   mock_handler_tests       - Unit tests on generated Dart mock handler code.
   macos_swift_unittests    - Unit tests on generated Swift code on macOS.
+  macos_swift_e2e_tests    - Integration tests on generated Swift code on macOS.
   "
     exit 1
     ;;
@@ -355,6 +363,9 @@ if [ "$should_run_android_unittests" = true ]; then
 fi
 if [ "$should_run_macos_swift_unittests" = true ]; then
   run_macos_swift_unittests
+fi
+if [ "$should_run_macos_swift_e2e_tests" = true ]; then
+  run_macos_swift_e2e_tests
 fi
 if [ "$should_run_android_kotlin_unittests" = true ]; then
   run_android_kotlin_unittests

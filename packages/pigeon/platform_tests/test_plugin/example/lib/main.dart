@@ -5,6 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:test_plugin/all_void.gen.dart';
 import 'package:test_plugin/test_plugin.dart';
 
 void main() {
@@ -21,6 +22,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // ignore: unused_field
   final TestPlugin _testPlugin = TestPlugin();
+  late final AllVoidHostApi api;
+  String status = 'Calling...';
 
   @override
   void initState() {
@@ -29,9 +32,18 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initPlatformState() async {
-    // TODO(tarrinneal): Call TestPlugin methods here for manual integration
-    // testing, once they exist. See
-    // https://github.com/flutter/flutter/issues/111505
+    api = AllVoidHostApi();
+    try {
+      await api.doit();
+    } catch (e) {
+      setState(() {
+        status = 'Failed: $e';
+      });
+      return;
+    }
+    setState(() {
+      status = 'Success!';
+    });
   }
 
   @override
@@ -41,9 +53,8 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Pigeon integration tests'),
         ),
-        body: const Center(
-          child: Text(
-              'TODO, see https://github.com/flutter/flutter/issues/111505'),
+        body: Center(
+          child: Text(status),
         ),
       ),
     );
