@@ -9,27 +9,18 @@ import FlutterMacOS
  * This plugin handles the native side of the integration tests in
  * example/integration_test/.
  */
-public class TestPlugin: NSObject, FlutterPlugin, AllVoidHostApi, HostEverything {
+public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin()
-    AllVoidHostApiSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
-    HostEverythingSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
+    HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
   }
 
-  // MARK: AllVoidHostApi implementation
+  // MARK: HostIntegrationCoreApi implementation
 
-  func doit() {
-    // No-op
+  func noop() {
   }
 
-  // MARK: HostEverything implementation
-
-  func giveMeEverything() -> Everything {
-    // Currently unused in integration tests, so just return an empty object.
-    return Everything()
-  }
-
-  func echo(everything: Everything) -> Everything {
+  func echoAllTypes(everything: AllTypes) -> AllTypes {
     return everything
   }
 }

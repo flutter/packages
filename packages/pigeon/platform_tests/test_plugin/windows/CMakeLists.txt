@@ -23,6 +23,7 @@ list(APPEND PLUGIN_SOURCES
   "pigeon/all_void.gen.h"
   "pigeon/async_handlers.gen.cpp"
   "pigeon/async_handlers.gen.h"
+  "pigeon/core_tests.gen.h"
   "pigeon/enum.gen.cpp"
   "pigeon/enum.gen.h"
   "pigeon/host2flutter.gen.cpp"

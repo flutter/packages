@@ -18,15 +18,15 @@ void runPigeonIntegrationTests() {
 
   group('Host API tests', () {
     testWidgets('voidCallVoidReturn', (WidgetTester _) async {
-      final AllVoidHostApi api = AllVoidHostApi();
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      expect(api.doit(), completes);
+      expect(api.noop(), completes);
     });
 
     testWidgets('allDataTypesEcho', (WidgetTester _) async {
-      final HostEverything api = HostEverything();
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final Everything sentObject = Everything(
+      final AllTypes sentObject = AllTypes(
         aBool: true,
         anInt: 42,
         aDouble: 3.14159,
@@ -43,7 +43,7 @@ void runPigeonIntegrationTests() {
         ],
       );
 
-      final Everything echoObject = await api.echo(sentObject);
+      final AllTypes echoObject = await api.echoAllTypes(sentObject);
       expect(echoObject.aBool, sentObject.aBool);
       expect(echoObject.anInt, sentObject.anInt);
       expect(echoObject.aDouble, sentObject.aDouble);

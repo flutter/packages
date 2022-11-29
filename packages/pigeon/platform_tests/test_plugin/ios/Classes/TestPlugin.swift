@@ -9,11 +9,18 @@ import UIKit
  * This plugin is currently a no-op since only unit tests have been set up.
  * In the future, this will register Pigeon APIs used in integration tests.
  */
-public class TestPlugin: NSObject, FlutterPlugin {
+public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
+    let plugin = TestPlugin()
+    HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger(), api: plugin)
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result(FlutterMethodNotImplemented)
+  // MARK: HostIntegrationCoreApi implementation
+
+  func noop() {
+  }
+
+  func echoAllTypes(everything: AllTypes) -> AllTypes {
+    return everything
   }
 }

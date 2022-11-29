@@ -5,39 +5,27 @@
 package com.example.alternate_language_test_plugin;
 
 import androidx.annotation.NonNull;
-import com.example.alternate_language_test_plugin.AllDatatypes.Everything;
-import com.example.alternate_language_test_plugin.AllDatatypes.HostEverything;
-import com.example.alternate_language_test_plugin.AllVoid.AllVoidHostApi;
+import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
+import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
-public class AlternateLanguageTestPlugin implements FlutterPlugin, AllVoidHostApi, HostEverything {
+public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrationCoreApi {
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    AllVoidHostApi.setup(binding.getBinaryMessenger(), this);
-    HostEverything.setup(binding.getBinaryMessenger(), this);
+    HostIntegrationCoreApi.setup(binding.getBinaryMessenger(), this);
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {}
 
-  // AllVoidHostApi
+  // HostIntegrationCoreApi
 
   @Override
-  public void doit() {
-    // No-op.
-  }
-
-  // HostEverything
+  public void noop() {}
 
   @Override
-  public @NonNull Everything giveMeEverything() {
-    // Currently unused in integration tests, so just return an empty object.
-    return new Everything();
-  }
-
-  @Override
-  public @NonNull Everything echo(@NonNull Everything everything) {
+  public @NonNull AllTypes echoAllTypes(@NonNull AllTypes everything) {
     return everything;
   }
 }

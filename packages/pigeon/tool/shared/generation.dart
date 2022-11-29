@@ -57,6 +57,7 @@ Future<int> generatePigeons({required String baseDir}) async {
     'android_unittests',
     'async_handlers',
     'background_platform_channels',
+    'core_tests',
     'enum_args',
     'enum',
     'host2flutter',
