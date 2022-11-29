@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: always_specify_types, public_member_api_docs
+// ignore_for_file: always_specify_types, public_member_api_docs, unnecessary_null_checks
 
 part of 'all_types.dart';
 
