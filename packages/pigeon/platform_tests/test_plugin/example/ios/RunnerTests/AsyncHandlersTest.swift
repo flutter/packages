@@ -43,7 +43,7 @@ class AsyncHandlersTest: XCTestCase {
     let expectation = XCTestExpectation(description: "voidvoid callback")
     binaryMessenger.handlers[channelName]?(nil) { data in
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
-        XCTAssertNil(outputList?.first)
+        XCTAssertEqual(outputList?.first as! NSNull, NSNull())
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
