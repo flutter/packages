@@ -207,7 +207,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matches) {
-      _routerDelegate.push(matches.last);
+      _routerDelegate.push(matches.lastWithEffectiveEncodedParams);
     });
   }
 

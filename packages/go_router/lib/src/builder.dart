@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -126,9 +125,8 @@ class RouteBuilder {
     try {
       final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
           <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
-      final Map<String, String> params = <String, String>{};
       _buildRecursive(context, matchList, 0, onPop, routerNeglect, keyToPage,
-          params, navigatorKey, registry);
+          navigatorKey, registry);
       return keyToPage[navigatorKey]!;
     } on _RouteBuilderError catch (e) {
       return <Page<Object?>>[
@@ -144,7 +142,6 @@ class RouteBuilder {
     VoidCallback pop,
     bool routerNeglect,
     Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPages,
-    Map<String, String> params,
     GlobalKey<NavigatorState> navigatorKey,
     Map<Page<Object?>, GoRouterState> registry,
   ) {
@@ -159,11 +156,8 @@ class RouteBuilder {
     }
 
     final RouteBase route = match.route;
-    final Map<String, String> newParams = <String, String>{
-      ...params,
-      ...match.decodedParams
-    };
-    final GoRouterState state = buildState(match, newParams);
+    final GoRouterState state =
+        buildState(match, matchList.effectiveEncodedParams(startIndex));
     if (route is GoRoute) {
       final Page<Object?> page = _buildPageForRoute(context, state, match);
       registry[page] = state;
@@ -175,7 +169,7 @@ class RouteBuilder {
       keyToPages.putIfAbsent(goRouteNavKey, () => <Page<Object?>>[]).add(page);
 
       _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
-          keyToPages, newParams, navigatorKey, registry);
+          keyToPages, navigatorKey, registry);
     } else if (route is ShellRouteBase) {
       assert(startIndex + 1 < matchList.matches.length,
           'Shell routes must always have child routes');
@@ -191,42 +185,56 @@ class RouteBuilder {
       // that the page for this ShellRoute is placed at the right index.
       final int shellPageIdx = keyToPages[parentNavigatorKey]!.length;
 
-      // Get the current sub-route of this shell route from the match list.
-      final RouteBase subRoute = matchList.matches[startIndex + 1].route;
+      void buildRecursive(GlobalKey<NavigatorState> shellNavigatorKey) {
+        // Add an entry for the shell route's navigator
+        keyToPages.putIfAbsent(shellNavigatorKey, () => <Page<Object?>>[]);
 
-      // The key to provide to the shell route's Navigator.
-      final GlobalKey<NavigatorState>? shellNavigatorKey =
-          route.navigatorKeyForSubRoute(subRoute);
-      assert(
-          shellNavigatorKey != null,
-          'Shell routes must always provide a navigator key for its immediate '
-          'sub-routes');
-
-      // Add an entry for the shell route's navigator
-      keyToPages.putIfAbsent(shellNavigatorKey!, () => <Page<Object?>>[]);
-
-      // Build the remaining pages
-      _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
-          keyToPages, newParams, shellNavigatorKey, registry);
+        // Build the remaining pages
+        _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
+            keyToPages, shellNavigatorKey, registry);
+      }
 
       // Build the Navigator and/or StatefulNavigationShell
-      Widget child;
+      Widget? child;
+      GlobalKey<NavigatorState>? shellNavigatorKey;
       if (route is StatefulShellRoute) {
-        final String? restorationScopeId = route.branches
-            .firstWhereOrNull(
-                (ShellRouteBranch e) => e.navigatorKey == shellNavigatorKey)
-            ?.restorationScopeId;
+        final List<StatefulShellBranch> branches =
+            route.branchBuilder(context, state);
+        final StatefulShellBranch? branch =
+            route.resolveBranch(branches, state);
+        // Since branches may be generated dynamically, validation needs to
+        // occur at build time, rather than at creation of RouteConfiguration
+        assert(() {
+          return configuration.debugValidateStatefulShellBranches(
+              route, branches);
+        }());
+
+        assert(
+            branch != null,
+            'Shell routes must always provide a navigator key for its immediate '
+            'sub-routes');
+        // The key to provide to the shell route's Navigator.
+        shellNavigatorKey = branch!.navigatorKey;
+        buildRecursive(shellNavigatorKey);
+
         child = _buildNavigator(
             pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
-            restorationScopeId: restorationScopeId);
+            restorationScopeId: branch.restorationScopeId);
+        final StatefulShellBranchState shellNavigatorState =
+            StatefulShellBranchState(
+                branch: branch, child: child, matchList: matchList);
         child = _buildStatefulNavigationShell(
-            route, child as Navigator, state, matchList, pop, registry);
-      } else {
-        final String? restorationScopeId =
-            (route is ShellRoute) ? route.restorationScopeId : null;
+            route, state, branches, shellNavigatorState, pop, registry);
+      } else if (route is ShellRoute) {
+        // The key to provide to the shell route's Navigator.
+        shellNavigatorKey = route.navigatorKey;
+        buildRecursive(shellNavigatorKey);
+        final String? restorationScopeId = route.restorationScopeId;
         child = _buildNavigator(
             pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
             restorationScopeId: restorationScopeId);
+      } else {
+        assert(false, 'Unknown route type ($route)');
       }
 
       // Build the Page for this route
@@ -264,9 +272,9 @@ class RouteBuilder {
 
   StatefulNavigationShell _buildStatefulNavigationShell(
     StatefulShellRoute shellRoute,
-    Navigator navigator,
     GoRouterState shellRouterState,
-    RouteMatchList matchList,
+    List<StatefulShellBranch> branches,
+    StatefulShellBranchState currentBranchState,
     VoidCallback pop,
     Map<Page<Object?>, GoRouterState> registry,
   ) {
@@ -274,8 +282,8 @@ class RouteBuilder {
         configuration: configuration,
         shellRoute: shellRoute,
         shellGoRouterState: shellRouterState,
-        navigator: navigator,
-        matchList: matchList,
+        branches: branches,
+        currentBranchState: currentBranchState,
         branchNavigatorBuilder: (BuildContext context,
             RouteMatchList navigatorMatchList,
             GlobalKey<NavigatorState> navigatorKey,
@@ -286,6 +294,11 @@ class RouteBuilder {
               restorationScopeId: restorationScopeId);
         });
   }
+
+  /// Gets the current [StatefulShellBranch] for the provided
+  /// [StatefulShellRoute].
+  StatefulShellBranch? currentStatefulShellBranch(StatefulShellRoute route) =>
+      route.currentBranch;
 
   /// Helper method that builds a [GoRouterState] object for the given [match]
   /// and [params].

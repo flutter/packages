@@ -34,6 +34,12 @@ typedef ShellRoutePageBuilder = Page<dynamic> Function(
   Widget child,
 );
 
+/// The branch builder for a [StatefulShellRoute].
+typedef StatefulShellBranchBuilder = List<StatefulShellBranch> Function(
+  BuildContext context,
+  GoRouterState state,
+);
+
 /// The signature of the navigatorBuilder callback.
 typedef GoRouterNavigatorBuilder = Widget Function(
   BuildContext context,

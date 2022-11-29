@@ -94,6 +94,27 @@ class RouteMatchList {
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.first.error;
+
+  /// A copy of the last route match, updated to include all the effective path
+  /// parameters of the current matches.
+  RouteMatch get lastWithEffectiveEncodedParams {
+    final Map<String, String> params = matches.fold(
+        <String, String>{},
+        (Map<String, String> p, RouteMatch e) =>
+            <String, String>{...p, ...e.encodedParams});
+    return last.copy(encodedParams: params);
+  }
+
+  /// Returns the encoded path parameters for all matches up to and including the
+  /// provided index in this RouteMatchList.
+  Map<String, String> effectiveEncodedParams(int matchIndex) {
+    assert(matchIndex >= 0);
+    final Map<String, String> params = <String, String>{};
+    for (int i = 0; i <= matchIndex; i++) {
+      params.addAll(matches[i].decodedParams);
+    }
+    return params;
+  }
 }
 
 /// An error that occurred during matching.

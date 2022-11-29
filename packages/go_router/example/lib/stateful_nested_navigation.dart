@@ -6,20 +6,30 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _tabANavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'tabANav');
+final List<StatefulShellBranch> _bottomNavBranches = <StatefulShellBranch>[
+  StatefulShellBranch(rootLocation: '/a', name: 'A'),
+  StatefulShellBranch(rootLocation: '/b', name: 'B'),
+  StatefulShellBranch(rootLocations: <String>['/c1', '/c2'], name: 'C'),
+
+  /// To enable preloading of the root routes of the branches, pass true
+  /// for the parameter preload of StatefulShellBranch.
+  //StatefulShellBranch(rootLocations: <String>['/c1', '/c2'], name: 'C', preload: true),
+];
+
+final List<StatefulShellBranch> _topNavBranches = <StatefulShellBranch>[
+  StatefulShellBranch(rootLocation: '/c1', name: 'C1'),
+  StatefulShellBranch(rootLocation: '/c2', name: 'C2'),
+];
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each tab uses its own persistent navigator, i.e.
 // navigation state is maintained separately for each tab. This setup also
 // enables deep linking into nested pages.
 //
-// This example demonstrates how to display routes within a ShellRoute using a
-// `nestedNavigationBuilder`. Navigators for the tabs ('Section A' and
-// 'Section B') are created via nested ShellRoutes. Note that no navigator will
-// be created by the "top" ShellRoute. This example is similar to the ShellRoute
-// example, but differs in that it is able to maintain the navigation state of
-// each tab.
+// This example demonstrates how to display routes within a StatefulShellRoute,
+// that are places on separate navigators. The example also demonstrates how
+// state is maintained when switching between different tabs (and thus branches
+// and Navigators).
 
 void main() {
   runApp(NestedTabNavigationExampleApp());
@@ -34,132 +44,94 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     initialLocation: '/a',
     routes: <RouteBase>[
       StatefulShellRoute(
-        /// To enable preloading of the root routes of the branches, pass true
-        /// for the parameter preloadBranches.
-        // preloadBranches: true,
-        branches: <ShellRouteBranch>[
-          /// The route branch for the first tab of the bottom navigation bar.
-          ShellRouteBranch(
-            navigatorKey: _tabANavigatorKey,
+        routes: <RouteBase>[
+          GoRoute(
+            /// The screen to display as the root in the first tab of the
+            /// bottom navigation bar.
+            path: '/a',
+            builder: (BuildContext context, GoRouterState state) =>
+                const RootScreen(label: 'A', detailsPath: '/a/details'),
             routes: <RouteBase>[
+              /// The details screen to display stacked on navigator of the
+              /// first tab. This will cover screen A but not the application
+              /// shell (bottom navigation bar).
               GoRoute(
-                /// The screen to display as the root in the first tab of the
-                /// bottom navigation bar.
-                path: '/a',
+                path: 'details',
                 builder: (BuildContext context, GoRouterState state) =>
-                    const RootScreen(label: 'A', detailsPath: '/a/details'),
-                routes: <RouteBase>[
-                  /// The details screen to display stacked on navigator of the
-                  /// first tab. This will cover screen A but not the application
-                  /// shell (bottom navigation bar).
-                  GoRoute(
-                    path: 'details',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        DetailsScreen(label: 'A', extra: state.extra),
-                  ),
-                ],
+                    DetailsScreen(label: 'A', extra: state.extra),
               ),
             ],
           ),
-
-          /// The route branch for the second tab of the bottom navigation bar.
-          ShellRouteBranch(
-            /// It's not necessary to provide a navigatorKey if it isn't also
-            /// needed elsewhere. If not provided, a default key will be used.
-            // navigatorKey: _tabBNavigatorKey,
+          GoRoute(
+            /// The screen to display as the root in the second tab of the
+            /// bottom navigation bar.
+            path: '/b',
+            builder: (BuildContext context, GoRouterState state) =>
+                const RootScreen(
+              label: 'B',
+              detailsPath: '/b/details/1',
+              secondDetailsPath: '/b/details/2',
+            ),
             routes: <RouteBase>[
               GoRoute(
-                /// The screen to display as the root in the second tab of the
-                /// bottom navigation bar.
-                path: '/b',
+                path: 'details/:param',
                 builder: (BuildContext context, GoRouterState state) =>
-                    const RootScreen(
+                    DetailsScreen(
                   label: 'B',
-                  detailsPath: '/b/details/1',
-                  secondDetailsPath: '/b/details/2',
+                  param: state.params['param'],
+                  extra: state.extra,
                 ),
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: 'details/:param',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        DetailsScreen(
-                      label: 'B',
-                      param: state.params['param'],
-                      extra: state.extra,
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
-
-          /// The route branch for the third tab of the bottom navigation bar.
-          ShellRouteBranch(
-            /// ShellRouteBranch will automatically use the first descendant
-            /// GoRoute as the default location of the branch. If another route
-            /// is desired, you can specify the location of it using the
-            /// defaultLocation parameter.
-            // defaultLocation: '/c2',
-            routes: <RouteBase>[
-              StatefulShellRoute(
-                /// This bottom tab uses a nested shell, wrapping sub routes in a
-                /// top TabBar.
-                branches: <ShellRouteBranch>[
-                  ShellRouteBranch(routes: <GoRoute>[
+          StatefulShellRoute(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/c1',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const TabScreen(label: 'C1', detailsPath: '/c1/details'),
+                  routes: <RouteBase>[
                     GoRoute(
-                      path: '/c1',
+                      path: 'details',
                       builder: (BuildContext context, GoRouterState state) =>
-                          const TabScreen(
-                              label: 'C1', detailsPath: '/c1/details'),
-                      routes: <RouteBase>[
-                        GoRoute(
-                          path: 'details',
-                          builder:
-                              (BuildContext context, GoRouterState state) =>
-                                  DetailsScreen(
-                            label: 'C1',
-                            extra: state.extra,
-                            withScaffold: false,
-                          ),
-                        ),
-                      ],
+                          DetailsScreen(
+                        label: 'C1',
+                        extra: state.extra,
+                        withScaffold: false,
+                      ),
                     ),
-                  ]),
-                  ShellRouteBranch(routes: <GoRoute>[
+                  ],
+                ),
+                GoRoute(
+                  path: '/c2',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const TabScreen(label: 'C2', detailsPath: '/c2/details'),
+                  routes: <RouteBase>[
                     GoRoute(
-                      path: '/c2',
+                      path: 'details',
                       builder: (BuildContext context, GoRouterState state) =>
-                          const TabScreen(
-                              label: 'C2', detailsPath: '/c2/details'),
-                      routes: <RouteBase>[
-                        GoRoute(
-                          path: 'details',
-                          builder:
-                              (BuildContext context, GoRouterState state) =>
-                                  DetailsScreen(
-                            label: 'C2',
-                            extra: state.extra,
-                            withScaffold: false,
-                          ),
-                        ),
-                      ],
+                          DetailsScreen(
+                        label: 'C2',
+                        extra: state.extra,
+                        withScaffold: false,
+                      ),
                     ),
-                  ]),
-                ],
-                builder:
-                    (BuildContext context, GoRouterState state, Widget child) {
-                  /// For this nested StatefulShellRoute we are using a custom
-                  /// container (TabBarView) for the branch navigators, and thus
-                  /// ignoring the default navigator contained passed to the
-                  /// builder. Custom implementation can access the branch
-                  /// navigators via the StatefulShellRouteState
-                  /// (see TabbedRootScreen for details).
-                  return const TabbedRootScreen();
-                },
-              ),
-            ],
-          ),
+                  ],
+                ),
+              ],
+              branches: _topNavBranches,
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                /// For this nested StatefulShellRoute we are using a custom
+                /// container (TabBarView) for the branch navigators, and thus
+                /// ignoring the default navigator contained passed to the
+                /// builder. Custom implementation can access the branch
+                /// navigators via the StatefulShellRouteState
+                /// (see TabbedRootScreen for details).
+                return const TabbedRootScreen();
+              }),
         ],
+        branches: _bottomNavBranches,
         builder: (BuildContext context, GoRouterState state, Widget child) {
           return ScaffoldWithNavBar(body: child);
         },
@@ -214,6 +186,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
+
     return Scaffold(
       body: body,
       bottomNavigationBar: BottomNavigationBar(
@@ -222,8 +195,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
           BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
         ],
-        currentIndex: shellState.index,
-        onTap: (int tappedIndex) => shellState.goBranch(tappedIndex),
+        currentIndex: shellState.currentIndex,
+        onTap: (int tappedIndex) => shellState.goBranch(
+            navigatorKey: _bottomNavBranches[tappedIndex].navigatorKey),
       ),
     );
   }
@@ -375,24 +349,30 @@ class TabbedRootScreen extends StatelessWidget {
   /// Constructs a TabbedRootScreen
   const TabbedRootScreen({Key? key}) : super(key: key);
 
+  Widget _child(StatefulShellBranchState branchState) {
+    // TabBarView will cache it's root widget, so we need to reevaluate
+    // the child (using a Builder) in case it's null.
+    return branchState.child != null ? branchState.child! :
+      Builder(builder: (BuildContext context) =>
+        StatefulShellBranch.of(context).child ?? const SizedBox.expand());
+  }
+
   @override
   Widget build(BuildContext context) {
     final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
-    final List<TabbedRootScreenTab> children = shellState.branchState
-        .mapIndexed((int index, ShellRouteBranchState e) =>
-            TabbedRootScreenTab(index: index))
-        .toList();
+    final List<Widget> children = shellState.branchStates.map(_child).toList();
+    final List<Tab> tabs = children.mapIndexed((int i, _) =>
+        Tab(text: 'Tab ${i + 1}')).toList();
 
     return DefaultTabController(
       length: children.length,
-      initialIndex: shellState.index,
+      initialIndex: shellState.currentIndex,
       child: Scaffold(
         appBar: AppBar(
             title: const Text('Tab root'),
             bottom: TabBar(
-              tabs: children.map((TabbedRootScreenTab e) => e.tab).toList(),
-              onTap: (int tappedIndex) =>
-                  _onTabTap(context, shellState, tappedIndex),
+              tabs: tabs,
+              onTap: (int tappedIndex) => _onTabTap(context, tappedIndex),
             )),
         body: TabBarView(
           children: children,
@@ -401,35 +381,9 @@ class TabbedRootScreen extends StatelessWidget {
     );
   }
 
-  void _onTabTap(
-      BuildContext context, StatefulShellRouteState shellState, int index) {
-    shellState.goBranch(index);
-  }
-}
-
-/// Widget wrapping the [Navigator] for a specific tab in [TabbedRootScreen].
-///
-/// This class is needed since [TabBarView] won't update its cached list of
-/// children while in a transition between tabs. This is why we only pass the
-/// index of the branch as a parameter, and fetch the state fresh in the build
-/// method.
-class TabbedRootScreenTab extends StatelessWidget {
-  /// Constructs a TabbedRootScreenTab
-  const TabbedRootScreenTab({Key? key, required this.index}) : super(key: key);
-
-  /// The index of the tab
-  final int index;
-
-  /// Gets the associated [Tab] object
-  Tab get tab => Tab(text: 'Tab ${index + 1}');
-
-  @override
-  Widget build(BuildContext context) {
-    // Note that we must fetch the state fresh here, since the
-    // TabbedRootScreenTab is "cached" by the TabBarView.
-    final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
-    final Widget? navigator = shellState.branchState[index].child;
-    return navigator ?? const SizedBox.expand();
+  void _onTabTap(BuildContext context, int index) {
+    StatefulShellRoute.of(context)
+        .goBranch(navigatorKey: _topNavBranches[index].navigatorKey);
   }
 }
 
@@ -477,17 +431,18 @@ class _AnimatedRouteBranchContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final StatefulShellRouteState shellRouteState =
         StatefulShellRoute.of(context);
+    final int currentIndex = shellRouteState.currentIndex;
     return Stack(
         children: shellRouteState.children.mapIndexed(
       (int index, Widget? navigator) {
         return AnimatedScale(
-          scale: index == shellRouteState.index ? 1 : 1.5,
+          scale: index == currentIndex ? 1 : 1.5,
           duration: const Duration(milliseconds: 400),
           child: AnimatedOpacity(
-            opacity: index == shellRouteState.index ? 1 : 0,
+            opacity: index == currentIndex ? 1 : 0,
             duration: const Duration(milliseconds: 400),
             child: Offstage(
-              offstage: index != shellRouteState.index,
+              offstage: index != currentIndex,
               child: navigator ?? const SizedBox.shrink(),
             ),
           ),

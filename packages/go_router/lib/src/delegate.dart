@@ -60,40 +60,37 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   final Map<String, int> _pushCounts = <String, int>{};
   final RouteConfiguration _configuration;
 
+  GlobalKey<NavigatorState>? _navigatorKeyForRouteMatch(int matchListIndex) {
+    final RouteMatch match = _matchList.matches[matchListIndex];
+    final RouteBase route = match.route;
+    if (route is GoRoute && route.parentNavigatorKey != null) {
+      return route.parentNavigatorKey;
+    } else if (route is ShellRoute) {
+      return route.navigatorKey;
+    } else if (route is StatefulShellRoute) {
+      return builder.currentStatefulShellBranch(route)!.navigatorKey;
+    }
+    return null;
+  }
+
   @override
   Future<bool> popRoute() async {
     // Iterate backwards through the RouteMatchList until seeing a GoRoute with
     // a non-null parentNavigatorKey or a ShellRoute with a non-null
     // parentNavigatorKey and pop from that Navigator instead of the root.
     final int matchCount = _matchList.matches.length;
-    late RouteBase subRoute;
     for (int i = matchCount - 1; i >= 0; i -= 1) {
-      final RouteMatch match = _matchList.matches[i];
-      final RouteBase route = match.route;
+      final GlobalKey<NavigatorState>? navigatorKey =
+          _navigatorKeyForRouteMatch(i);
 
-      if (route is GoRoute && route.parentNavigatorKey != null) {
-        final bool didPop =
-            await route.parentNavigatorKey!.currentState!.maybePop();
-
-        // Continue if didPop was false.
-        if (didPop) {
-          return didPop;
-        }
-      } else if (route is ShellRouteBase) {
-        // For shell routes, find the navigator key that should be used for the
-        // child route in the current match list
-        final GlobalKey<NavigatorState>? navigatorKey =
-            route.navigatorKeyForSubRoute(subRoute);
-
-        final bool didPop =
-            await navigatorKey?.currentState!.maybePop() ?? false;
+      if (navigatorKey != null) {
+        final bool didPop = await navigatorKey.currentState!.maybePop();
 
         // Continue if didPop was false.
         if (didPop) {
           return didPop;
         }
       }
-      subRoute = route;
     }
 
     // Use the root navigator if no ShellRoute Navigators were found and didn't
@@ -133,31 +130,18 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   bool canPop() {
     // Loop through navigators in reverse and call canPop()
     final int matchCount = _matchList.matches.length;
-    late RouteBase subRoute;
     for (int i = matchCount - 1; i >= 0; i -= 1) {
-      final RouteMatch match = _matchList.matches[i];
-      final RouteBase route = match.route;
-      if (route is GoRoute && route.parentNavigatorKey != null) {
-        final bool canPop = route.parentNavigatorKey!.currentState!.canPop();
+      final GlobalKey<NavigatorState>? navigatorKey =
+          _navigatorKeyForRouteMatch(i);
 
-        // Continue if canPop is false.
-        if (canPop) {
-          return canPop;
-        }
-      } else if (route is ShellRouteBase) {
-        // For shell routes, find the navigator key that should be used for the
-        // child route in the current match list
-        final GlobalKey<NavigatorState>? navigatorKey =
-            route.navigatorKeyForSubRoute(subRoute);
-
-        final bool canPop = navigatorKey?.currentState?.canPop() ?? false;
+      if (navigatorKey != null) {
+        final bool canPop = navigatorKey.currentState!.canPop();
 
         // Continue if canPop is false.
         if (canPop) {
           return canPop;
         }
       }
-      subRoute = route;
     }
     return navigatorKey.currentState?.canPop() ?? false;
   }

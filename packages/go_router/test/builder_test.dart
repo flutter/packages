@@ -112,32 +112,175 @@ void main() {
     testWidgets('Builds StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> key =
           GlobalKey<NavigatorState>(debugLabel: 'key');
-      final GoRouter goRouter = GoRouter(
-        initialLocation: '/nested',
+      final RouteConfiguration config = RouteConfiguration(
         routes: <RouteBase>[
           StatefulShellRoute(
             builder: (_, __, Widget child) => child,
-            branches: <ShellRouteBranch>[
-              ShellRouteBranch(navigatorKey: key, routes: <RouteBase>[
-                GoRoute(
-                  path: '/nested',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return _DetailsScreen();
-                  },
-                ),
-              ]),
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(rootLocation: '/nested', navigatorKey: key),
+            ],
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/nested',
+                builder: (BuildContext context, GoRouterState state) {
+                  return _DetailsScreen();
+                },
+              ),
             ],
           ),
         ],
+        redirectLimit: 10,
+        topRedirect: (_, __) => null,
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      await tester.pumpWidget(MaterialApp.router(
-        routerConfig: goRouter,
-      ));
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        _createRouteMatch(config.routes.first, '/nested'),
+        _createRouteMatch(config.routes.first.routes.first, '/nested'),
+      ]);
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
 
       expect(find.byType(_DetailsScreen), findsOneWidget);
       expect(find.byKey(key), findsOneWidget);
+    });
+
+    testWidgets(
+        'throws when a branch of a StatefulShellRoute has an incorrect '
+        'defaultLocation', (WidgetTester tester) async {
+      final RouteConfiguration config = RouteConfiguration(
+        routes: <RouteBase>[
+          StatefulShellRoute(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (_, __) => _DetailsScreen(),
+                ),
+                GoRoute(
+                  path: '/b',
+                  builder: (_, __) => _DetailsScreen(),
+                ),
+              ],
+              builder: (_, __, Widget child) {
+                return _HomeScreen(child: child);
+              },
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(rootLocation: '/x'),
+                StatefulShellBranch(rootLocation: '/b'),
+              ]),
+        ],
+        redirectLimit: 10,
+        topRedirect: (_, __) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
+      );
+
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        _createRouteMatch(config.routes.first, '/b'),
+        _createRouteMatch(config.routes.first.routes.first, '/b'),
+      ]);
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      expect(tester.takeException(), isAssertionError);
+    });
+
+    testWidgets(
+        'throws when a branch of a StatefulShellRoute has duplicate '
+        'defaultLocation', (WidgetTester tester) async {
+      final RouteConfiguration config = RouteConfiguration(
+        routes: <RouteBase>[
+          StatefulShellRoute(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (_, __) => _DetailsScreen(),
+                ),
+                GoRoute(
+                  path: '/b',
+                  builder: (_, __) => _DetailsScreen(),
+                ),
+              ],
+              builder: (_, __, Widget child) {
+                return _HomeScreen(child: child);
+              },
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(rootLocation: '/a'),
+                StatefulShellBranch(rootLocations: <String>['/a', '/b']),
+              ]),
+        ],
+        redirectLimit: 10,
+        topRedirect: (_, __) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
+      );
+
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        _createRouteMatch(config.routes.first, '/b'),
+        _createRouteMatch(config.routes.first.routes.first, '/b'),
+      ]);
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      expect(tester.takeException(), isAssertionError);
+    });
+
+    testWidgets('throws when StatefulShellRoute has duplicate navigator keys',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> keyA =
+          GlobalKey<NavigatorState>(debugLabel: 'A');
+      final RouteConfiguration config = RouteConfiguration(
+        routes: <RouteBase>[
+          StatefulShellRoute(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (_, __) => _DetailsScreen(),
+                ),
+                GoRoute(
+                  path: '/b',
+                  builder: (_, __) => _DetailsScreen(),
+                ),
+              ],
+              builder: (_, __, Widget child) {
+                return _HomeScreen(child: child);
+              },
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(rootLocation: '/a', navigatorKey: keyA),
+                StatefulShellBranch(rootLocation: '/b', navigatorKey: keyA),
+              ]),
+        ],
+        redirectLimit: 10,
+        topRedirect: (_, __) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
+      );
+
+      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
+        _createRouteMatch(config.routes.first, '/b'),
+        _createRouteMatch(config.routes.first.routes.first, '/b'),
+      ]);
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      expect(tester.takeException(), isAssertionError);
     });
 
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
@@ -382,18 +525,19 @@ void main() {
             builder: (BuildContext context, GoRouterState state, Widget child) {
               return _HomeScreen(child: child);
             },
-            branches: <ShellRouteBranch>[
-              ShellRouteBranch(
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
+                rootLocation: '/a',
                 navigatorKey: shellNavigatorKey,
                 restorationScopeId: 'scope1',
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: '/a',
-                    builder: (BuildContext context, GoRouterState state) {
-                      return _DetailsScreen();
-                    },
-                  ),
-                ],
+              ),
+            ],
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) {
+                  return _DetailsScreen();
+                },
               ),
             ],
           ),

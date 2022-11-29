@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -271,9 +272,9 @@ class StatefulShellRouteState {
   /// Constructs a [StatefulShellRouteState].
   const StatefulShellRouteState({
     required this.route,
-    required this.branchState,
-    required this.index,
-    required void Function(ShellRouteBranchState, RouteMatchList?)
+    required this.branchStates,
+    required this.currentIndex,
+    required void Function(StatefulShellBranchState, RouteMatchList?)
         switchActiveBranch,
     required void Function() resetState,
   })  : _switchActiveBranch = switchActiveBranch,
@@ -282,11 +283,11 @@ class StatefulShellRouteState {
   /// Constructs a copy of this [StatefulShellRouteState], with updated values
   /// for some of the fields.
   StatefulShellRouteState copy(
-      {List<ShellRouteBranchState>? branchState, int? index}) {
+      {List<StatefulShellBranchState>? branchStates, int? currentIndex}) {
     return StatefulShellRouteState(
       route: route,
-      branchState: branchState ?? this.branchState,
-      index: index ?? this.index,
+      branchStates: branchStates ?? this.branchStates,
+      currentIndex: currentIndex ?? this.currentIndex,
       switchActiveBranch: _switchActiveBranch,
       resetState: _resetState,
     );
@@ -297,17 +298,27 @@ class StatefulShellRouteState {
 
   /// The state for all separate route branches associated with a
   /// [StatefulShellRoute].
-  final List<ShellRouteBranchState> branchState;
+  final List<StatefulShellBranchState> branchStates;
 
-  /// The index of the currently active route branch.
-  final int index;
+  /// The state associated with the current [ShellNavigator].
+  StatefulShellBranchState get currentBranchState => branchStates[currentIndex];
 
-  final void Function(ShellRouteBranchState, RouteMatchList?)
+  /// The index of the currently active [ShellNavigator].
+  ///
+  /// Corresponds to the index of the ShellNavigator in the List returned from
+  /// shellNavigatorBuilder of [StatefulShellRoute].
+  final int currentIndex;
+
+  /// The Navigator key of the current navigator.
+  GlobalKey<NavigatorState> get currentNavigatorKey =>
+      currentBranchState.branch.navigatorKey;
+
+  final void Function(StatefulShellBranchState, RouteMatchList?)
       _switchActiveBranch;
 
   final void Function() _resetState;
 
-  /// Gets the [Widget]s representing each of the route branches.
+  /// Gets the [Widget]s representing each of the shell branches.
   ///
   /// The Widget returned from this method contains the [Navigator]s of the
   /// branches. Note that the Widget for a particular branch may be null if the
@@ -316,20 +327,48 @@ class StatefulShellRouteState {
   /// branch container Widget implementation, where the child parameter in the
   /// [ShellRouteBuilder] of the [StatefulShellRoute] is ignored (i.e. not added
   /// to the widget tree).
-  /// See [ShellRouteBranchState.child].
+  /// See [StatefulShellBranchState.child].
   List<Widget?> get children =>
-      branchState.map((ShellRouteBranchState e) => e.child).toList();
+      branchStates.map((StatefulShellBranchState e) => e.child).toList();
 
-  /// Navigate to the current location of the branch with the provided index.
+  /// Navigate to the current location of the shell navigator with the provided
+  /// Navigator key, name or index.
   ///
   /// This method will switch the currently active [Navigator] for the
   /// [StatefulShellRoute] by replacing the current navigation stack with the
-  /// one of the route branch at the provided index. If resetLocation is true,
-  /// the branch will be reset to its default location (see
-  /// [ShellRouteBranch.defaultLocation]).
-  void goBranch(int index, {bool resetLocation = false}) {
-    _switchActiveBranch(branchState[index],
-        resetLocation ? null : branchState[index]._matchList);
+  /// one of the route branch identified by the provided Navigator key, name or
+  /// index. If resetLocation is true, the branch will be reset to its default
+  /// location (see [StatefulShellBranch.defaultLocation]).
+  void goBranch({
+    GlobalKey<NavigatorState>? navigatorKey,
+    String? name,
+    int? index,
+    bool resetLocation = false,
+  }) {
+    assert(navigatorKey != null || name != null || index != null);
+    assert(<dynamic>[navigatorKey, name, index].whereNotNull().length == 1);
+
+    final StatefulShellBranchState state;
+    if (navigatorKey != null) {
+      state = branchStates.firstWhere((StatefulShellBranchState e) =>
+          e.branch.navigatorKey == navigatorKey);
+      assert(state != null,
+          'Unable to find ShellNavigator with key $navigatorKey');
+    } else if (name != null) {
+      state = branchStates
+          .firstWhere((StatefulShellBranchState e) => e.branch.name == name);
+      assert(state != null, 'Unable to find ShellNavigator with name "$name"');
+    } else {
+      state = branchStates[index!];
+    }
+
+    _switchActiveBranch(state, resetLocation ? null : state._matchList);
+  }
+
+  /// Refreshes this StatefulShellRouteState by rebuilding the state for the
+  /// current location.
+  void refresh() {
+    _switchActiveBranch(currentBranchState, currentBranchState._matchList);
   }
 
   /// Resets this StatefulShellRouteState by clearing all navigation state of
@@ -347,43 +386,43 @@ class StatefulShellRouteState {
       return false;
     }
     return other.route == route &&
-        listEquals(other.branchState, branchState) &&
-        other.index == index;
+        listEquals(other.branchStates, branchStates) &&
+        other.currentIndex == currentIndex;
   }
 
   @override
-  int get hashCode => Object.hash(route, branchState, index);
+  int get hashCode => Object.hash(route, currentIndex, currentIndex);
 }
 
 /// The snapshot of the current state for a particular route branch
-/// ([ShellRouteBranch]) in a [StatefulShellRoute].
+/// ([StatefulShellBranch]) in a [StatefulShellRoute].
 ///
 /// Note that this an immutable class, that represents the snapshot of the state
-/// of a ShellRouteBranchState at a given point in time. Therefore, instances of
+/// of a StatefulShellBranchState at a given point in time. Therefore, instances of
 /// this object should not be stored, but instead fetched fresh when needed,
 /// via the [StatefulShellRouteState] returned by the method
 /// [StatefulShellRoute.of].
 @immutable
-class ShellRouteBranchState {
-  /// Constructs a [ShellRouteBranchState].
-  const ShellRouteBranchState({
-    required this.routeBranch,
+class StatefulShellBranchState {
+  /// Constructs a [StatefulShellBranchState].
+  const StatefulShellBranchState({
+    required this.branch,
     this.child,
     RouteMatchList? matchList,
   }) : _matchList = matchList;
 
-  /// Constructs a copy of this [ShellRouteBranchState], with updated values for
+  /// Constructs a copy of this [StatefulShellBranchState], with updated values for
   /// some of the fields.
-  ShellRouteBranchState copy({Widget? child, RouteMatchList? matchList}) {
-    return ShellRouteBranchState(
-      routeBranch: routeBranch,
+  StatefulShellBranchState copy({Widget? child, RouteMatchList? matchList}) {
+    return StatefulShellBranchState(
+      branch: branch,
       child: child ?? this.child,
       matchList: matchList ?? _matchList,
     );
   }
 
-  /// The associated [ShellRouteBranch]
-  final ShellRouteBranch routeBranch;
+  /// The associated [StatefulShellBranch]
+  final StatefulShellBranch branch;
 
   /// The [Widget] representing this route branch in a [StatefulShellRoute].
   ///
@@ -403,14 +442,14 @@ class ShellRouteBranchState {
     if (identical(other, this)) {
       return true;
     }
-    if (other is! ShellRouteBranchState) {
+    if (other is! StatefulShellBranchState) {
       return false;
     }
-    return other.routeBranch == routeBranch &&
+    return other.branch == branch &&
         other.child == child &&
         other._matchList == _matchList;
   }
 
   @override
-  int get hashCode => Object.hash(routeBranch, child, _matchList);
+  int get hashCode => Object.hash(branch, child, _matchList);
 }
