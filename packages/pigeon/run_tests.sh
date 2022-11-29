@@ -251,6 +251,10 @@ run_android_unittests() {
   popd
 }
 
+run_android_java_e2e_tests() {
+  dart run tool/run_tests.dart -t android_java_integration_tests --skip-generation
+}
+
 ###############################################################################
 # main
 ###############################################################################
@@ -267,6 +271,7 @@ should_run_macos_swift_e2e_tests=true
 should_run_android_kotlin_unittests=true
 # Default to false until there is CI support. See
 # https://github.com/flutter/flutter/issues/111505
+should_run_android_java_e2e_tests=false
 should_run_android_kotlin_e2e_tests=false
 while getopts "t:l?h" opt; do
   case $opt in
@@ -282,10 +287,12 @@ while getopts "t:l?h" opt; do
     should_run_macos_swift_unittests=false
     should_run_macos_swift_e2e_tests=false
     should_run_android_kotlin_unittests=false
+    should_run_android_java_e2e_tests=false
     should_run_android_kotlin_e2e_tests=false
     case $OPTARG in
     # TODO(stuartmorgan): Rename to include "java".
     android_unittests) should_run_android_unittests=true ;;
+    android_java_e2e_tests) should_run_android_java_e2e_tests=true ;;
     dart_compilation_tests) should_run_dart_compilation_tests=true ;;
     dart_unittests) should_run_dart_unittests=true ;;
     flutter_unittests) should_run_flutter_unittests=true ;;
@@ -307,6 +314,7 @@ while getopts "t:l?h" opt; do
   l)
     echo "available tests for -t:
   android_unittests        - Unit tests on generated Java code.
+  android_java_e2e_tests   - Integration tests on generated Java code on Android.
   android_kotlin_unittests - Unit tests on generated Kotlin code on Android.
   android_kotlin_e2e_tests - Integration tests on generated Kotlin code on Android.
   dart_compilation_tests   - Compilation tests on generated Dart code.
@@ -370,6 +378,9 @@ if [ "$should_run_ios_e2e_tests" = true ]; then
 fi
 if [ "$should_run_android_unittests" = true ]; then
   run_android_unittests
+fi
+if [ "$should_run_android_java_e2e_tests" = true ]; then
+  run_android_java_e2e_tests
 fi
 if [ "$should_run_macos_swift_unittests" = true ]; then
   run_macos_swift_unittests
