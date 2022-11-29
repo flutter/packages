@@ -103,11 +103,10 @@ TEST_F(NullFieldsTest, ReplyFromListWithValues) {
           EncodableValue(2),
           EncodableValue(3),
       })},
-      {
-       EncodableValue(EncodableList{
-           {EncodableValue("hello")},
-           {EncodableValue(1)},
-       })},
+      {EncodableValue(EncodableList{
+          {EncodableValue("hello")},
+          {EncodableValue(1)},
+      })},
       {EncodableValue(0)},
   };
   NullFieldsSearchReply reply = ReplyFromList(list);
@@ -122,11 +121,8 @@ TEST_F(NullFieldsTest, ReplyFromListWithValues) {
 
 TEST_F(NullFieldsTest, ReplyFromListWithNulls) {
   EncodableList list{
-      {EncodableValue()},
-      {EncodableValue()},
-      {EncodableValue()},
-      {EncodableValue()},
-      {EncodableValue()},
+      {EncodableValue()}, {EncodableValue()}, {EncodableValue()},
+      {EncodableValue()}, {EncodableValue()},
   };
   NullFieldsSearchReply reply = ReplyFromList(list);
 
@@ -164,7 +160,7 @@ TEST_F(NullFieldsTest, RequestToMapWithNulls) {
 
   EncodableList list = wrapped[0]
 
-  EXPECT_EQ(list.size(), 2);
+      EXPECT_EQ(list.size(), 2);
   EXPECT_TRUE(list[0].IsNull());
   EXPECT_EQ(list[1], 1);
 }
@@ -195,8 +191,8 @@ TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   EXPECT_EQ(indices[1].LongValue(), 2L);
   EXPECT_EQ(indices[2].LongValue(), 3L);
   const EncodableList& wrapped_request_list = list[4];
-  const EncodableList& request_list = wrapped_request_list[0]
-  EXPECT_EQ(request_list[0], "hello");
+  const EncodableList& request_list =
+      wrapped_request_list[0] EXPECT_EQ(request_list[0], "hello");
   EXPECT_EQ(request_list[1], 0);
 }
 
