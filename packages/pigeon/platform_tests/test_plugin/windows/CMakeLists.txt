@@ -16,6 +16,39 @@ set(PLUGIN_NAME "test_plugin_plugin")
 list(APPEND PLUGIN_SOURCES
   "test_plugin.cpp"
   "test_plugin.h"
+  # Generated sources.
+  "pigeon/all_datatypes.gen.cpp"
+  "pigeon/all_datatypes.gen.h"
+  "pigeon/all_void.gen.cpp"
+  "pigeon/all_void.gen.h"
+  "pigeon/async_handlers.gen.cpp"
+  "pigeon/async_handlers.gen.h"
+  "pigeon/enum.gen.cpp"
+  "pigeon/enum.gen.h"
+  "pigeon/host2flutter.gen.cpp"
+  "pigeon/host2flutter.gen.h"
+  "pigeon/list.gen.cpp"
+  "pigeon/list.gen.h"
+  "pigeon/message.gen.cpp"
+  "pigeon/message.gen.h"
+  "pigeon/multiple_arity.gen.cpp"
+  "pigeon/multiple_arity.gen.h"
+  "pigeon/non_null_fields.gen.cpp"
+  "pigeon/non_null_fields.gen.h"
+  "pigeon/null_fields.gen.cpp"
+  "pigeon/null_fields.gen.h"
+  "pigeon/nullable_returns.gen.cpp"
+  "pigeon/nullable_returns.gen.h"
+  "pigeon/primitive.gen.cpp"
+  "pigeon/primitive.gen.h"
+  "pigeon/void_arg_flutter.gen.cpp"
+  "pigeon/void_arg_flutter.gen.h"
+  "pigeon/void_arg_host.gen.cpp"
+  "pigeon/void_arg_host.gen.h"
+  "pigeon/voidflutter.gen.cpp"
+  "pigeon/voidflutter.gen.h"
+  "pigeon/voidhost.gen.cpp"
+  "pigeon/voidhost.gen.h"
 )
 
 # Define the plugin library target. Its name must not be changed (see comment
@@ -82,39 +115,6 @@ add_executable(${TEST_RUNNER}
   test/null_fields_test.cpp
   test/pigeon_test.cpp
   test/primitive_test.cpp
-  # Generated sources.
-  test/all_datatypes.g.cpp
-  test/all_datatypes.g.h
-  test/all_void.g.cpp
-  test/all_void.g.h
-  test/async_handlers.g.cpp
-  test/async_handlers.g.h
-  test/enum.g.cpp
-  test/enum.g.h
-  test/host2flutter.g.cpp
-  test/host2flutter.g.h
-  test/list.g.cpp
-  test/list.g.h
-  test/message.g.cpp
-  test/message.g.h
-  test/multiple_arity.g.cpp
-  test/multiple_arity.g.h
-  test/non_null_fields.g.cpp
-  test/non_null_fields.g.h
-  test/null_fields.g.cpp
-  test/null_fields.g.h
-  test/nullable_returns.g.cpp
-  test/nullable_returns.g.h
-  test/primitive.g.cpp
-  test/primitive.g.h
-  test/void_arg_flutter.g.cpp
-  test/void_arg_flutter.g.h
-  test/void_arg_host.g.cpp
-  test/void_arg_host.g.h
-  test/voidflutter.g.cpp
-  test/voidflutter.g.h
-  test/voidhost.g.cpp
-  test/voidhost.g.h
   # Test utilities.
   test/utils/echo_messenger.cpp
   test/utils/echo_messenger.h

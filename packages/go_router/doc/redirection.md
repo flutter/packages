@@ -3,9 +3,9 @@ example, redirection can be used to display a sign-in screen if the user is not
 logged in.
 
 A redirect is a callback of the type
-[GoRouterRedirect](go_router/GoRouterRedirect.html). To change incoming location
-based on some application state, add a callback to either the GoRouter or
-GoRoute constructor:
+[GoRouterRedirect](https://pub.dev/documentation/go_router/latest/go_router/GoRouterRedirect.html).
+To change incoming location based on some application state, add a callback to
+either the GoRouter or GoRoute constructor:
 
 
 ```dart

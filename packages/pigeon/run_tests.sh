@@ -51,6 +51,8 @@ mktmpdir() {
 #
 # Compiles the pigeon file to a temp directory and attempts to compile the java
 # code.
+# TODO(stuartmorgan): Remove this in favor of unit testing all files, which
+# already includes compilation.
 test_pigeon_android() {
   echo "test_pigeon_android($1)"
   temp_dir=$(mktmpdir)
@@ -81,6 +83,7 @@ test_pigeon_android() {
 #
 # Compiles the pigeon file to a temp directory and attempts to run the dart
 # analyzer on it.
+# TODO(stuartmorgan): Remove this in favor of analyzing test_plugin.
 test_pigeon_dart() {
   echo "test_pigeon_dart($1, $2)"
   local flutter_project_dir=$2
@@ -101,33 +104,6 @@ flags:
   -t test_name: Run only specified test.
   -l          : List available tests.
 "
-}
-
-gen_ios_unittests_code() {
-  local input=$1
-  local prefix=$2
-  local filename=${input##*/}
-  local name="${filename%.dart}"
-  $run_pigeon \
-    --input $input \
-    --objc_prefix "$prefix" \
-    --dart_out /dev/null \
-    --objc_header_out platform_tests/alternate_language_test_plugin/ios/Classes/$name.gen.h \
-    --objc_source_out platform_tests/alternate_language_test_plugin/ios/Classes/$name.gen.m
-}
-
-gen_android_unittests_code() {
-  local input=$1
-  local javaName=$2
-  local javaOut="platform_tests/alternate_language_test_plugin/android/src/main/java/com/example/alternate_language_test_plugin/$javaName.java"
-  $run_pigeon \
-    --input $input \
-    --dart_out /dev/null \
-    --java_out $javaOut \
-    --java_package "com.example.alternate_language_test_plugin"
-
-  java -jar ci/$java_formatter --replace $javaOut
-  java -jar ci/$java_linter -c "ci/$google_checks" "$javaOut"
 }
 
 ###############################################################################
@@ -158,7 +134,7 @@ get_java_linter_formatter() {
 }
 
 run_dart_unittests() {
-  dart run tool/run_tests.dart -t dart_unittests
+  dart run tool/run_tests.dart -t dart_unittests --skip-generation
 }
 
 test_command_line() {
@@ -178,23 +154,31 @@ test_command_line() {
 }
 
 run_flutter_unittests() {
-  dart run tool/run_tests.dart -t flutter_unittests
+  dart run tool/run_tests.dart -t flutter_unittests --skip-generation
 }
 
 run_mock_handler_tests() {
-  dart run tool/run_tests.dart -t mock_handler_tests
+  dart run tool/run_tests.dart -t mock_handler_tests --skip-generation
 }
 
 run_ios_swift_unittests() {
-  dart run tool/run_tests.dart -t ios_swift_unittests
+  dart run tool/run_tests.dart -t ios_swift_unittests --skip-generation
 }
 
 run_macos_swift_unittests() {
-  dart run tool/run_tests.dart -t mac_swift_unittests
+  dart run tool/run_tests.dart -t macos_swift_unittests --skip-generation
+}
+
+run_macos_swift_e2e_tests() {
+  dart run tool/run_tests.dart -t macos_swift_integration_tests --skip-generation
 }
 
 run_android_kotlin_unittests() {
-  dart run tool/run_tests.dart -t android_kotlin_unittests
+  dart run tool/run_tests.dart -t android_kotlin_unittests --skip-generation
+}
+
+run_android_kotlin_e2e_tests() {
+  dart run tool/run_tests.dart -t android_kotlin_integration_tests --skip-generation
 }
 
 run_dart_compilation_tests() {
@@ -217,24 +201,6 @@ run_dart_compilation_tests() {
 }
 
 run_ios_unittests() {
-  gen_ios_unittests_code ./pigeons/all_void.dart ""
-  gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
-  gen_ios_unittests_code ./pigeons/async_handlers.dart ""
-  gen_ios_unittests_code ./pigeons/background_platform_channels.dart "BC"
-  gen_ios_unittests_code ./pigeons/enum.dart "AC"
-  gen_ios_unittests_code ./pigeons/enum_args.dart "EA"
-  gen_ios_unittests_code ./pigeons/host2flutter.dart ""
-  gen_ios_unittests_code ./pigeons/list.dart "LST"
-  gen_ios_unittests_code ./pigeons/message.dart ""
-  gen_ios_unittests_code ./pigeons/multiple_arity.dart ""
-  gen_ios_unittests_code ./pigeons/non_null_fields.dart "NNF"
-  gen_ios_unittests_code ./pigeons/null_fields.dart ""
-  gen_ios_unittests_code ./pigeons/nullable_returns.dart "NR"
-  gen_ios_unittests_code ./pigeons/primitive.dart ""
-  gen_ios_unittests_code ./pigeons/void_arg_flutter.dart "VAF"
-  gen_ios_unittests_code ./pigeons/void_arg_host.dart "VAH"
-  gen_ios_unittests_code ./pigeons/voidflutter.dart "VF"
-  gen_ios_unittests_code ./pigeons/voidhost.dart "VH"
   pushd $PWD
   cd platform_tests/alternate_language_test_plugin/example
   flutter build ios --simulator --no-codesign
@@ -252,13 +218,11 @@ run_ios_e2e_tests() {
   DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
   DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
   DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
-  PIGEON_JAVA="e2e_tests/test_objc/android/app/src/main/java/io/flutter/plugins/Pigeon.java"
   $run_pigeon \
     --input pigeons/message.dart \
     --dart_out $DARTLE_DART \
     --objc_header_out $DARTLE_H \
     --objc_source_out $DARTLE_M \
-    --java_out $PIGEON_JAVA
   dart format $DARTLE_DART
 
   pushd $PWD
@@ -278,26 +242,6 @@ run_ios_e2e_tests() {
 
 run_android_unittests() {
   pushd $PWD
-  gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
-  gen_android_unittests_code ./pigeons/all_void.dart AllVoid
-  gen_android_unittests_code ./pigeons/android_unittests.dart Pigeon
-  gen_android_unittests_code ./pigeons/async_handlers.dart AsyncHandlers
-  gen_android_unittests_code ./pigeons/background_platform_channels.dart BackgroundPlatformChannels
-  gen_android_unittests_code ./pigeons/enum.dart Enum
-  gen_android_unittests_code ./pigeons/enum_args.dart EnumArgs
-  gen_android_unittests_code ./pigeons/host2flutter.dart Host2Flutter
-  gen_android_unittests_code ./pigeons/java_double_host_api.dart JavaDoubleHostApi
-  gen_android_unittests_code ./pigeons/list.dart PigeonList
-  gen_android_unittests_code ./pigeons/message.dart MessagePigeon
-  gen_android_unittests_code ./pigeons/multiple_arity.dart MultipleArity
-  gen_android_unittests_code ./pigeons/non_null_fields.dart NonNullFields
-  gen_android_unittests_code ./pigeons/null_fields.dart NullFields
-  gen_android_unittests_code ./pigeons/nullable_returns.dart NullableReturns
-  gen_android_unittests_code ./pigeons/primitive.dart Primitive
-  gen_android_unittests_code ./pigeons/void_arg_flutter.dart VoidArgFlutter
-  gen_android_unittests_code ./pigeons/void_arg_host.dart VoidArgHost
-  gen_android_unittests_code ./pigeons/voidflutter.dart VoidFlutter
-  gen_android_unittests_code ./pigeons/voidhost.dart VoidHost
   cd platform_tests/alternate_language_test_plugin/example
   if [ ! -f "android/gradlew" ]; then
     flutter build apk --debug
@@ -305,6 +249,10 @@ run_android_unittests() {
   cd android
   ./gradlew test
   popd
+}
+
+run_android_java_e2e_tests() {
+  dart run tool/run_tests.dart -t android_java_integration_tests --skip-generation
 }
 
 ###############################################################################
@@ -319,7 +267,12 @@ should_run_ios_unittests=true
 should_run_ios_swift_unittests=true
 should_run_mock_handler_tests=true
 should_run_macos_swift_unittests=true
+should_run_macos_swift_e2e_tests=true
 should_run_android_kotlin_unittests=true
+# Default to false until there is CI support. See
+# https://github.com/flutter/flutter/issues/111505
+should_run_android_java_e2e_tests=false
+should_run_android_kotlin_e2e_tests=false
 while getopts "t:l?h" opt; do
   case $opt in
   t)
@@ -332,10 +285,14 @@ while getopts "t:l?h" opt; do
     should_run_ios_swift_unittests=false
     should_run_mock_handler_tests=false
     should_run_macos_swift_unittests=false
+    should_run_macos_swift_e2e_tests=false
     should_run_android_kotlin_unittests=false
+    should_run_android_java_e2e_tests=false
+    should_run_android_kotlin_e2e_tests=false
     case $OPTARG in
     # TODO(stuartmorgan): Rename to include "java".
     android_unittests) should_run_android_unittests=true ;;
+    android_java_e2e_tests) should_run_android_java_e2e_tests=true ;;
     dart_compilation_tests) should_run_dart_compilation_tests=true ;;
     dart_unittests) should_run_dart_unittests=true ;;
     flutter_unittests) should_run_flutter_unittests=true ;;
@@ -345,7 +302,9 @@ while getopts "t:l?h" opt; do
     ios_swift_unittests) should_run_ios_swift_unittests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
     macos_swift_unittests) should_run_macos_swift_unittests=true ;;
+    macos_swift_e2e_tests) should_run_macos_swift_e2e_tests=true ;;
     android_kotlin_unittests) should_run_android_kotlin_unittests=true ;;
+    android_kotlin_e2e_tests) should_run_android_kotlin_e2e_tests=true ;;
     *)
       echo "unrecognized test: $OPTARG"
       exit 1
@@ -355,7 +314,9 @@ while getopts "t:l?h" opt; do
   l)
     echo "available tests for -t:
   android_unittests        - Unit tests on generated Java code.
+  android_java_e2e_tests   - Integration tests on generated Java code on Android.
   android_kotlin_unittests - Unit tests on generated Kotlin code on Android.
+  android_kotlin_e2e_tests - Integration tests on generated Kotlin code on Android.
   dart_compilation_tests   - Compilation tests on generated Dart code.
   dart_unittests           - Unit tests on and analysis on Pigeon's implementation.
   flutter_unittests        - Unit tests on generated Dart code.
@@ -364,6 +325,7 @@ while getopts "t:l?h" opt; do
   ios_swift_unittests      - Unit tests on generated Swift code.
   mock_handler_tests       - Unit tests on generated Dart mock handler code.
   macos_swift_unittests    - Unit tests on generated Swift code on macOS.
+  macos_swift_e2e_tests    - Integration tests on generated Swift code on macOS.
   "
     exit 1
     ;;
@@ -385,6 +347,10 @@ done
 ##############################################################################
 dart pub get
 dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
+
+# Pre-generate platform_test output files, which most tests rely on existing.
+dart run tool/generate.dart
+
 if [ "$should_run_android_unittests" = true ]; then
   get_java_linter_formatter
 fi
@@ -413,9 +379,18 @@ fi
 if [ "$should_run_android_unittests" = true ]; then
   run_android_unittests
 fi
+if [ "$should_run_android_java_e2e_tests" = true ]; then
+  run_android_java_e2e_tests
+fi
 if [ "$should_run_macos_swift_unittests" = true ]; then
   run_macos_swift_unittests
 fi
+if [ "$should_run_macos_swift_e2e_tests" = true ]; then
+  run_macos_swift_e2e_tests
+fi
 if [ "$should_run_android_kotlin_unittests" = true ]; then
   run_android_kotlin_unittests
+fi
+if [ "$should_run_android_kotlin_e2e_tests" = true ]; then
+  run_android_kotlin_e2e_tests
 fi

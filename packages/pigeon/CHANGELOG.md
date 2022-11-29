@@ -1,3 +1,11 @@
+## 4.2.7
+
+* [swift] Fixes a bug when calling methods that return `void`.
+
+## 4.2.6
+
+* Fixes bug with parsing documentation comments that start with '/'.
+
 ## 4.2.5
 
 * [dart] Fixes enum parameter handling in Dart test API class.

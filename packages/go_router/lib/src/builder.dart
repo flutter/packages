@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
+import 'delegate.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
@@ -75,11 +76,7 @@ class RouteBuilder {
                 registry: _registry, child: result);
           } on _RouteBuilderError catch (e) {
             return _buildErrorNavigator(
-                context,
-                e,
-                Uri.parse(matchList.location.toString()),
-                pop,
-                configuration.navigatorKey);
+                context, e, matchList.uri, pop, configuration.navigatorKey);
           }
         },
       ),
@@ -124,13 +121,12 @@ class RouteBuilder {
     try {
       final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
           <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
-      final Map<String, String> params = <String, String>{};
       _buildRecursive(context, matchList, 0, onPop, routerNeglect, keyToPage,
-          params, navigatorKey, registry);
+          navigatorKey, registry);
       return keyToPage[navigatorKey]!;
     } on _RouteBuilderError catch (e) {
       return <Page<Object?>>[
-        _buildErrorPage(context, e, matchList.location),
+        _buildErrorPage(context, e, matchList.uri),
       ];
     }
   }
@@ -142,7 +138,6 @@ class RouteBuilder {
     VoidCallback pop,
     bool routerNeglect,
     Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPages,
-    Map<String, String> params,
     GlobalKey<NavigatorState> navigatorKey,
     Map<Page<Object?>, GoRouterState> registry,
   ) {
@@ -157,11 +152,7 @@ class RouteBuilder {
     }
 
     final RouteBase route = match.route;
-    final Map<String, String> newParams = <String, String>{
-      ...params,
-      ...match.decodedParams
-    };
-    final GoRouterState state = buildState(match, newParams);
+    final GoRouterState state = buildState(matchList, match);
     if (route is GoRoute) {
       final Page<Object?> page = _buildPageForRoute(context, state, match);
       registry[page] = state;
@@ -173,7 +164,7 @@ class RouteBuilder {
       keyToPages.putIfAbsent(goRouteNavKey, () => <Page<Object?>>[]).add(page);
 
       _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
-          keyToPages, newParams, navigatorKey, registry);
+          keyToPages, navigatorKey, registry);
     } else if (route is ShellRoute) {
       // The key for the Navigator that will display this ShellRoute's page.
       final GlobalKey<NavigatorState> parentNavigatorKey = navigatorKey;
@@ -194,7 +185,7 @@ class RouteBuilder {
 
       // Build the remaining pages
       _buildRecursive(context, matchList, startIndex + 1, pop, routerNeglect,
-          keyToPages, newParams, shellNavigatorKey, registry);
+          keyToPages, shellNavigatorKey, registry);
 
       // Build the Navigator
       final Widget child = _buildNavigator(
@@ -235,25 +226,27 @@ class RouteBuilder {
   /// Helper method that builds a [GoRouterState] object for the given [match]
   /// and [params].
   @visibleForTesting
-  GoRouterState buildState(RouteMatch match, Map<String, String> params) {
+  GoRouterState buildState(RouteMatchList matchList, RouteMatch match) {
     final RouteBase route = match.route;
-    String? name = '';
+    String? name;
     String path = '';
     if (route is GoRoute) {
       name = route.name;
       path = route.path;
     }
+    final RouteMatchList effectiveMatchList =
+        match is ImperativeRouteMatch ? match.matches : matchList;
     return GoRouterState(
       configuration,
-      location: match.fullUriString,
+      location: effectiveMatchList.uri.toString(),
       subloc: match.subloc,
       name: name,
       path: path,
-      fullpath: match.fullpath,
-      params: params,
+      fullpath: effectiveMatchList.fullpath,
+      params: effectiveMatchList.pathParameters,
       error: match.error,
-      queryParams: match.queryParams,
-      queryParametersAll: match.queryParametersAll,
+      queryParams: effectiveMatchList.uri.queryParameters,
+      queryParametersAll: effectiveMatchList.uri.queryParametersAll,
       extra: match.extra,
       pageKey: match.pageKey,
     );
@@ -425,6 +418,7 @@ class RouteBuilder {
       queryParams: uri.queryParameters,
       queryParametersAll: uri.queryParametersAll,
       error: Exception(error),
+      pageKey: const ValueKey<String>('error'),
     );
 
     // If the error page builder is provided, use that, otherwise, if the error

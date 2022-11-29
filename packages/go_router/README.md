@@ -13,7 +13,7 @@ GoRouter has a number of features to make navigation straightforward:
   application state, for example to a sign-in when the user is not
   authenticated
 - Support for multiple Navigators via
-  [ShellRoute](https://pub.dev/documentation/go_router/ShellRoute-class.html) -
+  [ShellRoute](https://pub.dev/documentation/go_router/latest/go_router/ShellRoute-class.html) -
   you can display an inner Navigator that displays its own pages based on the
   matched route. For example, to display a BottomNavigationBar that stays
   visible at the bottom of the
@@ -34,7 +34,6 @@ See the API documentation for details on the following topics:
 - [Transition animations](https://pub.dev/documentation/go_router/latest/topics/Transition%20animations-topic.html)
 - [Type-safe routes](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html)
 - [Named routes](https://pub.dev/documentation/go_router/latest/topics/Named%20routes-topic.html)
-- [Logging](https://pub.dev/documentation/go_router/latest/topics/Logging-topic.html)
 - [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
 
 ## Migration guides

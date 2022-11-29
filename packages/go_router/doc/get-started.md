@@ -35,4 +35,4 @@ For a complete sample, see the [Getting started sample][] in the example directo
 For more on how to configure GoRouter, see [Configuration].
 
 [Getting started sample]: https://github.com/flutter/packages/tree/main/packages/go_router/example/lib/main.dart
-[Configuration]: https://pub.dev/documentation/go_router/topics/Configuration-topic.html 
+[Configuration]: https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html 

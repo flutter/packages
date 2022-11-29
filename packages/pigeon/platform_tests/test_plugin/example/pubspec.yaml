@@ -8,11 +8,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_test_plugin_code:
+    path: ../../shared_test_plugin_code
   test_plugin:
     path: ../
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
 flutter:
