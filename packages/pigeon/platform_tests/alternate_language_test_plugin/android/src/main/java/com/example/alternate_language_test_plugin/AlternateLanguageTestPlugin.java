@@ -10,9 +10,7 @@ import com.example.alternate_language_test_plugin.AllDatatypes.HostEverything;
 import com.example.alternate_language_test_plugin.AllVoid.AllVoidHostApi;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 
-/**
- * This plugin handles the native side of the integration tests in example/integration_test/.
- */
+/** This plugin handles the native side of the integration tests in example/integration_test/. */
 public class AlternateLanguageTestPlugin implements FlutterPlugin, AllVoidHostApi, HostEverything {
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
