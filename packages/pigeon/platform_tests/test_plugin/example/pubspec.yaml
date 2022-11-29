@@ -8,6 +8,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_test_plugin_code:
+    path: ../../shared_test_plugin_code
   test_plugin:
     path: ../
 
