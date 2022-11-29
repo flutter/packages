@@ -28,6 +28,8 @@ const String _skipGenerationFlag = 'skip-generation';
 const int _noDeviceAvailableExitCode = 100;
 
 const String _testPluginRelativePath = 'platform_tests/test_plugin';
+const String _alternateLanguageTestPluginRelativePath =
+    'platform_tests/test_plugin';
 const String _integrationTestFileRelativePath = 'integration_test/test.dart';
 
 @immutable
@@ -44,9 +46,12 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'windows_integration_tests': _TestInfo(
       function: _runWindowsIntegrationTests,
       description: 'Integration tests on generated Windows C++ code.'),
-  'android_unittests': _TestInfo(
-      function: _runAndroidUnitTests,
+  'android_java_unittests': _TestInfo(
+      function: _runAndroidJavaUnitTests,
       description: 'Unit tests on generated Java code.'),
+  'android_java_integration_tests': _TestInfo(
+      function: _runAndroidJavaIntegrationTests,
+      description: 'Integration tests on generated Java code.'),
   'android_kotlin_unittests': _TestInfo(
       function: _runAndroidKotlinUnitTests,
       description: 'Unit tests on generated Kotlin code.'),
@@ -79,8 +84,12 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
       description: 'Unit tests on generated Dart mock handler code.'),
 };
 
-Future<int> _runAndroidUnitTests() async {
+Future<int> _runAndroidJavaUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
+}
+
+Future<int> _runAndroidJavaIntegrationTests() async {
+  return _runAndroidIntegrationTests(_alternateLanguageTestPluginRelativePath);
 }
 
 Future<int> _runAndroidKotlinUnitTests() async {
@@ -98,6 +107,10 @@ Future<int> _runAndroidKotlinUnitTests() async {
 }
 
 Future<int> _runAndroidKotlinIntegrationTests() async {
+  return _runAndroidIntegrationTests(_testPluginRelativePath);
+}
+
+Future<int> _runAndroidIntegrationTests(String testPluginPath) async {
   final String? device = await getDeviceForPlatform('android');
   if (device == null) {
     print('No Android device available. Attach an Android device or start '
@@ -105,7 +118,7 @@ Future<int> _runAndroidKotlinIntegrationTests() async {
     return _noDeviceAvailableExitCode;
   }
 
-  const String examplePath = './$_testPluginRelativePath/example';
+  final String examplePath = './$testPluginPath/example';
   return runFlutterCommand(
     examplePath,
     'test',
