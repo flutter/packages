@@ -44,7 +44,7 @@ class AsyncHandlersTest: XCTestCase {
     let expectation = XCTestExpectation(description: "voidvoid callback")
     binaryMessenger.handlers[channelName]?(nil) { data in
       let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertNil(outputMap?["result"])
+      XCTAssertEqual(outputMap?["result"] as! NSNull, NSNull())
       XCTAssertNil(outputMap?["error"])
       expectation.fulfill()
     }

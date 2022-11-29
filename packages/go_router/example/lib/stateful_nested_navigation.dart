@@ -352,17 +352,20 @@ class TabbedRootScreen extends StatelessWidget {
   Widget _child(StatefulShellBranchState branchState) {
     // TabBarView will cache it's root widget, so we need to reevaluate
     // the child (using a Builder) in case it's null.
-    return branchState.child != null ? branchState.child! :
-      Builder(builder: (BuildContext context) =>
-        StatefulShellBranch.of(context).child ?? const SizedBox.expand());
+    return branchState.child != null
+        ? branchState.child!
+        : Builder(
+            builder: (BuildContext context) =>
+                StatefulShellBranch.of(context).child ??
+                const SizedBox.expand());
   }
 
   @override
   Widget build(BuildContext context) {
     final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
     final List<Widget> children = shellState.branchStates.map(_child).toList();
-    final List<Tab> tabs = children.mapIndexed((int i, _) =>
-        Tab(text: 'Tab ${i + 1}')).toList();
+    final List<Tab> tabs =
+        children.mapIndexed((int i, _) => Tab(text: 'Tab ${i + 1}')).toList();
 
     return DefaultTabController(
       length: children.length,

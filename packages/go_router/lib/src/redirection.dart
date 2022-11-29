@@ -26,13 +26,13 @@ FutureOr<RouteMatchList> redirect(
     {List<RouteMatchList>? redirectHistory,
     Object? extra}) {
   FutureOr<RouteMatchList> processRedirect(RouteMatchList prevMatchList) {
-    final String prevLocation = prevMatchList.location.toString();
+    final String prevLocation = prevMatchList.uri.toString();
     FutureOr<RouteMatchList> processTopLevelRedirect(
         String? topRedirectLocation) {
       if (topRedirectLocation != null && topRedirectLocation != prevLocation) {
         final RouteMatchList newMatch = _getNewMatches(
           topRedirectLocation,
-          prevMatchList.location,
+          prevMatchList.uri,
           configuration,
           matcher,
           redirectHistory!,
@@ -50,23 +50,13 @@ FutureOr<RouteMatchList> redirect(
         );
       }
 
-      // Merge new params to keep params from previously matched paths, e.g.
-      // /users/:userId/book/:bookId provides userId and bookId to bookgit /:bookId
-      final Map<String, String> previouslyMatchedParams = <String, String>{};
-      for (final RouteMatch match in prevMatchList.matches) {
-        assert(
-          !previouslyMatchedParams.keys.any(match.encodedParams.containsKey),
-          'Duplicated parameter names',
-        );
-        previouslyMatchedParams.addAll(match.encodedParams);
-      }
       FutureOr<RouteMatchList> processRouteLevelRedirect(
           String? routeRedirectLocation) {
         if (routeRedirectLocation != null &&
             routeRedirectLocation != prevLocation) {
           final RouteMatchList newMatch = _getNewMatches(
             routeRedirectLocation,
-            prevMatchList.location,
+            prevMatchList.uri,
             configuration,
             matcher,
             redirectHistory!,
@@ -98,7 +88,6 @@ FutureOr<RouteMatchList> redirect(
 
     redirectHistory ??= <RouteMatchList>[prevMatchList];
     // Check for top-level redirect
-    final Uri uri = prevMatchList.location;
     final FutureOr<String?> topRedirectResult = configuration.topRedirect(
       context,
       GoRouterState(
@@ -107,10 +96,11 @@ FutureOr<RouteMatchList> redirect(
         name: null,
         // No name available at the top level trim the query params off the
         // sub-location to match route.redirect
-        subloc: uri.path,
-        queryParams: uri.queryParameters,
-        queryParametersAll: uri.queryParametersAll,
+        subloc: prevMatchList.uri.path,
+        queryParams: prevMatchList.uri.queryParameters,
+        queryParametersAll: prevMatchList.uri.queryParametersAll,
         extra: extra,
+        pageKey: const ValueKey<String>('topLevel'),
       ),
     );
 
@@ -147,15 +137,16 @@ FutureOr<String?> _getRouteLevelRedirect(
       context,
       GoRouterState(
         configuration,
-        location: matchList.location.toString(),
+        location: matchList.uri.toString(),
         subloc: match.subloc,
         name: route.name,
         path: route.path,
-        fullpath: match.fullpath,
+        fullpath: matchList.fullpath,
         extra: match.extra,
-        params: matchList.effectiveEncodedParams(currentCheckIndex),
-        queryParams: match.queryParams,
-        queryParametersAll: match.queryParametersAll,
+        params: matchList.pathParameters,
+        queryParams: matchList.uri.queryParameters,
+        queryParametersAll: matchList.uri.queryParametersAll,
+        pageKey: match.pageKey,
       ),
     );
   }
@@ -215,8 +206,8 @@ class RedirectionError extends Error implements UnsupportedError {
 
   @override
   String toString() => '${super.toString()} ${<String>[
-        ...matches.map(
-            (RouteMatchList routeMatches) => routeMatches.location.toString()),
+        ...matches
+            .map((RouteMatchList routeMatches) => routeMatches.uri.toString()),
       ].join(' => ')}';
 }
 

@@ -11,7 +11,6 @@ import 'builder.dart';
 import 'configuration.dart';
 import 'match.dart';
 import 'matching.dart';
-import 'misc/errors.dart';
 import 'typedefs.dart';
 
 /// GoRouter implementation of [RouterDelegate].
@@ -44,7 +43,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Set to true to disable creating history entries on the web.
   final bool routerNeglect;
 
-  RouteMatchList _matchList = RouteMatchList.empty();
+  RouteMatchList _matchList = RouteMatchList.empty;
 
   /// Stores the number of times each route route has been pushed.
   ///
@@ -100,26 +99,21 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   /// Pushes the given location onto the page stack
-  void push(RouteMatch match) {
-    if (match.route is ShellRouteBase) {
-      throw GoError('ShellRoutes cannot be pushed');
-    }
+  void push(RouteMatchList matches) {
+    assert(matches.last.route is! ShellRouteBase);
 
     // Remap the pageKey to allow any number of the same page on the stack
-    final String fullPath = match.fullpath;
-    final int count = (_pushCounts[fullPath] ?? 0) + 1;
-    _pushCounts[fullPath] = count;
-    final ValueKey<String> pageKey = ValueKey<String>('$fullPath-p$count');
-    final RouteMatch newPageKeyMatch = RouteMatch(
-      route: match.route,
-      subloc: match.subloc,
-      fullpath: match.fullpath,
-      encodedParams: match.encodedParams,
-      queryParams: match.queryParams,
-      queryParametersAll: match.queryParametersAll,
-      extra: match.extra,
-      error: match.error,
+    final int count = (_pushCounts[matches.fullpath] ?? 0) + 1;
+    _pushCounts[matches.fullpath] = count;
+    final ValueKey<String> pageKey =
+        ValueKey<String>('${matches.fullpath}-p$count');
+    final ImperativeRouteMatch newPageKeyMatch = ImperativeRouteMatch(
+      route: matches.last.route,
+      subloc: matches.last.subloc,
+      extra: matches.last.extra,
+      error: matches.last.error,
       pageKey: pageKey,
+      matches: matches,
     );
 
     _matchList.push(newPageKeyMatch);
@@ -168,9 +162,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
-  void replace(RouteMatch match) {
+  void replace(RouteMatchList matches) {
     _matchList.pop();
-    push(match); // [push] will notify the listeners.
+    push(matches); // [push] will notify the listeners.
   }
 
   /// For internal use; visible for testing only.
@@ -206,4 +200,21 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // synchronously and remove unwanted initial animations on deep-linking
     return SynchronousFuture<void>(null);
   }
+}
+
+/// The route match that represent route pushed through [GoRouter.push].
+// TODO(chunhtai): Removes this once imperative API no longer insert route match.
+class ImperativeRouteMatch extends RouteMatch {
+  /// Constructor for [ImperativeRouteMatch].
+  ImperativeRouteMatch({
+    required super.route,
+    required super.subloc,
+    required super.extra,
+    required super.error,
+    required super.pageKey,
+    required this.matches,
+  });
+
+  /// The matches that produces this route match.
+  final RouteMatchList matches;
 }

@@ -62,7 +62,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
       // If there is a matching error for the initial location, we should
       // still try to process the top-level redirects.
-      initialMatches = RouteMatchList.empty();
+      initialMatches = RouteMatchList.empty;
     }
     return processRedirection(initialMatches, context,
         topRouteInformation: routeInformation);
@@ -74,7 +74,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       {RouteInformation? topRouteInformation}) {
     final RouteInformation routeInformation = topRouteInformation ??
         RouteInformation(
-            location: routeMatchList.location.toString(),
+            location: routeMatchList.uri.toString(),
             state: routeMatchList.extra);
     Future<RouteMatchList> processRedirectorResult(RouteMatchList matches) {
       if (matches.isEmpty) {
@@ -111,7 +111,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   @override
   RouteInformation restoreRouteInformation(RouteMatchList configuration) {
     return RouteInformation(
-      location: configuration.location.toString(),
+      location: configuration.uri.toString(),
       state: configuration.extra,
     );
   }

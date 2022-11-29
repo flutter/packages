@@ -137,8 +137,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
       Navigator? navigator;
       if (shellRouteIndex >= 0 &&
           shellRouteIndex < (matchList.matches.length - 1)) {
-        final RouteMatchList navigatorMatchList =
-            RouteMatchList(matchList.matches.sublist(shellRouteIndex + 1));
+        final RouteMatchList navigatorMatchList = RouteMatchList(
+            matchList.matches.sublist(shellRouteIndex + 1),
+            matchList.uri,
+            matchList.pathParameters);
         navigator = widget.branchNavigatorBuilder(context, navigatorMatchList,
             branch.navigatorKey, branch.restorationScopeId);
       }

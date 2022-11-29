@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
-GlobalKey<NavigatorState>(debugLabel: 'root');
+    GlobalKey<NavigatorState>(debugLabel: 'root');
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, using a dynamic set of tabs. Each tab uses its own
@@ -33,22 +33,23 @@ class NestedTabNavigationExampleApp extends StatefulWidget {
 }
 
 /// An example demonstrating how to use dynamic nested navigators
-class NestedTabNavigationExampleAppState extends State<NestedTabNavigationExampleApp> {
-
+class NestedTabNavigationExampleAppState
+    extends State<NestedTabNavigationExampleApp> {
   final List<StatefulShellBranch> _branches = <StatefulShellBranch>[
     StatefulShellBranch(rootLocation: '/home', name: 'Home'),
     StatefulShellBranch(rootLocation: '/a/0', name: 'Dynamic 0'),
   ];
 
   void _addSection(StatefulShellRouteState shellRouteState) => setState(() {
-    if (_branches.length < 10) {
-      final int index = _branches.length - 1;
-      _branches.add(StatefulShellBranch(rootLocation: '/a/$index', name: 'Dynamic $index'));
-      // In situations where setState isn't possible, you can call refresh() on
-      // StatefulShellRouteState instead, to refresh the branches
-      //shellRouteState.refresh();
-    }
-  });
+        if (_branches.length < 10) {
+          final int index = _branches.length - 1;
+          _branches.add(StatefulShellBranch(
+              rootLocation: '/a/$index', name: 'Dynamic $index'));
+          // In situations where setState isn't possible, you can call refresh() on
+          // StatefulShellRouteState instead, to refresh the branches
+          //shellRouteState.refresh();
+        }
+      });
 
   void _removeSection(StatefulShellRouteState shellRouteState) {
     if (_branches.length > 2) {
@@ -71,33 +72,31 @@ class NestedTabNavigationExampleAppState extends State<NestedTabNavigationExampl
             builder: (BuildContext context, GoRouterState state) => RootScreen(
               label: 'Home',
               addSection: () => _addSection(StatefulShellRoute.of(context)),
-              removeSection: () => _removeSection(StatefulShellRoute.of(context)),
+              removeSection: () =>
+                  _removeSection(StatefulShellRoute.of(context)),
             ),
           ),
           GoRoute(
             /// The screen to display as the root in the first tab of the
             /// bottom navigation bar.
             path: '/a/:id',
-            builder: (BuildContext context, GoRouterState state) =>
-                RootScreen(
-                  label: 'A${state.params['id']}',
-                  detailsPath: '/a/${state.params['id']}/details',
-                ),
+            builder: (BuildContext context, GoRouterState state) => RootScreen(
+              label: 'A${state.params['id']}',
+              detailsPath: '/a/${state.params['id']}/details',
+            ),
             routes: <RouteBase>[
               /// The details screen to display stacked on navigator of the
               /// first tab. This will cover screen A but not the application
               /// shell (bottom navigation bar).
               GoRoute(
                 path: 'details',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
+                builder: (BuildContext context, GoRouterState state) =>
                     DetailsScreen(label: 'A${state.params['id']}'),
               ),
             ],
           ),
         ],
-        builder:
-            (BuildContext context, GoRouterState state, Widget child) {
+        builder: (BuildContext context, GoRouterState state, Widget child) {
           return ScaffoldWithNavBar(body: child);
         },
       ),
@@ -128,12 +127,15 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// Body, i.e. the index stack
   final Widget body;
 
-  List<BottomNavigationBarItem> _items(List<StatefulShellBranchState> branches) {
+  List<BottomNavigationBarItem> _items(
+      List<StatefulShellBranchState> branches) {
     return branches.mapIndexed((int i, StatefulShellBranchState e) {
       if (i == 0) {
-        return BottomNavigationBarItem(icon: const Icon(Icons.home), label: e.branch.name);
+        return BottomNavigationBarItem(
+            icon: const Icon(Icons.home), label: e.branch.name);
       } else {
-        return BottomNavigationBarItem(icon: const Icon(Icons.star), label: e.branch.name);
+        return BottomNavigationBarItem(
+            icon: const Icon(Icons.star), label: e.branch.name);
       }
     }).toList();
   }
@@ -172,6 +174,7 @@ class RootScreen extends StatelessWidget {
 
   /// Function for adding a new branch
   final VoidCallback? addSection;
+
   /// Function for removing a branch
   final VoidCallback? removeSection;
 

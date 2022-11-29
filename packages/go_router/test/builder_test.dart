@@ -29,18 +29,18 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first as GoRoute,
-          subloc: '/',
-          fullpath: '/',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          queryParametersAll: <String, List<String>>{},
-          extra: null,
-          error: null,
-        ),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            RouteMatch(
+              route: config.routes.first as GoRoute,
+              subloc: '/',
+              extra: null,
+              error: null,
+              pageKey: const ValueKey<String>('/'),
+            ),
+          ],
+          Uri.parse('/'),
+          const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -76,28 +76,14 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first,
-          subloc: '',
-          fullpath: '',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          queryParametersAll: <String, List<String>>{},
-          extra: null,
-          error: null,
-        ),
-        RouteMatch(
-          route: config.routes.first.routes.first,
-          subloc: '/',
-          fullpath: '/',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          queryParametersAll: <String, List<String>>{},
-          extra: null,
-          error: null,
-        ),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            _createRouteMatch(config.routes.first, '/'),
+            _createRouteMatch(config.routes.first.routes.first, '/'),
+          ],
+          Uri.parse('/'),
+          <String, String>{},
+      );
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -134,10 +120,13 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        _createRouteMatch(config.routes.first, '/nested'),
-        _createRouteMatch(config.routes.first.routes.first, '/nested'),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            _createRouteMatch(config.routes.first, '/nested'),
+            _createRouteMatch(config.routes.first.routes.first, '/nested'),
+          ],
+          Uri.parse('/nested'),
+          <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -179,10 +168,13 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        _createRouteMatch(config.routes.first, '/b'),
-        _createRouteMatch(config.routes.first.routes.first, '/b'),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            _createRouteMatch(config.routes.first, '/b'),
+            _createRouteMatch(config.routes.first.routes.first, '/b'),
+          ],
+          Uri.parse('/b'),
+          <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -223,10 +215,13 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        _createRouteMatch(config.routes.first, '/b'),
-        _createRouteMatch(config.routes.first.routes.first, '/b'),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            _createRouteMatch(config.routes.first, '/b'),
+            _createRouteMatch(config.routes.first.routes.first, '/b'),
+          ],
+          Uri.parse('/b'),
+          <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -268,10 +263,13 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        _createRouteMatch(config.routes.first, '/b'),
-        _createRouteMatch(config.routes.first.routes.first, '/b'),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            _createRouteMatch(config.routes.first, '/b'),
+            _createRouteMatch(config.routes.first.routes.first, '/b'),
+          ],
+          Uri.parse('/b'),
+          <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -302,18 +300,18 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first as GoRoute,
-          subloc: '/',
-          fullpath: '/',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          queryParametersAll: <String, List<String>>{},
-          extra: null,
-          error: null,
-        ),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            RouteMatch(
+              route: config.routes.first as GoRoute,
+              subloc: '/',
+              extra: null,
+              error: null,
+              pageKey: const ValueKey<String>('/'),
+            ),
+          ],
+          Uri.parse('/'),
+          <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -357,28 +355,25 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first,
-          subloc: '',
-          fullpath: '',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          queryParametersAll: <String, List<String>>{},
-          extra: null,
-          error: null,
-        ),
-        RouteMatch(
-          route: config.routes.first.routes.first,
-          subloc: '/details',
-          fullpath: '/details',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          queryParametersAll: <String, List<String>>{},
-          extra: null,
-          error: null,
-        ),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            RouteMatch(
+              route: config.routes.first,
+              subloc: '',
+              extra: null,
+              error: null,
+              pageKey: const ValueKey<String>(''),
+            ),
+            RouteMatch(
+              route: config.routes.first.routes.first,
+              subloc: '/details',
+              extra: null,
+              error: null,
+              pageKey: const ValueKey<String>('/details'),
+            ),
+          ],
+          Uri.parse('/details'),
+          <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -435,18 +430,18 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        RouteMatch(
-          route: config.routes.first.routes.first as GoRoute,
-          subloc: '/a/details',
-          fullpath: '/a/details',
-          encodedParams: <String, String>{},
-          queryParams: <String, String>{},
-          queryParametersAll: <String, List<String>>{},
-          extra: null,
-          error: null,
-        ),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            RouteMatch(
+              route: config.routes.first.routes.first as GoRoute,
+              subloc: '/a/details',
+              extra: null,
+              error: null,
+              pageKey: const ValueKey<String>('/a/details'),
+            ),
+          ],
+          Uri.parse('/a/details'),
+          <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -492,10 +487,13 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(<RouteMatch>[
-        _createRouteMatch(config.routes.first, ''),
-        _createRouteMatch(config.routes.first.routes.first, '/a'),
-      ]);
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            _createRouteMatch(config.routes.first, ''),
+            _createRouteMatch(config.routes.first.routes.first, '/a'),
+          ],
+          Uri.parse('/b'),
+          <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -639,11 +637,8 @@ RouteMatch _createRouteMatch(RouteBase route, String location) {
   return RouteMatch(
     route: route,
     subloc: location,
-    fullpath: location,
-    encodedParams: <String, String>{},
-    queryParams: <String, String>{},
-    queryParametersAll: <String, List<String>>{},
     extra: null,
     error: null,
+    pageKey: ValueKey<String>(location),
   );
 }

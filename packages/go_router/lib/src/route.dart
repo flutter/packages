@@ -4,6 +4,7 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'misc/stateful_navigation_shell.dart';
@@ -132,40 +133,14 @@ class GoRoute extends RouteBase {
     this.pageBuilder,
     this.parentNavigatorKey,
     this.redirect,
-    List<RouteBase> routes = const <RouteBase>[],
+    super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
         assert(pageBuilder != null || builder != null || redirect != null,
             'builder, pageBuilder, or redirect must be provided'),
-        super._(
-          routes: routes,
-        ) {
+        super._() {
     // cache the path regexp and parameters
-    _pathRE = patternToRegExp(path, _pathParams);
-    assert(() {
-      // check path params
-      final Map<String, List<String>> groupedParams =
-          _pathParams.groupListsBy<String>((String p) => p);
-      final Map<String, List<String>> dupParams =
-          Map<String, List<String>>.fromEntries(
-        groupedParams.entries
-            .where((MapEntry<String, List<String>> e) => e.value.length > 1),
-      );
-      assert(dupParams.isEmpty,
-          'duplicate path params: ${dupParams.keys.join(', ')}');
-
-      // check sub-routes
-      for (final RouteBase route in routes) {
-        // check paths
-        if (route is GoRoute) {
-          assert(
-              route.path == '/' ||
-                  (!route.path.startsWith('/') && !route.path.endsWith('/')),
-              'sub-route path may not start or end with /: ${route.path}');
-        }
-      }
-      return true;
-    }());
+    _pathRE = patternToRegExp(path, pathParams);
   }
 
   /// Optional name of the route.
@@ -333,9 +308,16 @@ class GoRoute extends RouteBase {
 
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
-      extractPathParameters(_pathParams, match);
+      extractPathParameters(pathParams, match);
 
-  final List<String> _pathParams = <String>[];
+  /// The path parameters in this route.
+  @internal
+  final List<String> pathParams = <String>[];
+
+  @override
+  String toString() {
+    return 'GoRoute(name: $name, path: $path)';
+  }
 
   late final RegExp _pathRE;
 }
@@ -771,7 +753,7 @@ class StatefulShellBranch {
   /// GoRouterState.
   bool isBranchFor(GoRouterState state) {
     final String? match = rootLocations
-        .firstWhereOrNull((String e) => state.location.startsWith(e));
+        .firstWhereOrNull((String e) => state.subloc.startsWith(e));
     return match != null;
   }
 
