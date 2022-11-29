@@ -29,7 +29,7 @@ const int _noDeviceAvailableExitCode = 100;
 
 const String _testPluginRelativePath = 'platform_tests/test_plugin';
 const String _alternateLanguageTestPluginRelativePath =
-    'platform_tests/test_plugin';
+    'platform_tests/alternate_language_test_plugin';
 const String _integrationTestFileRelativePath = 'integration_test/test.dart';
 
 @immutable
