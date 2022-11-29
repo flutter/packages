@@ -13,7 +13,7 @@
  */
 @implementation AlternateLanguageTestPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  AlternateLanguageTestPlugin* plugin = [[AlternateLanguageTestPlugin alloc] init];
+  AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
   AllVoidHostApiSetup(registrar.messenger, plugin);
   HostEverythingSetup(registrar.messenger, plugin);
 }
