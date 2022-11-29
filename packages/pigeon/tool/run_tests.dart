@@ -16,6 +16,7 @@ import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
+import 'shared/flutter_utils.dart';
 import 'shared/generation.dart';
 import 'shared/native_project_runners.dart';
 import 'shared/process_utils.dart';
@@ -23,6 +24,8 @@ import 'shared/process_utils.dart';
 const String _testFlag = 'test';
 const String _listFlag = 'list';
 const String _skipGenerationFlag = 'skip-generation';
+
+const int _noDeviceAvailableExitCode = 100;
 
 const String _testPluginRelativePath = 'platform_tests/test_plugin';
 const String _integrationTestFileRelativePath = 'integration_test/test.dart';
@@ -47,6 +50,9 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'android_kotlin_unittests': _TestInfo(
       function: _runAndroidKotlinUnitTests,
       description: 'Unit tests on generated Kotlin code.'),
+  'android_kotlin_integration_tests': _TestInfo(
+      function: _runAndroidKotlinIntegrationTests,
+      description: 'Integration tests on generated Kotlin code.'),
   'dart_compilation_tests': _TestInfo(
       function: _runDartCompilationTests,
       description: 'Compilation tests on generated Dart code.'),
@@ -89,6 +95,22 @@ Future<int> _runAndroidKotlinUnitTests() async {
   }
 
   return runGradleBuild(androidProjectPath, 'testDebugUnitTest');
+}
+
+Future<int> _runAndroidKotlinIntegrationTests() async {
+  final String? device = await getDeviceForPlatform('android');
+  if (device == null) {
+    print('No Android device available. Attach an Android device or start '
+        'an emulator to run integration tests');
+    return _noDeviceAvailableExitCode;
+  }
+
+  const String examplePath = './$_testPluginRelativePath/example';
+  return runFlutterCommand(
+    examplePath,
+    'test',
+    <String>[_integrationTestFileRelativePath, '-d', device],
+  );
 }
 
 Future<int> _runDartCompilationTests() async {

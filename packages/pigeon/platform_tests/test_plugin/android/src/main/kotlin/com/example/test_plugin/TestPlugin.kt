@@ -13,13 +13,32 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
 /**
- * This plugin is currently a no-op since only unit tests have been set up.
- * In the future, this will register Pigeon APIs used in integration tests.
+ * This plugin handles the native side of the integration tests in
+ * example/integration_test/.
  */
-class TestPlugin: FlutterPlugin {
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+class TestPlugin: FlutterPlugin, AllVoidHostApi, HostEverything {
+  override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    AllVoidHostApi.setUp(binding.getBinaryMessenger(), this)
+    HostEverything.setUp(binding.getBinaryMessenger(), this)
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+  }
+
+  // AllVoidHostApi
+
+  override fun doit() {
+    // No-op.
+  }
+
+  // HostEverything
+
+  override fun giveMeEverything(): Everything {
+    // Currently unused in integration tests, so just return an empty object.
+    return Everything()
+  }
+
+  override fun echo(everything: Everything): Everything {
+    return everything
   }
 }
