@@ -56,3 +56,9 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoAllTypes:')
   AllTypes echoAllTypes(AllTypes everything);
 }
+
+/// An API that can be implemented for minimal, compile-only tests.
+@HostApi()
+abstract class HostTrivialApi {
+  void noop();
+}

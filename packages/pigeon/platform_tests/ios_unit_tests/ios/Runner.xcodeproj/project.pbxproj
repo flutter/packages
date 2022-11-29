@@ -15,7 +15,6 @@
 		0D6FD3C526A76D400046D8BD /* Primitive.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D6FD3C426A76D400046D8BD /* Primitive.gen.m */; };
 		0D6FD3C726A777C00046D8BD /* PrimitiveTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D6FD3C626A777C00046D8BD /* PrimitiveTest.m */; };
 		0D7A910A268D4A050056B5E1 /* ListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A9109268D4A050056B5E1 /* ListTest.m */; };
-		0D7A910D268E5D700056B5E1 /* AllVoid.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A910C268E5D700056B5E1 /* AllVoid.gen.m */; };
 		0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */; };
 		0DA5DFD626CC39D600D2354B /* MultipleArity.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFD526CC39D600D2354B /* MultipleArity.gen.m */; };
 		0DA5DFD826CC3A2100D2354B /* MultipleArityTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFD726CC3A2100D2354B /* MultipleArityTest.m */; };
@@ -28,7 +27,6 @@
 		0DD2E6BD2684031300A7D764 /* AsyncHandlers.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6AF2684031300A7D764 /* AsyncHandlers.gen.m */; };
 		0DD2E6BE2684031300A7D764 /* Message.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B02684031300A7D764 /* Message.gen.m */; };
 		0DD2E6BF2684031300A7D764 /* Enum.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B12684031300A7D764 /* Enum.gen.m */; };
-		0DD2E6C02684031300A7D764 /* AllDatatypes.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B22684031300A7D764 /* AllDatatypes.gen.m */; };
 		0DD2E6C12684031300A7D764 /* Voidhost.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B52684031300A7D764 /* Voidhost.gen.m */; };
 		0DD2E6C22684031300A7D764 /* Voidflutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B62684031300A7D764 /* Voidflutter.gen.m */; };
 		0DD2E6C32684031300A7D764 /* VoidArgFlutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6B82684031300A7D764 /* VoidArgFlutter.gen.m */; };
@@ -36,6 +34,7 @@
 		0DF4E5C8266ED80900AEA855 /* EchoMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DF4E5C7266ED80900AEA855 /* EchoMessenger.m */; };
 		0DF4E5CB266FDAE300AEA855 /* EnumTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DF4E5CA266FDAE300AEA855 /* EnumTest.m */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		3305655A2936D176005D393D /* CoreTests.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 330565592936D176005D393D /* CoreTests.gen.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
@@ -84,8 +83,6 @@
 		0D6FD3C426A76D400046D8BD /* Primitive.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Primitive.gen.m; sourceTree = "<group>"; };
 		0D6FD3C626A777C00046D8BD /* PrimitiveTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PrimitiveTest.m; sourceTree = "<group>"; };
 		0D7A9109268D4A050056B5E1 /* ListTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListTest.m; sourceTree = "<group>"; };
-		0D7A910B268E5D700056B5E1 /* AllVoid.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllVoid.gen.h; sourceTree = "<group>"; };
-		0D7A910C268E5D700056B5E1 /* AllVoid.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllVoid.gen.m; sourceTree = "<group>"; };
 		0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsyncHandlersTest.m; sourceTree = "<group>"; };
 		0DA5DFD426CC39D600D2354B /* MultipleArity.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultipleArity.gen.h; sourceTree = "<group>"; };
 		0DA5DFD526CC39D600D2354B /* MultipleArity.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultipleArity.gen.m; sourceTree = "<group>"; };
@@ -99,7 +96,6 @@
 		0DD2E6A72684031200A7D764 /* List.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = List.gen.m; sourceTree = "<group>"; };
 		0DD2E6A82684031200A7D764 /* Host2flutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Host2flutter.gen.h; sourceTree = "<group>"; };
 		0DD2E6A92684031200A7D764 /* Voidhost.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voidhost.gen.h; sourceTree = "<group>"; };
-		0DD2E6AA2684031300A7D764 /* AllDatatypes.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllDatatypes.gen.h; sourceTree = "<group>"; };
 		0DD2E6AB2684031300A7D764 /* Host2flutter.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Host2flutter.gen.m; sourceTree = "<group>"; };
 		0DD2E6AC2684031300A7D764 /* VoidArgFlutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoidArgFlutter.gen.h; sourceTree = "<group>"; };
 		0DD2E6AD2684031300A7D764 /* List.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = List.gen.h; sourceTree = "<group>"; };
@@ -107,7 +103,6 @@
 		0DD2E6AF2684031300A7D764 /* AsyncHandlers.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncHandlers.gen.m; sourceTree = "<group>"; };
 		0DD2E6B02684031300A7D764 /* Message.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.gen.m; sourceTree = "<group>"; };
 		0DD2E6B12684031300A7D764 /* Enum.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Enum.gen.m; sourceTree = "<group>"; };
-		0DD2E6B22684031300A7D764 /* AllDatatypes.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllDatatypes.gen.m; sourceTree = "<group>"; };
 		0DD2E6B32684031300A7D764 /* Voidflutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voidflutter.gen.h; sourceTree = "<group>"; };
 		0DD2E6B42684031300A7D764 /* Message.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.gen.h; sourceTree = "<group>"; };
 		0DD2E6B52684031300A7D764 /* Voidhost.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Voidhost.gen.m; sourceTree = "<group>"; };
@@ -121,6 +116,8 @@
 		0DF4E5CA266FDAE300AEA855 /* EnumTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EnumTest.m; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		330565582936D176005D393D /* CoreTests.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreTests.gen.h; sourceTree = "<group>"; };
+		330565592936D176005D393D /* CoreTests.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreTests.gen.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -213,6 +210,8 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				330565582936D176005D393D /* CoreTests.gen.h */,
+				330565592936D176005D393D /* CoreTests.gen.m */,
 				CEA7789227DE9EEB00FE0824 /* NullFields.gen.h */,
 				CEA7789127DE9EEB00FE0824 /* NullFields.gen.m */,
 				0D21E59927D0502D0051D07D /* BackgroundPlatformChannels.gen.h */,
@@ -225,10 +224,6 @@
 				0DA5DFD526CC39D600D2354B /* MultipleArity.gen.m */,
 				0D6FD3C326A76D400046D8BD /* Primitive.gen.h */,
 				0D6FD3C426A76D400046D8BD /* Primitive.gen.m */,
-				0D7A910B268E5D700056B5E1 /* AllVoid.gen.h */,
-				0D7A910C268E5D700056B5E1 /* AllVoid.gen.m */,
-				0DD2E6AA2684031300A7D764 /* AllDatatypes.gen.h */,
-				0DD2E6B22684031300A7D764 /* AllDatatypes.gen.m */,
 				0DD2E6AE2684031300A7D764 /* AsyncHandlers.gen.h */,
 				0DD2E6AF2684031300A7D764 /* AsyncHandlers.gen.m */,
 				0DD2E6B72684031300A7D764 /* Enum.gen.h */,
@@ -371,6 +366,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -385,6 +381,7 @@
 		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -426,18 +423,17 @@
 			files = (
 				0DBD8C41279B741800E4FDBA /* NonNullFields.gen.m in Sources */,
 				0DD2E6BD2684031300A7D764 /* AsyncHandlers.gen.m in Sources */,
-				0D7A910D268E5D700056B5E1 /* AllVoid.gen.m in Sources */,
 				0DD2E6C12684031300A7D764 /* Voidhost.gen.m in Sources */,
 				0DD2E6BB2684031300A7D764 /* List.gen.m in Sources */,
 				978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */,
 				0DD2E6C32684031300A7D764 /* VoidArgFlutter.gen.m in Sources */,
 				0DD2E6C22684031300A7D764 /* Voidflutter.gen.m in Sources */,
-				0DD2E6C02684031300A7D764 /* AllDatatypes.gen.m in Sources */,
 				0D6FD3C526A76D400046D8BD /* Primitive.gen.m in Sources */,
 				97C146F31CF9000F007C117D /* main.m in Sources */,
 				0DD2E6BC2684031300A7D764 /* Host2flutter.gen.m in Sources */,
 				0DA5DFD626CC39D600D2354B /* MultipleArity.gen.m in Sources */,
 				CEA7789327DE9EEB00FE0824 /* NullFields.gen.m in Sources */,
+				3305655A2936D176005D393D /* CoreTests.gen.m in Sources */,
 				0DD2E6BE2684031300A7D764 /* Message.gen.m in Sources */,
 				0D21E59A27D0502D0051D07D /* BackgroundPlatformChannels.gen.m in Sources */,
 				0DD2E6BA2684031300A7D764 /* VoidArgHost.gen.m in Sources */,
@@ -490,7 +486,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = RunnerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.aaclarke.RunnerTests;
@@ -513,7 +513,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = RunnerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.aaclarke.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -535,7 +539,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = RunnerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.aaclarke.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -606,7 +614,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -734,7 +745,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -757,7 +771,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
