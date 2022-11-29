@@ -6,14 +6,30 @@ import Cocoa
 import FlutterMacOS
 
 /**
- * This plugin is currently a no-op since only unit tests have been set up.
- * In the future, this will register Pigeon APIs used in integration tests.
+ * This plugin handles the native side of the integration tests in
+ * example/integration_test/.
  */
-public class TestPlugin: NSObject, FlutterPlugin {
+public class TestPlugin: NSObject, FlutterPlugin, AllVoidHostApi, HostEverything {
   public static func register(with registrar: FlutterPluginRegistrar) {
+    let plugin = TestPlugin()
+    AllVoidHostApiSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
+    HostEverythingSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result(FlutterMethodNotImplemented)
+  // MARK: AllVoidHostApi implementation
+
+  func doit() {
+    // No-op
+  }
+
+  // MARK: HostEverything implementation
+
+  func giveMeEverything() -> Everything {
+    // Currently unused in integration tests, so just return an empty object.
+    return Everything()
+  }
+
+  func echo(everything: Everything) -> Everything {
+    return everything
   }
 }

@@ -232,7 +232,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
               indent.write('$call ');
               if (method.returnType.isVoid) {
                 indent.scoped('{', '}', () {
-                  indent.writeln('reply(nil)');
+                  indent.writeln('reply(wrapResult(nil))');
                 });
               } else {
                 indent.scoped('{ result in', '}', () {
@@ -242,7 +242,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
             } else {
               if (method.returnType.isVoid) {
                 indent.writeln(call);
-                indent.writeln('reply(nil)');
+                indent.writeln('reply(wrapResult(nil))');
               } else {
                 indent.writeln('let result = $call');
                 indent.writeln('reply(wrapResult(result))');

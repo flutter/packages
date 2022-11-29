@@ -1,6 +1,10 @@
-## 4.2.7
+## 4.2.8
 
 * Updates serialisation to use lists instead of maps.
+
+## 4.2.7
+
+* [swift] Fixes a bug when calling methods that return `void`.
 
 ## 4.2.6
 
