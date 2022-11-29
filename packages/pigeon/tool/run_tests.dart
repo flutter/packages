@@ -29,7 +29,7 @@ const int _noDeviceAvailableExitCode = 100;
 
 const String _testPluginRelativePath = 'platform_tests/test_plugin';
 const String _alternateLanguageTestPluginRelativePath =
-    'platform_tests/test_plugin';
+    'platform_tests/alternate_language_test_plugin';
 const String _integrationTestFileRelativePath = 'integration_test/test.dart';
 
 @immutable
@@ -67,9 +67,12 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'flutter_unittests': _TestInfo(
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
-  'ios_unittests': _TestInfo(
-      function: _runIosUnitTests,
+  'ios_objc_unittests': _TestInfo(
+      function: _runIosObjCUnitTests,
       description: 'Unit tests on generated Objective-C code.'),
+  'ios_objc_integration_tests': _TestInfo(
+      function: _runIosObjCIntegrationTests,
+      description: 'Integration tests on generated Objective-C code.'),
   'ios_swift_unittests': _TestInfo(
       function: _runIosSwiftUnitTests,
       description: 'Unit tests on generated Swift code.'),
@@ -218,8 +221,25 @@ Future<int> _runFlutterUnitTests() async {
   return 0;
 }
 
-Future<int> _runIosUnitTests() async {
+Future<int> _runIosObjCUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
+}
+
+Future<int> _runIosObjCIntegrationTests() async {
+  final String? device = await getDeviceForPlatform('ios');
+  if (device == null) {
+    print('No iOS device available. Attach an iOS device or start '
+        'a simulator to run integration tests');
+    return _noDeviceAvailableExitCode;
+  }
+
+  const String examplePath =
+      './$_alternateLanguageTestPluginRelativePath/example';
+  return runFlutterCommand(
+    examplePath,
+    'test',
+    <String>[_integrationTestFileRelativePath, '-d', device],
+  );
 }
 
 Future<int> _runMacOSSwiftUnitTests() async {

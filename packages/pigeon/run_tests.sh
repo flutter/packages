@@ -214,7 +214,7 @@ run_ios_unittests() {
   popd
 }
 
-run_ios_e2e_tests() {
+run_ios_e2e_legacy_tests() {
   DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
   DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
   DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
@@ -240,6 +240,10 @@ run_ios_e2e_tests() {
   popd
 }
 
+run_ios_objc_e2e_tests() {
+  dart run tool/run_tests.dart -t ios_objc_integration_tests --skip-generation
+}
+
 run_android_unittests() {
   pushd $PWD
   cd platform_tests/alternate_language_test_plugin/example
@@ -263,6 +267,7 @@ should_run_dart_compilation_tests=true
 should_run_dart_unittests=true
 should_run_flutter_unittests=true
 should_run_ios_e2e_tests=true
+should_run_ios_objc_e2e_tests=true
 should_run_ios_unittests=true
 should_run_ios_swift_unittests=true
 should_run_mock_handler_tests=true
@@ -281,6 +286,7 @@ while getopts "t:l?h" opt; do
     should_run_dart_unittests=false
     should_run_flutter_unittests=false
     should_run_ios_e2e_tests=false
+    should_run_ios_objc_e2e_tests=false
     should_run_ios_unittests=false
     should_run_ios_swift_unittests=false
     should_run_mock_handler_tests=false
@@ -297,6 +303,7 @@ while getopts "t:l?h" opt; do
     dart_unittests) should_run_dart_unittests=true ;;
     flutter_unittests) should_run_flutter_unittests=true ;;
     ios_e2e_tests) should_run_ios_e2e_tests=true ;;
+    ios_objc_e2e_tests) should_run_ios_objc_e2e_tests=true ;;
     # TODO(stuartmorgan): Rename to include "objc".
     ios_unittests) should_run_ios_unittests=true ;;
     ios_swift_unittests) should_run_ios_swift_unittests=true ;;
@@ -321,7 +328,8 @@ while getopts "t:l?h" opt; do
   dart_unittests           - Unit tests on and analysis on Pigeon's implementation.
   flutter_unittests        - Unit tests on generated Dart code.
   ios_e2e_tests            - End-to-end objc tests run on iOS Simulator
-  ios_unittests            - Unit tests on generated Objc code.
+  ios_unittests            - Unit tests on generated Obj-C code.
+  ios_objc_e2e_tests       - Integration tests on generated Obj-C code.
   ios_swift_unittests      - Unit tests on generated Swift code.
   mock_handler_tests       - Unit tests on generated Dart mock handler code.
   macos_swift_unittests    - Unit tests on generated Swift code on macOS.
@@ -374,7 +382,10 @@ if [ "$should_run_ios_swift_unittests" = true ]; then
   run_ios_swift_unittests
 fi
 if [ "$should_run_ios_e2e_tests" = true ]; then
-  run_ios_e2e_tests
+  run_ios_e2e_legacy_tests
+fi
+if [ "$should_run_ios_objc_e2e_tests" = true ]; then
+  run_ios_objc_e2e_tests
 fi
 if [ "$should_run_android_unittests" = true ]; then
   run_android_unittests
