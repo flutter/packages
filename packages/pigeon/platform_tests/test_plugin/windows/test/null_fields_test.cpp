@@ -15,23 +15,6 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-// EXPECTs that 'map' contains 'key', and then returns a pointer to its value.
-//
-// This gives useful test failure messages instead of silent crashes when the
-// value isn't present, or has the wrong type.
-template <class T>
-const T* ExpectAndGet(const EncodableMap& map, const std::string& key) {
-  auto it = map.find(EncodableValue(key));
-  EXPECT_TRUE(it != map.end()) << "Could not find value for '" << key << '"';
-  if (it == map.end()) {
-    return nullptr;
-  }
-  const T* value_ptr = std::get_if<T>(&(it->second));
-  EXPECT_NE(value_ptr, nullptr)
-      << "Value for '" << key << "' has incorrect type";
-  return value_ptr;
-}
-
 }  // namespace
 
 class NullFieldsTest : public ::testing::Test {
@@ -41,15 +24,15 @@ class NullFieldsTest : public ::testing::Test {
     return NullFieldsSearchRequest(list);
   }
 
-  // Wrapper for access to private NullFieldsSearchRequest map constructor.
-  NullFieldsSearchReply ReplyFromMap(const EncodableList& list) {
+  // Wrapper for access to private NullFieldsSearchRequest list constructor.
+  NullFieldsSearchReply ReplyFromList(const EncodableList& list) {
     return NullFieldsSearchReply(list);
   }
-  // Wrapper for access to private NullFieldsSearchRequest::ToEncodableMap.
+  // Wrapper for access to private NullFieldsSearchRequest::ToEncodableList.
   EncodableList ListFromRequest(const NullFieldsSearchRequest& request) {
     return request.ToEncodableList();
   }
-  // Wrapper for access to private NullFieldsSearchRequest map constructor.
+  // Wrapper for access to private NullFieldsSearchRequest list constructor.
   EncodableList ListFromReply(const NullFieldsSearchReply& reply) {
     return reply.ToEncodableList();
   }
@@ -89,45 +72,45 @@ TEST(NullFields, BuildReplyWithNulls) {
   EXPECT_EQ(reply.type(), nullptr);
 }
 
-TEST_F(NullFieldsTest, RequestFromMapWithValues) {
-  EncodableMap map{
-      {EncodableValue("query"), EncodableValue("hello")},
-      {EncodableValue("identifier"), EncodableValue(1)},
+TEST_F(NullFieldsTest, RequestFromListWithValues) {
+  EncodableList list{
+      {EncodableValue("hello")},
+      {EncodableValue(1)},
   };
-  NullFieldsSearchRequest request = RequestFromMap(map);
+  NullFieldsSearchRequest request = RequestFromList(list);
 
   EXPECT_EQ(*request.query(), "hello");
   EXPECT_EQ(request.identifier(), 1);
 }
 
-TEST_F(NullFieldsTest, RequestFromMapWithNulls) {
-  EncodableMap map{
-      {EncodableValue("query"), EncodableValue()},
-      {EncodableValue("identifier"), EncodableValue(1)},
+TEST_F(NullFieldsTest, RequestFromListWithNulls) {
+  EncodableList list{
+      {EncodableValue()},
+      {EncodableValue(1)},
   };
-  NullFieldsSearchRequest request = RequestFromMap(map);
+  NullFieldsSearchRequest request = RequestFromList(list);
 
   EXPECT_EQ(request.query(), nullptr);
   EXPECT_EQ(request.identifier(), 1);
 }
 
-TEST_F(NullFieldsTest, ReplyFromMapWithValues) {
-  EncodableMap map{
-      {EncodableValue("result"), EncodableValue("result")},
-      {EncodableValue("error"), EncodableValue("error")},
-      {EncodableValue("indices"), EncodableValue(EncodableList{
-                                      EncodableValue(1),
-                                      EncodableValue(2),
-                                      EncodableValue(3),
-                                  })},
-      {EncodableValue("request"),
-       EncodableValue(EncodableMap{
-           {EncodableValue("query"), EncodableValue("hello")},
-           {EncodableValue("identifier"), EncodableValue(1)},
+TEST_F(NullFieldsTest, ReplyFromListWithValues) {
+  EncodableList list{
+      {EncodableValue("result")},
+      {EncodableValue("error")},
+      {EncodableValue(EncodableList{
+          EncodableValue(1),
+          EncodableValue(2),
+          EncodableValue(3),
+      })},
+      {
+       EncodableValue(EncodableList{
+           {EncodableValue("hello")},
+           {EncodableValue(1)},
        })},
-      {EncodableValue("type"), EncodableValue(0)},
+      {EncodableValue(0)},
   };
-  NullFieldsSearchReply reply = ReplyFromMap(map);
+  NullFieldsSearchReply reply = ReplyFromList(list);
 
   EXPECT_EQ(*reply.result(), "result");
   EXPECT_EQ(*reply.error(), "error");
@@ -137,15 +120,15 @@ TEST_F(NullFieldsTest, ReplyFromMapWithValues) {
   EXPECT_EQ(*reply.type(), NullFieldsSearchReplyType::success);
 }
 
-TEST_F(NullFieldsTest, ReplyFromMapWithNulls) {
-  EncodableMap map{
-      {EncodableValue("result"), EncodableValue()},
-      {EncodableValue("error"), EncodableValue()},
-      {EncodableValue("indices"), EncodableValue()},
-      {EncodableValue("request"), EncodableValue()},
-      {EncodableValue("type"), EncodableValue()},
+TEST_F(NullFieldsTest, ReplyFromListWithNulls) {
+  EncodableList list{
+      {EncodableValue()},
+      {EncodableValue()},
+      {EncodableValue()},
+      {EncodableValue()},
+      {EncodableValue()},
   };
-  NullFieldsSearchReply reply = ReplyFromMap(map);
+  NullFieldsSearchReply reply = ReplyFromList(list);
 
   EXPECT_EQ(reply.result(), nullptr);
   EXPECT_EQ(reply.error(), nullptr);
@@ -154,16 +137,20 @@ TEST_F(NullFieldsTest, ReplyFromMapWithNulls) {
   EXPECT_EQ(reply.type(), nullptr);
 }
 
-TEST_F(NullFieldsTest, RequestToMapWithValues) {
+TEST_F(NullFieldsTest, RequestToListWithValues) {
   NullFieldsSearchRequest request;
   request.set_query("hello");
   request.set_identifier(1);
 
-  EncodableMap map = MapFromRequest(request);
+  EncodableList wrapped = ListFromRequest(request);
 
-  EXPECT_EQ(map.size(), 2);
-  EXPECT_EQ(*ExpectAndGet<std::string>(map, "query"), "hello");
-  EXPECT_EQ(*ExpectAndGet<int64_t>(map, "identifier"), 1);
+  EXPECT_EQ(wrapped.size(), 1);
+
+  EncodableList list = wrapped[0];
+  EXPECT_EQ(list.size(), 2);
+
+  EXPECT_EQ(list[0], "hello");
+  EXPECT_EQ(list[1], 1);
 }
 
 TEST_F(NullFieldsTest, RequestToMapWithNulls) {
@@ -171,11 +158,15 @@ TEST_F(NullFieldsTest, RequestToMapWithNulls) {
   // TODO(gaaclarke): This needs a way to be enforced.
   request.set_identifier(1);
 
-  EncodableMap map = MapFromRequest(request);
+  EncodableList wrapped = ListFromRequest(request);
 
-  EXPECT_EQ(map.size(), 2);
-  EXPECT_TRUE(map[EncodableValue("hello")].IsNull());
-  EXPECT_EQ(*ExpectAndGet<int64_t>(map, "identifier"), 1);
+  EXPECT_EQ(wrapped.size(), 2);
+
+  EncodableList list = wrapped[0]
+
+  EXPECT_EQ(list.size(), 2);
+  EXPECT_TRUE(list[0].IsNull());
+  EXPECT_EQ(list[1], 1);
 }
 
 TEST_F(NullFieldsTest, ReplyToMapWithValues) {
@@ -189,32 +180,41 @@ TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   reply.set_request(request);
   reply.set_type(NullFieldsSearchReplyType::success);
 
-  EncodableMap map = MapFromReply(reply);
+  EncodableList wrapped = ListFromReply(reply);
 
-  EXPECT_EQ(map.size(), 5);
-  EXPECT_EQ(*ExpectAndGet<std::string>(map, "result"), "result");
-  EXPECT_EQ(*ExpectAndGet<std::string>(map, "error"), "error");
-  const EncodableList& indices = *ExpectAndGet<EncodableList>(map, "indices");
+  EXPECT_EQ(wrapped.size(), 1);
+
+  EncodableList list = wrapped[0];
+
+  EXPECT_EQ(list.size(), 5);
+  EXPECT_EQ(list[0], "result");
+  EXPECT_EQ(list[1], "error");
+  const EncodableList& indices = list[2];
   EXPECT_EQ(indices.size(), 3);
   EXPECT_EQ(indices[0].LongValue(), 1L);
   EXPECT_EQ(indices[1].LongValue(), 2L);
   EXPECT_EQ(indices[2].LongValue(), 3L);
-  const EncodableMap& request_map = *ExpectAndGet<EncodableMap>(map, "request");
-  EXPECT_EQ(*ExpectAndGet<std::string>(request_map, "query"), "hello");
-  EXPECT_EQ(*ExpectAndGet<int>(map, "type"), 0);
+  const EncodableList& wrapped_request_list = list[4];
+  const EncodableList& request_list = wrapped_request_list[0]
+  EXPECT_EQ(request_list[0], "hello");
+  EXPECT_EQ(request_list[1], 0);
 }
 
-TEST_F(NullFieldsTest, ReplyToMapWithNulls) {
+TEST_F(NullFieldsTest, ReplyToListWithNulls) {
   NullFieldsSearchReply reply;
 
-  EncodableMap map = MapFromReply(reply);
+  EncodableList unwrapped = ListFromReply(reply);
 
-  EXPECT_EQ(map.size(), 5);
-  EXPECT_TRUE(map[EncodableValue("result")].IsNull());
-  EXPECT_TRUE(map[EncodableValue("error")].IsNull());
-  EXPECT_TRUE(map[EncodableValue("indices")].IsNull());
-  EXPECT_TRUE(map[EncodableValue("request")].IsNull());
-  EXPECT_TRUE(map[EncodableValue("type")].IsNull());
+  EXPECT_EQ(unwrapped.size(), 1);
+
+  EncodableList list = wrapped[0];
+
+  EXPECT_EQ(list.size(), 5);
+  EXPECT_TRUE(list[0].IsNull());
+  EXPECT_TRUE(list[1].IsNull());
+  EXPECT_TRUE(list[2].IsNull());
+  EXPECT_TRUE(list[3].IsNull());
+  EXPECT_TRUE(list[4].IsNull());
 }
 
 }  // namespace null_fields_pigeontest
