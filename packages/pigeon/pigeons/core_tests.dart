@@ -32,6 +32,7 @@ abstract class HostIntegrationCoreApi {
   void noop();
 
   /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllTypes:')
   AllTypes echoAllTypes(AllTypes everything);
 
   // TODO(stuartmorgan:) Add wrapper methods to trigger calls back into
@@ -52,5 +53,6 @@ abstract class FlutterIntegrationCoreApi {
   void noop();
 
   /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllTypes:')
   AllTypes echoAllTypes(AllTypes everything);
 }

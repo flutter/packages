@@ -16,9 +16,8 @@ set(PLUGIN_NAME "test_plugin_plugin")
 list(APPEND PLUGIN_SOURCES
   "test_plugin.cpp"
   "test_plugin.h"
+
   # Generated sources.
-  "pigeon/all_datatypes.gen.cpp"
-  "pigeon/all_datatypes.gen.h"
   "pigeon/all_void.gen.cpp"
   "pigeon/all_void.gen.h"
   "pigeon/async_handlers.gen.cpp"
@@ -87,53 +86,58 @@ set(test_plugin_bundled_libraries
 )
 
 # === Tests ===
+if(${include_${PROJECT_NAME}_tests})
+  set(TEST_RUNNER "${PROJECT_NAME}_test")
+  enable_testing()
 
-if (${include_${PROJECT_NAME}_tests})
-set(TEST_RUNNER "${PROJECT_NAME}_test")
-enable_testing()
-# TODO(stuartmorgan): Consider using a single shared, pre-checked-in googletest
-# instance rather than downloading for each plugin. This approach makes sense
-# for a template, but not for a monorepo with many plugins.
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/release-1.11.0.zip
-)
-# Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-# Disable install commands for gtest so it doesn't end up in the bundle.
-set(INSTALL_GTEST OFF CACHE BOOL "Disable installation of googletest" FORCE)
+  # TODO(stuartmorgan): Consider using a single shared, pre-checked-in googletest
+  # instance rather than downloading for each plugin. This approach makes sense
+  # for a template, but not for a monorepo with many plugins.
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/release-1.11.0.zip
+  )
 
-FetchContent_MakeAvailable(googletest)
+  # Prevent overriding the parent project's compiler/linker settings
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-# The plugin's C API is not very useful for unit testing, so build the sources
-# directly into the test binary rather than using the DLL.
-add_executable(${TEST_RUNNER}
-  # Tests.
-  test/multiple_arity_test.cpp
-  test/non_null_fields_test.cpp
-  test/nullable_returns_test.cpp
-  test/null_fields_test.cpp
-  test/pigeon_test.cpp
-  test/primitive_test.cpp
-  # Test utilities.
-  test/utils/echo_messenger.cpp
-  test/utils/echo_messenger.h
-  test/utils/fake_host_messenger.cpp
-  test/utils/fake_host_messenger.h
+  # Disable install commands for gtest so it doesn't end up in the bundle.
+  set(INSTALL_GTEST OFF CACHE BOOL "Disable installation of googletest" FORCE)
 
-  ${PLUGIN_SOURCES}
-)
-apply_standard_settings(${TEST_RUNNER})
-target_include_directories(${TEST_RUNNER} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_libraries(${TEST_RUNNER} PRIVATE flutter_wrapper_plugin)
-target_link_libraries(${TEST_RUNNER} PRIVATE gtest_main gmock)
-# flutter_wrapper_plugin has link dependencies on the Flutter DLL.
-add_custom_command(TARGET ${TEST_RUNNER} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  "${FLUTTER_LIBRARY}" $<TARGET_FILE_DIR:${TEST_RUNNER}>
-)
+  FetchContent_MakeAvailable(googletest)
 
-include(GoogleTest)
-gtest_discover_tests(${TEST_RUNNER})
+  # The plugin's C API is not very useful for unit testing, so build the sources
+  # directly into the test binary rather than using the DLL.
+  add_executable(${TEST_RUNNER}
+
+    # Tests.
+    test/multiple_arity_test.cpp
+    test/non_null_fields_test.cpp
+    test/nullable_returns_test.cpp
+    test/null_fields_test.cpp
+    test/pigeon_test.cpp
+    test/primitive_test.cpp
+
+    # Test utilities.
+    test/utils/echo_messenger.cpp
+    test/utils/echo_messenger.h
+    test/utils/fake_host_messenger.cpp
+    test/utils/fake_host_messenger.h
+
+    ${PLUGIN_SOURCES}
+  )
+  apply_standard_settings(${TEST_RUNNER})
+  target_include_directories(${TEST_RUNNER} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+  target_link_libraries(${TEST_RUNNER} PRIVATE flutter_wrapper_plugin)
+  target_link_libraries(${TEST_RUNNER} PRIVATE gtest_main gmock)
+
+  # flutter_wrapper_plugin has link dependencies on the Flutter DLL.
+  add_custom_command(TARGET ${TEST_RUNNER} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${FLUTTER_LIBRARY}" $<TARGET_FILE_DIR:${TEST_RUNNER}>
+  )
+
+  include(GoogleTest)
+  gtest_discover_tests(${TEST_RUNNER})
 endif()

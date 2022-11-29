@@ -10,8 +10,7 @@
 
 #include <memory>
 
-#include "pigeon/all_datatypes.gen.h"
-#include "pigeon/all_void.gen.h"
+#include "pigeon/core_tests.gen.h"
 
 namespace test_plugin {
 
