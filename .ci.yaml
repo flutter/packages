@@ -20,6 +20,17 @@ platform_properties:
         ]
       device_type: none
       os: Windows
+  mac_arm64:
+    properties:
+      dependencies: >-
+        [
+          {"dependency": "xcode", "version": "14a5294e"},
+          {"dependency": "gems", "version": "v3.3.14"}
+        ]
+      os: Mac-12
+      device_type: none
+      cpu: arm64
+      xcode: 14a5294e # xcode 14.0 beta 5
   mac_x64:
     properties:
       dependencies: >-
@@ -52,6 +63,26 @@ targets:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: mac_build_all_packages.yaml
+      channel: stable
+
+  - name: Mac_arm64 custom_package_tests master
+    bringup: true # New configuration
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: mac_custom_package_tests.yaml
+      channel: master
+
+  - name: Mac_arm64 custom_package_tests stable
+    bringup: true # New configuration
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: mac_custom_package_tests.yaml
       channel: stable
 
   - name: Windows custom_package_tests master - packages
