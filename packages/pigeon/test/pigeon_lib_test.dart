@@ -1210,4 +1210,18 @@ abstract class Api {
     });
     await completer.future;
   });
+
+  test('run with PigeonOptions', () async {
+    final Completer<void> completer = Completer<void>();
+    withTempFile('foo.dart', (File input) async {
+      final _ValidatorGenerator generator = _ValidatorGenerator(null);
+      final int result = await Pigeon.runWithOptions(
+          PigeonOptions(input: input.path, dartOut: 'foo.dart'),
+          generators: <Generator>[generator]);
+      expect(generator.didCallValidate, isFalse);
+      expect(result, equals(0));
+      completer.complete();
+    });
+    await completer.future;
+  });
 }
