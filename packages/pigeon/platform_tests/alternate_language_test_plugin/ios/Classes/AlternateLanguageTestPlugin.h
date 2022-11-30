@@ -4,5 +4,8 @@
 
 #import <Flutter/Flutter.h>
 
-@interface AlternateLanguageTestPlugin : NSObject <FlutterPlugin>
+#import "AllDatatypes.gen.h"
+#import "AllVoid.gen.h"
+
+@interface AlternateLanguageTestPlugin : NSObject <FlutterPlugin, AllVoidHostApi, HostEverything>
 @end
