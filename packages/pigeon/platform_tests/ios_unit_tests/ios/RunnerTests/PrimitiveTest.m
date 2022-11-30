@@ -5,7 +5,7 @@
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
 #import "EchoMessenger.h"
-#import "primitive.gen.h"
+#import "Primitive.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface PrimitiveTest : XCTestCase

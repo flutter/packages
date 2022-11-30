@@ -5,10 +5,10 @@
 #import <XCTest/XCTest.h>
 #import "EchoMessenger.h"
 #import "MockBinaryMessenger.h"
-#import "nullable_returns.gen.h"
+#import "NullableReturns.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-@interface MockNullableArgHostApi : NSObject <NRNullableArgHostApi>
+@interface MockNullableArgHostApi : NSObject <NullableArgHostApi>
 @property(nonatomic, assign) BOOL didCall;
 @property(nonatomic, copy) NSNumber *x;
 @end
@@ -33,9 +33,9 @@
 
 - (void)testNullableParameterWithFlutterApi {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:NRNullableArgHostApiGetCodec()];
-  NRNullableArgFlutterApi *api =
-      [[NRNullableArgFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
+      [[EchoBinaryMessenger alloc] initWithCodec:NullableArgHostApiGetCodec()];
+  NullableArgFlutterApi *api =
+      [[NullableArgFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api doitX:nil
       completion:^(NSNumber *_Nonnull result, NSError *_Nullable error) {
@@ -48,12 +48,12 @@
 - (void)testNullableParameterWithHostApi {
   MockNullableArgHostApi *api = [[MockNullableArgHostApi alloc] init];
   MockBinaryMessenger *binaryMessenger =
-      [[MockBinaryMessenger alloc] initWithCodec:NRNullableArgHostApiGetCodec()];
+      [[MockBinaryMessenger alloc] initWithCodec:NullableArgHostApiGetCodec()];
   NSString *channel = @"dev.flutter.pigeon.NullableArgHostApi.doit";
-  NRNullableArgHostApiSetup(binaryMessenger, api);
+  NullableArgHostApiSetup(binaryMessenger, api);
   XCTAssertNotNil(binaryMessenger.handlers[channel]);
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  NSData *arguments = [NRNullableArgHostApiGetCodec() encode:@[ [NSNull null] ]];
+  NSData *arguments = [NullableArgHostApiGetCodec() encode:@[ [NSNull null] ]];
   binaryMessenger.handlers[channel](arguments, ^(NSData *data) {
     [expectation fulfill];
   });

@@ -5,7 +5,7 @@
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
 #import "EchoMessenger.h"
-#import "enum.gen.h"
+#import "Enum.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface EnumTest : XCTestCase
@@ -15,14 +15,14 @@
 @implementation EnumTest
 
 - (void)testEcho {
-  ACDataWithEnum *data = [[ACDataWithEnum alloc] init];
-  data.state = ACEnumStateError;
+  DataWithEnum *data = [[DataWithEnum alloc] init];
+  data.state = EnumStateError;
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:ACEnumApi2HostGetCodec()];
-  ACEnumApi2Flutter *api = [[ACEnumApi2Flutter alloc] initWithBinaryMessenger:binaryMessenger];
+      [[EchoBinaryMessenger alloc] initWithCodec:EnumApi2HostGetCodec()];
+  EnumApi2Flutter *api = [[EnumApi2Flutter alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoData:data
-      completion:^(ACDataWithEnum *_Nonnull result, NSError *_Nullable error) {
+      completion:^(DataWithEnum *_Nonnull result, NSError *_Nullable error) {
         XCTAssertEqual(data.state, result.state);
         [expectation fulfill];
       }];

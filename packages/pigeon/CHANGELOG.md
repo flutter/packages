@@ -2,6 +2,10 @@
 
 * Adds the ability to use `runWithOptions` entrypoint to allow external libraries to use the pigeon easier.
 
+## 4.2.7
+
+* [swift] Fixes a bug when calling methods that return `void`.
+
 ## 4.2.6
 
 * Fixes bug with parsing documentation comments that start with '/'.
