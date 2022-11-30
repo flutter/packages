@@ -136,12 +136,10 @@ public class AllDatatypesTest {
   public void integerToLong() {
     Everything everything = new Everything();
     everything.setAnInt(123L);
-    ArrayList<ArrayList> list = everything.toList();
+    ArrayList<Object> list = everything.toList();
     assertNotNull(list);
-    ArrayList unwrapped = list.get(0);
-    assertNotNull(unwrapped);
-    assertNull(unwrapped.get(0));
-    assertNotNull(unwrapped.get(1));
+    assertNull(list.get(0));
+    assertNotNull(list.get(1));
     // list.add(1, 123);
     Everything readEverything = Everything.fromList(list);
     assertEquals(readEverything.getAnInt(), everything.getAnInt());

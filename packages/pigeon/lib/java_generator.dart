@@ -115,7 +115,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
           indent.write('case (byte)${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
             indent.writeln(
-                'return ${customClass.name}.fromList((ArrayList<ArrayList>) readValue(buffer));');
+                'return ${customClass.name}.fromList((ArrayList<Object>) readValue(buffer));');
           });
         }
         indent.write('default:');
@@ -519,7 +519,7 @@ String _castObject(
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
   } else if (!hostDatatype.isBuiltin &&
       classes.map((Class x) => x.name).contains(field.type.baseName)) {
-    return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<ArrayList>)$varName)';
+    return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<Object>)$varName)';
   } else {
     return '(${hostDatatype.datatype})$varName';
   }
@@ -622,7 +622,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     }
 
     void writeToList() {
-      indent.write('@NonNull ArrayList<ArrayList> toList() ');
+      indent.write('@NonNull ArrayList<Object> toList() ');
       indent.scoped('{', '}', () {
         indent.writeln(
             'ArrayList<Object> toListResult = new ArrayList<Object>();');
@@ -645,28 +645,23 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           }
           indent.writeln('toListResult.add($toWriteValue);');
         }
-        indent.writeln(
-            'ArrayList<ArrayList> wrapped = new ArrayList<ArrayList>();');
-        indent.writeln('wrapped.add(toListResult);');
-        indent.writeln('return wrapped;');
+        indent.writeln('return toListResult;');
       });
     }
 
     void writeFromList() {
       indent.write(
-          'static @NonNull ${klass.name} fromList(@NonNull ArrayList<ArrayList> list) ');
+          'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
       indent.scoped('{', '}', () {
         const String result = 'pigeonResult';
         indent.writeln('${klass.name} $result = new ${klass.name}();');
-        indent.writeln('ArrayList<Object> unwrapped = list.get(0);');
-        indent.writeln('');
         klass.fields
             .toList()
             .asMap()
             .forEach((int index, final NamedType field) {
           final String fieldVariable = field.name;
           final String setter = _makeSetter(field);
-          indent.writeln('Object $fieldVariable = unwrapped.get($index);');
+          indent.writeln('Object $fieldVariable = list.get($index);');
           if (rootEnumNameSet.contains(field.type.baseName)) {
             indent.writeln(
                 '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName)});');

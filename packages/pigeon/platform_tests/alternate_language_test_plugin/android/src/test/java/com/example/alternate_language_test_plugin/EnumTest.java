@@ -14,7 +14,7 @@ public class EnumTest {
   public void nullValue() {
     Enum.DataWithEnum value = new Enum.DataWithEnum();
     value.setState(null);
-    ArrayList<ArrayList> list = value.toList();
+    ArrayList<Object> list = value.toList();
     Enum.DataWithEnum readValue = Enum.DataWithEnum.fromList(list);
     assertEquals(value.getState(), readValue.getState());
   }

@@ -21,7 +21,7 @@ public class PigeonTest {
     Pigeon.AndroidSetRequest request = new Pigeon.AndroidSetRequest();
     request.setValue(1234l);
     request.setState(Pigeon.AndroidLoadingState.COMPLETE);
-    ArrayList<ArrayList> list = request.toList();
+    ArrayList<Object> list = request.toList();
     Pigeon.AndroidSetRequest readRequest = Pigeon.AndroidSetRequest.fromList(list);
     assertEquals(request.getValue(), readRequest.getValue());
     assertEquals(request.getState(), readRequest.getState());
@@ -34,7 +34,7 @@ public class PigeonTest {
     request.setValue(1234l);
     request.setState(Pigeon.AndroidLoadingState.COMPLETE);
     nested.setRequest(request);
-    ArrayList<ArrayList> list = nested.toList();
+    ArrayList<Object> list = nested.toList();
     Pigeon.AndroidNestedRequest readNested = Pigeon.AndroidNestedRequest.fromList(list);
     assertEquals(nested.getRequest().getValue(), readNested.getRequest().getValue());
     assertEquals(nested.getRequest().getState(), readNested.getRequest().getState());

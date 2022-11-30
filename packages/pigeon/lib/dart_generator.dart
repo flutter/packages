@@ -524,7 +524,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
             indent.addln('${field.name});');
           }
         }
-        indent.writeln('return <Object?>[pigeonList];');
+        indent.writeln('return pigeonList;');
       });
     }
 
@@ -576,12 +576,10 @@ result[$index] != null
       }
 
       indent.write(
-        'static ${klass.name} decode(Object message) ',
+        'static ${klass.name} decode(Object result) ',
       );
       indent.scoped('{', '}', () {
-        indent.writeln('message as List<Object?>;');
-        indent.writeln(
-            'final List<Object?> result = message.first! as List<Object?>;');
+        indent.writeln('result as List<Object?>;');
         indent.write('return ${klass.name}');
         indent.scoped('(', ');', () {
           for (int index = 0; index < klass.fields.length; index += 1) {

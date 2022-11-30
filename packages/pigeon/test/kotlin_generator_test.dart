@@ -31,8 +31,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
-    expect(code, contains('fun fromList(result: List<Any?>): Foobar'));
-    expect(code, contains('fun toList(): MutableList<MutableList<Any?>>'));
+    expect(code, contains('fun fromList(list: List<Any?>): Foobar'));
+    expect(code, contains('fun toList(): MutableList<Any?>'));
   });
 
   test('gen one enum', () {
@@ -478,11 +478,11 @@ void main() {
     expect(code, contains('data class Outer'));
     expect(code, contains('data class Nested'));
     expect(code, contains('val nested: Nested? = null'));
-    expect(code, contains('fun fromList(result: List<Any?>): Outer'));
+    expect(code, contains('fun fromList(list: List<Any?>): Outer'));
     expect(
         code, contains('val nested: Nested? = (list[0] as? List<Any?>)?.let'));
     expect(code, contains('Nested.fromList(it)'));
-    expect(code, contains('fun toList(): MutableList<MutableList<Any?>>'));
+    expect(code, contains('fun toList(): MutableList<Any?>'));
   });
 
   test('gen one async Host Api', () {

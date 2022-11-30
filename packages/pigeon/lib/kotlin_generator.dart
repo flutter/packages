@@ -513,7 +513,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
     }
 
     void writeToList() {
-      indent.write('fun toList(): MutableList<MutableList<Any?>> ');
+      indent.write('fun toList(): MutableList<Any?> ');
       indent.scoped('{', '}', () {
         indent.writeln('val list = mutableListOf<Any?>()');
 
@@ -537,7 +537,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
             indent.writeln('list.add($toWriteValue)');
           }
         }
-        indent.writeln('return mutableListOf<MutableList<Any?>>(list)');
+        indent.writeln('return list');
       });
     }
 
@@ -547,10 +547,9 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
       indent.write('companion object ');
       indent.scoped('{', '}', () {
         indent.writeln('@Suppress("UNCHECKED_CAST")');
-        indent.write('fun fromList(result: List<Any?>): $className ');
+        indent.write('fun fromList(list: List<Any?>): $className ');
 
         indent.scoped('{', '}', () {
-          indent.writeln('val list = result.first() as List<Any?>');
           klass.fields
               .toList()
               .asMap()

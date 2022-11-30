@@ -89,7 +89,7 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('package com.google.foobar;'));
-    expect(code, contains('ArrayList<ArrayList> toList()'));
+    expect(code, contains('ArrayList<Object> toList()'));
   });
 
   test('gen one host api', () {
@@ -456,7 +456,7 @@ void main() {
     expect(
         code,
         contains(
-            '(nested == null) ? null : Nested.fromList((ArrayList<ArrayList>)nested)'));
+            '(nested == null) ? null : Nested.fromList((ArrayList<Object>)nested)'));
     expect(code, contains('add((nested == null) ? null : nested.toList());'));
   });
 

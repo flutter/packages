@@ -103,13 +103,11 @@ internal class AllDatatypesTest: TestCase() {
         val everything = Everything(anInt = 123L)
         val list = everything.toList()
         assertNotNull(list)
-        val result = list.first()
-        assertNotNull(result)
-        assertNull(result.first())
-        assertNotNull(result[1])
-        assertTrue(result[1] == 123L)
+        assertNull(list.first())
+        assertNotNull(list[1])
+        assertTrue(list[1] == 123L)
 
-        val list2 = listOf<Any?>(listOf(null, 123, null, null, null, null, null, null, null, null, null, null, null))
+        val list2 = listOf(null, 123, null, null, null, null, null, null, null, null, null, null, null)
         val everything2 = Everything.fromList(list2)
 
         assertEquals(everything.anInt, everything2.anInt)
