@@ -102,7 +102,7 @@ class RouteBuilder {
       _buildNavigator(
         pop,
         buildPages(
-            context, matchList, pop, routerNeglect, navigatorKey, registry),
+            context, matchList, 0, pop, routerNeglect, navigatorKey, registry),
         navigatorKey,
         observers: observers,
       ),
@@ -115,6 +115,7 @@ class RouteBuilder {
   List<Page<Object?>> buildPages(
       BuildContext context,
       RouteMatchList matchList,
+      int startIndex,
       VoidCallback onPop,
       bool routerNeglect,
       GlobalKey<NavigatorState> navigatorKey,
@@ -122,8 +123,8 @@ class RouteBuilder {
     try {
       final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
           <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
-      _buildRecursive(context, matchList, 0, onPop, routerNeglect, keyToPage,
-          navigatorKey, registry);
+      _buildRecursive(context, matchList, startIndex, onPop, routerNeglect,
+          keyToPage, navigatorKey, registry);
       return keyToPage[navigatorKey]!;
     } on _RouteBuilderError catch (e) {
       return <Page<Object?>>[
@@ -216,11 +217,8 @@ class RouteBuilder {
         child = _buildNavigator(
             pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
             restorationScopeId: branch.restorationScopeId);
-        final StatefulShellBranchState shellNavigatorState =
-            StatefulShellBranchState(
-                branch: branch, child: child, matchList: matchList);
-        child = _buildStatefulNavigationShell(
-            route, state, branches, shellNavigatorState, pop, registry);
+        child = _buildStatefulNavigationShell(route, state, branches, branch,
+            child as Navigator, matchList, pop, registry);
       } else if (route is ShellRoute) {
         // The key to provide to the shell route's Navigator.
         shellNavigatorKey = route.navigatorKey;
@@ -270,7 +268,9 @@ class RouteBuilder {
     StatefulShellRoute shellRoute,
     GoRouterState shellRouterState,
     List<StatefulShellBranch> branches,
-    StatefulShellBranchState currentBranchState,
+    StatefulShellBranch currentBranch,
+    Navigator currentNavigator,
+    RouteMatchList currentMatchList,
     VoidCallback pop,
     Map<Page<Object?>, GoRouterState> registry,
   ) {
@@ -279,13 +279,16 @@ class RouteBuilder {
         shellRoute: shellRoute,
         shellGoRouterState: shellRouterState,
         branches: branches,
-        currentBranchState: currentBranchState,
+        currentBranch: currentBranch,
+        currentNavigator: currentNavigator,
+        currentMatchList: currentMatchList,
         branchNavigatorBuilder: (BuildContext context,
-            RouteMatchList navigatorMatchList,
+            RouteMatchList matchList,
+            int startIndex,
             GlobalKey<NavigatorState> navigatorKey,
             String? restorationScopeId) {
-          final List<Page<dynamic>> pages = buildPages(
-              context, navigatorMatchList, pop, true, navigatorKey, registry);
+          final List<Page<dynamic>> pages = buildPages(context, matchList,
+              startIndex, pop, true, navigatorKey, registry);
           return _buildNavigator(pop, pages, navigatorKey,
               restorationScopeId: restorationScopeId);
         });

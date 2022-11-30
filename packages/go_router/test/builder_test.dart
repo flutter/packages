@@ -77,12 +77,12 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-          <RouteMatch>[
-            _createRouteMatch(config.routes.first, '/'),
-            _createRouteMatch(config.routes.first.routes.first, '/'),
-          ],
-          Uri.parse('/'),
-          <String, String>{},
+        <RouteMatch>[
+          _createRouteMatch(config.routes.first, '/'),
+          _createRouteMatch(config.routes.first.routes.first, '/'),
+        ],
+        Uri.parse('/'),
+        <String, String>{},
       );
 
       await tester.pumpWidget(

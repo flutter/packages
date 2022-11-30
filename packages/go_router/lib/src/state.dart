@@ -316,14 +316,12 @@ class StatefulShellRouteState {
   /// Gets the [Widget]s representing each of the shell branches.
   ///
   /// The Widget returned from this method contains the [Navigator]s of the
-  /// branches. Note that the Widget for a particular branch may be null if the
-  /// branch hasn't been visited yet. Also note that the Widgets returned by this
-  /// method should only be added to the widget tree if using a custom
-  /// branch container Widget implementation, where the child parameter in the
-  /// [ShellRouteBuilder] of the [StatefulShellRoute] is ignored (i.e. not added
-  /// to the widget tree).
+  /// branches. Note that the Widgets returned by this method should only be
+  /// added to the widget tree if using a custom branch container Widget
+  /// implementation, where the child parameter in the [ShellRouteBuilder] of
+  /// the [StatefulShellRoute] is ignored (i.e. not added to the widget tree).
   /// See [StatefulShellBranchState.child].
-  List<Widget?> get children =>
+  List<Widget> get children =>
       branchStates.map((StatefulShellBranchState e) => e.child).toList();
 
   /// Navigate to the current location of the shell navigator with the provided
@@ -402,7 +400,7 @@ class StatefulShellBranchState {
   /// Constructs a [StatefulShellBranchState].
   const StatefulShellBranchState({
     required this.branch,
-    this.child,
+    required this.child,
     RouteMatchList? matchList,
   }) : _matchList = matchList;
 
@@ -422,12 +420,11 @@ class StatefulShellBranchState {
   /// The [Widget] representing this route branch in a [StatefulShellRoute].
   ///
   /// The Widget returned from this method contains the [Navigator] of the
-  /// branch. This field may be null until this route branch has been navigated
-  /// to at least once. Note that the Widget returned by this method should only
+  /// branch. Note that the Widget returned by this method should only
   /// be added to the widget tree if using a custom branch container Widget
   /// implementation, where the child parameter in the [ShellRouteBuilder] of
   /// the [StatefulShellRoute] is ignored (i.e. not added to the widget tree).
-  final Widget? child;
+  final Widget child;
 
   /// The current navigation stack for the branch.
   final RouteMatchList? _matchList;
@@ -447,4 +444,10 @@ class StatefulShellBranchState {
 
   @override
   int get hashCode => Object.hash(branch, child, _matchList);
+}
+
+/// Helper extension on [StatefulShellBranchState], for internal use.
+extension StatefulShellBranchStateHelper on StatefulShellBranchState {
+  /// The current navigation stack for the branch.
+  RouteMatchList? get matchList => _matchList;
 }

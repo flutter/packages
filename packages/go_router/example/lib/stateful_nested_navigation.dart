@@ -349,16 +349,7 @@ class TabbedRootScreen extends StatelessWidget {
   /// Constructs a TabbedRootScreen
   const TabbedRootScreen({Key? key}) : super(key: key);
 
-  Widget _child(StatefulShellBranchState branchState) {
-    // TabBarView will cache it's root widget, so we need to reevaluate
-    // the child (using a Builder) in case it's null.
-    return branchState.child != null
-        ? branchState.child!
-        : Builder(
-            builder: (BuildContext context) =>
-                StatefulShellBranch.of(context).child ??
-                const SizedBox.expand());
-  }
+  Widget _child(StatefulShellBranchState branchState) => branchState.child;
 
   @override
   Widget build(BuildContext context) {

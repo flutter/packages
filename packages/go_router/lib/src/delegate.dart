@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 
 import 'builder.dart';
 import 'configuration.dart';
+import 'information_provider.dart';
 import 'match.dart';
 import 'matching.dart';
 import 'typedefs.dart';
@@ -19,6 +20,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Constructor for GoRouter's implementation of the RouterDelegate base
   /// class.
   GoRouterDelegate({
+    required GoRouteInformationProvider routeInformationProvider,
     required RouteConfiguration configuration,
     required GoRouterBuilderWithNav builderWithNav,
     required GoRouterPageBuilder? errorPageBuilder,
@@ -26,7 +28,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
-  })  : _configuration = configuration,
+  })  : _routeInformationProvider = routeInformationProvider,
+        _configuration = configuration,
         builder = RouteBuilder(
           configuration: configuration,
           builderWithNav: builderWithNav,
@@ -44,6 +47,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   final bool routerNeglect;
 
   RouteMatchList _matchList = RouteMatchList.empty;
+
+  late final GoRouteInformationProvider _routeInformationProvider;
 
   /// Stores the number of times each route route has been pushed.
   ///
@@ -150,12 +155,20 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Pop the top page off the GoRouter's page stack.
   void pop() {
+    final bool didPush = _matchList.last is ImperativeRouteMatch;
     _matchList.pop();
     assert(() {
       _debugAssertMatchListNotEmpty();
       return true;
     }());
-    notifyListeners();
+    if (didPush) {
+      notifyListeners();
+    } else {
+      // TODO(tolo): Temporary workaround (here and in RouteMatchList) to get expected pop behaviour
+      _routeInformationProvider.value = RouteInformation(
+          location: _matchList.lastMatchUri.toString(),
+          state: _matchList.last.extra);
+    }
   }
 
   /// Replaces the top-most page of the page stack with the given one.

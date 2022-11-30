@@ -72,6 +72,17 @@ class RouteMatchList {
     return buffer.toString();
   }
 
+  static String _addQueryParams(
+      String loc, Map<String, dynamic> queryParametersAll) {
+    final Uri uri = Uri.parse(loc);
+    assert(uri.queryParameters.isEmpty);
+    return Uri(
+            path: uri.path,
+            queryParameters:
+                queryParametersAll.isEmpty ? null : queryParametersAll)
+        .toString();
+  }
+
   final List<RouteMatch> _matches;
 
   /// the full path pattern that matches the uri.
@@ -81,8 +92,14 @@ class RouteMatchList {
   /// Parameters for the matched route, URI-encoded.
   final Map<String, String> pathParameters;
 
-  /// The uri of the current match.
+  /// The uri of the original match.
   final Uri uri;
+
+  /// The uri of the last match.
+  Uri get lastMatchUri => _matches.isEmpty
+      ? Uri(queryParameters: uri.queryParametersAll)
+      : Uri.parse(
+          _addQueryParams(_matches.last.subloc, uri.queryParametersAll));
 
   /// Returns true if there are no matches.
   bool get isEmpty => _matches.isEmpty;
