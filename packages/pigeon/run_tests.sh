@@ -165,6 +165,10 @@ run_ios_swift_unittests() {
   dart run tool/run_tests.dart -t ios_swift_unittests --skip-generation
 }
 
+run_ios_swift_e2e_tests() {
+  dart run tool/run_tests.dart -t ios_swift_integration_tests --skip-generation
+}
+
 run_macos_swift_unittests() {
   dart run tool/run_tests.dart -t macos_swift_unittests --skip-generation
 }
@@ -214,7 +218,7 @@ run_ios_unittests() {
   popd
 }
 
-run_ios_e2e_tests() {
+run_ios_e2e_legacy_tests() {
   DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
   DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
   DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
@@ -262,9 +266,13 @@ should_run_android_unittests=true
 should_run_dart_compilation_tests=true
 should_run_dart_unittests=true
 should_run_flutter_unittests=true
-should_run_ios_e2e_tests=true
+should_run_ios_e2e_legacy_tests=true
 should_run_ios_unittests=true
 should_run_ios_swift_unittests=true
+# Currently these are testing exactly the same thing as macos_swift_e2e_tests,
+# so we don't need to run both by default. This should become `true` if any
+# iOS-only tests are added (e.g., for a feature not supported by macOS).
+should_run_ios_swift_e2e_tests=false
 should_run_mock_handler_tests=true
 should_run_macos_swift_unittests=true
 should_run_macos_swift_e2e_tests=true
@@ -280,9 +288,10 @@ while getopts "t:l?h" opt; do
     should_run_dart_compilation_tests=false
     should_run_dart_unittests=false
     should_run_flutter_unittests=false
-    should_run_ios_e2e_tests=false
+    should_run_ios_e2e_legacy_tests=false
     should_run_ios_unittests=false
     should_run_ios_swift_unittests=false
+    should_run_ios_swift_e2e_tests=false
     should_run_mock_handler_tests=false
     should_run_macos_swift_unittests=false
     should_run_macos_swift_e2e_tests=false
@@ -296,10 +305,11 @@ while getopts "t:l?h" opt; do
     dart_compilation_tests) should_run_dart_compilation_tests=true ;;
     dart_unittests) should_run_dart_unittests=true ;;
     flutter_unittests) should_run_flutter_unittests=true ;;
-    ios_e2e_tests) should_run_ios_e2e_tests=true ;;
+    ios_e2e_legacy_tests) should_run_ios_e2e_legacy_tests=true ;;
     # TODO(stuartmorgan): Rename to include "objc".
     ios_unittests) should_run_ios_unittests=true ;;
     ios_swift_unittests) should_run_ios_swift_unittests=true ;;
+    ios_swift_e2e_tests) should_run_ios_swift_e2e_tests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
     macos_swift_unittests) should_run_macos_swift_unittests=true ;;
     macos_swift_e2e_tests) should_run_macos_swift_e2e_tests=true ;;
@@ -320,9 +330,10 @@ while getopts "t:l?h" opt; do
   dart_compilation_tests   - Compilation tests on generated Dart code.
   dart_unittests           - Unit tests on and analysis on Pigeon's implementation.
   flutter_unittests        - Unit tests on generated Dart code.
-  ios_e2e_tests            - End-to-end objc tests run on iOS Simulator
+  ios_e2e_legacy_tests     - Legacy end-to-end Obj-C tests; build-only.
   ios_unittests            - Unit tests on generated Objc code.
   ios_swift_unittests      - Unit tests on generated Swift code.
+  ios_swift_e2e_tests      - Integration tests on generated Swift code on iOS.
   mock_handler_tests       - Unit tests on generated Dart mock handler code.
   macos_swift_unittests    - Unit tests on generated Swift code on macOS.
   macos_swift_e2e_tests    - Integration tests on generated Swift code on macOS.
@@ -373,8 +384,11 @@ fi
 if [ "$should_run_ios_swift_unittests" = true ]; then
   run_ios_swift_unittests
 fi
-if [ "$should_run_ios_e2e_tests" = true ]; then
-  run_ios_e2e_tests
+if [ "$should_run_ios_swift_e2e_tests" = true ]; then
+  run_ios_swift_e2e_tests
+fi
+if [ "$should_run_ios_e2e_legacy_tests" = true ]; then
+  run_ios_e2e_legacy_tests
 fi
 if [ "$should_run_android_unittests" = true ]; then
   run_android_unittests

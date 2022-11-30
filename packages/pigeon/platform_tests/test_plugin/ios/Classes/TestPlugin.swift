@@ -6,8 +6,8 @@ import Flutter
 import UIKit
 
 /**
- * This plugin is currently a no-op since only unit tests have been set up.
- * In the future, this will register Pigeon APIs used in integration tests.
+ * This plugin handles the native side of the integration tests in
+ * example/integration_test/.
  */
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
