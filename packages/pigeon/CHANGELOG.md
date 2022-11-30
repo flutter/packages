@@ -1,4 +1,4 @@
-## 4.2.7
+## 4.2.8
 
 * Adds the ability to use `runWithOptions` entrypoint to allow external libraries to use the pigeon easier.
 
