@@ -68,14 +68,17 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
   'ios_objc_unittests': _TestInfo(
-      function: _runIosObjCUnitTests,
+      function: _runIOSObjCUnitTests,
       description: 'Unit tests on generated Objective-C code.'),
   'ios_objc_integration_tests': _TestInfo(
-      function: _runIosObjCIntegrationTests,
+      function: _runIOSObjCIntegrationTests,
       description: 'Integration tests on generated Objective-C code.'),
   'ios_swift_unittests': _TestInfo(
-      function: _runIosSwiftUnitTests,
+      function: _runIOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code.'),
+  'ios_swift_integration_tests': _TestInfo(
+      function: _runIOSSwiftIntegrationTests,
+      description: 'Integration tests on generated Swift code.'),
   'macos_swift_unittests': _TestInfo(
       function: _runMacOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code on macOS.'),
@@ -92,7 +95,8 @@ Future<int> _runAndroidJavaUnitTests() async {
 }
 
 Future<int> _runAndroidJavaIntegrationTests() async {
-  return _runAndroidIntegrationTests(_alternateLanguageTestPluginRelativePath);
+  return _runMobileIntegrationTests(
+      'Android', _alternateLanguageTestPluginRelativePath);
 }
 
 Future<int> _runAndroidKotlinUnitTests() async {
@@ -110,14 +114,15 @@ Future<int> _runAndroidKotlinUnitTests() async {
 }
 
 Future<int> _runAndroidKotlinIntegrationTests() async {
-  return _runAndroidIntegrationTests(_testPluginRelativePath);
+  return _runMobileIntegrationTests('Android', _testPluginRelativePath);
 }
 
-Future<int> _runAndroidIntegrationTests(String testPluginPath) async {
-  final String? device = await getDeviceForPlatform('android');
+Future<int> _runMobileIntegrationTests(
+    String platform, String testPluginPath) async {
+  final String? device = await getDeviceForPlatform(platform.toLowerCase());
   if (device == null) {
-    print('No Android device available. Attach an Android device or start '
-        'an emulator to run integration tests');
+    print('No $platform device available. Attach an $platform device or start '
+        'an emulator/simulator to run integration tests');
     return _noDeviceAvailableExitCode;
   }
 
@@ -221,11 +226,11 @@ Future<int> _runFlutterUnitTests() async {
   return 0;
 }
 
-Future<int> _runIosObjCUnitTests() async {
+Future<int> _runIOSObjCUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
 }
 
-Future<int> _runIosObjCIntegrationTests() async {
+Future<int> _runIOSObjCIntegrationTests() async {
   final String? device = await getDeviceForPlatform('ios');
   if (device == null) {
     print('No iOS device available. Attach an iOS device or start '
@@ -264,7 +269,7 @@ Future<int> _runMacOSSwiftIntegrationTests() async {
   );
 }
 
-Future<int> _runIosSwiftUnitTests() async {
+Future<int> _runIOSSwiftUnitTests() async {
   const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(
     examplePath,
@@ -281,6 +286,10 @@ Future<int> _runIosSwiftUnitTests() async {
     destination: 'platform=iOS Simulator,name=iPhone 8',
     extraArguments: <String>['test'],
   );
+}
+
+Future<int> _runIOSSwiftIntegrationTests() async {
+  return _runMobileIntegrationTests('iOS', _testPluginRelativePath);
 }
 
 Future<int> _runMockHandlerTests() async {
