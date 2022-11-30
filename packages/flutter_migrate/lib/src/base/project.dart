@@ -60,8 +60,8 @@ class FlutterProject {
   File get metadataFile => directory.childFile('.metadata');
 
   /// Returns a list of platform names that are supported by the project.
-  List<SupportedPlatform?> getSupportedPlatforms() {
-    final List<SupportedPlatform?> platforms = <SupportedPlatform?>[];
+  List<SupportedPlatform> getSupportedPlatforms() {
+    final List<SupportedPlatform> platforms = <SupportedPlatform>[];
     if (directory.childDirectory('android').existsSync()) {
       platforms.add(SupportedPlatform.android);
     }

@@ -102,12 +102,12 @@ bool _mergable(String localPath) {
 
 // Compile the set of path prefixes that should be ignored as configured
 // in the command arguments.
-Set<String> _getSkippedPrefixes(List<SupportedPlatform?> platforms) {
+Set<String> _getSkippedPrefixes(List<SupportedPlatform> platforms) {
   final Set<String> skippedPrefixes = <String>{};
   for (final SupportedPlatform platform in SupportedPlatform.values) {
     skippedPrefixes.add(platformToSubdirectoryPrefix(platform));
   }
-  for (final SupportedPlatform? platform in platforms) {
+  for (final SupportedPlatform platform in platforms) {
     if (platform != null) {
       skippedPrefixes.remove(platformToSubdirectoryPrefix(platform));
     }
@@ -185,7 +185,7 @@ class MigrateCommandParameters {
   final bool verbose;
   final bool allowFallbackBaseRevision;
   final bool deleteTempDirectories;
-  final List<SupportedPlatform?>? platforms;
+  final List<SupportedPlatform>? platforms;
 }
 
 /// Computes the changes that migrates the current flutter project to the target revision.
@@ -226,7 +226,7 @@ Future<MigrateResult?> computeMigration({
   migrateLogger.logStep('start');
   // Find the path prefixes to ignore. This allows subdirectories of platforms
   // not part of the migration to be skipped.
-  final List<SupportedPlatform?> platforms =
+  final List<SupportedPlatform> platforms =
       commandParameters.platforms ?? flutterProject.getSupportedPlatforms();
   final Set<String> skippedPrefixes = _getSkippedPrefixes(platforms);
 
@@ -819,10 +819,10 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
         final List<String> platforms = <String>[];
         for (final MigratePlatformConfig config
             in revisionToConfigs[revision]!) {
-          if (config.platform == null) {
+          if (config.component == null) {
             continue;
           }
-          platforms.add(config.platform.toString().split('.').last);
+          platforms.add(config.component.toString().split('.').last);
         }
 
         // In the case of the revision being invalid or not a hash of the master branch,
@@ -949,7 +949,7 @@ class MigrateRevisions {
     required MigrateContext context,
     required String? baseRevision,
     required bool allowFallbackBaseRevision,
-    required List<SupportedPlatform?> platforms,
+    required List<SupportedPlatform> platforms,
     required FlutterToolsEnvironment environment,
   }) {
     _computeRevisions(context, baseRevision, allowFallbackBaseRevision,
@@ -967,9 +967,14 @@ class MigrateRevisions {
     MigrateContext context,
     String? baseRevision,
     bool allowFallbackBaseRevision,
-    List<SupportedPlatform?> platforms,
+    List<SupportedPlatform> platforms,
     FlutterToolsEnvironment environment,
   ) {
+    final List<FlutterProjectComponent> components = <FlutterProjectComponent>[];
+    for (final SupportedPlatform platform in platforms) {
+      components.add(platform.toFlutterProjectComponent());
+    }
+    components.add(FlutterProjectComponent.root);
     final FlutterProjectMetadata metadata = FlutterProjectMetadata(
         context.flutterProject.directory.childFile('.metadata'),
         context.migrateLogger.logger);
@@ -998,10 +1003,10 @@ class MigrateRevisions {
                 _getFallbackBaseRevision(
                     allowFallbackBaseRevision, context.migrateLogger)
             : platform.baseRevision!;
-        if (platforms != null && !platforms.contains(platform.platform)) {
+        if (!components.contains(platform.component)) {
           continue;
         }
-        if (platform.platform == null) {
+        if (platform.component == FlutterProjectComponent.root) {
           rootBaseRevision = effectiveRevision;
         }
         revisions.add(effectiveRevision);
@@ -1013,12 +1018,12 @@ class MigrateRevisions {
     } else {
       rootBaseRevision = baseRevision;
       revisionToConfigs[baseRevision] = <MigratePlatformConfig>[];
-      for (final SupportedPlatform? platform in platforms) {
+      for (final FlutterProjectComponent component in components) {
         revisionToConfigs[baseRevision]!.add(MigratePlatformConfig(
-            platform: platform, baseRevision: baseRevision));
+            component: component, baseRevision: baseRevision));
       }
-      revisionToConfigs[baseRevision]!.add(
-          MigratePlatformConfig(platform: null, baseRevision: baseRevision));
+      // revisionToConfigs[baseRevision]!.add(
+      //     MigratePlatformConfig(platform: null, baseRevision: baseRevision));
     }
     // Reorder such that the root revision is created first.
     revisions.remove(rootBaseRevision);

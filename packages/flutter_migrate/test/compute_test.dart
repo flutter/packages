@@ -167,8 +167,8 @@ void main() {
         <String>[oldSdkRevision], //revisionsList
         <String, List<MigratePlatformConfig>>{
           oldSdkRevision: <MigratePlatformConfig>[
-            MigratePlatformConfig(platform: SupportedPlatform.android),
-            MigratePlatformConfig(platform: SupportedPlatform.ios)
+            MigratePlatformConfig(component: FlutterProjectComponent.android),
+            MigratePlatformConfig(component: FlutterProjectComponent.ios)
           ],
         }, //revisionToConfigs
         oldSdkRevision, //fallbackRevision
@@ -218,8 +218,8 @@ void main() {
         <String>[oldSdkRevision], //revisionsList
         <String, List<MigratePlatformConfig>>{
           oldSdkRevision: <MigratePlatformConfig>[
-            MigratePlatformConfig(platform: SupportedPlatform.android),
-            MigratePlatformConfig(platform: SupportedPlatform.ios)
+            MigratePlatformConfig(component: FlutterProjectComponent.android),
+            MigratePlatformConfig(component: FlutterProjectComponent.ios)
           ],
         }, //revisionToConfigs
         oldSdkRevision, //fallbackRevision
@@ -508,8 +508,8 @@ migration:
         <String>[oldSdkRevision], //revisionsList
         <String, List<MigratePlatformConfig>>{
           oldSdkRevision: <MigratePlatformConfig>[
-            MigratePlatformConfig(platform: SupportedPlatform.android),
-            MigratePlatformConfig(platform: SupportedPlatform.ios)
+            MigratePlatformConfig(component: FlutterProjectComponent.android),
+            MigratePlatformConfig(component: FlutterProjectComponent.ios)
           ],
         }, //revisionToConfigs
         oldSdkRevision, //fallbackRevision
@@ -729,8 +729,8 @@ migration:
         <String>[oldSdkRevision], //revisionsList
         <String, List<MigratePlatformConfig>>{
           oldSdkRevision: <MigratePlatformConfig>[
-            MigratePlatformConfig(platform: SupportedPlatform.android),
-            MigratePlatformConfig(platform: SupportedPlatform.ios)
+            MigratePlatformConfig(component: FlutterProjectComponent.android),
+            MigratePlatformConfig(component: FlutterProjectComponent.ios)
           ],
         }, //revisionToConfigs
         oldSdkRevision, //fallbackRevision
