@@ -227,7 +227,7 @@ Future<int> _runFlutterUnitTests() async {
 }
 
 Future<int> _runIOSObjCUnitTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  return _runIOSUnitTests(_alternateLanguageTestPluginRelativePath);
 }
 
 Future<int> _runIOSObjCIntegrationTests() async {
@@ -270,11 +270,15 @@ Future<int> _runMacOSSwiftIntegrationTests() async {
 }
 
 Future<int> _runIOSSwiftUnitTests() async {
-  const String examplePath = './$_testPluginRelativePath/example';
+  return _runIOSUnitTests(_testPluginRelativePath);
+}
+
+Future<int> _runIOSUnitTests(String testPluginPath) async {
+  final String examplePath = './$testPluginPath/example';
   final int compileCode = await runFlutterBuild(
     examplePath,
     'ios',
-    flags: <String>['--simulator'],
+    flags: <String>['--simulator', '--no-codesign'],
   );
   if (compileCode != 0) {
     return compileCode;
