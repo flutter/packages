@@ -1,6 +1,10 @@
-## 4.2.8
+## 4.2.9
 
 * Updates serialisation to use lists instead of maps.
+
+## 4.2.8
+
+* Adds the ability to use `runWithOptions` entrypoint to allow external libraries to use the pigeon easier.
 
 ## 4.2.7
 
