@@ -50,8 +50,8 @@ class AllDatatypesTests: XCTestCase {
       mapWithAnnotations: ["hello": "world"],
       mapWithObject: ["hello": 1234, "goodbye" : "world"]
     )
-    let binaryMessenger = EchoBinaryMessenger(codec: FlutterEverythingCodec.shared)
-    let api = FlutterEverything(binaryMessenger: binaryMessenger)
+    let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
+    let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
 
