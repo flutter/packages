@@ -86,18 +86,35 @@ void defineTests() {
         );
 
         final Iterable<Widget> widgets = tester.allWidgets;
-        expectTextStrings(widgets, <String>[
-          '1.',
-          'Item 1',
-          '2.',
-          'Item 2',
-          '3.',
-          'Item 3',
-          '10.',
-          'Item 10',
-          '11.',
-          'Item 11'
-        ]);
+        if (!newMarkdown) {
+          // For pkg:markdown <= v6.0.1
+          expectTextStrings(widgets, <String>[
+            '1.',
+            'Item 1',
+            '2.',
+            'Item 2',
+            '3.',
+            'Item 3',
+            '10.',
+            'Item 10',
+            '11.',
+            'Item 11'
+          ]);
+        } else {
+          // For pkg:markdown > v6.0.1
+          expectTextStrings(widgets, <String>[
+            '1.',
+            'Item 1',
+            '2.',
+            'Item 2',
+            '3.',
+            'Item 3',
+            '4.',
+            'Item 10',
+            '5.',
+            'Item 11'
+          ]);
+        }
       },
     );
 
