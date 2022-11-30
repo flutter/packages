@@ -204,14 +204,20 @@ run_dart_compilation_tests() {
   rm -rf $temp_dir
 }
 
-run_ios_unittests() {
+run_ios_objc_unittests() {
+  dart run tool/run_tests.dart -t ios_objc_unittests --skip-generation
+}
+
+# TODO(stuartmorgan): Remove once run_ios_objc_unittests works in CI; see
+# related TODOs below.
+run_ios_legacy_unittests() {
   pushd $PWD
-  cd platform_tests/alternate_language_test_plugin/example
-  flutter build ios --simulator --no-codesign
+  cd platform_tests/ios_unit_tests
+  flutter build ios --simulator
   cd ios
   xcodebuild \
     -workspace Runner.xcworkspace \
-    -scheme Runner \
+    -scheme RunnerTests \
     -sdk iphonesimulator \
     -destination 'platform=iOS Simulator,name=iPhone 8' \
     test
@@ -271,8 +277,14 @@ should_run_dart_compilation_tests=true
 should_run_dart_unittests=true
 should_run_flutter_unittests=true
 should_run_ios_e2e_legacy_tests=true
-should_run_ios_objc_e2e_tests=true
-should_run_ios_unittests=true
+# TODO(stuartmorgan): Enable by default once CI issues are solved; see
+# https://github.com/flutter/packages/pull/2816.
+should_run_ios_objc_e2e_tests=false
+# TODO(stuartmorgan): Enable the new version by default and remove the legacy
+# version once CI issues are solved; see
+# https://github.com/flutter/packages/pull/2816.
+should_run_ios_objc_unittests=false
+should_run_ios_legacy_unittests=true
 should_run_ios_swift_unittests=true
 # Currently these are testing exactly the same thing as macos_swift_e2e_tests,
 # so we don't need to run both by default. This should become `true` if any
@@ -293,9 +305,10 @@ while getopts "t:l?h" opt; do
     should_run_dart_compilation_tests=false
     should_run_dart_unittests=false
     should_run_flutter_unittests=false
-    should_run_ios_e2e_legacy_tests=false
+    should_run_ios_objc_unittests=false
     should_run_ios_objc_e2e_tests=false
-    should_run_ios_unittests=false
+    should_run_ios_e2e_legacy_tests=false
+    should_run_ios_legacy_unittests=false
     should_run_ios_swift_unittests=false
     should_run_ios_swift_e2e_tests=false
     should_run_mock_handler_tests=false
@@ -313,8 +326,8 @@ while getopts "t:l?h" opt; do
     flutter_unittests) should_run_flutter_unittests=true ;;
     ios_e2e_legacy_tests) should_run_ios_e2e_legacy_tests=true ;;
     ios_objc_e2e_tests) should_run_ios_objc_e2e_tests=true ;;
-    # TODO(stuartmorgan): Rename to include "objc".
-    ios_unittests) should_run_ios_unittests=true ;;
+    ios_objc_unittests) should_run_ios_objc_unittests=true ;;
+    ios_unittests) should_run_ios_legacy_unittests=true ;;
     ios_swift_unittests) should_run_ios_swift_unittests=true ;;
     ios_swift_e2e_tests) should_run_ios_swift_e2e_tests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
@@ -338,7 +351,8 @@ while getopts "t:l?h" opt; do
   dart_unittests           - Unit tests on and analysis on Pigeon's implementation.
   flutter_unittests        - Unit tests on generated Dart code.
   ios_e2e_legacy_tests     - Legacy end-to-end Obj-C tests; build-only.
-  ios_unittests            - Unit tests on generated Obj-C code.
+  ios_objc_unittests       - Unit tests on generated Obj-C code.
+  ios_unittests            - Legacy unit tests on generated Obj-C code. Use ios_objc_unittests instead.
   ios_objc_e2e_tests       - Integration tests on generated Obj-C code.
   ios_swift_unittests      - Unit tests on generated Swift code.
   ios_swift_e2e_tests      - Integration tests on generated Swift code on iOS.
@@ -386,8 +400,11 @@ fi
 if [ "$should_run_dart_compilation_tests" = true ]; then
   run_dart_compilation_tests
 fi
-if [ "$should_run_ios_unittests" = true ]; then
-  run_ios_unittests
+if [ "$should_run_ios_objc_unittests" = true ]; then
+  run_ios_objc_unittests
+fi
+if [ "$should_run_ios_legacy_unittests" = true ]; then
+  run_ios_legacy_unittests
 fi
 if [ "$should_run_ios_swift_unittests" = true ]; then
   run_ios_swift_unittests
