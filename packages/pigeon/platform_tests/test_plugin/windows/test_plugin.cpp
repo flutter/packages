@@ -14,10 +14,10 @@
 
 namespace test_plugin {
 
-using core_tests::AllTypes;
-using core_tests::ErrorOr;
-using core_tests::FlutterError;
-using core_tests::HostIntegrationCoreApi;
+using core_tests_pigeontest::AllTypes;
+using core_tests_pigeontest::ErrorOr;
+using core_tests_pigeontest::FlutterError;
+using core_tests_pigeontest::HostIntegrationCoreApi;
 
 // static
 void TestPlugin::RegisterWithRegistrar(
@@ -33,7 +33,7 @@ TestPlugin::TestPlugin() {}
 
 TestPlugin::~TestPlugin() {}
 
-std::optional<FlutterError> TestPlugin::Noop() {}
+std::optional<FlutterError> TestPlugin::Noop() { return std::nullopt; }
 
 ErrorOr<AllTypes> TestPlugin::EchoAllTypes(const AllTypes& everything) {
   return everything;

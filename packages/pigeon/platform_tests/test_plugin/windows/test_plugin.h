@@ -17,7 +17,7 @@ namespace test_plugin {
 // This plugin handles the native side of the integration tests in
 // example/integration_test/
 class TestPlugin : public flutter::Plugin,
-                   public core_tests::HostIntegrationCoreApi {
+                   public core_tests_pigeontest::HostIntegrationCoreApi {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
@@ -30,9 +30,9 @@ class TestPlugin : public flutter::Plugin,
   TestPlugin& operator=(const TestPlugin&) = delete;
 
   // HostIntegrationCoreApi.
-  std::optional<core_tests::FlutterError> Noop() override;
-  core_tests::ErrorOr<core_tests::AllTypes> EchoAllTypes(
-      const core_tests::AllTypes& everything) override;
+  std::optional<core_tests_pigeontest::FlutterError> Noop() override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes> EchoAllTypes(
+      const core_tests_pigeontest::AllTypes& everything) override;
 };
 
 }  // namespace test_plugin
