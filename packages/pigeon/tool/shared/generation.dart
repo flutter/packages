@@ -79,10 +79,6 @@ Future<int> generatePigeons({required String baseDir}) async {
       p.join(baseDir, 'platform_tests', 'alternate_language_test_plugin');
   final String sharedDartOutputBase =
       p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
-  // TODO(stuartmorgan): Eliminate this and use alternateOutputBase.
-  // See https://github.com/flutter/packages/pull/2816.
-  final String iosObjCBase =
-      p.join(baseDir, 'platform_tests', 'ios_unit_tests');
 
   for (final String input in inputs) {
     final String pascalCaseName = _snakeToPascalCase(input);
@@ -142,10 +138,10 @@ Future<int> generatePigeons({required String baseDir}) async {
       // iOS
       objcHeaderOut: skipLanguages.contains(GeneratorLanguages.objc)
           ? null
-          : '$iosObjCBase/ios/Runner/$pascalCaseName.gen.h',
+          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.h',
       objcSourceOut: skipLanguages.contains(GeneratorLanguages.objc)
           ? null
-          : '$iosObjCBase/ios/Runner/$pascalCaseName.gen.m',
+          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
     );
     if (generateCode != 0) {
       return generateCode;
