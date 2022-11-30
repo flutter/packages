@@ -39,4 +39,8 @@ ErrorOr<AllTypes> TestPlugin::EchoAllTypes(const AllTypes& everything) {
   return everything;
 }
 
+std::optional<FlutterError> TestPlugin::ThrowError() {
+  return FlutterError("An error");
+}
+
 }  // namespace test_plugin

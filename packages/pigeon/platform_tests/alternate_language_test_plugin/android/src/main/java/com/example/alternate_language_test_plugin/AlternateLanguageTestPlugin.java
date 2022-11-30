@@ -28,4 +28,9 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public @NonNull AllTypes echoAllTypes(@NonNull AllTypes everything) {
     return everything;
   }
+
+  @Override
+  public void throwError() {
+    throw new Exception("An error");
+  }
 }

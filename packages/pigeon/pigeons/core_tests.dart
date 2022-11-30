@@ -35,6 +35,9 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoAllTypes:')
   AllTypes echoAllTypes(AllTypes everything);
 
+  /// Returns an error, to test error handling.
+  void throwError();
+
   // TODO(stuartmorgan): Add wrapper methods to trigger calls back into
   // FlutterIntegrationCore methods, to allow Dart-driven integration testing
   // of host->Dart calls. Each wrapper would be implemented by calling the

@@ -23,4 +23,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func echoAllTypes(everything: AllTypes) -> AllTypes {
     return everything
   }
+
+  func throwError() {
+    // TODO(stuartmorgan): Implement this. See
+    // https://github.com/flutter/flutter/issues/112483
+  }
 }

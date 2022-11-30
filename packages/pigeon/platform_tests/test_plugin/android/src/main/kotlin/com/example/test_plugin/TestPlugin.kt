@@ -32,4 +32,8 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun echoAllTypes(everything: AllTypes): AllTypes {
     return everything
   }
+
+  override fun throwError() {
+    throw Exception("An error");
+  }
 }

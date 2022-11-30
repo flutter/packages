@@ -33,6 +33,7 @@ class TestPlugin : public flutter::Plugin,
   std::optional<core_tests_pigeontest::FlutterError> Noop() override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes> EchoAllTypes(
       const core_tests_pigeontest::AllTypes& everything) override;
+  std::optional<core_tests_pigeontest::FlutterError> ThrowError() override;
 };
 
 }  // namespace test_plugin
