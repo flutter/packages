@@ -5,7 +5,9 @@
 package com.example.alternate_language_test_plugin;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AllTypesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 
@@ -32,5 +34,16 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public void throwError() {
     throw new Exception("An error");
+  }
+
+  @Override
+  public @Nullable String extractNestedString(@NonNull AllTypesWrapper wrapper) {
+    return wrapper.getValues().getAString();
+  }
+
+  @Override
+  public @NonNull AllTypesWrapper createNestedString(@NonNull String string) {
+    AllTypes innerObject = new AllTypes.Builder().setAString(string).build();
+    return new AllTypesWrapper.Builder().setValues(innerObject).build();
   }
 }

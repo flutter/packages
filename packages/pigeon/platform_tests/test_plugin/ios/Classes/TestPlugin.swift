@@ -28,4 +28,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     // TODO(stuartmorgan): Implement this. See
     // https://github.com/flutter/flutter/issues/112483
   }
+
+  func extractNestedString(wrapper: AllTypesWrapper) -> String? {
+    return wrapper.values.aString;
+  }
+
+  func createNestedString(string: String) -> AllTypesWrapper {
+    return AllTypesWrapper(values: AllTypes(aString: string))
+  }
 }

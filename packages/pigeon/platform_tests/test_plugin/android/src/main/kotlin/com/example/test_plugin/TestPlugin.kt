@@ -36,4 +36,12 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun throwError() {
     throw Exception("An error");
   }
+
+  override fun extractNestedString(wrapper: AllTypesWrapper): String? {
+    return wrapper.values.aString;
+  }
+
+  override fun createNestedString(string: String): AllTypesWrapper {
+    return AllTypesWrapper(AllTypes(aString = string))
+  }
 }

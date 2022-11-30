@@ -102,6 +102,27 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         // Currently unimplementable for Swift:
         // https://github.com/flutter/flutter/issues/112483
         skip: targetGenerator == TargetGenerator.swift);
+
+    testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const String sentString = 'Some string';
+      final AllTypesWrapper sentObject =
+          AllTypesWrapper(values: AllTypes(aString: sentString));
+
+      final String? receivedString = await api.extractNestedString(sentObject);
+      expect(receivedString, sentString);
+    });
+
+    testWidgets('nested objects can be received correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const String sentString = 'Some string';
+      final AllTypesWrapper receivedObject =
+          await api.createNestedString(sentString);
+      expect(receivedObject.values.aString, sentString);
+    });
   });
 
   group('Flutter API tests', () {
