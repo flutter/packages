@@ -4,7 +4,11 @@
 
 @import XCTest;
 
+#ifdef LEGACY_HARNESS
+#import "NullableReturns.gen.h"
+#else
 @import alternate_language_test_plugin;
+#endif
 
 #import "EchoMessenger.h"
 #import "MockBinaryMessenger.h"

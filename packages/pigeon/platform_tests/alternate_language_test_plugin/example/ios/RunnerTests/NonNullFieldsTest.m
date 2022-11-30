@@ -6,7 +6,11 @@
 @import Flutter;
 @import XCTest;
 
+#ifdef LEGACY_HARNESS
+#import "NonNullFields.gen.h"
+#else
 @import alternate_language_test_plugin;
+#endif
 
 #import "EchoMessenger.h"
 
