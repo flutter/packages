@@ -73,7 +73,7 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
   assert(getCodecClasses(api, root).isNotEmpty);
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
   indent.write('class $codecName extends $_standardMessageCodec');
-  indent.scoped('{', '}', () {
+  indent.scoped(' {', '}', () {
     indent.writeln('const $codecName();');
     indent.writeln('@override');
     indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
@@ -97,6 +97,7 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
         indent.writeln('super.writeValue(buffer, value);');
       });
     });
+    indent.writeln('');
     indent.writeln('@override');
     indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
     indent.scoped('{', '}', () {
@@ -109,10 +110,10 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
                 'return ${customClass.name}.decode(readValue(buffer)! as List<Object?>);');
           });
         }
-        indent.write('default:');
-        indent.writeScoped('', '', () {
-          indent.writeln('return super.readValueOfType(type, buffer);');
-        });
+        indent.writeln('default:');
+        indent.inc();
+        indent.writeln('return super.readValueOfType(type, buffer);');
+        indent.dec();
       });
     });
   });
@@ -181,7 +182,8 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
 /// Constructor for [${api.name}].  The [binaryMessenger] named argument is
 /// available for dependency injection.  If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
-${api.name}({BinaryMessenger? binaryMessenger}) : _binaryMessenger = binaryMessenger;
+${api.name}({BinaryMessenger? binaryMessenger})
+\t\t: _binaryMessenger = binaryMessenger;
 final BinaryMessenger? _binaryMessenger;
 ''');
 
@@ -220,9 +222,8 @@ final BinaryMessenger? _binaryMessenger;
         indent.writeln(
             'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
         indent.nest(2, () {
-          indent.writeln(
-            "'$channelName', codec, binaryMessenger: _binaryMessenger);",
-          );
+          indent.writeln("'$channelName', codec,");
+          indent.writeln('binaryMessenger: _binaryMessenger);');
         });
         final String returnType = _makeGenericTypeArguments(func.returnType);
         final String castCall = _makeGenericCastCall(func.returnType);
@@ -233,7 +234,8 @@ final BinaryMessenger? _binaryMessenger;
             ? 'return;'
             : 'return ($accessor as $returnType?)$nullHandler$castCall;';
         indent.format('''
-final List<Object?>? replyList =\n\t\tawait channel.send($sendArgument) as List<Object?>?;
+final List<Object?>? replyList =
+\t\tawait channel.send($sendArgument) as List<Object?>?;
 if (replyList == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
@@ -290,6 +292,7 @@ void _writeFlutterApi(
     codecName = _getCodecName(api);
     _writeCodec(indent, codecName, api, root);
   }
+  indent.addln('');
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
 
   indent.write('abstract class ${api.name} ');
@@ -309,6 +312,7 @@ void _writeFlutterApi(
         _getArgumentName,
       );
       indent.writeln('$returnType ${func.name}($argSignature);');
+      indent.writeln('');
     }
     indent.write(
         'static void setup(${api.name}? api, {BinaryMessenger? binaryMessenger}) ');
@@ -323,8 +327,9 @@ void _writeFlutterApi(
               ? makeChannelName(api, func)
               : channelNameFunc(func);
           indent.nest(2, () {
+            indent.writeln("'$channelName', codec,");
             indent.writeln(
-              "'$channelName', codec, binaryMessenger: binaryMessenger);",
+              'binaryMessenger: binaryMessenger);',
             );
           });
           final String messageHandlerSetter =
@@ -352,9 +357,8 @@ void _writeFlutterApi(
                 indent.writeln('// ignore message');
                 call = 'api.${func.name}()';
               } else {
-                indent.writeln(
-                  "assert(message != null, 'Argument for $channelName was null.');",
-                );
+                indent.writeln('assert(message != null,');
+                indent.writeln("'Argument for $channelName was null.');");
                 const String argsArray = 'args';
                 indent.writeln(
                     'final List<Object?> $argsArray = (message as List<Object?>?)!;');
@@ -376,8 +380,9 @@ void _writeFlutterApi(
                         '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
                   }
                   if (!arg.type.isNullable) {
+                    indent.writeln('assert($argName != null,');
                     indent.writeln(
-                        "assert($argName != null, 'Argument for $channelName was null, expected non-null $argType.');");
+                        "'Argument for $channelName was null, expected non-null $argType.');");
                   }
                 });
                 final Iterable<String> argNames =
@@ -605,8 +610,6 @@ result[$index] != null
 
         final String datatype = _addGenericTypesNullable(field.type);
         indent.writeln('$datatype ${field.name};');
-      }
-      if (klass.fields.isNotEmpty) {
         indent.writeln('');
       }
       writeEncode();

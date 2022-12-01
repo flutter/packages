@@ -65,8 +65,7 @@ public class NullFieldsTest {
     ArrayList<Object> list = new ArrayList<Object>();
     list.add("hello");
     list.add(1L);
-    NullFields.NullFieldsSearchRequest request =
-        NullFields.NullFieldsSearchRequest.fromList(list);
+    NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromList(list);
     assertEquals(request.getQuery(), "hello");
   }
 
@@ -76,8 +75,7 @@ public class NullFieldsTest {
     list.add(null);
     list.add(1L);
 
-    NullFields.NullFieldsSearchRequest request =
-        NullFields.NullFieldsSearchRequest.fromList(list);
+    NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromList(list);
     assertNull(request.getQuery());
   }
 
@@ -113,7 +111,6 @@ public class NullFieldsTest {
     list.add(null);
     list.add(null);
     list.add(null);
-
 
     NullFields.NullFieldsSearchReply reply = NullFields.NullFieldsSearchReply.fromList(list);
     assertNull(reply.getResult());
