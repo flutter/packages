@@ -4,8 +4,7 @@
 
 #import "AlternateLanguageTestPlugin.h"
 
-#import "AllDatatypes.gen.h"
-#import "AllVoid.gen.h"
+#import "CoreTests.gen.h"
 
 /**
  * This plugin is currently a no-op since only unit tests have been set up.
@@ -14,25 +13,16 @@
 @implementation AlternateLanguageTestPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
-  AllVoidHostApiSetup(registrar.messenger, plugin);
-  HostEverythingSetup(registrar.messenger, plugin);
+  HostIntegrationCoreApiSetup(registrar.messenger, plugin);
 }
 
-#pragma mark AllVoidHostApi implementation
+#pragma mark HostIntegrationCoreApi implementation
 
-- (void)doitWithError:(FlutterError *_Nullable *_Nonnull)error {
-  // No-op.
+- (void)noopWithError:(FlutterError *_Nullable *_Nonnull)error {
 }
 
-#pragma mark HostEverything implementation
-
-- (nullable Everything *)giveMeEverythingWithError:(FlutterError *_Nullable *_Nonnull)error {
-  // Currently unused in integration tests, so just return an empty object.
-  return [[Everything alloc] init];
-}
-
-- (nullable Everything *)echoEverything:(Everything *)everything
-                                  error:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable AllTypes *)echoAllTypes:(AllTypes *)everything
+                              error:(FlutterError *_Nullable *_Nonnull)error {
   return everything;
 }
 
