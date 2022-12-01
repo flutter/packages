@@ -23,6 +23,12 @@ class AllTypes {
   Map<String?, Object?>? mapWithObject;
 }
 
+// A class for testing nested object handling.
+class AllTypesWrapper {
+  AllTypesWrapper(this.values);
+  AllTypes values;
+}
+
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @HostApi()
@@ -34,6 +40,19 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllTypes:')
   AllTypes echoAllTypes(AllTypes everything);
+
+  /// Returns an error, to test error handling.
+  void throwError();
+
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  @ObjCSelector('extractNestedStringFrom:')
+  String? extractNestedString(AllTypesWrapper wrapper);
+
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  @ObjCSelector('createNestedObjectWithString:')
+  AllTypesWrapper createNestedString(String string);
 
   // TODO(stuartmorgan): Add wrapper methods to trigger calls back into
   // FlutterIntegrationCore methods, to allow Dart-driven integration testing

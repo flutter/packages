@@ -26,4 +26,21 @@
   return everything;
 }
 
+- (void)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
+  *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
+}
+
+- (nullable NSString *)extractNestedStringFrom:(AllTypesWrapper *)wrapper
+                                         error:(FlutterError *_Nullable *_Nonnull)error {
+  return wrapper.values.aString;
+}
+
+- (nullable AllTypesWrapper *)createNestedObjectWithString:(NSString *)string
+                                                     error:
+                                                         (FlutterError *_Nullable *_Nonnull)error {
+  AllTypes *innerObject = [[AllTypes alloc] init];
+  innerObject.aString = string;
+  return [AllTypesWrapper makeWithValues:innerObject];
+}
+
 @end
