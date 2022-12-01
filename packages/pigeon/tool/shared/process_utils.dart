@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-
 import 'dart:io' show Process, stderr, stdout;
 
 Future<Process> _streamOutput(Future<Process> processFuture) async {
