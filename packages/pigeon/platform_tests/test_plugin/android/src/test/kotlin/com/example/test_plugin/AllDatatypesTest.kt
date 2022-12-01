@@ -16,12 +16,12 @@ import java.util.ArrayList
 internal class AllDatatypesTest: TestCase() {
     @Test
     fun testNullValues() {
-        val everything = Everything()
+        val everything = AllTypes()
         val binaryMessenger = mockk<BinaryMessenger>()
-        val api = FlutterEverything(binaryMessenger)
+        val api = FlutterIntegrationCoreApi(binaryMessenger)
 
         every { binaryMessenger.send(any(), any(), any()) } answers {
-            val codec = FlutterEverything.codec
+            val codec = FlutterIntegrationCoreApi.codec
             val message = arg<ByteBuffer>(1)
             val reply = arg<BinaryMessenger.BinaryReply>(2)
             message.position(0)
@@ -32,7 +32,7 @@ internal class AllDatatypesTest: TestCase() {
         }
 
         var didCall = false
-        api.echo(everything) {
+        api.echoAllTypes(everything) {
             didCall = true
             assertNull(it.aBool)
             assertNull(it.anInt)
@@ -52,7 +52,7 @@ internal class AllDatatypesTest: TestCase() {
 
     @Test
     fun testHasValues() {
-        val everything = Everything(
+        val everything = AllTypes(
             aBool = false,
             anInt = 1234L,
             aDouble = 2.0,
@@ -66,10 +66,10 @@ internal class AllDatatypesTest: TestCase() {
             mapWithObject = mapOf("hello" to 1234)
         )
         val binaryMessenger = mockk<BinaryMessenger>()
-        val api = FlutterEverything(binaryMessenger)
+        val api = FlutterIntegrationCoreApi(binaryMessenger)
 
         every { binaryMessenger.send(any(), any(), any()) } answers {
-            val codec = FlutterEverything.codec
+            val codec = FlutterIntegrationCoreApi.codec
             val message = arg<ByteBuffer>(1)
             val reply = arg<BinaryMessenger.BinaryReply>(2)
             message.position(0)
@@ -80,7 +80,7 @@ internal class AllDatatypesTest: TestCase() {
         }
 
         var didCall = false
-        api.echo(everything) {
+        api.echoAllTypes(everything) {
             didCall = true
             assertEquals(everything.aBool, it.aBool)
             assertEquals(everything.anInt, it.anInt)
@@ -100,12 +100,12 @@ internal class AllDatatypesTest: TestCase() {
 
     @Test
     fun testIntegerToLong() {
-        val everything = Everything(anInt = 123L)
+        val everything = AllTypes(anInt = 123L)
         val map = everything.toMap()
         assertTrue(map.containsKey("anInt"))
 
         val map2 = hashMapOf("anInt" to 123)
-        val everything2 = Everything.fromMap(map2)
+        val everything2 = AllTypes.fromMap(map2)
 
         assertEquals(everything.anInt, everything2.anInt)
     }

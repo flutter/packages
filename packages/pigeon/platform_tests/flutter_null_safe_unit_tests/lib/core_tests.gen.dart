@@ -11,8 +11,8 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-class Everything {
-  Everything({
+class AllTypes {
+  AllTypes({
     this.aBool,
     this.anInt,
     this.aDouble,
@@ -60,9 +60,9 @@ class Everything {
     return pigeonMap;
   }
 
-  static Everything decode(Object message) {
+  static AllTypes decode(Object message) {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
-    return Everything(
+    return AllTypes(
       aBool: pigeonMap['aBool'] as bool?,
       anInt: pigeonMap['anInt'] as int?,
       aDouble: pigeonMap['aDouble'] as double?,
@@ -84,11 +84,11 @@ class Everything {
   }
 }
 
-class _HostEverythingCodec extends StandardMessageCodec {
-  const _HostEverythingCodec();
+class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
+  const _HostIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is Everything) {
+    if (value is AllTypes) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
@@ -100,7 +100,7 @@ class _HostEverythingCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return Everything.decode(readValue(buffer)!);
+        return AllTypes.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -108,19 +108,23 @@ class _HostEverythingCodec extends StandardMessageCodec {
   }
 }
 
-class HostEverything {
-  /// Constructor for [HostEverything].  The [binaryMessenger] named argument is
+/// The core interface that each host language plugin must implement in
+/// platform_test integration tests.
+class HostIntegrationCoreApi {
+  /// Constructor for [HostIntegrationCoreApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  HostEverything({BinaryMessenger? binaryMessenger})
+  HostIntegrationCoreApi({BinaryMessenger? binaryMessenger})
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _HostEverythingCodec();
+  static const MessageCodec<Object?> codec = _HostIntegrationCoreApiCodec();
 
-  Future<Everything> giveMeEverything() async {
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic calling.
+  Future<void> noop() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostEverything.giveMeEverything', codec,
+        'dev.flutter.pigeon.HostIntegrationCoreApi.noop', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(null) as Map<Object?, Object?>?;
@@ -137,19 +141,15 @@ class HostEverything {
         message: error['message'] as String?,
         details: error['details'],
       );
-    } else if (replyMap['result'] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (replyMap['result'] as Everything?)!;
+      return;
     }
   }
 
-  Future<Everything> echo(Everything arg_everything) async {
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<AllTypes> echoAllTypes(AllTypes arg_everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostEverything.echo', codec,
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAllTypes', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(<Object?>[arg_everything]) as Map<Object?, Object?>?;
@@ -172,16 +172,16 @@ class HostEverything {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyMap['result'] as Everything?)!;
+      return (replyMap['result'] as AllTypes?)!;
     }
   }
 }
 
-class _FlutterEverythingCodec extends StandardMessageCodec {
-  const _FlutterEverythingCodec();
+class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
+  const _FlutterIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is Everything) {
+    if (value is AllTypes) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
@@ -193,7 +193,7 @@ class _FlutterEverythingCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return Everything.decode(readValue(buffer)!);
+        return AllTypes.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -201,45 +201,87 @@ class _FlutterEverythingCodec extends StandardMessageCodec {
   }
 }
 
-abstract class FlutterEverything {
-  static const MessageCodec<Object?> codec = _FlutterEverythingCodec();
+/// The core interface that the Dart platform_test code implements for host
+/// integration tests to call into.
+abstract class FlutterIntegrationCoreApi {
+  static const MessageCodec<Object?> codec = _FlutterIntegrationCoreApiCodec();
 
-  Everything giveMeEverything();
-  Everything echo(Everything everything);
-  static void setup(FlutterEverything? api,
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic calling.
+  void noop();
+
+  /// Returns the passed object, to test serialization and deserialization.
+  AllTypes echoAllTypes(AllTypes everything);
+  static void setup(FlutterIntegrationCoreApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterEverything.giveMeEverything', codec,
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.noop', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           // ignore message
-          final Everything output = api.giveMeEverything();
-          return output;
+          api.noop();
+          return;
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterEverything.echo', codec,
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterEverything.echo was null.');
+              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Everything? arg_everything = (args[0] as Everything?);
+          final AllTypes? arg_everything = (args[0] as AllTypes?);
           assert(arg_everything != null,
-              'Argument for dev.flutter.pigeon.FlutterEverything.echo was null, expected non-null Everything.');
-          final Everything output = api.echo(arg_everything!);
+              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes was null, expected non-null AllTypes.');
+          final AllTypes output = api.echoAllTypes(arg_everything!);
           return output;
         });
       }
+    }
+  }
+}
+
+/// An API that can be implemented for minimal, compile-only tests.
+class HostTrivialApi {
+  /// Constructor for [HostTrivialApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  HostTrivialApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<void> noop() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostTrivialApi.noop', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(null) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return;
     }
   }
 }

@@ -7,7 +7,8 @@ package com.example.alternate_language_test_plugin;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import com.example.alternate_language_test_plugin.AllDatatypes.*;
+import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
+import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import org.junit.Test;
 public class AllDatatypesTest {
   @Test
   public void nullValues() {
-    Everything everything = new Everything();
+    AllTypes everything = new AllTypes();
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
     doAnswer(
             invocation -> {
@@ -27,17 +28,18 @@ public class AllDatatypesTest {
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
               ArrayList<Object> args =
-                  (ArrayList<Object>) FlutterEverything.getCodec().decodeMessage(message);
-              ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
+                  (ArrayList<Object>) FlutterIntegrationCoreApi.getCodec().decodeMessage(message);
+              ByteBuffer replyData =
+                  FlutterIntegrationCoreApi.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);
               return null;
             })
         .when(binaryMessenger)
         .send(anyString(), any(), any());
-    FlutterEverything api = new FlutterEverything(binaryMessenger);
+    FlutterIntegrationCoreApi api = new FlutterIntegrationCoreApi(binaryMessenger);
     boolean[] didCall = {false};
-    api.echo(
+    api.echoAllTypes(
         everything,
         (result) -> {
           didCall[0] = true;
@@ -82,7 +84,7 @@ public class AllDatatypesTest {
 
   @Test
   public void hasValues() {
-    Everything everything = new Everything();
+    AllTypes everything = new AllTypes();
     everything.setABool(false);
     everything.setAnInt(1234L);
     everything.setADouble(2.0);
@@ -101,17 +103,18 @@ public class AllDatatypesTest {
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
               ArrayList<Object> args =
-                  (ArrayList<Object>) FlutterEverything.getCodec().decodeMessage(message);
-              ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
+                  (ArrayList<Object>) FlutterIntegrationCoreApi.getCodec().decodeMessage(message);
+              ByteBuffer replyData =
+                  FlutterIntegrationCoreApi.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);
               return null;
             })
         .when(binaryMessenger)
         .send(anyString(), any(), any());
-    FlutterEverything api = new FlutterEverything(binaryMessenger);
+    FlutterIntegrationCoreApi api = new FlutterIntegrationCoreApi(binaryMessenger);
     boolean[] didCall = {false};
-    api.echo(
+    api.echoAllTypes(
         everything,
         (result) -> {
           didCall[0] = true;
@@ -137,12 +140,12 @@ public class AllDatatypesTest {
 
   @Test
   public void integerToLong() {
-    Everything everything = new Everything();
+    AllTypes everything = new AllTypes();
     everything.setAnInt(123L);
     Map<String, Object> map = everything.toMap();
     assertTrue(map.containsKey("anInt"));
     map.put("anInt", 123);
-    Everything readEverything = Everything.fromMap(map);
+    AllTypes readEverything = AllTypes.fromMap(map);
     assertEquals(readEverything.getAnInt(), everything.getAnInt());
   }
 }
