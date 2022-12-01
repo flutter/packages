@@ -1379,6 +1379,7 @@ ${_argParser.usage}''';
         final List<Error> generatorErrors =
             generator.validate(options, parseResults.root);
         errors.addAll(generatorErrors);
+        await sink.close();
       }
     }
 
@@ -1419,6 +1420,7 @@ ${_argParser.usage}''';
       if (sink != null) {
         generator.generate(sink, options, parseResults.root);
         await sink.flush();
+        await sink.close();
       }
     }
 
