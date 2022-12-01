@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/matching.dart';
+import 'package:go_router/src/misc/errors.dart';
 import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
@@ -2629,10 +2630,14 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
+      StatefulShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (_, __, Widget child) => child,
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            routeState = StatefulShellRoute.of(context);
+            return child;
+          },
           routes: <RouteBase>[
             GoRoute(
               path: '/a',
@@ -2669,17 +2674,17 @@ void main() {
       expect(find.text('Screen A Detail'), findsOneWidget);
       expect(find.text('Screen B'), findsNothing);
 
-      router.go('/b');
+      routeState!.goBranch(index: 1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen A Detail'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
 
-      router.go('/a/detailA');
+      routeState!.goBranch(index: 0);
       await tester.pumpAndSettle();
       expect(statefulWidgetKey.currentState?.counter, equals(1));
 
-      router.pop();
+      routeState!.goBranch(index: 0, resetLocation: true);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen A Detail'), findsNothing);
@@ -3128,6 +3133,138 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen A Detail'), findsNothing);
+    });
+
+    testWidgets(
+        'Dynamic branches are created, removed and updated correctly in '
+        'a StatefulShellRoute', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> branch0 =
+          GlobalKey<NavigatorState>(debugLabel: 'branch0');
+      final GlobalKey<NavigatorState> branch1 =
+          GlobalKey<NavigatorState>(debugLabel: 'branch1');
+      final GlobalKey<NavigatorState> branch2 =
+          GlobalKey<NavigatorState>(debugLabel: 'branch2');
+
+      StatefulShellRouteState? routeState;
+      final ValueNotifier<int> scenario = ValueNotifier<int>(1);
+
+      final GoRouter router = GoRouter(
+        navigatorKey: rootNavigatorKey,
+        initialLocation: '/a/0',
+        routes: <RouteBase>[
+          StatefulShellRoute(
+            builder: (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRoute.of(context);
+              return child;
+            },
+            branchBuilder: (_, __) => <StatefulShellBranch>[
+              StatefulShellBranch(rootLocation: '/a/0', navigatorKey: branch0),
+              if (scenario.value == 2) ...<StatefulShellBranch>[
+                StatefulShellBranch(
+                    rootLocation: '/a/1', navigatorKey: branch1),
+                StatefulShellBranch(
+                    rootLocation: '/a/2', navigatorKey: branch2),
+              ],
+              if (scenario.value == 3) ...<StatefulShellBranch>[
+                StatefulShellBranch(
+                    rootLocation: '/a/1',
+                    name: 'branch1',
+                    navigatorKey: branch1),
+                StatefulShellBranch(
+                    rootLocation: '/a/2', navigatorKey: branch2),
+              ],
+              if (scenario.value == 4)
+                StatefulShellBranch(
+                    rootLocation: '/a/1', navigatorKey: branch1),
+            ],
+            routes: <RouteBase>[
+              GoRoute(
+                  path: '/a/:id',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return Text('a-${state.params['id']}');
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'detail',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return Text('a-detail-${state.params['id']}');
+                      },
+                    ),
+                  ]),
+            ],
+          ),
+        ],
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            Text('error:${GoRouter.of(context).location}'),
+      );
+
+      await tester.pumpWidget(
+        ValueListenableBuilder<int>(
+            valueListenable: scenario,
+            builder: (_, __, ___) {
+              return MaterialApp.router(routerConfig: router);
+            }),
+      );
+
+      expect(find.text('a-0'), findsOneWidget);
+      expect(find.text('a-detail-0'), findsNothing);
+      expect(find.byKey(branch0), findsOneWidget);
+
+      router.go('/a/0/detail');
+      await tester.pumpAndSettle();
+      expect(find.text('a-0'), findsNothing);
+      expect(find.text('a-detail-0'), findsOneWidget);
+
+      router.go('/a/1');
+      await tester.pumpAndSettle();
+      expect(find.text('a-1'), findsNothing);
+      expect(find.text('error:/a/1'), findsOneWidget);
+
+      scenario.value = 2;
+      await tester.pumpAndSettle();
+      routeState!.goBranch(navigatorKey: branch2);
+      await tester.pumpAndSettle();
+      expect(find.text('a-0'), findsNothing);
+      expect(find.text('a-1'), findsNothing);
+      expect(find.text('a-2'), findsOneWidget);
+
+      expect(() {
+        // Name 'branch1' hasn't yet been assigned, so this should fail
+        routeState!.goBranch(name: 'branch1');
+      }, throwsA(isA<GoError>()));
+      scenario.value = 3;
+      await tester.pumpAndSettle();
+      routeState!.goBranch(name: 'branch1');
+      await tester.pumpAndSettle();
+      expect(find.text('a-0'), findsNothing);
+      expect(find.text('a-1'), findsOneWidget);
+      expect(find.text('a-2'), findsNothing);
+      expect(routeState!.branchStates.length, 3);
+
+      router.go('/a/2/detail');
+      await tester.pumpAndSettle();
+      expect(find.text('a-2'), findsNothing);
+      expect(find.text('a-detail-2'), findsOneWidget);
+      routeState!.goBranch(name: 'branch1');
+      await tester.pumpAndSettle();
+
+      // Test removal of branch2
+      scenario.value = 4;
+      await tester.pumpAndSettle();
+      expect(routeState!.branchStates.length, 2);
+      expect(() {
+        routeState!.goBranch(navigatorKey: branch2);
+      }, throwsA(isA<GoError>()));
+
+      // Test that state of branch2 is forgotten (not restored) after removal
+      scenario.value = 3;
+      await tester.pumpAndSettle();
+      routeState!.goBranch(navigatorKey: branch2);
+      await tester.pumpAndSettle();
+      expect(find.text('a-2'), findsOneWidget);
+      expect(find.text('a-detail-2'), findsNothing);
     });
   });
 

@@ -82,7 +82,7 @@ void main() {
           _createRouteMatch(config.routes.first.routes.first, '/'),
         ],
         Uri.parse('/'),
-        <String, String>{},
+        const <String, String>{},
       );
 
       await tester.pumpWidget(
@@ -126,7 +126,7 @@ void main() {
             _createRouteMatch(config.routes.first.routes.first, '/nested'),
           ],
           Uri.parse('/nested'),
-          <String, String>{});
+          const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -174,7 +174,7 @@ void main() {
             _createRouteMatch(config.routes.first.routes.first, '/b'),
           ],
           Uri.parse('/b'),
-          <String, String>{});
+          const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -207,7 +207,7 @@ void main() {
               },
               branches: <StatefulShellBranch>[
                 StatefulShellBranch(rootLocation: '/a'),
-                StatefulShellBranch(rootLocations: <String>['/a', '/b']),
+                StatefulShellBranch(rootLocations: const <String>['/a', '/b']),
               ]),
         ],
         redirectLimit: 10,
@@ -221,7 +221,7 @@ void main() {
             _createRouteMatch(config.routes.first.routes.first, '/b'),
           ],
           Uri.parse('/b'),
-          <String, String>{});
+          const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -269,7 +269,7 @@ void main() {
             _createRouteMatch(config.routes.first.routes.first, '/b'),
           ],
           Uri.parse('/b'),
-          <String, String>{});
+          const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -311,7 +311,7 @@ void main() {
             ),
           ],
           Uri.parse('/'),
-          <String, String>{});
+          const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -373,7 +373,7 @@ void main() {
             ),
           ],
           Uri.parse('/details'),
-          <String, String>{});
+          const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -441,7 +441,7 @@ void main() {
             ),
           ],
           Uri.parse('/a/details'),
-          <String, String>{});
+          const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -493,7 +493,7 @@ void main() {
             _createRouteMatch(config.routes.first.routes.first, '/a'),
           ],
           Uri.parse('/b'),
-          <String, String>{});
+          const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(

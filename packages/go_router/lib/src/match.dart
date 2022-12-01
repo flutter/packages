@@ -10,9 +10,10 @@ import 'path_utils.dart';
 import 'route.dart';
 
 ///  An instance of a GoRoute plus information about the current location.
+@immutable
 class RouteMatch {
   /// Constructor for [RouteMatch].
-  RouteMatch({
+  const RouteMatch({
     required this.route,
     required this.subloc,
     required this.extra,
@@ -75,4 +76,22 @@ class RouteMatch {
 
   /// Optional value key of type string, to hold a unique reference to a page.
   final ValueKey<String> pageKey;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other is! RouteMatch) {
+      return false;
+    }
+    return other.route == route &&
+        other.subloc == subloc &&
+        other.extra == extra &&
+        other.error == error &&
+        other.pageKey == pageKey;
+  }
+
+  @override
+  int get hashCode => Object.hash(route, subloc, extra, error, pageKey);
 }

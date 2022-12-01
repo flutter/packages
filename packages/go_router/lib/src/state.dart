@@ -341,16 +341,19 @@ class StatefulShellRouteState {
     assert(navigatorKey != null || name != null || index != null);
     assert(<dynamic>[navigatorKey, name, index].whereNotNull().length == 1);
 
-    final StatefulShellBranchState state;
+    final StatefulShellBranchState? state;
     if (navigatorKey != null) {
-      state = branchStates.firstWhere((StatefulShellBranchState e) =>
+      state = branchStates.firstWhereOrNull((StatefulShellBranchState e) =>
           e.branch.navigatorKey == navigatorKey);
-      assert(state != null,
-          'Unable to find ShellNavigator with key $navigatorKey');
+      if (state == null) {
+        throw GoError('Unable to find ShellNavigator with key $navigatorKey');
+      }
     } else if (name != null) {
-      state = branchStates
-          .firstWhere((StatefulShellBranchState e) => e.branch.name == name);
-      assert(state != null, 'Unable to find ShellNavigator with name "$name"');
+      state = branchStates.firstWhereOrNull(
+          (StatefulShellBranchState e) => e.branch.name == name);
+      if (state == null) {
+        throw GoError('Unable to find ShellNavigator with name "$name"');
+      }
     } else {
       state = branchStates[index!];
     }

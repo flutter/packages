@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -46,15 +47,22 @@ class RouteMatcher {
 }
 
 /// The list of [RouteMatch] objects.
+@immutable
 class RouteMatchList {
   /// RouteMatchList constructor.
   RouteMatchList(List<RouteMatch> matches, this.uri, this.pathParameters)
       : _matches = matches,
         fullpath = _generateFullPath(matches);
 
+  /// Creates a clone of this RouteMatchList, that can be modified independently
+  /// of the original.
+  RouteMatchList clone() {
+    return RouteMatchList(matches.toList(), uri, pathParameters);
+  }
+
   /// Constructs an empty matches object.
-  static RouteMatchList empty =
-      RouteMatchList(<RouteMatch>[], Uri.parse(''), const <String, String>{});
+  static RouteMatchList empty = RouteMatchList(
+      const <RouteMatch>[], Uri.parse(''), const <String, String>{});
 
   static String _generateFullPath(List<RouteMatch> matches) {
     final StringBuffer buffer = StringBuffer();
@@ -136,6 +144,22 @@ class RouteMatchList {
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.first.error;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other is! RouteMatchList) {
+      return false;
+    }
+    return listEquals(other.matches, matches) &&
+        other.uri == uri &&
+        other.pathParameters == pathParameters;
+  }
+
+  @override
+  int get hashCode => Object.hash(matches, uri, pathParameters);
 }
 
 /// An error that occurred during matching.

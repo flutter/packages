@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 final List<StatefulShellBranch> _bottomNavBranches = <StatefulShellBranch>[
   StatefulShellBranch(rootLocation: '/a', name: 'A'),
   StatefulShellBranch(rootLocation: '/b', name: 'B'),
-  StatefulShellBranch(rootLocations: <String>['/c1', '/c2'], name: 'C'),
+  StatefulShellBranch(rootLocations: const <String>['/c1', '/c2'], name: 'C'),
 
   /// To enable preloading of the root routes of the branches, pass true
   /// for the parameter preload of StatefulShellBranch.
@@ -33,6 +33,37 @@ final List<StatefulShellBranch> _topNavBranches = <StatefulShellBranch>[
 
 void main() {
   runApp(NestedTabNavigationExampleApp());
+}
+
+/// InheritedWidget that provides a reference to the GoRouter in the widget
+/// tree, without creating a dependency that triggers rebuilds.
+///
+/// Simply use AppRouterProvider.of as an alternative to GoRouter.of, to get a
+/// reference to the GoRouter, that doesn't cause rebuilds every time GoRouter
+/// (or rather it's current location) changes.
+class AppRouterProvider extends InheritedWidget {
+  /// Constructs an [AppRouterProvider].
+  const AppRouterProvider({
+    required Widget child,
+    required this.goRouter,
+    Key? key,
+  }) : super(child: child, key: key);
+
+  /// The [GoRouter] instance used for this application.
+  final GoRouter goRouter;
+
+  @override
+  bool updateShouldNotify(covariant AppRouterProvider oldWidget) {
+    return false;
+  }
+
+  /// Find the current GoRouter in the widget tree.
+  static GoRouter of(BuildContext context) {
+    final AppRouterProvider? inherited =
+        context.dependOnInheritedWidgetOfExactType<AppRouterProvider>();
+    assert(inherited != null, 'No GoRouter found in context');
+    return inherited!.goRouter;
+  }
 }
 
 /// An example demonstrating how to use nested navigators
@@ -161,12 +192,15 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return AppRouterProvider(
+      goRouter: _router,
+      child: MaterialApp.router(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        routerConfig: _router,
       ),
-      routerConfig: _router,
     );
   }
 }
@@ -237,7 +271,8 @@ class RootScreen extends StatelessWidget {
             const Padding(padding: EdgeInsets.all(4)),
             TextButton(
               onPressed: () {
-                GoRouter.of(context).go(detailsPath, extra: '$label-XYZ');
+                AppRouterProvider.of(context)
+                    .go(detailsPath, extra: '$label-XYZ');
               },
               child: const Text('View details'),
             ),
@@ -245,7 +280,7 @@ class RootScreen extends StatelessWidget {
             if (secondDetailsPath != null)
               TextButton(
                 onPressed: () {
-                  GoRouter.of(context).go(secondDetailsPath!);
+                  AppRouterProvider.of(context).go(secondDetailsPath!);
                 },
                 child: const Text('View more details'),
               ),
@@ -332,7 +367,7 @@ class DetailsScreenState extends State<DetailsScreen> {
             const Padding(padding: EdgeInsets.all(16)),
             TextButton(
               onPressed: () {
-                GoRouter.of(context).pop();
+                AppRouterProvider.of(context).pop();
               },
               child: const Text('< Back',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
@@ -409,7 +444,7 @@ class TabScreen extends StatelessWidget {
           if (detailsPath != null)
             TextButton(
               onPressed: () {
-                GoRouter.of(context).go(detailsPath!);
+                AppRouterProvider.of(context).go(detailsPath!);
               },
               child: const Text('View details'),
             ),

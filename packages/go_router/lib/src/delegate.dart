@@ -219,7 +219,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 // TODO(chunhtai): Removes this once imperative API no longer insert route match.
 class ImperativeRouteMatch extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
-  ImperativeRouteMatch({
+  const ImperativeRouteMatch({
     required super.route,
     required super.subloc,
     required super.extra,
@@ -230,4 +230,18 @@ class ImperativeRouteMatch extends RouteMatch {
 
   /// The matches that produces this route match.
   final RouteMatchList matches;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other is! ImperativeRouteMatch) {
+      return false;
+    }
+    return super == this && other.matches == matches;
+  }
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, matches);
 }

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -705,6 +706,7 @@ class StatefulShellRoute extends ShellRouteBase {
 ///
 /// A [navigatorKey] is optional, but can be useful to provide in case you need
 /// to use the [Navigator] created for this branch elsewhere.
+@immutable
 class StatefulShellBranch {
   /// Constructs a [StatefulShellBranch].
   StatefulShellBranch({
@@ -761,4 +763,23 @@ class StatefulShellBranch {
   /// in the Widget tree.
   static StatefulShellBranchState of(BuildContext context) =>
       StatefulShellRoute.of(context).currentBranchState;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other is! StatefulShellBranch) {
+      return false;
+    }
+    return other.navigatorKey == navigatorKey &&
+        listEquals(other.rootLocations, rootLocations) &&
+        other.name == name &&
+        other.preload == preload &&
+        other.restorationScopeId == restorationScopeId;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      navigatorKey, rootLocations, name, preload, restorationScopeId);
 }

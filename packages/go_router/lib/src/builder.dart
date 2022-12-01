@@ -206,19 +206,22 @@ class RouteBuilder {
               route, branches);
         }());
 
-        assert(
-            branch != null,
-            'Shell routes must always provide a navigator key for its immediate '
-            'sub-routes');
+        if (branch == null) {
+          throw _RouteBuilderError('Shell routes must always provide a '
+              'navigator key for its immediate sub-routes');
+        }
         // The key to provide to the shell route's Navigator.
-        shellNavigatorKey = branch!.navigatorKey;
+        shellNavigatorKey = branch.navigatorKey;
         buildRecursive(shellNavigatorKey);
 
-        child = _buildNavigator(
-            pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
-            restorationScopeId: branch.restorationScopeId);
+        Navigator buildBranchNavigator() {
+          return _buildNavigator(
+              pop, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
+              restorationScopeId: branch.restorationScopeId);
+        }
+
         child = _buildStatefulNavigationShell(route, state, branches, branch,
-            child as Navigator, matchList, pop, registry);
+            buildBranchNavigator, matchList, pop, registry);
       } else if (route is ShellRoute) {
         // The key to provide to the shell route's Navigator.
         shellNavigatorKey = route.navigatorKey;
@@ -269,7 +272,7 @@ class RouteBuilder {
     GoRouterState shellRouterState,
     List<StatefulShellBranch> branches,
     StatefulShellBranch currentBranch,
-    Navigator currentNavigator,
+    BranchNavigatorBuilder currentNavigatorBuilder,
     RouteMatchList currentMatchList,
     VoidCallback pop,
     Map<Page<Object?>, GoRouterState> registry,
@@ -280,7 +283,7 @@ class RouteBuilder {
         shellGoRouterState: shellRouterState,
         branches: branches,
         currentBranch: currentBranch,
-        currentNavigator: currentNavigator,
+        currentNavigatorBuilder: currentNavigatorBuilder,
         currentMatchList: currentMatchList,
         branchNavigatorBuilder: (BuildContext context,
             RouteMatchList matchList,
