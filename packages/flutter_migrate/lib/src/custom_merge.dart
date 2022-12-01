@@ -4,7 +4,6 @@
 
 import 'base/file_system.dart';
 import 'base/logger.dart';
-import 'base/project.dart';
 import 'flutter_project_metadata.dart';
 import 'utils.dart';
 

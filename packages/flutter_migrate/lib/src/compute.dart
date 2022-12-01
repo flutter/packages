@@ -369,7 +369,7 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   required MigrateContext context,
   required MigrateResult result,
   required MigrateRevisions revisionConfig,
-  required List<SupportedPlatform?> platforms,
+  required List<SupportedPlatform> platforms,
   required MigrateCommandParameters commandParameters,
 }) async {
   // Use user-provided projects if provided, if not, generate them internally.
@@ -508,7 +508,7 @@ abstract class MigrateFlutterProject {
   final String name;
   final String androidLanguage;
   final String iosLanguage;
-  final List<SupportedPlatform?>? platformWhitelist;
+  final List<SupportedPlatform>? platformWhitelist;
 
   /// Run git diff over each matching pair of files in the this project and the provided target project.
   Future<Map<String, DiffResult>> diff(

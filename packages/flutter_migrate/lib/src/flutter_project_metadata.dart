@@ -22,18 +22,18 @@ enum FlutterProjectComponent {
 
 extension SupportedPlatformExtension on SupportedPlatform {
   FlutterProjectComponent toFlutterProjectComponent() {
-    final String platformName = this.toString().split('.').last;
-    return FlutterProjectComponent.values.firstWhere((e) => e.toString() == 'FlutterProjectComponent.' + platformName);
+    final String platformName = toString().split('.').last;
+    return FlutterProjectComponent.values.firstWhere((FlutterProjectComponent e) => e.toString() == 'FlutterProjectComponent.$platformName');
   }
 }
 
 extension FlutterProjectComponentExtension on FlutterProjectComponent {
   SupportedPlatform? toSupportedPlatform() {
-    final String platformName = this.toString().split('.').last;
+    final String platformName = toString().split('.').last;
     if (platformName == 'root') {
       return null;
     }
-    return SupportedPlatform.values.firstWhere((e) => e.toString() == 'SupportedPlatform.' + platformName);
+    return SupportedPlatform.values.firstWhere((SupportedPlatform e) => e.toString() == 'SupportedPlatform.$platformName');
   }
 }
 
