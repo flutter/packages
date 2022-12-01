@@ -33,7 +33,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void throwError() {
-    throw new Exception("An error");
+    throw new RuntimeException("An error");
   }
 
   @Override
