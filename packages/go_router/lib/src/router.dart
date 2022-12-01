@@ -142,7 +142,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   String get location => _location;
   String _location = '/';
 
-  /// Returns `true` if there is more than 1 page on the stack.
+  /// Returns `true` if there is at least two or more route can be pop.
   bool canPop() => _routerDelegate.canPop();
 
   void _handleStateMayChange() {
@@ -272,13 +272,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     );
   }
 
-  /// Pop the top page off the GoRouter's page stack.
-  void pop() {
+  /// Pop the top-most route off the current screen.
+  void pop<T extends Object?>([T? result]) {
     assert(() {
       log.info('popping $location');
       return true;
     }());
-    _routerDelegate.pop();
+    _routerDelegate.pop<T>(result);
   }
 
   /// Refresh the route.
