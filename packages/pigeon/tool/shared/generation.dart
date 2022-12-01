@@ -5,8 +5,6 @@
 import 'package:path/path.dart' as p;
 import 'package:pigeon/pigeon.dart';
 
-import 'process_utils.dart';
-
 enum GeneratorLanguages {
   cpp,
   java,
