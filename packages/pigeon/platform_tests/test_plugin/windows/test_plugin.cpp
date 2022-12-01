@@ -15,6 +15,7 @@
 namespace test_plugin {
 
 using core_tests_pigeontest::AllTypes;
+using core_tests_pigeontest::AllTypesWrapper;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::HostIntegrationCoreApi;
@@ -37,6 +38,26 @@ std::optional<FlutterError> TestPlugin::Noop() { return std::nullopt; }
 
 ErrorOr<AllTypes> TestPlugin::EchoAllTypes(const AllTypes& everything) {
   return everything;
+}
+
+std::optional<FlutterError> TestPlugin::ThrowError() {
+  return FlutterError("An error");
+}
+
+ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedString(
+    const AllTypesWrapper& wrapper) {
+  const std::string* inner_string = wrapper.values().a_string();
+  return inner_string ? std::optional<std::string>(*inner_string)
+                      : std::nullopt;
+}
+
+ErrorOr<AllTypesWrapper> TestPlugin::CreateNestedString(
+    const std::string& string) {
+  AllTypes inner_object;
+  inner_object.set_a_string(string);
+  AllTypesWrapper wrapper;
+  wrapper.set_values(inner_object);
+  return wrapper;
 }
 
 }  // namespace test_plugin
