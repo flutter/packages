@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <XCTest/XCTest.h>
+@import XCTest;
+
+#ifdef LEGACY_HARNESS
 #import "Message.gen.h"
+#else
+@import alternate_language_test_plugin;
+#endif
 
 @interface ACMessageSearchReply ()
 + (ACMessageSearchReply *)fromMap:(NSDictionary *)dict;

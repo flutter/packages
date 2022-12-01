@@ -2,10 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <Flutter/Flutter.h>
-#import <XCTest/XCTest.h>
-#import "EchoMessenger.h"
+@import Flutter;
+@import XCTest;
+
+#ifdef LEGACY_HARNESS
 #import "Enum.gen.h"
+#else
+@import alternate_language_test_plugin;
+#endif
+
+#import "EchoMessenger.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface EnumTest : XCTestCase
