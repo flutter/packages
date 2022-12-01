@@ -158,8 +158,7 @@ Future<int> _generateDart(Map<String, String> jobs) async {
   for (final MapEntry<String, String> job in jobs.entries) {
     // TODO(gaaclarke): Make this run the jobs in parallel.  A bug in Dart
     // blocked this (https://github.com/dart-lang/pub/pull/3285).
-    final int result = await runPigeon(
-        input: job.key, dartOut: job.value, streamOutput: false);
+    final int result = await runPigeon(input: job.key, dartOut: job.value);
     if (result != 0) {
       return result;
     }

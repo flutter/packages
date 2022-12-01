@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:path/path.dart' as p;
-
-import 'process_utils.dart';
+import 'package:pigeon/pigeon.dart';
 
 enum GeneratorLanguages {
   cpp,
@@ -164,65 +163,24 @@ Future<int> runPigeon({
   String? javaPackage,
   String? objcHeaderOut,
   String? objcSourceOut,
-  bool streamOutput = true,
 }) async {
-  const bool hasDart = false;
-  final List<String> args = <String>[
-    'run',
-    'pigeon',
-    '--input',
-    input,
-    '--copyright_header',
-    './copyright_header.txt',
-  ];
-  if (kotlinOut != null) {
-    args.addAll(<String>['--experimental_kotlin_out', kotlinOut]);
-  }
-  if (kotlinPackage != null) {
-    args.addAll(<String>['--experimental_kotlin_package', kotlinPackage]);
-  }
-  if (swiftOut != null) {
-    args.addAll(<String>['--experimental_swift_out', swiftOut]);
-  }
-  if (cppHeaderOut != null) {
-    args.addAll(<String>[
-      '--experimental_cpp_header_out',
-      cppHeaderOut,
-    ]);
-  }
-  if (cppSourceOut != null) {
-    args.addAll(<String>[
-      '--experimental_cpp_source_out',
-      cppSourceOut,
-    ]);
-  }
-  if (cppNamespace != null) {
-    args.addAll(<String>[
-      '--cpp_namespace',
-      cppNamespace,
-    ]);
-  }
-  if (dartOut != null) {
-    args.addAll(<String>['--dart_out', dartOut]);
-  }
-  if (dartTestOut != null) {
-    args.addAll(<String>['--dart_test_out', dartTestOut]);
-  }
-  if (!hasDart) {
-    args.add('--one_language');
-  }
-  if (javaOut != null) {
-    args.addAll(<String>['--java_out', javaOut]);
-  }
-  if (javaPackage != null) {
-    args.addAll(<String>['--java_package', javaPackage]);
-  }
-  if (objcHeaderOut != null) {
-    args.addAll(<String>['--objc_header_out', objcHeaderOut]);
-  }
-  if (objcSourceOut != null) {
-    args.addAll(<String>['--objc_source_out', objcSourceOut]);
-  }
-  return runProcess('dart', args,
-      streamOutput: streamOutput, logFailure: !streamOutput);
+  return Pigeon.runWithOptions(PigeonOptions(
+    input: input,
+    copyrightHeader: './copyright_header.txt',
+    dartOut: dartOut,
+    dartTestOut: dartTestOut,
+    dartOptions: const DartOptions(),
+    cppHeaderOut: cppHeaderOut,
+    cppSourceOut: cppSourceOut,
+    cppOptions: CppOptions(namespace: cppNamespace),
+    javaOut: javaOut,
+    javaOptions: JavaOptions(package: javaPackage),
+    kotlinOut: kotlinOut,
+    kotlinOptions: KotlinOptions(package: kotlinPackage),
+    objcHeaderOut: objcHeaderOut,
+    objcSourceOut: objcSourceOut,
+    objcOptions: const ObjcOptions(),
+    swiftOut: swiftOut,
+    swiftOptions: const SwiftOptions(),
+  ));
 }
