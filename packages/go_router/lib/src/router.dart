@@ -273,6 +273,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Pop the top-most route off the current screen.
+  ///
+  /// If the top-most route is a pop up or dialog, this method pops it instead
+  /// of any GoRoute under it.
   void pop<T extends Object?>([T? result]) {
     assert(() {
       log.info('popping $location');

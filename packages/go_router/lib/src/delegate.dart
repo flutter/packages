@@ -128,13 +128,16 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     );
   }
 
-  /// Pops the top page off the GoRouter's page stack.
-  void _onPopPage() {
+  bool _onPopPage(Route<Object?> route, Object? result) {
+    if (!route.didPop(result)) {
+      return false;
+    }
     _matchList.pop();
     assert(() {
       _debugAssertMatchListNotEmpty();
       return true;
     }());
+    return true;
   }
 
   /// Replaces the top-most page of the page stack with the given one.
@@ -181,6 +184,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 }
 
+/// An iterator that iterates through navigators that [GoRouterDelegate]
+/// created from the inner to outer.
+///
+/// The iterator starts with the navigator that hosts the top-most route. This
+/// navigator may not be the inner-most navigator if the top-most route is a
+/// pageless route, such as a dialog or bottom sheet.
 class _NavigatorStateIterator extends Iterator<NavigatorState> {
   _NavigatorStateIterator(this.matchList, this.root)
       : index = matchList.matches.length;
