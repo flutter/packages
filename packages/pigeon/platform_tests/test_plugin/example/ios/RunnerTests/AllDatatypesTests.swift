@@ -8,13 +8,13 @@ import XCTest
 class AllDatatypesTests: XCTestCase {
 
   func testAllNull() throws {
-    let everything = Everything()
-    let binaryMessenger = EchoBinaryMessenger(codec: FlutterEverythingCodec.shared)
-    let api = FlutterEverything(binaryMessenger: binaryMessenger)
+    let everything = AllTypes()
+    let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
+    let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echo(everything: everything) { result in
+    api.echoAllTypes(everything: everything) { result in
       XCTAssertNil(result.aBool)
       XCTAssertNil(result.anInt)
       XCTAssertNil(result.aDouble)
@@ -35,7 +35,7 @@ class AllDatatypesTests: XCTestCase {
   }
 
   func testAllEquals() throws {
-    let everything = Everything(
+    let everything = AllTypes(
       aBool: false,
       anInt: 1,
       aDouble: 2.0,
@@ -50,12 +50,12 @@ class AllDatatypesTests: XCTestCase {
       mapWithAnnotations: ["hello": "world"],
       mapWithObject: ["hello": 1234, "goodbye" : "world"]
     )
-    let binaryMessenger = EchoBinaryMessenger(codec: FlutterEverythingCodec.shared)
-    let api = FlutterEverything(binaryMessenger: binaryMessenger)
+    let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
+    let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echo(everything: everything) { result in
+    api.echoAllTypes(everything: everything) { result in
       XCTAssertEqual(result.aBool, everything.aBool)
       XCTAssertEqual(result.anInt, everything.anInt)
       XCTAssertEqual(result.aDouble, everything.aDouble)

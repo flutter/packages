@@ -51,11 +51,10 @@ Future<int> generatePigeons({required String baseDir}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const List<String> inputs = <String>[
-    'all_datatypes',
-    'all_void',
     'android_unittests',
     'async_handlers',
     'background_platform_channels',
+    'core_tests',
     'enum_args',
     'enum',
     'host2flutter',

@@ -191,13 +191,14 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
 }
 
 Future<int> _runFlutterUnitTests() async {
+  // TODO(stuartmorgan): Migrate Dart unit tests to use the generated output in
+  // shared_test_plugin_code instead of having multiple copies of generation.
   const String flutterUnitTestsPath =
       'platform_tests/flutter_null_safe_unit_tests';
   final int generateCode = await _generateDart(<String, String>{
     'pigeons/flutter_unittests.dart':
         '$flutterUnitTestsPath/lib/null_safe_pigeon.dart',
-    'pigeons/all_datatypes.dart':
-        '$flutterUnitTestsPath/lib/all_datatypes.dart',
+    'pigeons/core_tests.dart': '$flutterUnitTestsPath/lib/core_tests.gen.dart',
     'pigeons/primitive.dart': '$flutterUnitTestsPath/lib/primitive.dart',
     'pigeons/multiple_arity.dart':
         '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',

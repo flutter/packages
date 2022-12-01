@@ -10,16 +10,14 @@
 
 #include <memory>
 
-#include "pigeon/all_datatypes.gen.h"
-#include "pigeon/all_void.gen.h"
+#include "pigeon/core_tests.gen.h"
 
 namespace test_plugin {
 
 // This plugin handles the native side of the integration tests in
 // example/integration_test/
 class TestPlugin : public flutter::Plugin,
-                   public all_datatypes_pigeontest::HostEverything,
-                   public all_void_pigeontest::AllVoidHostApi {
+                   public core_tests_pigeontest::HostIntegrationCoreApi {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
@@ -31,14 +29,10 @@ class TestPlugin : public flutter::Plugin,
   TestPlugin(const TestPlugin&) = delete;
   TestPlugin& operator=(const TestPlugin&) = delete;
 
-  // AllVoidHostApi.
-  std::optional<all_void_pigeontest::FlutterError> Doit() override;
-
-  // HostEverything.
-  all_datatypes_pigeontest::ErrorOr<all_datatypes_pigeontest::Everything>
-  GiveMeEverything() override;
-  all_datatypes_pigeontest::ErrorOr<all_datatypes_pigeontest::Everything> Echo(
-      const all_datatypes_pigeontest::Everything& everything) override;
+  // HostIntegrationCoreApi.
+  std::optional<core_tests_pigeontest::FlutterError> Noop() override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes> EchoAllTypes(
+      const core_tests_pigeontest::AllTypes& everything) override;
 };
 
 }  // namespace test_plugin

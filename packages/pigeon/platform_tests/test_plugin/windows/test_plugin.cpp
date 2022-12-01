@@ -10,22 +10,21 @@
 
 #include <memory>
 
-#include "pigeon/all_datatypes.gen.h"
-#include "pigeon/all_void.gen.h"
+#include "pigeon/core_tests.gen.h"
 
 namespace test_plugin {
 
-using all_datatypes_pigeontest::Everything;
-using all_datatypes_pigeontest::HostEverything;
-using all_void_pigeontest::AllVoidHostApi;
+using core_tests_pigeontest::AllTypes;
+using core_tests_pigeontest::ErrorOr;
+using core_tests_pigeontest::FlutterError;
+using core_tests_pigeontest::HostIntegrationCoreApi;
 
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
   auto plugin = std::make_unique<TestPlugin>();
 
-  AllVoidHostApi::SetUp(registrar->messenger(), plugin.get());
-  HostEverything::SetUp(registrar->messenger(), plugin.get());
+  HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
 
   registrar->AddPlugin(std::move(plugin));
 }
@@ -34,19 +33,9 @@ TestPlugin::TestPlugin() {}
 
 TestPlugin::~TestPlugin() {}
 
-std::optional<all_void_pigeontest::FlutterError> TestPlugin::Doit() {
-  // No-op.
-  return std::nullopt;
-}
+std::optional<FlutterError> TestPlugin::Noop() { return std::nullopt; }
 
-// HostEverything.
-all_datatypes_pigeontest::ErrorOr<Everything> TestPlugin::GiveMeEverything() {
-  // Currently unused in integration tests, so just return an empty object.
-  return Everything();
-}
-
-all_datatypes_pigeontest::ErrorOr<Everything> TestPlugin::Echo(
-    const Everything& everything) {
+ErrorOr<AllTypes> TestPlugin::EchoAllTypes(const AllTypes& everything) {
   return everything;
 }
 

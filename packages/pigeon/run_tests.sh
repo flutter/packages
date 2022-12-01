@@ -191,8 +191,8 @@ run_dart_compilation_tests() {
 
   flutter create --platforms="android" $flutter_project_dir 1> /dev/null
 
-  test_pigeon_dart ./pigeons/all_void.dart $flutter_project_dir
   test_pigeon_dart ./pigeons/async_handlers.dart $flutter_project_dir
+  test_pigeon_dart ./pigeons/core_tests.dart $flutter_project_dir
   test_pigeon_dart ./pigeons/host2flutter.dart $flutter_project_dir
   test_pigeon_dart ./pigeons/list.dart $flutter_project_dir
   test_pigeon_dart ./pigeons/message.dart $flutter_project_dir

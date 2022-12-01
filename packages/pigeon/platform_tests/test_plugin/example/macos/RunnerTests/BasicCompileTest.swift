@@ -5,8 +5,8 @@
 import XCTest
 @testable import test_plugin
 
-class MyApi: AllVoidHostApi {
-  func doit() {}
+class MyApi: HostTrivialApi {
+  func noop() {}
 }
 
 // Since the generator is almost entirely shared with iOS, this is currently
