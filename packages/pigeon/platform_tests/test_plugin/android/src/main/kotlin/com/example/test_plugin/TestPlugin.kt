@@ -16,29 +16,20 @@ import io.flutter.plugin.common.MethodChannel.Result
  * This plugin handles the native side of the integration tests in
  * example/integration_test/.
  */
-class TestPlugin: FlutterPlugin, AllVoidHostApi, HostEverything {
+class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    AllVoidHostApi.setUp(binding.getBinaryMessenger(), this)
-    HostEverything.setUp(binding.getBinaryMessenger(), this)
+    HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this)
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
   }
 
-  // AllVoidHostApi
+  // HostIntegrationCoreApi
 
-  override fun doit() {
-    // No-op.
+  override fun noop() {
   }
 
-  // HostEverything
-
-  override fun giveMeEverything(): Everything {
-    // Currently unused in integration tests, so just return an empty object.
-    return Everything()
-  }
-
-  override fun echo(everything: Everything): Everything {
+  override fun echoAllTypes(everything: AllTypes): AllTypes {
     return everything
   }
 }

@@ -158,8 +158,7 @@ Future<int> _generateDart(Map<String, String> jobs) async {
   for (final MapEntry<String, String> job in jobs.entries) {
     // TODO(gaaclarke): Make this run the jobs in parallel.  A bug in Dart
     // blocked this (https://github.com/dart-lang/pub/pull/3285).
-    final int result = await runPigeon(
-        input: job.key, dartOut: job.value, streamOutput: false);
+    final int result = await runPigeon(input: job.key, dartOut: job.value);
     if (result != 0) {
       return result;
     }
@@ -192,13 +191,14 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
 }
 
 Future<int> _runFlutterUnitTests() async {
+  // TODO(stuartmorgan): Migrate Dart unit tests to use the generated output in
+  // shared_test_plugin_code instead of having multiple copies of generation.
   const String flutterUnitTestsPath =
       'platform_tests/flutter_null_safe_unit_tests';
   final int generateCode = await _generateDart(<String, String>{
     'pigeons/flutter_unittests.dart':
         '$flutterUnitTestsPath/lib/null_safe_pigeon.dart',
-    'pigeons/all_datatypes.dart':
-        '$flutterUnitTestsPath/lib/all_datatypes.dart',
+    'pigeons/core_tests.dart': '$flutterUnitTestsPath/lib/core_tests.gen.dart',
     'pigeons/primitive.dart': '$flutterUnitTestsPath/lib/primitive.dart',
     'pigeons/multiple_arity.dart':
         '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',

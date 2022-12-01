@@ -4,5 +4,4 @@
 *.gen.dart
 # The following are files that are used in integration tests, which need to be
 # checked in to avoid analysis failures.
-!all_datatypes.gen.dart
-!all_void.gen.dart
+!core_tests.gen.dart
