@@ -40,18 +40,16 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: mac_build_all_packages.yaml
+      target_file: mac_custom_package_tests.yaml
       channel: master
 
   - name: Mac_x64 build_all_packages stable
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
-      target_file: mac_build_all_packages.yaml
+      target_file: mac_custom_package_tests.yaml
       channel: stable
 
   - name: Windows custom_package_tests master - packages
