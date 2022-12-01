@@ -28,21 +28,21 @@
       [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoAllTypes:everything
-           completion:^(AllTypes *_Nonnull result, NSError *_Nullable error) {
-             XCTAssertNil(error);
-             XCTAssertNotNil(result);
-             XCTAssert([result.aBool isEqual:[NSNull null]]);
-             XCTAssert([result.anInt isEqual:[NSNull null]]);
-             XCTAssert([result.aDouble isEqual:[NSNull null]]);
-             XCTAssert([result.aString isEqual:[NSNull null]]);
-             XCTAssert([result.aByteArray isEqual:[NSNull null]]);
-             XCTAssert([result.a4ByteArray isEqual:[NSNull null]]);
-             XCTAssert([result.a8ByteArray isEqual:[NSNull null]]);
-             XCTAssert([result.aFloatArray isEqual:[NSNull null]]);
-             XCTAssert([result.aList isEqual:[NSNull null]]);
-             XCTAssert([result.aMap isEqual:[NSNull null]]);
-             [expectation fulfill];
-           }];
+         completion:^(AllTypes *_Nonnull result, NSError *_Nullable error) {
+           XCTAssertNil(error);
+           XCTAssertNotNil(result);
+           XCTAssert([result.aBool isEqual:[NSNull null]]);
+           XCTAssert([result.anInt isEqual:[NSNull null]]);
+           XCTAssert([result.aDouble isEqual:[NSNull null]]);
+           XCTAssert([result.aString isEqual:[NSNull null]]);
+           XCTAssert([result.aByteArray isEqual:[NSNull null]]);
+           XCTAssert([result.a4ByteArray isEqual:[NSNull null]]);
+           XCTAssert([result.a8ByteArray isEqual:[NSNull null]]);
+           XCTAssert([result.aFloatArray isEqual:[NSNull null]]);
+           XCTAssert([result.aList isEqual:[NSNull null]]);
+           XCTAssert([result.aMap isEqual:[NSNull null]]);
+           [expectation fulfill];
+         }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
