@@ -2,10 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <XCTest/XCTest.h>
+@import XCTest;
+
+#ifdef LEGACY_HARNESS
+#import "NullableReturns.gen.h"
+#else
+@import alternate_language_test_plugin;
+#endif
+
 #import "EchoMessenger.h"
 #import "MockBinaryMessenger.h"
-#import "NullableReturns.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface MockNullableArgHostApi : NSObject <NullableArgHostApi>

@@ -67,9 +67,12 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'flutter_unittests': _TestInfo(
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
-  'ios_unittests': _TestInfo(
-      function: _runIOSUnitTests,
+  'ios_objc_unittests': _TestInfo(
+      function: _runIOSObjCUnitTests,
       description: 'Unit tests on generated Objective-C code.'),
+  'ios_objc_integration_tests': _TestInfo(
+      function: _runIOSObjCIntegrationTests,
+      description: 'Integration tests on generated Objective-C code.'),
   'ios_swift_unittests': _TestInfo(
       function: _runIOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code.'),
@@ -223,8 +226,25 @@ Future<int> _runFlutterUnitTests() async {
   return 0;
 }
 
-Future<int> _runIOSUnitTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+Future<int> _runIOSObjCUnitTests() async {
+  return _runIOSUnitTests(_alternateLanguageTestPluginRelativePath);
+}
+
+Future<int> _runIOSObjCIntegrationTests() async {
+  final String? device = await getDeviceForPlatform('ios');
+  if (device == null) {
+    print('No iOS device available. Attach an iOS device or start '
+        'a simulator to run integration tests');
+    return _noDeviceAvailableExitCode;
+  }
+
+  const String examplePath =
+      './$_alternateLanguageTestPluginRelativePath/example';
+  return runFlutterCommand(
+    examplePath,
+    'test',
+    <String>[_integrationTestFileRelativePath, '-d', device],
+  );
 }
 
 Future<int> _runMacOSSwiftUnitTests() async {
@@ -250,11 +270,15 @@ Future<int> _runMacOSSwiftIntegrationTests() async {
 }
 
 Future<int> _runIOSSwiftUnitTests() async {
-  const String examplePath = './$_testPluginRelativePath/example';
+  return _runIOSUnitTests(_testPluginRelativePath);
+}
+
+Future<int> _runIOSUnitTests(String testPluginPath) async {
+  final String examplePath = './$testPluginPath/example';
   final int compileCode = await runFlutterBuild(
     examplePath,
     'ios',
-    flags: <String>['--simulator'],
+    flags: <String>['--simulator', '--no-codesign'],
   );
   if (compileCode != 0) {
     return compileCode;
