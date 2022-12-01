@@ -23,12 +23,10 @@ public class MultipleArityTest {
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
               ArrayList<Object> args =
-                  (ArrayList<Object>)
-                      AllDatatypes.FlutterEverything.getCodec().decodeMessage(message);
+                  (ArrayList<Object>) MultipleArityFlutterApi.getCodec().decodeMessage(message);
               Long arg0 = (Long) args.get(0);
               Long arg1 = (Long) args.get(1);
-              ByteBuffer replyData =
-                  AllDatatypes.FlutterEverything.getCodec().encodeMessage(arg0 - arg1);
+              ByteBuffer replyData = MultipleArityFlutterApi.getCodec().encodeMessage(arg0 - arg1);
               replyData.position(0);
               reply.reply(replyData);
               return null;

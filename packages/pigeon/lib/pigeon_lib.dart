@@ -1373,12 +1373,20 @@ ${_argParser.usage}''';
     final List<Error> errors = <Error>[];
     errors.addAll(parseResults.errors);
 
+    // Helper to clean up non-Stdout sinks.
+    Future<void> releaseSink(IOSink sink) async {
+      if (sink is! Stdout) {
+        await sink.close();
+      }
+    }
+
     for (final Generator generator in safeGenerators) {
       final IOSink? sink = generator.shouldGenerate(options);
       if (sink != null) {
         final List<Error> generatorErrors =
             generator.validate(options, parseResults.root);
         errors.addAll(generatorErrors);
+        await releaseSink(sink);
       }
     }
 
@@ -1419,6 +1427,7 @@ ${_argParser.usage}''';
       if (sink != null) {
         generator.generate(sink, options, parseResults.root);
         await sink.flush();
+        await releaseSink(sink);
       }
     }
 

@@ -24,9 +24,7 @@ class ExampleApp extends StatefulWidget {
 }
 
 class _ExampleAppState extends State<ExampleApp> {
-  // This just uses a single API since it's intended only a minimal check
-  // that the basics are wired up correctly.
-  late final AllVoidHostApi api;
+  late final HostIntegrationCoreApi api;
   String status = 'Calling...';
 
   @override
@@ -36,9 +34,11 @@ class _ExampleAppState extends State<ExampleApp> {
   }
 
   Future<void> initPlatformState() async {
-    api = AllVoidHostApi();
+    api = HostIntegrationCoreApi();
     try {
-      await api.doit();
+      // Make a single trivial call just to validate that everything is wired
+      // up.
+      await api.noop();
     } catch (e) {
       setState(() {
         status = 'Failed: $e';
