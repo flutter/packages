@@ -10,9 +10,13 @@ dependencies:
     path: ../
   flutter:
     sdk: flutter
+  shared_test_plugin_code:
+    path: ../../shared_test_plugin_code
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
 flutter:

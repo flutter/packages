@@ -165,12 +165,24 @@ run_ios_swift_unittests() {
   dart run tool/run_tests.dart -t ios_swift_unittests --skip-generation
 }
 
+run_ios_swift_e2e_tests() {
+  dart run tool/run_tests.dart -t ios_swift_integration_tests --skip-generation
+}
+
 run_macos_swift_unittests() {
-  dart run tool/run_tests.dart -t mac_swift_unittests --skip-generation
+  dart run tool/run_tests.dart -t macos_swift_unittests --skip-generation
+}
+
+run_macos_swift_e2e_tests() {
+  dart run tool/run_tests.dart -t macos_swift_integration_tests --skip-generation
 }
 
 run_android_kotlin_unittests() {
   dart run tool/run_tests.dart -t android_kotlin_unittests --skip-generation
+}
+
+run_android_kotlin_e2e_tests() {
+  dart run tool/run_tests.dart -t android_kotlin_integration_tests --skip-generation
 }
 
 run_dart_compilation_tests() {
@@ -192,7 +204,13 @@ run_dart_compilation_tests() {
   rm -rf $temp_dir
 }
 
-run_ios_unittests() {
+run_ios_objc_unittests() {
+  dart run tool/run_tests.dart -t ios_objc_unittests --skip-generation
+}
+
+# TODO(stuartmorgan): Remove once run_ios_objc_unittests works in CI; see
+# related TODOs below.
+run_ios_legacy_unittests() {
   pushd $PWD
   cd platform_tests/ios_unit_tests
   flutter build ios --simulator
@@ -206,7 +224,7 @@ run_ios_unittests() {
   popd
 }
 
-run_ios_e2e_tests() {
+run_ios_e2e_legacy_tests() {
   DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
   DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
   DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
@@ -232,6 +250,10 @@ run_ios_e2e_tests() {
   popd
 }
 
+run_ios_objc_e2e_tests() {
+  dart run tool/run_tests.dart -t ios_objc_integration_tests --skip-generation
+}
+
 run_android_unittests() {
   pushd $PWD
   cd platform_tests/alternate_language_test_plugin/example
@@ -243,6 +265,10 @@ run_android_unittests() {
   popd
 }
 
+run_android_java_e2e_tests() {
+  dart run tool/run_tests.dart -t android_java_integration_tests --skip-generation
+}
+
 ###############################################################################
 # main
 ###############################################################################
@@ -250,12 +276,28 @@ should_run_android_unittests=true
 should_run_dart_compilation_tests=true
 should_run_dart_unittests=true
 should_run_flutter_unittests=true
-should_run_ios_e2e_tests=true
-should_run_ios_unittests=true
+should_run_ios_e2e_legacy_tests=true
+# TODO(stuartmorgan): Enable by default once CI issues are solved; see
+# https://github.com/flutter/packages/pull/2816.
+should_run_ios_objc_e2e_tests=false
+# TODO(stuartmorgan): Enable the new version by default and remove the legacy
+# version once CI issues are solved; see
+# https://github.com/flutter/packages/pull/2816.
+should_run_ios_objc_unittests=false
+should_run_ios_legacy_unittests=true
 should_run_ios_swift_unittests=true
+# Currently these are testing exactly the same thing as macos_swift_e2e_tests,
+# so we don't need to run both by default. This should become `true` if any
+# iOS-only tests are added (e.g., for a feature not supported by macOS).
+should_run_ios_swift_e2e_tests=false
 should_run_mock_handler_tests=true
 should_run_macos_swift_unittests=true
+should_run_macos_swift_e2e_tests=true
 should_run_android_kotlin_unittests=true
+# Default to false until there is CI support. See
+# https://github.com/flutter/flutter/issues/111505
+should_run_android_java_e2e_tests=false
+should_run_android_kotlin_e2e_tests=false
 while getopts "t:l?h" opt; do
   case $opt in
   t)
@@ -263,25 +305,36 @@ while getopts "t:l?h" opt; do
     should_run_dart_compilation_tests=false
     should_run_dart_unittests=false
     should_run_flutter_unittests=false
-    should_run_ios_e2e_tests=false
-    should_run_ios_unittests=false
+    should_run_ios_objc_unittests=false
+    should_run_ios_objc_e2e_tests=false
+    should_run_ios_e2e_legacy_tests=false
+    should_run_ios_legacy_unittests=false
     should_run_ios_swift_unittests=false
+    should_run_ios_swift_e2e_tests=false
     should_run_mock_handler_tests=false
     should_run_macos_swift_unittests=false
+    should_run_macos_swift_e2e_tests=false
     should_run_android_kotlin_unittests=false
+    should_run_android_java_e2e_tests=false
+    should_run_android_kotlin_e2e_tests=false
     case $OPTARG in
     # TODO(stuartmorgan): Rename to include "java".
     android_unittests) should_run_android_unittests=true ;;
+    android_java_e2e_tests) should_run_android_java_e2e_tests=true ;;
     dart_compilation_tests) should_run_dart_compilation_tests=true ;;
     dart_unittests) should_run_dart_unittests=true ;;
     flutter_unittests) should_run_flutter_unittests=true ;;
-    ios_e2e_tests) should_run_ios_e2e_tests=true ;;
-    # TODO(stuartmorgan): Rename to include "objc".
-    ios_unittests) should_run_ios_unittests=true ;;
+    ios_e2e_legacy_tests) should_run_ios_e2e_legacy_tests=true ;;
+    ios_objc_e2e_tests) should_run_ios_objc_e2e_tests=true ;;
+    ios_objc_unittests) should_run_ios_objc_unittests=true ;;
+    ios_unittests) should_run_ios_legacy_unittests=true ;;
     ios_swift_unittests) should_run_ios_swift_unittests=true ;;
+    ios_swift_e2e_tests) should_run_ios_swift_e2e_tests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
     macos_swift_unittests) should_run_macos_swift_unittests=true ;;
+    macos_swift_e2e_tests) should_run_macos_swift_e2e_tests=true ;;
     android_kotlin_unittests) should_run_android_kotlin_unittests=true ;;
+    android_kotlin_e2e_tests) should_run_android_kotlin_e2e_tests=true ;;
     *)
       echo "unrecognized test: $OPTARG"
       exit 1
@@ -291,15 +344,21 @@ while getopts "t:l?h" opt; do
   l)
     echo "available tests for -t:
   android_unittests        - Unit tests on generated Java code.
+  android_java_e2e_tests   - Integration tests on generated Java code on Android.
   android_kotlin_unittests - Unit tests on generated Kotlin code on Android.
+  android_kotlin_e2e_tests - Integration tests on generated Kotlin code on Android.
   dart_compilation_tests   - Compilation tests on generated Dart code.
   dart_unittests           - Unit tests on and analysis on Pigeon's implementation.
   flutter_unittests        - Unit tests on generated Dart code.
-  ios_e2e_tests            - End-to-end objc tests run on iOS Simulator
-  ios_unittests            - Unit tests on generated Objc code.
+  ios_e2e_legacy_tests     - Legacy end-to-end Obj-C tests; build-only.
+  ios_objc_unittests       - Unit tests on generated Obj-C code.
+  ios_unittests            - Legacy unit tests on generated Obj-C code. Use ios_objc_unittests instead.
+  ios_objc_e2e_tests       - Integration tests on generated Obj-C code.
   ios_swift_unittests      - Unit tests on generated Swift code.
+  ios_swift_e2e_tests      - Integration tests on generated Swift code on iOS.
   mock_handler_tests       - Unit tests on generated Dart mock handler code.
   macos_swift_unittests    - Unit tests on generated Swift code on macOS.
+  macos_swift_e2e_tests    - Integration tests on generated Swift code on macOS.
   "
     exit 1
     ;;
@@ -341,21 +400,39 @@ fi
 if [ "$should_run_dart_compilation_tests" = true ]; then
   run_dart_compilation_tests
 fi
-if [ "$should_run_ios_unittests" = true ]; then
-  run_ios_unittests
+if [ "$should_run_ios_objc_unittests" = true ]; then
+  run_ios_objc_unittests
+fi
+if [ "$should_run_ios_legacy_unittests" = true ]; then
+  run_ios_legacy_unittests
 fi
 if [ "$should_run_ios_swift_unittests" = true ]; then
   run_ios_swift_unittests
 fi
-if [ "$should_run_ios_e2e_tests" = true ]; then
-  run_ios_e2e_tests
+if [ "$should_run_ios_swift_e2e_tests" = true ]; then
+  run_ios_swift_e2e_tests
+fi
+if [ "$should_run_ios_e2e_legacy_tests" = true ]; then
+  run_ios_e2e_legacy_tests
+fi
+if [ "$should_run_ios_objc_e2e_tests" = true ]; then
+  run_ios_objc_e2e_tests
 fi
 if [ "$should_run_android_unittests" = true ]; then
   run_android_unittests
 fi
+if [ "$should_run_android_java_e2e_tests" = true ]; then
+  run_android_java_e2e_tests
+fi
 if [ "$should_run_macos_swift_unittests" = true ]; then
   run_macos_swift_unittests
 fi
+if [ "$should_run_macos_swift_e2e_tests" = true ]; then
+  run_macos_swift_e2e_tests
+fi
 if [ "$should_run_android_kotlin_unittests" = true ]; then
   run_android_kotlin_unittests
+fi
+if [ "$should_run_android_kotlin_e2e_tests" = true ]; then
+  run_android_kotlin_e2e_tests
 fi

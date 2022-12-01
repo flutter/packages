@@ -4,21 +4,36 @@
 
 #import "AlternateLanguageTestPlugin.h"
 
+#import "AllDatatypes.gen.h"
+#import "AllVoid.gen.h"
+
+/**
+ * This plugin is currently a no-op since only unit tests have been set up.
+ * In the future, this will register Pigeon APIs used in integration tests.
+ */
 @implementation AlternateLanguageTestPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@"alternate_language_test_plugin"
-                                  binaryMessenger:[registrar messenger]];
-  AlternateLanguageTestPlugin *instance = [[AlternateLanguageTestPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
+  AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
+  AllVoidHostApiSetup(registrar.messenger, plugin);
+  HostEverythingSetup(registrar.messenger, plugin);
 }
 
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"getPlatformVersion" isEqualToString:call.method]) {
-    result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
+#pragma mark AllVoidHostApi implementation
+
+- (void)doitWithError:(FlutterError *_Nullable *_Nonnull)error {
+  // No-op.
+}
+
+#pragma mark HostEverything implementation
+
+- (nullable Everything *)giveMeEverythingWithError:(FlutterError *_Nullable *_Nonnull)error {
+  // Currently unused in integration tests, so just return an empty object.
+  return [[Everything alloc] init];
+}
+
+- (nullable Everything *)echoEverything:(Everything *)everything
+                                  error:(FlutterError *_Nullable *_Nonnull)error {
+  return everything;
 }
 
 @end

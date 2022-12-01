@@ -1,9 +1,0 @@
-# TODO(stuartmorgan): Remove this, so that review will show the effects of
-# changes on generated files. This will need a way to avoid unnecessary churn,
-# such as a flag to suppress version stamp generation.
-*.gen.dart
-# TODO(stuartmorgan): Add exceptions for specific files that are used in
-# integration tests, as they will need to be checked in to avoid analysis
-# failures. The exclusion of other files is to prevent having multiple
-# copies of all of the Dart output until more tests are restructured to
-# minimize duplication.

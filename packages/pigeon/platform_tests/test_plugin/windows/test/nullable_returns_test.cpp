@@ -6,7 +6,7 @@
 
 #include <optional>
 
-#include "test/nullable_returns.gen.h"
+#include "pigeon/nullable_returns.gen.h"
 #include "test/utils/fake_host_messenger.h"
 
 namespace nullable_returns_pigeontest {

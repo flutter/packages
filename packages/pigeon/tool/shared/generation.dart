@@ -77,10 +77,8 @@ Future<int> generatePigeons({required String baseDir}) async {
   final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');
   final String alternateOutputBase =
       p.join(baseDir, 'platform_tests', 'alternate_language_test_plugin');
-  // TODO(stuartmorgan): Eliminate this and use alternateOutputBase.
-  // See https://github.com/flutter/packages/pull/2816.
-  final String iosObjCBase =
-      p.join(baseDir, 'platform_tests', 'ios_unit_tests');
+  final String sharedDartOutputBase =
+      p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
 
   for (final String input in inputs) {
     final String pascalCaseName = _snakeToPascalCase(input);
@@ -90,7 +88,7 @@ Future<int> generatePigeons({required String baseDir}) async {
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
-      dartOut: '$outputBase/lib/$input.gen.dart',
+      dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
       // Android
       kotlinOut: skipLanguages.contains(GeneratorLanguages.kotlin)
           ? null
@@ -103,10 +101,10 @@ Future<int> generatePigeons({required String baseDir}) async {
       // Windows
       cppHeaderOut: skipLanguages.contains(GeneratorLanguages.cpp)
           ? null
-          : '$outputBase/windows/test/$input.gen.h',
+          : '$outputBase/windows/pigeon/$input.gen.h',
       cppSourceOut: skipLanguages.contains(GeneratorLanguages.cpp)
           ? null
-          : '$outputBase/windows/test/$input.gen.cpp',
+          : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
     );
     if (generateCode != 0) {
@@ -129,7 +127,6 @@ Future<int> generatePigeons({required String baseDir}) async {
     // Generate the alternate language test plugin output.
     generateCode = await runPigeon(
       input: './pigeons/$input.dart',
-      dartOut: '$alternateOutputBase/lib/$input.gen.dart',
       // Android
       // This doesn't use the '.gen' suffix since Java has strict file naming
       // rules.
@@ -141,10 +138,10 @@ Future<int> generatePigeons({required String baseDir}) async {
       // iOS
       objcHeaderOut: skipLanguages.contains(GeneratorLanguages.objc)
           ? null
-          : '$iosObjCBase/ios/Runner/$pascalCaseName.gen.h',
+          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.h',
       objcSourceOut: skipLanguages.contains(GeneratorLanguages.objc)
           ? null
-          : '$iosObjCBase/ios/Runner/$pascalCaseName.gen.m',
+          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
     );
     if (generateCode != 0) {
       return generateCode;
