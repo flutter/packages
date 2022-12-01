@@ -337,7 +337,7 @@ Future<int> _runWindowsIntegrationTests() async {
 
 Future<void> main(List<String> args) async {
   final ArgParser parser = ArgParser()
-    ..addOption(_testFlag, abbr: 't', help: 'Only run specified test.')
+    ..addMultiOption(_testFlag, abbr: 't', help: 'Only run specified tests.')
     ..addFlag(_listFlag,
         negatable: false, abbr: 'l', help: 'List available tests.')
     // Temporarily provide a way for run_test.sh to bypass generation, since
@@ -368,7 +368,7 @@ usage: dart run tool/run_tests.dart [-l | -t <test name>]
 ${parser.usage}''');
     exit(0);
   } else if (argResults.wasParsed(_testFlag)) {
-    testsToRun = <String>[argResults[_testFlag]];
+    testsToRun = argResults[_testFlag];
   }
 
   if (!argResults.wasParsed(_skipGenerationFlag)) {
