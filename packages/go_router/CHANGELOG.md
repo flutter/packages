@@ -1,7 +1,9 @@
-## 5.3.0
+## 6.0.0
 
-- Adds `redirectWithState` to `GoRouteData`.
-- Deprecates `GoRouteData.redirect` in favor of `GoRouteData.redirectWithState`.
+- **BREAKING CHANGE**
+  - `GoRouteData`'s `redirect` now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `GoRouteData`'s `build` now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `GoRouteData`'s `buildPageWithState` has been removed and replaced by `buildPage` with now takes 2 parameters `BuildContext context, GoRouterState state`.
 
 ## 5.2.0
 
