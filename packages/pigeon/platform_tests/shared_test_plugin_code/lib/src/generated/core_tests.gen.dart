@@ -94,12 +94,36 @@ class AllTypes {
   }
 }
 
+class AllTypesWrapper {
+  AllTypesWrapper({
+    required this.values,
+  });
+
+  AllTypes values;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['values'] = values.encode();
+    return pigeonMap;
+  }
+
+  static AllTypesWrapper decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return AllTypesWrapper(
+      values: AllTypes.decode(pigeonMap['values']!),
+    );
+  }
+}
+
 class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   const _HostIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is AllTypes) {
       buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is AllTypesWrapper) {
+      buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -111,6 +135,9 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return AllTypes.decode(readValue(buffer)! as List<Object?>);
+
+      case 129:
+        return AllTypesWrapper.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -178,6 +205,88 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (replyList[0] as AllTypes?)!;
+    }
+  }
+
+  /// Returns an error, to test error handling.
+  Future<void> throwError() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.throwError', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(null) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  Future<String?> extractNestedString(AllTypesWrapper arg_wrapper) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedString', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_wrapper]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as String?);
+    }
+  }
+
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  Future<AllTypesWrapper> createNestedString(String arg_string) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.createNestedString', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_string]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as AllTypesWrapper?)!;
     }
   }
 }

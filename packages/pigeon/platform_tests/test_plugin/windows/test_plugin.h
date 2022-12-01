@@ -33,6 +33,12 @@ class TestPlugin : public flutter::Plugin,
   std::optional<core_tests_pigeontest::FlutterError> Noop() override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes> EchoAllTypes(
       const core_tests_pigeontest::AllTypes& everything) override;
+  std::optional<core_tests_pigeontest::FlutterError> ThrowError() override;
+  core_tests_pigeontest::ErrorOr<std::optional<std::string>>
+  ExtractNestedString(
+      const core_tests_pigeontest::AllTypesWrapper& wrapper) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypesWrapper>
+  CreateNestedString(const std::string& string) override;
 };
 
 }  // namespace test_plugin
