@@ -34,9 +34,13 @@ final GoRoute _goRouteDataBuild = GoRouteData.$route(
 );
 
 final ShellRoute _shellRouteDataBuilder = ShellRouteData.$route(
-  path: '/builder',
   factory: (GoRouterState state) => const _ShellRouteDataBuilder(),
-  routes: _routes,
+  routes: <RouteBase>[
+    GoRouteData.$route(
+      path: '/child',
+      factory: (GoRouterState state) => const _GoRouteDataBuild(),
+    ),
+  ],
 );
 
 class _GoRouteDataBuildPage extends GoRouteData {
@@ -70,9 +74,13 @@ final GoRoute _goRouteDataBuildPage = GoRouteData.$route(
 );
 
 final ShellRoute _shellRouteDataPageBuilder = ShellRouteData.$route(
-  path: '/page-builder',
   factory: (GoRouterState state) => const _ShellRouteDataPageBuilder(),
-  routes: _routes,
+  routes: <RouteBase>[
+    GoRouteData.$route(
+      path: '/child',
+      factory: (GoRouterState state) => const _GoRouteDataBuild(),
+    ),
+  ],
 );
 
 class _GoRouteDataBuildPageWithState extends GoRouteData {
@@ -153,16 +161,14 @@ void main() {
   });
 
   group('ShellRouteData >', () {
-    final List<ShellRoute> shellRoutes = <ShellRoute>[
-      _shellRouteDataBuilder,
-      _shellRouteDataPageBuilder,
-    ];
     testWidgets(
       'builder',
       (WidgetTester tester) async {
         final GoRouter goRouter = GoRouter(
-          initialLocation: '/builder',
-          routes: shellRoutes,
+          initialLocation: '/child',
+          routes: <RouteBase>[
+            _shellRouteDataBuilder,
+          ],
         );
         await tester.pumpWidget(MaterialApp.router(
           routeInformationProvider: goRouter.routeInformationProvider,
@@ -178,8 +184,10 @@ void main() {
       'pageBuilder',
       (WidgetTester tester) async {
         final GoRouter goRouter = GoRouter(
-          initialLocation: '/page-builder',
-          routes: shellRoutes,
+          initialLocation: '/child',
+          routes: <RouteBase>[
+            _shellRouteDataPageBuilder,
+          ],
         );
         await tester.pumpWidget(MaterialApp.router(
           routeInformationProvider: goRouter.routeInformationProvider,

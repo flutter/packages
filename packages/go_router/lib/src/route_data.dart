@@ -26,7 +26,6 @@ abstract class RouteData {
 /// [redirect].
 /// {@category Type-safe routes}
 abstract class GoRouteData extends RouteData {
-
   /// Allows subclasses to have `const` constructors.
   ///
   /// [GoRouteData] is abstract and cannot be instantiated directly.
@@ -174,7 +173,6 @@ abstract class ShellRouteData extends RouteData {
   ///
   /// Should not be used directly.
   static ShellRoute $route<T extends ShellRouteData>({
-    required String path,
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? navigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
