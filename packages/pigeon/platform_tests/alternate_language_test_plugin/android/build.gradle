@@ -1,0 +1,52 @@
+group 'com.example.alternate_language_test_plugin'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.3.1'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 31
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+        unitTests.returnDefaultValues = true
+        unitTests.all {
+            testLogging {
+               events "passed", "skipped", "failed", "standardOut", "standardError"
+               outputs.upToDateWhen {false}
+               showStandardStreams = true
+            }
+        }
+    }
+
+    dependencies {
+        testImplementation 'junit:junit:4.+'
+        testImplementation "org.mockito:mockito-core:4.+"
+    }
+}

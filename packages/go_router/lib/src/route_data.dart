@@ -29,11 +29,13 @@ abstract class RouteData {
 }
 
 /// Baseclass for supporting
-/// [typed routing](https://gorouter.dev/typed-routing).
+/// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
 ///
 /// Subclasses must override one of [build], [buildPageWithState], or
 /// [redirect].
+/// {@category Type-safe routes}
 abstract class GoRouteData extends RouteData {
+
   /// Allows subclasses to have `const` constructors.
   ///
   /// [GoRouteData] is abstract and cannot be instantiated directly.

@@ -1332,9 +1332,18 @@ ${_argParser.usage}''';
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
   static Future<int> run(List<String> args,
+      {List<Generator>? generators, String? sdkPath}) {
+    final PigeonOptions options = Pigeon.parseArgs(args);
+    return runWithOptions(options, generators: generators, sdkPath: sdkPath);
+  }
+
+  /// The 'main' entrypoint used by external packages.  [options] is
+  /// used when running the code generator.  The optional parameter [generators] allows you to
+  /// customize the generators that pigeon will use. The optional parameter
+  /// [sdkPath] allows you to specify the Dart SDK path.
+  static Future<int> runWithOptions(PigeonOptions options,
       {List<Generator>? generators, String? sdkPath}) async {
     final Pigeon pigeon = Pigeon.setup();
-    PigeonOptions options = Pigeon.parseArgs(args);
     if (options.debugGenerators ?? false) {
       generator_tools.debugGenerators = true;
     }
@@ -1364,12 +1373,20 @@ ${_argParser.usage}''';
     final List<Error> errors = <Error>[];
     errors.addAll(parseResults.errors);
 
+    // Helper to clean up non-Stdout sinks.
+    Future<void> releaseSink(IOSink sink) async {
+      if (sink is! Stdout) {
+        await sink.close();
+      }
+    }
+
     for (final Generator generator in safeGenerators) {
       final IOSink? sink = generator.shouldGenerate(options);
       if (sink != null) {
         final List<Error> generatorErrors =
             generator.validate(options, parseResults.root);
         errors.addAll(generatorErrors);
+        await releaseSink(sink);
       }
     }
 
@@ -1410,6 +1427,7 @@ ${_argParser.usage}''';
       if (sink != null) {
         generator.generate(sink, options, parseResults.root);
         await sink.flush();
+        await releaseSink(sink);
       }
     }
 

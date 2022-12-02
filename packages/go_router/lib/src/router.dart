@@ -13,29 +13,36 @@ import 'misc/inherited_router.dart';
 import 'parser.dart';
 import 'typedefs.dart';
 
-/// The top-level go router class.
+/// The route configuration for the app.
 ///
-/// This is the main entry point for defining app's routing policy.
+/// The `routes` list specifies the top-level routes for the app. It must not be
+/// empty and must contain an [GoRouter] to match `/`.
 ///
-/// The `routes` defines the routing table. It must not be empty and must
-/// contain an [GoRouter] to match `/`.
+/// See the [Get
+/// started](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
+/// example, which shows an app with a simple route configuration.
 ///
-/// See [Routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
-/// for an example of defining a simple routing table.
-///
-/// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
-/// for an example of defining a multi-level routing table.
-///
-/// The `redirect` does top-level redirection before the URIs are parsed by
-/// the `routes`. Consider using [GoRoute.redirect] for individual route
-/// redirection. If [BuildContext.dependOnInheritedWidgetOfExactType] is used
-/// during the redirection (which is how `of` methods are usually implemented),
-/// a re-evaluation will be triggered when the [InheritedWidget] changes.
+/// The [redirect] callback allows the app to redirect to a new location.
+/// Alternatively, you can specify a redirect for an individual route using
+/// [GoRoute.redirect]. If [BuildContext.dependOnInheritedWidgetOfExactType] is
+/// used during the redirection (which is how `of` methods are usually
+/// implemented), a re-evaluation will be triggered when the [InheritedWidget]
+/// changes.
 ///
 /// See also:
-///  * [GoRoute], which provides APIs to define the routing table.
-///  * [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example),
+/// * [Configuration](https://pub.dev/documentation/go_router/topics/Configuration-topic.html)
+/// * [GoRoute], which provides APIs to define the routing table.
+/// * [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example),
 ///    which contains examples for different routing scenarios.
+/// {@category Get started}
+/// {@category Upgrading}
+/// {@category Configuration}
+/// {@category Navigation}
+/// {@category Redirection}
+/// {@category Web}
+/// {@category Deep linking}
+/// {@category Error handling}
+/// {@category Named routes}
 class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
@@ -135,12 +142,22 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   String get location => _location;
   String _location = '/';
 
-  /// Returns `true` if there is more than 1 page on the stack.
+  /// Returns `true` if there is at least two or more route can be pop.
   bool canPop() => _routerDelegate.canPop();
 
   void _handleStateMayChange() {
-    final String newLocation =
-        _routerDelegate.currentConfiguration.location.toString();
+    final String newLocation;
+    if (routerDelegate.currentConfiguration.isNotEmpty &&
+        routerDelegate.currentConfiguration.matches.last
+            is ImperativeRouteMatch) {
+      newLocation = (routerDelegate.currentConfiguration.matches.last
+              as ImperativeRouteMatch)
+          .matches
+          .uri
+          .toString();
+    } else {
+      newLocation = _routerDelegate.currentConfiguration.uri.toString();
+    }
     if (_location != newLocation) {
       _location = newLocation;
       notifyListeners();
@@ -200,7 +217,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matches) {
-      _routerDelegate.push(matches.last);
+      _routerDelegate.push(matches);
     });
   }
 
@@ -232,7 +249,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matchList) {
-      routerDelegate.replace(matchList.matches.last);
+      routerDelegate.replace(matchList);
     });
   }
 
@@ -255,13 +272,16 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     );
   }
 
-  /// Pop the top page off the GoRouter's page stack.
-  void pop() {
+  /// Pop the top-most route off the current screen.
+  ///
+  /// If the top-most route is a pop up or dialog, this method pops it instead
+  /// of any GoRoute under it.
+  void pop<T extends Object?>([T? result]) {
     assert(() {
       log.info('popping $location');
       return true;
     }());
-    _routerDelegate.pop();
+    _routerDelegate.pop<T>(result);
   }
 
   /// Refresh the route.
