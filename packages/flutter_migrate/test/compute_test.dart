@@ -299,17 +299,13 @@ void main() {
       expect(revisions.config.unmanagedFiles.isEmpty, false);
       expect(revisions.config.platformConfigs.isEmpty, false);
       expect(revisions.config.platformConfigs.length, 3);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.root),
-          true);
+      expect(revisions.config.platformConfigs.containsKey(FlutterProjectComponent.root), true);
       expect(
           revisions.config.platformConfigs
               .containsKey(FlutterProjectComponent.android),
           true);
       expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.ios),
+          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.ios),
           true);
     });
 
@@ -394,91 +390,78 @@ migration:
           true);
 
       expect(revisions.config.platformConfigs.length, 7);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.root),
-          true);
+      expect(revisions.config.platformConfigs.containsKey(FlutterProjectComponent.root), true);
       expect(
           revisions.config.platformConfigs
               .containsKey(FlutterProjectComponent.android),
           true);
       expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.ios),
+          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.ios),
           true);
       expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.linux),
+          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.linux),
           true);
       expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.macos),
+          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.macos),
           true);
       expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.web),
+          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.web),
           true);
       expect(
           revisions.config.platformConfigs
               .containsKey(FlutterProjectComponent.windows),
           true);
 
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.root]!
-              .createRevision,
+      expect(revisions.config.platformConfigs[FlutterProjectComponent.root]!.createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
           revisions.config.platformConfigs[FlutterProjectComponent.android]!
               .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.ios]!
-              .createRevision,
+          revisions
+              .config.platformConfigs[FlutterProjectComponent.ios]!.createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.linux]!
-              .createRevision,
+          revisions
+              .config.platformConfigs[FlutterProjectComponent.linux]!.createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.macos]!
-              .createRevision,
+          revisions
+              .config.platformConfigs[FlutterProjectComponent.macos]!.createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.web]!
-              .createRevision,
+          revisions
+              .config.platformConfigs[FlutterProjectComponent.web]!.createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
           revisions.config.platformConfigs[FlutterProjectComponent.windows]!
               .createRevision,
           '36427af29421f406ac95ff55ea31d1dc49a45b5f');
 
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.root]!
-              .baseRevision,
+      expect(revisions.config.platformConfigs[FlutterProjectComponent.root]!.baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.android]!
-              .baseRevision,
+          revisions
+              .config.platformConfigs[FlutterProjectComponent.android]!.baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.ios]!
-              .baseRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.ios]!.baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.linux]!
-              .baseRevision,
+          revisions
+              .config.platformConfigs[FlutterProjectComponent.linux]!.baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.macos]!
-              .baseRevision,
+          revisions
+              .config.platformConfigs[FlutterProjectComponent.macos]!.baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.web]!
-              .baseRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.web]!.baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.windows]!
-              .baseRevision,
+          revisions
+              .config.platformConfigs[FlutterProjectComponent.windows]!.baseRevision,
           '36427af29421f406ac95ff55ea31d1dc49a45b5f');
     });
   });
@@ -792,25 +775,26 @@ migration:
         false, // preferTwoWayMerge
       );
 
+      final List<String> expectedMergedPaths = <String> [
+        '.metadata',
+        'ios/Runner/Info.plist',
+        'ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata',
+        'ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme',
+        'ios/Flutter/AppFrameworkInfo.plist',
+        'pubspec.yaml',
+        '.gitignore',
+        'android/app/build.gradle',
+        'android/app/src/main/res/values/styles.xml',
+        'android/app/src/main/AndroidManifest.xml',
+        'android/gradle/wrapper/gradle-wrapper.properties',
+        'android/build.gradle',
+      ];
       expect(result.mergeResults.length, 12);
-      expect(result.mergeResults[0].localPath, '.metadata');
-      expect(result.mergeResults[1].localPath, 'ios/Runner/Info.plist');
-      expect(result.mergeResults[2].localPath,
-          'ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata');
-      expect(result.mergeResults[3].localPath,
-          'ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme');
-      expect(result.mergeResults[4].localPath,
-          'ios/Flutter/AppFrameworkInfo.plist');
-      expect(result.mergeResults[5].localPath, 'pubspec.yaml');
-      expect(result.mergeResults[6].localPath, '.gitignore');
-      expect(result.mergeResults[7].localPath, 'android/app/build.gradle');
-      expect(result.mergeResults[8].localPath,
-          'android/app/src/main/res/values/styles.xml');
-      expect(result.mergeResults[9].localPath,
-          'android/app/src/main/AndroidManifest.xml');
-      expect(result.mergeResults[10].localPath,
-          'android/gradle/wrapper/gradle-wrapper.properties');
-      expect(result.mergeResults[11].localPath, 'android/build.gradle');
+      expect(expectedMergedPaths.length, 12);
+
+      for (MergeResult mergeResult in result.mergeResults) {
+        expect(expectedMergedPaths.contains(mergeResult.localPath), true);
+      }
 
       expect(result.mergeResults[0].exitCode, 0);
       expect(result.mergeResults[1].exitCode, 0);
