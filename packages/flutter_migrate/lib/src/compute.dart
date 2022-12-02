@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:path/path.dart';
+
 import 'base/common.dart';
 import 'base/file_system.dart';
 import 'base/logger.dart';
@@ -31,27 +33,37 @@ const List<String> _skippedDirectories = <String>[
   'test', // Typically user owned and flutter-side changes are not relevant.
 ];
 
+final Iterable<String> canonicalizedSkippedFiles = _skippedFiles.map<String>(
+  (String path) => canonicalize(path),
+);
+// final String canonicalizedLocalPath = canonicalize(localPath);
+// if (canonicalizedSkippedFiles.contains(canonicalizedLocalPath)) {
+//   return true;
+// }
+
 // Returns true for paths relative to the project root that should be skipped
 // completely by the migrate tool.
 bool _skipped(String localPath, FileSystem fileSystem,
     {Set<String>? skippedPrefixes}) {
-  for (final String path in _skippedFiles) {
-    if (path.replaceAll('/', fileSystem.path.separator) == localPath) {
-      return true;
-    }
-  }
-  if (_skippedFiles.contains(localPath)) {
+  final String canonicalizedLocalPath = canonicalize(localPath);
+  final Iterable<String> canonicalizedSkippedFiles =
+      _skippedFiles.map<String>((String path) => canonicalize(path));
+  if (canonicalizedSkippedFiles.contains(canonicalizedLocalPath)) {
     return true;
   }
-  for (final String dir in _skippedDirectories) {
-    if (localPath.startsWith(
-        '${dir.replaceAll('/', fileSystem.path.separator)}${fileSystem.path.separator}')) {
+  final Iterable<String> canonicalizedSkippedDirectories =
+      _skippedDirectories.map<String>((String path) => canonicalize(path));
+  for (final String dir in canonicalizedSkippedDirectories) {
+    if (canonicalizedLocalPath.startsWith('$dir${fileSystem.path.separator}')) {
       return true;
     }
   }
   if (skippedPrefixes != null) {
-    return skippedPrefixes.any((String prefix) =>
-        localPath.startsWith('$prefix${fileSystem.path.separator}'));
+    final Iterable<String> canonicalizedSkippedPrefixes =
+        _skippedFiles.map<String>((String path) => canonicalize(path));
+    return canonicalizedSkippedPrefixes.any((String prefix) =>
+        canonicalizedLocalPath
+            .startsWith('${canonicalize(prefix)}${fileSystem.path.separator}'));
   }
   return false;
 }
@@ -79,7 +91,7 @@ const List<String> _doNotMergeFileExtensions = <String>[
 ];
 
 // These files should always go through the migrate process as
-// they are either integral to the mirgate process or we expect
+// they are either integral to the migrate process or we expect
 // new versions of this file to always be desired.
 const Set<String> _alwaysMigrateFiles = <String>{
   '.metadata', // .metadata tracks key migration information.
@@ -970,7 +982,8 @@ class MigrateRevisions {
     List<SupportedPlatform> platforms,
     FlutterToolsEnvironment environment,
   ) {
-    final List<FlutterProjectComponent> components = <FlutterProjectComponent>[];
+    final List<FlutterProjectComponent> components =
+        <FlutterProjectComponent>[];
     for (final SupportedPlatform platform in platforms) {
       components.add(platform.toFlutterProjectComponent());
     }

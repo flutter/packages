@@ -299,13 +299,17 @@ void main() {
       expect(revisions.config.unmanagedFiles.isEmpty, false);
       expect(revisions.config.platformConfigs.isEmpty, false);
       expect(revisions.config.platformConfigs.length, 3);
-      expect(revisions.config.platformConfigs.containsKey(FlutterProjectComponent.root), true);
+      expect(
+          revisions.config.platformConfigs
+              .containsKey(FlutterProjectComponent.root),
+          true);
       expect(
           revisions.config.platformConfigs
               .containsKey(FlutterProjectComponent.android),
           true);
       expect(
-          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.ios),
+          revisions.config.platformConfigs
+              .containsKey(FlutterProjectComponent.ios),
           true);
     });
 
@@ -390,78 +394,91 @@ migration:
           true);
 
       expect(revisions.config.platformConfigs.length, 7);
-      expect(revisions.config.platformConfigs.containsKey(FlutterProjectComponent.root), true);
+      expect(
+          revisions.config.platformConfigs
+              .containsKey(FlutterProjectComponent.root),
+          true);
       expect(
           revisions.config.platformConfigs
               .containsKey(FlutterProjectComponent.android),
           true);
       expect(
-          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.ios),
+          revisions.config.platformConfigs
+              .containsKey(FlutterProjectComponent.ios),
           true);
       expect(
-          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.linux),
+          revisions.config.platformConfigs
+              .containsKey(FlutterProjectComponent.linux),
           true);
       expect(
-          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.macos),
+          revisions.config.platformConfigs
+              .containsKey(FlutterProjectComponent.macos),
           true);
       expect(
-          revisions.config.platformConfigs.containsKey(FlutterProjectComponent.web),
+          revisions.config.platformConfigs
+              .containsKey(FlutterProjectComponent.web),
           true);
       expect(
           revisions.config.platformConfigs
               .containsKey(FlutterProjectComponent.windows),
           true);
 
-      expect(revisions.config.platformConfigs[FlutterProjectComponent.root]!.createRevision,
+      expect(
+          revisions.config.platformConfigs[FlutterProjectComponent.root]!
+              .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
           revisions.config.platformConfigs[FlutterProjectComponent.android]!
               .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions
-              .config.platformConfigs[FlutterProjectComponent.ios]!.createRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.ios]!
+              .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions
-              .config.platformConfigs[FlutterProjectComponent.linux]!.createRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.linux]!
+              .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions
-              .config.platformConfigs[FlutterProjectComponent.macos]!.createRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.macos]!
+              .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions
-              .config.platformConfigs[FlutterProjectComponent.web]!.createRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.web]!
+              .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
           revisions.config.platformConfigs[FlutterProjectComponent.windows]!
               .createRevision,
           '36427af29421f406ac95ff55ea31d1dc49a45b5f');
 
-      expect(revisions.config.platformConfigs[FlutterProjectComponent.root]!.baseRevision,
+      expect(
+          revisions.config.platformConfigs[FlutterProjectComponent.root]!
+              .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions
-              .config.platformConfigs[FlutterProjectComponent.android]!.baseRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.android]!
+              .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.ios]!.baseRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.ios]!
+              .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions
-              .config.platformConfigs[FlutterProjectComponent.linux]!.baseRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.linux]!
+              .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions
-              .config.platformConfigs[FlutterProjectComponent.macos]!.baseRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.macos]!
+              .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.web]!.baseRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.web]!
+              .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
       expect(
-          revisions
-              .config.platformConfigs[FlutterProjectComponent.windows]!.baseRevision,
+          revisions.config.platformConfigs[FlutterProjectComponent.windows]!
+              .baseRevision,
           '36427af29421f406ac95ff55ea31d1dc49a45b5f');
     });
   });

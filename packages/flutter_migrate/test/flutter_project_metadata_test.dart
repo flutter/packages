@@ -137,9 +137,13 @@ migration:
     final FlutterProjectMetadata projectMetadata =
         FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, isNull);
-    expect(projectMetadata.migrateConfig.platformConfigs[FlutterProjectComponent.root]?.createRevision,
+    expect(
+        projectMetadata.migrateConfig
+            .platformConfigs[FlutterProjectComponent.root]?.createRevision,
         'abcdefg');
-    expect(projectMetadata.migrateConfig.platformConfigs[FlutterProjectComponent.root]?.baseRevision,
+    expect(
+        projectMetadata.migrateConfig
+            .platformConfigs[FlutterProjectComponent.root]?.baseRevision,
         'baserevision');
     expect(projectMetadata.migrateConfig.unmanagedFiles[0], 'file1');
 
@@ -174,9 +178,13 @@ migration:
     final FlutterProjectMetadata projectMetadata =
         FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, FlutterProjectType.app);
-    expect(projectMetadata.migrateConfig.platformConfigs[FlutterProjectComponent.root]?.createRevision,
+    expect(
+        projectMetadata.migrateConfig
+            .platformConfigs[FlutterProjectComponent.root]?.createRevision,
         'abcdefg');
-    expect(projectMetadata.migrateConfig.platformConfigs[FlutterProjectComponent.root]?.baseRevision,
+    expect(
+        projectMetadata.migrateConfig
+            .platformConfigs[FlutterProjectComponent.root]?.baseRevision,
         'baserevision');
     // Tool uses default unamanged files list when malformed.
     expect(projectMetadata.migrateConfig.unmanagedFiles[0], 'lib/main.dart');
@@ -213,17 +221,21 @@ migration:
     final FlutterProjectMetadata projectMetadata =
         FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, FlutterProjectType.app);
-    expect(projectMetadata.migrateConfig.platformConfigs[FlutterProjectComponent.root]?.createRevision,
+    expect(
+        projectMetadata.migrateConfig
+            .platformConfigs[FlutterProjectComponent.root]?.createRevision,
         'abcdefg');
-    expect(projectMetadata.migrateConfig.platformConfigs[FlutterProjectComponent.root]?.baseRevision,
+    expect(
+        projectMetadata.migrateConfig
+            .platformConfigs[FlutterProjectComponent.root]?.baseRevision,
         'baserevision');
     expect(
-        projectMetadata.migrateConfig.platformConfigs[FlutterProjectComponent.ios]
-            ?.createRevision,
+        projectMetadata.migrateConfig
+            .platformConfigs[FlutterProjectComponent.ios]?.createRevision,
         'abcdefg');
     expect(
-        projectMetadata
-            .migrateConfig.platformConfigs[FlutterProjectComponent.ios]?.baseRevision,
+        projectMetadata.migrateConfig
+            .platformConfigs[FlutterProjectComponent.ios]?.baseRevision,
         'baserevision');
     expect(
         projectMetadata.migrateConfig.platformConfigs

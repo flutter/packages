@@ -23,7 +23,9 @@ enum FlutterProjectComponent {
 extension SupportedPlatformExtension on SupportedPlatform {
   FlutterProjectComponent toFlutterProjectComponent() {
     final String platformName = toString().split('.').last;
-    return FlutterProjectComponent.values.firstWhere((FlutterProjectComponent e) => e.toString() == 'FlutterProjectComponent.$platformName');
+    return FlutterProjectComponent.values.firstWhere(
+        (FlutterProjectComponent e) =>
+            e.toString() == 'FlutterProjectComponent.$platformName');
   }
 }
 
@@ -33,7 +35,8 @@ extension FlutterProjectComponentExtension on FlutterProjectComponent {
     if (platformName == 'root') {
       return null;
     }
-    return SupportedPlatform.values.firstWhere((SupportedPlatform e) => e.toString() == 'SupportedPlatform.$platformName');
+    return SupportedPlatform.values.firstWhere((SupportedPlatform e) =>
+        e.toString() == 'SupportedPlatform.$platformName');
   }
 }
 
@@ -253,10 +256,11 @@ ${migrateConfig.getOutputFileString()}''';
 /// Each platform tracks a different set of revisions because flutter create can be
 /// used to add support for new platforms, so the base and create revision may not always be the same.
 class MigrateConfig {
-  MigrateConfig({
-    Map<FlutterProjectComponent, MigratePlatformConfig>? platformConfigs,
-    this.unmanagedFiles = kDefaultUnmanagedFiles
-  }) : platformConfigs = platformConfigs ?? <FlutterProjectComponent, MigratePlatformConfig>{};
+  MigrateConfig(
+      {Map<FlutterProjectComponent, MigratePlatformConfig>? platformConfigs,
+      this.unmanagedFiles = kDefaultUnmanagedFiles})
+      : platformConfigs = platformConfigs ??
+            <FlutterProjectComponent, MigratePlatformConfig>{};
 
   /// A mapping of the files that are unmanaged by defult for each platform.
   static const List<String> kDefaultUnmanagedFiles = <String>[
@@ -290,7 +294,8 @@ class MigrateConfig {
     final FlutterProject flutterProject = FlutterProject(projectDirectory);
     platforms ??= flutterProject.getSupportedPlatforms();
 
-    final List<FlutterProjectComponent> components = <FlutterProjectComponent>[];
+    final List<FlutterProjectComponent> components =
+        <FlutterProjectComponent>[];
     for (final SupportedPlatform platform in platforms) {
       components.add(platform.toFlutterProjectComponent());
     }
@@ -359,7 +364,9 @@ migration:
                 'base_revision': String,
               },
               logger)) {
-            final FlutterProjectComponent component = FlutterProjectComponent.values.firstWhere((FlutterProjectComponent val) =>
+            final FlutterProjectComponent component = FlutterProjectComponent
+                .values
+                .firstWhere((FlutterProjectComponent val) =>
                     val.toString() ==
                     'FlutterProjectComponent.${platformYamlMap['platform'] as String}');
             platformConfigs[component] = MigratePlatformConfig(
