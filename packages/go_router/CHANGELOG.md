@@ -7,6 +7,10 @@
   describe the meaning of the child argument in the builder functions.
 - Added support for restorationId to ShellRoute (and StatefulShellRoute).
 
+## 5.2.1
+
+- Refactors `GoRouter.pop` to be able to pop individual pageless route with result.
+
 ## 5.2.0
 
 - Fixes `GoRouterState.location` and `GoRouterState.param` to return correct value.

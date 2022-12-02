@@ -626,7 +626,7 @@ class _BuilderTestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: builder.tryBuild(context, matches, () {}, false,
+      home: builder.tryBuild(context, matches, (_, __) => false, false,
           routeConfiguration.navigatorKey, <Page<Object?>, GoRouterState>{}),
       // builder: (context, child) => ,
     );

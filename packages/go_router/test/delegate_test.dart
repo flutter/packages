@@ -79,24 +79,21 @@ void main() {
     testWidgets('removes the last element', (WidgetTester tester) async {
       final GoRouter goRouter = await createGoRouter(tester)
         ..push('/error');
+      await tester.pumpAndSettle();
 
-      goRouter.routerDelegate.addListener(expectAsync0(() {}));
       final RouteMatch last = goRouter.routerDelegate.matches.matches.last;
-      goRouter.routerDelegate.pop();
+      await goRouter.routerDelegate.popRoute();
       expect(goRouter.routerDelegate.matches.matches.length, 1);
       expect(goRouter.routerDelegate.matches.matches.contains(last), false);
     });
 
-    testWidgets('throws when it pops more than matches count',
+    testWidgets('pops more than matches count should return false',
         (WidgetTester tester) async {
       final GoRouter goRouter = await createGoRouter(tester)
         ..push('/error');
-      expect(
-        () => goRouter.routerDelegate
-          ..pop()
-          ..pop(),
-        throwsA(isAssertionError),
-      );
+      await tester.pumpAndSettle();
+      await goRouter.routerDelegate.popRoute();
+      expect(await goRouter.routerDelegate.popRoute(), isFalse);
     });
   });
 
