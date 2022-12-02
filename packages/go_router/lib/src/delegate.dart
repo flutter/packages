@@ -13,7 +13,6 @@ import 'information_provider.dart';
 import 'match.dart';
 import 'matching.dart';
 import 'misc/errors.dart';
-import 'misc/stateful_navigation_shell.dart';
 import 'typedefs.dart';
 
 /// GoRouter implementation of [RouterDelegate].

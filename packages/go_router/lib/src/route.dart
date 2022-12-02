@@ -783,3 +783,26 @@ class StatefulShellBranch {
   int get hashCode => Object.hash(
       navigatorKey, rootLocations, name, preload, restorationScopeId);
 }
+
+/// StatefulShellRoute extension that provides support for resolving the
+/// current StatefulShellBranch.
+///
+/// Should not be used directly, consider using [StatefulShellRoute.of] or
+/// [StatefulShellBranch.of] to access [StatefulShellBranchState] for the
+/// current context.
+extension StatefulShellBranchResolver on StatefulShellRoute {
+  static final Expando<StatefulShellBranch> _shellBranchCache =
+      Expando<StatefulShellBranch>();
+
+  /// The current StatefulShellBranch, previously resolved using [resolveBranch].
+  StatefulShellBranch? get currentBranch => _shellBranchCache[this];
+
+  /// Resolves the current StatefulShellBranch, given the provided GoRouterState.
+  StatefulShellBranch? resolveBranch(
+      List<StatefulShellBranch> branches, GoRouterState state) {
+    final StatefulShellBranch? branch = branches
+        .firstWhereOrNull((StatefulShellBranch e) => e.isBranchFor(state));
+    _shellBranchCache[this] = branch;
+    return branch;
+  }
+}

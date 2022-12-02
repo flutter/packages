@@ -404,25 +404,6 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
   }
 }
 
-/// StatefulShellRoute extension that provides support for resolving the
-/// current StatefulShellBranch.
-extension StatefulShellBranchResolver on StatefulShellRoute {
-  static final Expando<StatefulShellBranch> _shellBranchCache =
-      Expando<StatefulShellBranch>();
-
-  /// The current StatefulShellBranch, previously resolved using [resolveBranch].
-  StatefulShellBranch? get currentBranch => _shellBranchCache[this];
-
-  /// Resolves the current StatefulShellBranch, given the provided GoRouterState.
-  StatefulShellBranch? resolveBranch(
-      List<StatefulShellBranch> branches, GoRouterState state) {
-    final StatefulShellBranch? branch = branches
-        .firstWhereOrNull((StatefulShellBranch e) => e.isBranchFor(state));
-    _shellBranchCache[this] = branch;
-    return branch;
-  }
-}
-
 extension _StatefulShellBranchStateHelper on StatefulShellBranchState {
   GlobalKey<NavigatorState> get navigatorKey => branch.navigatorKey;
   bool get preloading => (child as _BranchNavigatorProxy).loaded;
