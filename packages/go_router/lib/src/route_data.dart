@@ -17,15 +17,6 @@ import 'state.dart';
 abstract class RouteData {
   /// {@macro route_data}
   const RouteData();
-
-  /// [navigatorKey] is used to point to a certain navigator
-  /// or pass it into the shell route
-  ///
-  /// In case of [ShellRoute] it will instantiate a new navigator
-  /// with the given key
-  ///
-  /// In case of [GoRoute] it will use the given key to find the navigator
-  GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
 /// Baseclass for supporting
@@ -94,14 +85,13 @@ abstract class GoRouteData extends RouteData {
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
-  static String $location(String path, {Map<String, String>? queryParams}) =>
-      Uri.parse(path)
-          .replace(
-            queryParameters:
-                // Avoid `?` in generated location if `queryParams` is empty
-                queryParams?.isNotEmpty ?? false ? queryParams : null,
-          )
-          .toString();
+  static String $location(String path, {Map<String, String>? queryParams}) => Uri.parse(path)
+      .replace(
+        queryParameters:
+            // Avoid `?` in generated location if `queryParams` is empty
+            queryParams?.isNotEmpty ?? false ? queryParams : null,
+      )
+      .toString();
 
   /// A helper function used by generated code.
   ///
@@ -124,8 +114,7 @@ abstract class GoRouteData extends RouteData {
       return (_stateObjectExpando[state] ??= factory(state)) as T;
     }
 
-    Widget builder(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).build(context);
+    Widget builder(BuildContext context, GoRouterState state) => factoryImpl(state).build(context);
 
     Page<void> pageBuilder(BuildContext context, GoRouterState state) =>
         factoryImpl(state).buildPageWithState(context, state);
@@ -148,6 +137,11 @@ abstract class GoRouteData extends RouteData {
   static final Expando<GoRouteData> _stateObjectExpando = Expando<GoRouteData>(
     'GoRouteState to GoRouteData expando',
   );
+
+  /// [navigatorKey] is used to point to a certain navigator
+  ///
+  /// It will use the given key to find the right navigator for [GoRoute]
+  GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
 /// {@template shell_route_data}
@@ -229,10 +223,12 @@ abstract class ShellRouteData extends RouteData {
 
   /// Used to cache [ShellRouteData] that corresponds to a given [GoRouterState]
   /// to minimize the number of times it has to be deserialized.
-  static final Expando<ShellRouteData> _stateObjectExpando =
-      Expando<ShellRouteData>(
+  static final Expando<ShellRouteData> _stateObjectExpando = Expando<ShellRouteData>(
     'GoRouteState to ShellRouteData expando',
   );
+
+  /// It will be used to instantiate [Navigator] with the given key
+  GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
 /// {@template typed_route}
@@ -290,6 +286,5 @@ class NoOpPage extends Page<void> {
   const NoOpPage();
 
   @override
-  Route<void> createRoute(BuildContext context) =>
-      throw UnsupportedError('Should never be called');
+  Route<void> createRoute(BuildContext context) => throw UnsupportedError('Should never be called');
 }
