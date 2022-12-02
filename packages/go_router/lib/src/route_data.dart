@@ -84,13 +84,14 @@ abstract class GoRouteData extends RouteData {
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
-  static String $location(String path, {Map<String, String>? queryParams}) => Uri.parse(path)
-      .replace(
-        queryParameters:
-            // Avoid `?` in generated location if `queryParams` is empty
-            queryParams?.isNotEmpty ?? false ? queryParams : null,
-      )
-      .toString();
+  static String $location(String path, {Map<String, String>? queryParams}) =>
+      Uri.parse(path)
+          .replace(
+            queryParameters:
+                // Avoid `?` in generated location if `queryParams` is empty
+                queryParams?.isNotEmpty ?? false ? queryParams : null,
+          )
+          .toString();
 
   /// A helper function used by generated code.
   ///
@@ -113,7 +114,8 @@ abstract class GoRouteData extends RouteData {
       return (_stateObjectExpando[state] ??= factory(state)) as T;
     }
 
-    Widget builder(BuildContext context, GoRouterState state) => factoryImpl(state).build(context);
+    Widget builder(BuildContext context, GoRouterState state) =>
+        factoryImpl(state).build(context);
 
     Page<void> pageBuilder(BuildContext context, GoRouterState state) =>
         factoryImpl(state).buildPageWithState(context, state);
@@ -221,7 +223,8 @@ abstract class ShellRouteData extends RouteData {
 
   /// Used to cache [ShellRouteData] that corresponds to a given [GoRouterState]
   /// to minimize the number of times it has to be deserialized.
-  static final Expando<ShellRouteData> _stateObjectExpando = Expando<ShellRouteData>(
+  static final Expando<ShellRouteData> _stateObjectExpando =
+      Expando<ShellRouteData>(
     'GoRouteState to ShellRouteData expando',
   );
 
@@ -284,5 +287,6 @@ class NoOpPage extends Page<void> {
   const NoOpPage();
 
   @override
-  Route<void> createRoute(BuildContext context) => throw UnsupportedError('Should never be called');
+  Route<void> createRoute(BuildContext context) =>
+      throw UnsupportedError('Should never be called');
 }
