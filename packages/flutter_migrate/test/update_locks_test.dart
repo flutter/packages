@@ -105,14 +105,12 @@ flutter:
   });
 
   testWithoutContext('updates gradle locks', () async {
-    ProcessResult result = await processManager.run(<String>[
+    final ProcessResult result = await processManager.run(<String>[
       'flutter',
       'create',
       currentDir.absolute.path,
       '--project-name=testproject'
     ]);
-    result = await Process.run('dir', <String>[],
-        workingDirectory: currentDir.path, runInShell: true);
     expect(result.exitCode, 0);
     final File projectAppLock =
         currentDir.childDirectory('android').childFile('project-app.lockfile');
