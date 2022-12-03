@@ -102,15 +102,15 @@ class AllTypesWrapper {
   AllTypes values;
 
   Object encode() {
-    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
-    pigeonMap['values'] = values.encode();
-    return pigeonMap;
+    final List<Object?> pigeonList = <Object?>[];
+    pigeonList.add(values.encode());
+    return pigeonList;
   }
 
-  static AllTypesWrapper decode(Object message) {
-    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+  static AllTypesWrapper decode(Object result) {
+    result as List<Object?>;
     return AllTypesWrapper(
-      values: AllTypes.decode(pigeonMap['values']!),
+      values: AllTypes.decode(result[0]! as List<Object?>),
     );
   }
 }
@@ -137,7 +137,7 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
         return AllTypes.decode(readValue(buffer)! as List<Object?>);
 
       case 129:
-        return AllTypesWrapper.decode(readValue(buffer)!);
+        return AllTypesWrapper.decode(readValue(buffer)! as List<Object?>);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -213,20 +213,17 @@ class HostIntegrationCoreApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.throwError', codec,
         binaryMessenger: _binaryMessenger);
-    final Map<Object?, Object?>? replyMap =
-        await channel.send(null) as Map<Object?, Object?>?;
-    if (replyMap == null) {
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
         message: 'Unable to establish connection on channel.',
       );
-    } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
+    } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (error['code'] as String?)!,
-        message: error['message'] as String?,
-        details: error['details'],
+        code: (replyList[0] as String?)!,
+        message: replyList[1] as String?,
+        details: replyList[2],
       );
     } else {
       return;
@@ -239,23 +236,21 @@ class HostIntegrationCoreApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedString', codec,
         binaryMessenger: _binaryMessenger);
-    final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object?>[arg_wrapper]) as Map<Object?, Object?>?;
-    if (replyMap == null) {
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_wrapper]) as List<Object?>?;
+    if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
         message: 'Unable to establish connection on channel.',
       );
-    } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
+    } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (error['code'] as String?)!,
-        message: error['message'] as String?,
-        details: error['details'],
+        code: (replyList[0] as String?)!,
+        message: replyList[1] as String?,
+        details: replyList[2],
       );
     } else {
-      return (replyMap['result'] as String?);
+      return (replyList[0] as String?);
     }
   }
 
@@ -265,28 +260,26 @@ class HostIntegrationCoreApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.createNestedString', codec,
         binaryMessenger: _binaryMessenger);
-    final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object?>[arg_string]) as Map<Object?, Object?>?;
-    if (replyMap == null) {
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_string]) as List<Object?>?;
+    if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
         message: 'Unable to establish connection on channel.',
       );
-    } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
+    } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (error['code'] as String?)!,
-        message: error['message'] as String?,
-        details: error['details'],
+        code: (replyList[0] as String?)!,
+        message: replyList[1] as String?,
+        details: replyList[2],
       );
-    } else if (replyMap['result'] == null) {
+    } else if (replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyMap['result'] as AllTypesWrapper?)!;
+      return (replyList[0] as AllTypesWrapper?)!;
     }
   }
 }

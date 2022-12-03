@@ -94,12 +94,36 @@ class AllTypes {
   }
 }
 
+class AllTypesWrapper {
+  AllTypesWrapper({
+    required this.values,
+  });
+
+  AllTypes values;
+
+  Object encode() {
+    final List<Object?> pigeonList = <Object?>[];
+    pigeonList.add(values.encode());
+    return pigeonList;
+  }
+
+  static AllTypesWrapper decode(Object result) {
+    result as List<Object?>;
+    return AllTypesWrapper(
+      values: AllTypes.decode(result[0]! as List<Object?>),
+    );
+  }
+}
+
 class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   const _HostIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is AllTypes) {
       buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is AllTypesWrapper) {
+      buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -111,6 +135,9 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return AllTypes.decode(readValue(buffer)! as List<Object?>);
+
+      case 129:
+        return AllTypesWrapper.decode(readValue(buffer)! as List<Object?>);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -178,6 +205,81 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (replyList[0] as AllTypes?)!;
+    }
+  }
+
+  /// Returns an error, to test error handling.
+  Future<void> throwError() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.throwError', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: (replyList[0] as String?)!,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  Future<String?> extractNestedString(AllTypesWrapper arg_wrapper) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedString', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_wrapper]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: (replyList[0] as String?)!,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as String?);
+    }
+  }
+
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  Future<AllTypesWrapper> createNestedString(String arg_string) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.createNestedString', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_string]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: (replyList[0] as String?)!,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as AllTypesWrapper?)!;
     }
   }
 }
