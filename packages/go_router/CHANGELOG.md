@@ -1,3 +1,7 @@
+## 5.2.1
+
+- Refactors `GoRouter.pop` to be able to pop individual pageless route with result.
+
 ## 5.2.0
 
 - Fixes `GoRouterState.location` and `GoRouterState.param` to return correct value.
