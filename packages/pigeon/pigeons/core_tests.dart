@@ -29,6 +29,15 @@ class AllTypesWrapper {
   AllTypes values;
 }
 
+// A class to express Flutter API test results.
+class TestResult {
+  TestResult({this.error, this.skipped = false});
+  // An error description, if the test failed.
+  String? error;
+  // True if the test was deliberately skipped.
+  bool skipped;
+}
+
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @HostApi()
@@ -58,17 +67,29 @@ abstract class HostIntegrationCoreApi {
 
   // ========== Asyncronous method tests ==========
 
-  /// Returns the passed object asynchronously.
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
   @async
-  Map<String?, Object?> echoMapAsync(Map<String?, Object?> map);
+  void noopAsync();
 
-  // TODO(stuartmorgan): Add wrapper methods to trigger calls back into
-  // FlutterIntegrationCore methods, to allow Dart-driven integration testing
-  // of host->Dart calls. Each wrapper would be implemented by calling the
-  // corresponding FlutterIntegrationCore method, passing arguments and return
-  // values along unchanged. Since these will need to be async, we also need
-  // async host API tests here, so that failures in Dart->host async calling
-  // don't only show up here.
+  /// Returns the passed string asynchronously.
+  @async
+  @ObjCSelector('echoAsyncString:')
+  String echoAsyncString(String aString);
+
+  // ========== Flutter API test wrappers ==========
+
+  @async
+  void callFlutterNoop();
+
+  @async
+  @ObjCSelector('callFlutterEchoString:')
+  String callFlutterEchoString(String aString);
+
+  // TODO(stuartmorgan): Add callFlutterEchoString and the associated test once
+  // either https://github.com/flutter/flutter/issues/116117 is fixed, or the
+  // problematic type is moved out of AllTypes and into its own test, since
+  // the type mismatch breaks the second `encode` round.
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -82,6 +103,10 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllTypes:')
   AllTypes echoAllTypes(AllTypes everything);
+
+  /// Returns the passed string, to test serialization and deserialization.
+  @ObjCSelector('echoString:')
+  String echoString(String aString);
 }
 
 /// An API that can be implemented for minimal, compile-only tests.

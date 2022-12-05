@@ -17,8 +17,11 @@ import io.flutter.plugin.common.MethodChannel.Result
  * example/integration_test/.
  */
 class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
+  var flutterApi: FlutterIntegrationCoreApi? = null
+
   override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this)
+    flutterApi = FlutterIntegrationCoreApi(binding.getBinaryMessenger())
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -45,8 +48,19 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return AllTypesWrapper(AllTypes(aString = string))
   }
 
-  override fun echoMapAsync(map: Map<String?, Any?>,
-                            callback: (Map<String?, Any?>) -> Unit) {
-    callback(map)
+  override fun noopAsync(callback: () -> Unit) {
+    callback()
+  }
+
+  override fun echoAsyncString(aString: String, callback: (String) -> Unit) {
+    callback(aString)
+  }
+
+  override fun callFlutterNoop(callback: () -> Unit) {
+    flutterApi!!.noop() { callback() }
+  }
+
+  override fun callFlutterEchoString(aString: String, callback: (String) -> Unit) {
+    flutterApi!!.echoString(aString) { flutterString -> callback(flutterString) }
   }
 }

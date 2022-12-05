@@ -9,6 +9,8 @@
 #include <windows.h>
 
 #include <memory>
+#include <optional>
+#include <string>
 
 #include "pigeon/core_tests.gen.h"
 
@@ -18,6 +20,7 @@ using core_tests_pigeontest::AllTypes;
 using core_tests_pigeontest::AllTypesWrapper;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
+using core_tests_pigeontest::FlutterIntegrationCoreApi;
 using core_tests_pigeontest::HostIntegrationCoreApi;
 using flutter::EncodableMap;
 using flutter::ErrorOr;
@@ -32,7 +35,9 @@ void TestPlugin::RegisterWithRegistrar(
   registrar->AddPlugin(std::move(plugin));
 }
 
-TestPlugin::TestPlugin() {}
+TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger)
+    : flutter_api_(
+          std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)) {}
 
 TestPlugin::~TestPlugin() {}
 
@@ -62,10 +67,28 @@ ErrorOr<AllTypesWrapper> TestPlugin::CreateNestedString(
   return wrapper;
 }
 
-void TestPlugin::EchoMapAsync(
-    const EncodableMap& map,
-    std::function<void(ErrorOr<EncodableMap> reply)> result) {
-  result(map);
+void TestPlugin::NoopAsync(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  result(std::nullopt);
+}
+
+void TestPlugin::EchoAsyncString(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  result(a_string);
+}
+
+void TestPlugin::CallFlutterNoop(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  flutter_api_.noop([]() { result(); });
+}
+
+void TestPlugin::CallFlutterEchoString(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  flutter_api_.echoString(a_string, [](const std::string& flutter_string) {
+    result(flutter_string);
+  });
 }
 
 }  // namespace test_plugin
