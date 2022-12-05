@@ -106,7 +106,7 @@ void main() {
     );
   });
 
-  group('replace', () {
+  group('pushReplacement', () {
     testWidgets('It should replace the last match with the given one',
         (WidgetTester tester) async {
       final GoRouter goRouter = GoRouter(
@@ -128,7 +128,7 @@ void main() {
       goRouter.routerDelegate.addListener(expectAsync0(() {}));
       final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
       final RouteMatch last = goRouter.routerDelegate.matches.last;
-      goRouter.replace('/page-1');
+      goRouter.pushReplacement('/page-1');
       expect(goRouter.routerDelegate.matches.matches.length, 2);
       expect(
         goRouter.routerDelegate.matches.matches.first,
@@ -169,7 +169,7 @@ void main() {
           const Key('/a-p1'),
         );
 
-        goRouter.replace('/a');
+        goRouter.pushReplacement('/a');
         await tester.pumpAndSettle();
 
         expect(goRouter.routerDelegate.matches.matches.length, 2);
@@ -181,7 +181,7 @@ void main() {
     );
   });
 
-  group('replaceNamed', () {
+  group('pushReplacementNamed', () {
     testWidgets(
       'It should replace the last match with the given one',
       (WidgetTester tester) async {
@@ -210,7 +210,7 @@ void main() {
         goRouter.routerDelegate.addListener(expectAsync0(() {}));
         final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
         final RouteMatch last = goRouter.routerDelegate.matches.last;
-        goRouter.replaceNamed('page1');
+        goRouter.pushReplacementNamed('page1');
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.first,
