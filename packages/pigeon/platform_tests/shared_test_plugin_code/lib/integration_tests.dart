@@ -7,26 +7,46 @@
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'generated.dart';
 
+/// Possible host languages that test can target.
+enum TargetGenerator {
+  /// The Windows C++ generator.
+  cpp,
+
+  /// The Android Java generator.
+  java,
+
+  /// The Android Kotlin generator.
+  kotlin,
+
+  /// The iOS Objective-C generator.
+  objc,
+
+  /// The iOS or macOS Objective-C generator.
+  swift,
+}
+
 /// Sets up and runs the integration tests.
-void runPigeonIntegrationTests() {
+void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Host API tests', () {
-    testWidgets('voidCallVoidReturn', (WidgetTester _) async {
-      final AllVoidHostApi api = AllVoidHostApi();
+    testWidgets('basic void->void call works', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      expect(api.doit(), completes);
+      expect(api.noop(), completes);
     });
 
-    testWidgets('allDataTypesEcho', (WidgetTester _) async {
-      final HostEverything api = HostEverything();
+    testWidgets('all datatypes serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final Everything sentObject = Everything(
+      final AllTypes sentObject = AllTypes(
         aBool: true,
         anInt: 42,
         aDouble: 3.14159,
@@ -43,7 +63,7 @@ void runPigeonIntegrationTests() {
         ],
       );
 
-      final Everything echoObject = await api.echo(sentObject);
+      final AllTypes echoObject = await api.echoAllTypes(sentObject);
       expect(echoObject.aBool, sentObject.aBool);
       expect(echoObject.anInt, sentObject.anInt);
       expect(echoObject.aDouble, sentObject.aDouble);
@@ -70,6 +90,38 @@ void runPigeonIntegrationTests() {
           true);
       expect(
           mapEquals(echoObject.mapWithObject, sentObject.mapWithObject), true);
+    });
+
+    testWidgets('errors are returned correctly', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.throwError();
+      }, throwsA(isA<PlatformException>()));
+    },
+        // Currently unimplementable for Swift:
+        // https://github.com/flutter/flutter/issues/112483
+        skip: targetGenerator == TargetGenerator.swift);
+
+    testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const String sentString = 'Some string';
+      final AllTypesWrapper sentObject =
+          AllTypesWrapper(values: AllTypes(aString: sentString));
+
+      final String? receivedString = await api.extractNestedString(sentObject);
+      expect(receivedString, sentString);
+    });
+
+    testWidgets('nested objects can be received correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const String sentString = 'Some string';
+      final AllTypesWrapper receivedObject =
+          await api.createNestedString(sentString);
+      expect(receivedObject.values.aString, sentString);
     });
   });
 

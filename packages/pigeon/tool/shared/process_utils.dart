@@ -2,12 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:io' show Process, stderr, stdout;
 
 Future<Process> _streamOutput(Future<Process> processFuture) async {
   final Process process = await processFuture;
-  stdout.addStream(process.stdout);
-  stderr.addStream(process.stderr);
+  await Future.wait(<Future<Object?>>[
+    stdout.addStream(process.stdout),
+    stderr.addStream(process.stderr),
+  ]);
   return process;
 }
 
