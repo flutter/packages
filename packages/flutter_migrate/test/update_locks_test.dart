@@ -116,6 +116,14 @@ flutter:
         currentDir.childDirectory('android').childFile('project-app.lockfile');
     final File buildGradle =
         currentDir.childDirectory('android').childFile('build.gradle');
+    final File gradleProperties =
+        currentDir.childDirectory('android').childFile('gradle.properties');
+    gradleProperties.writeAsStringSync('''
+org.gradle.daemon=false
+org.gradle.jvmargs=-Xmx1536M
+android.useAndroidX=true
+android.enableJetifier=true
+''', flush: true);
     final File projectAppLockBackup = currentDir
         .childDirectory('android')
         .childFile('project-app.lockfile_backup_0');

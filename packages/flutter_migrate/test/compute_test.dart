@@ -13,6 +13,7 @@ import 'package:flutter_migrate/src/flutter_project_metadata.dart';
 import 'package:flutter_migrate/src/migrate_logger.dart';
 import 'package:flutter_migrate/src/result.dart';
 import 'package:flutter_migrate/src/utils.dart';
+import 'package:path/path.dart';
 import 'package:process/process.dart';
 
 import 'environment_test.dart';
@@ -316,12 +317,8 @@ void main() {
     testUsingContext('extracts revisions full metadata', () async {
       final File metadataFile =
           context.flutterProject.directory.childFile('.metadata');
-      if (metadataFile.existsSync()) {
-        try {
-          metadataFile.deleteSync();
-        } catch (e) {
-          print('Could not delete .metadata file: $e');
-        }
+      if (!isWindows && metadataFile.existsSync()) {
+        metadataFile.deleteSync();
       }
       metadataFile.createSync(recursive: true);
       metadataFile.writeAsStringSync('''
@@ -632,9 +629,9 @@ migration:
       expect(diffResults.length, 62);
       expect(expectedFiles.length, 62);
       print(expectedFiles);
-      for (final String expectedFile in expectedFiles) {
-        print(expectedFile);
-        expect(diffResults.containsKey(expectedFile), true);
+      for (final String diffResultPath in diffResults.keys) {
+        print(diffResultPath);
+        expect(expectedFiles.contains(canonicalize(diffResultPath)), true);
       }
       // Spot check diffs on key files:
       expect(diffResults['android/build.gradle']!.diff, contains(r'''
@@ -819,7 +816,7 @@ migration:
       print(expectedMergedPaths);
       for (final MergeResult mergeResult in result.mergeResults) {
         print(mergeResult.localPath);
-        expect(expectedMergedPaths.contains(mergeResult.localPath), true);
+        expect(expectedMergedPaths.contains(canonicalize(mergeResult.localPath)), true);
       }
 
       expect(result.mergeResults[0].exitCode, 0);
