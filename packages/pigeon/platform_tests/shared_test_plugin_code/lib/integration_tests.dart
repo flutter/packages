@@ -162,7 +162,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final String sentObject = 'Hello Dart!';
+      const String sentObject = 'Hello Dart!';
 
       final String echoObject = await api.callFlutterEchoString(sentObject);
       expect(echoObject, sentObject);
