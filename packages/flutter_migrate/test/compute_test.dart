@@ -317,7 +317,10 @@ void main() {
     testUsingContext('extracts revisions full metadata', () async {
       final File metadataFile =
           context.flutterProject.directory.childFile('.metadata');
-      if (!isWindows && metadataFile.existsSync()) {
+      if (metadataFile.existsSync()) {
+        if (isWindows) {
+          processManager.run(<String>['icacls', '"${metadataFile.absolute.path}"', r'/q', r'/c', r'/t', r'/grant', 'Users:F']);
+        }
         metadataFile.deleteSync();
       }
       metadataFile.createSync(recursive: true);
@@ -562,7 +565,7 @@ migration:
           await baseProject.diff(context, targetProject);
       result.diffMap.addAll(diffResults);
 
-      final List<String> expectedFiles = <String>[
+      List<String> expectedFiles = <String>[
         '.metadata',
         'ios/Runner.xcworkspace/contents.xcworkspacedata',
         'ios/Runner/AppDelegate.h',
@@ -626,6 +629,7 @@ migration:
         '.idea/workspace.xml',
         '.idea/modules.xml',
       ];
+      expectedFiles = List<String>.from(expectedFiles.map((String e) => canonicalize(e)));
       expect(diffResults.length, 62);
       expect(expectedFiles.length, 62);
       print(expectedFiles);
@@ -796,7 +800,7 @@ migration:
         false, // preferTwoWayMerge
       );
 
-      final List<String> expectedMergedPaths = <String>[
+      List<String> expectedMergedPaths = <String>[
         '.metadata',
         'ios/Runner/Info.plist',
         'ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata',
@@ -810,12 +814,13 @@ migration:
         'android/gradle/wrapper/gradle-wrapper.properties',
         'android/build.gradle',
       ];
+      expectedMergedPaths = List<String>.from(expectedMergedPaths.map((String e) => canonicalize(e)));
       expect(result.mergeResults.length, 12);
       expect(expectedMergedPaths.length, 12);
 
       print(expectedMergedPaths);
       for (final MergeResult mergeResult in result.mergeResults) {
-        print(mergeResult.localPath);
+        print(canonicalize(mergeResult.localPath));
         expect(expectedMergedPaths.contains(canonicalize(mergeResult.localPath)), true);
       }
 
