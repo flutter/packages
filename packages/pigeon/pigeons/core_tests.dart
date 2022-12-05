@@ -29,15 +29,6 @@ class AllTypesWrapper {
   AllTypes values;
 }
 
-// A class to express Flutter API test results.
-class TestResult {
-  TestResult({this.error, this.skipped = false});
-  // An error description, if the test failed.
-  String? error;
-  // True if the test was deliberately skipped.
-  bool skipped;
-}
-
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @HostApi()

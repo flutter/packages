@@ -145,8 +145,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
   // These tests rely on the ansync Dart->host calls to work correctly, since
   // the host->Dart call is wrapped in a driving Dart->host call, so any test
-  // added to this group should have an associated test in the
-  // "Host async API tests" group.
+  // added to this group should have coverage of the relevant arguments and
+  // return value in the "Host async API tests" group.
   group('Flutter API tests', () {
     setUp(() {
       FlutterIntegrationCoreApi.setup(_FlutterApiTestImplementation());
