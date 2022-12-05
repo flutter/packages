@@ -317,7 +317,11 @@ void main() {
       final File metadataFile =
           context.flutterProject.directory.childFile('.metadata');
       if (metadataFile.existsSync()) {
-        metadataFile.deleteSync();
+        try {
+          metadataFile.deleteSync();
+        } catch (e) {
+          print('Could not delete .metadata file: $e');
+        }
       }
       metadataFile.createSync(recursive: true);
       metadataFile.writeAsStringSync('''
@@ -560,7 +564,6 @@ migration:
       final Map<String, DiffResult> diffResults =
           await baseProject.diff(context, targetProject);
       result.diffMap.addAll(diffResults);
-      expect(diffResults.length, 62);
 
       final List<String> expectedFiles = <String>[
         '.metadata',
@@ -626,7 +629,11 @@ migration:
         '.idea/workspace.xml',
         '.idea/modules.xml',
       ];
+      expect(diffResults.length, 62);
+      expect(expectedFiles.length, 62);
+      print(expectedFiles);
       for (final String expectedFile in expectedFiles) {
+        print(expectedFile);
         expect(diffResults.containsKey(expectedFile), true);
       }
       // Spot check diffs on key files:
@@ -809,7 +816,9 @@ migration:
       expect(result.mergeResults.length, 12);
       expect(expectedMergedPaths.length, 12);
 
+      print(expectedMergedPaths);
       for (final MergeResult mergeResult in result.mergeResults) {
+        print(mergeResult.localPath);
         expect(expectedMergedPaths.contains(mergeResult.localPath), true);
       }
 
