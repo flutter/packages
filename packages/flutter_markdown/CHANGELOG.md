@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates the example to specify the import for `DropdownMenu`.
+
 ## 0.6.13
 
 * Support changes in the latest `package:markdown`.
