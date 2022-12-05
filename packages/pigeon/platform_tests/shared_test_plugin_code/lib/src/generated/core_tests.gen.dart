@@ -284,6 +284,38 @@ class HostIntegrationCoreApi {
       return (replyMap['result'] as AllTypesWrapper?)!;
     }
   }
+
+  /// Returns the passed object asynchronously.
+  Future<Map<String?, Object?>> echoMapAsync(
+      Map<String?, Object?> arg_map) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoMapAsync', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_map]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as Map<Object?, Object?>?)!
+          .cast<String?, Object?>();
+    }
+  }
 }
 
 class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {

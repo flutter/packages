@@ -9,7 +9,9 @@ import androidx.annotation.Nullable;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
+import com.example.alternate_language_test_plugin.CoreTests.Result;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import java.util.Map;
 
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrationCoreApi {
@@ -45,5 +47,10 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public @NonNull AllTypesWrapper createNestedString(@NonNull String string) {
     AllTypes innerObject = new AllTypes.Builder().setAString(string).build();
     return new AllTypesWrapper.Builder().setValues(innerObject).build();
+  }
+
+  @Override
+  public void echoMapAsync(@NonNull Map<String, Object> map, Result<Map<String, Object>> result) {
+    result.success(map);
   }
 }

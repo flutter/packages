@@ -43,4 +43,10 @@
   return [AllTypesWrapper makeWithValues:innerObject];
 }
 
+- (void)echoMapAsyncMap:(NSDictionary<NSString *, id> *)map
+             completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                                  FlutterError *_Nullable))completion {
+  completion(map, nil);
+}
+
 @end

@@ -33,6 +33,8 @@ class AllTypesWrapper {
 /// platform_test integration tests.
 @HostApi()
 abstract class HostIntegrationCoreApi {
+  // ========== Syncronous method tests ==========
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   void noop();
@@ -53,6 +55,12 @@ abstract class HostIntegrationCoreApi {
   /// sending of nested objects.
   @ObjCSelector('createNestedObjectWithString:')
   AllTypesWrapper createNestedString(String string);
+
+  // ========== Asyncronous method tests ==========
+
+  /// Returns the passed object asynchronously.
+  @async
+  Map<String?, Object?> echoMapAsync(Map<String?, Object?> map);
 
   // TODO(stuartmorgan): Add wrapper methods to trigger calls back into
   // FlutterIntegrationCore methods, to allow Dart-driven integration testing

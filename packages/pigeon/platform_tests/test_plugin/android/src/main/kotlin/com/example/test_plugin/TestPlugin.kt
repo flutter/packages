@@ -44,4 +44,9 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun createNestedString(string: String): AllTypesWrapper {
     return AllTypesWrapper(AllTypes(aString = string))
   }
+
+  override fun echoMapAsync(map: Map<String?, Any?>,
+                            callback: (Map<String?, Any?>) -> Unit) {
+    callback(map)
+  }
 }

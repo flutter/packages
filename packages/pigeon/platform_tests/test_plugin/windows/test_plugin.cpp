@@ -19,6 +19,8 @@ using core_tests_pigeontest::AllTypesWrapper;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::HostIntegrationCoreApi;
+using flutter::EncodableMap;
+using flutter::ErrorOr;
 
 // static
 void TestPlugin::RegisterWithRegistrar(
@@ -58,6 +60,12 @@ ErrorOr<AllTypesWrapper> TestPlugin::CreateNestedString(
   AllTypesWrapper wrapper;
   wrapper.set_values(inner_object);
   return wrapper;
+}
+
+void TestPlugin::EchoMapAsync(
+    const EncodableMap& map,
+    std::function<void(ErrorOr<EncodableMap> reply)> result) {
+  result(map);
 }
 
 }  // namespace test_plugin

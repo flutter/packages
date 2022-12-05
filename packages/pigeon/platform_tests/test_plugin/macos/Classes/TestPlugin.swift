@@ -36,4 +36,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func createNestedString(string: String) -> AllTypesWrapper {
     return AllTypesWrapper(values: AllTypes(aString: string))
   }
+
+  func echoMapAsync(map: [String?: Any?], completion: @escaping ([String?: Any?]) -> Void) {
+    completion(map)
+  }
 }

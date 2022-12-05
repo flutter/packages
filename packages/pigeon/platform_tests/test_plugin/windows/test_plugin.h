@@ -39,6 +39,11 @@ class TestPlugin : public flutter::Plugin,
       const core_tests_pigeontest::AllTypesWrapper& wrapper) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypesWrapper>
   CreateNestedString(const std::string& string) override;
+  void EchoMapAsync(
+      const flutter::EncodableMap& map,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<flutter::EncodableMap> reply)>
+          result) override;
 };
 
 }  // namespace test_plugin
