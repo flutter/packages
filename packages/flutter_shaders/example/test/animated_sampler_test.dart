@@ -10,8 +10,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_shaders/flutter_shaders.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-final Float64List _transform = Matrix4.identity().storage;
-
 void main() {
   setUpAll(() async {
     await ShaderBuilder.precacheShader('shaders/sampler.frag');
@@ -29,11 +27,9 @@ void main() {
           return AnimatedSampler(
               (ui.Image image, Size size, Offset offset, Canvas canvas) {
             usedShader = true;
-            final ImageShader sampler =
-                ImageShader(image, TileMode.clamp, TileMode.clamp, _transform);
             shader.setFloat(0, size.width);
             shader.setFloat(1, size.height);
-            shader.setSampler(0, sampler);
+            shader.setImageSampler(0, image);
 
             canvas.translate(offset.dx, offset.dy);
             canvas.drawRect(Offset.zero & size, Paint()..shader = shader);

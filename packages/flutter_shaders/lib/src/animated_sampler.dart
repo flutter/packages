@@ -31,7 +31,8 @@ typedef AnimatedSamplerBuilder = void Function(
 ///
 /// Example:
 ///
-/// providing an image to a fragment shader using [FragmentShader.setSampler].
+/// providing an image to a fragment shader using
+/// [FragmentShader.setImageSampler].
 ///
 /// ```dart
 /// Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ typedef AnimatedSamplerBuilder = void Function(
 ///      shader
 ///        ..setFloat(0, size.width)
 ///        ..setFloat(1, size.height)
-///        ..setSampler(0, ui.ImageShader(image, TileMode.clamp, TileMode.clamp, _identity));
+///        ..setImageSampler(0, image);
 ///      canvas.drawImage(image, Offset.zero, Paint()..shader = shader);
 ///     },
 ///     child: widget.child,
