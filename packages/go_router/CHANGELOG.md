@@ -5,6 +5,7 @@
   - `GoRouteData`'s `build` now takes 2 parameters `BuildContext context, GoRouterState state`.
   - `GoRouteData`'s `buildPageWithState` has been removed and replaced by `buildPage` with now takes 2 parameters `BuildContext context, GoRouterState state`.
   - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`. 
+  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`. 
   - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
 
 ## 5.2.1
