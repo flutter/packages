@@ -22,13 +22,11 @@ using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::FlutterIntegrationCoreApi;
 using core_tests_pigeontest::HostIntegrationCoreApi;
-using flutter::EncodableMap;
-using flutter::ErrorOr;
 
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
-  auto plugin = std::make_unique<TestPlugin>();
+  auto plugin = std::make_unique<TestPlugin>(registrar->messenger());
 
   HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
 
@@ -80,15 +78,15 @@ void TestPlugin::EchoAsyncString(
 
 void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
-  flutter_api_.noop([]() { result(); });
+  flutter_api_->noop([result]() { result(std::nullopt); });
 }
 
 void TestPlugin::CallFlutterEchoString(
     const std::string& a_string,
     std::function<void(ErrorOr<std::string> reply)> result) {
-  flutter_api_.echoString(a_string, [](const std::string& flutter_string) {
-    result(flutter_string);
-  });
+  flutter_api_->echoString(
+      a_string,
+      [result](const std::string& flutter_string) { result(flutter_string); });
 }
 
 }  // namespace test_plugin
