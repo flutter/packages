@@ -578,7 +578,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       // discouraged. The toMap and fromMap API matches class API to allow
       // the same code to work with enums and classes, but this
       // can also be done directly in the host and flutter APIs.
-      indent.writeln('private int index;');
+      indent.writeln('private final int index;');
       indent.write('private ${anEnum.name}(final int index) ');
       indent.scoped('{', '}', () {
         indent.writeln('this.index = index;');
