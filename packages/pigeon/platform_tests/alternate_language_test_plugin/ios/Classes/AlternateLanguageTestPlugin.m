@@ -6,14 +6,19 @@
 
 #import "CoreTests.gen.h"
 
+@interface AlternateLanguageTestPlugin ()
+@property(nonatomic) FlutterIntegrationCoreApi *flutterAPI;
+@end
+
 /**
- * This plugin is currently a no-op since only unit tests have been set up.
- * In the future, this will register Pigeon APIs used in integration tests.
+ * This plugin handles the native side of the integration tests in example/integration_test/.
  */
 @implementation AlternateLanguageTestPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
-  HostIntegrationCoreApiSetup(registrar.messenger, plugin);
+  HostIntegrationCoreApiSetup([registrar messenger], plugin);
+  plugin.flutterAPI =
+      [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:[registrar messenger]];
 }
 
 #pragma mark HostIntegrationCoreApi implementation
@@ -41,6 +46,29 @@
   AllTypes *innerObject = [[AllTypes alloc] init];
   innerObject.aString = string;
   return [AllTypesWrapper makeWithValues:innerObject];
+}
+
+- (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  completion(nil);
+}
+
+- (void)echoAsyncString:(NSString *)aString
+             completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  completion(aString, nil);
+}
+
+- (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  [self.flutterAPI noopWithCompletion:^(NSError *error) {
+    completion(error);
+  }];
+}
+
+- (void)callFlutterEchoString:(NSString *)aString
+                   completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoString:aString
+                   completion:^(NSString *value, NSError *error) {
+                     completion(value, error);
+                   }];
 }
 
 @end
