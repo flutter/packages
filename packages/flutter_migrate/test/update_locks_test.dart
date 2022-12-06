@@ -200,7 +200,7 @@ subprojects {
         contains('# Manual edits can break the build and are not advised.'));
     expect(projectAppLock.readAsStringSync(),
         contains('# This file is expected to be part of source control.'));
-  }, timeout: const Timeout(Duration(seconds: 500)));
+  }, timeout: const Timeout(Duration(seconds: 500)), skip: true);
 }
 
 class _VersionCode extends Comparable<_VersionCode> {
