@@ -1,3 +1,8 @@
+## 4.2.9
+
+* Fixes the SwiftCompiler build error when building iOS Frameworks
+  - Added public keyword to relevant structs, protocol and classes
+
 ## 4.2.8
 
 * Adds the ability to use `runWithOptions` entrypoint to allow external libraries to use the pigeon easier.
