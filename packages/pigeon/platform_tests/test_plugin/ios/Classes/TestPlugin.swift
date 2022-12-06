@@ -43,21 +43,21 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return AllTypesWrapper(values: AllTypes(aString: string))
   }
 
-  func noopAsync(completion: @escaping () -> Void) {
+  public func noopAsync(completion: @escaping () -> Void) {
     completion()
   }
 
-  func echoAsyncString(aString: String, completion: @escaping (String) -> Void) {
+  public func echoAsyncString(aString: String, completion: @escaping (String) -> Void) {
     completion(aString)
   }
 
-  func callFlutterNoop(completion: @escaping () -> Void) {
+  public func callFlutterNoop(completion: @escaping () -> Void) {
     flutterAPI.noop() {
       completion()
     }
   }
 
-  func callFlutterEchoString(aString: String, completion: @escaping (String) -> Void) {
+  public func callFlutterEchoString(aString: String, completion: @escaping (String) -> Void) {
     flutterAPI.echoString(aString: aString) { flutterString in
       completion(flutterString)
     }
