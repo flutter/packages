@@ -23,13 +23,14 @@ export 'package:test_api/test_api.dart' // ignore: deprecated_member_use
         isInstanceOf,
         test;
 
-void tryToDelete(FileSystemEntity fileEntity) {
+bool tryToDelete(FileSystemEntity fileEntity) {
   // This should not be necessary, but it turns out that
   // on Windows it's common for deletions to fail due to
   // bogus (we think) "access denied" errors.
   try {
     if (fileEntity.existsSync()) {
       fileEntity.deleteSync(recursive: true);
+      return true;
     }
   } on FileSystemException catch (error) {
     // We print this so that it's visible in the logs, to get an idea of how
@@ -37,6 +38,7 @@ void tryToDelete(FileSystemEntity fileEntity) {
     // ignore: avoid_print
     print('Failed to delete ${fileEntity.path}: $error');
   }
+  return false;
 }
 
 /// Gets the path to the root of the Flutter repository.
