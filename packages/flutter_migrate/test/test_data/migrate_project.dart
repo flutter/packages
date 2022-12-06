@@ -56,7 +56,7 @@ class MigrateProject extends Project {
       'git',
       'commit',
       '-m',
-      '"Initial commit"',
+      '"All changes"',
     ], workingDirectory: dir.path);
   }
 
@@ -138,8 +138,16 @@ class MigrateProject extends Project {
 
       await processManager.run(<String>[
         'chmod',
+        '-R',
         '+w',
-        '${dir.path}${fileSystem.path.separator}*',
+        dir.path,
+      ], workingDirectory: dir.path);
+
+      await processManager.run(<String>[
+        'chmod',
+        '-R',
+        '+r',
+        dir.path,
       ], workingDirectory: dir.path);
     }
 

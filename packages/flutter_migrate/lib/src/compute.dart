@@ -55,11 +55,9 @@ bool _skipped(String localPath, FileSystem fileSystem,
     }
   }
   if (skippedPrefixes != null) {
-    final Iterable<String> canonicalizedSkippedPrefixes =
-        _skippedFiles.map<String>((String path) => canonicalize(path));
-    return canonicalizedSkippedPrefixes.any((String prefix) =>
-        canonicalizedLocalPath
-            .startsWith('${canonicalize(prefix)}${fileSystem.path.separator}'));
+    return skippedPrefixes.any((String prefix) =>
+        localPath
+            .startsWith('$prefix${fileSystem.path.separator}'));
   }
   return false;
 }
@@ -114,7 +112,6 @@ Set<String> _getSkippedPrefixes(List<SupportedPlatform> platforms) {
   for (final SupportedPlatform platform in platforms) {
     skippedPrefixes.remove(platformToSubdirectoryPrefix(platform));
   }
-  skippedPrefixes.remove(null);
   return skippedPrefixes;
 }
 
@@ -275,10 +272,6 @@ Future<MigrateResult?> computeMigration({
     platforms: platforms,
     commandParameters: commandParameters,
   );
-  result.generatedBaseTemplateDirectory =
-      referenceProjects.baseProject.directory;
-  result.generatedTargetTemplateDirectory =
-      referenceProjects.targetProject.directory;
 
   // Generate diffs. These diffs are used to determine if a file is newly added, needs merging,
   // or deleted (rare). Only files with diffs between the base and target revisions need to be
@@ -401,6 +394,9 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   // Git init to enable running further git commands on the reference projects.
   await context.migrateUtils.gitInit(baseProjectDir.absolute.path);
   await context.migrateUtils.gitInit(targetProjectDir.absolute.path);
+
+  result.generatedBaseTemplateDirectory = baseProjectDir;
+  result.generatedTargetTemplateDirectory = targetProjectDir;
 
   final String name =
       context.environment['FlutterProject.manifest.appname']! as String;
@@ -821,7 +817,7 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
         final List<String> platforms = <String>[];
         for (final MigratePlatformConfig config
             in revisionToConfigs[revision]!) {
-          if (config.component == null) {
+          if (config.component == FlutterProjectComponent.root) {
             continue;
           }
           platforms.add(config.component.toString().split('.').last);

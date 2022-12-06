@@ -76,30 +76,29 @@ void main() {
       'start',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    print(result.stdout);
     expect(result.stdout.toString(), contains('Staging directory created at'));
     expect(result.stdout.toString(), contains('''
-           Added files:
-             - android/app/src/main/res/values-night/styles.xml
-             - android/app/src/main/res/drawable-v21/launch_background.xml
-             - analysis_options.yaml
-           Modified files:
-             - .metadata
-             - ios/Runner/Info.plist
-             - ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata
-             - ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme
-             - ios/Flutter/AppFrameworkInfo.plist
-             - ios/.gitignore
-             - pubspec.yaml
-             - .gitignore
-             - android/app/build.gradle
-             - android/app/src/profile/AndroidManifest.xml
-             - android/app/src/main/res/values/styles.xml
-             - android/app/src/main/AndroidManifest.xml
-             - android/app/src/debug/AndroidManifest.xml
-             - android/gradle/wrapper/gradle-wrapper.properties
-             - android/.gitignore
-             - android/build.gradle'''));
+Added files:
+  - android/app/src/main/res/values-night/styles.xml
+  - android/app/src/main/res/drawable-v21/launch_background.xml
+  - analysis_options.yaml
+Modified files:
+  - .metadata
+  - ios/Runner/Info.plist
+  - ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+  - ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme
+  - ios/Flutter/AppFrameworkInfo.plist
+  - ios/.gitignore
+  - pubspec.yaml
+  - .gitignore
+  - android/app/build.gradle
+  - android/app/src/profile/AndroidManifest.xml
+  - android/app/src/main/res/values/styles.xml
+  - android/app/src/main/AndroidManifest.xml
+  - android/app/src/debug/AndroidManifest.xml
+  - android/gradle/wrapper/gradle-wrapper.properties
+  - android/.gitignore
+  - android/build.gradle'''));
 
     result = await runMigrateCommand(<String>[
       'apply',
@@ -223,9 +222,10 @@ class MyApp extends StatelessWidget {
     final FlutterProject flutterProject = flutterFactory.fromDirectory(tempDir);
 
     final MigrateResult result = await computeMigration(
-      verbose: true,
       flutterProject: flutterProject,
-      deleteTempDirectories: false,
+      commandParameters: MigrateCommandParameters(
+        verbose: true,
+      ),
       fileSystem: fileSystem,
       logger: logger,
       migrateUtils: utils,

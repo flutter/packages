@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:args/command_runner.dart';
 
 enum ExitStatus {
@@ -49,7 +51,15 @@ class CommandResult {
 abstract class MigrateCommand extends Command<void> {
   @override
   Future<void> run() async {
-    await runCommand();
+    final CommandResult result = await runCommand();
+    switch (result.exitStatus) {
+      case ExitStatus.success:
+      case ExitStatus.warning:
+        return;
+      case ExitStatus.fail:
+      case ExitStatus.killed:
+        exit(1);
+    }
   }
 
   Future<CommandResult> runCommand();

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:process/process.dart';
+import 'dart:io';
 
 import '../base/command.dart';
 import '../base/file_system.dart';
@@ -219,13 +220,13 @@ class MigrateStartCommand extends MigrateCommand {
       return const CommandResult(ExitStatus.fail);
     }
 
+    await writeStagingDir(migrateResult, logger,
+        verbose: _verbose, projectRootDir: projectRootDir);
+
     _deleteTempDirectories(
       paths: <String>[],
       directories: migrateResult.tempDirectories,
     );
-
-    await writeStagingDir(migrateResult, logger,
-        verbose: _verbose, projectRootDir: projectRootDir);
 
     logger.printStatus(
         'The migrate tool has staged proposed changes in the migrate staging directory.\n');
@@ -298,7 +299,6 @@ class MigrateStartCommand extends MigrateCommand {
       logger.printStatus(
           'Writing migrate staging directory at `${stagingDir.path}`');
     }
-    print('1');
     // Write files in working dir
     for (final MergeResult result in migrateResult.mergeResults) {
       final File file = stagingDir.childFile(result.localPath);
@@ -310,28 +310,17 @@ class MigrateStartCommand extends MigrateCommand {
             flush: true);
       }
     }
-    print('2 ${migrateResult.addedFiles.length}');
-    for (final FilePendingMigration addedFile in migrateResult.addedFiles) {
-      print('2 ${addedFile.file}');
-    }
+
     // Write all files that are newly added in target
     for (final FilePendingMigration addedFile in migrateResult.addedFiles) {
-      print('  2.1 ${addedFile.localPath}');
-      print('  2.1 ${stagingDir.path}');
-      print('  2.1 ${stagingDir.existsSync()}');
       final File file = stagingDir.childFile(addedFile.localPath);
       file.createSync(recursive: true);
       try {
-        print('    2.2 string');
         file.writeAsStringSync(addedFile.file.readAsStringSync(), flush: true);
-        // } on FileSystemException {
-      } catch (e) {
-        print(e.toString());
-        print('    2.2 bytes');
+      } on FileSystemException {
         file.writeAsBytesSync(addedFile.file.readAsBytesSync(), flush: true);
       }
     }
-    print('3');
 
     // Write the MigrateManifest.
     final MigrateManifest manifest = MigrateManifest(
@@ -339,12 +328,10 @@ class MigrateStartCommand extends MigrateCommand {
       migrateResult: migrateResult,
     );
     manifest.writeFile();
-    print('4');
 
     // output the manifest contents.
     checkAndPrintMigrateStatus(manifest, stagingDir, logger: logger);
 
-    print('PRINTING BOX');
     logger.printBox('Staging directory created at `${stagingDir.path}`');
   }
 }

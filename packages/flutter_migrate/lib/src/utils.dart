@@ -220,6 +220,7 @@ class MigrateUtils {
       '--deleted',
       '--modified',
       '--others',
+      '--exclude-standard',
       '--exclude=${migrateStagingDir ?? kDefaultMigrateStagingDirectoryName}'
     ];
     final ProcessResult result =
