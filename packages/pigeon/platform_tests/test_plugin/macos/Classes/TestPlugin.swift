@@ -17,23 +17,23 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   // MARK: HostIntegrationCoreApi implementation
 
-  func noop() {
+  public func noop() {
   }
 
-  func echoAllTypes(everything: AllTypes) -> AllTypes {
+  public func echoAllTypes(everything: AllTypes) -> AllTypes {
     return everything
   }
 
-  func throwError() {
+  public func throwError() {
     // TODO(stuartmorgan): Implement this. See
     // https://github.com/flutter/flutter/issues/112483
   }
 
-  func extractNestedString(wrapper: AllTypesWrapper) -> String? {
+  public func extractNestedString(wrapper: AllTypesWrapper) -> String? {
     return wrapper.values.aString;
   }
 
-  func createNestedString(string: String) -> AllTypesWrapper {
+  public func createNestedString(string: String) -> AllTypesWrapper {
     return AllTypesWrapper(values: AllTypes(aString: string))
   }
 }
