@@ -564,8 +564,10 @@ migration:
 
       final Map<String, DiffResult> diffResults =
           await baseProject.diff(context, targetProject);
+      final Map<String, DiffResult> canonicalizedDiffResults =
+          <String, DiffResult>{};
       for (final MapEntry<String, DiffResult> entry in diffResults.entries) {
-        diffResults[canonicalize(entry.key)] = entry.value;
+        canonicalizedDiffResults[canonicalize(entry.key)] = entry.value;
       }
       result.diffMap.addAll(diffResults);
 
@@ -633,14 +635,17 @@ migration:
         '.idea/workspace.xml',
         '.idea/modules.xml',
       ];
-      expectedFiles = List<String>.from(expectedFiles.map((String e) => canonicalize(e)));
+      expectedFiles =
+          List<String>.from(expectedFiles.map((String e) => canonicalize(e)));
       expect(diffResults.length, 62);
       expect(expectedFiles.length, 62);
-      for (final String diffResultPath in diffResults.keys) {
-        expect(expectedFiles.contains(canonicalize(diffResultPath)), true);
+      for (final String diffResultPath in canonicalizedDiffResults.keys) {
+        expect(expectedFiles.contains(diffResultPath), true);
       }
       // Spot check diffs on key files:
-      expect(diffResults[canonicalize('android/build.gradle')]!.diff, contains(r'''
+      expect(
+          canonicalizedDiffResults[canonicalize('android/build.gradle')]!.diff,
+          contains(r'''
 @@ -1,18 +1,20 @@
  buildscript {
 +    ext.kotlin_version = '1.6.10'
@@ -649,14 +654,18 @@ migration:
 -        jcenter()
 +        mavenCentral()
      }'''));
-      expect(diffResults[canonicalize('android/build.gradle')]!.diff, contains(r'''
+      expect(
+          canonicalizedDiffResults[canonicalize('android/build.gradle')]!.diff,
+          contains(r'''
      dependencies {
 -        classpath 'com.android.tools.build:gradle:3.2.1'
 +        classpath 'com.android.tools.build:gradle:7.1.2'
 +        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
      }
  }'''));
-      expect(diffResults[canonicalize('android/build.gradle')]!.diff, contains(r'''
+      expect(
+          canonicalizedDiffResults[canonicalize('android/build.gradle')]!.diff,
+          contains(r'''
  allprojects {
      repositories {
          google()
@@ -664,7 +673,10 @@ migration:
 +        mavenCentral()
      }
  }'''));
-      expect(diffResults[canonicalize('android/app/src/main/AndroidManifest.xml')]!.diff,
+      expect(
+          canonicalizedDiffResults[
+                  canonicalize('android/app/src/main/AndroidManifest.xml')]!
+              .diff,
           contains(r'''
 @@ -1,39 +1,34 @@
  <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -816,14 +828,15 @@ migration:
         'android/gradle/wrapper/gradle-wrapper.properties',
         'android/build.gradle',
       ];
-      expectedMergedPaths = List<String>.from(expectedMergedPaths.map((String e) => canonicalize(e)));
+      expectedMergedPaths = List<String>.from(
+          expectedMergedPaths.map((String e) => canonicalize(e)));
       expect(result.mergeResults.length, 12);
       expect(expectedMergedPaths.length, 12);
 
-      print(expectedMergedPaths);
       for (final MergeResult mergeResult in result.mergeResults) {
-        print(canonicalize(mergeResult.localPath));
-        expect(expectedMergedPaths.contains(canonicalize(mergeResult.localPath)), true);
+        expect(
+            expectedMergedPaths.contains(canonicalize(mergeResult.localPath)),
+            true);
       }
 
       expect(result.mergeResults[0].exitCode, 0);

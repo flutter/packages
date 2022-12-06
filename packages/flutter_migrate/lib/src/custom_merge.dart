@@ -81,7 +81,8 @@ class MetadataCustomMerge extends CustomMerge {
   MigrateConfig mergeMigrateConfig(
       MigrateConfig current, MigrateConfig target) {
     // Create the superset of current and target platforms with baseRevision updated to be that of target.
-    final Map<FlutterProjectComponent, MigratePlatformConfig> projectComponentConfigs =
+    final Map<FlutterProjectComponent, MigratePlatformConfig>
+        projectComponentConfigs =
         <FlutterProjectComponent, MigratePlatformConfig>{};
     for (final MapEntry<FlutterProjectComponent, MigratePlatformConfig> entry
         in current.platformConfigs.entries) {

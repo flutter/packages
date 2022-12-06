@@ -186,6 +186,9 @@ subprojects {
             .childFile('gradlew.bat')
             .existsSync(),
         true);
+    final Directory dotGradle =
+        currentDir.childDirectory('android').childDirectory('.gradle');
+    tryToDelete(dotGradle);
     await updateGradleDependencyLocking(
         flutterProject, utils, logger, terminal, true, fileSystem,
         force: true);

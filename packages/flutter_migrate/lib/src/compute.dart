@@ -100,7 +100,8 @@ const Set<String> _alwaysMigrateFiles = <String>{
 
 /// False for files that should not be merged. Typically, images and binary files.
 bool _mergable(String localPath) {
-  return _alwaysMigrateFiles.contains(localPath) || !_doNotMergeFileExtensions.any((String ext) => localPath.endsWith(ext));
+  return _alwaysMigrateFiles.contains(localPath) ||
+      !_doNotMergeFileExtensions.any((String ext) => localPath.endsWith(ext));
 }
 
 // Compile the set of path prefixes that should be ignored as configured
