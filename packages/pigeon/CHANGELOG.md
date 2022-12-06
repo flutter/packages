@@ -1,7 +1,6 @@
 ## 4.2.9
 
-* Fixes the SwiftCompiler build error when building iOS Frameworks
-  - Added public keyword to relevant structs, protocol and classes
+* Added public keyword to relevant structs, protocol and classes
 * [kotlin] Fixes a bug with some methods that return `void`.
 
 ## 4.2.8
