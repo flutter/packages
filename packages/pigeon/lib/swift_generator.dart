@@ -468,7 +468,7 @@ import FlutterMacOS
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
-    indent.write('enum ${anEnum.name}: Int ');
+    indent.write('public enum ${anEnum.name}: Int ');
     indent.scoped('{', '}', () {
       // We use explicit indexing here as use of the ordinal() method is
       // discouraged. The toMap and fromMap API matches class API to allow
