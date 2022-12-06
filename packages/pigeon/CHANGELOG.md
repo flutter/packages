@@ -1,6 +1,10 @@
-## 4.2.9
+## 4.2.10
 
 * Changes generated Java enum field to be final.
+
+## 4.2.9
+
+* [kotlin] Fixes a bug with some methods that return `void`.
 
 ## 4.2.8
 

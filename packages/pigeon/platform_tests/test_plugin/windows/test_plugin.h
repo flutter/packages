@@ -9,6 +9,8 @@
 #include <flutter/plugin_registrar_windows.h>
 
 #include <memory>
+#include <optional>
+#include <string>
 
 #include "pigeon/core_tests.gen.h"
 
@@ -21,7 +23,7 @@ class TestPlugin : public flutter::Plugin,
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
-  TestPlugin();
+  TestPlugin(flutter::BinaryMessenger* binary_messenger);
 
   virtual ~TestPlugin();
 
@@ -39,6 +41,25 @@ class TestPlugin : public flutter::Plugin,
       const core_tests_pigeontest::AllTypesWrapper& wrapper) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypesWrapper>
   CreateNestedString(const std::string& string) override;
+  void NoopAsync(std::function<
+                 void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+                     result) override;
+  void EchoAsyncString(
+      const std::string& a_string,
+      std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+          result) override;
+  void CallFlutterNoop(
+      std::function<
+          void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+          result) override;
+  void CallFlutterEchoString(
+      const std::string& a_string,
+      std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+          result) override;
+
+ private:
+  std::unique_ptr<core_tests_pigeontest::FlutterIntegrationCoreApi>
+      flutter_api_;
 };
 
 }  // namespace test_plugin
