@@ -36,10 +36,6 @@ const List<String> _skippedDirectories = <String>[
 final Iterable<String> canonicalizedSkippedFiles = _skippedFiles.map<String>(
   (String path) => canonicalize(path),
 );
-// final String canonicalizedLocalPath = canonicalize(localPath);
-// if (canonicalizedSkippedFiles.contains(canonicalizedLocalPath)) {
-//   return true;
-// }
 
 // Returns true for paths relative to the project root that should be skipped
 // completely by the migrate tool.
@@ -104,12 +100,7 @@ const Set<String> _alwaysMigrateFiles = <String>{
 
 /// False for files that should not be merged. Typically, images and binary files.
 bool _mergable(String localPath) {
-  for (final String ext in _doNotMergeFileExtensions) {
-    if (localPath.endsWith(ext) && !_alwaysMigrateFiles.contains(localPath)) {
-      return false;
-    }
-  }
-  return true;
+  return _alwaysMigrateFiles.contains(localPath) || !_doNotMergeFileExtensions.any((String ext) => localPath.endsWith(ext));
 }
 
 // Compile the set of path prefixes that should be ignored as configured
@@ -120,9 +111,7 @@ Set<String> _getSkippedPrefixes(List<SupportedPlatform> platforms) {
     skippedPrefixes.add(platformToSubdirectoryPrefix(platform));
   }
   for (final SupportedPlatform platform in platforms) {
-    if (platform != null) {
-      skippedPrefixes.remove(platformToSubdirectoryPrefix(platform));
-    }
+    skippedPrefixes.remove(platformToSubdirectoryPrefix(platform));
   }
   skippedPrefixes.remove(null);
   return skippedPrefixes;

@@ -9,6 +9,10 @@ import 'base/file_system.dart';
 import 'base/logger.dart';
 import 'base/project.dart';
 
+/// Represents subdirectories of the flutter project that can be independently created.
+///
+/// This includes each supported platform as well as a component that represents the
+/// root directory of the project.
 enum FlutterProjectComponent {
   root,
   android,
