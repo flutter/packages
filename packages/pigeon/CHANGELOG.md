@@ -1,3 +1,7 @@
+## 4.2.9
+
+* Changes generated Java enum field to be final.
+
 ## 4.2.8
 
 * Adds the ability to use `runWithOptions` entrypoint to allow external libraries to use the pigeon easier.
