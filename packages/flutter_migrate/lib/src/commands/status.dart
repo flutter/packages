@@ -88,6 +88,10 @@ class MigrateStatusCommand extends MigrateCommand {
             .fromDirectory(fileSystem.directory(projectDirectory));
     final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
 
+    if (!validateWorkingDirectory(project, logger)) {
+      return CommandResult.fail();
+    }
+
     Directory stagingDirectory =
         project.directory.childDirectory(kDefaultMigrateStagingDirectoryName);
     final String? customStagingDirectoryPath = stringArg('staging-directory');
@@ -166,7 +170,7 @@ class MigrateStatusCommand extends MigrateCommand {
       }
     }
 
-    logger.printBox('Working directory at `${stagingDirectory.path}`');
+    logger.printBox('Staging directory at `${stagingDirectory.path}`');
 
     checkAndPrintMigrateStatus(manifest, stagingDirectory, logger: logger);
 

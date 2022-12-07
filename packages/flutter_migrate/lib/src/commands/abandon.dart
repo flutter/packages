@@ -76,6 +76,11 @@ class MigrateAbandonCommand extends MigrateCommand {
         : flutterProjectFactory
             .fromDirectory(fileSystem.directory(projectDirectory));
     final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
+
+    if (!validateWorkingDirectory(project, logger)) {
+      return CommandResult.fail();
+    }
+
     Directory stagingDirectory =
         project.directory.childDirectory(kDefaultMigrateStagingDirectoryName);
     final String? customStagingDirectoryPath = stringArg('staging-directory');

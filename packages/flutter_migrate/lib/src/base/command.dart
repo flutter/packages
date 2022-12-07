@@ -6,12 +6,19 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 
+import 'logger.dart';
+import 'project.dart';
+
 enum ExitStatus {
   success,
   warning,
   fail,
   killed,
 }
+
+const String flutterNoPubspecMessage =
+      'Error: No pubspec.yaml file found.\n'
+      'This command should be run from the root of your Flutter project.';
 
 class CommandResult {
   const CommandResult(this.exitStatus);
@@ -81,4 +88,12 @@ abstract class MigrateCommand extends Command<void> {
 
   /// Gets the parsed command-line option named [name] as an `int`.
   int? intArg(String name) => argResults?[name] as int?;
+
+  bool validateWorkingDirectory(FlutterProject project, Logger logger) {
+    if (!project.pubspecFile.existsSync()) {
+      logger.printError(flutterNoPubspecMessage);
+      return false;
+    }
+    return true;
+  }
 }

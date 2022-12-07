@@ -7,11 +7,8 @@
 import 'package:flutter_migrate/src/base/file_system.dart';
 import 'package:flutter_migrate/src/base/io.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
-import 'package:flutter_migrate/src/base/project.dart';
 import 'package:flutter_migrate/src/base/terminal.dart';
-import 'package:flutter_migrate/src/compute.dart';
 import 'package:flutter_migrate/src/environment.dart';
-import 'package:flutter_migrate/src/result.dart';
 import 'package:flutter_migrate/src/utils.dart';
 import 'package:process/process.dart';
 
@@ -20,6 +17,9 @@ import 'src/context.dart';
 import 'src/test_utils.dart';
 import 'test_data/migrate_project.dart';
 
+// This file contains E2E test that execute the core migrate commands
+// and simulates manual conflict resolution and other manipulations of
+// the project files.
 void main() {
   Directory tempDir;
   BufferLogger logger;
@@ -152,7 +152,7 @@ class MyApp extends StatelessWidget {
       'start',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.stdout.toString(), contains('Working directory created at'));
+    expect(result.stdout.toString(), contains('Staging directory created at'));
 
     result = await runMigrateCommand(<String>[
       'apply',
@@ -164,7 +164,8 @@ class MyApp extends StatelessWidget {
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('Migration complete'));
 
-    result = await runMigrateCommand(<String>[
+    result = await processManager.run(<String>[
+      'flutter',
       'build',
       'apk',
       '--debug',
@@ -188,7 +189,7 @@ class MyApp extends StatelessWidget {
             'This command should be run from the root of your Flutter project'));
 
     final File manifestFile =
-        tempDir.childFile('migrate_working_dir/.migrate_manifest');
+        tempDir.childFile('migrate_staging_dir/.migrate_manifest');
     expect(manifestFile.existsSync(), false);
 
     // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
@@ -199,7 +200,7 @@ class MyApp extends StatelessWidget {
       'abandon',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
+    expect(result.exitCode, 1);
     expect(result.stdout.toString(), contains('No migration'));
 
     // Create migration.
@@ -214,31 +215,6 @@ class MyApp extends StatelessWidget {
     expect(result.stdout.toString(), contains('Abandon complete'));
   });
 
-  testUsingContext('migrate compute', () async {
-    // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
-    await MigrateProject.installProject('version:1.22.6_stable', tempDir);
-
-    final FlutterProjectFactory flutterFactory = FlutterProjectFactory();
-    final FlutterProject flutterProject = flutterFactory.fromDirectory(tempDir);
-
-    final MigrateResult result = await computeMigration(
-      flutterProject: flutterProject,
-      commandParameters: MigrateCommandParameters(
-        verbose: true,
-      ),
-      fileSystem: fileSystem,
-      logger: logger,
-      migrateUtils: utils,
-      environment: environment,
-    );
-    expect(result.sdkDirs.length, equals(1));
-    expect(result.deletedFiles.isEmpty, true);
-    expect(result.addedFiles.isEmpty, false);
-    expect(result.mergeResults.isEmpty, false);
-    expect(result.generatedBaseTemplateDirectory, isNotNull);
-    expect(result.generatedTargetTemplateDirectory, isNotNull);
-  });
-
   // Migrates a user-modified app
   testUsingContext('modified migrate process succeeds', () async {
     // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
@@ -249,14 +225,14 @@ class MyApp extends StatelessWidget {
       'apply',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
+    expect(result.exitCode, 1);
     expect(result.stdout.toString(), contains('No migration'));
 
     result = await runMigrateCommand(<String>[
       'status',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
+    expect(result.exitCode, 1);
     expect(result.stdout.toString(), contains('No migration'));
 
     result = await runMigrateCommand(<String>[
@@ -264,38 +240,38 @@ class MyApp extends StatelessWidget {
       '--verbose',
     ], workingDirectory: tempDir.path);
     expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('Working directory created at'));
+    expect(result.stdout.toString(), contains('Staging directory created at'));
     expect(result.stdout.toString(), contains('''
-           Modified files:
-             - .metadata
-             - ios/Runner/Info.plist
-             - ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata
-             - ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme
-             - ios/Flutter/AppFrameworkInfo.plist
-             - ios/.gitignore
-             - .gitignore
-             - android/app/build.gradle
-             - android/app/src/profile/AndroidManifest.xml
-             - android/app/src/main/res/values/styles.xml
-             - android/app/src/main/AndroidManifest.xml
-             - android/app/src/debug/AndroidManifest.xml
-             - android/gradle/wrapper/gradle-wrapper.properties
-             - android/.gitignore
-             - android/build.gradle
-           Merge conflicted files:
-[        ]   - pubspec.yaml'''));
+Modified files:
+  - .metadata
+  - ios/Runner/Info.plist
+  - ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+  - ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme
+  - ios/Flutter/AppFrameworkInfo.plist
+  - ios/.gitignore
+  - .gitignore
+  - android/app/build.gradle
+  - android/app/src/profile/AndroidManifest.xml
+  - android/app/src/main/res/values/styles.xml
+  - android/app/src/main/AndroidManifest.xml
+  - android/app/src/debug/AndroidManifest.xml
+  - android/gradle/wrapper/gradle-wrapper.properties
+  - android/.gitignore
+  - android/build.gradle
+Merge conflicted files:
+  - pubspec.yaml'''));
 
     // Call apply with conflicts remaining. Should fail.
     result = await runMigrateCommand(<String>[
       'apply',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
+    expect(result.exitCode, 1);
     expect(
         result.stdout.toString(),
         contains(
             'Conflicting files found. Resolve these conflicts and try again.'));
-    expect(result.stdout.toString(), contains(']   - pubspec.yaml'));
+    expect(result.stdout.toString(), contains('- pubspec.yaml'));
 
     result = await runMigrateCommand(<String>[
       'status',
@@ -308,7 +284,7 @@ class MyApp extends StatelessWidget {
     // Manually resolve conflics. The correct contents for resolution may change over time,
     // but it shouldnt matter for this test.
     final File metadataFile =
-        tempDir.childFile('migrate_working_dir/.metadata');
+        tempDir.childFile('migrate_staging_dir/.metadata');
     metadataFile.writeAsStringSync('''
 # This file tracks properties of this Flutter project.
 # Used by Flutter tool to assess capabilities and perform upgrades etc.
@@ -323,7 +299,7 @@ project_type: app
 
 ''', flush: true);
     final File pubspecYamlFile =
-        tempDir.childFile('migrate_working_dir/pubspec.yaml');
+        tempDir.childFile('migrate_staging_dir/pubspec.yaml');
     pubspecYamlFile.writeAsStringSync('''
 name: vanilla_app_1_22_6_stable
 description: This is a modified description from the default.

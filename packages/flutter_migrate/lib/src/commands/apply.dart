@@ -100,6 +100,10 @@ class MigrateApplyCommand extends MigrateCommand {
             _processManager, logger);
     final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
 
+    if (!validateWorkingDirectory(project, logger)) {
+      return CommandResult.fail();
+    }
+
     if (!await gitRepoExists(project.directory.path, logger, migrateUtils)) {
       logger.printStatus('No git repo found. Please run in a project with an '
           'initialized git repo or initialize one with:');

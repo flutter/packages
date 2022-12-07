@@ -139,6 +139,10 @@ class MigrateStartCommand extends MigrateCommand {
         : flutterProjectFactory
             .fromDirectory(fileSystem.directory(projectRootDirPath));
 
+    if (!validateWorkingDirectory(project, logger)) {
+      return CommandResult.fail();
+    }
+
     final bool isModule =
         environment.getBool('FlutterProject.isModule') ?? false;
     final bool isPlugin =

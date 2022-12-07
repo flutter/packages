@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'src/base/command.dart';
 
@@ -53,4 +54,5 @@ Future<void> main(List<String> args) async {
       break;
     }
   }
+  exit(0);
 }
