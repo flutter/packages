@@ -91,9 +91,6 @@ import 'typedefs.dart';
 /// ```
 /// In the above example, if /family route is matched, it will be used.
 /// else /:username route will be used.
-///
-/// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
-/// for a complete runnable example.
 @immutable
 abstract class RouteBase {
   const RouteBase._({
