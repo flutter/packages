@@ -48,6 +48,14 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return AllTypesWrapper(AllTypes(aString = string))
   }
 
+  override fun extractNestedBool(wrapper: AllTypesWrapper): Boolean? {
+    return wrapper.values.aBool;
+  }
+
+  override fun createNestedBool(aBool: Boolean): AllTypesWrapper {
+    return AllTypesWrapper(AllTypes(aBool = aBool))
+  }
+
   override fun noopAsync(callback: () -> Unit) {
     callback()
   }

@@ -43,6 +43,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return AllTypesWrapper(values: AllTypes(aString: string))
   }
 
+  func extractNestedBool(wrapper: AllTypesWrapper) -> Bool? {
+    return wrapper.values.aBool;
+  }
+
+  func createNestedBool(aBool: Bool) -> AllTypesWrapper {
+    return AllTypesWrapper(values: AllTypes(aBool: aBool))
+  }
+
   func noopAsync(completion: @escaping () -> Void) {
     completion()
   }

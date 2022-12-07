@@ -56,6 +56,16 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('createNestedObjectWithString:')
   AllTypesWrapper createNestedString(String string);
 
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  @ObjCSelector('extractNestedBoolFrom:')
+  bool? extractNestedBool(AllTypesWrapper wrapper);
+
+  /// Returns the inner `aBool` value from the wrapped object, to test
+  /// sending of nested objects.
+  @ObjCSelector('createNestedObjectWithBool:')
+  AllTypesWrapper createNestedBool(bool aBool);
+
   // ========== Asyncronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -98,7 +108,6 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed string, to test serialization and deserialization.
   @ObjCSelector('echoString:')
   String echoString(String aString);
-}
 
 /// An API that can be implemented for minimal, compile-only tests.
 @HostApi()
