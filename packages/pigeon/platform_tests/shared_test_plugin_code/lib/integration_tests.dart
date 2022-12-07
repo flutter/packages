@@ -27,7 +27,7 @@ enum TargetGenerator {
   /// The iOS Objective-C generator.
   objc,
 
-  /// The iOS or macOS Objective-C generator.
+  /// The iOS or macOS Swift generator.
   swift,
 }
 

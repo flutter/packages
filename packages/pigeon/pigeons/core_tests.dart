@@ -56,7 +56,7 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('createNestedObjectWithString:')
   AllTypesWrapper createNestedString(String string);
 
-  /// Returns the inner `aString` value from the wrapped object, to test
+  /// Returns the inner `aBool` value from the wrapped object, to test
   /// sending of nested objects.
   @ObjCSelector('extractNestedBoolFrom:')
   bool? extractNestedBool(AllTypesWrapper wrapper);
