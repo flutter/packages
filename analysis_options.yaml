@@ -19,7 +19,6 @@ analyzer:
     # Ignore generated files
     - '**/*.g.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
-    - 'packages/go_router_builder/example/*' # TODO(skogsfrae): remove in https://github.com/flutter/packages/pull/2679
 
 linter:
   rules:
