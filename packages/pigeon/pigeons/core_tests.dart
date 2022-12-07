@@ -108,6 +108,7 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed string, to test serialization and deserialization.
   @ObjCSelector('echoString:')
   String echoString(String aString);
+}
 
 /// An API that can be implemented for minimal, compile-only tests.
 @HostApi()
