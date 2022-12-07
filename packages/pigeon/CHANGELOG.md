@@ -1,3 +1,7 @@
+## 4.2.10
+
+* Adds minor additional integration test.
+
 ## 4.2.9
 
 * [kotlin] Fixes a bug with some methods that return `void`.
