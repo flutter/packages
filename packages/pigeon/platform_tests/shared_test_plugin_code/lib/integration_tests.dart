@@ -122,6 +122,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllTypesWrapper receivedObject =
           await api.createNestedString(sentString);
       expect(receivedObject.values.aString, sentString);
+
+      bool sentBool = true;
+      do {
+        final AllTypesWrapper receivedBoolObject =
+            await api.createNestedBool(sentBool);
+        expect(receivedBoolObject.values.aBool, sentBool);
+
+        sentBool = !sentBool;
+      } while (!sentBool);
     });
   });
 
