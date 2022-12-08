@@ -32,7 +32,7 @@ You can then use the routesService object to make requests to the Google Routes 
 <?code-excerpt "readme_excerpts.dart (SampleUsage)"?>
 ```dart
 
-import 'package:google_maps_routes_api/routes_service.dart';
+import 'package:google_maps_routes_api/google_maps_routes_api.dart';
 
 final RoutesService routesService = RoutesService(apiKey: 'GOOGLE_API_KEY');
 

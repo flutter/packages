@@ -9,4 +9,6 @@ environment:
 
 dependencies:
   http: ^0.13.5
-  test: any
+  
+dev_dependencies:
+  test: ^1.22.0
