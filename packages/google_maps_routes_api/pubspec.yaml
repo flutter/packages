@@ -1,0 +1,12 @@
+name: google_maps_routes_api
+description: Google Maps Routes API service to calculate routes and route matrixes between locations.
+repository: https://github.com/flutter/packages/tree/main/packages/google_maps_routes_api
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+google_maps_routes_api%22
+version: 0.0.1
+
+environment:
+  sdk: '>=2.18.2 <3.0.0'
+
+dependencies:
+  http: ^0.13.5
+  test: any

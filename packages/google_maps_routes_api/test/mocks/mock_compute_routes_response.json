@@ -1,0 +1,215 @@
+{
+    "routes": [
+        {
+            "legs": [
+                {
+                    "distanceMeters": 773,
+                    "duration": "149s",
+                    "staticDuration": "149s",
+                    "polyline": {
+                        "geoJsonLinestring": {
+                            "type": "LineString",
+                            "coordinates": [
+                                [
+                                    -122.08292349999998,
+                                    37.419733799999996
+                                ],
+                                [
+                                    -122.08293399999998,
+                                    37.416928399999996
+                                ],
+                                [
+                                    -122.0829445,
+                                    37.416776999999996
+                                ],
+                                [
+                                    -122.0829497,
+                                    37.416708199999995
+                                ],
+                                [
+                                    -122.07938779999999,
+                                    37.4165247
+                                ],
+                                [
+                                    -122.07938820000001,
+                                    37.417616599999995
+                                ]
+                            ]
+                        }
+                    },
+                    "startLocation": {
+                        "latLng": {
+                            "latitude": 37.419733799999996,
+                            "longitude": -122.08292349999998
+                        }
+                    },
+                    "endLocation": {
+                        "latLng": {
+                            "latitude": 37.417616599999995,
+                            "longitude": -122.07938820000001
+                        }
+                    },
+                    "steps": [
+                        {
+                            "distanceMeters": 329,
+                            "staticDuration": "57s",
+                            "polyline": {
+                                "geoJsonLinestring": {
+                                    "type": "LineString",
+                                    "coordinates": [
+                                        [
+                                            -122.08292349999998,
+                                            37.419733799999996
+                                        ],
+                                        [
+                                            -122.08293399999998,
+                                            37.416928399999996
+                                        ],
+                                        [
+                                            -122.0829445,
+                                            37.416776999999996
+                                        ]
+                                    ]
+                                }
+                            },
+                            "startLocation": {
+                                "latLng": {
+                                    "latitude": 37.419733799999996,
+                                    "longitude": -122.08292349999998
+                                }
+                            },
+                            "endLocation": {
+                                "latLng": {
+                                    "latitude": 37.416776999999996,
+                                    "longitude": -122.0829445
+                                }
+                            }
+                        },
+                        {
+                            "distanceMeters": 323,
+                            "staticDuration": "58s",
+                            "polyline": {
+                                "geoJsonLinestring": {
+                                    "type": "LineString",
+                                    "coordinates": [
+                                        [
+                                            -122.0829445,
+                                            37.416776999999996
+                                        ],
+                                        [
+                                            -122.0829497,
+                                            37.416708199999995
+                                        ],
+                                        [
+                                            -122.07938779999999,
+                                            37.4165247
+                                        ]
+                                    ]
+                                }
+                            },
+                            "startLocation": {
+                                "latLng": {
+                                    "latitude": 37.416776999999996,
+                                    "longitude": -122.0829445
+                                }
+                            },
+                            "endLocation": {
+                                "latLng": {
+                                    "latitude": 37.4165247,
+                                    "longitude": -122.07938779999999
+                                }
+                            },
+                            "navigationInstruction": {
+                                "maneuver": "TURN_LEFT",
+                                "instructions": "Turn left onto Plymouth St"
+                            }
+                        },
+                        {
+                            "distanceMeters": 121,
+                            "staticDuration": "34s",
+                            "polyline": {
+                                "geoJsonLinestring": {
+                                    "coordinates": [
+                                        [
+                                            -122.07938779999999,
+                                            37.4165247
+                                        ],
+                                        [
+                                            -122.07938820000001,
+                                            37.417616599999995
+                                        ]
+                                    ],
+                                    "type": "LineString"
+                                }
+                            },
+                            "startLocation": {
+                                "latLng": {
+                                    "latitude": 37.4165247,
+                                    "longitude": -122.07938779999999
+                                }
+                            },
+                            "endLocation": {
+                                "latLng": {
+                                    "latitude": 37.417616599999995,
+                                    "longitude": -122.07938820000001
+                                }
+                            },
+                            "navigationInstruction": {
+                                "maneuver": "TURN_LEFT",
+                                "instructions": "Turn left"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "distanceMeters": 773,
+            "duration": "149s",
+            "staticDuration": "149s",
+            "polyline": {
+                "geoJsonLinestring": {
+                    "coordinates": [
+                        [
+                            -122.08292349999998,
+                            37.419733799999996
+                        ],
+                        [
+                            -122.08293399999998,
+                            37.416928399999996
+                        ],
+                        [
+                            -122.0829445,
+                            37.416776999999996
+                        ],
+                        [
+                            -122.0829497,
+                            37.416708199999995
+                        ],
+                        [
+                            -122.07938779999999,
+                            37.4165247
+                        ],
+                        [
+                            -122.07938820000001,
+                            37.417616599999995
+                        ]
+                    ],
+                    "type": "LineString"
+                }
+            },
+            "description": "Huff Ave and Plymouth St",
+            "viewport": {
+                "low": {
+                    "latitude": 37.4165247,
+                    "longitude": -122.0829497
+                },
+                "high": {
+                    "latitude": 37.419733799999996,
+                    "longitude": -122.07938779999999
+                }
+            },
+            "routeLabels": [
+                "DEFAULT_ROUTE"
+            ]
+        }
+    ]
+}

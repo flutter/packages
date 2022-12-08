@@ -1,0 +1,15 @@
+name: google_maps_routes_api_example
+description: An example for the google_maps_routes_api package.
+publish_to: "none"
+version: 0.0.1
+
+environment:
+  sdk: ">=2.18.2 <3.0.0"
+
+dependencies:
+  google_maps_routes_api:
+    path: ../
+
+dev_dependencies:
+  build_runner: ^2.1.10 # To extract README excerpts only.
+
