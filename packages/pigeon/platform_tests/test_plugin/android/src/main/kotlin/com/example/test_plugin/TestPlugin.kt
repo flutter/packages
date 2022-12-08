@@ -48,6 +48,19 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return AllTypesWrapper(AllTypes(aString = string))
   }
 
+  override fun sendMultipleTypes(aBool: Boolean, anInt: Long, aString: String): AllTypes {
+    var someThings = AllTypes(aBool = aBool, anInt = anInt, aString = aString)
+    return someThings
+  }
+
+  override fun echoInt(anInt: Long): Long {
+    return anInt
+  }
+
+  override fun echoBool(aBool: Boolean): Boolean {
+    return aBool
+  }
+
   override fun noopAsync(callback: () -> Unit) {
     callback()
   }
