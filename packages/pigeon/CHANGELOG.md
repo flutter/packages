@@ -1,7 +1,3 @@
-## 4.2.11
-
-* Adds echo boolean integration test.
-
 ## 4.2.10
 
 * Changes generated Java enum field to be final.
