@@ -61,12 +61,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public @Nullable Long echoInt(@NonNull Long anInt) {
+  public Long echoInt(@NonNull Long anInt) {
     return anInt;
   }
 
   @Override
-  public @Nullable Boolean echoBool(@NonNull Boolean aBool) {
+  public Boolean echoBool(@NonNull Boolean aBool) {
     return aBool;
   }
 

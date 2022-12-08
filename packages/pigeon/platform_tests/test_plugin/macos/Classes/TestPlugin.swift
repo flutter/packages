@@ -48,11 +48,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return someThings
   }
 
-  func echoInt(anInt: Int32) -> Int32? {
+  func echoInt(anInt: Int32) -> Int32 {
     return anInt
   }
 
-  func echoBool(aBool: Bool) -> Bool? {
+  func echoBool(aBool: Bool) -> Bool {
     return aBool
   }
 

@@ -53,13 +53,6 @@
   return wrapper.values.aBool;
 }
 
-- (nullable AllTypesWrapper *)createNestedObjectWithBool:(NSNumber *)aBool
-                                                   error:(FlutterError *_Nullable *_Nonnull)error {
-  AllTypes *innerObject = [[AllTypes alloc] init];
-  innerObject.aBool = aBool;
-  return [AllTypesWrapper makeWithValues:innerObject];
-}
-
 - (nullable AllTypes *)sendMultipleTypesABool:(NSNumber *)aBool
                                         anInt:(NSNumber *)anInt
                                       aString:(NSString *)aString

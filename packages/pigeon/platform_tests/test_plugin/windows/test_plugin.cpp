@@ -78,7 +78,7 @@ ErrorOr<std::optional<int64_t>> TestPlugin::EchoInt(int64_t an_int) {
   return an_int
 }
 
-ErrorOr<std::optional<bool>> TestPlugin::EchoBool(bool a_bool) {
+ErrorOr<bool> TestPlugin::EchoBool(bool a_bool) {
   return a_bool
 }
 
@@ -91,12 +91,6 @@ void TestPlugin::EchoAsyncString(
     const std::string& a_string,
     std::function<void(ErrorOr<std::string> reply)> result) {
   result(a_string);
-}
-
-void TestPlugin::EchoAsyncBool(
-    const std::bool& a_bool,
-    std::function<void(ErrorOr<std::bool> reply)> result) {
-  result(a_bool);
 }
 
 void TestPlugin::CallFlutterNoop(

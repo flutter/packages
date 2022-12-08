@@ -62,11 +62,11 @@ abstract class HostIntegrationCoreApi {
 
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
-  int? echoInt(int anInt);
+  int echoInt(int anInt);
 
   /// Returns the passed in boolean asynchronously.
   @ObjCSelector('echoBool:')
-  bool? echoBool(bool aBool);
+  bool echoBool(bool aBool);
 
   // ========== Asyncronous method tests ==========
 

@@ -53,11 +53,11 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return someThings
   }
 
-  override fun echoInt(anInt: Long): Long? {
+  override fun echoInt(anInt: Long): Long {
     return anInt
   }
 
-  override fun echoBool(aBool: Boolean): Boolean? {
+  override fun echoBool(aBool: Boolean): Boolean {
     return aBool
   }
 

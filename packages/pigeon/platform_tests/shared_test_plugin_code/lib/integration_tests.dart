@@ -144,7 +144,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const int inInt = -13;
-      final int? anInt = await api.echoInt(inInt);
+      final int anInt = await api.echoInt(inInt);
       expect(anInt, inInt);
     });
 
@@ -152,13 +152,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      bool sentBool = true;
-      do {
-        final bool? receivedBool = await api.echoBool(sentBool);
+      for (final bool sentBool in <bool>[true, false]) {
+        final bool receivedBool = await api.echoBool(sentBool);
         expect(receivedBool, sentBool);
-
-        sentBool = !sentBool;
-      } while (!sentBool);
+      }
     });
   });
 
