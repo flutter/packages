@@ -48,7 +48,7 @@ class RouteMatcher {
 /// The list of [RouteMatch] objects.
 class RouteMatchList {
   /// RouteMatchList constructor.
-  RouteMatchList(List<RouteMatch> matches, this.uri, this.pathParameters)
+  RouteMatchList(List<RouteMatch> matches, this._uri, this.pathParameters)
       : _matches = matches,
         fullpath = _generateFullPath(matches);
 
@@ -82,7 +82,8 @@ class RouteMatchList {
   final Map<String, String> pathParameters;
 
   /// The uri of the current match.
-  final Uri uri;
+  Uri get uri => _uri;
+  Uri _uri;
 
   /// Returns true if there are no matches.
   bool get isEmpty => _matches.isEmpty;
@@ -97,8 +98,11 @@ class RouteMatchList {
 
   /// Removes the last match.
   void pop() {
+    if (_matches.last.route is GoRoute) {
+      final GoRoute route = _matches.last.route as GoRoute;
+      _uri = _uri.replace(path: removePatternFromPath(route.path, _uri.path));
+    }
     _matches.removeLast();
-
     // Also pop ShellRoutes when there are no subsequent route matches
     while (_matches.isNotEmpty && _matches.last.route is ShellRoute) {
       _matches.removeLast();
