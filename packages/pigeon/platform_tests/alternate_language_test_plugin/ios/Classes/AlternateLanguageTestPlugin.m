@@ -48,11 +48,6 @@
   return [AllTypesWrapper makeWithValues:innerObject];
 }
 
-- (nullable NSNumber *)extractNestedBoolFrom:(AllTypesWrapper *)wrapper
-                                       error:(FlutterError *_Nullable *_Nonnull)error {
-  return wrapper.values.aBool;
-}
-
 - (nullable AllTypes *)sendMultipleTypesABool:(NSNumber *)aBool
                                         anInt:(NSNumber *)anInt
                                       aString:(NSString *)aString
