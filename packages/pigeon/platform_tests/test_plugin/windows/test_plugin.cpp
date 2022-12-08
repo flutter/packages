@@ -74,9 +74,7 @@ ErrorOr<AllTypes> TestPlugin::SendMultipleTypes(bool a_bool, int64_t an_int,
   return someTypes;
 };
 
-ErrorOr<int64_t> TestPlugin::EchoInt(int64_t an_int) {
-  return an_int;
-}
+ErrorOr<int64_t> TestPlugin::EchoInt(int64_t an_int) { return an_int; }
 
 ErrorOr<bool> TestPlugin::EchoBool(bool a_bool) { return a_bool; }
 
