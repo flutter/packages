@@ -523,8 +523,8 @@ import FlutterMacOS
 
     void writeFromMap() {
       final String className = klass.name;
-      indent
-          .write('static func fromMap(_ map: [String: Any?]) -> $className? ');
+      indent.write(
+          'public static func fromMap(_ map: [String: Any?]) -> $className? ');
 
       indent.scoped('{', '}', () {
         for (final NamedType field in klass.fields) {
