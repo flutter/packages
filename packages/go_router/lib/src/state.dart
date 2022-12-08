@@ -269,7 +269,8 @@ class StatefulShellRouteState {
     required this.route,
     required this.branchStates,
     required this.currentIndex,
-    required void Function(StatefulShellBranchState, RouteMatchList?)
+    required void Function(
+            StatefulShellBranchState, UnmodifiableRouteMatchList?)
         switchActiveBranch,
     required void Function() resetState,
   })  : _switchActiveBranch = switchActiveBranch,
@@ -308,7 +309,7 @@ class StatefulShellRouteState {
   GlobalKey<NavigatorState> get currentNavigatorKey =>
       currentBranchState.branch.navigatorKey;
 
-  final void Function(StatefulShellBranchState, RouteMatchList?)
+  final void Function(StatefulShellBranchState, UnmodifiableRouteMatchList?)
       _switchActiveBranch;
 
   final void Function() _resetState;
@@ -404,12 +405,13 @@ class StatefulShellBranchState {
   const StatefulShellBranchState({
     required this.branch,
     required this.child,
-    RouteMatchList? matchList,
+    UnmodifiableRouteMatchList? matchList,
   }) : _matchList = matchList;
 
   /// Constructs a copy of this [StatefulShellBranchState], with updated values for
   /// some of the fields.
-  StatefulShellBranchState copy({Widget? child, RouteMatchList? matchList}) {
+  StatefulShellBranchState copy(
+      {Widget? child, UnmodifiableRouteMatchList? matchList}) {
     return StatefulShellBranchState(
       branch: branch,
       child: child ?? this.child,
@@ -430,7 +432,7 @@ class StatefulShellBranchState {
   final Widget child;
 
   /// The current navigation stack for the branch.
-  final RouteMatchList? _matchList;
+  final UnmodifiableRouteMatchList? _matchList;
 
   @override
   bool operator ==(Object other) {
@@ -452,5 +454,5 @@ class StatefulShellBranchState {
 /// Helper extension on [StatefulShellBranchState], for internal use.
 extension StatefulShellBranchStateHelper on StatefulShellBranchState {
   /// The current navigation stack for the branch.
-  RouteMatchList? get matchList => _matchList;
+  UnmodifiableRouteMatchList? get matchList => _matchList;
 }

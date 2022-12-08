@@ -47,17 +47,15 @@ class RouteMatcher {
 }
 
 /// The list of [RouteMatch] objects.
-@immutable
 class RouteMatchList {
   /// RouteMatchList constructor.
   RouteMatchList(List<RouteMatch> matches, this._uri, this.pathParameters)
       : _matches = matches,
         fullpath = _generateFullPath(matches);
 
-  /// Creates a clone of this RouteMatchList, that can be modified independently
-  /// of the original.
-  RouteMatchList clone() {
-    return RouteMatchList(matches.toList(), uri, pathParameters);
+  /// Creates an immutable clone of this RouteMatchList.
+  UnmodifiableRouteMatchList unmodifiableRouteMatchList() {
+    return UnmodifiableRouteMatchList.from(this);
   }
 
   /// Constructs an empty matches object.
@@ -80,17 +78,6 @@ class RouteMatchList {
     return buffer.toString();
   }
 
-  static String _addQueryParams(
-      String loc, Map<String, dynamic> queryParametersAll) {
-    final Uri uri = Uri.parse(loc);
-    assert(uri.queryParameters.isEmpty);
-    return Uri(
-            path: uri.path,
-            queryParameters:
-                queryParametersAll.isEmpty ? null : queryParametersAll)
-        .toString();
-  }
-
   final List<RouteMatch> _matches;
 
   /// the full path pattern that matches the uri.
@@ -103,12 +90,6 @@ class RouteMatchList {
   /// The uri of the current match.
   Uri get uri => _uri;
   Uri _uri;
-
-  /// The uri of the last match.
-  Uri get lastMatchUri => _matches.isEmpty
-      ? Uri(queryParameters: uri.queryParametersAll)
-      : Uri.parse(
-          _addQueryParams(_matches.last.subloc, uri.queryParametersAll));
 
   /// Returns true if there are no matches.
   bool get isEmpty => _matches.isEmpty;
@@ -148,22 +129,48 @@ class RouteMatchList {
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.first.error;
+}
+
+/// Unmodifiable version of [RouteMatchList].
+@immutable
+class UnmodifiableRouteMatchList {
+  /// UnmodifiableRouteMatchList constructor.
+  UnmodifiableRouteMatchList.from(RouteMatchList routeMatchList)
+      : _matches = List<RouteMatch>.unmodifiable(routeMatchList.matches),
+        _uri = routeMatchList.uri,
+        _pathParameters =
+            Map<String, String>.unmodifiable(routeMatchList.pathParameters);
+
+  /// Creates a new [RouteMatchList] from this UnmodifiableRouteMatchList.
+  RouteMatchList get routeMatchList => RouteMatchList(
+      List<RouteMatch>.from(_matches),
+      _uri,
+      Map<String, String>.from(_pathParameters));
+
+  /// The route matches.
+  final List<RouteMatch> _matches;
+
+  /// The uri of the current match.
+  final Uri _uri;
+
+  /// Parameters for the matched route, URI-encoded.
+  final Map<String, String> _pathParameters;
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) {
       return true;
     }
-    if (other is! RouteMatchList) {
+    if (other is! UnmodifiableRouteMatchList) {
       return false;
     }
-    return listEquals(other.matches, matches) &&
-        other.uri == uri &&
-        other.pathParameters == pathParameters;
+    return listEquals(other._matches, _matches) &&
+        other._uri == _uri &&
+        other._pathParameters == _pathParameters;
   }
 
   @override
-  int get hashCode => Object.hash(matches, uri, pathParameters);
+  int get hashCode => Object.hash(_matches, _uri, _pathParameters);
 }
 
 /// An error that occurred during matching.

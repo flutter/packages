@@ -9,7 +9,6 @@ import 'package:flutter/widgets.dart';
 
 import 'builder.dart';
 import 'configuration.dart';
-import 'information_provider.dart';
 import 'match.dart';
 import 'matching.dart';
 import 'misc/errors.dart';
@@ -21,7 +20,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Constructor for GoRouter's implementation of the RouterDelegate base
   /// class.
   GoRouterDelegate({
-    required GoRouteInformationProvider routeInformationProvider,
     required RouteConfiguration configuration,
     required GoRouterBuilderWithNav builderWithNav,
     required GoRouterPageBuilder? errorPageBuilder,
@@ -29,8 +27,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
-  })  : _routeInformationProvider = routeInformationProvider,
-        _configuration = configuration,
+  })  : _configuration = configuration,
         builder = RouteBuilder(
           configuration: configuration,
           builderWithNav: builderWithNav,
@@ -48,8 +45,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   final bool routerNeglect;
 
   RouteMatchList _matchList = RouteMatchList.empty;
-
-  late final GoRouteInformationProvider _routeInformationProvider;
 
   /// Stores the number of times each route route has been pushed.
   ///
@@ -134,7 +129,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   bool _onPopPage(Route<Object?> route, Object? result) {
-    final bool lastMatchIsImperative = _matchList.last is ImperativeRouteMatch;
     if (!route.didPop(result)) {
       return false;
     }
@@ -144,12 +138,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       _debugAssertMatchListNotEmpty();
       return true;
     }());
-    if (!lastMatchIsImperative) {
-      // TODO(tolo): Temporary workaround (here and in RouteMatchList) to get expected pop behaviour
-      _routeInformationProvider.value = RouteInformation(
-          location: _matchList.lastMatchUri.toString(),
-          state: _matchList.last.extra);
-    }
     return true;
   }
 

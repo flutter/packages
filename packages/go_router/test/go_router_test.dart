@@ -2935,10 +2935,14 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<NavigatorState> sectionBNavigatorKey =
           GlobalKey<NavigatorState>();
+      StatefulShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (_, __, Widget child) => child,
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            routeState = StatefulShellRoute.of(context);
+            return child;
+          },
           routes: <RouteBase>[
             GoRoute(
               path: '/a',
@@ -2996,6 +3000,16 @@ void main() {
       expect(find.text('Screen A Detail'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen B Detail'), findsNothing);
+
+      routeState!.goBranch(index: 0);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen A Detail'), findsOneWidget);
+
+      await simulateAndroidBackButton(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen A Detail'), findsNothing);
     });
 
     testWidgets(

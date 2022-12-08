@@ -276,7 +276,7 @@ class RouteBuilder {
         branches: branches,
         currentBranch: currentBranch,
         currentNavigatorBuilder: currentNavigatorBuilder,
-        currentMatchList: currentMatchList,
+        currentMatchList: currentMatchList.unmodifiableRouteMatchList(),
         branchNavigatorBuilder: (BuildContext context,
             RouteMatchList matchList,
             int startIndex,

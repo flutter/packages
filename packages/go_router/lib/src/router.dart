@@ -87,7 +87,6 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
         refreshListenable: refreshListenable);
 
     _routerDelegate = GoRouterDelegate(
-      routeInformationProvider: _routeInformationProvider,
       configuration: _routeConfiguration,
       errorPageBuilder: errorPageBuilder,
       errorBuilder: errorBuilder,
