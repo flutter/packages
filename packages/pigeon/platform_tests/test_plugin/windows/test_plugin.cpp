@@ -65,6 +65,19 @@ ErrorOr<AllTypesWrapper> TestPlugin::CreateNestedString(
   return wrapper;
 }
 
+ErrorOr<AllTypes> TestPlugin::SendMultipleTypes(bool a_bool, int64_t an_int,
+                                                const std::string& a_string) {
+  AllTypes someTypes;
+  someTypes.set_a_bool(a_bool);
+  someTypes.set_an_int(an_int);
+  someTypes.set_a_string(a_string);
+  return someTypes;
+};
+
+ErrorOr<int64_t> TestPlugin::EchoInt(int64_t an_int) { return an_int; }
+
+ErrorOr<bool> TestPlugin::EchoBool(bool a_bool) { return a_bool; }
+
 void TestPlugin::NoopAsync(
     std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);
