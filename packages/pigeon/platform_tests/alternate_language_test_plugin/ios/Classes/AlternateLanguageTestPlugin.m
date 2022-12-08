@@ -76,6 +76,10 @@
   return anInt;
 }
 
+- (nullable NSNumber *)echoBool:(NSNumber *)aBool {
+  return aBool;
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }
@@ -83,11 +87,6 @@
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   completion(aString, nil);
-}
-
-- (void)echoAsyncBool:(NSNumber *)aBool
-           completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  completion(aBool, nil);
 }
 
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {

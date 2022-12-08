@@ -43,16 +43,13 @@ class TestPlugin : public flutter::Plugin,
   CreateNestedString(const std::string& string) override;
   SendMultipleTypes(bool a_bool, int64_t an_int, const std::string& a_string);
   EchoInt(int64_t an_int);
+  EchoBool(bool a_bool);
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;
   void EchoAsyncString(
       const std::string& a_string,
       std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
-          result) override;
-  void EchoAsyncBool(
-      const std::bool& a_bool,
-      std::function<void(core_tests_pigeontest::ErrorOr<std::bool> reply)>
           result) override;
   void CallFlutterNoop(
       std::function<

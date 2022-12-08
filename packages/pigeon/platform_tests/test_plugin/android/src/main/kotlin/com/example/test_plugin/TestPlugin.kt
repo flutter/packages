@@ -57,16 +57,16 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return anInt
   }
 
+  override fun echoBool(aBool: Boolean): Boolean? {
+    return aBool
+  }
+
   override fun noopAsync(callback: () -> Unit) {
     callback()
   }
 
   override fun echoAsyncString(aString: String, callback: (String) -> Unit) {
     callback(aString)
-  }
-
-  override fun echoAsyncBool(aBool: Boolean, callback: (Boolean) -> Unit) {
-    callback(aBool)
   }
 
   override fun callFlutterNoop(callback: () -> Unit) {

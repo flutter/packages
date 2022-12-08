@@ -52,16 +52,16 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anInt
   }
 
+  func echoBool(aBool: Bool) -> Bool? {
+    return aBool
+  }
+
   func noopAsync(completion: @escaping () -> Void) {
     completion()
   }
 
   func echoAsyncString(aString: String, completion: @escaping (String) -> Void) {
     completion(aString)
-  }
-
-  func echoAsyncBool(aBool: Bool, completion: @escaping (Bool) -> Void) {
-    completion(aBool)
   }
 
   func callFlutterNoop(completion: @escaping () -> Void) {

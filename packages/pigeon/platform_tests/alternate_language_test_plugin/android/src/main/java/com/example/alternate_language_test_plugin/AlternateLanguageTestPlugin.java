@@ -66,6 +66,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @Nullable Boolean echoBool(@NonNull Boolean aBool) {
+    return aBool;
+  }
+
+  @Override
   public void noopAsync(Result<Void> result) {
     result.success(null);
   }
@@ -73,11 +78,6 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public void echoAsyncString(@NonNull String aString, Result<String> result) {
     result.success(aString);
-  }
-
-  @Override
-  public void echoAsyncBool(@NonNull Boolean aBool, Result<Boolean> result) {
-    result.success(aBool);
   }
 
   @Override

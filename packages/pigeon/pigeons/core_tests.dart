@@ -64,6 +64,10 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoIntAnInt:')
   int? echoInt(int anInt);
 
+  /// Returns the passed in boolean asynchronously.
+  @ObjCSelector('echoBool:')
+  bool? echoBool(bool aBool);
+
   // ========== Asyncronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -75,11 +79,6 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncString:')
   String echoAsyncString(String aString);
-
-  /// Returns the passed in boolean asynchronously.
-  @async
-  @ObjCSelector('echoAsyncBool:')
-  bool echoAsyncBool(bool aBool);
 
   // ========== Flutter API test wrappers ==========
 

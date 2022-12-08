@@ -147,6 +147,19 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final int? anInt = await api.echoInt(inInt);
       expect(anInt, inInt);
     });
+
+    testWidgets('booleans serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      bool sentBool = true;
+      do {
+        final bool? receivedBool = await api.echoBool(sentBool);
+        expect(receivedBool, sentBool);
+
+        sentBool = !sentBool;
+      } while (!sentBool);
+    });
   });
 
   group('Host async API tests', () {
@@ -164,19 +177,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final String echoObject = await api.echoAsyncString(sentObject);
       expect(echoObject, sentObject);
-    });
-
-    testWidgets('booleans serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-
-      bool sentBool = true;
-      do {
-        final bool receivedBool = await api.echoAsyncBool(sentBool);
-        expect(receivedBool, sentBool);
-
-        sentBool = !sentBool;
-      } while (!sentBool);
     });
   });
 
