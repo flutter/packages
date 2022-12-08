@@ -211,9 +211,12 @@ class RouteBuilder {
           routerNeglect, keyToPages, shellNavigatorKey, registry);
 
       // Build the Navigator
-      final Widget child = _buildNavigator(
-          onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
-          observers: observers);
+      final Widget child = HeroControllerScope(
+        controller: route.heroController,
+        child: _buildNavigator(
+            onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
+            observers: observers),
+      );
 
       // Build the Page for this route
       final Page<Object?> page =
