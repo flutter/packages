@@ -50,7 +50,7 @@ class RouteMatcher {
 @immutable
 class RouteMatchList {
   /// RouteMatchList constructor.
-  RouteMatchList(List<RouteMatch> matches, this.uri, this.pathParameters)
+  RouteMatchList(List<RouteMatch> matches, this._uri, this.pathParameters)
       : _matches = matches,
         fullpath = _generateFullPath(matches);
 
@@ -100,8 +100,9 @@ class RouteMatchList {
   /// Parameters for the matched route, URI-encoded.
   final Map<String, String> pathParameters;
 
-  /// The uri of the original match.
-  final Uri uri;
+  /// The uri of the current match.
+  Uri get uri => _uri;
+  Uri _uri;
 
   /// The uri of the last match.
   Uri get lastMatchUri => _matches.isEmpty
@@ -122,8 +123,11 @@ class RouteMatchList {
 
   /// Removes the last match.
   void pop() {
+    if (_matches.last.route is GoRoute) {
+      final GoRoute route = _matches.last.route as GoRoute;
+      _uri = _uri.replace(path: removePatternFromPath(route.path, _uri.path));
+    }
     _matches.removeLast();
-
     // Also pop ShellRoutes when there are no subsequent route matches
     while (_matches.isNotEmpty && _matches.last.route is ShellRouteBase) {
       _matches.removeLast();

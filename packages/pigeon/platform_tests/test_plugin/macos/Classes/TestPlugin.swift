@@ -10,9 +10,15 @@ import FlutterMacOS
  * example/integration_test/.
  */
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
+  var flutterAPI: FlutterIntegrationCoreApi
+
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let plugin = TestPlugin()
+    let plugin = TestPlugin(binaryMessenger: registrar.messenger)
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
+  }
+
+  init(binaryMessenger: FlutterBinaryMessenger) {
+    flutterAPI = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -35,5 +41,25 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func createNestedString(string: String) -> AllTypesWrapper {
     return AllTypesWrapper(values: AllTypes(aString: string))
+  }
+
+  func noopAsync(completion: @escaping () -> Void) {
+    completion()
+  }
+
+  func echoAsyncString(aString: String, completion: @escaping (String) -> Void) {
+    completion(aString)
+  }
+
+  func callFlutterNoop(completion: @escaping () -> Void) {
+    flutterAPI.noop() {
+      completion()
+    }
+  }
+
+  func callFlutterEchoString(aString: String, completion: @escaping (String) -> Void) {
+    flutterAPI.echoString(aString: aString) { flutterString in
+      completion(flutterString)
+    }
   }
 }

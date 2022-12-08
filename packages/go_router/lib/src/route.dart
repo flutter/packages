@@ -303,6 +303,7 @@ class GoRoute extends RouteBase {
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
+  // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
   RegExpMatch? matchPatternAsPrefix(String loc) =>
       _pathRE.matchAsPrefix(loc) as RegExpMatch?;

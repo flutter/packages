@@ -880,6 +880,138 @@ void main() {
     });
   });
 
+  group('report correct url', () {
+    final List<MethodCall> log = <MethodCall>[];
+    setUp(() {
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.navigation,
+              (MethodCall methodCall) async {
+        log.add(methodCall);
+        return null;
+      });
+    });
+    tearDown(() {
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.navigation, null);
+      log.clear();
+    });
+
+    testWidgets('on push', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (_, __) => const DummyScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      log.clear();
+      router.push('/settings');
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/settings',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+
+    testWidgets('on pop', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const DummyScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'settings',
+                builder: (_, __) => const DummyScreen(),
+              ),
+            ]),
+      ];
+
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/settings');
+
+      log.clear();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+
+    testWidgets('on pop with path parameters', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const DummyScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'settings/:id',
+                builder: (_, __) => const DummyScreen(),
+              ),
+            ]),
+      ];
+
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/settings/123');
+
+      log.clear();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+
+    testWidgets('on pop with path parameters case 2',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const DummyScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                path: ':id',
+                builder: (_, __) => const DummyScreen(),
+              ),
+            ]),
+      ];
+
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/123/');
+
+      log.clear();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+  });
+
   group('named routes', () {
     testWidgets('match home route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[

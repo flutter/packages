@@ -47,10 +47,51 @@ RegExp patternToRegExp(String pattern, List<String> parameters) {
   return RegExp(buffer.toString(), caseSensitive: false);
 }
 
-String _escapeGroup(String group, String name) {
+/// Removes string from the end of the path that matches a `pattern`.
+///
+/// The path parameters can be specified by prefixing them with `:`. The
+/// `parameters` are used for storing path parameter names.
+///
+///
+/// For example:
+///
+///  `path` = `/user/123/book/345`
+///  `pattern` = `book/:id`
+///
+/// The return value = `/user/123`.
+String removePatternFromPath(String pattern, String path) {
+  final StringBuffer buffer = StringBuffer();
+  int start = 0;
+  for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
+    if (match.start > start) {
+      buffer.write(RegExp.escape(pattern.substring(start, match.start)));
+    }
+    final String? optionalPattern = match[2];
+    final String regex =
+        optionalPattern != null ? _escapeGroup(optionalPattern) : '[^/]+';
+    buffer.write(regex);
+    start = match.end;
+  }
+
+  if (start < pattern.length) {
+    buffer.write(RegExp.escape(pattern.substring(start)));
+  }
+
+  if (!pattern.endsWith('/')) {
+    buffer.write(r'(?=/|$)');
+  }
+  buffer.write(r'$');
+  final RegExp regexp = RegExp(buffer.toString(), caseSensitive: false);
+  return path.replaceFirst(regexp, '');
+}
+
+String _escapeGroup(String group, [String? name]) {
   final String escapedGroup = group.replaceFirstMapped(
       RegExp(r'[:=!]'), (Match match) => '\\${match[0]}');
-  return '(?<$name>$escapedGroup)';
+  if (name != null) {
+    return '(?<$name>$escapedGroup)';
+  }
+  return escapedGroup;
 }
 
 /// Reconstructs the full path from a [pattern] and path parameters.

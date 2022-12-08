@@ -139,6 +139,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       return false;
     }
     _matchList.pop();
+    notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
       return true;

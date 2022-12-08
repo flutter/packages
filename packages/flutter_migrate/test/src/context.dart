@@ -24,6 +24,7 @@ void testUsingContext(
   Map<Type, Generator> overrides = const <Type, Generator>{},
   bool initializeFlutterRoot = true,
   String? testOn,
+  Timeout? timeout,
   bool?
       skip, // should default to `false`, but https://github.com/dart-lang/test/issues/545 doesn't allow this
 }) {
@@ -87,10 +88,7 @@ void testUsingContext(
         },
       );
     }, overrides: <Type, Generator>{});
-  }, testOn: testOn, skip: skip);
-  // We don't support "timeout"; see ../../dart_test.yaml which
-  // configures all tests to have a 15 minute timeout which should
-  // definitely be enough.
+  }, testOn: testOn, skip: skip, timeout: timeout);
 }
 
 void _printBufferedErrors(AppContext testContext) {
