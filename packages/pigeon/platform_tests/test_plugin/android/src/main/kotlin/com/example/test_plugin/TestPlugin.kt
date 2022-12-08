@@ -53,6 +53,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return someThings
   }
 
+  override fun echoInt(anInt: Long): Long? {
+    return anInt
+  }
+
   override fun noopAsync(callback: () -> Unit) {
     callback()
   }

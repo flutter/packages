@@ -71,6 +71,11 @@
   return someTypes;
 }
 
+- (nullable NSNumber *)echoIntAnInt:(NSNumber *)anInt
+                              error:(FlutterError *_Nullable *_Nonnull)error {
+  return anInt;
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }

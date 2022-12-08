@@ -74,6 +74,10 @@ ErrorOr<AllTypes> TestPlugin::SendMultipleTypes(bool a_bool, int64_t an_int,
   return someTypes;
 };
 
+ErrorOr<std::optional<int64_t>> TestPlugin::EchoInt(int64_t an_int) {
+  return an_int
+}
+
 void TestPlugin::NoopAsync(
     std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);

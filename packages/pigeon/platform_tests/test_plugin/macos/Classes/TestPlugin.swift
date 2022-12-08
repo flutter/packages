@@ -44,8 +44,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func sendMultipleTypes(aBool: Bool, anInt: Int32, aString: String) -> AllTypes {
-    var someThings = AllTypes(aBool: aBool, anInt: anInt, aString: aString)
+    let someThings = AllTypes(aBool: aBool, anInt: anInt, aString: aString)
     return someThings
+  }
+
+  func echoInt(anInt: Int32) -> Int32? {
+    return anInt
   }
 
   func noopAsync(completion: @escaping () -> Void) {

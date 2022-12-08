@@ -61,6 +61,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @Nullable Long echoInt(@NonNull Long anInt) {
+    return anInt;
+  }
+
+  @Override
   public void noopAsync(Result<Void> result) {
     result.success(null);
   }

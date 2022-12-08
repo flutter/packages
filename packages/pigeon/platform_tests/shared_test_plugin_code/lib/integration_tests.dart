@@ -138,6 +138,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject.aBool, aBool);
       expect(echoObject.aString, aString);
     });
+
+    testWidgets('Ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int inInt = -13;
+      final int? anInt = await api.echoInt(inInt);
+      expect(anInt, inInt);
+    });
   });
 
   group('Host async API tests', () {
