@@ -65,20 +65,6 @@ ErrorOr<AllTypesWrapper> TestPlugin::CreateNestedString(
   return wrapper;
 }
 
-ErrorOr<std::optional<std::bool>> TestPlugin::ExtractNestedBool(
-    const AllTypesWrapper& wrapper) {
-  const std::bool* inner_bool = wrapper.values().a_bool();
-  return inner_bool ? std::optional<std::bool>(*inner_bool) : std::nullopt;
-}
-
-ErrorOr<AllTypesWrapper> TestPlugin::CreateNestedBool(const std::bool& bool) {
-  AllTypes inner_object;
-  inner_object.set_a_bool(bool);
-  AllTypesWrapper wrapper;
-  wrapper.set_values(inner_object);
-  return wrapper;
-}
-
 void TestPlugin::NoopAsync(
     std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);
@@ -88,6 +74,12 @@ void TestPlugin::EchoAsyncString(
     const std::string& a_string,
     std::function<void(ErrorOr<std::string> reply)> result) {
   result(a_string);
+}
+
+void TestPlugin::EchoAsyncBool(
+    const std::bool& a_bool,
+    std::function<void(ErrorOr<std::bool> reply)> result) {
+  result(a_bool);
 }
 
 void TestPlugin::CallFlutterNoop(

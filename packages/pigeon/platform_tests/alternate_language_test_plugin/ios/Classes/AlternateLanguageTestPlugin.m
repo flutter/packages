@@ -69,6 +69,11 @@
   completion(aString, nil);
 }
 
+- (void)echoAsyncBool:(NSNumber *)aBool
+           completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  completion(aBool, nil);
+}
+
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   [self.flutterAPI noopWithCompletion:^(NSError *error) {
     completion(error);

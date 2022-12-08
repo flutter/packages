@@ -122,15 +122,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllTypesWrapper receivedObject =
           await api.createNestedString(sentString);
       expect(receivedObject.values.aString, sentString);
-
-      bool sentBool = true;
-      do {
-        final AllTypesWrapper receivedBoolObject =
-            await api.createNestedBool(sentBool);
-        expect(receivedBoolObject.values.aBool, sentBool);
-
-        sentBool = !sentBool;
-      } while (!sentBool);
     });
   });
 
@@ -149,6 +140,19 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final String echoObject = await api.echoAsyncString(sentObject);
       expect(echoObject, sentObject);
+    });
+
+    testWidgets('booleans serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      bool sentBool = true;
+      do {
+        final bool receivedBool = await api.echoAsyncBool(sentBool);
+        expect(receivedBool, sentBool);
+
+        sentBool = !sentBool;
+      } while (!sentBool);
     });
   });
 

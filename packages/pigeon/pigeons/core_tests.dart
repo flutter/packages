@@ -56,16 +56,6 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('createNestedObjectWithString:')
   AllTypesWrapper createNestedString(String string);
 
-  /// Returns the inner `aBool` value from the wrapped object, to test
-  /// sending of nested objects.
-  @ObjCSelector('extractNestedBoolFrom:')
-  bool? extractNestedBool(AllTypesWrapper wrapper);
-
-  /// Returns the inner `aBool` value from the wrapped object, to test
-  /// sending of nested objects.
-  @ObjCSelector('createNestedObjectWithBool:')
-  AllTypesWrapper createNestedBool(bool aBool);
-
   // ========== Asyncronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -77,6 +67,11 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncString:')
   String echoAsyncString(String aString);
+
+  /// Returns the passed in boolean.
+  @async
+  @ObjCSelector('echoAsyncBool:')
+  bool echoAsyncBool(bool aBool);
 
   // ========== Flutter API test wrappers ==========
 

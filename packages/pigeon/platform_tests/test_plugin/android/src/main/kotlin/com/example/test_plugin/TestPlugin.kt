@@ -48,20 +48,16 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return AllTypesWrapper(AllTypes(aString = string))
   }
 
-  override fun extractNestedBool(wrapper: AllTypesWrapper): Boolean? {
-    return wrapper.values.aBool;
-  }
-
-  override fun createNestedBool(aBool: Boolean): AllTypesWrapper {
-    return AllTypesWrapper(AllTypes(aBool = aBool))
-  }
-
   override fun noopAsync(callback: () -> Unit) {
     callback()
   }
 
   override fun echoAsyncString(aString: String, callback: (String) -> Unit) {
     callback(aString)
+  }
+
+  override fun echoAsyncBool(aBool: Boolean, callback: (Boolean) -> Unit) {
+    callback(aBool)
   }
 
   override fun callFlutterNoop(callback: () -> Unit) {

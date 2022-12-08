@@ -53,17 +53,6 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public @Nullable Boolean extractNestedBool(@NonNull AllTypesWrapper wrapper) {
-    return wrapper.getValues().getABool();
-  }
-
-  @Override
-  public @NonNull AllTypesWrapper createNestedBool(@NonNull Boolean aBool) {
-    AllTypes innerObject = new AllTypes.Builder().setABool(aBool).build();
-    return new AllTypesWrapper.Builder().setValues(innerObject).build();
-  }
-
-  @Override
   public void noopAsync(Result<Void> result) {
     result.success(null);
   }
@@ -71,6 +60,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public void echoAsyncString(@NonNull String aString, Result<String> result) {
     result.success(aString);
+  }
+
+  @Override
+  public void echoAsyncBool(@NonNull Boolean aBool, Result<Boolean> result) {
+    result.success(aBool);
   }
 
   @Override
