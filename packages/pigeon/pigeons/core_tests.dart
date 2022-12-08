@@ -56,6 +56,10 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('createNestedObjectWithString:')
   AllTypesWrapper createNestedString(String string);
 
+  /// Returns passed in arguments of multiple types.
+  // @ObjCSelector('sendMultipleTypes')
+  AllTypes sendMultipleTypes(bool aBool, int anInt, String aString);
+
   // ========== Asyncronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -68,7 +72,7 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoAsyncString:')
   String echoAsyncString(String aString);
 
-  /// Returns the passed in boolean.
+  /// Returns the passed in boolean asynchronously.
   @async
   @ObjCSelector('echoAsyncBool:')
   bool echoAsyncBool(bool aBool);

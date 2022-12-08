@@ -41,6 +41,7 @@ class TestPlugin : public flutter::Plugin,
       const core_tests_pigeontest::AllTypesWrapper& wrapper) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypesWrapper>
   CreateNestedString(const std::string& string) override;
+  SendMultipleTypes(bool a_bool, int64_t an_int, const std::string& a_string);
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;

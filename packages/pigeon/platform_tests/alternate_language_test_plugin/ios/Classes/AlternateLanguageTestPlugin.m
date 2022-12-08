@@ -60,6 +60,17 @@
   return [AllTypesWrapper makeWithValues:innerObject];
 }
 
+- (nullable AllTypes *)sendMultipleTypesABool:(NSNumber *)aBool
+                                        anInt:(NSNumber *)anInt
+                                      aString:(NSString *)aString
+                                        error:(FlutterError *_Nullable *_Nonnull)error {
+  AllTypes *someTypes = [[AllTypes alloc] init];
+  someTypes.aBool = aBool;
+  someTypes.anInt = anInt;
+  someTypes.aString = aString;
+  return someTypes;
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }

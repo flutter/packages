@@ -43,6 +43,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return AllTypesWrapper(values: AllTypes(aString: string))
   }
 
+  func sendMultipleTypes(aBool: Bool, anInt: Int32, aString: String) -> AllTypes {
+    var someThings = AllTypes(aBool: aBool, anInt: anInt, aString: aString)
+    return someThings
+  }
+
   func noopAsync(completion: @escaping () -> Void) {
     completion()
   }

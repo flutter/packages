@@ -53,6 +53,14 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull AllTypes sendMultipleTypes(
+      @NonNull Boolean aBool, @NonNull Long anInt, @NonNull String aString) {
+    AllTypes someThings =
+        new AllTypes.Builder().setABool(aBool).setAnInt(anInt).setAString(aString).build();
+    return someThings;
+  }
+
+  @Override
   public void noopAsync(Result<Void> result) {
     result.success(null);
   }

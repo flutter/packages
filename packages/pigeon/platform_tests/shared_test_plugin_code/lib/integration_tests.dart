@@ -123,6 +123,21 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.createNestedString(sentString);
       expect(receivedObject.values.aString, sentString);
     });
+
+    testWidgets(
+        'Arguments of multiple types serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String aString = 'this is aString';
+      const bool aBool = false;
+      const int anInt = 42;
+
+      final AllTypes echoObject =
+          await api.sendMultipleTypes(aBool, anInt, aString);
+      expect(echoObject.anInt, anInt);
+      expect(echoObject.aBool, aBool);
+      expect(echoObject.aString, aString);
+    });
   });
 
   group('Host async API tests', () {
