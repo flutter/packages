@@ -61,7 +61,7 @@ abstract class HostIntegrationCoreApi {
   AllTypes sendMultipleTypes(bool aBool, int anInt, String aString);
 
   /// Returns passed in int.
-  @ObjCSelector('echoIntAnInt:')
+  @ObjCSelector('echoInt:')
   int? echoInt(int anInt);
 
   /// Returns the passed in boolean asynchronously.
