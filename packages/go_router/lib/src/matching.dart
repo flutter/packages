@@ -166,7 +166,7 @@ class UnmodifiableRouteMatchList {
     }
     return listEquals(other._matches, _matches) &&
         other._uri == _uri &&
-        other._pathParameters == _pathParameters;
+        mapEquals(other._pathParameters, _pathParameters);
   }
 
   @override
