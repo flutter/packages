@@ -139,6 +139,64 @@ void main() {
       expect(find.byKey(key), findsOneWidget);
     });
 
+    testWidgets('Builds StatefulShellRoute as a sub-route',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> key =
+          GlobalKey<NavigatorState>(debugLabel: 'key');
+      late GoRoute root;
+      late StatefulShellRoute shell;
+      late GoRoute nested;
+      final RouteConfiguration config = RouteConfiguration(
+        routes: <RouteBase>[
+          root = GoRoute(
+            path: '/root',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('Root'),
+            routes: <RouteBase>[
+              shell = StatefulShellRoute(
+                builder: (_, __, Widget child) => child,
+                branches: <StatefulShellBranch>[
+                  StatefulShellBranch(
+                      rootLocation: '/root/nested', navigatorKey: key),
+                ],
+                routes: <RouteBase>[
+                  nested = GoRoute(
+                    path: 'nested',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return _DetailsScreen();
+                    },
+                  ),
+                ],
+              ),
+            ],
+          )
+        ],
+        redirectLimit: 10,
+        topRedirect: (_, __) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
+      );
+
+      final RouteMatchList matches = RouteMatchList(
+        <RouteMatch>[
+          _createRouteMatch(root, '/root'),
+          _createRouteMatch(shell, 'nested'),
+          _createRouteMatch(nested, '/root/nested'),
+        ],
+        Uri.parse('/root/nested'),
+        const <String, String>{},
+      );
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      expect(find.byType(_DetailsScreen), findsOneWidget);
+      expect(find.byKey(key), findsOneWidget);
+    });
+
     testWidgets(
         'throws when a branch of a StatefulShellRoute has an incorrect '
         'defaultLocation', (WidgetTester tester) async {

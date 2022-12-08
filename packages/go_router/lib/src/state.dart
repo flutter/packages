@@ -295,13 +295,13 @@ class StatefulShellRouteState {
   /// [StatefulShellRoute].
   final List<StatefulShellBranchState> branchStates;
 
-  /// The state associated with the current [ShellNavigator].
+  /// The state associated with the current [StatefulShellBranch].
   StatefulShellBranchState get currentBranchState => branchStates[currentIndex];
 
-  /// The index of the currently active [ShellNavigator].
+  /// The index of the currently active [StatefulShellBranch].
   ///
-  /// Corresponds to the index of the ShellNavigator in the List returned from
-  /// shellNavigatorBuilder of [StatefulShellRoute].
+  /// Corresponds to the index of the branch in the List returned from
+  /// branchBuilder of [StatefulShellRoute].
   final int currentIndex;
 
   /// The Navigator key of the current navigator.
@@ -346,13 +346,13 @@ class StatefulShellRouteState {
       state = branchStates.firstWhereOrNull((StatefulShellBranchState e) =>
           e.branch.navigatorKey == navigatorKey);
       if (state == null) {
-        throw GoError('Unable to find ShellNavigator with key $navigatorKey');
+        throw GoError('Unable to find branch with key $navigatorKey');
       }
     } else if (name != null) {
       state = branchStates.firstWhereOrNull(
           (StatefulShellBranchState e) => e.branch.name == name);
       if (state == null) {
-        throw GoError('Unable to find ShellNavigator with name "$name"');
+        throw GoError('Unable to find branch with name "$name"');
       }
     } else {
       state = branchStates[index!];

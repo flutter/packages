@@ -755,7 +755,7 @@ class StatefulShellBranch {
   /// GoRouterState.
   bool isBranchFor(GoRouterState state) {
     final String? match = rootLocations
-        .firstWhereOrNull((String e) => state.subloc.startsWith(e));
+        .firstWhereOrNull((String e) => state.location.startsWith(e));
     return match != null;
   }
 

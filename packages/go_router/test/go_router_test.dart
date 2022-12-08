@@ -2624,6 +2624,107 @@ void main() {
     });
 
     testWidgets(
+        'Navigation with goBranch is correctly handled in StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> branchANavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> branchCNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
+          GlobalKey<DummyStatefulWidgetState>();
+      StatefulShellRouteState? routeState;
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute(
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            routeState = StatefulShellRoute.of(context);
+            return child;
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen A'),
+            ),
+            GoRoute(
+              path: '/b',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen B'),
+            ),
+            GoRoute(
+              path: '/c',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen C'),
+            ),
+            GoRoute(
+              path: '/d',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('Screen D'),
+            ),
+          ],
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(rootLocation: '/a'),
+            StatefulShellBranch(rootLocation: '/b', name: 'B'),
+            StatefulShellBranch(
+                rootLocation: '/c', navigatorKey: branchCNavigatorKey),
+            StatefulShellBranch(rootLocation: '/d'),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester,
+          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      statefulWidgetKey.currentState?.increment();
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen C'), findsNothing);
+      expect(find.text('Screen D'), findsNothing);
+
+      routeState!.goBranch(name: 'B');
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(find.text('Screen C'), findsNothing);
+      expect(find.text('Screen D'), findsNothing);
+
+      routeState!.goBranch(navigatorKey: branchCNavigatorKey);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen C'), findsOneWidget);
+      expect(find.text('Screen D'), findsNothing);
+
+      routeState!.goBranch(index: 3);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen C'), findsNothing);
+      expect(find.text('Screen D'), findsOneWidget);
+
+      expect(() {
+        // Verify that navigation without specifying name, key or index fails
+        routeState!.goBranch();
+      }, throwsA(isAssertionError));
+
+      expect(() {
+        // Verify that navigation to unknown name fails
+        routeState!.goBranch(name: 'C');
+      }, throwsA(isA<GoError>()));
+
+      expect(() {
+        // Verify that navigation to unknown name fails
+        routeState!.goBranch(navigatorKey: branchANavigatorKey);
+      }, throwsA(isA<GoError>()));
+
+      expect(() {
+        // Verify that navigation to unknown index fails
+        routeState!.goBranch(index: 4);
+      }, throwsA(isA<Error>()));
+    });
+
+    testWidgets(
         'Navigates to correct nested navigation tree in StatefulShellRoute '
         'and maintains state', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
