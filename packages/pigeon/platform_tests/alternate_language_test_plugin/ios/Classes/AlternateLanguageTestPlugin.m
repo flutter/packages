@@ -71,13 +71,11 @@
   return someTypes;
 }
 
-- (nullable NSNumber *)echoInt:(NSNumber *)anInt
-                              error:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable NSNumber *)echoInt:(NSNumber *)anInt error:(FlutterError *_Nullable *_Nonnull)error {
   return anInt;
 }
 
-- (nullable NSNumber *)echoBool:(NSNumber *)aBool 
-                          error:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable NSNumber *)echoBool:(NSNumber *)aBool error:(FlutterError *_Nullable *_Nonnull)error {
   return aBool;
 }
 

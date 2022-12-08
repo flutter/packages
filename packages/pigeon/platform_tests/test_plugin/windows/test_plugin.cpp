@@ -79,7 +79,7 @@ ErrorOr<std::optional<int64_t>> TestPlugin::EchoInt(int64_t an_int) {
 }
 
 ErrorOr<std::optional<bool>> TestPlugin::EchoBool(bool a_bool) {
- return a_bool
+  return a_bool
 }
 
 void TestPlugin::NoopAsync(
