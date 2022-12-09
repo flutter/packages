@@ -85,7 +85,7 @@ Modified files:
             .existsSync(),
         true);
     expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
-  });
+  }, timeout: const Timeout(Duration(seconds: 500)));
 
   // Migrates a clean untouched app generated with flutter create
   testUsingContext('vanilla migrate builds', () async {
@@ -138,7 +138,7 @@ class MyApp extends StatelessWidget {
     ], workingDirectory: tempDir.path);
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('app-debug.apk'));
-  });
+  }, timeout: const Timeout(Duration(seconds: 500)));
 
   testUsingContext('migrate abandon', () async {
     // Abandon in an empty dir fails.
@@ -167,19 +167,20 @@ class MyApp extends StatelessWidget {
       '--verbose',
     ], workingDirectory: tempDir.path);
     expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('No migration'));
+    expect(result.stdout.toString(), contains('No migration in progress'));
 
     // Create migration.
     manifestFile.createSync(recursive: true);
 
-    // Directory with manifest_working_dir succeeds.
+    // Directory with manifest_staging_dir succeeds.
     result = await runMigrateCommand(<String>[
       'abandon',
       '--verbose',
+      '--force',
     ], workingDirectory: tempDir.path);
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('Abandon complete'));
-  });
+  }, timeout: const Timeout(Duration(seconds: 300)));
 
   // Migrates a user-modified app
   testUsingContext('modified migrate process succeeds', () async {
@@ -398,5 +399,5 @@ flutter:
             .existsSync(),
         true);
     expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
-  });
+  }, timeout: const Timeout(Duration(seconds: 500)));
 }

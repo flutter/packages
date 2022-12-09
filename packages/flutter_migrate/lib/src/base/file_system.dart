@@ -76,19 +76,19 @@ class LocalFileSystem extends local_fs.LocalFileSystem {
     _systemTemp = null;
   }
 
-  void testSig() {
-    // Make sure that the temporary directory is cleaned up if the tool is
-    // killed by a signal.
-    for (final ProcessSignal signal in _fatalSignals) {
-      final Object token = _signals.addHandler(
-        signal,
-        (ProcessSignal _) {
-          _tryToDeleteTemp();
-        },
-      );
-      _signalTokens[signal] = token;
-    }
-  }
+  // void testSig() {
+  //   // Make sure that the temporary directory is cleaned up if the tool is
+  //   // killed by a signal.
+  //   for (final ProcessSignal signal in _fatalSignals) {
+  //     final Object token = _signals.addHandler(
+  //       signal,
+  //       (ProcessSignal _) {
+  //         _tryToDeleteTemp();
+  //       },
+  //     );
+  //     _signalTokens[signal] = token;
+  //   }
+  // }
 
   // This getter returns a fresh entry under /tmp, like
   // /tmp/flutter_tools.abcxyz, then the rest of the tool creates /tmp entries
@@ -105,17 +105,17 @@ class LocalFileSystem extends local_fs.LocalFileSystem {
       }
       _systemTemp = superSystemTempDirectory.createTempSync('flutter_tools.')
         ..createSync(recursive: true);
-      // // Make sure that the temporary directory is cleaned up if the tool is
-      // // killed by a signal.
-      // for (final ProcessSignal signal in _fatalSignals) {
-      //   final Object token = _signals.addHandler(
-      //     signal,
-      //     (ProcessSignal _) {
-      //       _tryToDeleteTemp();
-      //     },
-      //   );
-      //   _signalTokens[signal] = token;
-      // }
+      // Make sure that the temporary directory is cleaned up if the tool is
+      // killed by a signal.
+      for (final ProcessSignal signal in _fatalSignals) {
+        final Object token = _signals.addHandler(
+          signal,
+          (ProcessSignal _) {
+            _tryToDeleteTemp();
+          },
+        );
+        _signalTokens[signal] = token;
+      }
       // Make sure that the temporary directory is cleaned up when the tool
       // exits normally.
       shutdownHooks.addShutdownHook(

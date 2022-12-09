@@ -353,9 +353,13 @@ class AnsiTerminal implements Terminal {
         // prompt ends with ': '
         logger.printStatus(': ', emphasis: true, newline: false);
       }
-      final int byte = stdin.readByteSync();
-      choice = const AsciiDecoder().convert(<int>[byte]);
-      logger.printStatus(choice);
+      try {
+        final int byte = stdin.readByteSync();
+        choice = const AsciiDecoder().convert(<int>[byte]);
+      } on FormatException {
+        logger.printError('Invalid input. Please try again.');
+      }
+      logger.printStatus(choice ?? 'null');
     }
     singleCharMode = false;
     if (defaultChoiceIndex != null && choice == '') {

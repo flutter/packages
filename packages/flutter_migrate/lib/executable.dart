@@ -4,9 +4,10 @@
 
 import 'dart:async';
 
-import 'src/base/command.dart';
-import 'src/base/terminal.dart';
+import 'package:args/args.dart';
+import 'package:args/command_runner.dart';
 
+import 'src/base/command.dart';
 import 'src/base_dependencies.dart';
 
 import 'src/commands/abandon.dart';
@@ -20,11 +21,6 @@ Future<void> main(List<String> args) async {
       args.contains('-v') || args.contains('--verbose') || veryVerbose;
 
   final MigrateBaseDependencies baseDependencies = MigrateBaseDependencies();
-
-  if (args.isEmpty) {
-    baseDependencies.logger.printError('No subcommand specified. Use the --help or -h flag to see options.');
-    return;
-  }
 
   final List<MigrateCommand> commands = <MigrateCommand>[
     MigrateStartCommand(
@@ -52,22 +48,27 @@ Future<void> main(List<String> args) async {
         processManager: baseDependencies.processManager),
   ];
 
-  if (args.contains('-h') || args.contains('--help')) {
-    for (final MigrateCommand command in commands) {
-      baseDependencies.logger.printStatus('${command.name}:');
-      baseDependencies.logger.printStatus(
-        command.description,
-        color: TerminalColor.grey,
-        indent: 2,
-      );
-    }
+  final MigrateCommandRunner runner = MigrateCommandRunner();
+
+  commands.forEach(runner.addCommand);
+  runner.run(args);
+  await baseDependencies.fileSystem.dispose();
+}
+
+/// Simple extension of a CommandRunner to provide migrate specific global flags.
+class MigrateCommandRunner extends CommandRunner<void> {
+  MigrateCommandRunner()
+      : super(
+          'flutter',
+          'Migrates legacy flutter projects to modern versions.',
+        ) {
+    argParser.addFlag('verbose',
+        abbr: 'v',
+        negatable: false,
+        help: 'Noisy logging, including all shell commands executed.');
   }
 
-  for (final MigrateCommand command in commands) {
-    if (command.name == args[0]) {
-      await command.runCommand();
-      break;
-    }
-  }
-  await baseDependencies.fileSystem.dispose();
+  @override
+  ArgParser get argParser => _argParser;
+  final ArgParser _argParser = ArgParser();
 }
