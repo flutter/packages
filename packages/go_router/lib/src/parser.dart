@@ -98,7 +98,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
   /// for use by the Router architecture as part of the RouteInformationParser
   @override
-  RouteInformation restoreRouteInformation(RouteMatchList configuration) {
+  RouteInformation? restoreRouteInformation(RouteMatchList configuration) {
+    if (configuration.isEmpty) {
+      return null;
+    }
     if (configuration.matches.last is ImperativeRouteMatch) {
       configuration =
           (configuration.matches.last as ImperativeRouteMatch).matches;
