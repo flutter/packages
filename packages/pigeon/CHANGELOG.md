@@ -1,6 +1,6 @@
 ## 4.2.11
 
-* Updates serialisation to use lists instead of maps.
+* Updates serialisation to use lists instead of maps to improve performance.
 
 ## 4.2.10
 

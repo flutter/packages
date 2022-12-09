@@ -330,7 +330,6 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
 
         final String instanceVariable = _makeInstanceVariableName(field);
 
-        // final String encodableKey = 'flutter::EncodableValue("${field.name}")';
         String encodableValue = '';
         if (!hostDatatype.isBuiltin &&
             rootClassNameSet.contains(field.type.baseName)) {
@@ -392,7 +391,7 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
                 .map((Class x) => x.name)
                 .contains(field.type.baseName)) {
           indent.write(
-              'if (const flutter::EncodableList* $pointerFieldName = std::get_if<flutter::EncodableList>(&$encodableFieldName)) '); //might need to change reference
+              'if (const flutter::EncodableList* $pointerFieldName = std::get_if<flutter::EncodableList>(&$encodableFieldName)) ');
           indent.scoped('{', '}', () {
             indent.writeln(
                 '$instanceVariableName = ${hostDatatype.datatype}(*$pointerFieldName);');

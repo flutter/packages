@@ -386,10 +386,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
-    expect(
-        code,
-        contains(
-            'pigeonResult.nested = [Input fromList:(list[0] == [NSNull null] ? nil : list[0])];'));
+    expect(code, contains('pigeonResult.nested = [Input fromList:(list[0])];'));
     expect(
         code,
         contains(

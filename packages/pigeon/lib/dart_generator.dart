@@ -111,9 +111,9 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
           });
         }
         indent.writeln('default:');
-        indent.inc();
-        indent.writeln('return super.readValueOfType(type, buffer);');
-        indent.dec();
+        indent.scoped('', '', () {
+          indent.writeln('return super.readValueOfType(type, buffer);');
+        });
       });
     });
   });

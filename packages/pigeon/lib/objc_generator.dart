@@ -615,7 +615,7 @@ String _listGetter(List<String> classNames, String list, NamedType field,
     if (prefix != null) {
       className = '$prefix$className';
     }
-    return '[$className fromList:($list[$index] == [NSNull null] ? nil : $list[$index])]';
+    return '[$className fromList:($list[$index])]';
   } else {
     return '$list[$index]';
   }
@@ -932,8 +932,6 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
     indent.writeln('+ ($className *)fromList:(NSMutableArray *)list;');
-    indent.writeln(
-        '+ (nullable $className *)nullableFromList:(NSMutableArray *)list;');
     indent.writeln('- (NSMutableArray *)toList;');
     indent.writeln('@end');
   }
@@ -959,8 +957,9 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
         const String resultName = 'pigeonResult';
         indent.writeln('$className *$resultName = [[$className alloc] init];');
         final int len = klass.fields.length;
-        indent.scoped('if (list == nil) {', '}', () {
-          indent.writeln('list = [[NSMutableArray alloc] init];');
+        indent.scoped('if (list == nil || list == [NSNull null]) {', '}', () {
+          indent.writeln(
+              'list = [[NSMutableArray alloc] initWithCapacity: $len];');
           indent.write('for (int i = 0; i < $len; i++) ');
           indent.scoped('{', '}', () {
             indent.writeln('[list addObject: [NSNull null]];');
@@ -984,14 +983,14 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
         });
         indent.writeln('return $resultName;');
       });
-      indent.writeln(
-          '+ (nullable $className *)nullableFromList:(NSMutableArray *)list { return (list) ? [$className fromList:list] : nil; }');
     }
 
     void writeToList() {
       indent.write('- (NSMutableArray *)toList ');
       indent.scoped('{', '}', () {
-        indent.writeln('NSMutableArray *list = [[NSMutableArray alloc] init];');
+        final int len = klass.fields.length;
+        indent.writeln(
+            'NSMutableArray *list = [[NSMutableArray alloc] initWithCapacity: $len];');
         klass.fields
             .toList()
             .asMap()
