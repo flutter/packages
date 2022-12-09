@@ -30,7 +30,7 @@ import 'typedefs.dart';
 /// changes.
 ///
 /// See also:
-/// * [Configuration](https://pub.dev/documentation/go_router/topics/Configuration-topic.html)
+/// * [Configuration](https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html)
 /// * [GoRoute], which provides APIs to define the routing table.
 /// * [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example),
 ///    which contains examples for different routing scenarios.

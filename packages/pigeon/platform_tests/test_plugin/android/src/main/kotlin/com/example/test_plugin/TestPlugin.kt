@@ -17,8 +17,11 @@ import io.flutter.plugin.common.MethodChannel.Result
  * example/integration_test/.
  */
 class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
+  var flutterApi: FlutterIntegrationCoreApi? = null
+
   override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this)
+    flutterApi = FlutterIntegrationCoreApi(binding.getBinaryMessenger())
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -43,5 +46,34 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
 
   override fun createNestedString(string: String): AllTypesWrapper {
     return AllTypesWrapper(AllTypes(aString = string))
+  }
+
+  override fun sendMultipleTypes(aBool: Boolean, anInt: Long, aString: String): AllTypes {
+    var someThings = AllTypes(aBool = aBool, anInt = anInt, aString = aString)
+    return someThings
+  }
+
+  override fun echoInt(anInt: Long): Long {
+    return anInt
+  }
+
+  override fun echoBool(aBool: Boolean): Boolean {
+    return aBool
+  }
+
+  override fun noopAsync(callback: () -> Unit) {
+    callback()
+  }
+
+  override fun echoAsyncString(aString: String, callback: (String) -> Unit) {
+    callback(aString)
+  }
+
+  override fun callFlutterNoop(callback: () -> Unit) {
+    flutterApi!!.noop() { callback() }
+  }
+
+  override fun callFlutterEchoString(aString: String, callback: (String) -> Unit) {
+    flutterApi!!.echoString(aString) { flutterString -> callback(flutterString) }
   }
 }

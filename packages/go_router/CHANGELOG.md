@@ -8,6 +8,14 @@
   - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`. 
   - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
 
+## 5.2.3
+
+- Fixes link for router configuration and sub-routes
+
+## 5.2.2
+
+- Fixes `pop` and `push` to update urls correctly.
+
 ## 5.2.1
 
 - Refactors `GoRouter.pop` to be able to pop individual pageless route with result.

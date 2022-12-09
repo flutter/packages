@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-import '../shared/dropdown_menu.dart';
+import '../shared/dropdown_menu.dart' as dropdown;
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
 
@@ -85,7 +85,7 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
             children: <Widget>[
-              DropdownMenu<MarkdownExtensionSet>(
+              dropdown.DropdownMenu<MarkdownExtensionSet>(
                 items: _menuItems,
                 label: 'Extension Set:',
                 initialValue: _extensionSet,

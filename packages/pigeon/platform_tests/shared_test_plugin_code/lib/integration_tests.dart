@@ -27,7 +27,7 @@ enum TargetGenerator {
   /// The iOS Objective-C generator.
   objc,
 
-  /// The iOS or macOS Objective-C generator.
+  /// The iOS or macOS Swift generator.
   swift,
 }
 
@@ -35,7 +35,7 @@ enum TargetGenerator {
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Host API tests', () {
+  group('Host sync API tests', () {
     testWidgets('basic void->void call works', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
@@ -123,10 +123,101 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.createNestedString(sentString);
       expect(receivedObject.values.aString, sentString);
     });
+
+    testWidgets(
+        'Arguments of multiple types serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String aString = 'this is aString';
+      const bool aBool = false;
+      const int anInt = 42;
+
+      final AllTypes echoObject =
+          await api.sendMultipleTypes(aBool, anInt, aString);
+      expect(echoObject.anInt, anInt);
+      expect(echoObject.aBool, aBool);
+      expect(echoObject.aString, aString);
+    });
+
+    testWidgets('Ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int inInt = -13;
+      final int anInt = await api.echoInt(inInt);
+      expect(anInt, inInt);
+    });
+
+    testWidgets('booleans serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      for (final bool sentBool in <bool>[true, false]) {
+        final bool receivedBool = await api.echoBool(sentBool);
+        expect(receivedBool, sentBool);
+      }
+    });
   });
 
-  group('Flutter API tests', () {
-    // TODO(stuartmorgan): Add Flutter API tests, driven by wrapper host APIs
-    // that forward the arguments and return values in the opposite direction.
+  group('Host async API tests', () {
+    testWidgets('basic void->void call works', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(api.noopAsync(), completes);
+    });
+
+    testWidgets('strings serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const String sentObject = 'Hello, asyncronously!';
+
+      final String echoObject = await api.echoAsyncString(sentObject);
+      expect(echoObject, sentObject);
+    });
   });
+
+  // These tests rely on the ansync Dart->host calls to work correctly, since
+  // the host->Dart call is wrapped in a driving Dart->host call, so any test
+  // added to this group should have coverage of the relevant arguments and
+  // return value in the "Host async API tests" group.
+  group('Flutter API tests', () {
+    setUp(() {
+      FlutterIntegrationCoreApi.setup(_FlutterApiTestImplementation());
+    });
+
+    testWidgets('basic void->void call works', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(api.callFlutterNoop(), completes);
+    });
+
+    testWidgets('strings serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const String sentObject = 'Hello Dart!';
+
+      final String echoObject = await api.callFlutterEchoString(sentObject);
+      expect(echoObject, sentObject);
+    });
+  },
+      // TODO(stuartmorgan): Enable when FlutterApi generation is fixed for
+      // C++. See https://github.com/flutter/flutter/issues/108682.
+      skip: targetGenerator == TargetGenerator.cpp);
+}
+
+class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
+  @override
+  AllTypes echoAllTypes(AllTypes everything) {
+    return everything;
+  }
+
+  @override
+  String echoString(String aString) {
+    return aString;
+  }
+
+  @override
+  void noop() {}
 }

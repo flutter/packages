@@ -91,9 +91,8 @@ import 'typedefs.dart';
 /// ```
 /// In the above example, if /family route is matched, it will be used.
 /// else /:username route will be used.
-///
-/// See [Sub-routes](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
-/// for a complete runnable example.
+/// ///
+/// See [main.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
 @immutable
 abstract class RouteBase {
   const RouteBase._({
@@ -300,6 +299,7 @@ class GoRoute extends RouteBase {
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
+  // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
   RegExpMatch? matchPatternAsPrefix(String loc) =>
       _pathRE.matchAsPrefix(loc) as RegExpMatch?;
