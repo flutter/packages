@@ -158,9 +158,9 @@ TEST_F(NullFieldsTest, RequestToMapWithNulls) {
 
   EXPECT_EQ(wrapped.size(), 2);
 
-  EncodableList list = wrapped[0]
+  EncodableList list = wrapped[0];
 
-      EXPECT_EQ(list.size(), 2);
+  EXPECT_EQ(list.size(), 2);
   EXPECT_TRUE(list[0].IsNull());
   EXPECT_EQ(list[1], 1);
 }

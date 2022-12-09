@@ -145,6 +145,7 @@ public class AllDatatypesTest {
     assertNotNull(list);
     assertNull(list.get(0));
     assertNotNull(list.get(1));
+    list.set(1, 123);
     AllTypes readEverything = AllTypes.fromList(list);
     assertEquals(readEverything.getAnInt(), everything.getAnInt());
   }
