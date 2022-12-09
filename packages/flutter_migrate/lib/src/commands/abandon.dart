@@ -78,7 +78,7 @@ class MigrateAbandonCommand extends MigrateCommand {
     final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
 
     if (!validateWorkingDirectory(project, logger)) {
-      return CommandResult.fail();
+      return const CommandResult(ExitStatus.fail);
     }
 
     Directory stagingDirectory =

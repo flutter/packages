@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:args/command_runner.dart';
 
 import 'logger.dart';
@@ -16,9 +14,8 @@ enum ExitStatus {
   killed,
 }
 
-const String flutterNoPubspecMessage =
-      'Error: No pubspec.yaml file found.\n'
-      'This command should be run from the root of your Flutter project.';
+const String flutterNoPubspecMessage = 'Error: No pubspec.yaml file found.\n'
+    'This command should be run from the root of your Flutter project.';
 
 class CommandResult {
   const CommandResult(this.exitStatus);
@@ -58,15 +55,8 @@ class CommandResult {
 abstract class MigrateCommand extends Command<void> {
   @override
   Future<void> run() async {
-    final CommandResult result = await runCommand();
-    switch (result.exitStatus) {
-      case ExitStatus.success:
-      case ExitStatus.warning:
-        return;
-      case ExitStatus.fail:
-      case ExitStatus.killed:
-        exit(1);
-    }
+    await runCommand();
+    return;
   }
 
   Future<CommandResult> runCommand();

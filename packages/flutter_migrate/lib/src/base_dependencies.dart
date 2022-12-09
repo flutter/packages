@@ -38,7 +38,7 @@ class MigrateBaseDependencies {
   }
 
   late ProcessManager processManager;
-  late FileSystem fileSystem;
+  late LocalFileSystem fileSystem;
   late Stdio stdio;
   late Terminal terminal;
   late Logger logger;

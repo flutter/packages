@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:process/process.dart';
-import 'dart:io';
 
 import '../base/command.dart';
 import '../base/file_system.dart';
@@ -126,7 +125,8 @@ class MigrateStartCommand extends MigrateCommand {
   @override
   Future<CommandResult> runCommand() async {
     final FlutterToolsEnvironment environment =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(processManager, logger);
+        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
+            processManager, logger);
     if (!_validateEnvironment(environment)) {
       return const CommandResult(ExitStatus.fail);
     }
@@ -211,7 +211,6 @@ class MigrateStartCommand extends MigrateCommand {
           boolArg('allow-fallback-base-revision') ?? false,
     );
 
-    // final MigrateResult? migrateResult = null;
     final MigrateResult? migrateResult = await computeMigration(
       flutterProject: project,
       commandParameters: commandParameters,

@@ -56,8 +56,7 @@ bool _skipped(String localPath, FileSystem fileSystem,
   }
   if (skippedPrefixes != null) {
     return skippedPrefixes.any((String prefix) =>
-        localPath
-            .startsWith('$prefix${fileSystem.path.separator}'));
+        localPath.startsWith('$prefix${fileSystem.path.separator}'));
   }
   return false;
 }
@@ -262,6 +261,8 @@ Future<MigrateResult?> computeMigration({
     }
   }
 
+  (context.fileSystem as LocalFileSystem).testSig();
+
   migrateLogger.logStep('generating_base');
   // Generate the base templates
   final ReferenceProjects referenceProjects =
@@ -370,8 +371,8 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   // Use user-provided projects if provided, if not, generate them internally.
   final bool customBaseProjectDir = commandParameters.baseAppPath != null;
   final bool customTargetProjectDir = commandParameters.targetAppPath != null;
-  Directory? baseProjectDir;
-  Directory? targetProjectDir;
+  Directory? baseProjectDir = context.fileSystem.systemTempDirectory.createTempSync('baseProject');
+  Directory? targetProjectDir = context.fileSystem.systemTempDirectory.createTempSync('targetProject');
   if (customBaseProjectDir) {
     baseProjectDir =
         context.fileSystem.directory(commandParameters.baseAppPath);

@@ -8,8 +8,6 @@ import 'package:flutter_migrate/src/base/file_system.dart';
 import 'package:flutter_migrate/src/base/io.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
 import 'package:flutter_migrate/src/base/terminal.dart';
-import 'package:flutter_migrate/src/environment.dart';
-import 'package:flutter_migrate/src/utils.dart';
 import 'package:process/process.dart';
 
 import 'src/common.dart';
@@ -23,44 +21,12 @@ import 'test_data/migrate_project.dart';
 void main() {
   Directory tempDir;
   BufferLogger logger;
-  MigrateUtils utils;
   ProcessManager processManager;
-  FlutterToolsEnvironment environment;
 
   setUp(() async {
     tempDir = createResolvedTempDirectorySync('run_test.');
     logger = BufferLogger.test();
     processManager = const LocalProcessManager();
-    utils = MigrateUtils(
-      logger: logger,
-      fileSystem: fileSystem,
-      processManager: processManager,
-    );
-    environment = FlutterToolsEnvironment(mapping: <String, Object>{
-      'FlutterProject.directory': '/projects/hello_world',
-      'FlutterProject.metadataFile': '/projects/hello_world/.metadata',
-      'FlutterProject.android.exists': true,
-      'FlutterProject.ios.exists': true,
-      'FlutterProject.web.exists': true,
-      'FlutterProject.macos.exists': true,
-      'FlutterProject.linux.exists': true,
-      'FlutterProject.windows.exists': true,
-      'FlutterProject.fuchsia.exists': false,
-      'FlutterProject.android.isKotlin': true,
-      'FlutterProject.ios.isSwift': true,
-      'FlutterProject.isModule': false,
-      'FlutterProject.isPlugin': false,
-      'FlutterProject.manifest.appname': 'hello_world',
-      'FlutterVersion.frameworkRevision': '',
-      'Platform.operatingSystem': 'macos',
-      'Platform.isAndroid': false,
-      'Platform.isIOS': false,
-      'Platform.isWindows': false,
-      'Platform.isMacOS': true,
-      'Platform.isFuchsia': false,
-      'Platform.pathSeparator': '/',
-      'Cache.flutterRoot': '/flutter'
-    });
   });
 
   tearDown(() async {
@@ -180,7 +146,7 @@ class MyApp extends StatelessWidget {
       'abandon',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 1);
+    expect(result.exitCode, 0);
     expect(result.stderr.toString(),
         contains('Error: No pubspec.yaml file found'));
     expect(
@@ -200,7 +166,7 @@ class MyApp extends StatelessWidget {
       'abandon',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 1);
+    expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('No migration'));
 
     // Create migration.
@@ -225,14 +191,14 @@ class MyApp extends StatelessWidget {
       'apply',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 1);
+    expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('No migration'));
 
     result = await runMigrateCommand(<String>[
       'status',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 1);
+    expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('No migration'));
 
     result = await runMigrateCommand(<String>[
@@ -266,7 +232,7 @@ Merge conflicted files:
       'apply',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 1);
+    expect(result.exitCode, 0);
     expect(
         result.stdout.toString(),
         contains(
