@@ -1026,8 +1026,7 @@ void main() {
         ),
       ];
       final Completer<void> completer = Completer<void>();
-      final GoRouter router =
-          await createRouter(routes, tester, redirect: (_, __) async {
+      await createRouter(routes, tester, redirect: (_, __) async {
         await completer.future;
         return '/login';
       });
