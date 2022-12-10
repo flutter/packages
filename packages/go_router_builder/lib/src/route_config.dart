@@ -191,7 +191,10 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
     final ParameterElement? extraParam = _ctor.parameters
         .singleWhereOrNull((ParameterElement element) => element.isExtraField);
 
-    if (_ctor.isConst && _ctorParams.isEmpty && _ctorQueryParams.isEmpty && extraParam == null) {
+    if (_ctor.isConst &&
+        _ctorParams.isEmpty &&
+        _ctorQueryParams.isEmpty &&
+        extraParam == null) {
       buffer.writeln('const ');
     }
 
