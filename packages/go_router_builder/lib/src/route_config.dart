@@ -187,12 +187,13 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
 
   String get _newFromState {
     final StringBuffer buffer = StringBuffer('=>');
-    if (_ctor.isConst && _ctorParams.isEmpty && _ctorQueryParams.isEmpty) {
-      buffer.writeln('const ');
-    }
 
     final ParameterElement? extraParam = _ctor.parameters
         .singleWhereOrNull((ParameterElement element) => element.isExtraField);
+
+    if (_ctor.isConst && _ctorParams.isEmpty && _ctorQueryParams.isEmpty && extraParam == null) {
+      buffer.writeln('const ');
+    }
 
     buffer.writeln('$_className(');
     for (final ParameterElement param in <ParameterElement>[
