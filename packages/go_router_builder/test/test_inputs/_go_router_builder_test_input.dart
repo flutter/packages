@@ -108,6 +108,32 @@ class EnumParam extends GoRouteData {
   final EnumTest y;
 }
 
+@ShouldGenerate(r'''
+GoRoute get $routeWithExtra => GoRouteData.$route(
+      path: '/',
+      factory: $RouteWithExtraExtension._fromState,
+    );
+
+extension $RouteWithExtraExtension on RouteWithExtra {
+  static RouteWithExtra _fromState(GoRouterState state) => RouteWithExtra(
+        $extra: state.extra as Object?,
+      );
+
+  String get location => GoRouteData.$location(
+        '/',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
+}
+''')
+@TypedGoRoute<RouteWithExtra>(path: '/')
+class RouteWithExtra extends GoRouteData {
+  RouteWithExtra({this.$extra});
+  final Object? $extra;
+}
+
 enum EnumTest {
   a(1),
   b(3),
