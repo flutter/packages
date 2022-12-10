@@ -16,7 +16,9 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  uses-material-design: true
   shaders:
+    - shaders/inkwell.frag
     - shaders/sampler.frag
     - shaders/solid_color.frag
     - shaders/blank.frag
