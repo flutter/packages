@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 #version 460 core
 
-precision highp float;
+precision mediump float;
 
 out vec4 fragColor;
 

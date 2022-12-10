@@ -3,9 +3,9 @@
 // found in the LICENSE file.
 #version 460 core
 
-precision highp float;
+precision mediump float;
 
-layout(location = 0) uniform vec4 uColor;
+uniform vec4 uColor;
 
 out vec4 fragColor;
 

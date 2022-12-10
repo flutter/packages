@@ -7,11 +7,14 @@ precision mediump float;
 
 #include <flutter/runtime_effect.glsl>
 
-uniform vec2 uSize;
-uniform sampler2D uTexture;
+uniform float uAnimation;
+uniform vec4 uColor;
+uniform float uRadius;
+uniform vec2 uCenter;
 
 out vec4 fragColor;
 
 void main() {
-  fragColor = texture(uTexture, FlutterFragCoord().xy / uSize);
+  float scale = distance(FlutterFragCoord(), uCenter) / uRadius;
+  fragColor = mix(vec4(1.0), uColor, scale) * (1.0 - uAnimation);
 }
