@@ -1,6 +1,6 @@
 # CHANGES
 
-## 2.0.0
+## 2.0.0-dev.1
 
 - Use parsing backend from `vector_graphics_compiler`.
   - Out of order defs now supported.
