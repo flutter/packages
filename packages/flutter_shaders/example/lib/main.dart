@@ -7,9 +7,9 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_shaders/flutter_shaders.dart';
 
-
 void main() async {
-  final ui.FragmentProgram program = await ui.FragmentProgram.fromAsset('shaders/inkwell.frag');
+  final ui.FragmentProgram program =
+      await ui.FragmentProgram.fromAsset('shaders/inkwell.frag');
   runApp(MyApp(program: program));
 }
 
