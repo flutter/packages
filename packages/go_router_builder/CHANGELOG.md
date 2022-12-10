@@ -1,3 +1,7 @@
+## 1.0.16
+
+* Fixes a bug where generated extension pproduces a compile error when using extra parameters. [#116832](https://github.com/flutter/flutter/issues/116832).
+
 ## 1.0.15
 
 * Avoids using deprecated DartType.element2.
