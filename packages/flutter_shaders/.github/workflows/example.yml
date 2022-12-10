@@ -21,6 +21,6 @@ jobs:
         channel: 'master'
     - run: flutter --version
     - run: flutter pub get
-    - run: flutter format --set-exit-if-changed .
+    - run: dart format --set-exit-if-changed .
     - run: flutter analyze .
     - run: flutter test --coverage
