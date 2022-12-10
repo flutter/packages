@@ -1049,7 +1049,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     _enums.add(Enum(
       name: node.name2.lexeme,
       members: node.constants
-          .map((dart_ast.EnumConstantDeclaration e) => e.name2.lexeme)
+          .map((dart_ast.EnumConstantDeclaration e) => EnumMember(
+                name: e.name2.lexeme,
+                documentationComments: _documentationCommentsParser(
+                    e.documentationComment?.tokens),
+              ))
           .toList(),
       documentationComments:
           _documentationCommentsParser(node.documentationComment?.tokens),

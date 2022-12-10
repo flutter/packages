@@ -471,8 +471,10 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.scoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final String member) {
-        indent.write('${member.toUpperCase()}($index)');
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        indent.write('${member.name.toUpperCase()}($index)');
         if (index != anEnum.members.length - 1) {
           indent.addln(',');
         } else {

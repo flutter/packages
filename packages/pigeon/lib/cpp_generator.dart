@@ -1059,9 +1059,11 @@ void generateCppHeader(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
     indent.scoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final String member) {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
-            '$member = $index${index == anEnum.members.length - 1 ? '' : ','}');
+            '${member.name} = $index${index == anEnum.members.length - 1 ? '' : ','}');
       });
     });
   }
