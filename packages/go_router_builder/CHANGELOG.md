@@ -1,6 +1,7 @@
 ## 1.0.16
 
 * Fixes a bug where generated extension pproduces a compile error when using extra parameters. [#116832](https://github.com/flutter/flutter/issues/116832).
+* Fixes a bug where generated extension pproduces a compile error when using non-nullable queryParams. [#116837](https://github.com/flutter/flutter/issues/116837).
 
 ## 1.0.15
 
