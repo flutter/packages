@@ -35,25 +35,27 @@ abstract class SvgLoader<T> extends BytesLoader {
   Future<T?> prepareMessage(BuildContext? context) =>
       SynchronousFuture<T?>(null);
 
+  Future<ByteData> _load(BuildContext? context) {
+    return prepareMessage(context).then((T? message) {
+      return compute((T? message) {
+        return encodeSvg(
+          xml: provideSvg(message),
+          theme: theme,
+          colorMapper: colorMapper,
+          debugName: 'Svg loader',
+          enableClippingOptimizer: false,
+          enableMaskingOptimizer: false,
+          enableOverdrawOptimizer: false,
+        ).buffer.asByteData();
+      }, message, debugLabel: 'Load Bytes');
+    });
+  }
+
   /// This method intentionally avoids using `await` to avoid unnecessary event
   /// loop turns. This is meant to to help tests in particular.
   @override
   Future<ByteData> loadBytes(BuildContext? context) {
-    return svg.cache.putIfAbsent(cacheKey(context), () {
-      return prepareMessage(context).then((T? message) {
-        return compute((T? message) {
-          return encodeSvg(
-            xml: provideSvg(message),
-            theme: theme,
-            colorMapper: colorMapper,
-            debugName: 'Svg loader',
-            enableClippingOptimizer: false,
-            enableMaskingOptimizer: false,
-            enableOverdrawOptimizer: false,
-          ).buffer.asByteData();
-        }, message, debugLabel: 'Load Bytes');
-      });
-    });
+    return svg.cache.putIfAbsent(cacheKey(context), () => _load(context));
   }
 }
 
