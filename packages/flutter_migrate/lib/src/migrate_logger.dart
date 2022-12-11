@@ -12,13 +12,13 @@ class MigrateLogger {
     required this.logger,
     this.verbose = false,
     this.silent = false,
-  });
+  }) : status = logger.startSpinner();
 
   final Logger logger;
   // We keep a spinner going and print periodic progress messages
   // to assure the developer that the command is still working due to
   // the long expected runtime.
-  Status? status;
+  Status status;
   final bool verbose;
   final bool silent;
 
@@ -27,8 +27,8 @@ class MigrateLogger {
   }
 
   void stop() {
-    status?.stop();
-    status?.cancel();
+    status.stop();
+    status.cancel();
   }
 
   static final Map<String, String> _stepStringsMap = <String, String>{
@@ -48,15 +48,15 @@ class MigrateLogger {
     if (silent) {
       return;
     }
-    status?.pause();
+    status.pause();
     logger.printStatus(message, indent: indent, color: TerminalColor.grey);
-    status?.resume();
+    status.resume();
   }
 
   void printError(String message, {int indent = 0}) {
-    status?.pause();
+    status.pause();
     logger.printError(message, indent: indent);
-    status?.resume();
+    status.resume();
   }
 
   void logStep(String key) {

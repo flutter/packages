@@ -3,11 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io' as io;
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 
 import 'src/base/command.dart';
+import 'src/base/file_system.dart';
 import 'src/base_dependencies.dart';
 
 import 'src/commands/abandon.dart';
@@ -51,7 +53,9 @@ Future<void> main(List<String> args) async {
   final MigrateCommandRunner runner = MigrateCommandRunner();
 
   commands.forEach(runner.addCommand);
-  runner.run(args);
+  await runner.run(args);
+
+  await _exit(0, baseDependencies, shutdownHooks: baseDependencies.fileSystem.shutdownHooks);
   await baseDependencies.fileSystem.dispose();
 }
 
@@ -71,4 +75,27 @@ class MigrateCommandRunner extends CommandRunner<void> {
   @override
   ArgParser get argParser => _argParser;
   final ArgParser _argParser = ArgParser();
+}
+
+Future<int> _exit(int code, MigrateBaseDependencies baseDependencies, {required ShutdownHooks shutdownHooks}) async {
+  // Run shutdown hooks before flushing logs
+  await shutdownHooks.runShutdownHooks(baseDependencies.logger);
+
+  final Completer<void> completer = Completer<void>();
+
+  // Give the task / timer queue one cycle through before we hard exit.
+  Timer.run(() {
+    try {
+      baseDependencies.logger.printTrace('exiting with code $code');
+      io.exit(code);
+      completer.complete();
+    // This catches all exceptions because the error is propagated on the
+    // completer.
+    } catch (error, stackTrace) { // ignore: avoid_catches_without_on_clauses
+      completer.completeError(error, stackTrace);
+    }
+  });
+
+  await completer.future;
+  return code;
 }
