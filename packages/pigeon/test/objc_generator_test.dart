@@ -110,7 +110,7 @@ void main() {
     expect(
         code,
         contains(
-            'pigeonResult.enum1 = [(list[1] == [NSNull null] ? 0 : list[1]) integerValue];'));
+            'pigeonResult.enum1 = [GetNullableObjectAtIndex(list, 1) integerValue];'));
   });
 
   test('primitive enum host', () {
@@ -347,7 +347,8 @@ void main() {
     generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
-    expect(code, contains('pigeonResult.aBool = list[0];'));
+    expect(code,
+        contains('pigeonResult.aBool = GetNullableObjectAtIndex(list, 0);'));
   });
 
   test('nested class header', () {
@@ -386,7 +387,10 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('pigeonResult.nested = [Input fromList:(list[0])];'));
+    expect(
+        code,
+        contains(
+            'pigeonResult.nested = [Input nullableFromList:(GetNullableObjectAtIndex(list, 0))];'));
     expect(
         code,
         contains(
