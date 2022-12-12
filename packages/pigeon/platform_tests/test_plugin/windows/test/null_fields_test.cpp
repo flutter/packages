@@ -208,7 +208,8 @@ TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   EXPECT_EQ(indices[0].LongValue(), 1L);
   EXPECT_EQ(indices[1].LongValue(), 2L);
   EXPECT_EQ(indices[2].LongValue(), 3L);
-  const EncodableList& request_list = *ExpectAndGetIndex<EncodableList>(list, 4);
+  const EncodableList& request_list =
+      *ExpectAndGetIndex<EncodableList>(list, 4);
   EXPECT_EQ(*ExpectAndGetIndex<std::string>(request_list, 0), "hello");
   EXPECT_EQ(*ExpectAndGetIndex<int>(request_list, 1), 0);
 }
