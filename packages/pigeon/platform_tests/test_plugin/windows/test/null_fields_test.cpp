@@ -21,12 +21,14 @@ using flutter::EncodableValue;
 // value isn't present, or has the wrong type.
 template <class T>
 const T* ExpectAndGetIndex(const EncodableList& list, const int i) {
-  EXPECT_LT(i, list.size()) << "Index " << i << " is out of bounds; size is " << list.size();
+  EXPECT_LT(i, list.size())
+      << "Index " << i << " is out of bounds; size is " << list.size();
   if (i >= list.size()) {
     return nullptr;
   }
   const T* value_ptr = std::get_if<T>(&(list[i]));
-  EXPECT_NE(value_ptr, nullptr) << "Value for index " << i << " has incorrect type";
+  EXPECT_NE(value_ptr, nullptr)
+      << "Value for index " << i << " has incorrect type";
   return value_ptr;
 }
 
@@ -200,7 +202,7 @@ TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   EXPECT_EQ(list.size(), 5);
   EXPECT_EQ(*ExpectAndGetIndex<std::string>(list, 0), "result");
   EXPECT_EQ(*ExpectAndGet<std::string>(list, 1), "error");
-  const EncodableList& indices =  ExpectAndGetIndex<EncodableList>(list, 2);
+  const EncodableList& indices = ExpectAndGetIndex<EncodableList>(list, 2);
   EXPECT_EQ(indices.size(), 3);
   EXPECT_EQ(indices[0].LongValue(), 1L);
   EXPECT_EQ(indices[1].LongValue(), 2L);

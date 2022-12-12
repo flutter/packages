@@ -615,7 +615,7 @@ String _listGetter(List<String> classNames, String list, NamedType field,
     if (prefix != null) {
       className = '$prefix$className';
     }
-    return 'GetNullableObjectAtIndex($list, $index) != nil ? [$className fromList:(GetNullableObjectAtIndex($list, $index))] : nil';
+    return '[$className nullableFromList:(GetNullableObjectAtIndex($list, $index))]';
   } else {
     return 'GetNullableObjectAtIndex($list, $index)';
   }
@@ -924,6 +924,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
     indent.writeln('+ ($className *)fromList:(NSMutableArray *)list;');
+    indent.writeln(
+        '+ (nullable $className *)nullableFromList:(NSMutableArray *)list;');
     indent.writeln('- (NSMutableArray *)toList;');
     indent.writeln('@end');
   }
@@ -966,6 +968,9 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
         });
         indent.writeln('return $resultName;');
       });
+
+      indent.writeln(
+          '+ (nullable $className *)nullableFromList:(NSMutableArray *)list { return (list) ? [$className fromList:list] : nil; }');
     }
 
     void writeToList() {
