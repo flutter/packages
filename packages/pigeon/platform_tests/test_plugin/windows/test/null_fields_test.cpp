@@ -160,11 +160,11 @@ TEST_F(NullFieldsTest, RequestToListWithValues) {
 
   EXPECT_EQ(wrapped.size(), 1);
 
-  EncodableList list = ExpectAndGetIndex<EncodableList>(wrapped, 0);
+  const EncodableList list = *ExpectAndGetIndex<EncodableList>(wrapped, 0);
   EXPECT_EQ(list.size(), 2);
 
-  EXPECT_EQ(*ExpectAndGet<std::string>(list, 0), "hello");
-  EXPECT_EQ(*ExpectAndGet<int64_t>(list, 1), 1);
+  EXPECT_EQ(*ExpectAndGetIndex<std::string>(list, 0), "hello");
+  EXPECT_EQ(*ExpectAndGetIndex<int64_t>(list, 1), 1);
 }
 
 TEST_F(NullFieldsTest, RequestToMapWithNulls) {
@@ -176,11 +176,11 @@ TEST_F(NullFieldsTest, RequestToMapWithNulls) {
 
   EXPECT_EQ(wrapped.size(), 2);
 
-  EncodableList list = ExpectAndGetIndex<EncodableList>(wrapped, 0);
+  const EncodableList list = *ExpectAndGetIndex<EncodableList>(wrapped, 0);
 
   EXPECT_EQ(list.size(), 2);
   EXPECT_TRUE(list[0].IsNull());
-  EXPECT_EQ(*ExpectAndGet<int64_t>(list, 1), 1);
+  EXPECT_EQ(*ExpectAndGetIndex<int64_t>(list, 1), 1);
 }
 
 TEST_F(NullFieldsTest, ReplyToMapWithValues) {
@@ -194,33 +194,33 @@ TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   reply.set_request(request);
   reply.set_type(NullFieldsSearchReplyType::success);
 
-  EncodableList wrapped = ListFromReply(reply);
+  const EncodableList wrapped = ListFromReply(reply);
 
   EXPECT_EQ(wrapped.size(), 1);
 
-  EncodableList list = ExpectAndGetIndex<EncodableList>(wrapped, 0);
+  const EncodableList list = *ExpectAndGetIndex<EncodableList>(wrapped, 0);
 
   EXPECT_EQ(list.size(), 5);
   EXPECT_EQ(*ExpectAndGetIndex<std::string>(list, 0), "result");
-  EXPECT_EQ(*ExpectAndGet<std::string>(list, 1), "error");
-  const EncodableList& indices = ExpectAndGetIndex<EncodableList>(list, 2);
+  EXPECT_EQ(*ExpectAndGetIndex<std::string>(list, 1), "error");
+  const EncodableList& indices = *ExpectAndGetIndex<EncodableList>(list, 2);
   EXPECT_EQ(indices.size(), 3);
   EXPECT_EQ(indices[0].LongValue(), 1L);
   EXPECT_EQ(indices[1].LongValue(), 2L);
   EXPECT_EQ(indices[2].LongValue(), 3L);
-  const EncodableList& request_list = ExpectAndGetIndex<EncodableList>(list, 4);
-  EXPECT_EQ(*ExpectAndGet<std::string>(request_list, 0), "hello");
-  EXPECT_EQ(*ExpectAndGet<int>(request_list, 1), 0);
+  const EncodableList& request_list = *ExpectAndGetIndex<EncodableList>(list, 4);
+  EXPECT_EQ(*ExpectAndGetIndex<std::string>(request_list, 0), "hello");
+  EXPECT_EQ(*ExpectAndGetIndex<int>(request_list, 1), 0);
 }
 
 TEST_F(NullFieldsTest, ReplyToListWithNulls) {
   NullFieldsSearchReply reply;
 
-  EncodableList wrapped = ListFromReply(reply);
+  const EncodableList wrapped = ListFromReply(reply);
 
   EXPECT_EQ(wrapped.size(), 1);
 
-  EncodableList list = ExpectAndGetIndex<EncodableList>(wrapped, 0);
+  const EncodableList list = *ExpectAndGetIndex<EncodableList>(wrapped, 0);
 
   EXPECT_EQ(list.size(), 5);
   EXPECT_TRUE(list[0].IsNull());

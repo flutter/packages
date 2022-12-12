@@ -335,7 +335,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
             rootClassNameSet.contains(field.type.baseName)) {
           final String operator = field.type.isNullable ? '->' : '.';
           encodableValue =
-              'EncodeableValue($instanceVariable${operator}ToEncodableList())';
+              'flutter::EncodableValue($instanceVariable${operator}ToEncodableList())';
         } else if (!hostDatatype.isBuiltin &&
             rootEnumNameSet.contains(field.type.baseName)) {
           final String nonNullValue =
