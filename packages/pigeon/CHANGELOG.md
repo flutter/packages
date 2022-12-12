@@ -1,3 +1,7 @@
+## 4.2.13
+
+* Add documentation comment support for Enum members.
+
 ## 4.2.12
 
 * Updates serialization to use lists instead of maps to improve performance.
