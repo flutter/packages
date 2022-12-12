@@ -15,7 +15,8 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-/// EXPECTs that 'list' contains 'index', and then returns a pointer to its value.
+/// EXPECTs that 'list' contains 'index', and then returns a pointer to its
+/// value.
 ///
 /// This gives useful test failure messages instead of silent crashes when the
 /// value isn't present, or has the wrong type.
