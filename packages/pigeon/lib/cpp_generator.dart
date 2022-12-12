@@ -334,7 +334,8 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
         if (!hostDatatype.isBuiltin &&
             rootClassNameSet.contains(field.type.baseName)) {
           final String operator = field.type.isNullable ? '->' : '.';
-          encodableValue = '$instanceVariable${operator}ToEncodableList()';
+          encodableValue =
+              'EncodeableValue($instanceVariable${operator}ToEncodableList())';
         } else if (!hostDatatype.isBuiltin &&
             rootEnumNameSet.contains(field.type.baseName)) {
           final String nonNullValue =
@@ -351,7 +352,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
               '$instanceVariable ? $encodableValue : flutter::EncodableValue()';
         }
 
-        indent.writeln('{$encodableValue},');
+        indent.writeln('$encodableValue,');
       }
     });
   });
@@ -1146,16 +1147,16 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
       indent.format('''
 flutter::EncodableList ${api.name}::WrapError(std::string_view error_message) {
 \treturn flutter::EncodableList({
-\t\t{flutter::EncodableValue(std::string(error_message))},
-\t\t{flutter::EncodableValue("Error")},
-\t\t{flutter::EncodableValue()}
+\t\tflutter::EncodableValue(std::string(error_message)),
+\t\tflutter::EncodableValue("Error"),
+\t\tflutter::EncodableValue()
 \t});
 }
 flutter::EncodableList ${api.name}::WrapError(const FlutterError& error) {
 \treturn flutter::EncodableList({
-\t\t{flutter::EncodableValue(error.message())},
-\t\t{flutter::EncodableValue(error.code())},
-\t\t{error.details()}
+\t\tflutter::EncodableValue(error.message()),
+\t\tflutter::EncodableValue(error.code()),
+\t\terror.details()
 \t});
 }''');
       indent.addln('');

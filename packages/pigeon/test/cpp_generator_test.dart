@@ -457,12 +457,13 @@ void main() {
       // Serialization handles optionals.
       expect(
           code,
-          contains('{nullable_bool_ ? flutter::EncodableValue(*nullable_bool_) '
-              ': flutter::EncodableValue()}'));
+          contains('nullable_bool_ ? flutter::EncodableValue(*nullable_bool_) '
+              ': flutter::EncodableValue()'));
       expect(
           code,
-          contains('{nullable_nested_ ? nullable_nested_->ToEncodableList() '
-              ': flutter::EncodableValue()}'));
+          contains(
+              'nullable_nested_ ? EncodeableValue(nullable_nested_->ToEncodableList()) '
+              ': flutter::EncodableValue()'));
     }
   });
 
@@ -558,8 +559,8 @@ void main() {
       expect(code, contains('non_nullable_string_ = value_arg;'));
       expect(code, contains('non_nullable_nested_ = value_arg;'));
       // Serialization uses the value directly.
-      expect(code, contains('{flutter::EncodableValue(non_nullable_bool_)}'));
-      expect(code, contains('{non_nullable_nested_.ToEncodableList()}'));
+      expect(code, contains('flutter::EncodableValue(non_nullable_bool_)'));
+      expect(code, contains('non_nullable_nested_.ToEncodableList()'));
     }
   });
 

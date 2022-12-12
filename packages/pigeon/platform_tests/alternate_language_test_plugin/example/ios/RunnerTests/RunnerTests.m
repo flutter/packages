@@ -34,7 +34,7 @@
   reply.result = nil;
   NSArray *list = [reply toList];
   ACMessageSearchReply *copy = [ACMessageSearchReply fromList:list];
-  XCTAssertEqualObjects(copy.result, [NSNull null]);
+  XCTAssertNil(copy.result);
 }
 
 - (void)testHandlesNullFirst {

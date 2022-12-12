@@ -615,9 +615,9 @@ String _listGetter(List<String> classNames, String list, NamedType field,
     if (prefix != null) {
       className = '$prefix$className';
     }
-    return '[$className fromList:($list[$index])]';
+    return 'GetNullableObjectAtIndex($list, $index) != nil ? [$className fromList:(GetNullableObjectAtIndex($list, $index))] : nil';
   } else {
-    return '$list[$index]';
+    return 'GetNullableObjectAtIndex($list, $index)';
   }
 }
 
@@ -902,19 +902,11 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
 
   void writeHelperFunctions() {
     indent.format('''
-static NSMutableArray *wrapResult(id result, FlutterError *error) {
-\tNSMutableArray *resultList = [[NSMutableArray alloc] init];
+static NSArray *wrapResult(id result, FlutterError *error) {
 \tif (error) {
-
-\t\t[resultList addObject:(error.code ?: [NSNull null])];
-\t\t[resultList addObject:(error.message ?: [NSNull null])];
-\t\t[resultList addObject:(error.details ?: [NSNull null])];
-
-\t} else {
-\t\t[resultList addObject:(result ?: [NSNull null])];
+\t\treturn @[ error.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null] ];
 \t}
-
-\treturn resultList;
+\treturn @[ result ?: [NSNull null]  ];
 }''');
     indent.format('''
 static id GetNullableObject(NSDictionary* dict, id key) {
@@ -956,22 +948,13 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       indent.scoped('{', '}', () {
         const String resultName = 'pigeonResult';
         indent.writeln('$className *$resultName = [[$className alloc] init];');
-        final int len = klass.fields.length;
-        indent.scoped('if (list == nil || list == [NSNull null]) {', '}', () {
-          indent.writeln(
-              'list = [[NSMutableArray alloc] initWithCapacity: $len];');
-          indent.write('for (int i = 0; i < $len; i++) ');
-          indent.scoped('{', '}', () {
-            indent.writeln('[list addObject: [NSNull null]];');
-          });
-        });
         klass.fields
             .toList()
             .asMap()
             .forEach((int index, final NamedType field) {
           if (enumNames.contains(field.type.baseName)) {
             indent.writeln(
-                '$resultName.${field.name} = [(${_listGetter(classNames, 'list', field, index, options.prefix)} == [NSNull null] ? 0 : ${_listGetter(classNames, 'list', field, index, options.prefix)}) integerValue];');
+                '$resultName.${field.name} = [${_listGetter(classNames, 'list', field, index, options.prefix)} integerValue];');
           } else {
             indent.writeln(
                 '$resultName.${field.name} = ${_listGetter(classNames, 'list', field, index, options.prefix)};');
@@ -990,7 +973,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       indent.scoped('{', '}', () {
         final int len = klass.fields.length;
         indent.writeln(
-            'NSMutableArray *list = [[NSMutableArray alloc] initWithCapacity: $len];');
+            'NSMutableArray *list = [[NSMutableArray alloc] initWithCapacity:$len];');
         klass.fields
             .toList()
             .asMap()

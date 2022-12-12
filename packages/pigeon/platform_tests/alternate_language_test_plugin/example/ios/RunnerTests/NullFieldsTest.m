@@ -84,7 +84,7 @@
     @1,
   ];
   NullFieldsSearchRequest *request = [NullFieldsSearchRequest fromList:list];
-  XCTAssertEqualObjects(request.query, [NSNull null]);
+  XCTAssertNil(request.query);
 }
 
 - (void)testReplyFromListWithValues {
@@ -117,10 +117,10 @@
     [NSNull null],
   ];
   NullFieldsSearchReply *reply = [NullFieldsSearchReply fromList:list];
-  XCTAssertEqualObjects(reply.result, [NSNull null]);
-  XCTAssertEqualObjects(reply.error, [NSNull null]);
-  XCTAssertEqualObjects(reply.indices, [NSNull null]);
-  XCTAssertEqualObjects(reply.request.query, [NSNull null]);
+  XCTAssertNil(reply.result);
+  XCTAssertNil(reply.error);
+  XCTAssertNil(reply.indices);
+  XCTAssertNil(reply.request.query);
   XCTAssertEqual(NullFieldsSearchReplyTypeSuccess, reply.type);
 }
 

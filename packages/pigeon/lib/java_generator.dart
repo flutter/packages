@@ -265,10 +265,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
 \t}
 \tpublic void error(Throwable error) {
 \t\tArrayList<Object> wrappedError = wrapError(error);
-\t\twrapped.add(wrappedError.get(0));
-\t\twrapped.add(wrappedError.get(1));
-\t\twrapped.add(wrappedError.get(2));
-\t\treply.reply(wrapped);
+\t\treply.reply(wrappedError);
 \t}
 };
 ''');
@@ -290,11 +287,12 @@ Result<$returnType> $resultName = new Result<$returnType>() {
           indent.scoped('{', '}', () {
             indent.writeln(
                 'ArrayList<Object> wrappedError = wrapError(exception);');
-            indent.writeln('wrapped.add(wrappedError.get(0));');
-            indent.writeln('wrapped.add(wrappedError.get(1));');
-            indent.writeln('wrapped.add(wrappedError.get(2));');
             if (method.isAsynchronous) {
-              indent.writeln('reply.reply(wrapped);');
+              indent.writeln('reply.reply(wrappedError);');
+            } else {
+              indent.writeln('wrapped.add(wrappedError.get(0));');
+              indent.writeln('wrapped.add(wrappedError.get(1));');
+              indent.writeln('wrapped.add(wrappedError.get(2));');
             }
           });
           if (!method.isAsynchronous) {
