@@ -462,7 +462,7 @@ void main() {
       expect(
           code,
           contains(
-              'nullable_nested_ ? EncodeableValue(nullable_nested_->ToEncodableList()) '
+              'nullable_nested_ ? flutter::EncodableValue(nullable_nested_->ToEncodableList()) '
               ': flutter::EncodableValue()'));
     }
   });
