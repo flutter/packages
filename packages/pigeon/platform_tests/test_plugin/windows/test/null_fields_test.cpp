@@ -15,10 +15,10 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-// EXPECTs that 'map' contains 'key', and then returns a pointer to its value.
-//
-// This gives useful test failure messages instead of silent crashes when the
-// value isn't present, or has the wrong type.
+/// EXPECTs that 'list' contains 'index', and then returns a pointer to its value.
+///
+/// This gives useful test failure messages instead of silent crashes when the
+/// value isn't present, or has the wrong type.
 template <class T>
 const T* ExpectAndGetIndex(const EncodableList& list, const int i) {
   EXPECT_LT(i, list.size())
