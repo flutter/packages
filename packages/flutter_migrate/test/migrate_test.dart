@@ -43,7 +43,7 @@ void main() {
       '--verbose',
     ], workingDirectory: tempDir.path);
     expect(result.stdout.toString(), contains('Staging directory created at'));
-    expect(result.stdout.toString(), contains('''
+    const String linesToMatch = '''
 Added files:
   - android/app/src/main/res/values-night/styles.xml
   - android/app/src/main/res/drawable-v21/launch_background.xml
@@ -64,7 +64,10 @@ Modified files:
   - android/app/src/debug/AndroidManifest.xml
   - android/gradle/wrapper/gradle-wrapper.properties
   - android/.gitignore
-  - android/build.gradle'''));
+  - android/build.gradle''';
+    for (final String line in linesToMatch.split('\n')) {
+      expect(result.stdout.toString(), contains(line));
+    }
 
     result = await runMigrateCommand(<String>[
       'apply',
@@ -208,7 +211,7 @@ class MyApp extends StatelessWidget {
     ], workingDirectory: tempDir.path);
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('Staging directory created at'));
-    expect(result.stdout.toString(), contains('''
+    const String linesToMatch = '''
 Modified files:
   - .metadata
   - ios/Runner/Info.plist
@@ -226,7 +229,10 @@ Modified files:
   - android/.gitignore
   - android/build.gradle
 Merge conflicted files:
-  - pubspec.yaml'''));
+  - pubspec.yaml''';
+    for (final String line in linesToMatch.split('\n')) {
+      expect(result.stdout.toString(), contains(line));
+    }
 
     // Call apply with conflicts remaining. Should fail.
     result = await runMigrateCommand(<String>[
