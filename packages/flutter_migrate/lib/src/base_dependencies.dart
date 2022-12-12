@@ -37,11 +37,11 @@ class MigrateBaseDependencies {
     );
   }
 
-  late ProcessManager processManager;
-  late LocalFileSystem fileSystem;
-  late Stdio stdio;
-  late Terminal terminal;
-  late Logger logger;
+  late final ProcessManager processManager;
+  late final LocalFileSystem fileSystem;
+  late final Stdio stdio;
+  late final Terminal terminal;
+  late final Logger logger;
 }
 
 /// An abstraction for instantiation of the correct logger type.

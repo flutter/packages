@@ -1,8 +1,6 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-// @dart = 2.8
 
 import 'package:flutter_migrate/src/base/file_system.dart';
 import 'package:flutter_migrate/src/base/io.dart';
@@ -19,9 +17,9 @@ import 'test_data/migrate_project.dart';
 // and simulates manual conflict resolution and other manipulations of
 // the project files.
 void main() {
-  Directory tempDir;
-  BufferLogger logger;
-  ProcessManager processManager;
+  late Directory tempDir;
+  late BufferLogger logger;
+  late ProcessManager processManager;
 
   setUp(() async {
     tempDir = createResolvedTempDirectorySync('run_test.');
