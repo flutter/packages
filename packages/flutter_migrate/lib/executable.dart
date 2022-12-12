@@ -55,7 +55,8 @@ Future<void> main(List<String> args) async {
   commands.forEach(runner.addCommand);
   await runner.run(args);
 
-  await _exit(0, baseDependencies, shutdownHooks: baseDependencies.fileSystem.shutdownHooks);
+  await _exit(0, baseDependencies,
+      shutdownHooks: baseDependencies.fileSystem.shutdownHooks);
   await baseDependencies.fileSystem.dispose();
 }
 
@@ -77,7 +78,8 @@ class MigrateCommandRunner extends CommandRunner<void> {
   final ArgParser _argParser = ArgParser();
 }
 
-Future<int> _exit(int code, MigrateBaseDependencies baseDependencies, {required ShutdownHooks shutdownHooks}) async {
+Future<int> _exit(int code, MigrateBaseDependencies baseDependencies,
+    {required ShutdownHooks shutdownHooks}) async {
   // Run shutdown hooks before flushing logs
   await shutdownHooks.runShutdownHooks(baseDependencies.logger);
 
@@ -88,10 +90,10 @@ Future<int> _exit(int code, MigrateBaseDependencies baseDependencies, {required 
     try {
       baseDependencies.logger.printTrace('exiting with code $code');
       io.exit(code);
-      completer.complete();
-    // This catches all exceptions because the error is propagated on the
-    // completer.
-    } catch (error, stackTrace) { // ignore: avoid_catches_without_on_clauses
+      // This catches all exceptions because the error is propagated on the
+      // completer.
+    } catch (error, stackTrace) {
+      // ignore: avoid_catches_without_on_clauses
       completer.completeError(error, stackTrace);
     }
   });

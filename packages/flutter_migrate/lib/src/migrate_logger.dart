@@ -28,7 +28,6 @@ class MigrateLogger {
 
   void stop() {
     status.stop();
-    status.cancel();
   }
 
   static final Map<String, String> _stepStringsMap = <String, String>{

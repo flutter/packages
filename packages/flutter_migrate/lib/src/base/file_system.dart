@@ -91,6 +91,17 @@ class LocalFileSystem extends local_fs.LocalFileSystem {
       }
       _systemTemp = superSystemTempDirectory.createTempSync('flutter_tools.')
         ..createSync(recursive: true);
+      // Make sure that the temporary directory is cleaned up if the tool is
+      // killed by a signal.
+      for (final ProcessSignal signal in _fatalSignals) {
+        final Object token = _signals.addHandler(
+          signal,
+          (ProcessSignal _) {
+            _tryToDeleteTemp();
+          },
+        );
+        _signalTokens[signal] = token;
+      }
       // Make sure that the temporary directory is cleaned up when the tool
       // exits normally.
       shutdownHooks.addShutdownHook(
