@@ -19,6 +19,7 @@ class MigrateAbandonCommand extends MigrateCommand {
     required this.fileSystem,
     required this.terminal,
     required ProcessManager processManager,
+    this.standalone = false,
   }) : migrateUtils = MigrateUtils(
           logger: logger,
           fileSystem: fileSystem,
@@ -60,6 +61,8 @@ class MigrateAbandonCommand extends MigrateCommand {
 
   final MigrateUtils migrateUtils;
 
+  final bool standalone;
+
   @override
   final String name = 'abandon';
 
@@ -75,7 +78,7 @@ class MigrateAbandonCommand extends MigrateCommand {
         ? FlutterProject.current(fileSystem)
         : flutterProjectFactory
             .fromDirectory(fileSystem.directory(projectDirectory));
-    final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
+    final bool isSubcommand = boolArg('flutter-subcommand') ?? !standalone;
 
     if (!validateWorkingDirectory(project, logger)) {
       return const CommandResult(ExitStatus.fail);

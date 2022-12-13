@@ -25,6 +25,7 @@ class MigrateApplyCommand extends MigrateCommand {
     required this.fileSystem,
     required this.terminal,
     required ProcessManager processManager,
+    this.standalone = false,
   })  : _verbose = verbose,
         _processManager = processManager,
         migrateUtils = MigrateUtils(
@@ -76,6 +77,8 @@ class MigrateApplyCommand extends MigrateCommand {
 
   final MigrateUtils migrateUtils;
 
+  final bool standalone;
+
   @override
   final String name = 'apply';
 
@@ -98,7 +101,7 @@ class MigrateApplyCommand extends MigrateCommand {
     final FlutterToolsEnvironment environment =
         await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
             _processManager, logger);
-    final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
+    final bool isSubcommand = boolArg('flutter-subcommand') ?? !standalone;
 
     if (!validateWorkingDirectory(project, logger)) {
       return CommandResult.fail();
@@ -107,7 +110,7 @@ class MigrateApplyCommand extends MigrateCommand {
     if (!await gitRepoExists(project.directory.path, logger, migrateUtils)) {
       logger.printStatus('No git repo found. Please run in a project with an '
           'initialized git repo or initialize one with:');
-      printCommandText('git init', logger, standalone: null);
+      printCommand('git init', logger);
       return const CommandResult(ExitStatus.fail);
     }
 

@@ -21,6 +21,7 @@ class MigrateStartCommand extends MigrateCommand {
     required this.logger,
     required this.fileSystem,
     required this.processManager,
+    this.standalone = false,
   })  : _verbose = verbose,
         migrateUtils = MigrateUtils(
           logger: logger,
@@ -117,6 +118,8 @@ class MigrateStartCommand extends MigrateCommand {
 
   final ProcessManager processManager;
 
+  final bool standalone;
+
   @override
   final String name = 'start';
 
@@ -154,7 +157,7 @@ class MigrateStartCommand extends MigrateCommand {
           'Migrate tool only supports app projects. This project is a ${isModule ? 'module' : 'plugin'}');
       return const CommandResult(ExitStatus.fail);
     }
-    final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
+    final bool isSubcommand = boolArg('flutter-subcommand') ?? !standalone;
 
     if (!await gitRepoExists(project.directory.path, logger, migrateUtils)) {
       return const CommandResult(ExitStatus.fail);
