@@ -166,6 +166,13 @@ String _getMethodArgumentsSignature(
 ///   static const MessageCodec<Object?> codec = FooCodec();
 ///   Future<int> add(int x, int y) async {...}
 /// }
+///
+/// Messages will be sent and received in a list.
+///
+/// If the message recieved was succesful it will be contained at the 0'th index.
+///
+/// If the message was a failure, the list will contain 3 items:
+/// a code, a message, and details in that order.
 void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
   String codecName = _standardMessageCodec;
