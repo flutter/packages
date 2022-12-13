@@ -238,7 +238,7 @@ void main() {
     logger.clear();
 
     printCommandText('fullstandalone', logger);
-    expect(logger.statusText, contains('./bin/flutter_migrate fullstandalone'));
+    expect(logger.statusText, contains('dart run <flutter_migrate_dir>/bin/flutter_migrate.dart fullstandalone'));
     logger.clear();
   });
 

@@ -137,6 +137,8 @@ class MyApp extends StatelessWidget {
       'apk',
       '--debug',
     ], workingDirectory: tempDir.path);
+    print(result.stderr);
+    print(result.stdout);
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('app-debug.apk'));
   }, timeout: const Timeout(Duration(seconds: 500)));
