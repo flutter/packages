@@ -244,7 +244,7 @@ class TypedRoute<T extends RouteData> {
 /// A superclass for each typed go route descendant
 /// {@endtemplate}
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
-class TypedGoRoute<T extends RouteData> extends TypedRoute<T> {
+class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   /// {@macro typed_go_route}
   const TypedGoRoute({
     required this.path,
