@@ -131,7 +131,7 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
         indent.scoped('{', '}', () {
           indent.writeln('stream->WriteByte(${customClass.enumeration});');
           indent.writeln(
-              'WriteValue(std::any_cast<${customClass.name}>(*custom_value).ToEncodableList(), stream);');
+              'WriteValue(flutter::EncodableValue(std::any_cast<${customClass.name}>(*custom_value).ToEncodableList()), stream);');
           indent.writeln('return;');
         });
       }
@@ -591,7 +591,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.write('if ($encodableArgName.IsNull()) ');
                     indent.scoped('{', '}', () {
                       indent.writeln(
-                          'wrapped = WrapError("$argName unexpectedly null.");');
+                          'reply(WrapError("$argName unexpectedly null."));');
                       indent.writeln('reply(wrapped);');
                       indent.writeln('return;');
                     });
@@ -643,11 +643,10 @@ $prefix\t}${indent.newline}''';
                 }
                 return '${prefix}if ($ifCondition) {${indent.newline}'
                     '$prefix\twrapped = WrapError(output.$errorGetter());${indent.newline}'
-                    '$prefix$reply'
                     '$prefix} else {${indent.newline}'
                     '$elseBody'
-                    '$prefix$reply'
-                    '$prefix}';
+                    '$prefix}'
+                    '$prefix$reply';
               }
 
               final HostDatatype returnType = getHostDatatype(
