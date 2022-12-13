@@ -498,7 +498,7 @@ import FlutterMacOS
       indent.scoped('{', '}', () {
         indent.write('return ');
         indent.scoped('[', ']', () {
-          for (final NamedType field in klass.fields) {
+          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
             final HostDatatype hostDatatype = getHostDatatype(field);
             String toWriteValue = '';
             final String fieldName = field.name;
@@ -513,7 +513,8 @@ import FlutterMacOS
               toWriteValue = field.name;
             }
 
-            final String comma = klass.fields.last == field ? '' : ',';
+            final String comma =
+                getFieldsInSerializationOrder(klass).last == field ? '' : ',';
 
             indent.writeln('$toWriteValue$comma');
           }
@@ -526,7 +527,7 @@ import FlutterMacOS
       indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
       indent.scoped('{', '}', () {
-        klass.fields
+        getFieldsInSerializationOrder(klass)
             .toList()
             .asMap()
             .forEach((int index, final NamedType field) {
@@ -574,8 +575,9 @@ import FlutterMacOS
         indent.writeln('');
         indent.write('return ');
         indent.scoped('$className(', ')', () {
-          for (final NamedType field in klass.fields) {
-            final String comma = klass.fields.last == field ? '' : ',';
+          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+            final String comma =
+                getFieldsInSerializationOrder(klass).last == field ? '' : ',';
             indent.writeln('${field.name}: ${field.name}$comma');
           }
         });
@@ -591,7 +593,7 @@ import FlutterMacOS
 
     indent.write('struct ${klass.name} ');
     indent.scoped('{', '}', () {
-      klass.fields.forEach(writeField);
+      getFieldsInSerializationOrder(klass).forEach(writeField);
 
       indent.writeln('');
       writeFromList();

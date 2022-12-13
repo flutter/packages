@@ -513,7 +513,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
       indent.scoped('{', '}', () {
         indent.writeln('val list = mutableListOf<Any?>()');
 
-        for (final NamedType field in klass.fields) {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final HostDatatype hostDatatype = getHostDatatype(field);
           String toWriteValue = '';
           final String fieldName = field.name;
@@ -546,7 +546,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
         indent.write('fun fromList(list: List<Any?>): $className ');
 
         indent.scoped('{', '}', () {
-          klass.fields
+          getFieldsInSerializationOrder(klass)
               .toList()
               .asMap()
               .forEach((int index, final NamedType field) {
@@ -599,8 +599,9 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
 
           indent.writeln('');
           indent.write('return $className(');
-          for (final NamedType field in klass.fields) {
-            final String comma = klass.fields.last == field ? '' : ', ';
+          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+            final String comma =
+                getFieldsInSerializationOrder(klass).last == field ? '' : ', ';
             indent.add('${field.name}$comma');
           }
           indent.addln(')');
@@ -617,9 +618,9 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
 
     indent.write('data class ${klass.name} ');
     indent.scoped('(', '', () {
-      for (final NamedType element in klass.fields) {
+      for (final NamedType element in getFieldsInSerializationOrder(klass)) {
         writeField(element);
-        if (klass.fields.last != element) {
+        if (getFieldsInSerializationOrder(klass).last != element) {
           indent.addln(',');
         } else {
           indent.addln('');

@@ -624,7 +624,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.scoped('{', '}', () {
         indent.writeln(
             'ArrayList<Object> toListResult = new ArrayList<Object>();');
-        for (final NamedType field in klass.fields) {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
               field,
               root.classes,
@@ -653,7 +653,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.scoped('{', '}', () {
         const String result = 'pigeonResult';
         indent.writeln('${klass.name} $result = new ${klass.name}();');
-        klass.fields
+        getFieldsInSerializationOrder(klass)
             .toList()
             .asMap()
             .forEach((int index, final NamedType field) {
@@ -675,7 +675,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     void writeBuilder() {
       indent.write('public static final class Builder ');
       indent.scoped('{', '}', () {
-        for (final NamedType field in klass.fields) {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
               field,
               root.classes,
@@ -696,7 +696,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.scoped('{', '}', () {
           const String returnVal = 'pigeonReturn';
           indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
-          for (final NamedType field in klass.fields) {
+          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
             indent.writeln('$returnVal.${_makeSetter(field)}(${field.name});');
           }
           indent.writeln('return $returnVal;');
@@ -713,12 +713,12 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
     indent.write('public static class ${klass.name} ');
     indent.scoped('{', '}', () {
-      for (final NamedType field in klass.fields) {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         writeField(field);
         indent.addln('');
       }
 
-      if (klass.fields
+      if (getFieldsInSerializationOrder(klass)
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(

@@ -208,12 +208,11 @@ TEST_F(NullFieldsTest, ReplyToListWithNulls) {
 
   const EncodableList list = ListFromReply(reply);
 
-  EXPECT_EQ(list.size(), 5);
-  EXPECT_TRUE(list[0].IsNull());
-  EXPECT_TRUE(list[1].IsNull());
-  EXPECT_TRUE(list[2].IsNull());
-  EXPECT_TRUE(list[3].IsNull());
-  EXPECT_TRUE(list[4].IsNull());
+  const int field_count = 5;
+  EXPECT_EQ(list.size(), field_count);
+  for (int i = 0; i < field_count; ++i) {
+    EXPECT_TRUE(list[i].IsNull());
+  }
 }
 
 }  // namespace null_fields_pigeontest

@@ -27,10 +27,10 @@ class NullFieldsSearchRequest {
   int identifier;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(query);
-    pigeonList.add(identifier);
-    return pigeonList;
+    return <Object?>[
+      query,
+      identifier,
+    ];
   }
 
   static NullFieldsSearchRequest decode(Object result) {
@@ -62,13 +62,13 @@ class NullFieldsSearchReply {
   NullFieldsSearchReplyType? type;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(result);
-    pigeonList.add(error);
-    pigeonList.add(indices);
-    pigeonList.add(request?.encode());
-    pigeonList.add(type?.index);
-    return pigeonList;
+    return <Object?>[
+      result,
+      error,
+      indices,
+      request?.encode(),
+      type?.index,
+    ];
   }
 
   static NullFieldsSearchReply decode(Object result) {
@@ -106,12 +106,10 @@ class _NullFieldsHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return NullFieldsSearchReply.decode(
-            readValue(buffer)! as List<Object?>);
+        return NullFieldsSearchReply.decode(readValue(buffer)!);
 
       case 129:
-        return NullFieldsSearchRequest.decode(
-            readValue(buffer)! as List<Object?>);
+        return NullFieldsSearchRequest.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -143,7 +141,7 @@ class NullFieldsHostApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -177,12 +175,10 @@ class _NullFieldsFlutterApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return NullFieldsSearchReply.decode(
-            readValue(buffer)! as List<Object?>);
+        return NullFieldsSearchReply.decode(readValue(buffer)!);
 
       case 129:
-        return NullFieldsSearchRequest.decode(
-            readValue(buffer)! as List<Object?>);
+        return NullFieldsSearchRequest.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);

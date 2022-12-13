@@ -392,9 +392,7 @@ void main() {
         contains(
             'pigeonResult.nested = [Input nullableFromList:(GetNullableObjectAtIndex(list, 0))];'));
     expect(
-        code,
-        contains(
-            '[list addObject:(self.nested ? [self.nested toList] : [NSNull null])]'));
+        code, contains('self.nested ? [self.nested toList] : [NSNull null]'));
   });
 
   test('prefix class header', () {

@@ -187,7 +187,7 @@ void main() {
     expect(
       code,
       contains(
-        'pigeonList.add(nested?.encode())',
+        'nested?.encode(),',
       ),
     );
     expect(
@@ -229,7 +229,7 @@ void main() {
     expect(
       code,
       contains(
-        'pigeonList.add(nested.encode())',
+        'nested.encode(),',
       ),
     );
     expect(
@@ -417,7 +417,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, contains('pigeonList.add(enum1?.index);'));
+    expect(code, contains('enum1?.index,'));
     expect(code, contains('? Enum.values[result[0]! as int]'));
     expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
   });
@@ -484,7 +484,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, contains('pigeonList.add(enum1.index);'));
+    expect(code, contains('enum1.index,'));
     expect(code, contains('enum1: Enum.values[result[0]! as int]'));
   });
 

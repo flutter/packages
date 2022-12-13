@@ -55,21 +55,21 @@ class AllTypes {
   Map<String?, Object?>? mapWithObject;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(aBool);
-    pigeonList.add(anInt);
-    pigeonList.add(aDouble);
-    pigeonList.add(aString);
-    pigeonList.add(aByteArray);
-    pigeonList.add(a4ByteArray);
-    pigeonList.add(a8ByteArray);
-    pigeonList.add(aFloatArray);
-    pigeonList.add(aList);
-    pigeonList.add(aMap);
-    pigeonList.add(nestedList);
-    pigeonList.add(mapWithAnnotations);
-    pigeonList.add(mapWithObject);
-    return pigeonList;
+    return <Object?>[
+      aBool,
+      anInt,
+      aDouble,
+      aString,
+      aByteArray,
+      a4ByteArray,
+      a8ByteArray,
+      aFloatArray,
+      aList,
+      aMap,
+      nestedList,
+      mapWithAnnotations,
+      mapWithObject,
+    ];
   }
 
   static AllTypes decode(Object result) {
@@ -102,9 +102,9 @@ class AllTypesWrapper {
   AllTypes values;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(values.encode());
-    return pigeonList;
+    return <Object?>[
+      values.encode(),
+    ];
   }
 
   static AllTypesWrapper decode(Object result) {
@@ -134,10 +134,10 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return AllTypes.decode(readValue(buffer)! as List<Object?>);
+        return AllTypes.decode(readValue(buffer)!);
 
       case 129:
-        return AllTypesWrapper.decode(readValue(buffer)! as List<Object?>);
+        return AllTypesWrapper.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -171,7 +171,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -194,7 +194,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -221,7 +221,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -245,7 +245,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -269,7 +269,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -298,7 +298,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -326,7 +326,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -354,7 +354,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -382,7 +382,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -405,7 +405,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -431,7 +431,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -454,7 +454,7 @@ class HostIntegrationCoreApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -485,7 +485,7 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return AllTypes.decode(readValue(buffer)! as List<Object?>);
+        return AllTypes.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -588,7 +588,7 @@ class HostTrivialApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );

@@ -168,7 +168,7 @@ void _writeInitializerDeclaration(Indent indent, Class klass,
   indent.write('+ (instancetype)makeWith');
   bool isFirst = true;
   indent.nest(2, () {
-    for (final NamedType field in klass.fields) {
+    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
       final String label = isFirst ? _capitalize(field.name) : field.name;
       final void Function(String) printer = isFirst
           ? indent.add
@@ -206,8 +206,8 @@ void _writeClassDeclarations(
         indent, klass.documentationComments, _docCommentSpec);
 
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
-    if (klass.fields.isNotEmpty) {
-      if (klass.fields
+    if (getFieldsInSerializationOrder(klass).isNotEmpty) {
+      if (getFieldsInSerializationOrder(klass)
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
@@ -217,7 +217,7 @@ void _writeClassDeclarations(
       _writeInitializerDeclaration(indent, klass, classes, enums, prefix);
       indent.addln(';');
     }
-    for (final NamedType field in klass.fields) {
+    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
       final HostDatatype hostDatatype = getFieldHostDatatype(
           field,
           classes,
@@ -621,7 +621,7 @@ String _listGetter(List<String> classNames, String list, NamedType field,
   }
 }
 
-String _dictValue(
+String _arrayValue(
     List<String> classNames, List<String> enumNames, NamedType field) {
   if (classNames.contains(field.type.baseName)) {
     return '(self.${field.name} ? [self.${field.name} toList] : [NSNull null])';
@@ -923,10 +923,10 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   void writeDataClassExtension(Class klass) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
-    indent.writeln('+ ($className *)fromList:(NSMutableArray *)list;');
-    indent.writeln(
-        '+ (nullable $className *)nullableFromList:(NSMutableArray *)list;');
-    indent.writeln('- (NSMutableArray *)toList;');
+    indent.writeln('+ ($className *)fromList:(NSArray *)list;');
+    indent
+        .writeln('+ (nullable $className *)nullableFromList:(NSArray *)list;');
+    indent.writeln('- (NSArray *)toList;');
     indent.writeln('@end');
   }
 
@@ -938,7 +938,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       indent.writeScoped(' {', '}', () {
         const String result = 'pigeonResult';
         indent.writeln('$className* $result = [[$className alloc] init];');
-        for (final NamedType field in klass.fields) {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           indent.writeln('$result.${field.name} = ${field.name};');
         }
         indent.writeln('return $result;');
@@ -946,11 +946,11 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     }
 
     void writeFromList() {
-      indent.write('+ ($className *)fromList:(NSMutableArray *)list ');
+      indent.write('+ ($className *)fromList:(NSArray *)list ');
       indent.scoped('{', '}', () {
         const String resultName = 'pigeonResult';
         indent.writeln('$className *$resultName = [[$className alloc] init];');
-        klass.fields
+        getFieldsInSerializationOrder(klass)
             .toList()
             .asMap()
             .forEach((int index, final NamedType field) {
@@ -970,23 +970,18 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       });
 
       indent.writeln(
-          '+ (nullable $className *)nullableFromList:(NSMutableArray *)list { return (list) ? [$className fromList:list] : nil; }');
+          '+ (nullable $className *)nullableFromList:(NSArray *)list { return (list) ? [$className fromList:list] : nil; }');
     }
 
     void writeToList() {
-      indent.write('- (NSMutableArray *)toList ');
+      indent.write('- (NSArray *)toList ');
       indent.scoped('{', '}', () {
-        final int len = klass.fields.length;
-        indent.writeln(
-            'NSMutableArray *list = [[NSMutableArray alloc] initWithCapacity:$len];');
-        klass.fields
-            .toList()
-            .asMap()
-            .forEach((int index, final NamedType field) {
-          indent.writeln(
-              '[list addObject:${_dictValue(classNames, enumNames, field)}];');
+        indent.write('return');
+        indent.scoped(' @[', '];', () {
+          for (final NamedType field in klass.fields) {
+            indent.writeln('${_arrayValue(classNames, enumNames, field)},');
+          }
         });
-        indent.writeln('return list;');
       });
     }
 

@@ -131,7 +131,7 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
         indent.scoped('{', '}', () {
           indent.writeln('stream->WriteByte(${customClass.enumeration});');
           indent.writeln(
-              'WriteValue(std::any_cast<${customClass.name}>(*custom_value).ToEncodableList(), stream);');
+              'WriteValue(flutter::EncodableValue(std::any_cast<${customClass.name}>(*custom_value).ToEncodableList()), stream);');
           indent.writeln('return;');
         });
       }
@@ -207,7 +207,7 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
   indent.scoped('{', '};', () {
     indent.scoped(' public:', '', () {
       indent.writeln('${klass.name}();');
-      for (final NamedType field in klass.fields) {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         addDocumentationComments(
             indent, field.documentationComments, _docCommentSpec);
         final HostDatatype baseDatatype = getFieldHostDatatype(
@@ -251,7 +251,7 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
         indent.writeln('friend class $testFriend;');
       }
 
-      for (final NamedType field in klass.fields) {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         final HostDatatype hostDatatype = getFieldHostDatatype(
             field,
             root.classes,
@@ -280,7 +280,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
   indent.addln('');
 
   // Getters and setters.
-  for (final NamedType field in klass.fields) {
+  for (final NamedType field in getFieldsInSerializationOrder(klass)) {
     final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
         root.enums, (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
     final String instanceVariableName = _makeInstanceVariableName(field);
@@ -321,7 +321,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
       .write('flutter::EncodableList ${klass.name}::ToEncodableList() const ');
   indent.scoped('{', '}', () {
     indent.scoped('return flutter::EncodableList{', '};', () {
-      for (final NamedType field in klass.fields) {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         final HostDatatype hostDatatype = getFieldHostDatatype(
             field,
             root.classes,
@@ -365,7 +365,10 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
   // Deserialization.
   indent.write('${klass.name}::${klass.name}(flutter::EncodableList list) ');
   indent.scoped('{', '}', () {
-    klass.fields.toList().asMap().forEach((int index, final NamedType field) {
+    getFieldsInSerializationOrder(klass)
+        .toList()
+        .asMap()
+        .forEach((int index, final NamedType field) {
       final String instanceVariableName = _makeInstanceVariableName(field);
       final String pointerFieldName =
           '${_pointerPrefix}_${_makeVariableName(field)}';
@@ -588,7 +591,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.write('if ($encodableArgName.IsNull()) ');
                     indent.scoped('{', '}', () {
                       indent.writeln(
-                          'wrapped = WrapError("$argName unexpectedly null.");');
+                          'reply(WrapError("$argName unexpectedly null."));');
                       indent.writeln('reply(wrapped);');
                       indent.writeln('return;');
                     });
@@ -640,11 +643,10 @@ $prefix\t}${indent.newline}''';
                 }
                 return '${prefix}if ($ifCondition) {${indent.newline}'
                     '$prefix\twrapped = WrapError(output.$errorGetter());${indent.newline}'
-                    '$prefix$reply'
                     '$prefix} else {${indent.newline}'
                     '$elseBody'
-                    '$prefix$reply'
-                    '$prefix}';
+                    '$prefix}'
+                    '$prefix$reply';
               }
 
               final HostDatatype returnType = getHostDatatype(
