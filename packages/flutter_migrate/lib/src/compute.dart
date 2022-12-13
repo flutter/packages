@@ -369,9 +369,9 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   // Use user-provided projects if provided, if not, generate them internally.
   final bool customBaseProjectDir = commandParameters.baseAppPath != null;
   final bool customTargetProjectDir = commandParameters.targetAppPath != null;
-  Directory? baseProjectDir =
+  Directory baseProjectDir =
       context.fileSystem.systemTempDirectory.createTempSync('baseProject');
-  Directory? targetProjectDir =
+  Directory targetProjectDir =
       context.fileSystem.systemTempDirectory.createTempSync('targetProject');
   if (customBaseProjectDir) {
     baseProjectDir =

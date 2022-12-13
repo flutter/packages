@@ -87,15 +87,15 @@ Future<int> _exit(int code, MigrateBaseDependencies baseDependencies,
 
   // Give the task / timer queue one cycle through before we hard exit.
   Timer.run(() {
-    try {
-      baseDependencies.logger.printTrace('exiting with code $code');
       io.exit(code);
-      // This catches all exceptions because the error is propagated on the
-      // completer.
-    } catch (error, stackTrace) {
-      // ignore: avoid_catches_without_on_clauses
-      completer.completeError(error, stackTrace);
-    }
+    // try {
+    //   baseDependencies.logger.printTrace('exiting with code $code');
+    //   // This catches all exceptions because the error is propagated on the
+    //   // completer.
+    // } catch (error, stackTrace) {
+    //   // ignore: avoid_catches_without_on_clauses
+    //   completer.completeError(error, stackTrace);
+    // }
   });
 
   await completer.future;
