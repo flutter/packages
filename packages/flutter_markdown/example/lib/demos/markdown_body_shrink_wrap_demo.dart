@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import '../shared/dropdown_menu.dart';
+import '../shared/dropdown_menu.dart' as dropdown;
 import '../shared/markdown_demo_widget.dart';
 
 // ignore_for_file: public_member_api_docs
@@ -67,7 +67,7 @@ class _MarkdownBodyShrinkWrapDemoState
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        DropdownMenu<bool>(
+        dropdown.DropdownMenu<bool>(
           items: _shrinkWrapMenuItems,
           label: 'Shrink wrap:',
           initialValue: _shrinkWrap,

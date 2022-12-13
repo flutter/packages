@@ -233,15 +233,11 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                       'api.${method.name}(${methodArgument.join(', ')})';
                   if (method.isAsynchronous) {
                     indent.write('$call ');
-                    if (method.returnType.isVoid) {
-                      indent.scoped('{', '}', () {
-                        indent.writeln('reply.reply(null)');
-                      });
-                    } else {
-                      indent.scoped('{', '}', () {
-                        indent.writeln('reply.reply(wrapResult(it))');
-                      });
-                    }
+                    final String resultValue =
+                        method.returnType.isVoid ? 'null' : 'it';
+                    indent.scoped('{', '}', () {
+                      indent.writeln('reply.reply(wrapResult($resultValue))');
+                    });
                   } else if (method.returnType.isVoid) {
                     indent.writeln(call);
                     indent.writeln('wrapped["${Keys.result}"] = null');

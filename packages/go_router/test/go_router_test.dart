@@ -4,6 +4,8 @@
 
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -875,6 +877,176 @@ void main() {
     await tester.runAsync(() async {
       await verify(() => simulateAndroidBackButton(tester), <Object>[
         isMethodCall('SystemNavigator.pop', arguments: null),
+      ]);
+    });
+  });
+
+  group('report correct url', () {
+    final List<MethodCall> log = <MethodCall>[];
+    setUp(() {
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.navigation,
+              (MethodCall methodCall) async {
+        log.add(methodCall);
+        return null;
+      });
+    });
+    tearDown(() {
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.navigation, null);
+      log.clear();
+    });
+
+    testWidgets('on push', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (_, __) => const DummyScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      log.clear();
+      router.push('/settings');
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/settings',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+
+    testWidgets('on pop', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const DummyScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'settings',
+                builder: (_, __) => const DummyScreen(),
+              ),
+            ]),
+      ];
+
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/settings');
+
+      log.clear();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+
+    testWidgets('on pop with path parameters', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const DummyScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'settings/:id',
+                builder: (_, __) => const DummyScreen(),
+              ),
+            ]),
+      ];
+
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/settings/123');
+
+      log.clear();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+
+    testWidgets('on pop with path parameters case 2',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const DummyScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                path: ':id',
+                builder: (_, __) => const DummyScreen(),
+              ),
+            ]),
+      ];
+
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/123/');
+
+      log.clear();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+
+    testWidgets('works correctly with async redirect',
+        (WidgetTester tester) async {
+      final UniqueKey login = UniqueKey();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (_, __) => DummyScreen(key: login),
+        ),
+      ];
+      final Completer<void> completer = Completer<void>();
+      await createRouter(routes, tester, redirect: (_, __) async {
+        await completer.future;
+        return '/login';
+      });
+      await tester.pumpAndSettle();
+      expect(find.byKey(login), findsNothing);
+      expect(tester.takeException(), isNull);
+      expect(log, <Object>[]);
+
+      completer.complete();
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(login), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/login',
+          'state': null,
+          'replace': false
+        }),
       ]);
     });
   });

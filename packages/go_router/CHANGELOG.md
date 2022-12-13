@@ -1,7 +1,19 @@
-## 5.2.2
+## 5.2.5
 
 - Adds helpers for go_router_builder for ShellRoute support
 - Update README
+
+## 5.2.4
+
+- Fixes crashes when using async redirect.
+
+## 5.2.3
+
+- Fixes link for router configuration and sub-routes
+
+## 5.2.2
+
+- Fixes `pop` and `push` to update urls correctly.
 
 ## 5.2.1
 
