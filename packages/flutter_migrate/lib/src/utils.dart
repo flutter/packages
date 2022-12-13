@@ -365,7 +365,7 @@ void printCommandText(String command, Logger logger,
   final String prefix = standalone == null
       ? ''
       : (standalone
-          ? 'dart run <flutter_migrate_dir>/bin/flutter_migrate.dart '
+          ? 'dart run <flutter_migrate_dir>${Platform.pathSeparator}bin${Platform.pathSeparator}flutter_migrate.dart '
           : 'flutter migrate ');
   printCommand('$prefix$command', logger, newlineAfter: newlineAfter);
 }
