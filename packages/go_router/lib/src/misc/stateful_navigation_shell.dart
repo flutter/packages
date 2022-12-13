@@ -261,20 +261,29 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
       {BranchNavigatorBuilder? navigatorBuilder,
       UnmodifiableRouteMatchList? matchList,
       bool? loaded}) {
+    bool dirty = branchState.matchList != matchList;
     if (navigatorBuilder != null) {
       final Navigator? existingNav = _navigatorForBranch(branchState.branch);
-      if (existingNav == null || branchState.matchList != matchList) {
+      if (existingNav == null || dirty) {
+        dirty = true;
         _setNavigatorForBranch(branchState.branch, navigatorBuilder());
       }
     }
+
     final _BranchNavigatorProxy branchWidget =
         branchState.child as _BranchNavigatorProxy;
     final bool isLoaded =
         loaded ?? _navigatorForBranch(branchState.branch) != null;
-    return branchState.copy(
-      child: branchWidget.copy(loaded: isLoaded),
-      matchList: matchList,
-    );
+    dirty = dirty || isLoaded != branchWidget.loaded;
+
+    if (dirty) {
+      return branchState.copy(
+        child: branchWidget.copy(loaded: isLoaded),
+        matchList: matchList,
+      );
+    } else {
+      return branchState;
+    }
   }
 
   StatefulShellBranchState _createStatefulShellBranchState(

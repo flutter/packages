@@ -434,6 +434,10 @@ class StatefulShellBranchState {
   /// The current navigation stack for the branch.
   final UnmodifiableRouteMatchList? _matchList;
 
+  /// Returns true if this branch has been loaded (i.e. visited once or
+  /// pre-loaded).
+  bool get isLoaded => _matchList != null;
+
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) {
