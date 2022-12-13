@@ -268,7 +268,7 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
 /// A superclass for each typed shell route descendant
 /// {@endtemplate}
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
-class TypedShellRoute<T extends RouteData> extends TypedRoute<T> {
+class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
   /// {@macro typed_shell_route}
   const TypedShellRoute({
     this.routes = const <TypedRoute<RouteData>>[],
