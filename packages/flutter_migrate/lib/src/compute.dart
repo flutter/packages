@@ -55,8 +55,8 @@ bool _skipped(String localPath, FileSystem fileSystem,
     }
   }
   if (skippedPrefixes != null) {
-    return skippedPrefixes.any((String prefix) =>
-        localPath.startsWith('$prefix${fileSystem.path.separator}'));
+    return skippedPrefixes.any((String prefix) => localPath.startsWith(
+        '${normalize(prefix.replaceAll(r'\', fileSystem.path.separator))}${fileSystem.path.separator}'));
   }
   return false;
 }

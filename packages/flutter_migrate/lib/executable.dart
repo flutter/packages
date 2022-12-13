@@ -87,7 +87,7 @@ Future<int> _exit(int code, MigrateBaseDependencies baseDependencies,
 
   // Give the task / timer queue one cycle through before we hard exit.
   Timer.run(() {
-      io.exit(code);
+    io.exit(code);
   });
 
   await completer.future;

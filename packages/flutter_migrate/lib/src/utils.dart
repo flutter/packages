@@ -342,8 +342,7 @@ Future<bool> hasUncommittedChanges(
   if (await migrateUtils.hasUncommittedChanges(projectDirectory)) {
     logger.printStatus(
         'There are uncommitted changes in your project. Please git commit, abandon, or stash your changes before trying again.');
-    logger.printStatus(
-        'You may commit your changes using');
+    logger.printStatus('You may commit your changes using');
     printCommand('git add .', logger, newlineAfter: false);
     printCommand('git commit -m "<message>"', logger);
     return true;
@@ -365,7 +364,9 @@ void printCommandText(String command, Logger logger,
     {bool? standalone = true, bool newlineAfter = true}) {
   final String prefix = standalone == null
       ? ''
-      : (standalone ? 'dart run <flutter_migrate_dir>/bin/flutter_migrate.dart ' : 'flutter migrate ');
+      : (standalone
+          ? 'dart run <flutter_migrate_dir>/bin/flutter_migrate.dart '
+          : 'flutter migrate ');
   printCommand('$prefix$command', logger, newlineAfter: newlineAfter);
 }
 
