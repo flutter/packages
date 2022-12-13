@@ -492,7 +492,7 @@ void addDocumentationComments(
   }
 }
 
-/// Returns a consistent ordered list of fields for serialisation order.
+/// Returns an ordered list of fields to provide consistent serialisation order.
 Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
   return klass.fields;
 }
