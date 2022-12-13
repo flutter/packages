@@ -4,6 +4,8 @@
 
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1005,6 +1007,44 @@ void main() {
         isMethodCall('selectMultiEntryHistory', arguments: null),
         isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
           'location': '/',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+
+    testWidgets('works correctly with async redirect',
+        (WidgetTester tester) async {
+      final UniqueKey login = UniqueKey();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (_, __) => DummyScreen(key: login),
+        ),
+      ];
+      final Completer<void> completer = Completer<void>();
+      await createRouter(routes, tester, redirect: (_, __) async {
+        await completer.future;
+        return '/login';
+      });
+      await tester.pumpAndSettle();
+      expect(find.byKey(login), findsNothing);
+      expect(tester.takeException(), isNull);
+      expect(log, <Object>[]);
+
+      completer.complete();
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(login), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/login',
           'state': null,
           'replace': false
         }),
