@@ -44,11 +44,11 @@ class MessageSearchRequest {
   bool? aBool;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(query);
-    pigeonList.add(anInt);
-    pigeonList.add(aBool);
-    return pigeonList;
+    return <Object?>[
+      query,
+      anInt,
+      aBool,
+    ];
   }
 
   static MessageSearchRequest decode(Object result) {
@@ -81,11 +81,11 @@ class MessageSearchReply {
   MessageRequestState? state;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(result);
-    pigeonList.add(error);
-    pigeonList.add(state?.index);
-    return pigeonList;
+    return <Object?>[
+      result,
+      error,
+      state?.index,
+    ];
   }
 
   static MessageSearchReply decode(Object result) {
@@ -110,9 +110,9 @@ class MessageNested {
   MessageSearchRequest? request;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(request?.encode());
-    return pigeonList;
+    return <Object?>[
+      request?.encode(),
+    ];
   }
 
   static MessageNested decode(Object result) {
@@ -144,10 +144,10 @@ class _MessageApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return MessageSearchReply.decode(readValue(buffer)! as List<Object?>);
+        return MessageSearchReply.decode(readValue(buffer)!);
 
       case 129:
-        return MessageSearchRequest.decode(readValue(buffer)! as List<Object?>);
+        return MessageSearchRequest.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -183,7 +183,7 @@ class MessageApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -206,7 +206,7 @@ class MessageApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -243,13 +243,13 @@ class _MessageNestedApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return MessageNested.decode(readValue(buffer)! as List<Object?>);
+        return MessageNested.decode(readValue(buffer)!);
 
       case 129:
-        return MessageSearchReply.decode(readValue(buffer)! as List<Object?>);
+        return MessageSearchReply.decode(readValue(buffer)!);
 
       case 130:
-        return MessageSearchRequest.decode(readValue(buffer)! as List<Object?>);
+        return MessageSearchRequest.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -284,7 +284,7 @@ class MessageNestedApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -318,10 +318,10 @@ class _MessageFlutterSearchApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return MessageSearchReply.decode(readValue(buffer)! as List<Object?>);
+        return MessageSearchReply.decode(readValue(buffer)!);
 
       case 129:
-        return MessageSearchRequest.decode(readValue(buffer)! as List<Object?>);
+        return MessageSearchRequest.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);

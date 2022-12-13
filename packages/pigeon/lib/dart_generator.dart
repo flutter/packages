@@ -107,7 +107,7 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
           indent.write('case ${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
             indent.writeln(
-                'return ${customClass.name}.decode(readValue(buffer)! as List<Object?>);');
+                'return ${customClass.name}.decode(readValue(buffer)!);');
           });
         }
         indent.writeln('default:');
@@ -243,7 +243,7 @@ if (replyList == null) {
 \t);
 } else if (replyList.length > 1) {
 \tthrow PlatformException(
-\t\tcode: (replyList[0] as String?)!,
+\t\tcode: replyList[0]! as String,
 \t\tmessage: replyList[1] as String?,
 \t\tdetails: replyList[2],
 \t);''');
@@ -380,9 +380,8 @@ void _writeFlutterApi(
                         '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
                   }
                   if (!arg.type.isNullable) {
-                    indent.writeln('assert($argName != null,');
                     indent.writeln(
-                        "'Argument for $channelName was null, expected non-null $argType.');");
+                        "assert($argName != null, 'Argument for $channelName was null, expected non-null $argType.');");
                   }
                 });
                 final Iterable<String> argNames =
@@ -501,7 +500,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     void writeConstructor() {
       indent.write(klass.name);
       indent.scoped('({', '});', () {
-        for (final NamedType field in klass.fields) {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final String required = field.type.isNullable ? '' : 'required ';
           indent.writeln('${required}this.${field.name},');
         }
@@ -511,37 +510,38 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     void writeEncode() {
       indent.write('Object encode() ');
       indent.scoped('{', '}', () {
-        indent.writeln(
-          'final List<Object?> pigeonList = <Object?>[];',
+        indent.write(
+          'return <Object?>',
         );
-        for (final NamedType field in klass.fields) {
-          indent.write('pigeonList.add(');
-          final String conditional = field.type.isNullable ? '?' : '';
-          if (customClassNames.contains(field.type.baseName)) {
-            indent.addln(
-              '${field.name}$conditional.encode());',
-            );
-          } else if (customEnumNames.contains(field.type.baseName)) {
-            indent.addln(
-              '${field.name}$conditional.index);',
-            );
-          } else {
-            indent.addln('${field.name});');
+        indent.scoped('[', '];', () {
+          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+            final String conditional = field.type.isNullable ? '?' : '';
+            if (customClassNames.contains(field.type.baseName)) {
+              indent.writeln(
+                '${field.name}$conditional.encode(),',
+              );
+            } else if (customEnumNames.contains(field.type.baseName)) {
+              indent.writeln(
+                '${field.name}$conditional.index,',
+              );
+            } else {
+              indent.writeln('${field.name},');
+            }
           }
-        }
-        indent.writeln('return pigeonList;');
+        });
       });
     }
 
     void writeDecode() {
       void writeValueDecode(NamedType field, int index) {
+        final String resultAt = 'result[$index]';
         if (customClassNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              '${field.type.baseName}.decode(result[$index]! as List<Object?>)';
+              '${field.type.baseName}.decode($resultAt! as List<Object?>)';
           indent.format(
               field.type.isNullable
                   ? '''
-result[$index] != null
+$resultAt != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -549,11 +549,11 @@ result[$index] != null
               trailingNewline: false);
         } else if (customEnumNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              '${field.type.baseName}.values[result[$index]! as int]';
+              '${field.type.baseName}.values[$resultAt! as int]';
           indent.format(
               field.type.isNullable
                   ? '''
-result[$index] != null
+$resultAt != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -564,17 +564,17 @@ result[$index] != null
           final String castCall = _makeGenericCastCall(field.type);
           final String castCallPrefix = field.type.isNullable ? '?' : '!';
           indent.add(
-            '(result[$index] as $genericType?)$castCallPrefix$castCall',
+            '($resultAt as $genericType?)$castCallPrefix$castCall',
           );
         } else {
           final String genericdType = _addGenericTypesNullable(field.type);
           if (field.type.isNullable) {
             indent.add(
-              'result[$index] as $genericdType',
+              '$resultAt as $genericdType',
             );
           } else {
             indent.add(
-              'result[$index]! as $genericdType',
+              '$resultAt! as $genericdType',
             );
           }
         }
@@ -587,11 +587,12 @@ result[$index] != null
         indent.writeln('result as List<Object?>;');
         indent.write('return ${klass.name}');
         indent.scoped('(', ');', () {
-          for (int index = 0; index < klass.fields.length; index += 1) {
-            final NamedType field = klass.fields[index];
+          int index = 0;
+          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
             indent.write('${field.name}: ');
             writeValueDecode(field, index);
             indent.addln(',');
+            index++;
           }
         });
       });
@@ -604,7 +605,7 @@ result[$index] != null
     indent.scoped('{', '}', () {
       writeConstructor();
       indent.addln('');
-      for (final NamedType field in klass.fields) {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         addDocumentationComments(
             indent, field.documentationComments, _docCommentSpec);
 

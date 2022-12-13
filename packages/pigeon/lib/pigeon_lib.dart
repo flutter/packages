@@ -634,7 +634,7 @@ List<Error> _validateAst(Root root, String source) {
       root.classes.map((Class x) => x.name).toList();
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
   for (final Class klass in root.classes) {
-    for (final NamedType field in klass.fields) {
+    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
       if (field.type.typeArguments != null) {
         for (final TypeDeclaration typeArgument in field.type.typeArguments) {
           if (!typeArgument.isNullable) {

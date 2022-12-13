@@ -33,7 +33,7 @@ class NullableReturnHostApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -90,7 +90,7 @@ class NullableArgHostApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -154,7 +154,7 @@ class NullableCollectionReturnHostApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -211,7 +211,7 @@ class NullableCollectionArgHostApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );

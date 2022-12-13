@@ -24,9 +24,9 @@ class NonNullFieldSearchRequest {
   String query;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(query);
-    return pigeonList;
+    return <Object?>[
+      query,
+    ];
   }
 
   static NonNullFieldSearchRequest decode(Object result) {
@@ -48,10 +48,10 @@ class ExtraData {
   String detailB;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(detailA);
-    pigeonList.add(detailB);
-    return pigeonList;
+    return <Object?>[
+      detailA,
+      detailB,
+    ];
   }
 
   static ExtraData decode(Object result) {
@@ -83,13 +83,13 @@ class NonNullFieldSearchReply {
   ReplyType type;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(result);
-    pigeonList.add(error);
-    pigeonList.add(indices);
-    pigeonList.add(extraData.encode());
-    pigeonList.add(type.index);
-    return pigeonList;
+    return <Object?>[
+      result,
+      error,
+      indices,
+      extraData.encode(),
+      type.index,
+    ];
   }
 
   static NonNullFieldSearchReply decode(Object result) {
@@ -126,15 +126,13 @@ class _NonNullFieldHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return ExtraData.decode(readValue(buffer)! as List<Object?>);
+        return ExtraData.decode(readValue(buffer)!);
 
       case 129:
-        return NonNullFieldSearchReply.decode(
-            readValue(buffer)! as List<Object?>);
+        return NonNullFieldSearchReply.decode(readValue(buffer)!);
 
       case 130:
-        return NonNullFieldSearchRequest.decode(
-            readValue(buffer)! as List<Object?>);
+        return NonNullFieldSearchRequest.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -166,7 +164,7 @@ class NonNullFieldHostApi {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -203,15 +201,13 @@ class _NonNullFieldFlutterApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return ExtraData.decode(readValue(buffer)! as List<Object?>);
+        return ExtraData.decode(readValue(buffer)!);
 
       case 129:
-        return NonNullFieldSearchReply.decode(
-            readValue(buffer)! as List<Object?>);
+        return NonNullFieldSearchReply.decode(readValue(buffer)!);
 
       case 130:
-        return NonNullFieldSearchRequest.decode(
-            readValue(buffer)! as List<Object?>);
+        return NonNullFieldSearchRequest.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);

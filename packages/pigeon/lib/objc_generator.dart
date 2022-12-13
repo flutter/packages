@@ -168,7 +168,7 @@ void _writeInitializerDeclaration(Indent indent, Class klass,
   indent.write('+ (instancetype)makeWith');
   bool isFirst = true;
   indent.nest(2, () {
-    for (final NamedType field in klass.fields) {
+    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
       final String label = isFirst ? _capitalize(field.name) : field.name;
       final void Function(String) printer = isFirst
           ? indent.add
@@ -206,8 +206,8 @@ void _writeClassDeclarations(
         indent, klass.documentationComments, _docCommentSpec);
 
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
-    if (klass.fields.isNotEmpty) {
-      if (klass.fields
+    if (getFieldsInSerializationOrder(klass).isNotEmpty) {
+      if (getFieldsInSerializationOrder(klass)
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
@@ -217,7 +217,7 @@ void _writeClassDeclarations(
       _writeInitializerDeclaration(indent, klass, classes, enums, prefix);
       indent.addln(';');
     }
-    for (final NamedType field in klass.fields) {
+    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
       final HostDatatype hostDatatype = getFieldHostDatatype(
           field,
           classes,
@@ -938,7 +938,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       indent.writeScoped(' {', '}', () {
         const String result = 'pigeonResult';
         indent.writeln('$className* $result = [[$className alloc] init];');
-        for (final NamedType field in klass.fields) {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           indent.writeln('$result.${field.name} = ${field.name};');
         }
         indent.writeln('return $result;');
@@ -950,7 +950,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       indent.scoped('{', '}', () {
         const String resultName = 'pigeonResult';
         indent.writeln('$className *$resultName = [[$className alloc] init];');
-        klass.fields
+        getFieldsInSerializationOrder(klass)
             .toList()
             .asMap()
             .forEach((int index, final NamedType field) {
@@ -976,10 +976,10 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     void writeToList() {
       indent.write('- (NSMutableArray *)toList ');
       indent.scoped('{', '}', () {
-        final int len = klass.fields.length;
+        final int len = getFieldsInSerializationOrder(klass).length;
         indent.writeln(
             'NSMutableArray *list = [[NSMutableArray alloc] initWithCapacity:$len];');
-        klass.fields
+        getFieldsInSerializationOrder(klass)
             .toList()
             .asMap()
             .forEach((int index, final NamedType field) {

@@ -19,9 +19,9 @@ class FlutterSearchRequest {
   String? query;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(query);
-    return pigeonList;
+    return <Object?>[
+      query,
+    ];
   }
 
   static FlutterSearchRequest decode(Object result) {
@@ -43,10 +43,10 @@ class FlutterSearchReply {
   String? error;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(result);
-    pigeonList.add(error);
-    return pigeonList;
+    return <Object?>[
+      result,
+      error,
+    ];
   }
 
   static FlutterSearchReply decode(Object result) {
@@ -66,9 +66,9 @@ class FlutterSearchRequests {
   List<Object?>? requests;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(requests);
-    return pigeonList;
+    return <Object?>[
+      requests,
+    ];
   }
 
   static FlutterSearchRequests decode(Object result) {
@@ -87,9 +87,9 @@ class FlutterSearchReplies {
   List<Object?>? replies;
 
   Object encode() {
-    final List<Object?> pigeonList = <Object?>[];
-    pigeonList.add(replies);
-    return pigeonList;
+    return <Object?>[
+      replies,
+    ];
   }
 
   static FlutterSearchReplies decode(Object result) {
@@ -125,17 +125,16 @@ class _ApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return FlutterSearchReplies.decode(readValue(buffer)! as List<Object?>);
+        return FlutterSearchReplies.decode(readValue(buffer)!);
 
       case 129:
-        return FlutterSearchReply.decode(readValue(buffer)! as List<Object?>);
+        return FlutterSearchReply.decode(readValue(buffer)!);
 
       case 130:
-        return FlutterSearchRequest.decode(readValue(buffer)! as List<Object?>);
+        return FlutterSearchRequest.decode(readValue(buffer)!);
 
       case 131:
-        return FlutterSearchRequests.decode(
-            readValue(buffer)! as List<Object?>);
+        return FlutterSearchRequests.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -165,7 +164,7 @@ class Api {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -193,7 +192,7 @@ class Api {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -220,7 +219,7 @@ class Api {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
@@ -247,7 +246,7 @@ class Api {
       );
     } else if (replyList.length > 1) {
       throw PlatformException(
-        code: (replyList[0] as String?)!,
+        code: replyList[0]! as String,
         message: replyList[1] as String?,
         details: replyList[2],
       );
