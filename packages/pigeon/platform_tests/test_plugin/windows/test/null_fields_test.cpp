@@ -179,6 +179,7 @@ TEST_F(NullFieldsTest, RequestToMapWithNulls) {
 TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   NullFieldsSearchRequest request;
   request.set_query("hello");
+  request.set_identifier(1);
 
   NullFieldsSearchReply reply;
   reply.set_result("result");
@@ -200,7 +201,7 @@ TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   const EncodableList& request_list =
       *ExpectAndGetIndex<EncodableList>(list, 3);
   EXPECT_EQ(*ExpectAndGetIndex<std::string>(request_list, 0), "hello");
-  EXPECT_EQ(*ExpectAndGetIndex<int>(request_list, 1), 0);
+  EXPECT_EQ(*ExpectAndGetIndex<int64_t>(request_list, 1), 1);
 }
 
 TEST_F(NullFieldsTest, ReplyToListWithNulls) {
