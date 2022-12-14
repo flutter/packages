@@ -61,6 +61,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aBool
   }
 
+  override fun echoString(aString: String): String {
+    return aString
+  }
+
   override fun noopAsync(callback: () -> Unit) {
     callback()
   }

@@ -67,6 +67,11 @@
   return aBool;
 }
 
+- (nullable NSString *)echoString:(NSString *)aString
+                            error:(FlutterError *_Nullable *_Nonnull)error {
+  return aString;
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }

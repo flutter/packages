@@ -159,6 +159,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         expect(receivedBool, sentBool);
       }
     });
+
+    testWidgets('strings serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String sentString = "I'm a computer";
+      final String receivedString = await api.echoString(sentString);
+      expect(receivedString, sentString);
+    });
   });
 
   group('Host async API tests', () {

@@ -75,6 +75,10 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoBool:')
   bool echoBool(bool aBool);
 
+  /// Returns the passed in string asynchronously.
+  @ObjCSelector('echoString:')
+  String echoString(String aString);
+
   // ========== Asyncronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity

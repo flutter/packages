@@ -71,6 +71,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public String echoString(@NonNull String aString) {
+    return aString;
+  }
+
+  @Override
   public void noopAsync(Result<Void> result) {
     result.success(null);
   }

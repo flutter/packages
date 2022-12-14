@@ -56,6 +56,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aBool
   }
 
+  func echoString(aString: String) -> String {
+    return aString
+  }
+
   func noopAsync(completion: @escaping () -> Void) {
     completion()
   }
