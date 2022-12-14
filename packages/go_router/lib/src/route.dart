@@ -681,8 +681,6 @@ class StatefulShellRoute extends ShellRouteBase {
   /// This builder is used to provide the currently active StatefulShellBranches
   /// at any point in time. Each branch uses a separate [Navigator], identified
   /// by [StatefulShellBranch.navigatorKey].
-  /// identifies the [Navigator] to be used
-  /// (via the navigatorKey)
   final StatefulShellBranchBuilder branchBuilder;
 
   /// Gets the state for the nearest stateful shell route in the Widget tree.
