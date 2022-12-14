@@ -11,6 +11,12 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+enum AnEnum {
+  one,
+  two,
+  three,
+}
+
 class AllTypes {
   AllTypes({
     this.aBool,
@@ -26,6 +32,7 @@ class AllTypes {
     this.nestedList,
     this.mapWithAnnotations,
     this.mapWithObject,
+    this.anEnum,
   });
 
   bool? aBool;
@@ -41,6 +48,7 @@ class AllTypes {
   List<List<bool?>?>? nestedList;
   Map<String?, String?>? mapWithAnnotations;
   Map<String?, Object?>? mapWithObject;
+  AnEnum? anEnum;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -57,6 +65,7 @@ class AllTypes {
     pigeonMap['nestedList'] = nestedList;
     pigeonMap['mapWithAnnotations'] = mapWithAnnotations;
     pigeonMap['mapWithObject'] = mapWithObject;
+    pigeonMap['anEnum'] = anEnum?.index;
     return pigeonMap;
   }
 
@@ -80,6 +89,9 @@ class AllTypes {
               ?.cast<String?, String?>(),
       mapWithObject: (pigeonMap['mapWithObject'] as Map<Object?, Object?>?)
           ?.cast<String?, Object?>(),
+      anEnum: pigeonMap['anEnum'] != null
+          ? AnEnum.values[pigeonMap['anEnum']! as int]
+          : null,
     );
   }
 }

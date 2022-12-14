@@ -61,6 +61,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           <bool>[true, false],
           <bool>[false, true]
         ],
+        anEnum: AnEnum.two,
       );
 
       final AllTypes echoObject = await api.echoAllTypes(sentObject);

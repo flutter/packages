@@ -4,6 +4,12 @@
 
 import 'package:pigeon/pigeon.dart';
 
+enum AnEnum {
+  one,
+  two,
+  three,
+}
+
 // A class containing all supported types.
 class AllTypes {
   bool? aBool;
@@ -21,6 +27,7 @@ class AllTypes {
   List<List<bool?>?>? nestedList;
   Map<String?, String?>? mapWithAnnotations;
   Map<String?, Object?>? mapWithObject;
+  AnEnum? anEnum;
 }
 
 // A class for testing nested object handling.
