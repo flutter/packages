@@ -107,6 +107,8 @@ class MigrateProject extends Project {
         dir.path,
         '*',
         '/E',
+        '/COPYALL',
+        '/V',
         '/mov',
       ]);
       // Add full access permissions to Users
