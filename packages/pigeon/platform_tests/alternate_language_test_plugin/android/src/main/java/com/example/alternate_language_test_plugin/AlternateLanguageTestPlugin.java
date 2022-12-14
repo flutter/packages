@@ -66,6 +66,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public Double echoDouble(@NonNull Double aDouble) {
+    return aDouble;
+  }
+
+  @Override
   public Boolean echoBool(@NonNull Boolean aBool) {
     return aBool;
   }

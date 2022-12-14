@@ -63,6 +63,11 @@
   return anInt;
 }
 
+- (nullable NSNumber *)echoDouble:(NSNumber *)aDouble
+                            error:(FlutterError *_Nullable *_Nonnull)error {
+  return aDouble
+}
+
 - (nullable NSNumber *)echoBool:(NSNumber *)aBool error:(FlutterError *_Nullable *_Nonnull)error {
   return aBool;
 }

@@ -145,9 +145,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int inInt = -13;
-      final int anInt = await api.echoInt(inInt);
-      expect(anInt, inInt);
+      const int sentInt = -13;
+      final int receivedInt = await api.echoInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Doubles serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentDouble = 2.0694;
+      final double receivedDouble = await api.echoDouble(sentDouble);
+      expect(receivedDouble, sentDouble);
     });
 
     testWidgets('booleans serialize and deserialize correctly',

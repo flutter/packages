@@ -57,6 +57,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return anInt
   }
 
+  override fun echoDouble(aDouble: Double): Double {
+    return aDouble
+  }
+
   override fun echoBool(aBool: Boolean): Boolean {
     return aBool
   }

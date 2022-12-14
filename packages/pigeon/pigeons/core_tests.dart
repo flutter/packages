@@ -71,6 +71,10 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoInt:')
   int echoInt(int anInt);
 
+  /// Returns passed in double.
+  @ObjCSelector('echoDouble:')
+  double echoDouble(double aDouble);
+
   /// Returns the passed in boolean asynchronously.
   @ObjCSelector('echoBool:')
   bool echoBool(bool aBool);

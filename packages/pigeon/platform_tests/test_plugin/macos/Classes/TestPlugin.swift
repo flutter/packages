@@ -52,6 +52,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anInt
   }
 
+  func echoDouble(aDouble: Double) -> Double {
+    return aDouble
+  }
+
   func echoBool(aBool: Bool) -> Bool {
     return aBool
   }
