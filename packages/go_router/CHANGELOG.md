@@ -8,6 +8,10 @@
   - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`. 
   - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
 
+## 5.2.4
+
+- Fixes crashes when using async redirect.
+
 ## 5.2.3
 
 - Fixes link for router configuration and sub-routes
