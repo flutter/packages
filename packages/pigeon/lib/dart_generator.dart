@@ -78,10 +78,7 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
     indent.writeln('@override');
     indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
     indent.scoped('{', '}', () {
-      codecClasses
-          .toList()
-          .asMap()
-          .forEach((int index, final EnumeratedClass customClass) {
+      enumerate(codecClasses, (int index, final EnumeratedClass customClass) {
         final String ifValue = 'if (value is ${customClass.name}) ';
         if (index == 0) {
           indent.write(ifValue);
@@ -169,7 +166,8 @@ String _getMethodArgumentsSignature(
 ///
 /// Messages will be sent and received in a list.
 ///
-/// If the message recieved was succesful it will be contained at the 0'th index.
+/// If the message recieved was succesful,
+/// the result will be contained at the 0'th index.
 ///
 /// If the message was a failure, the list will contain 3 items:
 /// a code, a message, and details in that order.
@@ -594,13 +592,12 @@ $resultAt != null
         indent.writeln('result as List<Object?>;');
         indent.write('return ${klass.name}');
         indent.scoped('(', ');', () {
-          int index = 0;
-          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          enumerate(getFieldsInSerializationOrder(klass),
+              (int index, final NamedType field) {
             indent.write('${field.name}: ');
             writeValueDecode(field, index);
             indent.addln(',');
-            index++;
-          }
+          });
         });
       });
     }

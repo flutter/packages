@@ -290,9 +290,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
             if (method.isAsynchronous) {
               indent.writeln('reply.reply(wrappedError);');
             } else {
-              indent.writeln('wrapped.add(wrappedError.get(0));');
-              indent.writeln('wrapped.add(wrappedError.get(1));');
-              indent.writeln('wrapped.add(wrappedError.get(2));');
+              indent.writeln('wrapped = wrappedError;');
             }
           });
           if (!method.isAsynchronous) {
@@ -571,17 +569,11 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
     indent.write('public enum ${anEnum.name} ');
     indent.scoped('{', '}', () {
-      int index = 0;
-      for (final String member in anEnum.members) {
+      enumerate(anEnum.members, (int index, final String member) {
         indent.writeln(
             '${camelToSnake(member)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
-        index++;
-      }
+      });
       indent.writeln('');
-      // We use explicit indexing here as use of the ordinal() method is
-      // discouraged. The toMap and fromMap API matches class API to allow
-      // the same code to work with enums and classes, but this
-      // can also be done directly in the host and flutter APIs.
       indent.writeln('private final int index;');
       indent.write('private ${anEnum.name}(final int index) ');
       indent.scoped('{', '}', () {
@@ -623,7 +615,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.write('@NonNull ArrayList<Object> toList() ');
       indent.scoped('{', '}', () {
         indent.writeln(
-            'ArrayList<Object> toListResult = new ArrayList<Object>();');
+            'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
               field,
@@ -653,10 +645,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.scoped('{', '}', () {
         const String result = 'pigeonResult';
         indent.writeln('${klass.name} $result = new ${klass.name}();');
-        getFieldsInSerializationOrder(klass)
-            .toList()
-            .asMap()
-            .forEach((int index, final NamedType field) {
+        enumerate(getFieldsInSerializationOrder(klass),
+            (int index, final NamedType field) {
           final String fieldVariable = field.name;
           final String setter = _makeSetter(field);
           indent.writeln('Object $fieldVariable = list.get($index);');
@@ -751,7 +741,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   void writeWrapError() {
     indent.format('''
 @NonNull private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-\tArrayList<Object> errorList = new ArrayList<>();
+\tArrayList<Object> errorList = new ArrayList<>(3);
 \terrorList.add(exception.toString());
 \terrorList.add(exception.getClass().getSimpleName());
 \terrorList.add("Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));

@@ -561,13 +561,11 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.scoped('{', '};', () {
-      int index = 0;
-      for (final String member in anEnum.members) {
+      enumerate(anEnum.members, (int index, final String member) {
         // Capitalized first letter to ensure Swift compatibility
         indent.writeln(
             '$enumName${member[0].toUpperCase()}${member.substring(1)} = $index,');
-        index++;
-      }
+      });
     });
   }
 
@@ -950,10 +948,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       indent.scoped('{', '}', () {
         const String resultName = 'pigeonResult';
         indent.writeln('$className *$resultName = [[$className alloc] init];');
-        getFieldsInSerializationOrder(klass)
-            .toList()
-            .asMap()
-            .forEach((int index, final NamedType field) {
+        enumerate(getFieldsInSerializationOrder(klass),
+            (int index, final NamedType field) {
           if (enumNames.contains(field.type.baseName)) {
             indent.writeln(
                 '$resultName.${field.name} = [${_listGetter(classNames, 'list', field, index, options.prefix)} integerValue];');

@@ -365,10 +365,8 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
   // Deserialization.
   indent.write('${klass.name}::${klass.name}(flutter::EncodableList list) ');
   indent.scoped('{', '}', () {
-    getFieldsInSerializationOrder(klass)
-        .toList()
-        .asMap()
-        .forEach((int index, final NamedType field) {
+    enumerate(getFieldsInSerializationOrder(klass),
+        (int index, final NamedType field) {
       final String instanceVariableName = _makeInstanceVariableName(field);
       final String pointerFieldName =
           '${_pointerPrefix}_${_makeVariableName(field)}';
@@ -1061,12 +1059,10 @@ void generateCppHeader(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
     indent.scoped('{', '};', () {
-      int index = 0;
-      for (final String member in anEnum.members) {
+      enumerate(anEnum.members, (int index, final String member) {
         indent.writeln(
             '$member = $index${index == anEnum.members.length - 1 ? '' : ','}');
-        index++;
-      }
+      });
     });
   }
 

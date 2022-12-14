@@ -32,7 +32,7 @@ void main() {
     expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
     expect(code, contains('fun fromList(list: List<Any?>): Foobar'));
-    expect(code, contains('fun toList(): MutableList<Any?>'));
+    expect(code, contains('fun toList(): List<Any?>'));
   });
 
   test('gen one enum', () {
@@ -130,14 +130,19 @@ void main() {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val wrapped = mutableListOf<Any?>()
+            var error = listOf<Any?>()
             try {
               val args = message as List<Any?>
               val inputArg = args[0] as Input
               wrapped.add(api.doSomething(inputArg))
             } catch (exception: Error) {
-              wrapped.add(wrapError(exception))
+              error = wrapError(exception)
             }
-            reply.reply(wrapped)
+            if (error.size == 0) {
+              reply.reply(wrapped)
+            } else {
+              reply.reply(error)
+            }
           }
         } else {
           channel.setMessageHandler(null)
@@ -368,7 +373,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
     expect(code, contains('wrapped.add(api.doSomething())'));
-    expect(code, contains('wrapped.add(wrapError(exception))'));
+    expect(code, contains('error = wrapError(exception)'));
     expect(code, contains('reply(wrapped)'));
   });
 
@@ -482,7 +487,7 @@ void main() {
     expect(
         code, contains('val nested: Nested? = (list[0] as? List<Any?>)?.let'));
     expect(code, contains('Nested.fromList(it)'));
-    expect(code, contains('fun toList(): MutableList<Any?>'));
+    expect(code, contains('fun toList(): List<Any?>'));
   });
 
   test('gen one async Host Api', () {

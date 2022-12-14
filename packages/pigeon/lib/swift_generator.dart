@@ -470,15 +470,9 @@ import FlutterMacOS
 
     indent.write('enum ${anEnum.name}: Int ');
     indent.scoped('{', '}', () {
-      // We use explicit indexing here as use of the ordinal() method is
-      // discouraged. The toList and fromList API matches class API to allow
-      // the same code to work with enums and classes, but this
-      // can also be done directly in the host and flutter APIs.
-      int index = 0;
-      for (final String member in anEnum.members) {
+      enumerate(anEnum.members, (int index, final String member) {
         indent.writeln('case ${_camelCase(member)} = $index');
-        index++;
-      }
+      });
     });
   }
 
@@ -513,10 +507,7 @@ import FlutterMacOS
               toWriteValue = field.name;
             }
 
-            final String comma =
-                getFieldsInSerializationOrder(klass).last == field ? '' : ',';
-
-            indent.writeln('$toWriteValue$comma');
+            indent.writeln('$toWriteValue,');
           }
         });
       });
@@ -527,10 +518,8 @@ import FlutterMacOS
       indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
       indent.scoped('{', '}', () {
-        getFieldsInSerializationOrder(klass)
-            .toList()
-            .asMap()
-            .forEach((int index, final NamedType field) {
+        enumerate(getFieldsInSerializationOrder(klass),
+            (int index, final NamedType field) {
           final HostDatatype hostDatatype = getHostDatatype(field);
 
           final String listValue = 'list[$index]';

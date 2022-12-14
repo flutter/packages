@@ -214,7 +214,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
               indent.write('channel.setMessageHandler ');
               indent.scoped('{ $messageVarName, reply ->', '}', () {
                 indent.writeln('val wrapped = mutableListOf<Any?>()');
-
+                indent.writeln('var error = listOf<Any?>()');
                 indent.write('try ');
                 indent.scoped('{', '}', () {
                   final List<String> methodArgument = <String>[];
@@ -246,13 +246,20 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                 }, addTrailingNewline: false);
                 indent.add(' catch (exception: Error) ');
                 indent.scoped('{', '}', () {
-                  indent.writeln('wrapped.add(wrapError(exception))');
+                  indent.writeln('error = wrapError(exception)');
                   if (method.isAsynchronous) {
                     indent.writeln('reply.reply(wrapped)');
                   }
                 });
                 if (!method.isAsynchronous) {
-                  indent.writeln('reply.reply(wrapped)');
+                  indent.write('if (error.size == 0) ');
+                  indent.scoped('{', '}', () {
+                    indent.writeln('reply.reply(wrapped)');
+                  }, addTrailingNewline: false);
+                  indent.add(' else ');
+                  indent.scoped('{', '}', () {
+                    indent.writeln('reply.reply(error)');
+                  });
                 }
               });
             }, addTrailingNewline: false);
@@ -472,20 +479,14 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.scoped('{', '}', () {
-      // We use explicit indexing here as use of the ordinal() method is
-      // discouraged. The toList and fromList API matches class API to allow
-      // the same code to work with enums and classes, but this
-      // can also be done directly in the host and flutter APIs.
-      int index = 0;
-      for (final String member in anEnum.members) {
+      enumerate(anEnum.members, (int index, final String member) {
         indent.write('${member.toUpperCase()}($index)');
         if (index != anEnum.members.length - 1) {
           indent.addln(',');
         } else {
           indent.addln(';');
         }
-        index++;
-      }
+      });
 
       indent.writeln('');
       indent.write('companion object ');
@@ -509,31 +510,26 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
     }
 
     void writeToList() {
-      indent.write('fun toList(): MutableList<Any?> ');
+      indent.write('fun toList(): List<Any?> ');
       indent.scoped('{', '}', () {
-        indent.writeln('val list = mutableListOf<Any?>()');
-
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          final HostDatatype hostDatatype = getHostDatatype(field);
-          String toWriteValue = '';
-          final String fieldName = field.name;
-          if (!hostDatatype.isBuiltin &&
-              rootClassNameSet.contains(field.type.baseName)) {
-            toWriteValue = '$fieldName?.toList()';
-          } else if (!hostDatatype.isBuiltin &&
-              rootEnumNameSet.contains(field.type.baseName)) {
-            toWriteValue = '$fieldName?.raw';
-          } else {
-            toWriteValue = fieldName;
+        indent.write('return listOf<Any?>');
+        indent.scoped('(', ')', () {
+          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+            final HostDatatype hostDatatype = getHostDatatype(field);
+            String toWriteValue = '';
+            final String fieldName = field.name;
+            if (!hostDatatype.isBuiltin &&
+                rootClassNameSet.contains(field.type.baseName)) {
+              toWriteValue = '$fieldName?.toList()';
+            } else if (!hostDatatype.isBuiltin &&
+                rootEnumNameSet.contains(field.type.baseName)) {
+              toWriteValue = '$fieldName?.raw';
+            } else {
+              toWriteValue = fieldName;
+            }
+            indent.writeln('$toWriteValue,');
           }
-
-          if (field.type.isNullable) {
-            indent.writeln('list.add($toWriteValue)');
-          } else {
-            indent.writeln('list.add($toWriteValue)');
-          }
-        }
-        indent.writeln('return list');
+        });
       });
     }
 
@@ -546,10 +542,8 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
         indent.write('fun fromList(list: List<Any?>): $className ');
 
         indent.scoped('{', '}', () {
-          getFieldsInSerializationOrder(klass)
-              .toList()
-              .asMap()
-              .forEach((int index, final NamedType field) {
+          enumerate(getFieldsInSerializationOrder(klass),
+              (int index, final NamedType field) {
             final HostDatatype hostDatatype = getHostDatatype(field);
 
             // The StandardMessageCodec can give us [Integer, Long] for
