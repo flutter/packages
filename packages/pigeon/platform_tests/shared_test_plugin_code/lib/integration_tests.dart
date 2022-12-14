@@ -91,6 +91,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           true);
       expect(
           mapEquals(echoObject.mapWithObject, sentObject.mapWithObject), true);
+      expect(echoObject.anEnum, sentObject.anEnum);
     });
 
     testWidgets('errors are returned correctly', (WidgetTester _) async {
