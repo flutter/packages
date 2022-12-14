@@ -1,4 +1,4 @@
-name: ios_unit_tests
+name: test_objc
 description: A new Flutter project.
 publish_to: none
 
@@ -18,6 +18,8 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
@@ -25,7 +27,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  integration_test:
+    sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

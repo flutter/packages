@@ -1,21 +1,20 @@
-name: test_app
-description: An example app for web benchmarks testing.
-
-publish_to: 'none'
+name: ios_swift_unit_tests
+description: A new Flutter project.
+publish_to: none
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
+
+dev_dependencies:
   flutter_test:
     sdk: flutter
-  web_benchmarks:
-    path: ../../
 
 flutter:
   uses-material-design: true
