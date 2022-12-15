@@ -80,8 +80,8 @@ ErrorOr<double> TestPlugin::EchoDouble(double a_double) { return a_double; }
 
 ErrorOr<bool> TestPlugin::EchoBool(bool a_bool) { return a_bool; }
 
-ErrorOr<std::string> TestPlugin::EchoString(std::string a_String) {
-  return a_String;
+ErrorOr<std::string> TestPlugin::EchoString(std::string a_string) {
+  return a_string;
 }
 
 ErrorOr<std::vector<uint8_t>> TestPlugin::EchoUint8List(

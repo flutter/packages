@@ -47,7 +47,8 @@ class TestPlugin : public flutter::Plugin,
   core_tests_pigeontest::ErrorOr<int64_t> EchoInt(int64_t an_int) override;
   core_tests_pigeontest::ErrorOr<double> EchoDouble(double a_double) override;
   core_tests_pigeontest::ErrorOr<bool> EchoBool(bool a_bool) override;
-  core_tests_pigeontest::ErrorOr<std::string> EchoString(const std::string& a_string) override;
+  core_tests_pigeontest::ErrorOr<std::string> EchoString(
+      const std::string& a_string) override;
   core_tests_pigeontest::ErrorOr<std::vector<uint8_t>> EchoUint8List(
       const std::vector<uint8_t>& a_uint8_list) override;
   void NoopAsync(std::function<
