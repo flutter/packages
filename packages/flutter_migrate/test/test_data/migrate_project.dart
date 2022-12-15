@@ -111,6 +111,12 @@ class MigrateProject extends Project {
         '/V',
         '/mov',
       ]);
+      await processManager.run(<String>[
+        'takeown',
+        '/f',
+        dir.path,
+        '/r',
+      ]);
       // Add full access permissions to Users
       await processManager.run(<String>[
         'icacls',
