@@ -9,7 +9,11 @@ import 'package:flutter/rendering.dart';
 
 /// A callback for the [AnimatedSamplerBuilder] widget.
 typedef AnimatedSamplerBuilder = void Function(
-    ui.Image, Size, Offset offset, ui.Canvas);
+  ui.Image image,
+  Size size,
+  Offset offset,
+  ui.Canvas canvas,
+);
 
 /// A widget that allows access to a snapshot of the child widgets for painting
 /// with a sampler applied to a [FragmentProgram].
@@ -23,29 +27,24 @@ typedef AnimatedSamplerBuilder = void Function(
 /// Caveats:
 ///   * Platform views cannot be captured in a texture. If any are present they
 ///     will be excluded from the texture. Texture-based platform views are OK.
-///   * This widget will not be automatically notified if a child widget needs
-///     to repaint. This can lead to delays as the child widget will only be
-///     updated when this widget is marked dirty. To avoid this situation, this
-///     widget should only have [enabled] set to true when there is an ongoing
-///     animation driving a fragment shader.
 ///
 /// Example:
 ///
-/// providing an image to a fragment shader using
+/// Providing an image to a fragment shader using
 /// [FragmentShader.setImageSampler].
 ///
 /// ```dart
 /// Widget build(BuildContext context) {
-///  return AnimatedSampler(
-///    (ui.Image image, Size size, Canvas canvas) {
-///      shader
-///        ..setFloat(0, size.width)
-///        ..setFloat(1, size.height)
-///        ..setImageSampler(0, image);
-///      canvas.drawImage(image, Offset.zero, Paint()..shader = shader);
+///   return AnimatedSampler(
+///     (ui.Image image, Size size, Offset offset, Canvas canvas) {
+///       shader
+///         ..setFloat(0, size.width)
+///         ..setFloat(1, size.height)
+///         ..setImageSampler(0, image);
+///       canvas.drawRect(offset & size, Paint()..shader = shader);
 ///     },
 ///     child: widget.child,
-///    );
+///   );
 /// }
 /// ```
 ///
@@ -74,7 +73,7 @@ class AnimatedSampler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ShaderSamplerImpl(
+    return _ShaderSamplerBuilder(
       builder,
       enabled: enabled,
       child: child,
@@ -82,8 +81,12 @@ class AnimatedSampler extends StatelessWidget {
   }
 }
 
-class _ShaderSamplerImpl extends SingleChildRenderObjectWidget {
-  const _ShaderSamplerImpl(this.builder, {super.child, required this.enabled});
+class _ShaderSamplerBuilder extends SingleChildRenderObjectWidget {
+  const _ShaderSamplerBuilder(
+    this.builder, {
+    super.child,
+    required this.enabled,
+  });
 
   final AnimatedSamplerBuilder builder;
   final bool enabled;
@@ -127,13 +130,7 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
       return;
     }
     _devicePixelRatio = value;
-    if (_childRaster == null) {
-      return;
-    } else {
-      _childRaster?.dispose();
-      _childRaster = null;
-      markNeedsPaint();
-    }
+    markNeedsPaint();
   }
 
   /// The painter used to paint the child snapshot or child widgets.
@@ -157,58 +154,54 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
     markNeedsPaint();
   }
 
-  ui.Image? _childRaster;
-
-  @override
-  void detach() {
-    _childRaster?.dispose();
-    _childRaster = null;
-    super.detach();
-  }
-
-  @override
-  void dispose() {
-    _childRaster?.dispose();
-    _childRaster = null;
-    super.dispose();
-  }
-
-  // Paint [child] with this painting context, then convert to a raster and detach all
-  // children from this layer.
-  ui.Image? _paintAndDetachToImage() {
-    final OffsetLayer offsetLayer = OffsetLayer();
-    final PaintingContext context =
-        PaintingContext(offsetLayer, Offset.zero & size);
-    super.paint(context, Offset.zero);
-    // This ignore is here because this method is protected by the `PaintingContext`. Adding a new
-    // method that performs the work of `_paintAndDetachToImage` would avoid the need for this, but
-    // that would conflict with our goals of minimizing painting context.
-    // ignore: invalid_use_of_protected_member
-    context.stopRecordingIfNeeded();
-    final ui.Image image = offsetLayer.toImageSync(Offset.zero & size,
-        pixelRatio: devicePixelRatio);
-    offsetLayer.dispose();
-    return image;
-  }
-
   @override
   bool get alwaysNeedsCompositing => true;
+
+  ui.Picture _paintBuilder(Offset offset, OffsetLayer childLayer) {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final ui.Image image = childLayer.toImageSync(
+      offset & size,
+      pixelRatio: devicePixelRatio,
+    );
+    try {
+      builder(image, size, offset, canvas);
+    } finally {
+      image.dispose();
+    }
+    return pictureRecorder.endRecording();
+  }
 
   @override
   void paint(PaintingContext context, Offset offset) {
     if (size.isEmpty) {
-      _childRaster?.dispose();
-      _childRaster = null;
       return;
     }
 
     if (!enabled) {
-      _childRaster?.dispose();
-      _childRaster = null;
       return super.paint(context, offset);
     }
-    _childRaster?.dispose();
-    _childRaster = _paintAndDetachToImage();
-    builder(_childRaster!, size, offset, context.canvas);
+
+    context.pushLayer(
+      _ShaderSamplerBuilderLayer(offset, _paintBuilder),
+      (context, offset) {
+        context.pushLayer(OffsetLayer(), super.paint, offset);
+      },
+      offset,
+    );
+  }
+}
+
+class _ShaderSamplerBuilderLayer extends ContainerLayer {
+  _ShaderSamplerBuilderLayer(this.offset, this.paint);
+
+  final Offset offset;
+  final ui.Picture Function(Offset offset, OffsetLayer childLayer) paint;
+
+  @override
+  void addToScene(ui.SceneBuilder builder) {
+    final OffsetLayer childLayer = firstChild! as OffsetLayer;
+    final ui.Picture picture = paint(offset, childLayer);
+    builder.addPicture(Offset.zero, picture);
   }
 }
