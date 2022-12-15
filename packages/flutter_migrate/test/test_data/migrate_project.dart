@@ -101,17 +101,37 @@ class MigrateProject extends Project {
     ], workingDirectory: dir.path);
 
     if (Platform.isWindows) {
-      ProcessResult res = await processManager.run(<String>[
+      ProcessResult res;
+      res = await processManager.run(<String>[
+        'icacls',
+        tempDir.path,
+      ], workingDirectory: dir.path);
+      print('ICACLS');
+      print(res.stderr);
+      print(res.stdout);
+      res = await processManager.run(<String>[
+        'icacls',
+        dir.path,
+      ], workingDirectory: dir.path);
+      print('ICACLS');
+      print(res.stderr);
+      print(res.stdout);
+      res = await processManager.run(<String>[
         'robocopy',
         tempDir.path,
         dir.path,
         '*',
         '/E',
-        '/COPYALL',
         '/V',
         '/mov',
       ]);
       print('ROBOCOPY');
+      print(res.stderr);
+      print(res.stdout);
+      res = await processManager.run(<String>[
+        'dir',
+      ], workingDirectory: dir.path);
+      print('DIR');
       print(res.stderr);
       print(res.stdout);
       res = await processManager.run(<String>[
