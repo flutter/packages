@@ -80,7 +80,7 @@ ErrorOr<double> TestPlugin::EchoDouble(double a_double) { return a_double; }
 
 ErrorOr<bool> TestPlugin::EchoBool(bool a_bool) { return a_bool; }
 
-ErrorOr<std::string> TestPlugin::EchoString(std::string a_string) {
+ErrorOr<std::string> TestPlugin::EchoString(const std::string& a_string) {
   return a_string;
 }
 
