@@ -213,8 +213,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
 
               indent.write('channel.setMessageHandler ');
               indent.scoped('{ $messageVarName, reply ->', '}', () {
-                indent.writeln('val wrapped = mutableListOf<Any?>()');
-                indent.writeln('var error = listOf<Any?>()');
+                indent.writeln('var wrapped = listOf<Any?>()');
                 indent.write('try ');
                 indent.scoped('{', '}', () {
                   final List<String> methodArgument = <String>[];
@@ -239,27 +238,20 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                     });
                   } else if (method.returnType.isVoid) {
                     indent.writeln(call);
-                    indent.writeln('wrapped.add(null)');
+                    indent.writeln('wrapped = listOf<Any?>(null)');
                   } else {
-                    indent.writeln('wrapped.add($call)');
+                    indent.writeln('wrapped = listOf<Any?>($call)');
                   }
                 }, addTrailingNewline: false);
                 indent.add(' catch (exception: Error) ');
                 indent.scoped('{', '}', () {
-                  indent.writeln('error = wrapError(exception)');
+                  indent.writeln('wrapped = wrapError(exception)');
                   if (method.isAsynchronous) {
                     indent.writeln('reply.reply(wrapped)');
                   }
                 });
                 if (!method.isAsynchronous) {
-                  indent.write('if (error.size == 0) ');
-                  indent.scoped('{', '}', () {
-                    indent.writeln('reply.reply(wrapped)');
-                  }, addTrailingNewline: false);
-                  indent.add(' else ');
-                  indent.scoped('{', '}', () {
-                    indent.writeln('reply.reply(error)');
-                  });
+                  indent.writeln('reply.reply(wrapped)');
                 }
               });
             }, addTrailingNewline: false);

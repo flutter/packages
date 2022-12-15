@@ -129,20 +129,15 @@ void main() {
     expect(code, contains('''
         if (api != null) {
           channel.setMessageHandler { message, reply ->
-            val wrapped = mutableListOf<Any?>()
-            var error = listOf<Any?>()
+            var wrapped = listOf<Any?>()
             try {
               val args = message as List<Any?>
               val inputArg = args[0] as Input
-              wrapped.add(api.doSomething(inputArg))
+              wrapped = listOf<Any?>(api.doSomething(inputArg))
             } catch (exception: Error) {
-              error = wrapError(exception)
+              wrapped = wrapError(exception)
             }
-            if (error.size == 0) {
-              reply.reply(wrapped)
-            } else {
-              reply.reply(error)
-            }
+            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -372,8 +367,8 @@ void main() {
     generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
-    expect(code, contains('wrapped.add(api.doSomething())'));
-    expect(code, contains('error = wrapError(exception)'));
+    expect(code, contains('wrapped = listOf<Any?>(api.doSomething())'));
+    expect(code, contains('wrapped = wrapError(exception)'));
     expect(code, contains('reply(wrapped)'));
   });
 
@@ -774,7 +769,7 @@ void main() {
     generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
-    expect(code, contains('wrapped.add(api.doit())'));
+    expect(code, contains('wrapped = listOf<Any?>(api.doit())'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -838,7 +833,7 @@ void main() {
         code,
         contains(
             'val yArg = args[1].let { if (it is Int) it.toLong() else it as Long }'));
-    expect(code, contains('wrapped.add(api.add(xArg, yArg))'));
+    expect(code, contains('wrapped = listOf<Any?>(api.add(xArg, yArg))'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 

@@ -494,5 +494,6 @@ void addDocumentationComments(
 
 /// Returns an ordered list of fields to provide consistent serialisation order.
 Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+  // This returns the fields in the order they are declared in the pigeon file.
   return klass.fields;
 }

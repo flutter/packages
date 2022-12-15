@@ -260,7 +260,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
               indent.format('''
 Result<$returnType> $resultName = new Result<$returnType>() {
 \tpublic void success($returnType result) {
-\t\twrapped.add($resultValue);
+\t\twrapped.add(0, $resultValue);
 \t\treply.reply(wrapped);
 \t}
 \tpublic void error(Throwable error) {
@@ -277,10 +277,10 @@ Result<$returnType> $resultName = new Result<$returnType>() {
               indent.writeln('$call;');
             } else if (method.returnType.isVoid) {
               indent.writeln('$call;');
-              indent.writeln('wrapped.add(null);');
+              indent.writeln('wrapped.add(0, null);');
             } else {
               indent.writeln('$returnType output = $call;');
-              indent.writeln('wrapped.add(output);');
+              indent.writeln('wrapped.add(0, output);');
             }
           });
           indent.write('catch (Error | RuntimeException exception) ');

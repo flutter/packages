@@ -81,10 +81,9 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
       enumerate(codecClasses, (int index, final EnumeratedClass customClass) {
         final String ifValue = 'if (value is ${customClass.name}) ';
         if (index == 0) {
-          indent.write(ifValue);
-        } else {
-          indent.add(ifValue);
+          indent.write('');
         }
+        indent.add(ifValue);
         indent.scoped('{', '} else ', () {
           indent.writeln('buffer.putUint8(${customClass.enumeration});');
           indent.writeln('writeValue(buffer, value.encode());');

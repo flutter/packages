@@ -363,7 +363,8 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
   indent.addln('');
 
   // Deserialization.
-  indent.write('${klass.name}::${klass.name}(flutter::EncodableList list) ');
+  indent.write(
+      '${klass.name}::${klass.name}(const flutter::EncodableList& list) ');
   indent.scoped('{', '}', () {
     enumerate(getFieldsInSerializationOrder(klass),
         (int index, final NamedType field) {
@@ -590,7 +591,6 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.scoped('{', '}', () {
                       indent.writeln(
                           'reply(WrapError("$argName unexpectedly null."));');
-                      indent.writeln('reply(wrapped);');
                       indent.writeln('return;');
                     });
                   }
