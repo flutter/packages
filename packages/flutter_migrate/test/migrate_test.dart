@@ -40,6 +40,8 @@ void main() {
       'start',
       '--verbose',
     ], workingDirectory: tempDir.path);
+    print(result.stderr);
+    print(result.stdout);
     expect(result.stdout.toString(), contains('Staging directory created at'));
     const String linesToMatch = '''
 Added files:
@@ -119,6 +121,8 @@ class MyApp extends StatelessWidget {
       'start',
       '--verbose',
     ], workingDirectory: tempDir.path);
+    print(result.stderr);
+    print(result.stdout);
     expect(result.stdout.toString(), contains('Staging directory created at'));
 
     result = await runMigrateCommand(<String>[
