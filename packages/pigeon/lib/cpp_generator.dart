@@ -232,7 +232,7 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
     });
 
     indent.scoped(' private:', '', () {
-      indent.writeln('${klass.name}(flutter::EncodableList list);');
+      indent.writeln('${klass.name}(flutter::EncodableList& list);');
       indent.writeln('flutter::EncodableList ToEncodableList() const;');
       for (final Class friend in root.classes) {
         if (friend != klass &&
@@ -364,7 +364,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
 
   // Deserialization.
   indent.write(
-      '${klass.name}::${klass.name}(const flutter::EncodableList list) ');
+      '${klass.name}::${klass.name}(const flutter::EncodableList& list) ');
   indent.scoped('{', '}', () {
     enumerate(getFieldsInSerializationOrder(klass),
         (int index, final NamedType field) {
