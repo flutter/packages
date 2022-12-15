@@ -137,7 +137,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (match == null) {
       return true;
     }
-    _matchList.pop(match);
+    _matchList.remove(match);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
@@ -151,7 +151,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
   void pushReplacement(RouteMatchList matches) {
-    _matchList.pop(_matchList.last);
+    _matchList.remove(_matchList.last);
     push(matches); // [push] will notify the listeners.
   }
 

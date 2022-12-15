@@ -98,7 +98,7 @@ class RouteMatchList {
   }
 
   /// Removes the match from the list.
-  void pop(RouteMatch match) {
+  void remove(RouteMatch match) {
     final int index = _matches.indexOf(match);
     assert(index != -1);
     _matches.removeRange(index, _matches.length);
