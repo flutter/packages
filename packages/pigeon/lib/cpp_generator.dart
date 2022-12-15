@@ -364,7 +364,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
 
   // Deserialization.
   indent.write(
-      '${klass.name}::${klass.name}(const flutter::EncodableList& list) ');
+      '${klass.name}::${klass.name}(const flutter::EncodableList list) ');
   indent.scoped('{', '}', () {
     enumerate(getFieldsInSerializationOrder(klass),
         (int index, final NamedType field) {
