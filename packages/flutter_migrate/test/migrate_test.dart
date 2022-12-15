@@ -31,8 +31,22 @@ void main() {
     tryToDelete(tempDir);
   });
 
+  Future<bool> hasFlutterEnvironment() async {
+    final ProcessResult result = await Process
+        .run('flutter', <String>['analyze', '--suggestions', '--machine']);
+    if (result.exitCode != 0) {
+      return false;
+    }
+    return true;
+  }
+
   // Migrates a clean untouched app generated with flutter create
   testUsingContext('vanilla migrate process succeeds', () async {
+    // This tool does not support old versions of flutter that dont include
+    // `flutter analyze --suggestions --machine` command
+    if (!await hasFlutterEnvironment()) {
+      return;
+    }
     // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
     await MigrateProject.installProject('version:1.22.6_stable', tempDir);
 
@@ -92,31 +106,36 @@ Modified files:
 
   // Migrates a clean untouched app generated with flutter create
   testUsingContext('vanilla migrate builds', () async {
+    // This tool does not support old versions of flutter that dont include
+    // `flutter analyze --suggestions --machine` command
+    if (!await hasFlutterEnvironment()) {
+      return;
+    }
     // Flutter Stable 2.0.0 hash: 60bd88df915880d23877bfc1602e8ddcf4c4dd2a
-    await MigrateProject.installProject('version:2.0.0_stable', tempDir,
-        main: '''
-import 'package:flutter/material.dart';
+    await MigrateProject.installProject('version:2.0.0_stable', tempDir);
+//         main: '''
+// import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+// void main() {
+//   runApp(const MyApp());
+// }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Container(),
-    );
-  }
-}
-''');
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: Container(),
+//     );
+//   }
+// }
+// ''');
     ProcessResult result = await runMigrateCommand(<String>[
       'start',
       '--verbose',
@@ -145,7 +164,7 @@ class MyApp extends StatelessWidget {
     print(result.stdout);
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('app-debug.apk'));
-  }, timeout: const Timeout(Duration(seconds: 500)));
+  }, timeout: const Timeout(Duration(seconds: 900)));
 
   testUsingContext('migrate abandon', () async {
     // Abandon in an empty dir fails.
@@ -191,6 +210,11 @@ class MyApp extends StatelessWidget {
 
   // Migrates a user-modified app
   testUsingContext('modified migrate process succeeds', () async {
+    // This tool does not support old versions of flutter that dont include
+    // `flutter analyze --suggestions --machine` command
+    if (!await hasFlutterEnvironment()) {
+      return;
+    }
     // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
     await MigrateProject.installProject('version:1.22.6_stable', tempDir,
         vanilla: false);
