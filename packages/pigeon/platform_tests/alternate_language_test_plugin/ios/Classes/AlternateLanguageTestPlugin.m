@@ -77,6 +77,11 @@
   return aString;
 }
 
+- (nullable FlutterStandardTypedData *)echoUint8List:(FlutterStandardTypedData *)aUint8List
+                                               error:(FlutterError *_Nullable *_Nonnull)error {
+  return aUint8List;
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }

@@ -176,6 +176,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String receivedString = await api.echoString(sentString);
       expect(receivedString, sentString);
     });
+
+    // TODO(stuartmorgan): Enable these once they work for all generators;
+    // currently at least Swift is broken.
+    // TODO(tarrinneal): Finish tests for int lists once issue solved.
+    // See https://github.com/flutter/flutter/issues/115906
+    // testWidgets('Uint8List serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    //   final List<int> data = [102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
+    //   final Uint8List sentUint8List = Uint8List.fromList(data);
+    //   final Uint8List receivedUint8List =
+    //       await api.echoUint8List(sentUint8List);
+    //   expect(receivedUint8List, sentUint8List);
+    // });
   });
 
   group('Host async API tests', () {

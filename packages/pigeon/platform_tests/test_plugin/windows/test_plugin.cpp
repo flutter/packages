@@ -84,6 +84,10 @@ ErrorOr<std::string> TestPlugin::EchoString(std::string a_String) {
   return a_String;
 }
 
+ErrorOr<std::vector<uint8_t>> TestPlugin::EchoUint8List(
+    const std::vector<uint8_t>& a_uint8_list) {
+  return a_uint8_list;
+}
 void TestPlugin::NoopAsync(
     std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);

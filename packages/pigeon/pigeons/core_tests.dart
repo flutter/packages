@@ -75,13 +75,17 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoDouble:')
   double echoDouble(double aDouble);
 
-  /// Returns the passed in boolean asynchronously.
+  /// Returns the passed in boolean.
   @ObjCSelector('echoBool:')
   bool echoBool(bool aBool);
 
-  /// Returns the passed in string asynchronously.
+  /// Returns the passed in string.
   @ObjCSelector('echoString:')
   String echoString(String aString);
+
+  /// Returns the passed in Uint8List.
+  @ObjCSelector('echoUint8List:')
+  Uint8List echoUint8List(Uint8List aUint8List);
 
   // ========== Asyncronous method tests ==========
 

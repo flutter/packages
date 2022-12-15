@@ -81,6 +81,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public byte[] echoUint8List(@NonNull byte[] aUint8List) {
+    return aUint8List;
+  }
+
+  @Override
   public void noopAsync(Result<Void> result) {
     result.success(null);
   }

@@ -69,6 +69,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aString
   }
 
+  override fun echoUint8List(aUint8List: ByteArray): ByteArray {
+    return aUint8List
+  }
+
   override fun noopAsync(callback: () -> Unit) {
     callback()
   }
