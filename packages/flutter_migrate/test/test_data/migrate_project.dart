@@ -101,7 +101,7 @@ class MigrateProject extends Project {
     ], workingDirectory: dir.path);
 
     if (Platform.isWindows) {
-      await processManager.run(<String>[
+      ProcessResult res = await processManager.run(<String>[
         'robocopy',
         tempDir.path,
         dir.path,
@@ -111,14 +111,20 @@ class MigrateProject extends Project {
         '/V',
         '/mov',
       ]);
-      await processManager.run(<String>[
+      print('ROBOCOPY');
+      print(res.stderr);
+      print(res.stdout);
+      res = await processManager.run(<String>[
         'takeown',
         '/f',
         dir.path,
         '/r',
       ]);
+      print('TAKEDOWN');
+      print(res.stderr);
+      print(res.stdout);
       // Add full access permissions to Users
-      await processManager.run(<String>[
+      res = await processManager.run(<String>[
         'icacls',
         dir.path,
         '/q',
@@ -127,6 +133,9 @@ class MigrateProject extends Project {
         '/grant',
         'Users:F',
       ]);
+      print('ICACLS');
+      print(res.stderr);
+      print(res.stdout);
     } else {
       // This cp command changes the symlinks to real files so the tool can edit them.
       await processManager.run(<String>[
