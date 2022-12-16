@@ -112,30 +112,30 @@ Modified files:
       return;
     }
     // Flutter Stable 2.0.0 hash: 60bd88df915880d23877bfc1602e8ddcf4c4dd2a
-    await MigrateProject.installProject('version:2.0.0_stable', tempDir);
-//         main: '''
-// import 'package:flutter/material.dart';
+    await MigrateProject.installProject('version:2.0.0_stable', tempDir,
+        main: '''
+import 'package:flutter/material.dart';
 
-// void main() {
-//   runApp(const MyApp());
-// }
+void main() {
+  runApp(const MyApp());
+}
 
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: Container(),
-//     );
-//   }
-// }
-// ''');
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Container(),
+    );
+  }
+}
+''');
     ProcessResult result = await runMigrateCommand(<String>[
       'start',
       '--verbose',
