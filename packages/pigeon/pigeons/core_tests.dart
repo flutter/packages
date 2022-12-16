@@ -4,6 +4,12 @@
 
 import 'package:pigeon/pigeon.dart';
 
+enum AnEnum {
+  one,
+  two,
+  three,
+}
+
 // A class containing all supported types.
 class AllTypes {
   bool? aBool;
@@ -21,6 +27,7 @@ class AllTypes {
   List<List<bool?>?>? nestedList;
   Map<String?, String?>? mapWithAnnotations;
   Map<String?, Object?>? mapWithObject;
+  AnEnum? anEnum;
 }
 
 // A class for testing nested object handling.
@@ -64,9 +71,21 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoInt:')
   int echoInt(int anInt);
 
-  /// Returns the passed in boolean asynchronously.
+  /// Returns passed in double.
+  @ObjCSelector('echoDouble:')
+  double echoDouble(double aDouble);
+
+  /// Returns the passed in boolean.
   @ObjCSelector('echoBool:')
   bool echoBool(bool aBool);
+
+  /// Returns the passed in string.
+  @ObjCSelector('echoString:')
+  String echoString(String aString);
+
+  /// Returns the passed in Uint8List.
+  @ObjCSelector('echoUint8List:')
+  Uint8List echoUint8List(Uint8List aUint8List);
 
   // ========== Asyncronous method tests ==========
 

@@ -63,8 +63,23 @@
   return anInt;
 }
 
+- (nullable NSNumber *)echoDouble:(NSNumber *)aDouble
+                            error:(FlutterError *_Nullable *_Nonnull)error {
+  return aDouble
+}
+
 - (nullable NSNumber *)echoBool:(NSNumber *)aBool error:(FlutterError *_Nullable *_Nonnull)error {
   return aBool;
+}
+
+- (nullable NSString *)echoString:(NSString *)aString
+                            error:(FlutterError *_Nullable *_Nonnull)error {
+  return aString;
+}
+
+- (nullable FlutterStandardTypedData *)echoUint8List:(FlutterStandardTypedData *)aUint8List
+                                               error:(FlutterError *_Nullable *_Nonnull)error {
+  return aUint8List;
 }
 
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
