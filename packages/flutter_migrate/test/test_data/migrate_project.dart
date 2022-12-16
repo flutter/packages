@@ -143,6 +143,15 @@ class MigrateProject extends Project {
       print('TAKEDOWN');
       print(res.stderr);
       print(res.stdout);
+      res = await processManager.run(<String>[
+        'takeown',
+        '/f',
+        '${dir.path}\\lib\\main.dart',
+        '/r',
+      ]);
+      print('TAKEDOWN');
+      print(res.stderr);
+      print(res.stdout);
       // Add full access permissions to Users
       res = await processManager.run(<String>[
         'icacls',
