@@ -61,6 +61,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           <bool>[true, false],
           <bool>[false, true]
         ],
+        anEnum: AnEnum.two,
       );
 
       final AllTypes echoObject = await api.echoAllTypes(sentObject);
@@ -90,6 +91,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           true);
       expect(
           mapEquals(echoObject.mapWithObject, sentObject.mapWithObject), true);
+      expect(echoObject.anEnum, sentObject.anEnum);
     });
 
     testWidgets('errors are returned correctly', (WidgetTester _) async {
@@ -143,9 +145,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int inInt = -13;
-      final int anInt = await api.echoInt(inInt);
-      expect(anInt, inInt);
+      const int sentInt = -13;
+      final int receivedInt = await api.echoInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Doubles serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentDouble = 2.0694;
+      final double receivedDouble = await api.echoDouble(sentDouble);
+      expect(receivedDouble, sentDouble);
     });
 
     testWidgets('booleans serialize and deserialize correctly',
@@ -157,6 +168,28 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         expect(receivedBool, sentBool);
       }
     });
+
+    testWidgets('strings serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String sentString = "I'm a computer";
+      final String receivedString = await api.echoString(sentString);
+      expect(receivedString, sentString);
+    });
+
+    // TODO(stuartmorgan): Enable these once they work for all generators;
+    // currently at least Swift is broken.
+    // TODO(tarrinneal): Finish tests for int lists once issue solved.
+    // See https://github.com/flutter/flutter/issues/115906
+    // testWidgets('Uint8List serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    //   final List<int> data = [102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
+    //   final Uint8List sentUint8List = Uint8List.fromList(data);
+    //   final Uint8List receivedUint8List =
+    //       await api.echoUint8List(sentUint8List);
+    //   expect(receivedUint8List, sentUint8List);
+    // });
   });
 
   group('Host async API tests', () {

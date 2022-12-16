@@ -57,8 +57,20 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return anInt
   }
 
+  override fun echoDouble(aDouble: Double): Double {
+    return aDouble
+  }
+
   override fun echoBool(aBool: Boolean): Boolean {
     return aBool
+  }
+
+  override fun echoString(aString: String): String {
+    return aString
+  }
+
+  override fun echoUint8List(aUint8List: ByteArray): ByteArray {
+    return aUint8List
   }
 
   override fun noopAsync(callback: () -> Unit) {

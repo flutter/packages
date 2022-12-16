@@ -11,6 +11,12 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+enum AnEnum {
+  one,
+  two,
+  three,
+}
+
 class AllTypes {
   AllTypes({
     this.aBool,
@@ -26,6 +32,7 @@ class AllTypes {
     this.nestedList,
     this.mapWithAnnotations,
     this.mapWithObject,
+    this.anEnum,
   });
 
   bool? aBool;
@@ -41,6 +48,7 @@ class AllTypes {
   List<List<bool?>?>? nestedList;
   Map<String?, String?>? mapWithAnnotations;
   Map<String?, Object?>? mapWithObject;
+  AnEnum? anEnum;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -57,6 +65,7 @@ class AllTypes {
     pigeonMap['nestedList'] = nestedList;
     pigeonMap['mapWithAnnotations'] = mapWithAnnotations;
     pigeonMap['mapWithObject'] = mapWithObject;
+    pigeonMap['anEnum'] = anEnum?.index;
     return pigeonMap;
   }
 
@@ -80,6 +89,9 @@ class AllTypes {
               ?.cast<String?, String?>(),
       mapWithObject: (pigeonMap['mapWithObject'] as Map<Object?, Object?>?)
           ?.cast<String?, Object?>(),
+      anEnum: pigeonMap['anEnum'] != null
+          ? AnEnum.values[pigeonMap['anEnum']! as int]
+          : null,
     );
   }
 }
@@ -347,7 +359,37 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns the passed in boolean asynchronously.
+  /// Returns passed in double.
+  Future<double> echoDouble(double arg_aDouble) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoDouble', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_aDouble]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as double?)!;
+    }
+  }
+
+  /// Returns the passed in boolean.
   Future<bool> echoBool(bool arg_aBool) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.echoBool', codec,
@@ -374,6 +416,66 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (replyMap['result'] as bool?)!;
+    }
+  }
+
+  /// Returns the passed in string.
+  Future<String> echoString(String arg_aString) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoString', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_aString]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as String?)!;
+    }
+  }
+
+  /// Returns the passed in Uint8List.
+  Future<Uint8List> echoUint8List(Uint8List arg_aUint8List) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoUint8List', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_aUint8List]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as Uint8List?)!;
     }
   }
 
