@@ -141,15 +141,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return true;
   }
 
-  /// Calls [pop] repeatedly until the predicate returns true.
+  /// Calls [pop] repeatedly until the predicate returns `true`.
   void popUntil(bool Function(RouteMatch) predicate) {
-    bool hasPopped = false;
     while (!predicate(_matchList.last)) {
-      hasPopped = true;
-      _matchList.pop();
-    }
-    if (hasPopped) {
-      notifyListeners();
+      pop();
     }
   }
 
