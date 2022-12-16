@@ -62,7 +62,7 @@ void main() {
 
       await tester.pumpAndSettle();
       expect(goRouter.routerDelegate.matches.matches.length, 3);
-      goRouter.routerDelegate.addListener(expectAsync0(() {}));
+      goRouter.routerDelegate.addListener(expectAsync0(count: 2, () {}));
       final RouteMatch second = goRouter.routerDelegate.matches.matches[1];
       final RouteMatch last = goRouter.routerDelegate.matches.matches.last;
 
