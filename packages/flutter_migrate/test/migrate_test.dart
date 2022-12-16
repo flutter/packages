@@ -2,9 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter_migrate/src/base/common.dart';
 import 'package:flutter_migrate/src/base/file_system.dart';
 import 'package:flutter_migrate/src/base/io.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
+import 'package:flutter_migrate/src/base/signals.dart';
 import 'package:flutter_migrate/src/base/terminal.dart';
 import 'package:process/process.dart';
 
@@ -20,11 +22,13 @@ void main() {
   late Directory tempDir;
   late BufferLogger logger;
   late ProcessManager processManager;
+  late FileSystem fileSystem;
 
   setUp(() async {
     tempDir = createResolvedTempDirectorySync('run_test.');
     logger = BufferLogger.test();
     processManager = const LocalProcessManager();
+    fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
   });
 
   tearDown(() async {
@@ -32,8 +36,10 @@ void main() {
   });
 
   Future<bool> hasFlutterEnvironment() async {
+    final String flutterRoot = getFlutterRoot();
+    final String flutterExecutable = fileSystem.path.join(flutterRoot, 'bin', 'flutter${isWindows ? '.bat' : ''}');
     final ProcessResult result = await Process
-        .run('flutter', <String>['analyze', '--suggestions', '--machine']);
+        .run(flutterExecutable, <String>['analyze', '--suggestions', '--machine']);
     if (result.exitCode != 0) {
       return false;
     }
