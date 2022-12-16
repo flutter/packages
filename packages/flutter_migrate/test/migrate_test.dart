@@ -12,7 +12,6 @@ import 'package:process/process.dart';
 
 import 'src/common.dart';
 import 'src/context.dart';
-import 'src/test_utils.dart';
 import 'test_data/migrate_project.dart';
 
 // This file contains E2E test that execute the core migrate commands
@@ -25,10 +24,10 @@ void main() {
   late FileSystem fileSystem;
 
   setUp(() async {
-    tempDir = createResolvedTempDirectorySync('run_test.');
     logger = BufferLogger.test();
     processManager = const LocalProcessManager();
     fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
+    tempDir = fileSystem.systemTempDirectory.createTempSync('flutter_run_test');
   });
 
   tearDown(() async {
