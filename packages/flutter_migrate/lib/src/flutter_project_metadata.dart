@@ -9,6 +9,41 @@ import 'base/file_system.dart';
 import 'base/logger.dart';
 import 'base/project.dart';
 
+/// Represents subdirectories of the flutter project that can be independently created.
+///
+/// This includes each supported platform as well as a component that represents the
+/// root directory of the project.
+enum FlutterProjectComponent {
+  root,
+  android,
+  ios,
+  linux,
+  macos,
+  web,
+  windows,
+  fuchsia,
+}
+
+extension SupportedPlatformExtension on SupportedPlatform {
+  FlutterProjectComponent toFlutterProjectComponent() {
+    final String platformName = toString().split('.').last;
+    return FlutterProjectComponent.values.firstWhere(
+        (FlutterProjectComponent e) =>
+            e.toString() == 'FlutterProjectComponent.$platformName');
+  }
+}
+
+extension FlutterProjectComponentExtension on FlutterProjectComponent {
+  SupportedPlatform? toSupportedPlatform() {
+    final String platformName = toString().split('.').last;
+    if (platformName == 'root') {
+      return null;
+    }
+    return SupportedPlatform.values.firstWhere((SupportedPlatform e) =>
+        e.toString() == 'SupportedPlatform.$platformName');
+  }
+}
+
 enum FlutterProjectType {
   /// This is the default project with the user-managed host code.
   /// It is different than the "module" template in that it exposes and doesn't
@@ -226,10 +261,10 @@ ${migrateConfig.getOutputFileString()}''';
 /// used to add support for new platforms, so the base and create revision may not always be the same.
 class MigrateConfig {
   MigrateConfig(
-      {Map<SupportedPlatform, MigratePlatformConfig>? platformConfigs,
+      {Map<FlutterProjectComponent, MigratePlatformConfig>? platformConfigs,
       this.unmanagedFiles = kDefaultUnmanagedFiles})
-      : platformConfigs =
-            platformConfigs ?? <SupportedPlatform, MigratePlatformConfig>{};
+      : platformConfigs = platformConfigs ??
+            <FlutterProjectComponent, MigratePlatformConfig>{};
 
   /// A mapping of the files that are unmanaged by defult for each platform.
   static const List<String> kDefaultUnmanagedFiles = <String>[
@@ -238,7 +273,7 @@ class MigrateConfig {
   ];
 
   /// The metadata for each platform supported by the project.
-  final Map<SupportedPlatform, MigratePlatformConfig> platformConfigs;
+  final Map<FlutterProjectComponent, MigratePlatformConfig> platformConfigs;
 
   /// A list of paths relative to this file the migrate tool should ignore.
   ///
@@ -261,17 +296,23 @@ class MigrateConfig {
     required Logger logger,
   }) {
     final FlutterProject flutterProject = FlutterProject(projectDirectory);
-    platforms ??= flutterProject.getSupportedPlatforms(includeRoot: true);
+    platforms ??= flutterProject.getSupportedPlatforms();
 
+    final List<FlutterProjectComponent> components =
+        <FlutterProjectComponent>[];
     for (final SupportedPlatform platform in platforms) {
-      if (platformConfigs.containsKey(platform)) {
+      components.add(platform.toFlutterProjectComponent());
+    }
+    components.add(FlutterProjectComponent.root);
+    for (final FlutterProjectComponent component in components) {
+      if (platformConfigs.containsKey(component)) {
         if (update) {
-          platformConfigs[platform]!.baseRevision = currentRevision;
+          platformConfigs[component]!.baseRevision = currentRevision;
         }
       } else {
         if (create) {
-          platformConfigs[platform] = MigratePlatformConfig(
-              platform: platform,
+          platformConfigs[component] = MigratePlatformConfig(
+              component: component,
               createRevision: createRevision,
               baseRevision: currentRevision);
         }
@@ -287,7 +328,7 @@ class MigrateConfig {
     }
 
     String platformsString = '';
-    for (final MapEntry<SupportedPlatform, MigratePlatformConfig> entry
+    for (final MapEntry<FlutterProjectComponent, MigratePlatformConfig> entry
         in platformConfigs.entries) {
       platformsString +=
           '\n    - platform: ${entry.key.toString().split('.').last}\n      create_revision: ${entry.value.createRevision == null ? 'null' : "${entry.value.createRevision}"}\n      base_revision: ${entry.value.baseRevision == null ? 'null' : "${entry.value.baseRevision}"}';
@@ -327,12 +368,13 @@ migration:
                 'base_revision': String,
               },
               logger)) {
-            final SupportedPlatform platformValue = SupportedPlatform.values
-                .firstWhere((SupportedPlatform val) =>
+            final FlutterProjectComponent component = FlutterProjectComponent
+                .values
+                .firstWhere((FlutterProjectComponent val) =>
                     val.toString() ==
-                    'SupportedPlatform.${platformYamlMap['platform'] as String}');
-            platformConfigs[platformValue] = MigratePlatformConfig(
-              platform: platformValue,
+                    'FlutterProjectComponent.${platformYamlMap['platform'] as String}');
+            platformConfigs[component] = MigratePlatformConfig(
+              component: component,
               createRevision: platformYamlMap['create_revision'] as String?,
               baseRevision: platformYamlMap['base_revision'] as String?,
             );
@@ -357,10 +399,10 @@ migration:
 /// Holds the revisions for a single platform for use by the flutter migrate command.
 class MigratePlatformConfig {
   MigratePlatformConfig(
-      {required this.platform, this.createRevision, this.baseRevision});
+      {required this.component, this.createRevision, this.baseRevision});
 
   /// The platform this config describes.
-  SupportedPlatform platform;
+  FlutterProjectComponent component;
 
   /// The Flutter SDK revision this platform was created by.
   ///
@@ -373,7 +415,7 @@ class MigratePlatformConfig {
   String? baseRevision;
 
   bool equals(MigratePlatformConfig other) {
-    return platform == other.platform &&
+    return component == other.component &&
         createRevision == other.createRevision &&
         baseRevision == other.baseRevision;
   }

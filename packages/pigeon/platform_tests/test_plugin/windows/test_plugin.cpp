@@ -9,22 +9,97 @@
 #include <windows.h>
 
 #include <memory>
+#include <optional>
+#include <string>
+
+#include "pigeon/core_tests.gen.h"
 
 namespace test_plugin {
+
+using core_tests_pigeontest::AllTypes;
+using core_tests_pigeontest::AllTypesWrapper;
+using core_tests_pigeontest::ErrorOr;
+using core_tests_pigeontest::FlutterError;
+using core_tests_pigeontest::FlutterIntegrationCoreApi;
+using core_tests_pigeontest::HostIntegrationCoreApi;
 
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
-  auto plugin = std::make_unique<TestPlugin>();
+  auto plugin = std::make_unique<TestPlugin>(registrar->messenger());
 
-  // This plugin is currently a no-op since only unit tests have been set up.
-  //  In the future, this will register Pigeon APIs used in integration tests.
+  HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
 
   registrar->AddPlugin(std::move(plugin));
 }
 
-TestPlugin::TestPlugin() {}
+TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger)
+    : flutter_api_(
+          std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)) {}
 
 TestPlugin::~TestPlugin() {}
+
+std::optional<FlutterError> TestPlugin::Noop() { return std::nullopt; }
+
+ErrorOr<AllTypes> TestPlugin::EchoAllTypes(const AllTypes& everything) {
+  return everything;
+}
+
+std::optional<FlutterError> TestPlugin::ThrowError() {
+  return FlutterError("An error");
+}
+
+ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedString(
+    const AllTypesWrapper& wrapper) {
+  const std::string* inner_string = wrapper.values().a_string();
+  return inner_string ? std::optional<std::string>(*inner_string)
+                      : std::nullopt;
+}
+
+ErrorOr<AllTypesWrapper> TestPlugin::CreateNestedString(
+    const std::string& string) {
+  AllTypes inner_object;
+  inner_object.set_a_string(string);
+  AllTypesWrapper wrapper;
+  wrapper.set_values(inner_object);
+  return wrapper;
+}
+
+ErrorOr<AllTypes> TestPlugin::SendMultipleTypes(bool a_bool, int64_t an_int,
+                                                const std::string& a_string) {
+  AllTypes someTypes;
+  someTypes.set_a_bool(a_bool);
+  someTypes.set_an_int(an_int);
+  someTypes.set_a_string(a_string);
+  return someTypes;
+};
+
+ErrorOr<int64_t> TestPlugin::EchoInt(int64_t an_int) { return an_int; }
+
+ErrorOr<bool> TestPlugin::EchoBool(bool a_bool) { return a_bool; }
+
+void TestPlugin::NoopAsync(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  result(std::nullopt);
+}
+
+void TestPlugin::EchoAsyncString(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  result(a_string);
+}
+
+void TestPlugin::CallFlutterNoop(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  flutter_api_->noop([result]() { result(std::nullopt); });
+}
+
+void TestPlugin::CallFlutterEchoString(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  flutter_api_->echoString(
+      a_string,
+      [result](const std::string& flutter_string) { result(flutter_string); });
+}
 
 }  // namespace test_plugin

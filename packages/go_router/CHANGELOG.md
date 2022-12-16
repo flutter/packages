@@ -1,6 +1,27 @@
-## 5.2.0
+## 5.3.0
 
 - Adds `popUntil` method to `GoRouterDelegate`, `GoRouter` and `GoRouterHelper`. 
+
+## 5.2.4
+
+- Fixes crashes when using async redirect.
+
+## 5.2.3
+
+- Fixes link for router configuration and sub-routes
+
+## 5.2.2
+
+- Fixes `pop` and `push` to update urls correctly.
+
+## 5.2.1
+
+- Refactors `GoRouter.pop` to be able to pop individual pageless route with result.
+
+## 5.2.0
+
+- Fixes `GoRouterState.location` and `GoRouterState.param` to return correct value.
+- Cleans up `RouteMatch` and `RouteMatchList` API.
 
 ## 5.1.10
 

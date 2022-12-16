@@ -6,9 +6,9 @@ import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
 import 'logging.dart';
+import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
-
 export 'route.dart';
 export 'state.dart';
 
@@ -20,74 +20,95 @@ class RouteConfiguration {
     required this.redirectLimit,
     required this.topRedirect,
     required this.navigatorKey,
-  }) {
+  })  : assert(_debugCheckPath(routes, true)),
+        assert(
+            _debugVerifyNoDuplicatePathParameter(routes, <String, GoRoute>{})),
+        assert(_debugCheckParentNavigatorKeys(
+            routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
     _cacheNameToPath('', routes);
-
     log.info(_debugKnownRoutes());
+  }
 
-    assert(() {
-      for (final RouteBase route in routes) {
-        if (route is GoRoute && !route.path.startsWith('/')) {
+  static bool _debugCheckPath(List<RouteBase> routes, bool isTopLevel) {
+    for (final RouteBase route in routes) {
+      late bool subRouteIsTopLevel;
+      if (route is GoRoute) {
+        if (isTopLevel) {
           assert(route.path.startsWith('/'),
-              'top-level path must start with "/": ${route.path}');
-        } else if (route is ShellRoute) {
-          for (final RouteBase route in routes) {
-            if (route is GoRoute) {
-              assert(route.path.startsWith('/'),
-                  'top-level path must start with "/": ${route.path}');
-            }
-          }
+              'top-level path must start with "/": $route');
+        } else {
+          assert(!route.path.startsWith('/') && !route.path.endsWith('/'),
+              'sub-route path may not start or end with /: $route');
         }
+        subRouteIsTopLevel = false;
+      } else if (route is ShellRoute) {
+        subRouteIsTopLevel = isTopLevel;
       }
+      _debugCheckPath(route.routes, subRouteIsTopLevel);
+    }
+    return true;
+  }
 
-      // Check that each parentNavigatorKey refers to either a ShellRoute's
-      // navigatorKey or the root navigator key.
-      void checkParentNavigatorKeys(
-          List<RouteBase> routes, List<GlobalKey<NavigatorState>> allowedKeys) {
-        for (final RouteBase route in routes) {
-          if (route is GoRoute) {
-            final GlobalKey<NavigatorState>? parentKey =
-                route.parentNavigatorKey;
-            if (parentKey != null) {
-              // Verify that the root navigator or a ShellRoute ancestor has a
-              // matching navigator key.
-              assert(
-                  allowedKeys.contains(parentKey),
-                  'parentNavigatorKey $parentKey must refer to'
-                  " an ancestor ShellRoute's navigatorKey or GoRouter's"
-                  ' navigatorKey');
+  // Check that each parentNavigatorKey refers to either a ShellRoute's
+  // navigatorKey or the root navigator key.
+  static bool _debugCheckParentNavigatorKeys(
+      List<RouteBase> routes, List<GlobalKey<NavigatorState>> allowedKeys) {
+    for (final RouteBase route in routes) {
+      if (route is GoRoute) {
+        final GlobalKey<NavigatorState>? parentKey = route.parentNavigatorKey;
+        if (parentKey != null) {
+          // Verify that the root navigator or a ShellRoute ancestor has a
+          // matching navigator key.
+          assert(
+              allowedKeys.contains(parentKey),
+              'parentNavigatorKey $parentKey must refer to'
+              " an ancestor ShellRoute's navigatorKey or GoRouter's"
+              ' navigatorKey');
 
-              checkParentNavigatorKeys(
-                route.routes,
-                <GlobalKey<NavigatorState>>[
-                  // Once a parentNavigatorKey is used, only that navigator key
-                  // or keys above it can be used.
-                  ...allowedKeys.sublist(0, allowedKeys.indexOf(parentKey) + 1),
-                ],
-              );
-            } else {
-              checkParentNavigatorKeys(
-                route.routes,
-                <GlobalKey<NavigatorState>>[
-                  ...allowedKeys,
-                ],
-              );
-            }
-          } else if (route is ShellRoute && route.navigatorKey != null) {
-            checkParentNavigatorKeys(
-              route.routes,
-              <GlobalKey<NavigatorState>>[
-                ...allowedKeys..add(route.navigatorKey)
-              ],
-            );
-          }
+          _debugCheckParentNavigatorKeys(
+            route.routes,
+            <GlobalKey<NavigatorState>>[
+              // Once a parentNavigatorKey is used, only that navigator key
+              // or keys above it can be used.
+              ...allowedKeys.sublist(0, allowedKeys.indexOf(parentKey) + 1),
+            ],
+          );
+        } else {
+          _debugCheckParentNavigatorKeys(
+            route.routes,
+            <GlobalKey<NavigatorState>>[
+              ...allowedKeys,
+            ],
+          );
         }
+      } else if (route is ShellRoute && route.navigatorKey != null) {
+        _debugCheckParentNavigatorKeys(
+          route.routes,
+          <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
+        );
       }
+    }
+    return true;
+  }
 
-      checkParentNavigatorKeys(
-          routes, <GlobalKey<NavigatorState>>[navigatorKey]);
-      return true;
-    }());
+  static bool _debugVerifyNoDuplicatePathParameter(
+      List<RouteBase> routes, Map<String, GoRoute> usedPathParams) {
+    for (final RouteBase route in routes) {
+      if (route is! GoRoute) {
+        continue;
+      }
+      for (final String pathParam in route.pathParams) {
+        if (usedPathParams.containsKey(pathParam)) {
+          final bool sameRoute = usedPathParams[pathParam] == route;
+          throw GoError(
+              "duplicate path parameter, '$pathParam' found in ${sameRoute ? '$route' : '${usedPathParams[pathParam]}, and $route'}");
+        }
+        usedPathParams[pathParam] = route;
+      }
+      _debugVerifyNoDuplicatePathParameter(route.routes, usedPathParams);
+      route.pathParams.forEach(usedPathParams.remove);
+    }
+    return true;
   }
 
   /// The list of top level routes used by [GoRouterDelegate].
