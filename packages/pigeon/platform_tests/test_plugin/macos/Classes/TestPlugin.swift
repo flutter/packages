@@ -52,8 +52,20 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anInt
   }
 
+  func echoDouble(aDouble: Double) -> Double {
+    return aDouble
+  }
+
   func echoBool(aBool: Bool) -> Bool {
     return aBool
+  }
+
+  func echoString(aString: String) -> String {
+    return aString
+  }
+
+  func echoUint8List(aUint8List: [UInt8]) -> [UInt8] {
+    return aUint8List
   }
 
   func noopAsync(completion: @escaping () -> Void) {
