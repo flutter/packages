@@ -60,9 +60,18 @@ extension GoRouterHelper on BuildContext {
 
   /// Pop the top page off the Navigator's page stack by calling
   /// [Navigator.pop].
+  ///
+  /// See also:
+  /// * [popUntil] which calls [pop] repeatedly until the predicate returns
+  ///   `true`.
   void pop() => GoRouter.of(this).pop();
 
   /// Calls [pop] repeatedly until the predicate returns true.
+  ///
+  /// See also:
+  ///
+  /// * [pop] which pops the top page off the Navigator's page stack by calling
+  ///   [Navigator.pop].
   void popUntil(bool Function(RouteMatch) predicate) =>
       GoRouter.of(this).popUntil(predicate);
 
