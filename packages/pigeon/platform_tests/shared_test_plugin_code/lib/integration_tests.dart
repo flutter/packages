@@ -177,7 +177,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('Uint8List serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-      final List<int> data = [102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0
+      ];
       final Uint8List sentUint8List = Uint8List.fromList(data);
       final Uint8List receivedUint8List =
           await api.echoUint8List(sentUint8List);
