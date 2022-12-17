@@ -17,7 +17,8 @@
 namespace test_plugin {
 
 using core_tests_pigeontest::AllTypes;
-using core_tests_pigeontest::AllTypesWrapper;
+using core_tests_pigeontest::AllNullableTypes;
+using core_tests_pigeontest::AllNullableTypesWrapper;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::FlutterIntegrationCoreApi;
@@ -45,34 +46,13 @@ ErrorOr<AllTypes> TestPlugin::EchoAllTypes(const AllTypes& everything) {
   return everything;
 }
 
+ErrorOr<AllNullableTypes> TestPlugin::EchoAllNullableTypes(const AllNullableTypes& everything) {
+  return everything;
+}
+
 std::optional<FlutterError> TestPlugin::ThrowError() {
   return FlutterError("An error");
 }
-
-ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedString(
-    const AllTypesWrapper& wrapper) {
-  const std::string* inner_string = wrapper.values().a_string();
-  return inner_string ? std::optional<std::string>(*inner_string)
-                      : std::nullopt;
-}
-
-ErrorOr<AllTypesWrapper> TestPlugin::CreateNestedString(
-    const std::string& string) {
-  AllTypes inner_object;
-  inner_object.set_a_string(string);
-  AllTypesWrapper wrapper;
-  wrapper.set_values(inner_object);
-  return wrapper;
-}
-
-ErrorOr<AllTypes> TestPlugin::SendMultipleTypes(bool a_bool, int64_t an_int,
-                                                const std::string& a_string) {
-  AllTypes someTypes;
-  someTypes.set_a_bool(a_bool);
-  someTypes.set_an_int(an_int);
-  someTypes.set_a_string(a_string);
-  return someTypes;
-};
 
 ErrorOr<int64_t> TestPlugin::EchoInt(int64_t an_int) { return an_int; }
 
@@ -88,6 +68,54 @@ ErrorOr<std::vector<uint8_t>> TestPlugin::EchoUint8List(
     const std::vector<uint8_t>& a_uint8_list) {
   return a_uint8_list;
 }
+
+ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(const AllNullableTypesWrapper& wrapper) {
+  const std::string* inner_string = wrapper.values().a_nullable_string();
+  return inner_string ? std::optional<std::string>(*inner_string)
+                      : std::nullopt;
+}
+
+ErrorOr<AllNullableTypesWrapper> TestPlugin::CreateNestedNullableString(const std::string* nullable_string) {
+  AllNullableTypes inner_object;
+  inner_object.set_a_nullable_string(*nullable_string);
+  AllNullableTypesWrapper wrapper;
+  wrapper.set_values(inner_object);
+  return wrapper;
+}
+
+ErrorOr<AllNullableTypes> TestPlugin::SendMultipleNullableTypes(const bool* a_nullable_bool, const int64_t* a_nullable_int, const std::string* a_nullable_string) {
+  AllNullableTypes someTypes;
+  someTypes.set_a_nullable_bool(a_nullable_bool);
+  someTypes.set_a_nullable_int(a_nullable_int);
+  someTypes.set_a_nullable_string(*a_nullable_string);
+  return someTypes;
+};
+
+ErrorOr<std::optional<int64_t>> TestPlugin::EchoNullableInt(const int64_t* a_nullable_int) {
+  if (!a_nullable_int) { return std::nullopt; }
+  return *a_nullable_int; *a_nullable_int;
+};
+
+ErrorOr<std::optional<double>> TestPlugin::EchoNullableDouble(const double* a_nullable_double) {
+  if (!a_nullable_double) { return std::nullopt; }
+  return *a_nullable_double; *a_nullable_double;
+};
+
+ErrorOr<std::optional<bool>> TestPlugin::EchoNullableBool(const bool* a_nullable_bool) {
+  if (!a_nullable_bool) { return std::nullopt; }
+  return *a_nullable_bool; *a_nullable_bool;
+};
+
+ErrorOr<std::optional<std::string>> TestPlugin::EchoNullableString(const std::string* a_nullable_string) {
+  if (!a_nullable_string) { return std::nullopt; }
+  return *a_nullable_string; *a_nullable_string;
+};
+
+ErrorOr<std::optional<std::vector<uint8_t>>> TestPlugin::EchoNullableUint8List(const std::vector<uint8_t>* a_nullable_uint8_list){
+  if (!a_nullable_uint8_list) { return std::nullopt; }
+  return *a_nullable_uint8_list; *a_nullable_uint8_list;
+};
+
 void TestPlugin::NoopAsync(
     std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);
