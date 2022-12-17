@@ -23,6 +23,6 @@ void main() {
       ],
     );
 
-    expect(shell.heroController, isNotNull);
+    expect(shell.goHero, isNotNull);
   });
 }

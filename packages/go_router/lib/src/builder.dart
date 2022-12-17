@@ -212,7 +212,7 @@ class RouteBuilder {
 
       // Build the Navigator
       final Widget child = HeroControllerScope(
-        controller: route.heroController,
+        controller: route.goHero.get(context),
         child: _buildNavigator(
             onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
             observers: observers),
