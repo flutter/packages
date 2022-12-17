@@ -102,7 +102,6 @@ ErrorOr<std::optional<int64_t>> TestPlugin::EchoNullableInt(
     return std::nullopt;
   }
   return *a_nullable_int;
-  *a_nullable_int;
 };
 
 ErrorOr<std::optional<double>> TestPlugin::EchoNullableDouble(
@@ -111,7 +110,6 @@ ErrorOr<std::optional<double>> TestPlugin::EchoNullableDouble(
     return std::nullopt;
   }
   return *a_nullable_double;
-  *a_nullable_double;
 };
 
 ErrorOr<std::optional<bool>> TestPlugin::EchoNullableBool(
@@ -120,7 +118,6 @@ ErrorOr<std::optional<bool>> TestPlugin::EchoNullableBool(
     return std::nullopt;
   }
   return *a_nullable_bool;
-  *a_nullable_bool;
 };
 
 ErrorOr<std::optional<std::string>> TestPlugin::EchoNullableString(
@@ -129,7 +126,6 @@ ErrorOr<std::optional<std::string>> TestPlugin::EchoNullableString(
     return std::nullopt;
   }
   return *a_nullable_string;
-  *a_nullable_string;
 };
 
 ErrorOr<std::optional<std::vector<uint8_t>>> TestPlugin::EchoNullableUint8List(
@@ -138,7 +134,6 @@ ErrorOr<std::optional<std::vector<uint8_t>>> TestPlugin::EchoNullableUint8List(
     return std::nullopt;
   }
   return *a_nullable_uint8_list;
-  *a_nullable_uint8_list;
 };
 
 void TestPlugin::NoopAsync(

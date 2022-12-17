@@ -30,7 +30,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  func echoAllNullableTypes(everything: AllNullableTypes) -> AllNullableTypes {
+  func echoAllNullableTypes(everything: AllNullableTypes?) -> AllNullableTypes? {
     return everything
   }
 
@@ -88,7 +88,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aNullableString
   }
 
-  func echoNullableUint8List(aNullableUint8List: [UInt8]?) -> [UInt8]? {
+  func echoNullableUint8List(aNullableUint8List: FlutterStandardTypedData?) -> FlutterStandardTypedData? {
     return aNullableUint8List
   }
 

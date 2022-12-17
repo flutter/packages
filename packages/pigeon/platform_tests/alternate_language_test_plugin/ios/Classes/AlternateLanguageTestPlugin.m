@@ -31,6 +31,11 @@
   return everything;
 }
 
+- (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
+                                              error:(FlutterError *_Nullable *_Nonnull)error {
+  return everything;
+}
+
 - (void)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
   *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
 }

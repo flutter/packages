@@ -56,15 +56,16 @@ class TestPlugin : public flutter::Plugin,
                             const int64_t* a_nullable_int,
                             const std::string* a_nullable_string) override;
   core_tests_pigeontest::ErrorOr<std::optional<int64_t>> EchoNullableInt(
-      const int64_t* a_nullable_int);
+      const int64_t* a_nullable_int) override;
   core_tests_pigeontest::ErrorOr<std::optional<double>> EchoNullableDouble(
-      const double* a_nullable_double);
+      const double* a_nullable_double) override;
   core_tests_pigeontest::ErrorOr<std::optional<bool>> EchoNullableBool(
-      const bool* a_nullable_bool);
+      const bool* a_nullable_bool) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>> EchoNullableString(
-      const std::string* a_nullable_string);
+      const std::string* a_nullable_string) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::vector<uint8_t>>>
-  EchoNullableUint8List(const std::vector<uint8_t>* a_nullable_uint8_list);
+  EchoNullableUint8List(
+      const std::vector<uint8_t>* a_nullable_uint8_list) override;
 
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>

@@ -38,7 +38,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public @NonNull AllNullableTypes echoAllNullableTypes(@NonNull AllNullableTypes everything) {
+  public @Nullable AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything) {
     return everything;
   }
 

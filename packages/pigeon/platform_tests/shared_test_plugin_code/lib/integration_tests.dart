@@ -46,14 +46,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     aFloatArray: Float64List.fromList(<double>[2.71828, 3.14159]),
     aList: <Object?>['Thing 1', 2, true, 3.14],
     aMap: <Object?, Object?>{'a': 1, 'b': 2.0, 'c': 'three', 'd': false},
-    nestedList: <List<bool>>[
-      <bool>[true, false],
-      <bool>[false, true]
-    ],
-    mapWithAnnotations: <String?, String?>{'key': 'value'},
-    mapWithObject: <String?, Object?>{
-      'key': <String?, String?>{'key': 'value'}
-    },
     anEnum: AnEnum.two,
   );
 
@@ -105,9 +97,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject.aFloatArray, genericAllTypes.aFloatArray);
       expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
       expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
-      expect(echoObject.nestedList.length, genericAllTypes.nestedList.length);
       // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
       // https://github.com/flutter/flutter/issues/116117
+      // expect(echoObject.nestedList.length, genericAllTypes.nestedList.length);
       //for (int i = 0; i < echoObject.nestedList!.length; i++) {
       //  expect(listEquals(echoObject.nestedList![i], genericAllTypes.nestedList![i]),
       //      true);
@@ -125,46 +117,47 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllNullableTypes echoObject =
+      final AllNullableTypes? echoObject =
           await api.echoAllNullableTypes(genericAllNullableTypes);
-      expect(echoObject.aNullableBool, genericAllNullableTypes.aNullableBool);
-      expect(echoObject.aNullableInt, genericAllNullableTypes.aNullableInt);
+      expect(echoObject?.aNullableBool, genericAllNullableTypes.aNullableBool);
+      expect(echoObject?.aNullableInt, genericAllNullableTypes.aNullableInt);
       expect(
-          echoObject.aNullableDouble, genericAllNullableTypes.aNullableDouble);
+          echoObject?.aNullableDouble, genericAllNullableTypes.aNullableDouble);
       expect(
-          echoObject.aNullableString, genericAllNullableTypes.aNullableString);
-      // TODO(stuartmorgan): Enable these once they work for all generators;
-      // currently at least Swift is broken.
-      // See https://github.com/flutter/flutter/issues/115906
-      //expect(echoObject.aNullableByteArray, genericAllNullableTypes.aNullableByteArray);
-      //expect(echoObject.aNullable4ByteArray, genericAllNullableTypes.aNullable4ByteArray);
-      //expect(echoObject.aNullable8ByteArray, genericAllNullableTypes.aNullable8ByteArray);
-      //expect(echoObject.aNullableFloatArray, genericAllNullableTypes.aNullableFloatArray);
+          echoObject?.aNullableString, genericAllNullableTypes.aNullableString);
+      expect(echoObject?.aNullableByteArray,
+          genericAllNullableTypes.aNullableByteArray);
+      expect(echoObject?.aNullable4ByteArray,
+          genericAllNullableTypes.aNullable4ByteArray);
+      expect(echoObject?.aNullable8ByteArray,
+          genericAllNullableTypes.aNullable8ByteArray);
+      expect(echoObject?.aNullableFloatArray,
+          genericAllNullableTypes.aNullableFloatArray);
       expect(
           listEquals(
-              echoObject.aNullableList, genericAllNullableTypes.aNullableList),
+              echoObject?.aNullableList, genericAllNullableTypes.aNullableList),
           true);
       expect(
           mapEquals(
-              echoObject.aNullableMap, genericAllNullableTypes.aNullableMap),
+              echoObject?.aNullableMap, genericAllNullableTypes.aNullableMap),
           true);
-      expect(echoObject.nullableNestedList?.length,
+      expect(echoObject?.nullableNestedList?.length,
           genericAllNullableTypes.nullableNestedList?.length);
       // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
       // https://github.com/flutter/flutter/issues/116117
-      //for (int i = 0; i < echoObject.nullableNestedList!.length; i++) {
-      //  expect(listEquals(echoObject.nullableNestedList![i], genericAllNullableTypes.nullableNestedList![i]),
+      //for (int i = 0; i < echoObject?.nullableNestedList!.length; i++) {
+      //  expect(listEquals(echoObject?.nullableNestedList![i], genericAllNullableTypes.nullableNestedList![i]),
       //      true);
       //}
       expect(
-          mapEquals(echoObject.nullableMapWithAnnotations,
+          mapEquals(echoObject?.nullableMapWithAnnotations,
               genericAllNullableTypes.nullableMapWithAnnotations),
           true);
       expect(
-          mapEquals(echoObject.nullableMapWithObject,
+          mapEquals(echoObject?.nullableMapWithObject,
               genericAllNullableTypes.nullableMapWithObject),
           true);
-      expect(echoObject.aNullableEnum, genericAllNullableTypes.aNullableEnum);
+      expect(echoObject?.aNullableEnum, genericAllNullableTypes.aNullableEnum);
     });
 
     testWidgets('errors are returned correctly', (WidgetTester _) async {

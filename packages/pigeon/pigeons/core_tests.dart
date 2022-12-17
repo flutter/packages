@@ -17,18 +17,12 @@ class AllTypes {
     this.anInt,
     this.aDouble,
     this.aString,
-    // TODO(stuartmorgan): Enable these once they work for all generators;
-    // currently at least Swift is broken.
-    // See https://github.com/flutter/flutter/issues/115906
-    // this.aByteArray,
-    // this.a4ByteArray,
-    // this.a8ByteArray,
-    // this.aFloatArray,
+    this.aByteArray,
+    this.a4ByteArray,
+    this.a8ByteArray,
+    this.aFloatArray,
     this.aList,
     this.aMap,
-    this.nestedList,
-    this.mapWithAnnotations,
-    this.mapWithObject,
     this.anEnum,
   );
 
@@ -36,27 +30,15 @@ class AllTypes {
   int anInt;
   double aDouble;
   String aString;
-  // TODO(stuartmorgan): Enable these once they work for all generators;
-  // currently at least Swift is broken.
-  // See https://github.com/flutter/flutter/issues/115906
-  // Uint8List aByteArray;
-  // Int32List a4ByteArray;
-  // Int64List a8ByteArray;
-  // Float64List aFloatArray;
+  Uint8List aByteArray;
+  Int32List a4ByteArray;
+  Int64List a8ByteArray;
+  Float64List aFloatArray;
   // ignore: always_specify_types, strict_raw_type
   List aList;
   // ignore: always_specify_types, strict_raw_type
   Map aMap;
-  List<List<bool?>?> nestedList;
-  Map<String?, String?> mapWithAnnotations;
-  Map<String?, Object?> mapWithObject;
   AnEnum anEnum;
-}
-
-// A class for testing nested object handling.
-class AllTypesWrapper {
-  AllTypesWrapper(this.values);
-  AllTypes values;
 }
 
 // A class containing all supported nullable types.
@@ -118,7 +100,7 @@ abstract class HostIntegrationCoreApi {
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypes:')
-  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
+  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
 
   /// Returns an error, to test error handling.
   void throwError();

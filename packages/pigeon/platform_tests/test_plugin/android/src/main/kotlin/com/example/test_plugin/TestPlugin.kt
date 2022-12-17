@@ -36,7 +36,7 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  override fun echoAllNullableTypes(everything: AllNullableTypes): AllNullableTypes {
+  override fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes? {
     return everything
   }
 
