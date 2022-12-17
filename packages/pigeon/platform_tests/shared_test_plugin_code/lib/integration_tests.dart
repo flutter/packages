@@ -40,13 +40,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     anInt: 42,
     aDouble: 3.14159,
     aString: 'Hello host!',
-    // TODO(stuartmorgan): Enable these once they work for all generators;
-    // currently at least Swift is broken.
-    // See https://github.com/flutter/flutter/issues/115906
-    // aByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-    // a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-    // a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-    // aFloatArray: Float64List.fromList(<double>[2.71828, 3.14159]),
+    aByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+    a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+    a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+    aFloatArray: Float64List.fromList(<double>[2.71828, 3.14159]),
     aList: <Object?>['Thing 1', 2, true, 3.14],
     aMap: <Object?, Object?>{'a': 1, 'b': 2.0, 'c': 'three', 'd': false},
     nestedList: <List<bool>>[
@@ -102,13 +99,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject.anInt, genericAllTypes.anInt);
       expect(echoObject.aDouble, genericAllTypes.aDouble);
       expect(echoObject.aString, genericAllTypes.aString);
-      // TODO(stuartmorgan): Enable these once they work for all generators;
-      // currently at least Swift is broken.
-      // See https://github.com/flutter/flutter/issues/115906
-      //expect(echoObject.aByteArray, genericAllTypes.aByteArray);
-      //expect(echoObject.a4ByteArray, genericAllTypes.a4ByteArray);
-      //expect(echoObject.a8ByteArray, genericAllTypes.a8ByteArray);
-      //expect(echoObject.aFloatArray, genericAllTypes.aFloatArray);
+      expect(echoObject.aByteArray, genericAllTypes.aByteArray);
+      expect(echoObject.a4ByteArray, genericAllTypes.a4ByteArray);
+      expect(echoObject.a8ByteArray, genericAllTypes.a8ByteArray);
+      expect(echoObject.aFloatArray, genericAllTypes.aFloatArray);
       expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
       expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
       expect(echoObject.nestedList.length, genericAllTypes.nestedList.length);
@@ -256,19 +250,26 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
     });
 
-    // TODO(stuartmorgan): Enable these once they work for all generators;
-    // currently at least Swift is broken.
-    // TODO(tarrinneal): Finish tests for int lists once issue solved.
-    // See https://github.com/flutter/flutter/issues/115906
-    // testWidgets('Uint8List serialize and deserialize correctly',
-    //     (WidgetTester _) async {
-    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-    //   final List<int> data = [102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
-    //   final Uint8List sentUint8List = Uint8List.fromList(data);
-    //   final Uint8List receivedUint8List =
-    //       await api.echoUint8List(sentUint8List);
-    //   expect(receivedUint8List, sentUint8List);
-    // });
+    testWidgets('Uint8List serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0
+      ];
+      final Uint8List sentUint8List = Uint8List.fromList(data);
+      final Uint8List receivedUint8List =
+          await api.echoUint8List(sentUint8List);
+      expect(receivedUint8List, sentUint8List);
+    });
   });
 
   group('Host async API tests', () {

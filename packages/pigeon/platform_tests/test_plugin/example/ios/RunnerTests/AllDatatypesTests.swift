@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import XCTest
 @testable import test_plugin
 
@@ -40,16 +41,17 @@ class AllDatatypesTests: XCTestCase {
       aNullableInt: 1,
       aNullableDouble: 2.0,
       aNullableString: "123",
-      aNullableByteArray: [UInt8]("1234".data(using: .utf8)!),
-      aNullable4ByteArray: [Int32].init(arrayLiteral: 1, 2, 3, 4),
-      aNullable8ByteArray: [Int64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
-      aNullableFloatArray: [Float64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
+      aNullableByteArray: FlutterStandardTypedData(bytes: "1234".data(using: .utf8)!),
+      aNullable4ByteArray: FlutterStandardTypedData(int32: "1234".data(using: .utf8)!),
+      aNullable8ByteArray: FlutterStandardTypedData(int64: "12345678".data(using: .utf8)!),
+      aNullableFloatArray: FlutterStandardTypedData(float64: "12345678".data(using: .utf8)!),
       aNullableList: [1, 2],
       aNullableMap: ["hello": 1234],
       nullableNestedList: [[true, false], [true]],
       nullableMapWithAnnotations: ["hello": "world"],
       nullableMapWithObject: ["hello": 1234, "goodbye" : "world"]
     )
+    
     let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
