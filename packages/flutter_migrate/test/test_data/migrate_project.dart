@@ -103,20 +103,6 @@ class MigrateProject extends Project {
     if (Platform.isWindows) {
       ProcessResult res;
       res = await processManager.run(<String>[
-        'icacls',
-        tempDir.path,
-      ], workingDirectory: dir.path);
-      print('ICACLS');
-      print(res.stderr);
-      print(res.stdout);
-      res = await processManager.run(<String>[
-        'icacls',
-        dir.path,
-      ], workingDirectory: dir.path);
-      print('ICACLS');
-      print(res.stderr);
-      print(res.stdout);
-      res = await processManager.run(<String>[
         'robocopy',
         tempDir.path,
         dir.path,
@@ -125,9 +111,9 @@ class MigrateProject extends Project {
         '/V',
         '/mov',
       ]);
-      print('ROBOCOPY');
-      print(res.stderr);
-      print(res.stdout);
+      // print('ROBOCOPY');
+      // print(res.stderr);
+      // print(res.stdout);
       res = await processManager.run(<String>[
         'dir',
       ], workingDirectory: dir.path);
@@ -150,6 +136,13 @@ class MigrateProject extends Project {
         '/r',
       ]);
       print('TAKEDOWN');
+      print(res.stderr);
+      print(res.stdout);
+      res = await processManager.run(<String>[
+        'icacls',
+        dir.path,
+      ], workingDirectory: dir.path);
+      print('ICACLS');
       print(res.stderr);
       print(res.stdout);
       // Add full access permissions to Users

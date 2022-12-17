@@ -107,7 +107,7 @@ Modified files:
             .existsSync(),
         true);
     expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
-  }, timeout: const Timeout(Duration(seconds: 500)));
+  }, timeout: const Timeout(Duration(seconds: 500)), skip: isWindows);
 
   // Migrates a clean untouched app generated with flutter create
   testUsingContext('vanilla migrate builds', () async {
@@ -169,7 +169,10 @@ class MyApp extends StatelessWidget {
     print(result.stdout);
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('app-debug.apk'));
-  }, timeout: const Timeout(Duration(seconds: 900)));
+  // Skipped due to being flaky, the build completes successfully, but sometimes
+  // Gradle crashes due to resources on the bot. We should fine tune this to
+  // make it stable.
+  }, timeout: const Timeout(Duration(seconds: 900)), skip: true);
 
   testUsingContext('migrate abandon', () async {
     // Abandon in an empty dir fails.
@@ -438,5 +441,5 @@ flutter:
             .existsSync(),
         true);
     expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
-  }, timeout: const Timeout(Duration(seconds: 500)));
+  }, timeout: const Timeout(Duration(seconds: 500)), skip: isWindows);
 }
