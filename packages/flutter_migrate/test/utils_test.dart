@@ -240,9 +240,15 @@ void main() {
 
     printCommandText('fullstandalone', logger);
     if (isWindows) {
-      expect(logger.statusText, contains(r'dart run <flutter_migrate_dir>\bin\flutter_migrate.dart fullstandalone'));
+      expect(
+          logger.statusText,
+          contains(
+              r'dart run <flutter_migrate_dir>\bin\flutter_migrate.dart fullstandalone'));
     } else {
-      expect(logger.statusText, contains('dart run <flutter_migrate_dir>/bin/flutter_migrate.dart fullstandalone'));
+      expect(
+          logger.statusText,
+          contains(
+              'dart run <flutter_migrate_dir>/bin/flutter_migrate.dart fullstandalone'));
     }
     logger.clear();
   });

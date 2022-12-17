@@ -36,9 +36,10 @@ void main() {
 
   Future<bool> hasFlutterEnvironment() async {
     final String flutterRoot = getFlutterRoot();
-    final String flutterExecutable = fileSystem.path.join(flutterRoot, 'bin', 'flutter${isWindows ? '.bat' : ''}');
-    final ProcessResult result = await Process
-        .run(flutterExecutable, <String>['analyze', '--suggestions', '--machine']);
+    final String flutterExecutable = fileSystem.path
+        .join(flutterRoot, 'bin', 'flutter${isWindows ? '.bat' : ''}');
+    final ProcessResult result = await Process.run(
+        flutterExecutable, <String>['analyze', '--suggestions', '--machine']);
     if (result.exitCode != 0) {
       return false;
     }
@@ -59,8 +60,6 @@ void main() {
       'start',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    print(result.stderr);
-    print(result.stdout);
     expect(result.stdout.toString(), contains('Staging directory created at'));
     const String linesToMatch = '''
 Added files:
@@ -145,8 +144,6 @@ class MyApp extends StatelessWidget {
       'start',
       '--verbose',
     ], workingDirectory: tempDir.path);
-    print(result.stderr);
-    print(result.stdout);
     expect(result.stdout.toString(), contains('Staging directory created at'));
 
     result = await runMigrateCommand(<String>[
@@ -165,13 +162,11 @@ class MyApp extends StatelessWidget {
       'apk',
       '--debug',
     ], workingDirectory: tempDir.path);
-    print(result.stderr);
-    print(result.stdout);
     expect(result.exitCode, 0);
     expect(result.stdout.toString(), contains('app-debug.apk'));
-  // Skipped due to being flaky, the build completes successfully, but sometimes
-  // Gradle crashes due to resources on the bot. We should fine tune this to
-  // make it stable.
+    // Skipped due to being flaky, the build completes successfully, but sometimes
+    // Gradle crashes due to resources on the bot. We should fine tune this to
+    // make it stable.
   }, timeout: const Timeout(Duration(seconds: 900)), skip: true);
 
   testUsingContext('migrate abandon', () async {

@@ -101,8 +101,7 @@ class MigrateProject extends Project {
     ], workingDirectory: dir.path);
 
     if (Platform.isWindows) {
-      ProcessResult res;
-      res = await processManager.run(<String>[
+      ProcessResult res = await processManager.run(<String>[
         'robocopy',
         tempDir.path,
         dir.path,
@@ -111,40 +110,23 @@ class MigrateProject extends Project {
         '/V',
         '/mov',
       ]);
-      // print('ROBOCOPY');
-      // print(res.stderr);
-      // print(res.stdout);
-      res = await processManager.run(<String>[
-        'dir',
-      ], workingDirectory: dir.path);
-      print('DIR');
-      print(res.stderr);
-      print(res.stdout);
+      assert(res.exitCode == 0);
       res = await processManager.run(<String>[
         'takeown',
         '/f',
         dir.path,
         '/r',
       ]);
-      print('TAKEDOWN');
-      print(res.stderr);
-      print(res.stdout);
       res = await processManager.run(<String>[
         'takeown',
         '/f',
         '${dir.path}\\lib\\main.dart',
         '/r',
       ]);
-      print('TAKEDOWN');
-      print(res.stderr);
-      print(res.stdout);
       res = await processManager.run(<String>[
         'icacls',
         dir.path,
       ], workingDirectory: dir.path);
-      print('ICACLS');
-      print(res.stderr);
-      print(res.stdout);
       // Add full access permissions to Users
       res = await processManager.run(<String>[
         'icacls',
@@ -155,9 +137,6 @@ class MigrateProject extends Project {
         '/grant',
         'Users:F',
       ]);
-      print('ICACLS');
-      print(res.stderr);
-      print(res.stdout);
     } else {
       // This cp command changes the symlinks to real files so the tool can edit them.
       await processManager.run(<String>[
