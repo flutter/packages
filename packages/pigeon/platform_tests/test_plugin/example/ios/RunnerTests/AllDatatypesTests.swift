@@ -8,26 +8,26 @@ import XCTest
 class AllDatatypesTests: XCTestCase {
 
   func testAllNull() throws {
-    let everything = AllTypes()
+    let everything = AllNullableTypes()
     let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echoAllTypes(everything: everything) { result in
-      XCTAssertNil(result.aBool)
-      XCTAssertNil(result.anInt)
-      XCTAssertNil(result.aDouble)
-      XCTAssertNil(result.aString)
-      XCTAssertNil(result.aByteArray)
-      XCTAssertNil(result.a4ByteArray)
-      XCTAssertNil(result.a8ByteArray)
-      XCTAssertNil(result.aFloatArray)
-      XCTAssertNil(result.aList)
-      XCTAssertNil(result.aMap)
-      XCTAssertNil(result.nestedList)
-      XCTAssertNil(result.mapWithAnnotations)
-      XCTAssertNil(result.mapWithObject)
+    api.echoAllNullableTypes(everything: everything) { result in
+      XCTAssertNil(result.aNullableBool)
+      XCTAssertNil(result.aNullableInt)
+      XCTAssertNil(result.aNullableDouble)
+      XCTAssertNil(result.aNullableString)
+      XCTAssertNil(result.aNullableByteArray)
+      XCTAssertNil(result.aNullable4ByteArray)
+      XCTAssertNil(result.aNullable8ByteArray)
+      XCTAssertNil(result.aNullableFloatArray)
+      XCTAssertNil(result.aNullableList)
+      XCTAssertNil(result.aNullableMap)
+      XCTAssertNil(result.nullableNestedList)
+      XCTAssertNil(result.nullableMapWithAnnotations)
+      XCTAssertNil(result.nullableMapWithObject)
       expectation.fulfill()
     }
 
@@ -35,40 +35,40 @@ class AllDatatypesTests: XCTestCase {
   }
 
   func testAllEquals() throws {
-    let everything = AllTypes(
-      aBool: false,
-      anInt: 1,
-      aDouble: 2.0,
-      aString: "123",
-      aByteArray: [UInt8]("1234".data(using: .utf8)!),
-      a4ByteArray: [Int32].init(arrayLiteral: 1, 2, 3, 4),
-      a8ByteArray: [Int64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
-      aFloatArray: [Float64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
-      aList: [1, 2],
-      aMap: ["hello": 1234],
-      nestedList: [[true, false], [true]],
-      mapWithAnnotations: ["hello": "world"],
-      mapWithObject: ["hello": 1234, "goodbye" : "world"]
+    let everything = AllNullableTypes(
+      aNullableBool: false,
+      aNullableInt: 1,
+      aNullableDouble: 2.0,
+      aNullableString: "123",
+      aNullableByteArray: [UInt8]("1234".data(using: .utf8)!),
+      aNullable4ByteArray: [Int32].init(arrayLiteral: 1, 2, 3, 4),
+      aNullable8ByteArray: [Int64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
+      aNullableFloatArray: [Float64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
+      aNullableList: [1, 2],
+      aNullableMap: ["hello": 1234],
+      nullableNestedList: [[true, false], [true]],
+      nullableMapWithAnnotations: ["hello": "world"],
+      nullableMapWithObject: ["hello": 1234, "goodbye" : "world"]
     )
     let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echoAllTypes(everything: everything) { result in
-      XCTAssertEqual(result.aBool, everything.aBool)
-      XCTAssertEqual(result.anInt, everything.anInt)
-      XCTAssertEqual(result.aDouble, everything.aDouble)
-      XCTAssertEqual(result.aString, everything.aString)
-      XCTAssertEqual(result.aByteArray, everything.aByteArray)
-      XCTAssertEqual(result.a4ByteArray, everything.a4ByteArray)
-      XCTAssertEqual(result.a8ByteArray, everything.a8ByteArray)
-      XCTAssertEqual(result.aFloatArray, everything.aFloatArray)
-      XCTAssert(equalsList(result.aList, everything.aList))
-      XCTAssert(equalsDictionary(result.aMap, everything.aMap))
-      XCTAssertEqual(result.nestedList, everything.nestedList)
-      XCTAssertEqual(result.mapWithAnnotations, everything.mapWithAnnotations)
-      XCTAssert(equalsDictionary(result.mapWithObject, everything.mapWithObject))
+    api.echoAllNullableTypes(everything: everything) { result in
+      XCTAssertEqual(result.aNullableBool, everything.aNullableBool)
+      XCTAssertEqual(result.aNullableInt, everything.aNullableInt)
+      XCTAssertEqual(result.aNullableDouble, everything.aNullableDouble)
+      XCTAssertEqual(result.aNullableString, everything.aNullableString)
+      XCTAssertEqual(result.aNullableByteArray, everything.aNullableByteArray)
+      XCTAssertEqual(result.aNullable4ByteArray, everything.aNullable4ByteArray)
+      XCTAssertEqual(result.aNullable8ByteArray, everything.aNullable8ByteArray)
+      XCTAssertEqual(result.aNullableFloatArray, everything.aNullableFloatArray)
+      XCTAssert(equalsList(result.aNullableList, everything.aNullableList))
+      XCTAssert(equalsDictionary(result.aNullableMap, everything.aNullableMap))
+      XCTAssertEqual(result.nullableNestedList, everything.nullableNestedList)
+      XCTAssertEqual(result.nullableMapWithAnnotations, everything.nullableMapWithAnnotations)
+      XCTAssert(equalsDictionary(result.nullableMapWithObject, everything.nullableMapWithObject))
 
       expectation.fulfill()
     }

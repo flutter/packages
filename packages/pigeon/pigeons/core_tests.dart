@@ -12,28 +12,94 @@ enum AnEnum {
 
 // A class containing all supported types.
 class AllTypes {
-  bool? aBool;
-  int? anInt;
-  double? aDouble;
-  String? aString;
-  Uint8List? aByteArray;
-  Int32List? a4ByteArray;
-  Int64List? a8ByteArray;
-  Float64List? aFloatArray;
+  AllTypes(
+    this.aBool,
+    this.anInt,
+    this.aDouble,
+    this.aString,
+    // TODO(stuartmorgan): Enable these once they work for all generators;
+    // currently at least Swift is broken.
+    // See https://github.com/flutter/flutter/issues/115906
+    // this.aByteArray,
+    // this.a4ByteArray,
+    // this.a8ByteArray,
+    // this.aFloatArray,
+    this.aList,
+    this.aMap,
+    this.nestedList,
+    this.mapWithAnnotations,
+    this.mapWithObject,
+    this.anEnum,
+  );
+
+  bool aBool;
+  int anInt;
+  double aDouble;
+  String aString;
+  // TODO(stuartmorgan): Enable these once they work for all generators;
+  // currently at least Swift is broken.
+  // See https://github.com/flutter/flutter/issues/115906
+  // Uint8List aByteArray;
+  // Int32List a4ByteArray;
+  // Int64List a8ByteArray;
+  // Float64List aFloatArray;
   // ignore: always_specify_types, strict_raw_type
-  List? aList;
+  List aList;
   // ignore: always_specify_types, strict_raw_type
-  Map? aMap;
-  List<List<bool?>?>? nestedList;
-  Map<String?, String?>? mapWithAnnotations;
-  Map<String?, Object?>? mapWithObject;
-  AnEnum? anEnum;
+  Map aMap;
+  List<List<bool?>?> nestedList;
+  Map<String?, String?> mapWithAnnotations;
+  Map<String?, Object?> mapWithObject;
+  AnEnum anEnum;
 }
 
 // A class for testing nested object handling.
 class AllTypesWrapper {
   AllTypesWrapper(this.values);
   AllTypes values;
+}
+
+// A class containing all supported nullable types.
+class AllNullableTypes {
+  AllNullableTypes(
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableDouble,
+    this.aNullableString,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableList,
+    this.aNullableMap,
+    this.nullableNestedList,
+    this.nullableMapWithAnnotations,
+    this.nullableMapWithObject,
+    this.aNullableEnum,
+  );
+
+  bool? aNullableBool;
+  int? aNullableInt;
+  double? aNullableDouble;
+  String? aNullableString;
+  Uint8List? aNullableByteArray;
+  Int32List? aNullable4ByteArray;
+  Int64List? aNullable8ByteArray;
+  Float64List? aNullableFloatArray;
+  // ignore: always_specify_types, strict_raw_type
+  List? aNullableList;
+  // ignore: always_specify_types, strict_raw_type
+  Map? aNullableMap;
+  List<List<bool?>?>? nullableNestedList;
+  Map<String?, String?>? nullableMapWithAnnotations;
+  Map<String?, Object?>? nullableMapWithObject;
+  AnEnum? aNullableEnum;
+}
+
+// A class for testing nested object handling.
+class AllNullableTypesWrapper {
+  AllNullableTypesWrapper(this.values);
+  AllNullableTypes values;
 }
 
 /// The core interface that each host language plugin must implement in
@@ -50,22 +116,12 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoAllTypes:')
   AllTypes echoAllTypes(AllTypes everything);
 
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllNullableTypes:')
+  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
+
   /// Returns an error, to test error handling.
   void throwError();
-
-  /// Returns the inner `aString` value from the wrapped object, to test
-  /// sending of nested objects.
-  @ObjCSelector('extractNestedStringFrom:')
-  String? extractNestedString(AllTypesWrapper wrapper);
-
-  /// Returns the inner `aString` value from the wrapped object, to test
-  /// sending of nested objects.
-  @ObjCSelector('createNestedObjectWithString:')
-  AllTypesWrapper createNestedString(String string);
-
-  /// Returns passed in arguments of multiple types.
-  @ObjCSelector('sendMultipleTypesABool:anInt:aString:')
-  AllTypes sendMultipleTypes(bool aBool, int anInt, String aString);
 
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
@@ -86,6 +142,43 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed in Uint8List.
   @ObjCSelector('echoUint8List:')
   Uint8List echoUint8List(Uint8List aUint8List);
+
+  // ========== Syncronous nullable method tests ==========
+
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  @ObjCSelector('extractNestedNullableStringFrom:')
+  String? extractNestedNullableString(AllNullableTypesWrapper wrapper);
+
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  @ObjCSelector('createNestedObjectWithNullableString:')
+  AllNullableTypesWrapper createNestedNullableString(String? nullableString);
+
+  /// Returns passed in arguments of multiple types.
+  @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
+  AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  /// Returns passed in int.
+  @ObjCSelector('echoNullableInt:')
+  int? echoNullableInt(int? aNullableInt);
+
+  /// Returns passed in double.
+  @ObjCSelector('echoNullableDouble:')
+  double? echoNullableDouble(double? aNullableDouble);
+
+  /// Returns the passed in boolean.
+  @ObjCSelector('echoNullableBool:')
+  bool? echoNullableBool(bool? aNullableBool);
+
+  /// Returns the passed in string.
+  @ObjCSelector('echoNullableString:')
+  String? echoNullableString(String? aNullableString);
+
+  /// Returns the passed in Uint8List.
+  @ObjCSelector('echoNullableUint8List:')
+  Uint8List? echoNullableUint8List(Uint8List? aNullableUint8List);
 
   // ========== Asyncronous method tests ==========
 
@@ -125,6 +218,10 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllTypes:')
   AllTypes echoAllTypes(AllTypes everything);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllNullableTypes:')
+  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
 
   /// Returns the passed string, to test serialization and deserialization.
   @ObjCSelector('echoString:')
