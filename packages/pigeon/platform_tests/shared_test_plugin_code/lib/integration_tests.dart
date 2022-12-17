@@ -69,13 +69,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject.anInt, sentObject.anInt);
       expect(echoObject.aDouble, sentObject.aDouble);
       expect(echoObject.aString, sentObject.aString);
-      // TODO(stuartmorgan): Enable these once they work for all generators;
-      // currently at least Swift is broken.
-      // See https://github.com/flutter/flutter/issues/115906
-      //expect(echoObject.aByteArray, sentObject.aByteArray);
-      //expect(echoObject.a4ByteArray, sentObject.a4ByteArray);
-      //expect(echoObject.a8ByteArray, sentObject.a8ByteArray);
-      //expect(echoObject.aFloatArray, sentObject.aFloatArray);
+      expect(echoObject.aByteArray, sentObject.aByteArray);
+      expect(echoObject.a4ByteArray, sentObject.a4ByteArray);
+      expect(echoObject.a8ByteArray, sentObject.a8ByteArray);
+      expect(echoObject.aFloatArray, sentObject.aFloatArray);
       expect(listEquals(echoObject.aList, sentObject.aList), true);
       expect(mapEquals(echoObject.aMap, sentObject.aMap), true);
       expect(echoObject.nestedList?.length, sentObject.nestedList?.length);
@@ -177,19 +174,26 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
     });
 
-    // TODO(stuartmorgan): Enable these once they work for all generators;
-    // currently at least Swift is broken.
-    // TODO(tarrinneal): Finish tests for int lists once issue solved.
-    // See https://github.com/flutter/flutter/issues/115906
-    // testWidgets('Uint8List serialize and deserialize correctly',
-    //     (WidgetTester _) async {
-    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-    //   final List<int> data = [102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
-    //   final Uint8List sentUint8List = Uint8List.fromList(data);
-    //   final Uint8List receivedUint8List =
-    //       await api.echoUint8List(sentUint8List);
-    //   expect(receivedUint8List, sentUint8List);
-    // });
+    testWidgets('Uint8List serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0
+      ];
+      final Uint8List sentUint8List = Uint8List.fromList(data);
+      final Uint8List receivedUint8List =
+          await api.echoUint8List(sentUint8List);
+      expect(receivedUint8List, sentUint8List);
+    });
   });
 
   group('Host async API tests', () {

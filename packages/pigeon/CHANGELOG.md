@@ -1,3 +1,7 @@
+## 4.2.11
+
+* [swift] Fixes compressed list data types.
+
 ## 4.2.10
 
 * Changes generated Java enum field to be final.
