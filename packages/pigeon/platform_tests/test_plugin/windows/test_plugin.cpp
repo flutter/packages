@@ -46,7 +46,8 @@ ErrorOr<AllTypes> TestPlugin::EchoAllTypes(const AllTypes& everything) {
   return everything;
 }
 
-ErrorOr<std::optional<AllNullableTypes>> TestPlugin::EchoAllNullableTypes(const AllNullableTypes* everything) {
+ErrorOr<std::optional<AllNullableTypes>> TestPlugin::EchoAllNullableTypes(
+    const AllNullableTypes* everything) {
   if (!everything) {
     return std::nullopt;
   }
