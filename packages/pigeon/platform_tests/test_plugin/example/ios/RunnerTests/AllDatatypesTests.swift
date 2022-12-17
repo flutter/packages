@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import XCTest
 @testable import test_plugin
 
@@ -40,10 +41,11 @@ class AllDatatypesTests: XCTestCase {
       anInt: 1,
       aDouble: 2.0,
       aString: "123",
-      aByteArray: [UInt8]("1234".data(using: .utf8)!),
-      a4ByteArray: [Int32].init(arrayLiteral: 1, 2, 3, 4),
-      a8ByteArray: [Int64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
-      aFloatArray: [Float64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
+      aByteArray: FlutterStandardTypedData(bytes: "1234".data(using: .utf8)!),
+      a4ByteArray: FlutterStandardTypedData(int32: "1234".data(using: .utf8)!),
+      a8ByteArray: FlutterStandardTypedData(int64: "12345678".data(using: .utf8)!),
+      aFloatArray: FlutterStandardTypedData(float64: "12345678".data(using: .utf8)!),
+
       aList: [1, 2],
       aMap: ["hello": 1234],
       nestedList: [[true, false], [true]],

@@ -187,10 +187,10 @@ void main() {
     expect(code, contains('var aInt: Int32? = nil'));
     expect(code, contains('var aDouble: Double? = nil'));
     expect(code, contains('var aString: String? = nil'));
-    expect(code, contains('var aUint8List: [UInt8]? = nil'));
-    expect(code, contains('var aInt32List: [Int32]? = nil'));
-    expect(code, contains('var aInt64List: [Int64]? = nil'));
-    expect(code, contains('var aFloat64List: [Float64]? = nil'));
+    expect(code, contains('var aUint8List: FlutterStandardTypedData? = nil'));
+    expect(code, contains('var aInt32List: FlutterStandardTypedData? = nil'));
+    expect(code, contains('var aInt64List: FlutterStandardTypedData? = nil'));
+    expect(code, contains('var aFloat64List: FlutterStandardTypedData? = nil'));
   });
 
   test('gen one flutter api', () {

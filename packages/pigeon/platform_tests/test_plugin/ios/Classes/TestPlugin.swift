@@ -64,7 +64,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aString
   }
 
-  func echoUint8List(aUint8List: [UInt8]) -> [UInt8] {
+  func echoUint8List(aUint8List: FlutterStandardTypedData) -> FlutterStandardTypedData {
     return aUint8List
   }
 
