@@ -12,19 +12,19 @@ enum AnEnum {
 
 // A class containing all supported types.
 class AllTypes {
-  AllTypes(
-    this.aBool,
-    this.anInt,
-    this.aDouble,
-    this.aString,
-    this.aByteArray,
-    this.a4ByteArray,
-    this.a8ByteArray,
-    this.aFloatArray,
-    this.aList,
-    this.aMap,
-    this.anEnum,
-  );
+  AllTypes({
+    this.aBool = false,
+    this.anInt = 0,
+    this.aDouble = 0,
+    this.aString = '',
+    required this.aByteArray,
+    required this.a4ByteArray,
+    required this.a8ByteArray,
+    required this.aFloatArray,
+    this.aList = const <Object?>[],
+    this.aMap = const <String?, Object?>{},
+    this.anEnum = AnEnum.one,
+  });
 
   bool aBool;
   int anInt;

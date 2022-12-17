@@ -158,6 +158,76 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
               genericAllNullableTypes.nullableMapWithObject),
           true);
       expect(echoObject?.aNullableEnum, genericAllNullableTypes.aNullableEnum);
+
+      final AllNullableTypes allTypesNull = AllNullableTypes();
+
+      final AllNullableTypes? echoNullFilledObject =
+          await api.echoAllNullableTypes(allTypesNull);
+
+      expect(echoNullFilledObject?.aNullableBool, allTypesNull.aNullableBool);
+      expect(echoNullFilledObject?.aNullableBool, null);
+
+      expect(echoNullFilledObject?.aNullableInt, allTypesNull.aNullableInt);
+      expect(echoNullFilledObject?.aNullableInt, null);
+
+      expect(
+          echoNullFilledObject?.aNullableDouble, allTypesNull.aNullableDouble);
+      expect(echoNullFilledObject?.aNullableDouble, null);
+
+      expect(
+          echoNullFilledObject?.aNullableString, allTypesNull.aNullableString);
+      expect(echoNullFilledObject?.aNullableString, null);
+
+      expect(echoNullFilledObject?.aNullableByteArray,
+          allTypesNull.aNullableByteArray);
+      expect(echoNullFilledObject?.aNullableByteArray, null);
+
+      expect(echoNullFilledObject?.aNullable4ByteArray,
+          allTypesNull.aNullable4ByteArray);
+      expect(echoNullFilledObject?.aNullable4ByteArray, null);
+
+      expect(echoNullFilledObject?.aNullable8ByteArray,
+          allTypesNull.aNullable8ByteArray);
+      expect(echoNullFilledObject?.aNullable8ByteArray, null);
+
+      expect(echoNullFilledObject?.aNullableFloatArray,
+          allTypesNull.aNullableFloatArray);
+      expect(echoNullFilledObject?.aNullableFloatArray, null);
+
+      expect(
+          listEquals(
+              echoNullFilledObject?.aNullableList, allTypesNull.aNullableList),
+          true);
+      expect(echoNullFilledObject?.aNullableList, null);
+
+      expect(
+          mapEquals(
+              echoNullFilledObject?.aNullableMap, allTypesNull.aNullableMap),
+          true);
+      expect(echoNullFilledObject?.aNullableMap, null);
+
+      // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
+      // https://github.com/flutter/flutter/issues/116117
+      //for (int i = 0; i < echoNullFilledObject?.nullableNestedList!.length; i++) {
+      //  expect(listEquals(echoNullFilledObject?.nullableNestedList![i], allTypesNull.nullableNestedList![i]),
+      //      true);
+      //}
+      expect(echoNullFilledObject?.nullableNestedList, null);
+
+      expect(
+          mapEquals(echoNullFilledObject?.nullableMapWithAnnotations,
+              allTypesNull.nullableMapWithAnnotations),
+          true);
+      expect(echoNullFilledObject?.nullableMapWithAnnotations, null);
+
+      expect(
+          mapEquals(echoNullFilledObject?.nullableMapWithObject,
+              allTypesNull.nullableMapWithObject),
+          true);
+      expect(echoNullFilledObject?.nullableMapWithObject, null);
+
+      expect(echoNullFilledObject?.aNullableEnum, allTypesNull.aNullableEnum);
+      expect(echoNullFilledObject?.aNullableEnum, null);
     });
 
     testWidgets('errors are returned correctly', (WidgetTester _) async {
@@ -205,6 +275,12 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject.aNullableInt, aNullableInt);
       expect(echoObject.aNullableBool, aNullableBool);
       expect(echoObject.aNullableString, aNullableString);
+
+      final AllNullableTypes echoNullFilledObject =
+          await api.sendMultipleNullableTypes(null, null, null);
+      expect(echoNullFilledObject.aNullableInt, null);
+      expect(echoNullFilledObject.aNullableBool, null);
+      expect(echoNullFilledObject.aNullableString, null);
     });
 
     testWidgets('Ints serialize and deserialize correctly',
@@ -262,6 +338,76 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Uint8List receivedUint8List =
           await api.echoUint8List(sentUint8List);
       expect(receivedUint8List, sentUint8List);
+    });
+
+    testWidgets('Nullable Ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = -13;
+      final int? receivedInt = await api.echoNullableInt(sentInt);
+      expect(receivedInt, sentInt);
+
+      final int? receivedNullInt = await api.echoNullableInt(null);
+      expect(receivedNullInt, null);
+    });
+
+    testWidgets('Nullable Doubles serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentDouble = 2.0694;
+      final double? receivedDouble = await api.echoNullableDouble(sentDouble);
+      expect(receivedDouble, sentDouble);
+
+      final double? receivedNullDouble = await api.echoNullableDouble(null);
+      expect(receivedNullDouble, null);
+    });
+
+    testWidgets('Nullable booleans serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      for (final bool? sentBool in <bool?>[true, false, null]) {
+        final bool? receivedBool = await api.echoNullableBool(sentBool);
+        expect(receivedBool, sentBool);
+      }
+    });
+
+    testWidgets('Nullable strings serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String sentString = "I'm a computer";
+      final String? receivedString = await api.echoNullableString(sentString);
+      expect(receivedString, sentString);
+
+      final String? receivedNullString = await api.echoNullableString(null);
+      expect(receivedNullString, null);
+    });
+
+    testWidgets('Nullable Uint8List serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0
+      ];
+      final Uint8List sentUint8List = Uint8List.fromList(data);
+      final Uint8List? receivedUint8List =
+          await api.echoNullableUint8List(sentUint8List);
+      expect(receivedUint8List, sentUint8List);
+
+      final Uint8List? receivedNullUint8List =
+          await api.echoNullableUint8List(null);
+      expect(receivedNullUint8List, null);
     });
   });
 
