@@ -246,29 +246,28 @@ class PigeonOptions {
       objcHeaderOut: map['objcHeaderOut'] as String?,
       objcSourceOut: map['objcSourceOut'] as String?,
       objcOptions: map.containsKey('objcOptions')
-          ? ObjcOptions.fromMap((map['objcOptions'] as Map<String, Object>?)!)
+          ? ObjcOptions.fromMap(map['objcOptions']! as Map<String, Object>)
           : null,
       javaOut: map['javaOut'] as String?,
       javaOptions: map.containsKey('javaOptions')
-          ? JavaOptions.fromMap((map['javaOptions'] as Map<String, Object>?)!)
+          ? JavaOptions.fromMap(map['javaOptions']! as Map<String, Object>)
           : null,
       swiftOut: map['swiftOut'] as String?,
       swiftOptions: map.containsKey('swiftOptions')
-          ? SwiftOptions.fromMap((map['swiftOptions'] as Map<String, Object>?)!)
+          ? SwiftOptions.fromList(map['swiftOptions']! as Map<String, Object>)
           : null,
       kotlinOut: map['kotlinOut'] as String?,
       kotlinOptions: map.containsKey('kotlinOptions')
-          ? KotlinOptions.fromMap(
-              (map['kotlinOptions'] as Map<String, Object>?)!)
+          ? KotlinOptions.fromMap(map['kotlinOptions']! as Map<String, Object>)
           : null,
       cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
       cppSourceOut: map['experimental_cppSourceOut'] as String?,
       cppOptions: map.containsKey('experimental_cppOptions')
           ? CppOptions.fromMap(
-              (map['experimental_cppOptions'] as Map<String, Object>?)!)
+              map['experimental_cppOptions']! as Map<String, Object>)
           : null,
       dartOptions: map.containsKey('dartOptions')
-          ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
+          ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
           : null,
       copyrightHeader: map['copyrightHeader'] as String?,
       oneLanguage: map['oneLanguage'] as bool?,
@@ -633,7 +632,7 @@ List<Error> _validateAst(Root root, String source) {
       root.classes.map((Class x) => x.name).toList();
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
   for (final Class klass in root.classes) {
-    for (final NamedType field in klass.fields) {
+    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
       if (field.type.typeArguments != null) {
         for (final TypeDeclaration typeArgument in field.type.typeArguments) {
           if (!typeArgument.isNullable) {

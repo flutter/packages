@@ -9,7 +9,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '4.2.11';
+const String pigeonVersion = '4.2.12';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -490,4 +490,10 @@ void addDocumentationComments(
       '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
     );
   }
+}
+
+/// Returns an ordered list of fields to provide consistent serialisation order.
+Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+  // This returns the fields in the order they are declared in the pigeon file.
+  return klass.fields;
 }
