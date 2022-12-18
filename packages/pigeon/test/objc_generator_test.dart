@@ -42,9 +42,9 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[
       Enum(
         name: 'Enum1',
-        members: <String>[
-          'one',
-          'two',
+        members: <EnumMember>[
+          EnumMember(name: 'one'),
+          EnumMember(name: 'two'),
         ],
       )
     ]);
@@ -60,9 +60,9 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[
       Enum(
         name: 'Enum1',
-        members: <String>[
-          'one',
-          'two',
+        members: <EnumMember>[
+          EnumMember(name: 'one'),
+          EnumMember(name: 'two'),
         ],
       )
     ]);
@@ -95,9 +95,9 @@ void main() {
       enums: <Enum>[
         Enum(
           name: 'Enum1',
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(name: 'one'),
+            EnumMember(name: 'two'),
           ],
         )
       ],
@@ -127,7 +127,10 @@ void main() {
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <String>['one', 'two'])
+      Enum(name: 'Foo', members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ])
     ]);
     final StringBuffer sink = StringBuffer();
     const ObjcOptions options = ObjcOptions(header: 'foo.h', prefix: 'AC');
@@ -161,7 +164,10 @@ void main() {
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <String>['one', 'two'])
+      Enum(name: 'Foo', members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ])
     ]);
     const ObjcOptions options = ObjcOptions(header: 'foo.h');
     final List<Error> errors = validateObjc(options, root);
@@ -190,9 +196,9 @@ void main() {
       enums: <Enum>[
         Enum(
           name: 'Enum1',
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(name: 'one'),
+            EnumMember(name: 'two'),
           ],
         )
       ],
@@ -1749,6 +1755,7 @@ void main() {
       ' class comment',
       ' class field comment',
       ' enum comment',
+      ' enum member comment',
     ];
     int count = 0;
 
@@ -1805,9 +1812,12 @@ void main() {
             comments[count++],
             unspacedComments[unspacedCount++]
           ],
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
+            EnumMember(name: 'two'),
           ],
         ),
       ],
