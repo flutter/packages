@@ -83,7 +83,14 @@ ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
 ErrorOr<AllNullableTypesWrapper> TestPlugin::CreateNestedNullableString(
     const std::string* nullable_string) {
   AllNullableTypes inner_object;
-  inner_object.set_a_nullable_string(*nullable_string);
+  // The string pointer can't be passed through directly since the setter for
+  // a string takes a std::string_view rather than std::string so the pointer
+  // types don't match.
+  if (nullable_string) {
+    inner_object.set_a_nullable_string(*nullable_string);
+  } else {
+    inner_object.set_a_nullable_string(nullptr);
+  }
   AllNullableTypesWrapper wrapper;
   wrapper.set_values(inner_object);
   return wrapper;
@@ -95,7 +102,14 @@ ErrorOr<AllNullableTypes> TestPlugin::SendMultipleNullableTypes(
   AllNullableTypes someTypes;
   someTypes.set_a_nullable_bool(a_nullable_bool);
   someTypes.set_a_nullable_int(a_nullable_int);
-  someTypes.set_a_nullable_string(*a_nullable_string);
+  // The string pointer can't be passed through directly since the setter for
+  // a string takes a std::string_view rather than std::string so the pointer
+  // types don't match.
+  if (a_nullable_string) {
+    someTypes.set_a_nullable_string(*a_nullable_string);
+  } else {
+    someTypes.set_a_nullable_string(nullptr);
+  }
   return someTypes;
 };
 
