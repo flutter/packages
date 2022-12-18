@@ -110,7 +110,7 @@ void main() {
     expect(
         code,
         contains(
-            'pigeonResult.enum1 = [GetNullableObject(dict, @"enum1") integerValue];'));
+            'pigeonResult.enum1 = [GetNullableObjectAtIndex(list, 1) integerValue];'));
   });
 
   test('primitive enum host', () {
@@ -348,7 +348,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
     expect(code,
-        contains('pigeonResult.aBool = GetNullableObject(dict, @"aBool");'));
+        contains('pigeonResult.aBool = GetNullableObjectAtIndex(list, 0);'));
   });
 
   test('nested class header', () {
@@ -390,8 +390,9 @@ void main() {
     expect(
         code,
         contains(
-            'pigeonResult.nested = [Input nullableFromMap:GetNullableObject(dict, @"nested")];'));
-    expect(code, matches('[self.nested toMap].*@"nested"'));
+            'pigeonResult.nested = [Input nullableFromList:(GetNullableObjectAtIndex(list, 0))];'));
+    expect(
+        code, contains('self.nested ? [self.nested toList] : [NSNull null]'));
   });
 
   test('prefix class header', () {
@@ -489,7 +490,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('ABCInput fromMap'));
+    expect(code, contains('ABCInput fromList'));
     expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
     expect(code, contains('void ABCApiSetup('));
   });

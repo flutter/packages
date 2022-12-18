@@ -187,13 +187,13 @@ void main() {
     expect(
       code,
       contains(
-        "pigeonMap['nested'] = nested?.encode()",
+        'nested?.encode(),',
       ),
     );
     expect(
       code.replaceAll('\n', ' ').replaceAll('  ', ''),
       contains(
-        "nested: pigeonMap['nested'] != null ? Input.decode(pigeonMap['nested']!) : null",
+        'nested: result[0] != null ? Input.decode(result[0]! as List<Object?>) : null',
       ),
     );
   });
@@ -229,13 +229,13 @@ void main() {
     expect(
       code,
       contains(
-        "pigeonMap['nested'] = nested.encode()",
+        'nested.encode(),',
       ),
     );
     expect(
       code.replaceAll('\n', ' ').replaceAll('  ', ''),
       contains(
-        "nested: Input.decode(pigeonMap['nested']!)",
+        'nested: Input.decode(result[0]! as List<Object?>)',
       ),
     );
   });
@@ -417,8 +417,8 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, contains("pigeonMap['enum1'] = enum1?.index;"));
-    expect(code, contains("? Enum.values[pigeonMap['enum1']! as int]"));
+    expect(code, contains('enum1?.index,'));
+    expect(code, contains('? Enum.values[result[0]! as int]'));
     expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
   });
 
@@ -484,8 +484,8 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, contains("pigeonMap['enum1'] = enum1.index;"));
-    expect(code, contains("enum1: Enum.values[pigeonMap['enum1']! as int]"));
+    expect(code, contains('enum1.index,'));
+    expect(code, contains('enum1: Enum.values[result[0]! as int]'));
   });
 
   test('host void argument', () {
@@ -574,7 +574,7 @@ void main() {
     expect(mainCode, isNot(contains('abstract class ApiMock')));
     expect(mainCode, isNot(contains('.ApiMock.doSomething')));
     expect(mainCode, isNot(contains("'${Keys.result}': output")));
-    expect(mainCode, isNot(contains('return <Object, Object>{};')));
+    expect(mainCode, isNot(contains('return <Object>[];')));
     generateTestDart(
       const DartOptions(),
       root,
@@ -587,8 +587,8 @@ void main() {
     expect(testCode, isNot(contains('class Api {')));
     expect(testCode, contains('abstract class ApiMock'));
     expect(testCode, isNot(contains('.ApiMock.doSomething')));
-    expect(testCode, contains("'${Keys.result}': output"));
-    expect(testCode, contains('return <Object?, Object?>{};'));
+    expect(testCode, contains('output'));
+    expect(testCode, contains('return <Object?>[];'));
   });
 
   test('gen one async Flutter Api', () {
@@ -896,10 +896,8 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>> doit('));
-    expect(
-        code,
-        contains(
-            "return (replyMap['result'] as List<Object?>?)!.cast<int?>();"));
+    expect(code,
+        contains('return (replyList[0] as List<Object?>?)!.cast<int?>();'));
   });
 
   test('flutter generics argument non void return', () {
@@ -960,7 +958,7 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains("return (replyMap['result'] as int?);"));
+    expect(code, contains('return (replyList[0] as int?);'));
   });
 
   test('return nullable collection host', () {
@@ -985,10 +983,8 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>?> doit()'));
-    expect(
-        code,
-        contains(
-            "return (replyMap['result'] as List<Object?>?)?.cast<int?>();"));
+    expect(code,
+        contains('return (replyList[0] as List<Object?>?)?.cast<int?>();'));
   });
 
   test('return nullable async host', () {
@@ -1012,7 +1008,7 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains("return (replyMap['result'] as int?);"));
+    expect(code, contains('return (replyList[0] as int?);'));
   });
 
   test('return nullable flutter', () {

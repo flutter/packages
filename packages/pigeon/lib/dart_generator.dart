@@ -73,22 +73,27 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
   assert(getCodecClasses(api, root).isNotEmpty);
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
   indent.write('class $codecName extends $_standardMessageCodec');
-  indent.scoped('{', '}', () {
+  indent.scoped(' {', '}', () {
     indent.writeln('const $codecName();');
     indent.writeln('@override');
     indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
     indent.scoped('{', '}', () {
-      for (final EnumeratedClass customClass in codecClasses) {
-        indent.write('if (value is ${customClass.name}) ');
+      enumerate(codecClasses, (int index, final EnumeratedClass customClass) {
+        final String ifValue = 'if (value is ${customClass.name}) ';
+        if (index == 0) {
+          indent.write('');
+        }
+        indent.add(ifValue);
         indent.scoped('{', '} else ', () {
           indent.writeln('buffer.putUint8(${customClass.enumeration});');
           indent.writeln('writeValue(buffer, value.encode());');
-        });
-      }
+        }, addTrailingNewline: false);
+      });
       indent.scoped('{', '}', () {
         indent.writeln('super.writeValue(buffer, value);');
       });
     });
+    indent.writeln('');
     indent.writeln('@override');
     indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
     indent.scoped('{', '}', () {
@@ -101,8 +106,8 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
                 'return ${customClass.name}.decode(readValue(buffer)!);');
           });
         }
-        indent.write('default:');
-        indent.writeScoped('', '', () {
+        indent.writeln('default:');
+        indent.scoped('', '', () {
           indent.writeln('return super.readValueOfType(type, buffer);');
         });
       });
@@ -157,6 +162,14 @@ String _getMethodArgumentsSignature(
 ///   static const MessageCodec<Object?> codec = FooCodec();
 ///   Future<int> add(int x, int y) async {...}
 /// }
+///
+/// Messages will be sent and received in a list.
+///
+/// If the message recieved was succesful,
+/// the result will be contained at the 0'th index.
+///
+/// If the message was a failure, the list will contain 3 items:
+/// a code, a message, and details in that order.
 void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
   String codecName = _standardMessageCodec;
@@ -173,7 +186,8 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
 /// Constructor for [${api.name}].  The [binaryMessenger] named argument is
 /// available for dependency injection.  If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
-${api.name}({BinaryMessenger? binaryMessenger}) : _binaryMessenger = binaryMessenger;
+${api.name}({BinaryMessenger? binaryMessenger})
+\t\t: _binaryMessenger = binaryMessenger;
 final BinaryMessenger? _binaryMessenger;
 ''');
 
@@ -212,38 +226,37 @@ final BinaryMessenger? _binaryMessenger;
         indent.writeln(
             'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
         indent.nest(2, () {
-          indent.writeln(
-            "'$channelName', codec, binaryMessenger: _binaryMessenger);",
-          );
+          indent.writeln("'$channelName', codec,");
+          indent.writeln('binaryMessenger: _binaryMessenger);');
         });
         final String returnType = _makeGenericTypeArguments(func.returnType);
         final String castCall = _makeGenericCastCall(func.returnType);
-        const String accessor = "replyMap['${Keys.result}']";
+        const String accessor = 'replyList[0]';
         final String nullHandler =
             func.returnType.isNullable ? (castCall.isEmpty ? '' : '?') : '!';
         final String returnStatement = func.returnType.isVoid
             ? 'return;'
             : 'return ($accessor as $returnType?)$nullHandler$castCall;';
         indent.format('''
-final Map<Object?, Object?>? replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object?, Object?>?;
-if (replyMap == null) {
+final List<Object?>? replyList =
+\t\tawait channel.send($sendArgument) as List<Object?>?;
+if (replyList == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
 \t\tmessage: 'Unable to establish connection on channel.',
 \t);
-} else if (replyMap['error'] != null) {
-\tfinal Map<Object?, Object?> error = (replyMap['${Keys.error}'] as Map<Object?, Object?>?)!;
+} else if (replyList.length > 1) {
 \tthrow PlatformException(
-\t\tcode: (error['${Keys.errorCode}'] as String?)!,
-\t\tmessage: error['${Keys.errorMessage}'] as String?,
-\t\tdetails: error['${Keys.errorDetails}'],
+\t\tcode: replyList[0]! as String,
+\t\tmessage: replyList[1] as String?,
+\t\tdetails: replyList[2],
 \t);''');
         // On iOS we can return nil from functions to accommodate error
         // handling.  Returning a nil value and not returning an error is an
         // exception.
         if (!func.returnType.isNullable && !func.returnType.isVoid) {
           indent.format('''
-} else if (replyMap['${Keys.result}'] == null) {
+} else if (replyList[0] == null) {
 \tthrow PlatformException(
 \t\tcode: 'null-error',
 \t\tmessage: 'Host platform returned null value for non-null return value.',
@@ -283,6 +296,7 @@ void _writeFlutterApi(
     codecName = _getCodecName(api);
     _writeCodec(indent, codecName, api, root);
   }
+  indent.addln('');
   addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
 
   indent.write('abstract class ${api.name} ');
@@ -302,6 +316,7 @@ void _writeFlutterApi(
         _getArgumentName,
       );
       indent.writeln('$returnType ${func.name}($argSignature);');
+      indent.writeln('');
     }
     indent.write(
         'static void setup(${api.name}? api, {BinaryMessenger? binaryMessenger}) ');
@@ -316,8 +331,9 @@ void _writeFlutterApi(
               ? makeChannelName(api, func)
               : channelNameFunc(func);
           indent.nest(2, () {
+            indent.writeln("'$channelName', codec,");
             indent.writeln(
-              "'$channelName', codec, binaryMessenger: binaryMessenger);",
+              'binaryMessenger: binaryMessenger);',
             );
           });
           final String messageHandlerSetter =
@@ -336,7 +352,7 @@ void _writeFlutterApi(
                   _addGenericTypesNullable(func.returnType);
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
-                  ? 'return <Object?, Object?>{};'
+                  ? 'return <Object?>[];'
                   : func.returnType.isVoid
                       ? 'return;'
                       : 'return null;';
@@ -345,9 +361,8 @@ void _writeFlutterApi(
                 indent.writeln('// ignore message');
                 call = 'api.${func.name}()';
               } else {
-                indent.writeln(
-                  "assert(message != null, 'Argument for $channelName was null.');",
-                );
+                indent.writeln('assert(message != null,');
+                indent.writeln("'Argument for $channelName was null.');");
                 const String argsArray = 'args';
                 indent.writeln(
                     'final List<Object?> $argsArray = (message as List<Object?>?)!;');
@@ -395,7 +410,7 @@ void _writeFlutterApi(
                 }
                 const String returnExpression = 'output';
                 final String returnStatement = isMockHandler
-                    ? "return <Object?, Object?>{'${Keys.result}': $returnExpression};"
+                    ? 'return <Object?>[$returnExpression];'
                     : 'return $returnExpression;';
                 indent.writeln(returnStatement);
               }
@@ -489,7 +504,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     void writeConstructor() {
       indent.write(klass.name);
       indent.scoped('({', '});', () {
-        for (final NamedType field in klass.fields) {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final String required = field.type.isNullable ? '' : 'required ';
           indent.writeln('${required}this.${field.name},');
         }
@@ -499,37 +514,38 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     void writeEncode() {
       indent.write('Object encode() ');
       indent.scoped('{', '}', () {
-        indent.writeln(
-          'final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};',
+        indent.write(
+          'return <Object?>',
         );
-        for (final NamedType field in klass.fields) {
-          indent.write("pigeonMap['${field.name}'] = ");
-          final String conditional = field.type.isNullable ? '?' : '';
-          if (customClassNames.contains(field.type.baseName)) {
-            indent.addln(
-              '${field.name}$conditional.encode();',
-            );
-          } else if (customEnumNames.contains(field.type.baseName)) {
-            indent.addln(
-              '${field.name}$conditional.index;',
-            );
-          } else {
-            indent.addln('${field.name};');
+        indent.scoped('[', '];', () {
+          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+            final String conditional = field.type.isNullable ? '?' : '';
+            if (customClassNames.contains(field.type.baseName)) {
+              indent.writeln(
+                '${field.name}$conditional.encode(),',
+              );
+            } else if (customEnumNames.contains(field.type.baseName)) {
+              indent.writeln(
+                '${field.name}$conditional.index,',
+              );
+            } else {
+              indent.writeln('${field.name},');
+            }
           }
-        }
-        indent.writeln('return pigeonMap;');
+        });
       });
     }
 
     void writeDecode() {
-      void writeValueDecode(NamedType field) {
+      void writeValueDecode(NamedType field, int index) {
+        final String resultAt = 'result[$index]';
         if (customClassNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              "${field.type.baseName}.decode(pigeonMap['${field.name}']!)";
+              '${field.type.baseName}.decode($resultAt! as List<Object?>)';
           indent.format(
               field.type.isNullable
                   ? '''
-pigeonMap['${field.name}'] != null
+$resultAt != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -537,11 +553,11 @@ pigeonMap['${field.name}'] != null
               trailingNewline: false);
         } else if (customEnumNames.contains(field.type.baseName)) {
           final String nonNullValue =
-              "${field.type.baseName}.values[pigeonMap['${field.name}']! as int]";
+              '${field.type.baseName}.values[$resultAt! as int]';
           indent.format(
               field.type.isNullable
                   ? '''
-pigeonMap['${field.name}'] != null
+$resultAt != null
 \t\t? $nonNullValue
 \t\t: null'''
                   : nonNullValue,
@@ -552,37 +568,35 @@ pigeonMap['${field.name}'] != null
           final String castCall = _makeGenericCastCall(field.type);
           final String castCallPrefix = field.type.isNullable ? '?' : '!';
           indent.add(
-            "(pigeonMap['${field.name}'] as $genericType?)$castCallPrefix$castCall",
+            '($resultAt as $genericType?)$castCallPrefix$castCall',
           );
         } else {
           final String genericdType = _addGenericTypesNullable(field.type);
           if (field.type.isNullable) {
             indent.add(
-              "pigeonMap['${field.name}'] as $genericdType",
+              '$resultAt as $genericdType',
             );
           } else {
             indent.add(
-              "pigeonMap['${field.name}']! as $genericdType",
+              '$resultAt! as $genericdType',
             );
           }
         }
       }
 
       indent.write(
-        'static ${klass.name} decode(Object message) ',
+        'static ${klass.name} decode(Object result) ',
       );
       indent.scoped('{', '}', () {
-        indent.writeln(
-          'final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;',
-        );
+        indent.writeln('result as List<Object?>;');
         indent.write('return ${klass.name}');
         indent.scoped('(', ');', () {
-          for (int index = 0; index < klass.fields.length; index += 1) {
-            final NamedType field = klass.fields[index];
+          enumerate(getFieldsInSerializationOrder(klass),
+              (int index, final NamedType field) {
             indent.write('${field.name}: ');
-            writeValueDecode(field);
+            writeValueDecode(field, index);
             indent.addln(',');
-          }
+          });
         });
       });
     }
@@ -594,14 +608,12 @@ pigeonMap['${field.name}'] != null
     indent.scoped('{', '}', () {
       writeConstructor();
       indent.addln('');
-      for (final NamedType field in klass.fields) {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         addDocumentationComments(
             indent, field.documentationComments, _docCommentSpec);
 
         final String datatype = _addGenericTypesNullable(field.type);
         indent.writeln('$datatype ${field.name};');
-      }
-      if (klass.fields.isNotEmpty) {
         indent.writeln('');
       }
       writeEncode();

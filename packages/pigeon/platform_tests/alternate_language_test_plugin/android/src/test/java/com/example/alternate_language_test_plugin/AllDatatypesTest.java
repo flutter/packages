@@ -14,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import org.junit.Test;
 
 public class AllDatatypesTest {
@@ -147,10 +146,12 @@ public class AllDatatypesTest {
   public void integerToLong() {
     AllNullableTypes everything = new AllNullableTypes();
     everything.setANullableInt(123L);
-    Map<String, Object> map = everything.toMap();
-    assertTrue(map.containsKey("aNullableInt"));
-    map.put("aNullableInt", 123);
-    AllNullableTypes readEverything = AllNullableTypes.fromMap(map);
+    ArrayList<Object> list = everything.toList();
+    assertNotNull(list);
+    assertNull(list.get(0));
+    assertNotNull(list.get(1));
+    list.set(1, 123);
+    AllNullableTypes readEverything = AllNullableTypes.fromList(list);
     assertEquals(readEverything.getANullableInt(), everything.getANullableInt());
   }
 }
