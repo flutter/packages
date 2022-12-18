@@ -19,36 +19,30 @@ enum AnEnum {
 
 class AllTypes {
   AllTypes({
-    this.aBool,
-    this.anInt,
-    this.aDouble,
-    this.aString,
-    this.aByteArray,
-    this.a4ByteArray,
-    this.a8ByteArray,
-    this.aFloatArray,
-    this.aList,
-    this.aMap,
-    this.nestedList,
-    this.mapWithAnnotations,
-    this.mapWithObject,
-    this.anEnum,
+    required this.aBool,
+    required this.anInt,
+    required this.aDouble,
+    required this.aString,
+    required this.aByteArray,
+    required this.a4ByteArray,
+    required this.a8ByteArray,
+    required this.aFloatArray,
+    required this.aList,
+    required this.aMap,
+    required this.anEnum,
   });
 
-  bool? aBool;
-  int? anInt;
-  double? aDouble;
-  String? aString;
-  Uint8List? aByteArray;
-  Int32List? a4ByteArray;
-  Int64List? a8ByteArray;
-  Float64List? aFloatArray;
-  List<Object?>? aList;
-  Map<Object?, Object?>? aMap;
-  List<List<bool?>?>? nestedList;
-  Map<String?, String?>? mapWithAnnotations;
-  Map<String?, Object?>? mapWithObject;
-  AnEnum? anEnum;
+  bool aBool;
+  int anInt;
+  double aDouble;
+  String aString;
+  Uint8List aByteArray;
+  Int32List a4ByteArray;
+  Int64List a8ByteArray;
+  Float64List aFloatArray;
+  List<Object?> aList;
+  Map<Object?, Object?> aMap;
+  AnEnum anEnum;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -62,46 +56,114 @@ class AllTypes {
     pigeonMap['aFloatArray'] = aFloatArray;
     pigeonMap['aList'] = aList;
     pigeonMap['aMap'] = aMap;
-    pigeonMap['nestedList'] = nestedList;
-    pigeonMap['mapWithAnnotations'] = mapWithAnnotations;
-    pigeonMap['mapWithObject'] = mapWithObject;
-    pigeonMap['anEnum'] = anEnum?.index;
+    pigeonMap['anEnum'] = anEnum.index;
     return pigeonMap;
   }
 
   static AllTypes decode(Object message) {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return AllTypes(
-      aBool: pigeonMap['aBool'] as bool?,
-      anInt: pigeonMap['anInt'] as int?,
-      aDouble: pigeonMap['aDouble'] as double?,
-      aString: pigeonMap['aString'] as String?,
-      aByteArray: pigeonMap['aByteArray'] as Uint8List?,
-      a4ByteArray: pigeonMap['a4ByteArray'] as Int32List?,
-      a8ByteArray: pigeonMap['a8ByteArray'] as Int64List?,
-      aFloatArray: pigeonMap['aFloatArray'] as Float64List?,
-      aList: pigeonMap['aList'] as List<Object?>?,
-      aMap: pigeonMap['aMap'] as Map<Object?, Object?>?,
-      nestedList:
-          (pigeonMap['nestedList'] as List<Object?>?)?.cast<List<bool?>?>(),
-      mapWithAnnotations:
-          (pigeonMap['mapWithAnnotations'] as Map<Object?, Object?>?)
+      aBool: pigeonMap['aBool']! as bool,
+      anInt: pigeonMap['anInt']! as int,
+      aDouble: pigeonMap['aDouble']! as double,
+      aString: pigeonMap['aString']! as String,
+      aByteArray: pigeonMap['aByteArray']! as Uint8List,
+      a4ByteArray: pigeonMap['a4ByteArray']! as Int32List,
+      a8ByteArray: pigeonMap['a8ByteArray']! as Int64List,
+      aFloatArray: pigeonMap['aFloatArray']! as Float64List,
+      aList: pigeonMap['aList']! as List<Object?>,
+      aMap: pigeonMap['aMap']! as Map<Object?, Object?>,
+      anEnum: AnEnum.values[pigeonMap['anEnum']! as int],
+    );
+  }
+}
+
+class AllNullableTypes {
+  AllNullableTypes({
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableDouble,
+    this.aNullableString,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableList,
+    this.aNullableMap,
+    this.nullableNestedList,
+    this.nullableMapWithAnnotations,
+    this.nullableMapWithObject,
+    this.aNullableEnum,
+  });
+
+  bool? aNullableBool;
+  int? aNullableInt;
+  double? aNullableDouble;
+  String? aNullableString;
+  Uint8List? aNullableByteArray;
+  Int32List? aNullable4ByteArray;
+  Int64List? aNullable8ByteArray;
+  Float64List? aNullableFloatArray;
+  List<Object?>? aNullableList;
+  Map<Object?, Object?>? aNullableMap;
+  List<List<bool?>?>? nullableNestedList;
+  Map<String?, String?>? nullableMapWithAnnotations;
+  Map<String?, Object?>? nullableMapWithObject;
+  AnEnum? aNullableEnum;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['aNullableBool'] = aNullableBool;
+    pigeonMap['aNullableInt'] = aNullableInt;
+    pigeonMap['aNullableDouble'] = aNullableDouble;
+    pigeonMap['aNullableString'] = aNullableString;
+    pigeonMap['aNullableByteArray'] = aNullableByteArray;
+    pigeonMap['aNullable4ByteArray'] = aNullable4ByteArray;
+    pigeonMap['aNullable8ByteArray'] = aNullable8ByteArray;
+    pigeonMap['aNullableFloatArray'] = aNullableFloatArray;
+    pigeonMap['aNullableList'] = aNullableList;
+    pigeonMap['aNullableMap'] = aNullableMap;
+    pigeonMap['nullableNestedList'] = nullableNestedList;
+    pigeonMap['nullableMapWithAnnotations'] = nullableMapWithAnnotations;
+    pigeonMap['nullableMapWithObject'] = nullableMapWithObject;
+    pigeonMap['aNullableEnum'] = aNullableEnum?.index;
+    return pigeonMap;
+  }
+
+  static AllNullableTypes decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return AllNullableTypes(
+      aNullableBool: pigeonMap['aNullableBool'] as bool?,
+      aNullableInt: pigeonMap['aNullableInt'] as int?,
+      aNullableDouble: pigeonMap['aNullableDouble'] as double?,
+      aNullableString: pigeonMap['aNullableString'] as String?,
+      aNullableByteArray: pigeonMap['aNullableByteArray'] as Uint8List?,
+      aNullable4ByteArray: pigeonMap['aNullable4ByteArray'] as Int32List?,
+      aNullable8ByteArray: pigeonMap['aNullable8ByteArray'] as Int64List?,
+      aNullableFloatArray: pigeonMap['aNullableFloatArray'] as Float64List?,
+      aNullableList: pigeonMap['aNullableList'] as List<Object?>?,
+      aNullableMap: pigeonMap['aNullableMap'] as Map<Object?, Object?>?,
+      nullableNestedList: (pigeonMap['nullableNestedList'] as List<Object?>?)
+          ?.cast<List<bool?>?>(),
+      nullableMapWithAnnotations:
+          (pigeonMap['nullableMapWithAnnotations'] as Map<Object?, Object?>?)
               ?.cast<String?, String?>(),
-      mapWithObject: (pigeonMap['mapWithObject'] as Map<Object?, Object?>?)
-          ?.cast<String?, Object?>(),
-      anEnum: pigeonMap['anEnum'] != null
-          ? AnEnum.values[pigeonMap['anEnum']! as int]
+      nullableMapWithObject:
+          (pigeonMap['nullableMapWithObject'] as Map<Object?, Object?>?)
+              ?.cast<String?, Object?>(),
+      aNullableEnum: pigeonMap['aNullableEnum'] != null
+          ? AnEnum.values[pigeonMap['aNullableEnum']! as int]
           : null,
     );
   }
 }
 
-class AllTypesWrapper {
-  AllTypesWrapper({
+class AllNullableTypesWrapper {
+  AllNullableTypesWrapper({
     required this.values,
   });
 
-  AllTypes values;
+  AllNullableTypes values;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -109,10 +171,10 @@ class AllTypesWrapper {
     return pigeonMap;
   }
 
-  static AllTypesWrapper decode(Object message) {
+  static AllNullableTypesWrapper decode(Object message) {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
-    return AllTypesWrapper(
-      values: AllTypes.decode(pigeonMap['values']!),
+    return AllNullableTypesWrapper(
+      values: AllNullableTypes.decode(pigeonMap['values']!),
     );
   }
 }
@@ -121,11 +183,17 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   const _HostIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllTypes) {
+    if (value is AllNullableTypes) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is AllTypesWrapper) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else if (value is AllNullableTypesWrapper) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is AllTypes) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -136,10 +204,16 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return AllTypes.decode(readValue(buffer)!);
+        return AllNullableTypes.decode(readValue(buffer)!);
 
       case 129:
-        return AllTypesWrapper.decode(readValue(buffer)!);
+        return AllNullableTypes.decode(readValue(buffer)!);
+
+      case 130:
+        return AllNullableTypesWrapper.decode(readValue(buffer)!);
+
+      case 131:
+        return AllTypes.decode(readValue(buffer)!);
 
       default:
         return super.readValueOfType(type, buffer);
@@ -215,6 +289,32 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<AllNullableTypes?> echoAllNullableTypes(
+      AllNullableTypes? arg_everything) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_everything]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as AllNullableTypes?);
+    }
+  }
+
   /// Returns an error, to test error handling.
   Future<void> throwError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -237,95 +337,6 @@ class HostIntegrationCoreApi {
       );
     } else {
       return;
-    }
-  }
-
-  /// Returns the inner `aString` value from the wrapped object, to test
-  /// sending of nested objects.
-  Future<String?> extractNestedString(AllTypesWrapper arg_wrapper) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedString', codec,
-        binaryMessenger: _binaryMessenger);
-    final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object?>[arg_wrapper]) as Map<Object?, Object?>?;
-    if (replyMap == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
-      throw PlatformException(
-        code: (error['code'] as String?)!,
-        message: error['message'] as String?,
-        details: error['details'],
-      );
-    } else {
-      return (replyMap['result'] as String?);
-    }
-  }
-
-  /// Returns the inner `aString` value from the wrapped object, to test
-  /// sending of nested objects.
-  Future<AllTypesWrapper> createNestedString(String arg_string) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.createNestedString', codec,
-        binaryMessenger: _binaryMessenger);
-    final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object?>[arg_string]) as Map<Object?, Object?>?;
-    if (replyMap == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
-      throw PlatformException(
-        code: (error['code'] as String?)!,
-        message: error['message'] as String?,
-        details: error['details'],
-      );
-    } else if (replyMap['result'] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (replyMap['result'] as AllTypesWrapper?)!;
-    }
-  }
-
-  /// Returns passed in arguments of multiple types.
-  Future<AllTypes> sendMultipleTypes(
-      bool arg_aBool, int arg_anInt, String arg_aString) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.sendMultipleTypes', codec,
-        binaryMessenger: _binaryMessenger);
-    final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object?>[arg_aBool, arg_anInt, arg_aString])
-            as Map<Object?, Object?>?;
-    if (replyMap == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
-      throw PlatformException(
-        code: (error['code'] as String?)!,
-        message: error['message'] as String?,
-        details: error['details'],
-      );
-    } else if (replyMap['result'] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (replyMap['result'] as AllTypes?)!;
     }
   }
 
@@ -479,6 +490,227 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  Future<String?> extractNestedNullableString(
+      AllNullableTypesWrapper arg_wrapper) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedNullableString',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_wrapper]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as String?);
+    }
+  }
+
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  Future<AllNullableTypesWrapper> createNestedNullableString(
+      String? arg_nullableString) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.createNestedNullableString',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap = await channel
+        .send(<Object?>[arg_nullableString]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as AllNullableTypesWrapper?)!;
+    }
+  }
+
+  /// Returns passed in arguments of multiple types.
+  Future<AllNullableTypes> sendMultipleNullableTypes(bool? arg_aNullableBool,
+      int? arg_aNullableInt, String? arg_aNullableString) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.sendMultipleNullableTypes',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap = await channel.send(
+            <Object?>[arg_aNullableBool, arg_aNullableInt, arg_aNullableString])
+        as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as AllNullableTypes?)!;
+    }
+  }
+
+  /// Returns passed in int.
+  Future<int?> echoNullableInt(int? arg_aNullableInt) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableInt', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap = await channel
+        .send(<Object?>[arg_aNullableInt]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as int?);
+    }
+  }
+
+  /// Returns passed in double.
+  Future<double?> echoNullableDouble(double? arg_aNullableDouble) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableDouble', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap = await channel
+        .send(<Object?>[arg_aNullableDouble]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as double?);
+    }
+  }
+
+  /// Returns the passed in boolean.
+  Future<bool?> echoNullableBool(bool? arg_aNullableBool) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableBool', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap = await channel
+        .send(<Object?>[arg_aNullableBool]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as bool?);
+    }
+  }
+
+  /// Returns the passed in string.
+  Future<String?> echoNullableString(String? arg_aNullableString) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableString', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap = await channel
+        .send(<Object?>[arg_aNullableString]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as String?);
+    }
+  }
+
+  /// Returns the passed in Uint8List.
+  Future<Uint8List?> echoNullableUint8List(
+      Uint8List? arg_aNullableUint8List) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableUint8List',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap = await channel
+        .send(<Object?>[arg_aNullableUint8List]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as Uint8List?);
+    }
+  }
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   Future<void> noopAsync() async {
@@ -594,8 +826,11 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
   const _FlutterIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllTypes) {
+    if (value is AllNullableTypes) {
       buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is AllTypes) {
+      buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -606,6 +841,9 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
+        return AllNullableTypes.decode(readValue(buffer)!);
+
+      case 129:
         return AllTypes.decode(readValue(buffer)!);
 
       default:
@@ -625,6 +863,9 @@ abstract class FlutterIntegrationCoreApi {
 
   /// Returns the passed object, to test serialization and deserialization.
   AllTypes echoAllTypes(AllTypes everything);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
 
   /// Returns the passed string, to test serialization and deserialization.
   String echoString(String aString);
@@ -659,6 +900,28 @@ abstract class FlutterIntegrationCoreApi {
           assert(arg_everything != null,
               'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes was null, expected non-null AllTypes.');
           final AllTypes output = api.echoAllTypes(arg_everything!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AllNullableTypes? arg_everything =
+              (args[0] as AllNullableTypes?);
+          assert(arg_everything != null,
+              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes was null, expected non-null AllNullableTypes.');
+          final AllNullableTypes output =
+              api.echoAllNullableTypes(arg_everything!);
           return output;
         });
       }

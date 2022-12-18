@@ -35,15 +35,11 @@ class TestPlugin : public flutter::Plugin,
   std::optional<core_tests_pigeontest::FlutterError> Noop() override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes> EchoAllTypes(
       const core_tests_pigeontest::AllTypes& everything) override;
+  core_tests_pigeontest::ErrorOr<
+      std::optional<core_tests_pigeontest::AllNullableTypes>>
+  EchoAllNullableTypes(
+      const core_tests_pigeontest::AllNullableTypes* everything) override;
   std::optional<core_tests_pigeontest::FlutterError> ThrowError() override;
-  core_tests_pigeontest::ErrorOr<std::optional<std::string>>
-  ExtractNestedString(
-      const core_tests_pigeontest::AllTypesWrapper& wrapper) override;
-  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypesWrapper>
-  CreateNestedString(const std::string& string) override;
-  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
-  SendMultipleTypes(bool a_bool, int64_t an_int,
-                    const std::string& a_string) override;
   core_tests_pigeontest::ErrorOr<int64_t> EchoInt(int64_t an_int) override;
   core_tests_pigeontest::ErrorOr<double> EchoDouble(double a_double) override;
   core_tests_pigeontest::ErrorOr<bool> EchoBool(bool a_bool) override;
@@ -51,6 +47,27 @@ class TestPlugin : public flutter::Plugin,
       const std::string& a_string) override;
   core_tests_pigeontest::ErrorOr<std::vector<uint8_t>> EchoUint8List(
       const std::vector<uint8_t>& a_uint8_list) override;
+  core_tests_pigeontest::ErrorOr<std::optional<std::string>>
+  ExtractNestedNullableString(
+      const core_tests_pigeontest::AllNullableTypesWrapper& wrapper) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllNullableTypesWrapper>
+  CreateNestedNullableString(const std::string* nullable_string) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllNullableTypes>
+  SendMultipleNullableTypes(const bool* a_nullable_bool,
+                            const int64_t* a_nullable_int,
+                            const std::string* a_nullable_string) override;
+  core_tests_pigeontest::ErrorOr<std::optional<int64_t>> EchoNullableInt(
+      const int64_t* a_nullable_int) override;
+  core_tests_pigeontest::ErrorOr<std::optional<double>> EchoNullableDouble(
+      const double* a_nullable_double) override;
+  core_tests_pigeontest::ErrorOr<std::optional<bool>> EchoNullableBool(
+      const bool* a_nullable_bool) override;
+  core_tests_pigeontest::ErrorOr<std::optional<std::string>> EchoNullableString(
+      const std::string* a_nullable_string) override;
+  core_tests_pigeontest::ErrorOr<std::optional<std::vector<uint8_t>>>
+  EchoNullableUint8List(
+      const std::vector<uint8_t>* a_nullable_uint8_list) override;
+
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;
