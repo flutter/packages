@@ -470,8 +470,10 @@ import FlutterMacOS
 
     indent.write('enum ${anEnum.name}: Int ');
     indent.scoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final String member) {
-        indent.writeln('case ${_camelCase(member)} = $index');
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        indent.writeln('case ${_camelCase(member.name)} = $index');
       });
     });
   }

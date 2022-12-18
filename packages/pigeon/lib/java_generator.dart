@@ -569,9 +569,11 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
     indent.write('public enum ${anEnum.name} ');
     indent.scoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final String member) {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
-            '${camelToSnake(member)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
+            '${camelToSnake(member.name)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
       });
       indent.writeln('');
       indent.writeln('private final int index;');
