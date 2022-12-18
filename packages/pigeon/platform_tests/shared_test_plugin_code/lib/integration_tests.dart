@@ -158,6 +158,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
               genericAllNullableTypes.nullableMapWithObject),
           true);
       expect(echoObject?.aNullableEnum, genericAllNullableTypes.aNullableEnum);
+    });
+
+    testWidgets('all nulla datatypes serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllNullableTypes allTypesNull = AllNullableTypes();
 
@@ -275,6 +280,12 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject.aNullableInt, aNullableInt);
       expect(echoObject.aNullableBool, aNullableBool);
       expect(echoObject.aNullableString, aNullableString);
+    });
+
+    testWidgets(
+        'Arguments of multiple null types serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllNullableTypes echoNullFilledObject =
           await api.sendMultipleNullableTypes(null, null, null);
@@ -347,6 +358,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const int sentInt = -13;
       final int? receivedInt = await api.echoNullableInt(sentInt);
       expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Null Ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final int? receivedNullInt = await api.echoNullableInt(null);
       expect(receivedNullInt, null);
@@ -359,6 +375,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const double sentDouble = 2.0694;
       final double? receivedDouble = await api.echoNullableDouble(sentDouble);
       expect(receivedDouble, sentDouble);
+    });
+
+    testWidgets('Null Doubles serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final double? receivedNullDouble = await api.echoNullableDouble(null);
       expect(receivedNullDouble, null);
@@ -368,10 +389,19 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      for (final bool? sentBool in <bool?>[true, false, null]) {
+      for (final bool? sentBool in <bool?>[true, false]) {
         final bool? receivedBool = await api.echoNullableBool(sentBool);
         expect(receivedBool, sentBool);
       }
+    });
+
+    testWidgets('Null booleans serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const bool? sentBool = null;
+      final bool? receivedBool = await api.echoNullableBool(sentBool);
+      expect(receivedBool, sentBool);
     });
 
     testWidgets('Nullable strings serialize and deserialize correctly',
@@ -380,6 +410,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const String sentString = "I'm a computer";
       final String? receivedString = await api.echoNullableString(sentString);
       expect(receivedString, sentString);
+    });
+
+    testWidgets('Null strings serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final String? receivedNullString = await api.echoNullableString(null);
       expect(receivedNullString, null);
@@ -404,6 +439,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Uint8List? receivedUint8List =
           await api.echoNullableUint8List(sentUint8List);
       expect(receivedUint8List, sentUint8List);
+    });
+
+    testWidgets('Null Uint8List serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final Uint8List? receivedNullUint8List =
           await api.echoNullableUint8List(null);
