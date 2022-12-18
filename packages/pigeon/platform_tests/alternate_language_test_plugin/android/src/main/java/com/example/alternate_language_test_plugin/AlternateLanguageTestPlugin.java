@@ -6,8 +6,9 @@ package com.example.alternate_language_test_plugin;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
-import com.example.alternate_language_test_plugin.CoreTests.AllTypesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.Result;
@@ -37,27 +38,13 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @Nullable AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything) {
+    return everything;
+  }
+
+  @Override
   public void throwError() {
     throw new RuntimeException("An error");
-  }
-
-  @Override
-  public @Nullable String extractNestedString(@NonNull AllTypesWrapper wrapper) {
-    return wrapper.getValues().getAString();
-  }
-
-  @Override
-  public @NonNull AllTypesWrapper createNestedString(@NonNull String string) {
-    AllTypes innerObject = new AllTypes.Builder().setAString(string).build();
-    return new AllTypesWrapper.Builder().setValues(innerObject).build();
-  }
-
-  @Override
-  public @NonNull AllTypes sendMultipleTypes(
-      @NonNull Boolean aBool, @NonNull Long anInt, @NonNull String aString) {
-    AllTypes someThings =
-        new AllTypes.Builder().setABool(aBool).setAnInt(anInt).setAString(aString).build();
-    return someThings;
   }
 
   @Override
@@ -83,6 +70,58 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public byte[] echoUint8List(@NonNull byte[] aUint8List) {
     return aUint8List;
+  }
+
+  @Override
+  public @Nullable String extractNestedNullableString(@NonNull AllNullableTypesWrapper wrapper) {
+    return wrapper.getValues().getANullableString();
+  }
+
+  @Override
+  public @NonNull AllNullableTypesWrapper createNestedNullableString(
+      @Nullable String nullableString) {
+    AllNullableTypes innerObject =
+        new AllNullableTypes.Builder().setANullableString(nullableString).build();
+    return new AllNullableTypesWrapper.Builder().setValues(innerObject).build();
+  }
+
+  @Override
+  public @NonNull AllNullableTypes sendMultipleNullableTypes(
+      @Nullable Boolean aNullableBool,
+      @Nullable Long aNullableInt,
+      @Nullable String aNullableString) {
+    AllNullableTypes someThings =
+        new AllNullableTypes.Builder()
+            .setANullableBool(aNullableBool)
+            .setANullableInt(aNullableInt)
+            .setANullableString(aNullableString)
+            .build();
+    return someThings;
+  }
+
+  @Override
+  public @Nullable Long echoNullableInt(@Nullable Long aNullableInt) {
+    return aNullableInt;
+  }
+
+  @Override
+  public @Nullable Double echoNullableDouble(@Nullable Double aNullableDouble) {
+    return aNullableDouble;
+  }
+
+  @Override
+  public @Nullable Boolean echoNullableBool(@Nullable Boolean aNullableBool) {
+    return aNullableBool;
+  }
+
+  @Override
+  public @Nullable String echoNullableString(@Nullable String aNullableString) {
+    return aNullableString;
+  }
+
+  @Override
+  public @Nullable byte[] echoNullableUint8List(@Nullable byte[] aNullableUint8List) {
+    return aNullableUint8List;
   }
 
   @Override

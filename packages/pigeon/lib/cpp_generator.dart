@@ -148,11 +148,11 @@ void _writeErrorOr(Indent indent,
   indent.format('''
 class FlutterError {
  public:
-\tFlutterError(const std::string& code)
+\texplicit FlutterError(const std::string& code)
 \t\t: code_(code) {}
-\tFlutterError(const std::string& code, const std::string& message)
+\texplicit FlutterError(const std::string& code, const std::string& message)
 \t\t: code_(code), message_(message) {}
-\tFlutterError(const std::string& code, const std::string& message, const flutter::EncodableValue& details)
+\texplicit FlutterError(const std::string& code, const std::string& message, const flutter::EncodableValue& details)
 \t\t: code_(code), message_(message), details_(details) {}
 
 \tconst std::string& code() const { return code_; }

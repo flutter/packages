@@ -404,11 +404,11 @@ String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
     'String': 'String',
     'int': 'Int32',
     'double': 'Double',
-    'Uint8List': '[UInt8]',
-    'Int32List': '[Int32]',
-    'Int64List': '[Int64]',
-    'Float32List': '[Float32]',
-    'Float64List': '[Float64]',
+    'Uint8List': 'FlutterStandardTypedData',
+    'Int32List': 'FlutterStandardTypedData',
+    'Int64List': 'FlutterStandardTypedData',
+    'Float32List': 'FlutterStandardTypedData',
+    'Float64List': 'FlutterStandardTypedData',
     'Object': 'Any',
   };
   if (swiftTypeForDartTypeMap.containsKey(type.baseName)) {

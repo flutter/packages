@@ -1,6 +1,10 @@
+## 4.2.12
+
+* Updates serialization to use lists instead of maps to improve performance.
+
 ## 4.2.11
 
-* Updates serialisation to use lists instead of maps to improve performance.
+* [swift] Fixes compressed list data types.
 
 ## 4.2.10
 

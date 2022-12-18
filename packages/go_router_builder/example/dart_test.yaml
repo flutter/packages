@@ -1,4 +1,0 @@
-# https://github.com/dart-lang/test/tree/master/pkgs/test#whole-package-configuration
-tags:
-  presubmit-only:
-    skip: "Should only be run during presubmit"

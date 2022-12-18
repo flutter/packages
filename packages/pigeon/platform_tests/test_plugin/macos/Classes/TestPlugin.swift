@@ -23,29 +23,20 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   // MARK: HostIntegrationCoreApi implementation
 
-  func noop() {
+    func noop() {
   }
 
   func echoAllTypes(everything: AllTypes) -> AllTypes {
     return everything
   }
 
+  func echoAllNullableTypes(everything: AllNullableTypes?) -> AllNullableTypes? {
+    return everything
+  }
+
   func throwError() {
     // TODO(stuartmorgan): Implement this. See
     // https://github.com/flutter/flutter/issues/112483
-  }
-
-  func extractNestedString(wrapper: AllTypesWrapper) -> String? {
-    return wrapper.values.aString;
-  }
-
-  func createNestedString(string: String) -> AllTypesWrapper {
-    return AllTypesWrapper(values: AllTypes(aString: string))
-  }
-
-  func sendMultipleTypes(aBool: Bool, anInt: Int32, aString: String) -> AllTypes {
-    let someThings = AllTypes(aBool: aBool, anInt: anInt, aString: aString)
-    return someThings
   }
 
   func echoInt(anInt: Int32) -> Int32 {
@@ -64,8 +55,41 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aString
   }
 
-  func echoUint8List(aUint8List: [UInt8]) -> [UInt8] {
+  func echoUint8List(aUint8List: FlutterStandardTypedData) -> FlutterStandardTypedData {
     return aUint8List
+  }
+
+  func extractNestedNullableString(wrapper: AllNullableTypesWrapper) -> String? {
+    return wrapper.values.aNullableString;
+  }
+
+  func createNestedNullableString(nullableString: String?) -> AllNullableTypesWrapper {
+    return AllNullableTypesWrapper(values: AllNullableTypes(aNullableString: nullableString))
+  }
+
+  func sendMultipleNullableTypes(aNullableBool: Bool?, aNullableInt: Int32?, aNullableString: String?) -> AllNullableTypes {
+    let someThings = AllNullableTypes(aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
+    return someThings
+  }
+
+  func echoNullableInt(aNullableInt: Int32?) -> Int32? {
+    return aNullableInt
+  }
+
+  func echoNullableDouble(aNullableDouble: Double?) -> Double? {
+    return aNullableDouble
+  }
+
+  func echoNullableBool(aNullableBool: Bool?) -> Bool? {
+    return aNullableBool
+  }
+
+  func echoNullableString(aNullableString: String?) -> String? {
+    return aNullableString
+  }
+
+  func echoNullableUint8List(aNullableUint8List: FlutterStandardTypedData?) -> FlutterStandardTypedData? {
+    return aNullableUint8List
   }
 
   func noopAsync(completion: @escaping () -> Void) {
