@@ -31,32 +31,13 @@
   return everything;
 }
 
+- (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
+                                              error:(FlutterError *_Nullable *_Nonnull)error {
+  return everything;
+}
+
 - (void)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
   *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
-}
-
-- (nullable NSString *)extractNestedStringFrom:(AllTypesWrapper *)wrapper
-                                         error:(FlutterError *_Nullable *_Nonnull)error {
-  return wrapper.values.aString;
-}
-
-- (nullable AllTypesWrapper *)createNestedObjectWithString:(NSString *)string
-                                                     error:
-                                                         (FlutterError *_Nullable *_Nonnull)error {
-  AllTypes *innerObject = [[AllTypes alloc] init];
-  innerObject.aString = string;
-  return [AllTypesWrapper makeWithValues:innerObject];
-}
-
-- (nullable AllTypes *)sendMultipleTypesABool:(NSNumber *)aBool
-                                        anInt:(NSNumber *)anInt
-                                      aString:(NSString *)aString
-                                        error:(FlutterError *_Nullable *_Nonnull)error {
-  AllTypes *someTypes = [[AllTypes alloc] init];
-  someTypes.aBool = aBool;
-  someTypes.anInt = anInt;
-  someTypes.aString = aString;
-  return someTypes;
 }
 
 - (nullable NSNumber *)echoInt:(NSNumber *)anInt error:(FlutterError *_Nullable *_Nonnull)error {
@@ -65,7 +46,7 @@
 
 - (nullable NSNumber *)echoDouble:(NSNumber *)aDouble
                             error:(FlutterError *_Nullable *_Nonnull)error {
-  return aDouble
+  return aDouble;
 }
 
 - (nullable NSNumber *)echoBool:(NSNumber *)aBool error:(FlutterError *_Nullable *_Nonnull)error {
@@ -80,6 +61,57 @@
 - (nullable FlutterStandardTypedData *)echoUint8List:(FlutterStandardTypedData *)aUint8List
                                                error:(FlutterError *_Nullable *_Nonnull)error {
   return aUint8List;
+}
+
+- (nullable NSString *)extractNestedNullableStringFrom:(AllNullableTypesWrapper *)wrapper
+                                                 error:(FlutterError *_Nullable *_Nonnull)error {
+  return wrapper.values.aNullableString;
+}
+
+- (nullable AllNullableTypesWrapper *)
+    createNestedObjectWithNullableString:(nullable NSString *)nullableString
+                                   error:(FlutterError *_Nullable *_Nonnull)error {
+  AllNullableTypes *innerObject = [[AllNullableTypes alloc] init];
+  innerObject.aNullableString = nullableString;
+  return [AllNullableTypesWrapper makeWithValues:innerObject];
+}
+
+- (nullable AllNullableTypes *)sendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
+                                                        anInt:(nullable NSNumber *)aNullableInt
+                                                      aString:(nullable NSString *)aNullableString
+                                                        error:(FlutterError *_Nullable *_Nonnull)
+                                                                  error {
+  AllNullableTypes *someTypes = [[AllNullableTypes alloc] init];
+  someTypes.aNullableBool = aNullableBool;
+  someTypes.aNullableInt = aNullableInt;
+  someTypes.aNullableString = aNullableString;
+  return someTypes;
+}
+
+- (nullable NSNumber *)echoNullableInt:(nullable NSNumber *)aNullableInt
+                                 error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableInt;
+}
+
+- (nullable NSNumber *)echoNullableDouble:(nullable NSNumber *)aNullableDouble
+                                    error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableDouble;
+}
+
+- (nullable NSNumber *)echoNullableBool:(nullable NSNumber *)aNullableBool
+                                  error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableBool;
+}
+
+- (nullable NSString *)echoNullableString:(nullable NSString *)aNullableString
+                                    error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableString;
+}
+
+- (nullable FlutterStandardTypedData *)
+    echoNullableUint8List:(nullable FlutterStandardTypedData *)aNullableUint8List
+                    error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableUint8List;
 }
 
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
