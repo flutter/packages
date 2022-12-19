@@ -1205,59 +1205,72 @@ void main() {
   });
 
   test('Does not send unwrapped EncodableLists', () {
-    final Root root = Root(
-      apis: <Api>[
-        Api(
-          name: 'Api',
-          location: ApiLocation.flutter,
-          methods: <Method>[
-            Method(
-              name: 'method',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[
-        Class(
-          name: 'class',
-          fields: <NamedType>[
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
             NamedType(
+                name: 'aBool',
                 type: const TypeDeclaration(
-                    baseName: 'Map',
-                    isNullable: true,
-                    typeArguments: <TypeDeclaration>[
-                      TypeDeclaration(baseName: 'String', isNullable: true),
-                      TypeDeclaration(baseName: 'int', isNullable: true),
-                    ]),
-                name: 'field1'),
+                  baseName: 'bool',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anInt',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aString',
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aList',
+                type: const TypeDeclaration(
+                  baseName: 'List',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'Object', isNullable: true)
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aMap',
+                type: const TypeDeclaration(
+                  baseName: 'Map',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'Object', isNullable: true),
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anObject',
+                type: const TypeDeclaration(
+                  baseName: 'ParameterObject',
+                  isNullable: false,
+                )),
           ],
+          returnType: const TypeDeclaration.voidDeclaration(),
         ),
-      ],
-      enums: <Enum>[
-        Enum(
-          name: 'enum',
-          members: <EnumMember>[
-            EnumMember(
-              name: 'one',
+      ])
+    ], classes: <Class>[
+      Class(name: 'ParameterObject', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
             ),
-            EnumMember(name: 'two'),
-          ],
-        ),
-      ],
-    );
+            name: 'aValue'),
+      ]),
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateCppHeader('foo', const CppOptions(), root, sink);
+    generateCppSource(const CppOptions(), root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains('reply(wrap')));
+    expect(code, contains('reply(flutter::EncodableValue('));
   });
 }
