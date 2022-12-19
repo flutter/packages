@@ -561,10 +561,12 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.scoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final String member) {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
         // Capitalized first letter to ensure Swift compatibility
         indent.writeln(
-            '$enumName${member[0].toUpperCase()}${member.substring(1)} = $index,');
+            '$enumName${member.name[0].toUpperCase()}${member.name.substring(1)} = $index,');
       });
     });
   }

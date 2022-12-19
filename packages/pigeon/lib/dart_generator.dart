@@ -482,8 +482,10 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           indent, anEnum.documentationComments, _docCommentSpec);
       indent.write('enum ${anEnum.name} ');
       indent.scoped('{', '}', () {
-        for (final String member in anEnum.members) {
-          indent.writeln('$member,');
+        for (final EnumMember member in anEnum.members) {
+          addDocumentationComments(
+              indent, member.documentationComments, _docCommentSpec);
+          indent.writeln('${member.name},');
         }
       });
     }

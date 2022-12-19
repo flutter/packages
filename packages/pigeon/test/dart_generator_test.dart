@@ -38,9 +38,9 @@ void main() {
   test('gen one enum', () {
     final Enum anEnum = Enum(
       name: 'Foobar',
-      members: <String>[
-        'one',
-        'two',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
       ],
     );
     final Root root = Root(
@@ -408,9 +408,9 @@ void main() {
     ], enums: <Enum>[
       Enum(
         name: 'Enum',
-        members: <String>[
-          'one',
-          'two',
+        members: <EnumMember>[
+          EnumMember(name: 'one'),
+          EnumMember(name: 'two'),
         ],
       )
     ]);
@@ -436,7 +436,10 @@ void main() {
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <String>['one', 'two'])
+      Enum(name: 'Foo', members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ])
     ]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(), root, sink);
@@ -475,9 +478,9 @@ void main() {
     ], enums: <Enum>[
       Enum(
         name: 'Enum',
-        members: <String>[
-          'one',
-          'two',
+        members: <EnumMember>[
+          EnumMember(name: 'one'),
+          EnumMember(name: 'two'),
         ],
       )
     ]);
@@ -1168,6 +1171,7 @@ name: foobar
       ' class comment',
       ' class field comment',
       ' enum comment',
+      ' enum member comment',
     ];
     int count = 0;
 
@@ -1223,9 +1227,12 @@ name: foobar
             comments[count++],
             unspacedComments[unspacedCount++]
           ],
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
+            EnumMember(name: 'two'),
           ],
         ),
       ],
@@ -1339,9 +1346,9 @@ name: foobar
       enums: <Enum>[
         Enum(
           name: 'Enum',
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(name: 'one'),
+            EnumMember(name: 'two'),
           ],
         )
       ],
