@@ -1203,4 +1203,61 @@ void main() {
     final String code = sink.toString();
     expect(code, contains(' : public flutter::StandardCodecSerializer'));
   });
+
+  test('Does not send unwrapped EncodableLists', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[
+        Class(
+          name: 'class',
+          fields: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                    baseName: 'Map',
+                    isNullable: true,
+                    typeArguments: <TypeDeclaration>[
+                      TypeDeclaration(baseName: 'String', isNullable: true),
+                      TypeDeclaration(baseName: 'int', isNullable: true),
+                    ]),
+                name: 'field1'),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'enum',
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+            ),
+            EnumMember(name: 'two'),
+          ],
+        ),
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateCppHeader('foo', const CppOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(contains('reply(wrap')));
+  });
 }
