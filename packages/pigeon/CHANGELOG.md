@@ -1,3 +1,7 @@
+## 4.2.13
+
+* [c++] Fixes reply sending non EncodableValue wrapped lists.
+
 ## 4.2.12
 
 * Updates serialization to use lists instead of maps to improve performance.
