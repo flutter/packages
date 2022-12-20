@@ -1203,4 +1203,74 @@ void main() {
     final String code = sink.toString();
     expect(code, contains(' : public flutter::StandardCodecSerializer'));
   });
+
+  test('Does not send unwrapped EncodableLists', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'aBool',
+                type: const TypeDeclaration(
+                  baseName: 'bool',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anInt',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aString',
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aList',
+                type: const TypeDeclaration(
+                  baseName: 'List',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'Object', isNullable: true)
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aMap',
+                type: const TypeDeclaration(
+                  baseName: 'Map',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'Object', isNullable: true),
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anObject',
+                type: const TypeDeclaration(
+                  baseName: 'ParameterObject',
+                  isNullable: false,
+                )),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+        ),
+      ])
+    ], classes: <Class>[
+      Class(name: 'ParameterObject', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
+            ),
+            name: 'aValue'),
+      ]),
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateCppSource(const CppOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(contains('reply(wrap')));
+    expect(code, contains('reply(flutter::EncodableValue('));
+  });
 }
