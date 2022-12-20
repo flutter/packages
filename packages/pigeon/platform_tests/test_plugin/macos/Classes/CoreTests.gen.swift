@@ -563,6 +563,8 @@ private class FlutterIntegrationCoreApiCodecReader: FlutterStandardReader {
       case 128:
         return AllNullableTypes.fromList(self.readValue() as! [Any])      
       case 129:
+        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any])      
+      case 130:
         return AllTypes.fromList(self.readValue() as! [Any])      
       default:
         return super.readValue(ofType: type)
@@ -575,8 +577,11 @@ private class FlutterIntegrationCoreApiCodecWriter: FlutterStandardWriter {
     if let value = value as? AllNullableTypes {
       super.writeByte(128)
       super.writeValue(value.toList())
-    } else if let value = value as? AllTypes {
+    } else if let value = value as? AllNullableTypesWrapper {
       super.writeByte(129)
+      super.writeValue(value.toList())
+    } else if let value = value as? AllTypes {
+      super.writeByte(130)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -634,11 +639,115 @@ class FlutterIntegrationCoreApi {
       completion(result)
     }
   }
+  /// Returns the passed boolean, to test serialization and deserialization.
+  func echoBool(aBool aBoolArg: Bool, completion: @escaping (Bool) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aBoolArg]) { response in
+      let result = response as! Bool
+      completion(result)
+    }
+  }
+  /// Returns the passed int, to test serialization and deserialization.
+  func echoInt(anInt anIntArg: Int32, completion: @escaping (Int32) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([anIntArg]) { response in
+      let result = response as! Int32
+      completion(result)
+    }
+  }
+  /// Returns the passed double, to test serialization and deserialization.
+  func echoDouble(aDouble aDoubleArg: Double, completion: @escaping (Double) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aDoubleArg]) { response in
+      let result = response as! Double
+      completion(result)
+    }
+  }
   /// Returns the passed string, to test serialization and deserialization.
   func echoString(aString aStringArg: String, completion: @escaping (String) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg]) { response in
       let result = response as! String
+      completion(result)
+    }
+  }
+  /// Returns the passed byte list, to test serialization and deserialization.
+  func echoUint8List(aList aListArg: FlutterStandardTypedData, completion: @escaping (FlutterStandardTypedData) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aListArg]) { response in
+      let result = response as! FlutterStandardTypedData
+      completion(result)
+    }
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoList(aList aListArg: [Any?], completion: @escaping ([Any?]) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aListArg]) { response in
+      let result = response as! [Any?]
+      completion(result)
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoMap(aMap aMapArg: [Any?: Any?], completion: @escaping ([Any?: Any?]) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aMapArg]) { response in
+      let result = response as! [Any?: Any?]
+      completion(result)
+    }
+  }
+  /// Returns the passed boolean, to test serialization and deserialization.
+  func echoNullableBool(aBool aBoolArg: Bool?, completion: @escaping (Bool?) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aBoolArg]) { response in
+      let result = response as? Bool
+      completion(result)
+    }
+  }
+  /// Returns the passed int, to test serialization and deserialization.
+  func echoNullableInt(anInt anIntArg: Int32?, completion: @escaping (Int32?) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([anIntArg]) { response in
+      let result = response as? Int32
+      completion(result)
+    }
+  }
+  /// Returns the passed double, to test serialization and deserialization.
+  func echoNullableDouble(aDouble aDoubleArg: Double?, completion: @escaping (Double?) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aDoubleArg]) { response in
+      let result = response as? Double
+      completion(result)
+    }
+  }
+  /// Returns the passed string, to test serialization and deserialization.
+  func echoNullableString(aString aStringArg: String?, completion: @escaping (String?) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aStringArg]) { response in
+      let result = response as? String
+      completion(result)
+    }
+  }
+  /// Returns the passed byte list, to test serialization and deserialization.
+  func echoNullableUint8List(aList aListArg: FlutterStandardTypedData?, completion: @escaping (FlutterStandardTypedData?) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aListArg]) { response in
+      let result = response as? FlutterStandardTypedData
+      completion(result)
+    }
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullableList(aList aListArg: [Any?]?, completion: @escaping ([Any?]?) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aListArg]) { response in
+      let result = response as? [Any?]
+      completion(result)
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableMap(aMap aMapArg: [Any?: Any?], completion: @escaping ([Any?: Any?]) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aMapArg]) { response in
+      let result = response as! [Any?: Any?]
       completion(result)
     }
   }

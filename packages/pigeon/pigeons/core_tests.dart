@@ -213,9 +213,61 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoAllNullableTypes:')
   AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
 
+  /// Returns the passed boolean, to test serialization and deserialization.
+  @ObjCSelector('echoBool:')
+  bool echoBool(bool aBool);
+
+  /// Returns the passed int, to test serialization and deserialization.
+  @ObjCSelector('echoInt:')
+  int echoInt(int anInt);
+
+  /// Returns the passed double, to test serialization and deserialization.
+  @ObjCSelector('echoDouble:')
+  double echoDouble(double aDouble);
+
   /// Returns the passed string, to test serialization and deserialization.
   @ObjCSelector('echoString:')
   String echoString(String aString);
+
+  /// Returns the passed byte list, to test serialization and deserialization.
+  @ObjCSelector('echoUint8List:')
+  Uint8List echoUint8List(Uint8List aList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoList:')
+  List<Object?> echoList(List<Object?> aList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoMap:')
+  Map<Object?, Object?> echoMap(Map<Object?, Object?> aMap);
+
+  /// Returns the passed boolean, to test serialization and deserialization.
+  @ObjCSelector('echoNullableBool:')
+  bool? echoNullableBool(bool? aBool);
+
+  /// Returns the passed int, to test serialization and deserialization.
+  @ObjCSelector('echoNullableInt:')
+  int? echoNullableInt(int? anInt);
+
+  /// Returns the passed double, to test serialization and deserialization.
+  @ObjCSelector('echoNullableDouble:')
+  double? echoNullableDouble(double? aDouble);
+
+  /// Returns the passed string, to test serialization and deserialization.
+  @ObjCSelector('echoNullableString:')
+  String? echoNullableString(String? aString);
+
+  /// Returns the passed byte list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableUint8List:')
+  Uint8List? echoNullableUint8List(Uint8List? aList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableList:')
+  List<Object?>? echoNullableList(List<Object?>? aList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableMap:')
+  Map<Object?, Object?> echoNullableMap(Map<Object?, Object?> aMap);
 }
 
 /// An API that can be implemented for minimal, compile-only tests.

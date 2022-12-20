@@ -203,9 +203,49 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 /// Returns the passed object, to test serialization and deserialization.
 - (void)echoAllNullableTypes:(AllNullableTypes *)everything
                   completion:(void (^)(AllNullableTypes *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed boolean, to test serialization and deserialization.
+- (void)echoBool:(NSNumber *)aBool
+      completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed int, to test serialization and deserialization.
+- (void)echoInt:(NSNumber *)anInt
+     completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed double, to test serialization and deserialization.
+- (void)echoDouble:(NSNumber *)aDouble
+        completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;
 /// Returns the passed string, to test serialization and deserialization.
 - (void)echoString:(NSString *)aString
         completion:(void (^)(NSString *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed byte list, to test serialization and deserialization.
+- (void)echoUint8List:(FlutterStandardTypedData *)aList
+           completion:(void (^)(FlutterStandardTypedData *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization.
+- (void)echoList:(NSArray<id> *)aList
+      completion:(void (^)(NSArray<id> *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoMap:(NSDictionary<id, id> *)aMap
+     completion:(void (^)(NSDictionary<id, id> *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed boolean, to test serialization and deserialization.
+- (void)echoNullableBool:(nullable NSNumber *)aBool
+              completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed int, to test serialization and deserialization.
+- (void)echoNullableInt:(nullable NSNumber *)anInt
+             completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed double, to test serialization and deserialization.
+- (void)echoNullableDouble:(nullable NSNumber *)aDouble
+                completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed string, to test serialization and deserialization.
+- (void)echoNullableString:(nullable NSString *)aString
+                completion:(void (^)(NSString *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed byte list, to test serialization and deserialization.
+- (void)echoNullableUint8List:(nullable FlutterStandardTypedData *)aList
+                   completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                        NSError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization.
+- (void)echoNullableList:(nullable NSArray<id> *)aList
+              completion:(void (^)(NSArray<id> *_Nullable, NSError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoNullableMap:(NSDictionary<id, id> *)aMap
+             completion:(void (^)(NSDictionary<id, id> *_Nullable, NSError *_Nullable))completion;
 @end
 /// The codec used by HostTrivialApi.
 NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void);

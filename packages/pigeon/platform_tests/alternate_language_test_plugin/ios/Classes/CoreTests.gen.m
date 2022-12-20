@@ -788,6 +788,9 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       return [AllNullableTypes fromList:[self readValue]];
 
     case 129:
+      return [AllNullableTypesWrapper fromList:[self readValue]];
+
+    case 130:
       return [AllTypes fromList:[self readValue]];
 
     default:
@@ -803,8 +806,11 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   if ([value isKindOfClass:[AllNullableTypes class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllTypes class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypesWrapper class]]) {
     [self writeByte:129];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[AllTypes class]]) {
+    [self writeByte:130];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -881,6 +887,42 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
                    completion(output, nil);
                  }];
 }
+- (void)echoBool:(NSNumber *)arg_aBool
+      completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aBool ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSNumber *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoInt:(NSNumber *)arg_anInt
+     completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_anInt ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSNumber *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoDouble:(NSNumber *)arg_aDouble
+        completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aDouble ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSNumber *output = reply;
+                   completion(output, nil);
+                 }];
+}
 - (void)echoString:(NSString *)arg_aString
         completion:(void (^)(NSString *_Nullable, NSError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
@@ -890,6 +932,128 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(id reply) {
                    NSString *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoUint8List:(FlutterStandardTypedData *)arg_aList
+           completion:
+               (void (^)(FlutterStandardTypedData *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   FlutterStandardTypedData *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoList:(NSArray<id> *)arg_aList
+      completion:(void (^)(NSArray<id> *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSArray<id> *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoMap:(NSDictionary<id, id> *)arg_aMap
+     completion:(void (^)(NSDictionary<id, id> *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSDictionary<id, id> *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoNullableBool:(nullable NSNumber *)arg_aBool
+              completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aBool ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSNumber *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoNullableInt:(nullable NSNumber *)arg_anInt
+             completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_anInt ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSNumber *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoNullableDouble:(nullable NSNumber *)arg_aDouble
+                completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aDouble ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSNumber *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoNullableString:(nullable NSString *)arg_aString
+                completion:(void (^)(NSString *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSString *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoNullableUint8List:(nullable FlutterStandardTypedData *)arg_aList
+                   completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                        NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   FlutterStandardTypedData *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoNullableList:(nullable NSArray<id> *)arg_aList
+              completion:(void (^)(NSArray<id> *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSArray<id> *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)echoNullableMap:(NSDictionary<id, id> *)arg_aMap
+             completion:(void (^)(NSDictionary<id, id> *_Nullable, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSDictionary<id, id> *output = reply;
                    completion(output, nil);
                  }];
 }

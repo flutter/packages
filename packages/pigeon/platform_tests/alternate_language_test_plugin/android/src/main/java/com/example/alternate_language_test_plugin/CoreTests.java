@@ -1509,6 +1509,9 @@ public class CoreTests {
           return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
 
         case (byte) 129:
+          return AllNullableTypesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+
+        case (byte) 130:
           return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
 
         default:
@@ -1521,8 +1524,11 @@ public class CoreTests {
       if (value instanceof AllNullableTypes) {
         stream.write(128);
         writeValue(stream, ((AllNullableTypes) value).toList());
-      } else if (value instanceof AllTypes) {
+      } else if (value instanceof AllNullableTypesWrapper) {
         stream.write(129);
+        writeValue(stream, ((AllNullableTypesWrapper) value).toList());
+      } else if (value instanceof AllTypes) {
+        stream.write(130);
         writeValue(stream, ((AllTypes) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -1594,6 +1600,47 @@ public class CoreTests {
             callback.reply(output);
           });
     }
+    /** Returns the passed boolean, to test serialization and deserialization. */
+    public void echoBool(@NonNull Boolean aBoolArg, Reply<Boolean> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool", getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aBoolArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Boolean output = (Boolean) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed int, to test serialization and deserialization. */
+    public void echoInt(@NonNull Long anIntArg, Reply<Long> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt", getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(anIntArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Long output = channelReply == null ? null : ((Number) channelReply).longValue();
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed double, to test serialization and deserialization. */
+    public void echoDouble(@NonNull Double aDoubleArg, Reply<Double> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aDoubleArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Double output = (Double) channelReply;
+            callback.reply(output);
+          });
+    }
     /** Returns the passed string, to test serialization and deserialization. */
     public void echoString(@NonNull String aStringArg, Reply<String> callback) {
       BasicMessageChannel<Object> channel =
@@ -1606,6 +1653,153 @@ public class CoreTests {
           channelReply -> {
             @SuppressWarnings("ConstantConditions")
             String output = (String) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed byte list, to test serialization and deserialization. */
+    public void echoUint8List(@NonNull byte[] aListArg, Reply<byte[]> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aListArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            byte[] output = (byte[]) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed list, to test serialization and deserialization. */
+    public void echoList(@NonNull List<Object> aListArg, Reply<List<Object>> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList", getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aListArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            List<Object> output = (List<Object>) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoMap(@NonNull Map<Object, Object> aMapArg, Reply<Map<Object, Object>> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap", getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aMapArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Map<Object, Object> output = (Map<Object, Object>) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed boolean, to test serialization and deserialization. */
+    public void echoNullableBool(@Nullable Boolean aBoolArg, Reply<Boolean> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aBoolArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Boolean output = (Boolean) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed int, to test serialization and deserialization. */
+    public void echoNullableInt(@Nullable Long anIntArg, Reply<Long> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(anIntArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Long output = channelReply == null ? null : ((Number) channelReply).longValue();
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed double, to test serialization and deserialization. */
+    public void echoNullableDouble(@Nullable Double aDoubleArg, Reply<Double> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aDoubleArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Double output = (Double) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed string, to test serialization and deserialization. */
+    public void echoNullableString(@Nullable String aStringArg, Reply<String> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aStringArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            String output = (String) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed byte list, to test serialization and deserialization. */
+    public void echoNullableUint8List(@Nullable byte[] aListArg, Reply<byte[]> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aListArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            byte[] output = (byte[]) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed list, to test serialization and deserialization. */
+    public void echoNullableList(@Nullable List<Object> aListArg, Reply<List<Object>> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aListArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            List<Object> output = (List<Object>) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoNullableMap(
+        @NonNull Map<Object, Object> aMapArg, Reply<Map<Object, Object>> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aMapArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Map<Object, Object> output = (Map<Object, Object>) channelReply;
             callback.reply(output);
           });
     }

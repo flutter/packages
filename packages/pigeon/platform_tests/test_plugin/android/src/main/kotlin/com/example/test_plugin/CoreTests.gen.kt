@@ -704,6 +704,11 @@ private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
       }
       129.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
+          AllNullableTypesWrapper.fromList(it)
+        }
+      }
+      130.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
           AllTypes.fromList(it)
         }
       }
@@ -716,8 +721,12 @@ private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
         stream.write(128)
         writeValue(stream, value.toList())
       }
-      is AllTypes -> {
+      is AllNullableTypesWrapper -> {
         stream.write(129)
+        writeValue(stream, value.toList())
+      }
+      is AllTypes -> {
+        stream.write(130)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -765,11 +774,115 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
       callback(result)
     }
   }
+  /** Returns the passed boolean, to test serialization and deserialization. */
+  fun echoBool(aBoolArg: Boolean, callback: (Boolean) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool", codec)
+    channel.send(listOf(aBoolArg)) {
+      val result = it as Boolean
+      callback(result)
+    }
+  }
+  /** Returns the passed int, to test serialization and deserialization. */
+  fun echoInt(anIntArg: Long, callback: (Long) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt", codec)
+    channel.send(listOf(anIntArg)) {
+      val result = it as Long
+      callback(result)
+    }
+  }
+  /** Returns the passed double, to test serialization and deserialization. */
+  fun echoDouble(aDoubleArg: Double, callback: (Double) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble", codec)
+    channel.send(listOf(aDoubleArg)) {
+      val result = it as Double
+      callback(result)
+    }
+  }
   /** Returns the passed string, to test serialization and deserialization. */
   fun echoString(aStringArg: String, callback: (String) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString", codec)
     channel.send(listOf(aStringArg)) {
       val result = it as String
+      callback(result)
+    }
+  }
+  /** Returns the passed byte list, to test serialization and deserialization. */
+  fun echoUint8List(aListArg: ByteArray, callback: (ByteArray) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List", codec)
+    channel.send(listOf(aListArg)) {
+      val result = it as ByteArray
+      callback(result)
+    }
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoList(aListArg: List<Any?>, callback: (List<Any?>) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList", codec)
+    channel.send(listOf(aListArg)) {
+      val result = it as List<Any?>
+      callback(result)
+    }
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoMap(aMapArg: Map<Any?, Any?>, callback: (Map<Any?, Any?>) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap", codec)
+    channel.send(listOf(aMapArg)) {
+      val result = it as Map<Any?, Any?>
+      callback(result)
+    }
+  }
+  /** Returns the passed boolean, to test serialization and deserialization. */
+  fun echoNullableBool(aBoolArg: Boolean?, callback: (Boolean?) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool", codec)
+    channel.send(listOf(aBoolArg)) {
+      val result = it as? Boolean?
+      callback(result)
+    }
+  }
+  /** Returns the passed int, to test serialization and deserialization. */
+  fun echoNullableInt(anIntArg: Long?, callback: (Long?) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt", codec)
+    channel.send(listOf(anIntArg)) {
+      val result = it as? Long?
+      callback(result)
+    }
+  }
+  /** Returns the passed double, to test serialization and deserialization. */
+  fun echoNullableDouble(aDoubleArg: Double?, callback: (Double?) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble", codec)
+    channel.send(listOf(aDoubleArg)) {
+      val result = it as? Double?
+      callback(result)
+    }
+  }
+  /** Returns the passed string, to test serialization and deserialization. */
+  fun echoNullableString(aStringArg: String?, callback: (String?) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString", codec)
+    channel.send(listOf(aStringArg)) {
+      val result = it as? String?
+      callback(result)
+    }
+  }
+  /** Returns the passed byte list, to test serialization and deserialization. */
+  fun echoNullableUint8List(aListArg: ByteArray?, callback: (ByteArray?) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List", codec)
+    channel.send(listOf(aListArg)) {
+      val result = it as? ByteArray?
+      callback(result)
+    }
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNullableList(aListArg: List<Any?>?, callback: (List<Any?>?) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList", codec)
+    channel.send(listOf(aListArg)) {
+      val result = it as? List<Any?>?
+      callback(result)
+    }
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableMap(aMapArg: Map<Any?, Any?>, callback: (Map<Any?, Any?>) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap", codec)
+    channel.send(listOf(aMapArg)) {
+      val result = it as Map<Any?, Any?>
       callback(result)
     }
   }
