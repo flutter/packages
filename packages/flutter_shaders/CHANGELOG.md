@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Remove restriction on `AnimatedSampler` child repainting.
+
 ## 0.0.4
 
 * Added `ShaderInkFeatureFactory` and `ShaderInkFeature` to allow configuration of a
