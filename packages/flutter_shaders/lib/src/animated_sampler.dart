@@ -152,25 +152,11 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
     }
     _enabled = value;
     markNeedsPaint();
+    markNeedsCompositingBitsUpdate();
   }
 
   @override
-  bool get alwaysNeedsCompositing => true;
-
-  ui.Picture _paintBuilder(Offset offset, OffsetLayer childLayer) {
-    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(pictureRecorder);
-    final ui.Image image = childLayer.toImageSync(
-      offset & size,
-      pixelRatio: devicePixelRatio,
-    );
-    try {
-      builder(image, size, offset, canvas);
-    } finally {
-      image.dispose();
-    }
-    return pictureRecorder.endRecording();
-  }
+  bool get alwaysNeedsCompositing => enabled;
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -183,8 +169,10 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
     }
 
     context.pushLayer(
-      _ShaderSamplerBuilderLayer(offset, _paintBuilder),
+      _ShaderSamplerBuilderLayer(offset, size, devicePixelRatio, builder),
       (context, offset) {
+        // _ShaderSamplerBuilderLayer expects its only child to be an
+        // OffsetLayer.
         context.pushLayer(OffsetLayer(), super.paint, offset);
       },
       offset,
@@ -192,16 +180,49 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
   }
 }
 
+/// A [Layer] that uses an [AnimatedSamplerBuilder] to create a [ui.Picture]
+/// every time it is added to a scene.
 class _ShaderSamplerBuilderLayer extends ContainerLayer {
-  _ShaderSamplerBuilderLayer(this.offset, this.paint);
+  _ShaderSamplerBuilderLayer(
+    this.offset,
+    this.size,
+    this.devicePixelRatio,
+    this.builder,
+  );
 
   final Offset offset;
-  final ui.Picture Function(Offset offset, OffsetLayer childLayer) paint;
+  final Size size;
+  final double devicePixelRatio;
+  final AnimatedSamplerBuilder builder;
 
   @override
   void addToScene(ui.SceneBuilder builder) {
-    final OffsetLayer childLayer = firstChild! as OffsetLayer;
-    final ui.Picture picture = paint(offset, childLayer);
-    builder.addPicture(Offset.zero, picture);
+    builder.addPicture(Offset.zero, _createPictureWithBuilder());
+  }
+
+  ui.Picture _createPictureWithBuilder() {
+    assert(firstChild is OffsetLayer);
+    assert(firstChild == lastChild);
+
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+
+    // This layer cannot be the OffsetLayer that we call toImageSync on to get
+    // the raster image. It expects to have a single OffsetLayer child it can
+    // use for that purpose.
+    // toImageSync eventually calls addToScene on the target layer, which would
+    // result in infinite recursion.
+    final OffsetLayer child = firstChild! as OffsetLayer;
+    final ui.Image image = child.toImageSync(
+      offset & size,
+      pixelRatio: devicePixelRatio,
+    );
+
+    try {
+      builder(image, size, offset, canvas);
+    } finally {
+      image.dispose();
+    }
+    return pictureRecorder.endRecording();
   }
 }
