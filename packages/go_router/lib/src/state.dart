@@ -24,7 +24,6 @@ class GoRouterState {
     this.params = const <String, String>{},
     this.queryParams = const <String, String>{},
     this.queryParametersAll = const <String, List<String>>{},
-    this.extra,
     this.error,
     required this.pageKey,
   });
@@ -57,9 +56,6 @@ class GoRouterState {
   /// The query parameters for the location,
   /// e.g. `{'q1': ['v1'], 'q2': ['v2', 'v3']}`
   final Map<String, List<String>> queryParametersAll;
-
-  /// An extra object to pass along with the navigation.
-  final Object? extra;
 
   /// The error associated with this sub-route.
   final Exception? error;
@@ -144,14 +140,13 @@ class GoRouterState {
         other.params == params &&
         other.queryParams == queryParams &&
         other.queryParametersAll == queryParametersAll &&
-        other.extra == extra &&
         other.error == error &&
         other.pageKey == pageKey;
   }
 
   @override
   int get hashCode => Object.hash(location, subloc, name, path, fullpath,
-      params, queryParams, queryParametersAll, extra, error, pageKey);
+      params, queryParams, queryParametersAll, error, pageKey);
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.

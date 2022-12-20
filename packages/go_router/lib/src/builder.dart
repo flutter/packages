@@ -241,7 +241,6 @@ class RouteBuilder {
       error: match.error,
       queryParams: effectiveMatchList.uri.queryParameters,
       queryParametersAll: effectiveMatchList.uri.queryParametersAll,
-      extra: match.extra,
       pageKey: match.pageKey,
     );
   }
