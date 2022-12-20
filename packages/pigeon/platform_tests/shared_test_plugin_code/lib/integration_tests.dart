@@ -545,10 +545,47 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   }
 
   @override
-  String echoString(String aString) {
-    return aString;
-  }
+  void noop() {}
 
   @override
-  void noop() {}
+  bool echoBool(bool aBool) => aBool;
+
+  @override
+  double echoDouble(double aDouble) => aDouble;
+
+  @override
+  int echoInt(int anInt) => anInt;
+
+  @override
+  String echoString(String aString) => aString;
+
+  @override
+  Uint8List echoUint8List(Uint8List aList) => aList;
+
+  @override
+  List<Object?> echoList(List<Object?> aList) => aList;
+
+  @override
+  Map<Object?, Object?> echoMap(Map<Object?, Object?> aMap) => aMap;
+
+  @override
+  bool? echoNullableBool(bool? aBool) => aBool;
+
+  @override
+  double? echoNullableDouble(double? aDouble) => aDouble;
+
+  @override
+  int? echoNullableInt(int? anInt) => anInt;
+
+  @override
+  List<Object?>? echoNullableList(List<Object?>? aList) => aList;
+
+  @override
+  Map<Object?, Object?> echoNullableMap(Map<Object?, Object?> aMap) => aMap;
+
+  @override
+  String? echoNullableString(String? aString) => aString;
+
+  @override
+  Uint8List? echoNullableUint8List(Uint8List? aList) => aList;
 }
