@@ -16,9 +16,6 @@ void main() {
         ),
       ),
     );
-
-    // Pump the next frame to animate `CircularProgressIndicator`.
-    await tester.pump(Duration(seconds: 1));
   });
 
   testWidgets('starts calling builder once enabled', (tester) async {
