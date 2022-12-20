@@ -1,3 +1,7 @@
+## 4.2.14
+
+* [c++] Fixes reply sending non EncodableValue wrapped lists.
+
 ## 4.2.13
 
 * Add documentation comment support for Enum members.
