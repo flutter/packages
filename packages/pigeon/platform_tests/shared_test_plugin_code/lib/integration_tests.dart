@@ -527,10 +527,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String echoObject = await api.callFlutterEchoString(sentObject);
       expect(echoObject, sentObject);
     });
-  },
-      // TODO(stuartmorgan): Enable when FlutterApi generation is fixed for
-      // C++. See https://github.com/flutter/flutter/issues/108682.
-      skip: targetGenerator == TargetGenerator.cpp);
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
