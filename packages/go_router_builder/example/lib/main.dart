@@ -83,7 +83,7 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => const HomeScreen();
+  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
 @TypedGoRoute<LoginRoute>(
@@ -95,7 +95,8 @@ class LoginRoute extends GoRouteData {
   final String? fromPage;
 
   @override
-  Widget build(BuildContext context) => LoginScreen(from: fromPage);
+  Widget build(BuildContext context, GoRouterState state) =>
+      LoginScreen(from: fromPage);
 }
 
 class FamilyRoute extends GoRouteData {
@@ -104,7 +105,8 @@ class FamilyRoute extends GoRouteData {
   final String fid;
 
   @override
-  Widget build(BuildContext context) => FamilyScreen(family: familyById(fid));
+  Widget build(BuildContext context, GoRouterState state) =>
+      FamilyScreen(family: familyById(fid));
 }
 
 class PersonRoute extends GoRouteData {
@@ -114,7 +116,7 @@ class PersonRoute extends GoRouteData {
   final int pid;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, GoRouterState state) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
     return PersonScreen(family: family, person: person);
@@ -130,7 +132,7 @@ class PersonDetailsRoute extends GoRouteData {
   final int? $extra;
 
   @override
-  Page<void> buildPageWithState(BuildContext context, GoRouterState state) {
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
 
