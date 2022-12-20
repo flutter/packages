@@ -332,7 +332,8 @@ class ParseResults {
   final Map<String, Object>? pigeonOptions;
 }
 
-Iterable<String> _lineReader(String path) sync* {
+/// Reads file line by line.
+Iterable<String> lineReader(String path) sync* {
   final String contents = File(path).readAsStringSync();
   const LineSplitter lineSplitter = LineSplitter();
   final List<String> lines = lineSplitter.convert(contents);
@@ -341,7 +342,8 @@ Iterable<String> _lineReader(String path) sync* {
   }
 }
 
-IOSink? _openSink(String? output) {
+/// Creates IOSink.
+IOSink? openSink(String? output) {
   if (output == null) {
     return null;
   }
@@ -356,14 +358,6 @@ IOSink? _openSink(String? output) {
   return sink;
 }
 
-DartOptions _dartOptionsWithCopyrightHeader(
-    DartOptions? dartOptions, String? copyrightHeader) {
-  dartOptions = dartOptions ?? const DartOptions();
-  return dartOptions.merge(DartOptions(
-      copyrightHeader:
-          copyrightHeader != null ? _lineReader(copyrightHeader) : null));
-}
-
 /// A [Generator] that generates the AST.
 class AstGenerator implements Generator {
   /// Constructor for [AstGenerator].
@@ -375,221 +369,7 @@ class AstGenerator implements Generator {
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.astOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
-}
-
-/// A [Generator] that generates Dart source code.
-class DartGenerator implements Generator {
-  /// Constructor for [DartGenerator].
-  const DartGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
-        options.dartOptions, options.copyrightHeader);
-    generateDart(dartOptionsWithHeader, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.dartOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
-}
-
-/// A [Generator] that generates Dart test source code.
-class DartTestGenerator implements Generator {
-  /// Constructor for [DartTestGenerator].
-  const DartTestGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
-        options.dartOptions, options.copyrightHeader);
-    generateTestDart(
-      dartOptionsWithHeader,
-      root,
-      sink,
-      dartOutPath: options.dartOut!,
-      testOutPath: options.dartTestOut!,
-    );
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) {
-    if (options.dartTestOut != null) {
-      return _openSink(options.dartTestOut);
-    } else {
-      return null;
-    }
-  }
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
-}
-
-/// A [Generator] that generates Objective-C header code.
-class ObjcHeaderGenerator implements Generator {
-  /// Constructor for [ObjcHeaderGenerator].
-  const ObjcHeaderGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
-    final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateObjcHeader(objcOptionsWithHeader, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      _openSink(options.objcHeaderOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) =>
-      validateObjc(options.objcOptions!, root);
-}
-
-/// A [Generator] that generates Objective-C source code.
-class ObjcSourceGenerator implements Generator {
-  /// Constructor for [ObjcSourceGenerator].
-  const ObjcSourceGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
-    final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateObjcSource(objcOptionsWithHeader, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      _openSink(options.objcSourceOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
-}
-
-/// A [Generator] that generates Java source code.
-class JavaGenerator implements Generator {
-  /// Constructor for [JavaGenerator].
-  const JavaGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    JavaOptions javaOptions = options.javaOptions ?? const JavaOptions();
-    javaOptions = javaOptions.merge(JavaOptions(
-        className: javaOptions.className ??
-            path.basenameWithoutExtension(options.javaOut!),
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateJava(javaOptions, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
-}
-
-/// A [Generator] that generates Swift source code.
-class SwiftGenerator implements Generator {
-  /// Constructor for [SwiftGenerator].
-  const SwiftGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
-    swiftOptions = swiftOptions.merge(SwiftOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateSwift(swiftOptions, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.swiftOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
-}
-
-/// A [Generator] that generates C++ header code.
-class CppHeaderGenerator implements Generator {
-  /// Constructor for [CppHeaderGenerator].
-  const CppHeaderGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
-    final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateCppHeader(path.basenameWithoutExtension(options.cppHeaderOut!),
-        cppOptionsWithHeader, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      _openSink(options.cppHeaderOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) =>
-      validateCpp(options.cppOptions!, root);
-}
-
-/// A [Generator] that generates C++ source code.
-class CppSourceGenerator implements Generator {
-  /// Constructor for [CppSourceGenerator].
-  const CppSourceGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
-    final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateCppSource(cppOptionsWithHeader, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      _openSink(options.cppSourceOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
-}
-
-/// A [Generator] that generates Kotlin source code.
-class KotlinGenerator implements Generator {
-  /// Constructor for [KotlinGenerator].
-  const KotlinGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    KotlinOptions kotlinOptions =
-        options.kotlinOptions ?? const KotlinOptions();
-    kotlinOptions = kotlinOptions.merge(KotlinOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateKotlin(kotlinOptions, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.kotlinOut);
+  IOSink? shouldGenerate(PigeonOptions options) => openSink(options.astOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];

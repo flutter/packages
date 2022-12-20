@@ -2,10 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
-import 'pigeon_lib.dart' show Error, TaskQueueType;
+import 'pigeon_lib.dart'
+    show Error, PigeonOptions, TaskQueueType, lineReader, openSink;
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
@@ -61,6 +65,53 @@ class ObjcOptions {
   ObjcOptions merge(ObjcOptions options) {
     return ObjcOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
+}
+
+/// A [Generator] that generates Objective-C header code.
+class ObjcHeaderGenerator implements Generator {
+  /// Constructor for [ObjcHeaderGenerator].
+  const ObjcHeaderGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
+    final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? lineReader(options.copyrightHeader!)
+            : null));
+    generateObjcHeader(objcOptionsWithHeader, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      openSink(options.objcHeaderOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) =>
+      validateObjc(options.objcOptions!, root);
+}
+
+/// A [Generator] that generates Objective-C source code.
+class ObjcSourceGenerator implements Generator {
+  /// Constructor for [ObjcSourceGenerator].
+  const ObjcSourceGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
+    final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? lineReader(options.copyrightHeader!)
+            : null));
+    generateObjcSource(objcOptionsWithHeader, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      openSink(options.objcSourceOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// Calculates the ObjC class name, possibly prefixed.

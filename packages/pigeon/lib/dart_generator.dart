@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show Directory, File, FileSystemEntity;
+import 'dart:io' show Directory, File, FileSystemEntity, IOSink;
 
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart' show Error, PigeonOptions, lineReader, openSink;
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
@@ -64,6 +66,64 @@ String _escapeForDartSingleQuotedString(String raw) {
 
 /// Calculates the name of the codec class that will be generated for [api].
 String _getCodecName(Api api) => '_${api.name}Codec';
+
+/// A [Generator] that generates Dart source code.
+class DartGenerator implements Generator {
+  /// Constructor for [DartGenerator].
+  const DartGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
+        options.dartOptions, options.copyrightHeader);
+    generateDart(dartOptionsWithHeader, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => openSink(options.dartOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+}
+
+DartOptions _dartOptionsWithCopyrightHeader(
+    DartOptions? dartOptions, String? copyrightHeader) {
+  dartOptions = dartOptions ?? const DartOptions();
+  return dartOptions.merge(DartOptions(
+      copyrightHeader:
+          copyrightHeader != null ? lineReader(copyrightHeader) : null));
+}
+
+/// A [Generator] that generates Dart test source code.
+class DartTestGenerator implements Generator {
+  /// Constructor for [DartTestGenerator].
+  const DartTestGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
+        options.dartOptions, options.copyrightHeader);
+    generateTestDart(
+      dartOptionsWithHeader,
+      root,
+      sink,
+      dartOutPath: options.dartOut!,
+      testOutPath: options.dartTestOut!,
+    );
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) {
+    if (options.dartTestOut != null) {
+      return openSink(options.dartTestOut);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+}
 
 /// Writes the codec that will be used by [api].
 /// Example:
