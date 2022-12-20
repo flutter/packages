@@ -10,7 +10,7 @@ void main() {
     'ensure_build',
     () => expectBuildClean(
       packageRelativeDirectory: 'packages/go_router_builder/example',
-      gitDiffPathArguments: [':!pubspec.yaml'],
+      gitDiffPathArguments: <String>[':!pubspec.yaml'],
     ),
     timeout: const Timeout.factor(3),
   );
