@@ -1,3 +1,7 @@
+## 4.2.15
+
+* Relocates generator classes.
+
 ## 4.2.14
 
 * [c++] Fixes reply sending non EncodableValue wrapped lists.
