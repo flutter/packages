@@ -272,6 +272,54 @@ void main() {
       expect(find.byType(_HomeScreen), findsNothing);
       expect(find.byType(_DetailsScreen), findsOneWidget);
     });
+
+    testWidgets('Builds a HeroControllerScope for ShellRoute',
+        (WidgetTester tester) async {
+      final RouteConfiguration config = RouteConfiguration(
+        routes: <RouteBase>[
+          ShellRoute(
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                return _DetailsScreen();
+              },
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return _DetailsScreen();
+                  },
+                ),
+              ]),
+        ],
+        redirectLimit: 10,
+        topRedirect: (BuildContext context, GoRouterState state) {
+          return null;
+        },
+        navigatorKey: GlobalKey<NavigatorState>(),
+      );
+
+      final RouteMatchList matches = RouteMatchList(
+          <RouteMatch>[
+            RouteMatch(
+              route: config.routes.first,
+              subloc: '/',
+              extra: null,
+              error: null,
+              pageKey: const ValueKey<String>('/'),
+            ),
+          ],
+          Uri.parse('/'),
+          <String, String>{});
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+
+      expect(find.byType(HeroControllerScope), findsNWidgets(3));
+    });
   });
 }
 

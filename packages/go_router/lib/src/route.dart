@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import 'configuration.dart';
-import 'misc/go_hero.dart';
 import 'pages/custom_transition_page.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
@@ -459,8 +458,4 @@ class ShellRoute extends RouteBase {
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
   final GlobalKey<NavigatorState> navigatorKey;
-
-  /// HeroController for each nested Navigator, which solves cases where the
-  /// Hero Widget animation stops working when navigating.
-  final GoHero goHero = GoHero();
 }

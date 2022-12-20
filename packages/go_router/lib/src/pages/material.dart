@@ -12,6 +12,10 @@ import '../misc/extensions.dart';
 bool isMaterialApp(Element elem) =>
     elem.findAncestorWidgetOfExactType<MaterialApp>() != null;
 
+/// Create a Material HeroController.
+HeroController createMaterialHeroController() =>
+    MaterialApp.createMaterialHeroController();
+
 /// Builds a Material page.
 MaterialPage<void> pageBuilderForMaterialApp({
   required LocalKey key,

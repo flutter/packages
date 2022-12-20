@@ -62,6 +62,10 @@ class RouteBuilder {
       _routeMatchLookUp[page];
 
   // final Map<>
+  /// Caches a HeroController for the nested Navigator, which solves cases where the
+  /// Hero Widget animation stops working when navigating.
+  final Map<GlobalKey<NavigatorState>, HeroController> _goHeroCache =
+      <GlobalKey<NavigatorState>, HeroController>{};
 
   /// Builds the top-level Navigator for the given [RouteMatchList].
   Widget build(
@@ -210,9 +214,11 @@ class RouteBuilder {
       _buildRecursive(context, matchList, startIndex + 1, onPopPage,
           routerNeglect, keyToPages, shellNavigatorKey, registry);
 
+      final HeroController heroController = _goHeroCache.putIfAbsent(
+          shellNavigatorKey, () => _getHeroController(context));
       // Build the Navigator
       final Widget child = HeroControllerScope(
-        controller: route.goHero.get(context),
+        controller: heroController,
         child: _buildNavigator(
             onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
             observers: observers),
@@ -458,6 +464,18 @@ class RouteBuilder {
                 ? errorBuilder(context, state)
                 : _errorBuilderForAppType!(context, state),
           );
+  }
+
+  /// Return a HeroController based on the app type.
+  HeroController _getHeroController(BuildContext context) {
+    if (context is Element) {
+      if (isMaterialApp(context)) {
+        return createMaterialHeroController();
+      } else if (isCupertinoApp(context)) {
+        return createCupertinoHeroController();
+      }
+    }
+    return HeroController();
   }
 }
 
