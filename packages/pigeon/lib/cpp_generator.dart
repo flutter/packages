@@ -590,7 +590,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.write('if ($encodableArgName.IsNull()) ');
                     indent.scoped('{', '}', () {
                       indent.writeln(
-                          'reply(WrapError("$argName unexpectedly null."));');
+                          'reply(flutter::EncodableValue(WrapError("$argName unexpectedly null.")));');
                       indent.writeln('return;');
                     });
                   }
@@ -656,7 +656,7 @@ $prefix\t}${indent.newline}''';
               if (method.isAsynchronous) {
                 methodArgument.add(
                   '[&wrapped, &reply]($returnTypeName&& output) {${indent.newline}'
-                  '${wrapResponse('\treply(wrapped);${indent.newline}', method.returnType)}'
+                  '${wrapResponse('\treply(flutter::EncodableValue(std::move(wrapped)));${indent.newline}', method.returnType)}'
                   '}',
                 );
               }
@@ -673,11 +673,13 @@ $prefix\t}${indent.newline}''';
             indent.scoped('{', '}', () {
               indent.writeln('wrapped = WrapError(exception.what());');
               if (method.isAsynchronous) {
-                indent.writeln('reply(wrapped);');
+                indent.writeln(
+                    'reply(flutter::EncodableValue(std::move(wrapped)));');
               }
             });
             if (!method.isAsynchronous) {
-              indent.writeln('reply(wrapped);');
+              indent.writeln(
+                  'reply(flutter::EncodableValue(std::move(wrapped)));');
             }
           });
         });
