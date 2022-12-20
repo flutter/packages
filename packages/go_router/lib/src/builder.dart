@@ -468,6 +468,11 @@ class RouteBuilder {
 
   /// Return a HeroController based on the app type.
   HeroController _getHeroController(BuildContext context) {
+    /// Clean up previous cache to prevent memory leak.
+    if (_goHeroCache.isNotEmpty) {
+      _goHeroCache.clear();
+    }
+
     if (context is Element) {
       if (isMaterialApp(context)) {
         return createMaterialHeroController();
