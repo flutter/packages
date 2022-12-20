@@ -639,6 +639,16 @@ class FlutterIntegrationCoreApi {
       completion(result)
     }
   }
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  func sendMultipleNullableTypes(aNullableBool aNullableBoolArg: Bool?, aNullableInt aNullableIntArg: Int32?, aNullableString aNullableStringArg: String?, completion: @escaping (AllNullableTypes) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aNullableBoolArg, aNullableIntArg, aNullableStringArg]) { response in
+      let result = response as! AllNullableTypes
+      completion(result)
+    }
+  }
   /// Returns the passed boolean, to test serialization and deserialization.
   func echoBool(aBool aBoolArg: Bool, completion: @escaping (Bool) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool", binaryMessenger: binaryMessenger, codec: codec)

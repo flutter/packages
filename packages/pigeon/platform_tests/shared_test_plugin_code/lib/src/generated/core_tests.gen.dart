@@ -891,6 +891,12 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
 
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
   /// Returns the passed boolean, to test serialization and deserialization.
   bool echoBool(bool aBool);
 
@@ -986,6 +992,27 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes was null, expected non-null AllNullableTypes.');
           final AllNullableTypes output =
               api.echoAllNullableTypes(arg_everything!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final bool? arg_aNullableBool = (args[0] as bool?);
+          final int? arg_aNullableInt = (args[1] as int?);
+          final String? arg_aNullableString = (args[2] as String?);
+          final AllNullableTypes output = api.sendMultipleNullableTypes(
+              arg_aNullableBool, arg_aNullableInt, arg_aNullableString);
           return output;
         });
       }

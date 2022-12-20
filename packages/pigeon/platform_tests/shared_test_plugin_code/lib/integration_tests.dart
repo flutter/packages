@@ -548,6 +548,15 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   void noop() {}
 
   @override
+  AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString) {
+    return AllNullableTypes(
+        aNullableBool: aNullableBool,
+        aNullableInt: aNullableInt,
+        aNullableString: aNullableString);
+  }
+
+  @override
   bool echoBool(bool aBool) => aBool;
 
   @override

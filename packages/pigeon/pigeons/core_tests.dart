@@ -213,6 +213,15 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoAllNullableTypes:')
   AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
 
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
+  AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  // ========== Non-nullable argument/return type tests ==========
+
   /// Returns the passed boolean, to test serialization and deserialization.
   @ObjCSelector('echoBool:')
   bool echoBool(bool aBool);
@@ -240,6 +249,8 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
   Map<Object?, Object?> echoMap(Map<Object?, Object?> aMap);
+
+  // ========== Nullable argument/return type tests ==========
 
   /// Returns the passed boolean, to test serialization and deserialization.
   @ObjCSelector('echoNullableBool:')

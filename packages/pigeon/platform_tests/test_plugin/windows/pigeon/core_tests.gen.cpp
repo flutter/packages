@@ -1514,6 +1514,34 @@ void FlutterIntegrationCoreApi::echoAllNullableTypes(
         callback(output);
       });
 }
+void FlutterIntegrationCoreApi::sendMultipleNullableTypes(
+    std::optional<bool> a_nullable_bool_arg,
+    std::optional<int64_t> a_nullable_int_arg,
+    std::optional<std::string> a_nullable_string_arg,
+    std::function<void(const AllNullableTypes&)>&& callback) {
+  auto channel = std::make_unique<
+      flutter::BasicMessageChannel<flutter::EncodableValue>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes",
+      &GetCodec());
+  channel->Send(
+      flutter::EncodableList{
+          flutter::CustomEncodableValue(a_nullable_bool_arg),
+          flutter::CustomEncodableValue(a_nullable_int_arg),
+          flutter::CustomEncodableValue(a_nullable_string_arg)},
+      [callback](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+            GetCodec().DecodeMessage(reply, reply_size);
+        flutter::EncodableValue args =
+            *(flutter::EncodableValue*)(decoded_reply.release());
+        AllNullableTypes output{};
+        if (const flutter::EncodableList* pointer_output =
+                std::get_if<flutter::EncodableList>(&args)) {
+          output = AllNullableTypes(*pointer_output);
+        }
+        callback(output);
+      });
+}
 void FlutterIntegrationCoreApi::echoBool(bool a_bool_arg,
                                          std::function<void(bool)>&& callback) {
   auto channel =

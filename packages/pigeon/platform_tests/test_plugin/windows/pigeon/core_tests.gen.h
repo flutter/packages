@@ -383,6 +383,14 @@ class FlutterIntegrationCoreApi {
   void echoAllNullableTypes(
       const AllNullableTypes& everything_arg,
       std::function<void(const AllNullableTypes&)>&& callback);
+  // Returns passed in arguments of multiple types.
+  //
+  // Tests multiple-arity FlutterApi handling.
+  void sendMultipleNullableTypes(
+      std::optional<bool> a_nullable_bool_arg,
+      std::optional<int64_t> a_nullable_int_arg,
+      std::optional<std::string> a_nullable_string_arg,
+      std::function<void(const AllNullableTypes&)>&& callback);
   // Returns the passed boolean, to test serialization and deserialization.
   void echoBool(bool a_bool_arg, std::function<void(bool)>&& callback);
   // Returns the passed int, to test serialization and deserialization.

@@ -203,6 +203,14 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 /// Returns the passed object, to test serialization and deserialization.
 - (void)echoAllNullableTypes:(AllNullableTypes *)everything
                   completion:(void (^)(AllNullableTypes *_Nullable, NSError *_Nullable))completion;
+/// Returns passed in arguments of multiple types.
+///
+/// Tests multiple-arity FlutterApi handling.
+- (void)sendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
+                                 anInt:(nullable NSNumber *)aNullableInt
+                               aString:(nullable NSString *)aNullableString
+                            completion:(void (^)(AllNullableTypes *_Nullable,
+                                                 NSError *_Nullable))completion;
 /// Returns the passed boolean, to test serialization and deserialization.
 - (void)echoBool:(NSNumber *)aBool
       completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;

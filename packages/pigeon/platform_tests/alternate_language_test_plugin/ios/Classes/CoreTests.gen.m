@@ -887,6 +887,25 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
                    completion(output, nil);
                  }];
 }
+- (void)sendMultipleNullableTypesABool:(nullable NSNumber *)arg_aNullableBool
+                                 anInt:(nullable NSNumber *)arg_aNullableInt
+                               aString:(nullable NSString *)arg_aNullableString
+                            completion:(void (^)(AllNullableTypes *_Nullable,
+                                                 NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:
+          @"dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[
+    arg_aNullableBool ?: [NSNull null], arg_aNullableInt ?: [NSNull null],
+    arg_aNullableString ?: [NSNull null]
+  ]
+                 reply:^(id reply) {
+                   AllNullableTypes *output = reply;
+                   completion(output, nil);
+                 }];
+}
 - (void)echoBool:(NSNumber *)arg_aBool
       completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel

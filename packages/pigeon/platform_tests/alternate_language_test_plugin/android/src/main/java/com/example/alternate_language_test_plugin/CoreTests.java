@@ -17,6 +17,7 @@ import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -1594,6 +1595,30 @@ public class CoreTests {
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(everythingArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            AllNullableTypes output = (AllNullableTypes) channelReply;
+            callback.reply(output);
+          });
+    }
+    /**
+     * Returns passed in arguments of multiple types.
+     *
+     * <p>Tests multiple-arity FlutterApi handling.
+     */
+    public void sendMultipleNullableTypes(
+        @Nullable Boolean aNullableBoolArg,
+        @Nullable Long aNullableIntArg,
+        @Nullable String aNullableStringArg,
+        Reply<AllNullableTypes> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(
+              Arrays.asList(aNullableBoolArg, aNullableIntArg, aNullableStringArg)),
           channelReply -> {
             @SuppressWarnings("ConstantConditions")
             AllNullableTypes output = (AllNullableTypes) channelReply;
