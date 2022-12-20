@@ -27,6 +27,7 @@ import 'ast.dart';
 import 'ast_generator.dart';
 import 'cpp_generator.dart';
 import 'dart_generator.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
 import 'java_generator.dart';
@@ -353,21 +354,6 @@ IOSink? _openSink(String? output) {
     sink = file.openWrite();
   }
   return sink;
-}
-
-/// A generator that will write code to a sink based on the contents of [PigeonOptions].
-abstract class Generator {
-  /// Returns an [IOSink] instance to be written to if the [Generator] should
-  /// generate.  If it returns `null`, the [Generator] will be skipped.
-  IOSink? shouldGenerate(PigeonOptions options);
-
-  /// Write the generated code described in [root] to [sink] using the
-  /// [options].
-  void generate(StringSink sink, PigeonOptions options, Root root);
-
-  /// Generates errors that would only be appropriate for this [Generator]. For
-  /// example, maybe a certain feature isn't implemented in a [Generator] yet.
-  List<Error> validate(PigeonOptions options, Root root);
 }
 
 DartOptions _dartOptionsWithCopyrightHeader(
