@@ -590,7 +590,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.write('if ($encodableArgName.IsNull()) ');
                     indent.scoped('{', '}', () {
                       indent.writeln(
-                          'reply(flutter::EncodableValue(std::move(WrapError("$argName unexpectedly null."))));');
+                          'reply(flutter::EncodableValue(WrapError("$argName unexpectedly null.")));');
                       indent.writeln('return;');
                     });
                   }
