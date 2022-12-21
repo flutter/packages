@@ -4,6 +4,7 @@
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show TaskQueueType;
 
@@ -61,6 +62,22 @@ class KotlinOptions {
   /// [KotlinOptions].
   KotlinOptions merge(KotlinOptions options) {
     return KotlinOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
+}
+
+/// Class that manages all Kotlin code generation.
+class KotlinGenerator extends Generator<KotlinOptions> {
+  /// Instantiates a Kotlin Generator.
+  KotlinGenerator({
+    required KotlinOptions languageOptions,
+    required Root root,
+    required StringSink sink,
+  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Generates Kotlin files with specified [KotlinOptions]
+  @override
+  void generate() {
+    //
   }
 }
 

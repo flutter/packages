@@ -4,6 +4,7 @@
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show Error, TaskQueueType;
 
@@ -60,6 +61,38 @@ class ObjcOptions {
   /// [ObjcOptions].
   ObjcOptions merge(ObjcOptions options) {
     return ObjcOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
+}
+
+/// Class that manages all Objc header code generation.
+class ObjcHeaderGenerator extends Generator<ObjcOptions> {
+  /// Instantiates a Objc Generator.
+  ObjcHeaderGenerator({
+    required ObjcOptions languageOptions,
+    required Root root,
+    required StringSink sink,
+  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Generates Objc header files with specified [ObjcOptions]
+  @override
+  void generate() {
+    //
+  }
+}
+
+/// Class that manages all Objc code generation.
+class ObjcSourceGenerator extends Generator<ObjcOptions> {
+  /// Instantiates a Objc Generator.
+  ObjcSourceGenerator({
+    required ObjcOptions languageOptions,
+    required Root root,
+    required StringSink sink,
+  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Generates Objc files with specified [ObjcOptions]
+  @override
+  void generate() {
+    //
   }
 }
 
