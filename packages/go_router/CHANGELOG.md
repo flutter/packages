@@ -3,7 +3,7 @@
 - Introduces `StatefulShellRoute` to support using separate
   navigators for child routes as well as preserving state in each navigation tree
   (flutter/flutter#99124).
-- Updated documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
+- Updates documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
   describe the meaning of the child argument in the builder functions.
 - Added support for restorationId to ShellRoute (and StatefulShellRoute).
 
