@@ -4,6 +4,7 @@
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 
 /// Documentation comment open symbol.
@@ -44,6 +45,22 @@ class SwiftOptions {
   /// [SwiftOptions].
   SwiftOptions merge(SwiftOptions options) {
     return SwiftOptions.fromList(mergeMaps(toMap(), options.toMap()));
+  }
+}
+
+/// Class that manages all Swift code generation.
+class SwiftGenerator extends Generator<SwiftOptions> {
+  /// Instantiates a Swift Generator.
+  SwiftGenerator({
+    required SwiftOptions languageOptions,
+    required Root root,
+    required StringSink sink,
+  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Generates Swift files with specified [SwiftOptions]
+  @override
+  void generate() {
+    //
   }
 }
 
