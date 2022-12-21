@@ -1,3 +1,7 @@
+## 4.2.16
+
+* Creates new Generator classes for each language.
+
 ## 4.2.15
 
 * Relocates generator classes. (Reverted)
