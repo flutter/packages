@@ -449,9 +449,6 @@ void main() {
             expect(state.fullpath, '/');
             expect(state.params, <String, String>{});
             expect(state.error, null);
-            if (state.extra != null) {
-              expect(state.extra! as int, 1);
-            }
             return const HomeScreen();
           },
           routes: <GoRoute>[
@@ -466,7 +463,6 @@ void main() {
                 expect(state.fullpath, '/login');
                 expect(state.params, <String, String>{});
                 expect(state.error, null);
-                expect(state.extra! as int, 2);
                 return const LoginScreen();
               },
             ),
@@ -484,7 +480,6 @@ void main() {
                 expect(state.fullpath, '/family/:fid');
                 expect(state.params, <String, String>{'fid': 'f2'});
                 expect(state.error, null);
-                expect(state.extra! as int, 3);
                 return FamilyScreen(state.params['fid']!);
               },
               routes: <GoRoute>[
@@ -502,7 +497,6 @@ void main() {
                       <String, String>{'fid': 'f2', 'pid': 'p1'},
                     );
                     expect(state.error, null);
-                    expect(state.extra! as int, 4);
                     return PersonScreen(
                         state.params['fid']!, state.params['pid']!);
                   },
@@ -514,13 +508,13 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      router.go('/', extra: 1);
+      router.go('/');
       await tester.pump();
-      router.push('/login', extra: 2);
+      router.push('/login');
       await tester.pump();
-      router.push('/family/f2', extra: 3);
+      router.push('/family/f2');
       await tester.pump();
-      router.push('/family/f2/person/p1', extra: 4);
+      router.push('/family/f2/person/p1');
       await tester.pump();
     });
 
@@ -1822,53 +1816,6 @@ void main() {
       expect(screen.ex, isNotNull);
     });
 
-    testWidgets('extra not null in redirect', (WidgetTester tester) async {
-      bool isCallTopRedirect = false;
-      bool isCallRouteRedirect = false;
-
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          name: 'home',
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
-          routes: <GoRoute>[
-            GoRoute(
-              name: 'login',
-              path: 'login',
-              builder: (BuildContext context, GoRouterState state) {
-                return const LoginScreen();
-              },
-              redirect: (BuildContext context, GoRouterState state) {
-                isCallRouteRedirect = true;
-                expect(state.extra, isNotNull);
-                return null;
-              },
-              routes: const <GoRoute>[],
-            ),
-          ],
-        ),
-      ];
-
-      final GoRouter router = await createRouter(
-        routes,
-        tester,
-        redirect: (BuildContext context, GoRouterState state) {
-          if (state.location == '/login') {
-            isCallTopRedirect = true;
-            expect(state.extra, isNotNull);
-          }
-
-          return null;
-        },
-      );
-
-      router.go('/login', extra: 1);
-      await tester.pump();
-
-      expect(isCallTopRedirect, true);
-      expect(isCallRouteRedirect, true);
-    });
 
     testWidgets('parent route level redirect take priority over child',
         (WidgetTester tester) async {
@@ -2216,24 +2163,24 @@ void main() {
             path: '/family',
             builder: (BuildContext context, GoRouterState state) =>
                 FamilyScreen(
-              (state.extra! as Map<String, String>)['fid']!,
+              (state.param! as Map<String, String>)['fid']!,
             ),
           ),
           GoRoute(
             path: '/person',
             builder: (BuildContext context, GoRouterState state) =>
                 PersonScreen(
-              (state.extra! as Map<String, String>)['fid']!,
-              (state.extra! as Map<String, String>)['pid']!,
+              (state.param! as Map<String, String>)['fid']!,
+              (state.param! as Map<String, String>)['pid']!,
             ),
           ),
         ],
         tester,
       );
 
-      router.go('/family', extra: <String, String>{'fid': 'f2'});
+      router.go('/family', param: <String, String>{'fid': 'f2'});
       await tester.pumpAndSettle();
-      router.push('/person', extra: <String, String>{'fid': 'f2', 'pid': 'p1'});
+      router.push('/person', param: <String, String>{'fid': 'f2', 'pid': 'p1'});
       await tester.pumpAndSettle();
       final FamilyScreen page1 = tester
           .widget<FamilyScreen>(find.byType(FamilyScreen, skipOffstage: false));
@@ -2465,7 +2412,6 @@ void main() {
       'a-query-key': 'a-query-value',
     };
     const String location = '/page1';
-    const String extra = 'Hello';
 
     testWidgets('calls [namedLocation] on closest GoRouter',
         (WidgetTester tester) async {
@@ -2497,10 +2443,8 @@ void main() {
       );
       key.currentContext!.go(
         location,
-        extra: extra,
       );
       expect(router.myLocation, location);
-      expect(router.extra, extra);
     });
 
     testWidgets('calls [goNamed] on closest GoRouter',
@@ -2516,12 +2460,10 @@ void main() {
         name,
         params: params,
         queryParams: queryParams,
-        extra: extra,
       );
       expect(router.name, name);
       expect(router.params, params);
       expect(router.queryParams, queryParams);
-      expect(router.extra, extra);
     });
 
     testWidgets('calls [push] on closest GoRouter',
@@ -2535,10 +2477,8 @@ void main() {
       );
       key.currentContext!.push(
         location,
-        extra: extra,
       );
       expect(router.myLocation, location);
-      expect(router.extra, extra);
     });
 
     testWidgets('calls [pushNamed] on closest GoRouter',
@@ -2554,12 +2494,10 @@ void main() {
         name,
         params: params,
         queryParams: queryParams,
-        extra: extra,
       );
       expect(router.name, name);
       expect(router.params, params);
       expect(router.queryParams, queryParams);
-      expect(router.extra, extra);
     });
 
     testWidgets('calls [pop] on closest GoRouter', (WidgetTester tester) async {
