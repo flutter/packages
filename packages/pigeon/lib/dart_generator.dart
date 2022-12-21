@@ -9,6 +9,7 @@ import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 
 /// Documentation comment open symbol.
@@ -52,6 +53,22 @@ class DartOptions {
   /// [DartOptions].
   DartOptions merge(DartOptions options) {
     return DartOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
+}
+
+/// Class that manages all coe generation.
+class DartGenerator extends Generator<DartOptions> {
+  /// Instantiates a Generator.
+  DartGenerator({
+    required DartOptions languageOptions,
+    required Root root,
+    required StringSink sink,
+  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Generates files for specified language with specified [languageOptions]
+  @override
+  void generate() {
+    //
   }
 }
 
