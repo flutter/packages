@@ -1,6 +1,6 @@
 ## 5.3.0
 
-- Introduced a new shell route class called `StatefulShellRoute`, to support using separate
+- Introduces `StatefulShellRoute` to support using separate
   navigators for child routes as well as preserving state in each navigation tree
   (flutter/flutter#99124).
 - Updated documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
