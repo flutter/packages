@@ -11,7 +11,7 @@ import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
 import 'generator_tools.dart';
-import 'pigeon_lib.dart' show Error, PigeonOptions, lineReader, openSink;
+import 'pigeon_lib.dart' show Error, PigeonOptions, lineReader, openWriteSink;
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
@@ -80,7 +80,8 @@ class DartGenerator implements Generator {
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => openSink(options.dartOut);
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      openWriteSink(options.dartOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -115,7 +116,7 @@ class DartTestGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) {
     if (options.dartTestOut != null) {
-      return openSink(options.dartTestOut);
+      return openWriteSink(options.dartTestOut);
     } else {
       return null;
     }

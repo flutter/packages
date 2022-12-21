@@ -9,7 +9,7 @@ import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
 import 'generator_tools.dart';
-import 'pigeon_lib.dart' show Error, PigeonOptions, lineReader, openSink;
+import 'pigeon_lib.dart' show Error, PigeonOptions, lineReader, openWriteSink;
 
 /// General comment opening token.
 const String _commentPrefix = '//';
@@ -86,7 +86,7 @@ class CppHeaderGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
-      openSink(options.cppHeaderOut);
+      openWriteSink(options.cppHeaderOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) =>
@@ -110,7 +110,7 @@ class CppSourceGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
-      openSink(options.cppSourceOut);
+      openWriteSink(options.cppSourceOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];

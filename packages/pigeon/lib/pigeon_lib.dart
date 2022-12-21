@@ -342,8 +342,10 @@ Iterable<String> lineReader(String path) sync* {
   }
 }
 
-/// Creates IOSink.
-IOSink? openSink(String? output) {
+/// Opens an [IOSink] to write to [output].
+/// If [output] is stdout it writes to the standard output,
+/// otherwise treats [output] like a path to a file.
+IOSink? openWriteSink(String? output) {
   if (output == null) {
     return null;
   }
@@ -369,7 +371,8 @@ class AstGenerator implements Generator {
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => openSink(options.astOut);
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      openWriteSink(options.astOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];

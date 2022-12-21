@@ -9,7 +9,7 @@ import 'functional.dart';
 import 'generator.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart'
-    show Error, PigeonOptions, TaskQueueType, lineReader, openSink;
+    show Error, PigeonOptions, TaskQueueType, lineReader, openWriteSink;
 
 /// Documentation open symbol.
 const String _docCommentPrefix = '/**';
@@ -85,7 +85,8 @@ class KotlinGenerator implements Generator {
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => openSink(options.kotlinOut);
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      openWriteSink(options.kotlinOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
