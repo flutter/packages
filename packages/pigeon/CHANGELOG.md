@@ -1,6 +1,6 @@
 ## 4.2.15
 
-* Reverts changelog change from commit revert.
+* Relocates generator classes. (Reverted)
 
 ## 4.2.14
 
