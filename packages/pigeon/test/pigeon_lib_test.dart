@@ -9,8 +9,8 @@ import 'package:pigeon/ast.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
 
-class _ValidatorGenerator implements Generator {
-  _ValidatorGenerator(this.sink);
+class _ValidatorAdapter implements Adapter {
+  _ValidatorAdapter(this.sink);
   bool didCallValidate = false;
 
   final IOSink? sink;
@@ -397,9 +397,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
-    const DartGenerator dartGenerator = DartGenerator();
+    const DartAdapter dartAdapter = DartAdapter();
     final StringBuffer buffer = StringBuffer();
-    dartGenerator.generate(buffer, options, root);
+    dartAdapter.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -407,9 +407,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
         javaOut: 'Foo.java', copyrightHeader: './copyright_header.txt');
-    const JavaGenerator javaGenerator = JavaGenerator();
+    const JavaAdapter javaAdapter = JavaAdapter();
     final StringBuffer buffer = StringBuffer();
-    javaGenerator.generate(buffer, options, root);
+    javaAdapter.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -417,9 +417,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
-    const ObjcHeaderGenerator objcHeaderGenerator = ObjcHeaderGenerator();
+    const ObjcHeaderAdapter objcHeaderAdapter = ObjcHeaderAdapter();
     final StringBuffer buffer = StringBuffer();
-    objcHeaderGenerator.generate(buffer, options, root);
+    objcHeaderAdapter.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -427,9 +427,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
-    const ObjcSourceGenerator objcSourceGenerator = ObjcSourceGenerator();
+    const ObjcSourceAdapter objcSourceAdapter = ObjcSourceAdapter();
     final StringBuffer buffer = StringBuffer();
-    objcSourceGenerator.generate(buffer, options, root);
+    objcSourceAdapter.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -437,9 +437,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
         swiftOut: 'Foo.swift', copyrightHeader: './copyright_header.txt');
-    const SwiftGenerator swiftGenerator = SwiftGenerator();
+    const SwiftAdapter swiftAdapter = SwiftAdapter();
     final StringBuffer buffer = StringBuffer();
-    swiftGenerator.generate(buffer, options, root);
+    swiftAdapter.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -447,9 +447,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
         cppHeaderOut: 'Foo.h', copyrightHeader: './copyright_header.txt');
-    const CppHeaderGenerator cppHeaderGenerator = CppHeaderGenerator();
+    const CppHeaderAdapter cppHeaderAdapter = CppHeaderAdapter();
     final StringBuffer buffer = StringBuffer();
-    cppHeaderGenerator.generate(buffer, options, root);
+    cppHeaderAdapter.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -457,9 +457,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
-    const CppSourceGenerator cppSourceGenerator = CppSourceGenerator();
+    const CppSourceAdapter cppSourceAdapter = CppSourceAdapter();
     final StringBuffer buffer = StringBuffer();
-    cppSourceGenerator.generate(buffer, options, root);
+    cppSourceAdapter.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -929,9 +929,9 @@ abstract class Api {
       dartTestOut: 'stdout',
       dartOut: 'stdout',
     );
-    const DartTestGenerator dartGenerator = DartTestGenerator();
+    const DartTestAdapter dartAdapter = DartTestAdapter();
     final StringBuffer buffer = StringBuffer();
-    dartGenerator.generate(buffer, options, root);
+    dartAdapter.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -1187,9 +1187,9 @@ abstract class Api {
   test('generator validation', () async {
     final Completer<void> completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final _ValidatorGenerator generator = _ValidatorGenerator(stdout);
+      final _ValidatorAdapter generator = _ValidatorAdapter(stdout);
       final int result = await Pigeon.run(<String>['--input', input.path],
-          generators: <Generator>[generator]);
+          adapters: <Adapter>[generator]);
       expect(generator.didCallValidate, isTrue);
       expect(result, isNot(0));
       completer.complete();
@@ -1200,10 +1200,10 @@ abstract class Api {
   test('generator validation skipped', () async {
     final Completer<void> completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final _ValidatorGenerator generator = _ValidatorGenerator(null);
+      final _ValidatorAdapter generator = _ValidatorAdapter(null);
       final int result = await Pigeon.run(
           <String>['--input', input.path, '--dart_out', 'foo.dart'],
-          generators: <Generator>[generator]);
+          adapters: <Adapter>[generator]);
       expect(generator.didCallValidate, isFalse);
       expect(result, equals(0));
       completer.complete();
@@ -1214,10 +1214,10 @@ abstract class Api {
   test('run with PigeonOptions', () async {
     final Completer<void> completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final _ValidatorGenerator generator = _ValidatorGenerator(null);
+      final _ValidatorAdapter generator = _ValidatorAdapter(null);
       final int result = await Pigeon.runWithOptions(
           PigeonOptions(input: input.path, dartOut: 'foo.dart'),
-          generators: <Generator>[generator]);
+          adapters: <Adapter>[generator]);
       expect(generator.didCallValidate, isFalse);
       expect(result, equals(0));
       completer.complete();
