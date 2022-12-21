@@ -2,14 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-import 'package:path/path.dart' as path;
-
 import 'ast.dart';
 import 'functional.dart';
-import 'generator.dart';
 import 'generator_tools.dart';
-import 'pigeon_lib.dart' show Error, PigeonOptions, lineReader, openSink;
+import 'pigeon_lib.dart' show Error;
 
 /// General comment opening token.
 const String _commentPrefix = '//';
@@ -66,54 +62,6 @@ class CppOptions {
   CppOptions merge(CppOptions options) {
     return CppOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
-}
-
-/// A [Generator] that generates C++ header code.
-class CppHeaderGenerator implements Generator {
-  /// Constructor for [CppHeaderGenerator].
-  const CppHeaderGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
-    final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? lineReader(options.copyrightHeader!)
-            : null));
-    generateCppHeader(path.basenameWithoutExtension(options.cppHeaderOut!),
-        cppOptionsWithHeader, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      openSink(options.cppHeaderOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) =>
-      validateCpp(options.cppOptions!, root);
-}
-
-/// A [Generator] that generates C++ source code.
-class CppSourceGenerator implements Generator {
-  /// Constructor for [CppSourceGenerator].
-  const CppSourceGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
-    final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? lineReader(options.copyrightHeader!)
-            : null));
-    generateCppSource(cppOptionsWithHeader, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      openSink(options.cppSourceOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 String _getCodecSerializerName(Api api) => '${api.name}CodecSerializer';

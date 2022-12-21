@@ -2,13 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'ast.dart';
 import 'functional.dart';
-import 'generator.dart';
 import 'generator_tools.dart';
-import 'pigeon_lib.dart' show Error, PigeonOptions, lineReader, openSink;
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
@@ -49,28 +45,6 @@ class SwiftOptions {
   SwiftOptions merge(SwiftOptions options) {
     return SwiftOptions.fromList(mergeMaps(toMap(), options.toMap()));
   }
-}
-
-/// A [Generator] that generates Swift source code.
-class SwiftGenerator implements Generator {
-  /// Constructor for [SwiftGenerator].
-  const SwiftGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
-    swiftOptions = swiftOptions.merge(SwiftOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? lineReader(options.copyrightHeader!)
-            : null));
-    generateSwift(swiftOptions, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) => openSink(options.swiftOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// Calculates the name of the codec that will be generated for [api].
