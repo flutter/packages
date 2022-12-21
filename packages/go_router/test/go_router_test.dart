@@ -953,6 +953,41 @@ void main() {
       ]);
     });
 
+    testWidgets('on pop twice', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const DummyScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                  path: 'settings',
+                  builder: (_, __) => const DummyScreen(),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'profile',
+                      builder: (_, __) => const DummyScreen(),
+                    ),
+                  ]),
+            ]),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          initialLocation: '/settings/profile');
+
+      log.clear();
+      router.pop();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
+          'location': '/',
+          'state': null,
+          'replace': false
+        }),
+      ]);
+    });
+
     testWidgets('on pop with path parameters', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
