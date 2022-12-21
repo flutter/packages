@@ -1,3 +1,7 @@
+## 6.0.1
+
+- Fixes incorrect URL when pops multiple times
+
 ## 6.0.0
 
 - **BREAKING CHANGE**
