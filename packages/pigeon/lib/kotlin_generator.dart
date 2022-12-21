@@ -68,15 +68,11 @@ class KotlinOptions {
 /// Class that manages all Kotlin code generation.
 class KotlinGenerator extends Generator<KotlinOptions> {
   /// Instantiates a Kotlin Generator.
-  KotlinGenerator({
-    required KotlinOptions languageOptions,
-    required Root root,
-    required StringSink sink,
-  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+  KotlinGenerator();
 
   /// Generates Kotlin files with specified [KotlinOptions]
   @override
-  void generate() {
+  void generate(KotlinOptions languageOptions, Root root, StringSink sink) {
     generateKotlin(languageOptions, root, sink);
   }
 }

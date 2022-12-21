@@ -67,15 +67,11 @@ class ObjcOptions {
 /// Class that manages all Objc header code generation.
 class ObjcHeaderGenerator extends Generator<ObjcOptions> {
   /// Instantiates a Objc Generator.
-  ObjcHeaderGenerator({
-    required ObjcOptions languageOptions,
-    required Root root,
-    required StringSink sink,
-  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+  ObjcHeaderGenerator();
 
   /// Generates Objc header files with specified [ObjcOptions]
   @override
-  void generate() {
+  void generate(ObjcOptions languageOptions, Root root, StringSink sink) {
     generateObjcHeader(languageOptions, root, sink);
   }
 }
@@ -83,15 +79,11 @@ class ObjcHeaderGenerator extends Generator<ObjcOptions> {
 /// Class that manages all Objc code generation.
 class ObjcSourceGenerator extends Generator<ObjcOptions> {
   /// Instantiates a Objc Generator.
-  ObjcSourceGenerator({
-    required ObjcOptions languageOptions,
-    required Root root,
-    required StringSink sink,
-  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+  ObjcSourceGenerator();
 
   /// Generates Objc files with specified [ObjcOptions]
   @override
-  void generate() {
+  void generate(ObjcOptions languageOptions, Root root, StringSink sink) {
     generateObjcSource(languageOptions, root, sink);
   }
 }

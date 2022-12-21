@@ -88,15 +88,11 @@ class JavaOptions {
 /// Class that manages all Java code generation.
 class JavaGenerator extends Generator<JavaOptions> {
   /// Instantiates a Java Generator.
-  JavaGenerator({
-    required JavaOptions languageOptions,
-    required Root root,
-    required StringSink sink,
-  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+  JavaGenerator();
 
   /// Generates Java files with specified [JavaOptions]
   @override
-  void generate() {
+  void generate(JavaOptions languageOptions, Root root, StringSink sink) {
     generateJava(languageOptions, root, sink);
   }
 }
