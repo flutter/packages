@@ -56,16 +56,16 @@ class DartOptions {
   }
 }
 
-/// Class that manages all coe generation.
+/// Class that manages all Dart code generation.
 class DartGenerator extends Generator<DartOptions> {
-  /// Instantiates a Generator.
+  /// Instantiates a Dart Generator.
   DartGenerator({
     required DartOptions languageOptions,
     required Root root,
     required StringSink sink,
   }) : super(languageOptions: languageOptions, root: root, sink: sink);
 
-  /// Generates files for specified language with specified [languageOptions]
+  /// Generates Dart files with specified [DartOptions]
   @override
   void generate() {
     //
