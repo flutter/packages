@@ -77,12 +77,8 @@ String removePatternFromPath(String pattern, String path) {
     buffer.write(RegExp.escape(pattern.substring(start)));
   }
 
-  if (path.endsWith('/')) {
-    buffer.write('/');
-  }
-
   if (!pattern.endsWith('/')) {
-    buffer.write(r'(?=/|$)');
+    buffer.write(r'(\/)?(?=/|$)');
   }
   buffer.write(r'$');
   final RegExp regexp = RegExp(buffer.toString(), caseSensitive: false);
