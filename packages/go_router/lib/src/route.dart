@@ -323,7 +323,7 @@ class GoRoute extends RouteBase {
   late final RegExp _pathRE;
 }
 
-/// Base class for classes that acts as a shell for sub-routes, such
+/// Base class for classes that act as shells for sub-routes, such
 /// as [ShellRoute] and [StatefulShellRoute].
 abstract class ShellRouteBase extends RouteBase {
   const ShellRouteBase._({this.builder, this.pageBuilder, super.routes})
