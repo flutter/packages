@@ -1,6 +1,6 @@
 ## 4.2.15
 
-* Revert changelog change from commit revert.
+* Reverts changelog change from commit revert.
 
 ## 4.2.14
 
