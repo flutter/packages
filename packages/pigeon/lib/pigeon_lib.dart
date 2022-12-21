@@ -379,7 +379,7 @@ DartOptions _dartOptionsWithCopyrightHeader(
           copyrightHeader != null ? _lineReader(copyrightHeader) : null));
 }
 
-/// A [Adapter] that generates the AST.
+/// An [Adapter] that generates the AST.
 class AstAdapter implements Adapter {
   /// Constructor for [AstAdapter].
   const AstAdapter();
@@ -396,7 +396,7 @@ class AstAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Adapter] that generates Dart source code.
+/// An [Adapter] that generates Dart source code.
 class DartAdapter implements Adapter {
   /// Constructor for [DartAdapter].
   const DartAdapter();
@@ -415,7 +415,7 @@ class DartAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Adapter] that generates Dart test source code.
+/// An [Adapter] that generates Dart test source code.
 class DartTestAdapter implements Adapter {
   /// Constructor for [DartTestAdapter].
   const DartTestAdapter();
@@ -446,7 +446,7 @@ class DartTestAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Adapter] that generates Objective-C header code.
+/// An [Adapter] that generates Objective-C header code.
 class ObjcHeaderAdapter implements Adapter {
   /// Constructor for [ObjcHeaderAdapter].
   const ObjcHeaderAdapter();
@@ -470,7 +470,7 @@ class ObjcHeaderAdapter implements Adapter {
       validateObjc(options.objcOptions!, root);
 }
 
-/// A [Adapter] that generates Objective-C source code.
+/// An [Adapter] that generates Objective-C source code.
 class ObjcSourceAdapter implements Adapter {
   /// Constructor for [ObjcSourceAdapter].
   const ObjcSourceAdapter();
@@ -493,7 +493,7 @@ class ObjcSourceAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Adapter] that generates Java source code.
+/// An [Adapter] that generates Java source code.
 class JavaAdapter implements Adapter {
   /// Constructor for [JavaAdapter].
   const JavaAdapter();
@@ -517,7 +517,7 @@ class JavaAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Adapter] that generates Swift source code.
+/// An [Adapter] that generates Swift source code.
 class SwiftAdapter implements Adapter {
   /// Constructor for [SwiftAdapter].
   const SwiftAdapter();
@@ -539,7 +539,7 @@ class SwiftAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Adapter] that generates C++ header code.
+/// An [Adapter] that generates C++ header code.
 class CppHeaderAdapter implements Adapter {
   /// Constructor for [CppHeaderAdapter].
   const CppHeaderAdapter();
@@ -564,7 +564,7 @@ class CppHeaderAdapter implements Adapter {
       validateCpp(options.cppOptions!, root);
 }
 
-/// A [Adapter] that generates C++ source code.
+/// An [Adapter] that generates C++ source code.
 class CppSourceAdapter implements Adapter {
   /// Constructor for [CppSourceAdapter].
   const CppSourceAdapter();
@@ -587,7 +587,7 @@ class CppSourceAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Adapter] that generates Kotlin source code.
+/// An [Adapter] that generates Kotlin source code.
 class KotlinAdapter implements Adapter {
   /// Constructor for [KotlinAdapter].
   const KotlinAdapter();

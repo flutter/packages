@@ -72,6 +72,22 @@ class DartGenerator extends Generator<DartOptions> {
   }
 }
 
+/// Class that manages all Dart code generation.
+class DartTestGenerator extends Generator<DartOptions> {
+  /// Instantiates a Dart Generator.
+  DartTestGenerator({
+    required DartOptions languageOptions,
+    required Root root,
+    required StringSink sink,
+  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Generates Dart files with specified [DartOptions]
+  @override
+  void generate() {
+    //
+  }
+}
+
 String _escapeForDartSingleQuotedString(String raw) {
   return raw
       .replaceAll(r'\', r'\\')

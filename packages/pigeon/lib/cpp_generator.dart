@@ -4,6 +4,7 @@
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show Error;
 
@@ -61,6 +62,38 @@ class CppOptions {
   /// [CppOptions].
   CppOptions merge(CppOptions options) {
     return CppOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
+}
+
+/// Class that manages all Cpp header code generation.
+class CppHeaderGenerator extends Generator<CppOptions> {
+  /// Instantiates a Cpp Generator.
+  CppHeaderGenerator({
+    required CppOptions languageOptions,
+    required Root root,
+    required StringSink sink,
+  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Generates Cpp header files with specified [CppOptions]
+  @override
+  void generate() {
+    //
+  }
+}
+
+/// Class that manages all Cpp code generation.
+class CppSourceGenerator extends Generator<CppOptions> {
+  /// Instantiates a Cpp Generator.
+  CppSourceGenerator({
+    required CppOptions languageOptions,
+    required Root root,
+    required StringSink sink,
+  }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Generates Cpp files with specified [CppOptions]
+  @override
+  void generate() {
+    //
   }
 }
 
