@@ -6,13 +6,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:pigeon/ast.dart';
-import 'package:pigeon/cpp_generator.dart';
-import 'package:pigeon/dart_generator.dart';
-import 'package:pigeon/generator.dart';
-import 'package:pigeon/java_generator.dart';
-import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon_lib.dart';
-import 'package:pigeon/swift_generator.dart';
 import 'package:test/test.dart';
 
 class _ValidatorGenerator implements Generator {

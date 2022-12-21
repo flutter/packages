@@ -2,16 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
-import 'package:path/path.dart' as path;
-
 import 'ast.dart';
 import 'functional.dart';
-import 'generator.dart';
 import 'generator_tools.dart';
-import 'pigeon_lib.dart'
-    show Error, PigeonOptions, TaskQueueType, lineReader, openSink;
+import 'pigeon_lib.dart' show TaskQueueType;
 
 /// Documentation open symbol.
 const String _docCommentPrefix = '/**';
@@ -88,30 +82,6 @@ class JavaOptions {
   JavaOptions merge(JavaOptions options) {
     return JavaOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
-}
-
-/// A [Generator] that generates Java source code.
-class JavaGenerator implements Generator {
-  /// Constructor for [JavaGenerator].
-  const JavaGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    JavaOptions javaOptions = options.javaOptions ?? const JavaOptions();
-    javaOptions = javaOptions.merge(JavaOptions(
-        className: javaOptions.className ??
-            path.basenameWithoutExtension(options.javaOut!),
-        copyrightHeader: options.copyrightHeader != null
-            ? lineReader(options.copyrightHeader!)
-            : null));
-    generateJava(javaOptions, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) => openSink(options.javaOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// Calculates the name of the codec that will be generated for [api].

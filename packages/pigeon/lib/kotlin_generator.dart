@@ -2,14 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'ast.dart';
 import 'functional.dart';
-import 'generator.dart';
 import 'generator_tools.dart';
-import 'pigeon_lib.dart'
-    show Error, PigeonOptions, TaskQueueType, lineReader, openSink;
+import 'pigeon_lib.dart' show TaskQueueType;
 
 /// Documentation open symbol.
 const String _docCommentPrefix = '/**';
@@ -66,29 +62,6 @@ class KotlinOptions {
   KotlinOptions merge(KotlinOptions options) {
     return KotlinOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
-}
-
-/// A [Generator] that generates Kotlin source code.
-class KotlinGenerator implements Generator {
-  /// Constructor for [KotlinGenerator].
-  const KotlinGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    KotlinOptions kotlinOptions =
-        options.kotlinOptions ?? const KotlinOptions();
-    kotlinOptions = kotlinOptions.merge(KotlinOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? lineReader(options.copyrightHeader!)
-            : null));
-    generateKotlin(kotlinOptions, root, sink);
-  }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) => openSink(options.kotlinOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// Calculates the name of the codec that will be generated for [api].
