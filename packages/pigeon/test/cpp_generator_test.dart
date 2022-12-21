@@ -1106,7 +1106,10 @@ void main() {
               'const flutter::EncodableMap* a_map, '
               'const ParameterObject* an_object,'));
       // The callback should pass a pointer as well.
-      expect(code, contains('std::function<void(const int64_t*)>&& callback)'));
+      expect(
+          code,
+          contains('std::function<void(const int64_t*)>&& callback, '
+              'std::function<void(const FlutterError&)>&& error_handler)'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1223,7 +1226,10 @@ void main() {
               'const flutter::EncodableMap& a_map, '
               'const ParameterObject& an_object,'));
       // The callback should pass a value.
-      expect(code, contains('std::function<void(int64_t)>&& callback)'));
+      expect(
+          code,
+          contains('std::function<void(int64_t)>&& callback, '
+              'std::function<void(const FlutterError&)>&& error_handler)'));
     }
     {
       final StringBuffer sink = StringBuffer();
