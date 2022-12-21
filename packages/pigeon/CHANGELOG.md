@@ -1,3 +1,7 @@
+## 4.2.15
+
+* Revert changelog change from commit revert.
+
 ## 4.2.14
 
 * [c++] Fixes reply sending non EncodableValue wrapped lists.
