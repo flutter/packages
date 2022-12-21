@@ -1068,7 +1068,10 @@ void main() {
                   isNullable: true,
                 )),
           ],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: true,
+          ),
         ),
       ])
     ], classes: <Class>[
@@ -1101,7 +1104,9 @@ void main() {
               'const std::string* a_string, '
               'const flutter::EncodableList* a_list, '
               'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object)'));
+              'const ParameterObject* an_object,'));
+      // The callback should pass a pointer as well.
+      expect(code, contains('std::function<void(const int64_t*)>&& callback)'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1187,7 +1192,10 @@ void main() {
                   isNullable: false,
                 )),
           ],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
         ),
       ])
     ], classes: <Class>[
@@ -1213,7 +1221,9 @@ void main() {
               // Non-POD types use const references.
               'const flutter::EncodableList& a_list, '
               'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object)'));
+              'const ParameterObject& an_object,'));
+      // The callback should pass a value.
+      expect(code, contains('std::function<void(int64_t)>&& callback)'));
     }
     {
       final StringBuffer sink = StringBuffer();
