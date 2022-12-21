@@ -577,7 +577,7 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
                     'val ${field.name} = $fieldType.fromList($listValue as List<Any?>)');
               } else if (!hostDatatype.isBuiltin &&
                   rootEnumNameSet.contains(field.type.baseName)) {
-                indent.write(
+                indent.writeln(
                     'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
               } else {
                 indent.writeln('val ${field.name} = $listValue as $fieldType');
