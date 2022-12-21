@@ -773,7 +773,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       final Iterable<String> argNames =
           indexMap(func.arguments, _getSafeArgumentName);
       sendArgument =
-          'flutter::EncodableList { ${(argNames.map((String arg) => 'flutter::CustomEncodableValue($arg)')).join(', ')} }';
+          'flutter::EncodableList { ${argNames.map((String arg) => 'flutter::CustomEncodableValue($arg)').join(', ')} }';
       final String argsSignature =
           map2(argTypes, argNames, (String x, String y) => '$x $y').join(', ');
       indent
