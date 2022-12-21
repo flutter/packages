@@ -136,10 +136,10 @@ class RouteBuilder {
       bool routerNeglect,
       GlobalKey<NavigatorState> navigatorKey,
       Map<Page<Object?>, GoRouterState> registry) {
+    final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
+        <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
     try {
       assert(_routeMatchLookUp.isEmpty);
-      final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
-          <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
       _buildRecursive(context, matchList, 0, onPopPage, routerNeglect,
           keyToPage, navigatorKey, registry);
 
@@ -151,6 +151,10 @@ class RouteBuilder {
       return <Page<Object?>>[
         _buildErrorPage(context, e, matchList.uri),
       ];
+    } finally {
+      /// Clean up previous cache to prevent memory leak.
+      _goHeroCache.removeWhere(
+          (GlobalKey<NavigatorState> key, _) => !keyToPage.keys.contains(key));
     }
   }
 
@@ -468,11 +472,6 @@ class RouteBuilder {
 
   /// Return a HeroController based on the app type.
   HeroController _getHeroController(BuildContext context) {
-    /// Clean up previous cache to prevent memory leak.
-    if (_goHeroCache.isNotEmpty) {
-      _goHeroCache.clear();
-    }
-
     if (context is Element) {
       if (isMaterialApp(context)) {
         return createMaterialHeroController();
