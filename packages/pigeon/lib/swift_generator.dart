@@ -60,7 +60,7 @@ class SwiftGenerator extends Generator<SwiftOptions> {
   /// Generates Swift files with specified [SwiftOptions]
   @override
   void generate() {
-    //
+    generateSwift(languageOptions, root, sink);
   }
 }
 

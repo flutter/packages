@@ -460,7 +460,9 @@ class ObjcHeaderAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateObjcHeader(objcOptionsWithHeader, root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator(
+        languageOptions: objcOptionsWithHeader, root: root, sink: sink);
+    generator.generate();
   }
 
   @override
@@ -484,7 +486,9 @@ class ObjcSourceAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateObjcSource(objcOptionsWithHeader, root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator(
+        languageOptions: objcOptionsWithHeader, root: root, sink: sink);
+    generator.generate();
   }
 
   @override
@@ -509,7 +513,9 @@ class JavaAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateJava(javaOptions, root, sink);
+    final JavaGenerator generator =
+        JavaGenerator(languageOptions: javaOptions, root: root, sink: sink);
+    generator.generate();
   }
 
   @override
@@ -531,7 +537,9 @@ class SwiftAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateSwift(swiftOptions, root, sink);
+    final SwiftGenerator generator =
+        SwiftGenerator(languageOptions: swiftOptions, root: root, sink: sink);
+    generator.generate();
   }
 
   @override
@@ -553,8 +561,12 @@ class CppHeaderAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateCppHeader(path.basenameWithoutExtension(options.cppHeaderOut!),
-        cppOptionsWithHeader, root, sink);
+    final CppHeaderGenerator generator = CppHeaderGenerator(
+        languageOptions: cppOptionsWithHeader,
+        root: root,
+        sink: sink,
+        path: path.basenameWithoutExtension(options.cppHeaderOut!));
+    generator.generate();
   }
 
   @override
@@ -578,7 +590,9 @@ class CppSourceAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateCppSource(cppOptionsWithHeader, root, sink);
+    final CppSourceGenerator generator = CppSourceGenerator(
+        languageOptions: cppOptionsWithHeader, root: root, sink: sink);
+    generator.generate();
   }
 
   @override
@@ -602,7 +616,9 @@ class KotlinAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateKotlin(kotlinOptions, root, sink);
+    final KotlinGenerator generator =
+        KotlinGenerator(languageOptions: kotlinOptions, root: root, sink: sink);
+    generator.generate();
   }
 
   @override

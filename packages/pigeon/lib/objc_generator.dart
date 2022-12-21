@@ -76,7 +76,7 @@ class ObjcHeaderGenerator extends Generator<ObjcOptions> {
   /// Generates Objc header files with specified [ObjcOptions]
   @override
   void generate() {
-    //
+    generateObjcHeader(languageOptions, root, sink);
   }
 }
 
@@ -92,7 +92,7 @@ class ObjcSourceGenerator extends Generator<ObjcOptions> {
   /// Generates Objc files with specified [ObjcOptions]
   @override
   void generate() {
-    //
+    generateObjcSource(languageOptions, root, sink);
   }
 }
 

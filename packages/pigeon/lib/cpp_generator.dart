@@ -72,12 +72,16 @@ class CppHeaderGenerator extends Generator<CppOptions> {
     required CppOptions languageOptions,
     required Root root,
     required StringSink sink,
+    required this.path,
   }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Path to output generated Cpp Header file.
+  String path;
 
   /// Generates Cpp header files with specified [CppOptions]
   @override
   void generate() {
-    //
+    generateCppHeader(path, languageOptions, root, sink);
   }
 }
 
@@ -93,7 +97,7 @@ class CppSourceGenerator extends Generator<CppOptions> {
   /// Generates Cpp files with specified [CppOptions]
   @override
   void generate() {
-    //
+    generateCppSource(languageOptions, root, sink);
   }
 }
 
