@@ -5,7 +5,7 @@
   (flutter/flutter#99124).
 - Updates documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
   describe the meaning of the child argument in the builder functions.
-- Added support for restorationId to ShellRoute (and StatefulShellRoute).
+- Adds support for restorationId to ShellRoute (and StatefulShellRoute).
 
 ## 5.2.4
 
