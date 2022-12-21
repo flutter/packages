@@ -68,7 +68,7 @@ class DartGenerator extends Generator<DartOptions> {
   /// Generates Dart files with specified [DartOptions]
   @override
   void generate() {
-    //
+    generateDart(languageOptions, root, sink);
   }
 }
 
@@ -79,12 +79,26 @@ class DartTestGenerator extends Generator<DartOptions> {
     required DartOptions languageOptions,
     required Root root,
     required StringSink sink,
+    required this.dartOutPath,
+    required this.testOutPath,
   }) : super(languageOptions: languageOptions, root: root, sink: sink);
+
+  /// Path to output generated Dart file.
+  String dartOutPath;
+
+  /// Path to output generated Test file.
+  String testOutPath;
 
   /// Generates Dart files with specified [DartOptions]
   @override
   void generate() {
-    //
+    generateTestDart(
+      languageOptions,
+      root,
+      sink,
+      dartOutPath: dartOutPath,
+      testOutPath: testOutPath,
+    );
   }
 }
 

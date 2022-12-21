@@ -405,7 +405,9 @@ class DartAdapter implements Adapter {
   void generate(StringSink sink, PigeonOptions options, Root root) {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
         options.dartOptions, options.copyrightHeader);
-    generateDart(dartOptionsWithHeader, root, sink);
+    final DartGenerator generator = DartGenerator(
+        languageOptions: dartOptionsWithHeader, root: root, sink: sink);
+    generator.generate();
   }
 
   @override
@@ -424,13 +426,13 @@ class DartTestAdapter implements Adapter {
   void generate(StringSink sink, PigeonOptions options, Root root) {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
         options.dartOptions, options.copyrightHeader);
-    generateTestDart(
-      dartOptionsWithHeader,
-      root,
-      sink,
-      dartOutPath: options.dartOut!,
-      testOutPath: options.dartTestOut!,
-    );
+    final DartTestGenerator testGenerator = DartTestGenerator(
+        languageOptions: dartOptionsWithHeader,
+        root: root,
+        sink: sink,
+        dartOutPath: options.dartOut!,
+        testOutPath: options.dartTestOut!);
+    testGenerator.generate();
   }
 
   @override
