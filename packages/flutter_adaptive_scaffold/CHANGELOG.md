@@ -1,3 +1,6 @@
+## 0.0.9
+Surface `useLegacyColorScheme` in `AdaptiveScaffold`.
+
 ## 0.0.8
 
 Make fuchsia a mobile platform.
