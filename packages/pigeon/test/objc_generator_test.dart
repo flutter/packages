@@ -70,8 +70,8 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
-    generator.generate(const ObjcOptions(header: 'PREFIX'), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(prefix: 'PREFIX'), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
     expect(code, contains('  PREFIXEnum1One = 0,'));
