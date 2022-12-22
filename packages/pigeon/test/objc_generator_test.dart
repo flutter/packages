@@ -148,7 +148,7 @@ void main() {
     }
     {
       final ObjcSourceGenerator generator = ObjcSourceGenerator();
-      generator.generate(const ObjcOptions(), root, sink);
+      generator.generate(options, root, sink);
       final String code = sink.toString();
       expect(
           code,
