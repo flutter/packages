@@ -118,7 +118,7 @@ class DartTestGenerator extends Generator<DartOptions> {
   @override
   void writeFileHeaders(
       DartOptions languageOptions, Root root, StringSink sink, Indent indent) {
-    writeHeader(languageOptions, root, sink, indent);
+    writeTestHeader(languageOptions, root, sink, indent);
   }
 }
 
@@ -760,6 +760,20 @@ String _posixify(String inputPath) {
   return context.fromUri(path.toUri(path.absolute(inputPath)));
 }
 
+/// Writes file header to sink.
+void writeTestHeader(
+    DartOptions opt, Root root, StringSink sink, Indent indent) {
+  if (opt.copyrightHeader != null) {
+    addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
+  }
+  indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
+  indent.writeln(
+    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import',
+  );
+  indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
+}
+
 /// Generates Dart source code for test support libraries based on the given AST
 /// represented by [root], outputting the code to [sink]. [dartOutPath] is the
 /// path of the generated dart code to be tested. [testOutPath] is where the
@@ -772,15 +786,6 @@ void generateTestDart(
   required String dartOutPath,
   required String testOutPath,
 }) {
-  if (opt.copyrightHeader != null) {
-    addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
-  }
-  indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// $seeAlsoWarning');
-  indent.writeln(
-    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import',
-  );
-  indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
   indent.writeln("import 'dart:async';");
   indent.writeln(
     "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
