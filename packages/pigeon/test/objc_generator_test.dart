@@ -107,7 +107,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
