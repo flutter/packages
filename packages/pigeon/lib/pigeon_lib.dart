@@ -372,21 +372,14 @@ abstract class Adapter {
 }
 
 DartOptions _dartOptionsWithCopyrightHeader(
-    DartOptions? dartOptions, String? copyrightHeader) {
-  dartOptions = dartOptions ?? const DartOptions();
-  return dartOptions.merge(DartOptions(
-      copyrightHeader:
-          copyrightHeader != null ? _lineReader(copyrightHeader) : null));
-}
-
-DartTestOptions _dartTestOptionsWithCopyrightHeader(DartOptions? dartOptions,
-    String? copyrightHeader, String dartOutPath, String testOutPath) {
+    DartOptions? dartOptions, String? copyrightHeader,
+    [String? dartOutPath, String? testOutPath]) {
   final Iterable<String>? parsedCopyrightHeader = dartOptions != null
       ? dartOptions.copyrightHeader
       : copyrightHeader != null
           ? _lineReader(copyrightHeader)
           : null;
-  return DartTestOptions(
+  return DartOptions(
       dartOutPath: dartOutPath,
       testOutPath: testOutPath,
       copyrightHeader: parsedCopyrightHeader);
@@ -436,12 +429,11 @@ class DartTestAdapter implements Adapter {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final DartTestOptions dartOptionsWithHeader =
-        _dartTestOptionsWithCopyrightHeader(
+    final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
       options.dartOptions,
       options.copyrightHeader,
-      options.dartOut!,
-      options.dartTestOut!,
+      options.dartOut,
+      options.dartTestOut,
     );
     final DartTestGenerator testGenerator = DartTestGenerator();
     testGenerator.generate(
