@@ -56,6 +56,57 @@ class DartOptions {
   }
 }
 
+/// Options that control how Dart test code will be generated.
+class DartTestOptions {
+  /// Constructor for DartOptions.
+  DartTestOptions({
+    this.copyrightHeader,
+    required this.dartOutPath,
+    required this.testOutPath,
+  });
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// Path to output generated Dart file.
+  String dartOutPath;
+
+  /// Path to output generated Test file.
+  String testOutPath;
+
+  /// Creates a [DartOptions] from a Map representation where:
+  /// `x = DartOptions.fromMap(x.toMap())`.
+  static DartTestOptions fromMap(Map<String, Object> map) {
+    final Iterable<dynamic>? copyrightHeader =
+        map['copyrightHeader'] as Iterable<dynamic>?;
+    return DartTestOptions(
+      dartOutPath: map['dartOutPath']! as String,
+      testOutPath: map['testOutPath']! as String,
+      copyrightHeader: copyrightHeader?.cast<String>(),
+    );
+  }
+
+  /// Converts a [DartOptions] to a Map representation where:
+  /// `x = DartOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [DartOptions].
+  DartTestOptions merge(DartTestOptions options) {
+    return DartTestOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
+
+  /// Converts DartTestOptions to DartOptions and returns it.
+  DartOptions toDartOptions() {
+    return DartOptions(copyrightHeader: copyrightHeader);
+  }
+}
+
 /// Class that manages all Dart code generation.
 class DartGenerator extends Generator<DartOptions> {
   /// Instantiates a Dart Generator.
@@ -69,28 +120,20 @@ class DartGenerator extends Generator<DartOptions> {
 }
 
 /// Class that manages all Dart code generation.
-class DartTestGenerator extends Generator<DartOptions> {
+class DartTestGenerator extends Generator<DartTestOptions> {
   /// Instantiates a Dart Generator.
-  DartTestGenerator({
-    required this.dartOutPath,
-    required this.testOutPath,
-  });
-
-  /// Path to output generated Dart file.
-  String dartOutPath;
-
-  /// Path to output generated Test file.
-  String testOutPath;
+  DartTestGenerator();
 
   /// Generates Dart files with specified [DartOptions]
   @override
-  void generate(DartOptions languageOptions, Root root, StringSink sink) {
+  void generate(DartTestOptions languageOptions, Root root, StringSink sink) {
+    final DartOptions dartOptions = languageOptions.toDartOptions();
     generateTestDart(
-      languageOptions,
+      dartOptions,
       root,
       sink,
-      dartOutPath: dartOutPath,
-      testOutPath: testOutPath,
+      dartOutPath: languageOptions.dartOutPath,
+      testOutPath: languageOptions.testOutPath,
     );
   }
 }

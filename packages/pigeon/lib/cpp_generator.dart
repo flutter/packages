@@ -21,11 +21,8 @@ const String _defaultCodecSerializer = 'flutter::StandardCodecSerializer';
 /// Options that control how C++ code will be generated.
 class CppOptions {
   /// Creates a [CppOptions] object
-  const CppOptions({
-    this.header,
-    this.namespace,
-    this.copyrightHeader,
-  });
+  const CppOptions(
+      {this.header, this.namespace, this.copyrightHeader, this.cppHeaderOut});
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
@@ -37,14 +34,17 @@ class CppOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
+  ///
+  final String? cppHeaderOut;
+
   /// Creates a [CppOptions] from a Map representation where:
   /// `x = CppOptions.fromMap(x.toMap())`.
   static CppOptions fromMap(Map<String, Object> map) {
     return CppOptions(
-      header: map['header'] as String?,
-      namespace: map['namespace'] as String?,
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
-    );
+        header: map['header'] as String?,
+        namespace: map['namespace'] as String?,
+        copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+        cppHeaderOut: map['cppHeaderOut'] as String?);
   }
 
   /// Converts a [CppOptions] to a Map representation where:
@@ -68,17 +68,13 @@ class CppOptions {
 /// Class that manages all Cpp header code generation.
 class CppHeaderGenerator extends Generator<CppOptions> {
   /// Instantiates a Cpp Generator.
-  CppHeaderGenerator({
-    required this.path,
-  });
-
-  /// Path to output generated Cpp Header file.
-  String path;
+  CppHeaderGenerator();
 
   /// Generates Cpp header files with specified [CppOptions]
   @override
   void generate(CppOptions languageOptions, Root root, StringSink sink) {
-    generateCppHeader(path, languageOptions, root, sink);
+    generateCppHeader(
+        languageOptions.cppHeaderOut, languageOptions, root, sink);
   }
 }
 

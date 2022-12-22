@@ -379,6 +379,19 @@ DartOptions _dartOptionsWithCopyrightHeader(
           copyrightHeader != null ? _lineReader(copyrightHeader) : null));
 }
 
+DartTestOptions _dartTestOptionsWithCopyrightHeader(DartOptions? dartOptions,
+    String? copyrightHeader, String dartOutPath, String testOutPath) {
+  final Iterable<String>? parsedCopyrightHeader = dartOptions != null
+      ? dartOptions.copyrightHeader
+      : copyrightHeader != null
+          ? _lineReader(copyrightHeader)
+          : null;
+  return DartTestOptions(
+      dartOutPath: dartOutPath,
+      testOutPath: testOutPath,
+      copyrightHeader: parsedCopyrightHeader);
+}
+
 /// An [Adapter] that generates the AST.
 class AstAdapter implements Adapter {
   /// Constructor for [AstAdapter].
@@ -423,10 +436,14 @@ class DartTestAdapter implements Adapter {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
-        options.dartOptions, options.copyrightHeader);
-    final DartTestGenerator testGenerator = DartTestGenerator(
-        dartOutPath: options.dartOut!, testOutPath: options.dartTestOut!);
+    final DartTestOptions dartOptionsWithHeader =
+        _dartTestOptionsWithCopyrightHeader(
+      options.dartOptions,
+      options.copyrightHeader,
+      options.dartOut!,
+      options.dartTestOut!,
+    );
+    final DartTestGenerator testGenerator = DartTestGenerator();
     testGenerator.generate(
       dartOptionsWithHeader,
       root,
@@ -553,11 +570,11 @@ class CppHeaderAdapter implements Adapter {
   void generate(StringSink sink, PigeonOptions options, Root root) {
     final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
     final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
+        cppHeaderOut: path.basenameWithoutExtension(options.cppHeaderOut!),
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final CppHeaderGenerator generator = CppHeaderGenerator(
-        path: path.basenameWithoutExtension(options.cppHeaderOut!));
+    final CppHeaderGenerator generator = CppHeaderGenerator();
     generator.generate(cppOptionsWithHeader, root, sink);
   }
 
