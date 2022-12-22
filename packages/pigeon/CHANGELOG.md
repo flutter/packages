@@ -1,3 +1,7 @@
+## 4.2.17
+
+* Adds writeHeaders method to Generator classes and updates tests to use new Generators.
+
 ## 4.2.16
 
 * Creates new Generator classes for each language.
