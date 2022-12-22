@@ -17,7 +17,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSString.*field1'));
@@ -32,7 +33,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -49,7 +51,8 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
     expect(code, contains('  Enum1One = 0,'));
@@ -67,7 +70,8 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(prefix: 'PREFIX'), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(header: 'PREFIX'), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
     expect(code, contains('  PREFIXEnum1One = 0,'));
@@ -103,7 +107,8 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -135,13 +140,15 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const ObjcOptions options = ObjcOptions(header: 'foo.h', prefix: 'AC');
     {
-      generateObjcHeader(options, root, sink);
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(options, root, sink);
       final String code = sink.toString();
       expect(code, contains('typedef NS_ENUM(NSUInteger, ACFoo)'));
       expect(code, contains(':(ACFoo)foo error:'));
     }
     {
-      generateObjcSource(options, root, sink);
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(const ObjcOptions(), root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -204,7 +211,8 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@property(nonatomic, assign) Enum1 enum1'));
   });
@@ -236,7 +244,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
@@ -275,7 +284,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
@@ -322,7 +332,8 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@class FlutterStandardTypedData;'));
@@ -350,7 +361,8 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
     expect(code,
@@ -371,7 +383,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code,
         contains('@property(nonatomic, strong, nullable) Input * nested;'));
@@ -391,7 +404,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -410,7 +424,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(prefix: 'ABC'), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface ABCFoobar'));
   });
@@ -424,7 +439,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation ABCFoobar'));
   });
@@ -458,7 +474,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(prefix: 'ABC'), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('property.*ABCInput'));
     expect(code, matches('ABCNested.*doSomething.*ABCInput'));
@@ -494,7 +511,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('ABCInput fromList'));
     expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
@@ -530,7 +548,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
     expect(
@@ -569,7 +588,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
     expect(code, matches('void.*doSomething.*Input.*Output.*{'));
@@ -598,8 +618,10 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+
     final String code = sink.toString();
     expect(code, contains('(void)doSomething:'));
   });
@@ -627,7 +649,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
@@ -658,7 +681,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
@@ -687,7 +711,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
@@ -711,7 +736,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('ABCOutput.*doSomethingWithError:[(]FlutterError'));
@@ -734,7 +760,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('output.*=.*api doSomethingWithError:&error'));
@@ -757,7 +784,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -783,7 +811,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -802,7 +831,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSArray.*field1'));
@@ -817,7 +847,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSDictionary.*field1'));
@@ -838,7 +869,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(
@@ -867,7 +899,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('(NSDictionary<NSString *, id> *)foo'));
   });
@@ -901,7 +934,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -940,7 +974,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -967,7 +1002,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -987,7 +1023,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -1026,7 +1063,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -1064,7 +1102,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -1084,7 +1123,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -1111,7 +1151,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
@@ -1127,14 +1168,14 @@ void main() {
   test('source copyright', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(
-      ObjcOptions(
-          header: 'foo.h',
-          prefix: 'ABC',
-          copyrightHeader: makeIterable('hello world')),
-      root,
-      sink,
-    );
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(
+        ObjcOptions(
+            header: 'foo.h',
+            prefix: 'ABC',
+            copyrightHeader: makeIterable('hello world')),
+        root,
+        sink);
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -1142,14 +1183,14 @@ void main() {
   test('header copyright', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
-      ObjcOptions(
-          header: 'foo.h',
-          prefix: 'ABC',
-          copyrightHeader: makeIterable('hello world')),
-      root,
-      sink,
-    );
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
+        ObjcOptions(
+            header: 'foo.h',
+            prefix: 'ABC',
+            copyrightHeader: makeIterable('hello world')),
+        root,
+        sink);
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -1174,7 +1215,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('NSArray<NSNumber *> * field1'));
@@ -1204,14 +1246,16 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(
@@ -1245,14 +1289,16 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
@@ -1289,7 +1335,8 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSArray<NSNumber *> *> *)arg'));
@@ -1316,7 +1363,8 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(
@@ -1324,7 +1372,8 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray<NSNumber *> *output ='));
@@ -1351,7 +1400,8 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(
@@ -1359,7 +1409,8 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(
@@ -1388,7 +1439,8 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(
@@ -1398,7 +1450,8 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
@@ -1433,7 +1486,8 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(
@@ -1443,7 +1497,8 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
@@ -1476,7 +1531,8 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(
@@ -1486,7 +1542,8 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(
@@ -1530,15 +1587,18 @@ void main() {
     final Root divideRoot = getDivideRoot(ApiLocation.host);
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
+
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
@@ -1548,21 +1608,18 @@ void main() {
     final Root divideRoot = getDivideRoot(ApiLocation.flutter);
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
-        divideRoot,
-        sink,
-      );
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*;'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
-        divideRoot,
-        sink,
-      );
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
+
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*{'));
     }
@@ -1577,7 +1634,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@property(nonatomic, copy) NSString * field1'));
@@ -1600,7 +1658,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1625,7 +1684,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches(r'doitWithCompletion.*NSNumber \*_Nullable'));
   });
@@ -1647,7 +1707,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches(r'nullable NSNumber.*doitWithError'));
   });
@@ -1674,13 +1735,15 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(const ObjcOptions(), root, sink);
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(const ObjcOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(const ObjcOptions(), root, sink);
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(const ObjcOptions(), root, sink);
       final String code = sink.toString();
       expect(code,
           contains('NSNumber *arg_foo = GetNullableObjectAtIndex(args, 0);'));
@@ -1709,13 +1772,15 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(const ObjcOptions(), root, sink);
+      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      generator.generate(const ObjcOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(const ObjcOptions(), root, sink);
+      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      generator.generate(const ObjcOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('- (void)doitFoo:(nullable NSNumber *)arg_foo'));
     }
@@ -1739,7 +1804,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1823,7 +1889,8 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(), root, sink);
+    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
       expect(code, contains('///$comment'));
@@ -1858,7 +1925,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains(' : FlutterStandardReader')));
   });
@@ -1900,7 +1968,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(), root, sink);
+    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains(' : FlutterStandardReader'));
   });
