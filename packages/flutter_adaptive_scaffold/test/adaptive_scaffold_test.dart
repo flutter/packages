@@ -203,7 +203,7 @@ void main() {
           child: AdaptiveScaffold(
             useDrawer: false,
             useLegacyColorScheme: false,
-            destinations:<NavigationDestination>[
+            destinations: <NavigationDestination>[
               NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
               NavigationDestination(
                   icon: Icon(Icons.article), label: 'Articles'),
