@@ -73,8 +73,17 @@ class CppHeaderGenerator extends Generator<CppOptions> {
   /// Generates Cpp header files with specified [CppOptions]
   @override
   void generate(CppOptions languageOptions, Root root, StringSink sink) {
+    final Indent indent = Indent(sink);
+
+    writeFileHeaders(languageOptions, root, sink, indent);
     generateCppHeader(
-        languageOptions.cppHeaderOut, languageOptions, root, sink);
+        languageOptions.cppHeaderOut, languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileHeaders(
+      CppOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    writeCppHeaderHeader(languageOptions, root, sink, indent);
   }
 }
 
@@ -86,7 +95,16 @@ class CppSourceGenerator extends Generator<CppOptions> {
   /// Generates Cpp files with specified [CppOptions]
   @override
   void generate(CppOptions languageOptions, Root root, StringSink sink) {
-    generateCppSource(languageOptions, root, sink);
+    final Indent indent = Indent(sink);
+
+    writeFileHeaders(languageOptions, root, sink, indent);
+    generateCppSource(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileHeaders(
+      CppOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    writeCppSourceHeader(languageOptions, root, sink, indent);
   }
 }
 
@@ -1035,14 +1053,18 @@ void _writeSystemHeaderIncludeBlock(Indent indent, List<String> headers) {
   }
 }
 
-/// Generates the ".h" file for the AST represented by [root] to [sink] with the
-/// provided [options] and [headerFileName].
-void generateCppHeader(
-    String? headerFileName, CppOptions options, Root root, StringSink sink) {
-  final Indent indent = Indent(sink);
+/// Writes Cpp header file header to sink.
+void writeCppHeaderHeader(
+    CppOptions options, Root root, StringSink sink, Indent indent) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');
   }
+}
+
+/// Generates the ".h" file for the AST represented by [root] to [sink] with the
+/// provided [options] and [headerFileName].
+void generateCppHeader(String? headerFileName, CppOptions options, Root root,
+    StringSink sink, Indent indent) {
   indent.writeln('$_commentPrefix $generatedCodeWarning');
   indent.writeln('$_commentPrefix $seeAlsoWarning');
   indent.addln('');
@@ -1126,13 +1148,18 @@ void generateCppHeader(
   indent.writeln('#endif  // $guardName');
 }
 
-/// Generates the ".cpp" file for the AST represented by [root] to [sink] with the
-/// provided [options].
-void generateCppSource(CppOptions options, Root root, StringSink sink) {
-  final Indent indent = Indent(sink);
+/// Writes Cpp source file header to sink.
+void writeCppSourceHeader(
+    CppOptions options, Root root, StringSink sink, Indent indent) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');
   }
+}
+
+/// Generates the ".cpp" file for the AST represented by [root] to [sink] with the
+/// provided [options].
+void generateCppSource(
+    CppOptions options, Root root, StringSink sink, Indent indent) {
   indent.writeln('$_commentPrefix $generatedCodeWarning');
   indent.writeln('$_commentPrefix $seeAlsoWarning');
   indent.addln('');

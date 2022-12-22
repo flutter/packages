@@ -93,7 +93,16 @@ class JavaGenerator extends Generator<JavaOptions> {
   /// Generates Java files with specified [JavaOptions]
   @override
   void generate(JavaOptions languageOptions, Root root, StringSink sink) {
-    generateJava(languageOptions, root, sink);
+    final Indent indent = Indent(sink);
+
+    writeFileHeaders(languageOptions, root, sink, indent);
+    generateJava(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileHeaders(
+      JavaOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    writeHeader(languageOptions, root, sink, indent);
   }
 }
 
@@ -534,22 +543,24 @@ String _castObject(
   }
 }
 
+/// Writes file header to sink.
+void writeHeader(
+    JavaOptions options, Root root, StringSink sink, Indent indent) {
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
+  indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
+}
+
 /// Generates the ".java" file for the AST represented by [root] to [sink] with the
 /// provided [options].
-void generateJava(JavaOptions options, Root root, StringSink sink) {
+void generateJava(
+    JavaOptions options, Root root, StringSink sink, Indent indent) {
   final Set<String> rootClassNameSet =
       root.classes.map((Class x) => x.name).toSet();
   final Set<String> rootEnumNameSet =
       root.enums.map((Enum x) => x.name).toSet();
-  final Indent indent = Indent(sink);
-
-  void writeHeader() {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// $generatedCodeWarning');
-    indent.writeln('// $seeAlsoWarning');
-  }
 
   void writeImports() {
     indent.writeln('import android.util.Log;');
@@ -764,7 +775,6 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 }''');
   }
 
-  writeHeader();
   indent.addln('');
   if (options.package != null) {
     indent.writeln('package ${options.package};');

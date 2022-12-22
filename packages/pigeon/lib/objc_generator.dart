@@ -72,7 +72,16 @@ class ObjcHeaderGenerator extends Generator<ObjcOptions> {
   /// Generates Objc header files with specified [ObjcOptions]
   @override
   void generate(ObjcOptions languageOptions, Root root, StringSink sink) {
-    generateObjcHeader(languageOptions, root, sink);
+    final Indent indent = Indent(sink);
+
+    writeFileHeaders(languageOptions, root, sink, indent);
+    generateObjcHeader(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileHeaders(
+      ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    writeObjcHeaderHeader(languageOptions, root, sink, indent);
   }
 }
 
@@ -84,7 +93,16 @@ class ObjcSourceGenerator extends Generator<ObjcOptions> {
   /// Generates Objc files with specified [ObjcOptions]
   @override
   void generate(ObjcOptions languageOptions, Root root, StringSink sink) {
-    generateObjcSource(languageOptions, root, sink);
+    final Indent indent = Indent(sink);
+
+    writeObjcSourceHeader(languageOptions, root, sink, indent);
+    generateObjcSource(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileHeaders(
+      ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    writeObjcSourceHeader(languageOptions, root, sink, indent);
   }
 }
 
@@ -555,19 +573,20 @@ void _writeFlutterApiDeclaration(
   indent.writeln('@end');
 }
 
+/// Writes Objc header file header to sink.
+void writeObjcHeaderHeader(
+    ObjcOptions options, Root root, StringSink sink, Indent indent) {
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
+  indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
+}
+
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options].
-void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
-  final Indent indent = Indent(sink);
-
-  void writeHeader() {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// $generatedCodeWarning');
-    indent.writeln('// $seeAlsoWarning');
-  }
-
+void generateObjcHeader(
+    ObjcOptions options, Root root, StringSink sink, Indent indent) {
   void writeImports() {
     indent.writeln('#import <Foundation/Foundation.h>');
   }
@@ -596,7 +615,6 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
     });
   }
 
-  writeHeader();
   writeImports();
   writeForwardDeclarations();
   indent.writeln('');
@@ -898,21 +916,23 @@ void _writeFlutterApiSource(
   indent.writeln('@end');
 }
 
+/// Writes Objc Source file header to sink.
+void writeObjcSourceHeader(
+    ObjcOptions options, Root root, StringSink sink, Indent indent) {
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
+  indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
+}
+
 /// Generates the ".m" file for the AST represented by [root] to [sink] with the
 /// provided [options].
-void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
-  final Indent indent = Indent(sink);
+void generateObjcSource(
+    ObjcOptions options, Root root, StringSink sink, Indent indent) {
   final List<String> classNames =
       root.classes.map((Class x) => x.name).toList();
   final List<String> enumNames = root.enums.map((Enum x) => x.name).toList();
-
-  void writeHeader() {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// $generatedCodeWarning');
-    indent.writeln('// $seeAlsoWarning');
-  }
 
   void writeImports() {
     indent.writeln('#import "${options.header}"');
@@ -1030,7 +1050,6 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     }
   }
 
-  writeHeader();
   writeImports();
   indent.writeln('');
   writeArcEnforcer();

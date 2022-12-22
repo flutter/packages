@@ -73,7 +73,16 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   /// Generates Kotlin files with specified [KotlinOptions]
   @override
   void generate(KotlinOptions languageOptions, Root root, StringSink sink) {
-    generateKotlin(languageOptions, root, sink);
+    final Indent indent = Indent(sink);
+
+    writeFileHeaders(languageOptions, root, sink, indent);
+    generateKotlin(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileHeaders(KotlinOptions languageOptions, Root root,
+      StringSink sink, Indent indent) {
+    writeHeader(languageOptions, root, sink, indent);
   }
 }
 
@@ -447,26 +456,28 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
   return '${_kotlinTypeForDartType(type)}$nullSafe';
 }
 
+/// Writes file header to sink.
+void writeHeader(
+    KotlinOptions options, Root root, StringSink sink, Indent indent) {
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
+  indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
+}
+
 /// Generates the ".kotlin" file for the AST represented by [root] to [sink] with the
 /// provided [options].
-void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
+void generateKotlin(
+    KotlinOptions options, Root root, StringSink sink, Indent indent) {
   final Set<String> rootClassNameSet =
       root.classes.map((Class x) => x.name).toSet();
   final Set<String> rootEnumNameSet =
       root.enums.map((Enum x) => x.name).toSet();
-  final Indent indent = Indent(sink);
 
   HostDatatype getHostDatatype(NamedType field) {
     return getFieldHostDatatype(field, root.classes, root.enums,
         (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
-  }
-
-  void writeHeader() {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// $generatedCodeWarning');
-    indent.writeln('// $seeAlsoWarning');
   }
 
   void writeImports() {
@@ -663,7 +674,6 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
     });
   }
 
-  writeHeader();
   indent.addln('');
   if (options.package != null) {
     indent.writeln('package ${options.package}');

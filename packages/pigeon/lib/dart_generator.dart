@@ -78,7 +78,16 @@ class DartGenerator extends Generator<DartOptions> {
   /// Generates Dart files with specified [DartOptions]
   @override
   void generate(DartOptions languageOptions, Root root, StringSink sink) {
-    generateDart(languageOptions, root, sink);
+    final Indent indent = Indent(sink);
+
+    writeFileHeaders(languageOptions, root, sink, indent);
+    generateDart(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileHeaders(
+      DartOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    writeHeader(languageOptions, root, sink, indent);
   }
 }
 
@@ -90,15 +99,26 @@ class DartTestGenerator extends Generator<DartOptions> {
   /// Generates Dart files with specified [DartOptions]
   @override
   void generate(DartOptions languageOptions, Root root, StringSink sink) {
+    final Indent indent = Indent(sink);
+
     final String dartOutPath = languageOptions.dartOutPath ?? '';
     final String testOutPath = languageOptions.testOutPath ?? '';
+
+    writeFileHeaders(languageOptions, root, sink, indent);
     generateTestDart(
       languageOptions,
       root,
       sink,
+      indent,
       dartOutPath: dartOutPath,
       testOutPath: testOutPath,
     );
+  }
+
+  @override
+  void writeFileHeaders(
+      DartOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    writeHeader(languageOptions, root, sink, indent);
   }
 }
 
@@ -502,25 +522,25 @@ String _addGenericTypesNullable(TypeDeclaration type) {
   return type.isNullable ? '$genericdType?' : genericdType;
 }
 
+/// Writes file header to sink.
+void writeHeader(DartOptions opt, Root root, StringSink sink, Indent indent) {
+  if (opt.copyrightHeader != null) {
+    addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
+  }
+  indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
+  indent.writeln(
+    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import',
+  );
+}
+
 /// Generates Dart source code for the given AST represented by [root],
 /// outputting the code to [sink].
-void generateDart(DartOptions opt, Root root, StringSink sink) {
+void generateDart(DartOptions opt, Root root, StringSink sink, Indent indent) {
   final List<String> customClassNames =
       root.classes.map((Class x) => x.name).toList();
   final List<String> customEnumNames =
       root.enums.map((Enum x) => x.name).toList();
-  final Indent indent = Indent(sink);
-
-  void writeHeader() {
-    if (opt.copyrightHeader != null) {
-      addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// $generatedCodeWarning');
-    indent.writeln('// $seeAlsoWarning');
-    indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import',
-    );
-  }
 
   void writeEnums() {
     for (final Enum anEnum in root.enums) {
@@ -679,7 +699,6 @@ $resultAt != null
     }
   }
 
-  writeHeader();
   writeImports();
   writeEnums();
   for (final Class klass in root.classes) {
@@ -748,11 +767,11 @@ String _posixify(String inputPath) {
 void generateTestDart(
   DartOptions opt,
   Root root,
-  StringSink sink, {
+  StringSink sink,
+  Indent indent, {
   required String dartOutPath,
   required String testOutPath,
 }) {
-  final Indent indent = Indent(sink);
   if (opt.copyrightHeader != null) {
     addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
   }

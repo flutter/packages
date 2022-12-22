@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'ast.dart';
+import 'generator_tools.dart';
 
 /// A Super class of generator classes.
 ///
@@ -12,5 +13,22 @@ abstract class Generator<T> {
   const Generator();
 
   /// Generates files for specified language with specified [languageOptions]
-  void generate(T languageOptions, Root root, StringSink sink);
+  ///
+  /// This method, when overridden, should follow a generic structure that is currently:
+  /// 1. Create Indent
+  /// 2. Write File Headers
+  /// 3. Generate File
+  void generate(
+    T languageOptions,
+    Root root,
+    StringSink sink,
+  );
+
+  /// Adds specified file headers.
+  void writeFileHeaders(
+    T languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+  );
 }
