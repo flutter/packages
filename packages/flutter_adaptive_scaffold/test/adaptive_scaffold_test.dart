@@ -193,6 +193,38 @@ void main() {
       expect(find.byType(PreferredSizeWidgetImpl), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'AdaptiveScaffold surfaces [BottomNavigationBar.useLegacyColorScheme] property',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(
+        home: MediaQuery(
+          data: MediaQueryData(size: Size(500, 500)),
+          child: AdaptiveScaffold(
+            useDrawer: false,
+            // useLegacyColorScheme: false,
+            destinations:<NavigationDestination>[
+              NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+              NavigationDestination(
+                  icon: Icon(Icons.article), label: 'Articles'),
+              NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
+              NavigationDestination(
+                  icon: Icon(Icons.video_call), label: 'Video')
+            ],
+          ),
+        ),
+      ));
+
+      expect(
+        tester.widget(find.byType(BottomNavigationBar)),
+        isA<BottomNavigationBar>().having(
+          (BottomNavigationBar bottomNav) => bottomNav.useLegacyColorScheme,
+          'useLegacyColorScheme',
+          isFalse,
+        ),
+      );
+    },
+  );
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that
