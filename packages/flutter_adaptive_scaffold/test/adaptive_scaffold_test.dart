@@ -202,7 +202,7 @@ void main() {
           data: MediaQueryData(size: Size(500, 500)),
           child: AdaptiveScaffold(
             useDrawer: false,
-            // useLegacyColorScheme: false,
+            useLegacyColorScheme: false,
             destinations:<NavigationDestination>[
               NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
               NavigationDestination(

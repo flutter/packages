@@ -101,6 +101,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.appBar,
     this.navigationRailWidth = 72,
     this.extendedNavigationRailWidth = 192,
+    this.useLegacyColorScheme,
   });
 
   /// The destinations to be used in navigation items. These are converted to
@@ -111,6 +112,12 @@ class AdaptiveScaffold extends StatefulWidget {
 
   /// The index to be used by the [NavigationRail].
   final int selectedIndex;
+
+  /// Determines the BottomNavigationBar, which the [AdaptiveScaffold.destinations]
+  /// are rendered into use the legacy color scheme.
+  ///
+  /// For more information see [BottomNavigationBar.useLegacyColorScheme].
+  final bool? useLegacyColorScheme;
 
   /// Option to display a leading widget at the top of the navigation rail
   /// at the middle breakpoint.
@@ -308,12 +315,14 @@ class AdaptiveScaffold extends StatefulWidget {
     int currentIndex = 0,
     double iconSize = 24,
     ValueChanged<int>? onDestinationSelected,
+    bool? useLegacyColorScheme,
   }) {
     return Builder(
       builder: (_) {
         return BottomNavigationBar(
           currentIndex: currentIndex,
           iconSize: iconSize,
+          useLegacyColorScheme: useLegacyColorScheme ?? true,
           items: destinations
               .map((NavigationDestination e) => _toBottomNavItem(e))
               .toList(),
@@ -528,6 +537,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                           builder: (_) =>
                               AdaptiveScaffold.standardBottomNavigationBar(
                             currentIndex: widget.selectedIndex,
+                            useLegacyColorScheme: widget.useLegacyColorScheme,
                             destinations: widget.destinations,
                             onDestinationSelected: widget.onSelectedIndexChange,
                           ),
