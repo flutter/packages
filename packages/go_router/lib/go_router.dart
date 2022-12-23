@@ -10,6 +10,7 @@ export 'src/configuration.dart'
     show GoRoute, GoRouterState, RouteBase, ShellRoute;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
+export 'src/page_key.dart';
 export 'src/pages/custom_transition_page.dart';
 export 'src/route_data.dart' show GoRouteData, TypedGoRoute;
 export 'src/router.dart';

@@ -10,6 +10,7 @@ import 'configuration.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
+import 'page_key.dart';
 
 /// A GoRouter redirector function.
 typedef RouteRedirector = FutureOr<RouteMatchList> Function(
@@ -100,7 +101,7 @@ FutureOr<RouteMatchList> redirect(
         queryParams: prevMatchList.uri.queryParameters,
         queryParametersAll: prevMatchList.uri.queryParametersAll,
         extra: extra,
-        pageKey: const ValueKey<String>('topLevel'),
+        pageKey: const PageKey(path: 'topLevel'),
       ),
     );
 

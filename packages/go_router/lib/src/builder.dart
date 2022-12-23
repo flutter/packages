@@ -10,6 +10,7 @@ import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
 import 'misc/error_screen.dart';
+import 'page_key.dart';
 import 'pages/cupertino.dart';
 import 'pages/custom_transition_page.dart';
 import 'pages/material.dart';
@@ -365,7 +366,7 @@ class RouteBuilder {
       key: state.pageKey,
       name: state.name ?? state.fullpath,
       arguments: <String, String>{...state.params, ...state.queryParams},
-      restorationId: state.pageKey.value,
+      restorationId: state.pageKey.fullPath,
       child: child,
     );
   }
@@ -416,7 +417,7 @@ class RouteBuilder {
       queryParams: uri.queryParameters,
       queryParametersAll: uri.queryParametersAll,
       error: Exception(error),
-      pageKey: const ValueKey<String>('error'),
+      pageKey: const PageKey(path: 'error'),
     );
 
     // If the error page builder is provided, use that, otherwise, if the error
@@ -438,7 +439,7 @@ class RouteBuilder {
 }
 
 typedef _PageBuilderForAppType = Page<void> Function({
-  required LocalKey key,
+  required PageKey key,
   required String? name,
   required Object? arguments,
   required String restorationId,
