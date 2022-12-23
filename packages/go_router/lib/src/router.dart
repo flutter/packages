@@ -203,7 +203,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       );
 
   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
-  /// `/family/f2/person/p1?color=blue`
+  /// `/family/f2/person/p1?color=blue`.
+  ///
+  /// See also:
+  /// * [pushReplacement] which replaces the top-most page of the page stack and
+  ///   always use a new page key.
+  /// * [replace] which replaces the top-most page of the page stack and keeps
+  ///   the page key when possible.
   void push(String location, {Object? extra}) {
     assert(() {
       log.info('pushing $location');
@@ -239,7 +245,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///
   /// See also:
   /// * [go] which navigates to the location.
-  /// * [push] which pushes the location onto the page stack.
+  /// * [push] which pushes the given location onto the page stack.
+  /// * [replace] which replaces the top-most page of the page stack but keeps
+  ///   the page key when possible.
   void pushReplacement(String location, {Object? extra}) {
     routeInformationParser
         .parseRouteInformationWithDependencies(
@@ -270,6 +278,25 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       namedLocation(name, params: params, queryParams: queryParams),
       extra: extra,
     );
+  }
+
+  /// Replaces the top-most page of the page stack with the given one.
+  ///
+  /// See also:
+  /// * [push] which pushes the given location onto the page stack.
+  /// * [pushReplacement] which replaces the top-most page of the page stack but
+  ///   always use a new page key.
+  void replace(String location, {Object? extra}) {
+    routeInformationParser
+        .parseRouteInformationWithDependencies(
+      RouteInformation(location: location, state: extra),
+      // TODO(chunhtai): avoid accessing the context directly through global key.
+      // https://github.com/flutter/flutter/issues/99112
+      _routerDelegate.navigatorKey.currentContext!,
+    )
+        .then<void>((RouteMatchList matchList) {
+      routerDelegate.replace(matchList);
+    });
   }
 
   /// Pop the top-most route off the current screen.

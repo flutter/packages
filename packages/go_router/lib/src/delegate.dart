@@ -12,6 +12,7 @@ import 'configuration.dart';
 import 'match.dart';
 import 'matching.dart';
 import 'misc/errors.dart';
+import 'page_key.dart';
 import 'typedefs.dart';
 
 /// GoRouter implementation of [RouterDelegate].
@@ -50,7 +51,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///
   /// This is used to generate a unique key for each route.
   ///
-  /// For example, it would could be equal to:
+  /// For example, it could be equal to:
   /// ```dart
   /// {
   ///   'family': 1,
@@ -75,15 +76,14 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return false;
   }
 
-  /// Pushes the given location onto the page stack
-  void push(RouteMatchList matches) {
-    assert(matches.last.route is! ShellRoute);
-
+  PageKey _getNewKeyForPath(String path) {
     // Remap the pageKey to allow any number of the same page on the stack
-    final int count = (_pushCounts[matches.fullpath] ?? 0) + 1;
-    _pushCounts[matches.fullpath] = count;
-    final ValueKey<String> pageKey =
-        ValueKey<String>('${matches.fullpath}-p$count');
+    final int count = (_pushCounts[path] ?? -1) + 1;
+    _pushCounts[path] = count;
+    return PageKey(path: path, count: count);
+  }
+
+  void _push(RouteMatchList matches, PageKey pageKey) {
     final ImperativeRouteMatch newPageKeyMatch = ImperativeRouteMatch(
       route: matches.last.route,
       subloc: matches.last.subloc,
@@ -94,6 +94,20 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     );
 
     _matchList.push(newPageKeyMatch);
+  }
+
+  /// Pushes the given location onto the page stack.
+  ///
+  /// See also:
+  /// * [pushReplacement] which replaces the top-most page of the page stack and
+  ///   always use a new page key.
+  /// * [replace] which replaces the top-most page of the page stack and keeps
+  ///   the page key when possible.
+  void push(RouteMatchList matches) {
+    assert(matches.last.route is! ShellRoute);
+
+    final PageKey pageKey = _getNewKeyForPath(matches.fullpath);
+    _push(matches, pageKey);
     notifyListeners();
   }
 
@@ -141,13 +155,36 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return true;
   }
 
-  /// Replaces the top-most page of the page stack with the given one.
+  /// Replaces the top-most page of the page stack with the given one. The page
+  /// key of the new page will always be different from the old one.
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
+  /// * [replace] which replaces the top-most page of the page stack but keeps
+  ///   the page key when possible.
   void pushReplacement(RouteMatchList matches) {
+    assert(matches.last.route is! ShellRoute);
     _matchList.pop();
     push(matches); // [push] will notify the listeners.
+  }
+
+  /// Replaces the top-most page of the page stack with the given one and reuse
+  /// the page key when the path didn't change.
+  ///
+  /// See also:
+  /// * [push] which pushes the given location onto the page stack.
+  /// * [pushReplacement] which replaces the top-most page of the page stack but
+  ///   always use a new page key.
+  void replace(RouteMatchList matches) {
+    assert(matches.last.route is! ShellRoute);
+    PageKey pageKey = _matchList.pop().pageKey;
+    if (pageKey.path != matches.fullpath) {
+      // If the same page is not being replace, (ex: 'family' and
+      // 'family/:fid'), We don't try to reuse the same key.
+      pageKey = _getNewKeyForPath(matches.fullpath);
+    }
+    _push(matches, pageKey);
+    notifyListeners();
   }
 
   /// For internal use; visible for testing only.

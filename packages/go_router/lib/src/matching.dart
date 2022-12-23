@@ -98,16 +98,17 @@ class RouteMatchList {
   }
 
   /// Removes the last match.
-  void pop() {
+  RouteMatch pop() {
     if (_matches.last.route is GoRoute) {
       final GoRoute route = _matches.last.route as GoRoute;
       _uri = _uri.replace(path: removePatternFromPath(route.path, _uri.path));
     }
-    _matches.removeLast();
+    final RouteMatch routeMatch = _matches.removeLast();
     // Also pop ShellRoutes when there are no subsequent route matches
     while (_matches.isNotEmpty && _matches.last.route is ShellRoute) {
       _matches.removeLast();
     }
+    return routeMatch;
   }
 
   /// An optional object provided by the app during navigation.
