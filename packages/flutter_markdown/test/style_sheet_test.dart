@@ -317,9 +317,11 @@ void defineTests() {
           styleSheet: style,
         )));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<Widget> widgets = selfAndDescendantWidgetsOf(
+          find.byType(MarkdownBody),
+          tester,
+        );
         expectWidgetTypes(widgets, <Type>[
-          Directionality,
           MarkdownBody,
           Column,
           Padding,

@@ -137,7 +137,7 @@ task:
         - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
       pathified_unit_test_script:
         # Run tests with path-based dependencies to ensure that publishing
-        # the changes won't break tests of other packages in the respository
+        # the changes won't break tests of other packages in the repository
         # that depend on it.
         - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
         - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
