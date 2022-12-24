@@ -554,6 +554,22 @@ void main() {
     });
 
     testWidgets(
+        'hasRoute returns true if the route we pass in exists, false otherwise',
+        (WidgetTester tester) async {
+          final List<GoRoute> routes = <GoRoute>[
+            GoRoute(path: '/', builder: dummy),
+            GoRoute(path: '/page1', builder: dummy)
+          ];
+
+          final GoRouter router = await createRouter(routes, tester);
+          await tester.pumpAndSettle();
+
+          expect(router.hasRoute('/'), true);
+          expect(router.hasRoute('/page1'), true);
+          expect(router.hasRoute('/page2'), false);
+        });
+
+    testWidgets(
         'If there is more than one route to match, use the first match.',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
