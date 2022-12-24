@@ -36,16 +36,16 @@ void main() {
     expect(
         code,
         contains(
-            '@NonNull private static Map<String, Object> wrapError(@NonNull Throwable exception)'));
+            '@NonNull private static ArrayList<Object> wrapError(@NonNull Throwable exception)'));
   });
 
   test('gen one enum', () {
     final Enum anEnum = Enum(
       name: 'Foobar',
-      members: <String>[
-        'one',
-        'twoThreeFour',
-        'remoteDB',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'twoThreeFour'),
+        EnumMember(name: 'remoteDB'),
       ],
     );
     final Root root = Root(
@@ -89,7 +89,7 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('package com.google.foobar;'));
-    expect(code, contains('Map<String, Object> toMap()'));
+    expect(code, contains('ArrayList<Object> toList()'));
   });
 
   test('gen one host api', () {
@@ -453,10 +453,11 @@ void main() {
     expect(code, contains('public static class Outer'));
     expect(code, contains('public static class Nested'));
     expect(code, contains('private @Nullable Nested nested;'));
-    expect(code,
-        contains('(nested == null) ? null : Nested.fromMap((Map)nested)'));
-    expect(code,
-        contains('put("nested", (nested == null) ? null : nested.toMap());'));
+    expect(
+        code,
+        contains(
+            '(nested == null) ? null : Nested.fromList((ArrayList<Object>)nested)'));
+    expect(code, contains('add((nested == null) ? null : nested.toList());'));
   });
 
   test('gen one async Host Api', () {
@@ -557,10 +558,10 @@ void main() {
   test('gen one enum class', () {
     final Enum anEnum = Enum(
       name: 'Enum1',
-      members: <String>[
-        'one',
-        'twoThreeFour',
-        'remoteDB',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'twoThreeFour'),
+        EnumMember(name: 'remoteDB'),
       ],
     );
     final Class klass = Class(
@@ -591,10 +592,8 @@ void main() {
     expect(code, contains('private Enum1(final int index) {'));
     expect(code, contains('      this.index = index;'));
 
-    expect(
-        code,
-        contains(
-            'toMapResult.put("enum1", enum1 == null ? null : enum1.index);'));
+    expect(code,
+        contains('toListResult.add(enum1 == null ? null : enum1.index);'));
     expect(
         code,
         contains(
@@ -615,7 +614,10 @@ void main() {
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <String>['one', 'two'])
+      Enum(name: 'Foo', members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ])
     ]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -1136,6 +1138,7 @@ void main() {
       ' class comment',
       ' class field comment',
       ' enum comment',
+      ' enum member comment',
     ];
     int count = 0;
 
@@ -1192,9 +1195,12 @@ void main() {
             comments[count++],
             unspacedComments[unspacedCount++]
           ],
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
+            EnumMember(name: 'two'),
           ],
         ),
       ],
