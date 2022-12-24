@@ -164,6 +164,20 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     }
   }
 
+  /// Checks if the [path] given has a registered route.
+  bool hasRoute(String path) {
+    bool result = false;
+
+    try {
+      _routeInformationParser.matcher.findMatch(path).isNotEmpty;
+      result = true;
+    } catch (e) {
+      result = false;
+    }
+
+    return result;
+  }
+
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
   String namedLocation(
