@@ -145,7 +145,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
-  void replace(RouteMatchList matches) {
+  void pushReplacement(RouteMatchList matches) {
     _matchList.pop();
     push(matches); // [push] will notify the listeners.
   }
