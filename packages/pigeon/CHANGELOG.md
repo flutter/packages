@@ -1,3 +1,7 @@
+## 6.0.4
+
+* [kotlin] Fixes a missed casting of not nullable Dart 'int' to Kotlin 64bit long.
+
 ## 6.0.3
 
 * [docs] Updates README.md.

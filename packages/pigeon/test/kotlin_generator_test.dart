@@ -201,7 +201,7 @@ void main() {
     '''));
   });
 
-  test('all the simple datatypes header', () {
+  test('all the simple nullable datatypes header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
@@ -277,6 +277,92 @@ void main() {
     expect(code, contains('val aInt32List: IntArray? = null'));
     expect(code, contains('val aInt64List: LongArray? = null'));
     expect(code, contains('val aFloat64List: DoubleArray? = null'));
+    expect(
+        code,
+        contains(
+            'val aInt = list[1].let { if (it is Int) it.toLong() else it as? Long }'));
+  });
+
+  test('all the simple not nullable datatypes header', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(name: 'Foobar', fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
+          name: 'aBool',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'int',
+            isNullable: false,
+          ),
+          name: 'aInt',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'double',
+            isNullable: false,
+          ),
+          name: 'aDouble',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: false,
+          ),
+          name: 'aString',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'Uint8List',
+            isNullable: true,
+          ),
+          name: 'aUint8List',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'Int32List',
+            isNullable: false,
+          ),
+          name: 'aInt32List',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'Int64List',
+            isNullable: false,
+          ),
+          name: 'aInt64List',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'Float64List',
+            isNullable: false,
+          ),
+          name: 'aFloat64List',
+        ),
+      ]),
+    ], enums: <Enum>[]);
+
+    final StringBuffer sink = StringBuffer();
+
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('val aBool: Boolean'));
+    expect(code, contains('val aInt: Long'));
+    expect(code, contains('val aDouble: Double'));
+    expect(code, contains('val aString: String'));
+    expect(code, contains('val aUint8List: ByteArray'));
+    expect(code, contains('val aInt32List: IntArray'));
+    expect(code, contains('val aInt64List: LongArray'));
+    expect(code, contains('val aFloat64List: DoubleArray'));
+    expect(
+        code,
+        contains(
+            'val aInt = list[1].let { if (it is Int) it.toLong() else it as Long }'));
   });
 
   test('gen one flutter api', () {
