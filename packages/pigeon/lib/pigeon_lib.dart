@@ -468,7 +468,7 @@ class ObjcHeaderAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(objcOptionsWithHeader, root, sink);
   }
 
@@ -493,7 +493,7 @@ class ObjcSourceAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(objcOptionsWithHeader, root, sink);
   }
 
@@ -566,7 +566,7 @@ class CppHeaderAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final CppHeaderGenerator generator = CppHeaderGenerator();
+    final CppGenerator generator = CppGenerator(FileType.header);
     generator.generate(cppOptionsWithHeader, root, sink);
   }
 
@@ -591,7 +591,7 @@ class CppSourceAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final CppSourceGenerator generator = CppSourceGenerator();
+    final CppGenerator generator = CppGenerator(FileType.source);
     generator.generate(cppOptionsWithHeader, root, sink);
   }
 

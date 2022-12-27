@@ -497,3 +497,12 @@ Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
   // This returns the fields in the order they are declared in the pigeon file.
   return klass.fields;
 }
+
+/// Enum to specify which file will be generated for multi-file generators
+enum FileType {
+  /// header file.
+  header,
+
+  /// source file.
+  source,
+}

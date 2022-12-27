@@ -4,13 +4,10 @@
 
 import 'ast.dart';
 
-/// A Super class of generator classes.
+/// A superclass of generator classes.
 ///
-/// This is meant to provide structure and direction for future generator work.
+/// This provides the structure that is common across generators for different languages.
 abstract class Generator<T> {
-  /// Instantiates a Generator.
-  const Generator();
-
   /// Generates files for specified language with specified [languageOptions]
   void generate(T languageOptions, Root root, StringSink sink);
 }

@@ -21,8 +21,12 @@ const String _defaultCodecSerializer = 'flutter::StandardCodecSerializer';
 /// Options that control how C++ code will be generated.
 class CppOptions {
   /// Creates a [CppOptions] object
-  const CppOptions(
-      {this.header, this.namespace, this.copyrightHeader, this.cppHeaderOut});
+  const CppOptions({
+    this.header,
+    this.namespace,
+    this.copyrightHeader,
+    this.cppHeaderOut,
+  });
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
@@ -34,7 +38,7 @@ class CppOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
-  ///
+  /// The path to the output header file location.
   final String? cppHeaderOut;
 
   /// Creates a [CppOptions] from a Map representation where:
@@ -66,27 +70,22 @@ class CppOptions {
 }
 
 /// Class that manages all Cpp header code generation.
-class CppHeaderGenerator extends Generator<CppOptions> {
+class CppGenerator extends Generator<CppOptions> {
   /// Instantiates a Cpp Generator.
-  CppHeaderGenerator();
+  CppGenerator(this.fileType);
 
-  /// Generates Cpp header files with specified [CppOptions]
-  @override
-  void generate(CppOptions languageOptions, Root root, StringSink sink) {
-    generateCppHeader(
-        languageOptions.cppHeaderOut, languageOptions, root, sink);
-  }
-}
-
-/// Class that manages all Cpp code generation.
-class CppSourceGenerator extends Generator<CppOptions> {
-  /// Instantiates a Cpp Generator.
-  CppSourceGenerator();
+  /// Specifies which file type (header or source) will be generated.
+  FileType fileType;
 
   /// Generates Cpp files with specified [CppOptions]
   @override
   void generate(CppOptions languageOptions, Root root, StringSink sink) {
-    generateCppSource(languageOptions, root, sink);
+    if (fileType == FileType.header) {
+      generateCppHeader(
+          languageOptions.cppHeaderOut, languageOptions, root, sink);
+    } else {
+      generateCppSource(languageOptions, root, sink);
+    }
   }
 }
 
