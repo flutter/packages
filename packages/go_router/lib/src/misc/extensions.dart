@@ -20,25 +20,23 @@ extension GoRouterHelper on BuildContext {
 
   /// Navigate to a location.
   void go(String location, {Object? extra}) =>
-      GoRouter.of(this).go(location, extra: extra);
+      GoRouter.of(this).go(location);
 
   /// Navigate to a named route.
   void goNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
-    Object? extra,
   }) =>
       GoRouter.of(this).goNamed(
         name,
         params: params,
         queryParams: queryParams,
-        extra: extra,
       );
 
   /// Push a location onto the page stack.
   void push(String location, {Object? extra}) =>
-      GoRouter.of(this).push(location, extra: extra);
+      GoRouter.of(this).push(location);
 
   /// Navigate to a named route onto the page stack.
   void pushNamed(
@@ -51,7 +49,6 @@ extension GoRouterHelper on BuildContext {
         name,
         params: params,
         queryParams: queryParams,
-        extra: extra,
       );
 
   /// Returns `true` if there is more than 1 page on the stack.
@@ -68,7 +65,8 @@ extension GoRouterHelper on BuildContext {
   /// * [go] which navigates to the location.
   /// * [push] which pushes the location onto the page stack.
   void pushReplacement(String location, {Object? extra}) =>
-      GoRouter.of(this).pushReplacement(location, extra: extra);
+      GoRouter.of(this).pushReplacement(location);
+
 
   /// Replaces the top-most page of the page stack with the named route w/
   /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
@@ -87,6 +85,5 @@ extension GoRouterHelper on BuildContext {
         name,
         params: params,
         queryParams: queryParams,
-        extra: extra,
       );
 }

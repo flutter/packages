@@ -14,7 +14,7 @@ import 'matching.dart';
 /// A GoRouter redirector function.
 typedef RouteRedirector = FutureOr<RouteMatchList> Function(
     BuildContext, FutureOr<RouteMatchList>, RouteConfiguration, RouteMatcher,
-    {List<RouteMatchList>? redirectHistory, Object? extra});
+    {List<RouteMatchList>? redirectHistory});
 
 /// Processes redirects by returning a new [RouteMatchList] representing the new
 /// location.
@@ -23,8 +23,8 @@ FutureOr<RouteMatchList> redirect(
     FutureOr<RouteMatchList> prevMatchListFuture,
     RouteConfiguration configuration,
     RouteMatcher matcher,
-    {List<RouteMatchList>? redirectHistory,
-    Object? extra}) {
+    {List<RouteMatchList>? redirectHistory
+ }) {
   FutureOr<RouteMatchList> processRedirect(RouteMatchList prevMatchList) {
     final String prevLocation = prevMatchList.uri.toString();
     FutureOr<RouteMatchList> processTopLevelRedirect(
@@ -46,7 +46,6 @@ FutureOr<RouteMatchList> redirect(
           configuration,
           matcher,
           redirectHistory: redirectHistory,
-          extra: extra,
         );
       }
 
@@ -71,7 +70,6 @@ FutureOr<RouteMatchList> redirect(
             configuration,
             matcher,
             redirectHistory: redirectHistory,
-            extra: extra,
           );
         }
         return prevMatchList;
@@ -99,7 +97,6 @@ FutureOr<RouteMatchList> redirect(
         subloc: prevMatchList.uri.path,
         queryParams: prevMatchList.uri.queryParameters,
         queryParametersAll: prevMatchList.uri.queryParametersAll,
-        extra: extra,
         pageKey: const ValueKey<String>('topLevel'),
       ),
     );
@@ -142,7 +139,6 @@ FutureOr<String?> _getRouteLevelRedirect(
         name: route.name,
         path: route.path,
         fullpath: matchList.fullpath,
-        extra: match.extra,
         params: matchList.pathParameters,
         queryParams: matchList.uri.queryParameters,
         queryParametersAll: matchList.uri.queryParametersAll,

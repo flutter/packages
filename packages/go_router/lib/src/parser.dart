@@ -56,8 +56,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   ) {
     late final RouteMatchList initialMatches;
     try {
-      initialMatches = matcher.findMatch(routeInformation.location!,
-          extra: routeInformation.state);
+      initialMatches = matcher.findMatch(routeInformation.location!);
     } on MatcherError {
       log.info('No initial matches: ${routeInformation.location}');
 
@@ -80,7 +79,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       SynchronousFuture<RouteMatchList>(initialMatches),
       configuration,
       matcher,
-      extra: routeInformation.state,
     );
     if (redirectorResult is RouteMatchList) {
       return processRedirectorResult(redirectorResult);
@@ -107,8 +105,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           (configuration.matches.last as ImperativeRouteMatch).matches;
     }
     return RouteInformation(
-      location: configuration.uri.toString(),
-      state: configuration.extra,
+      location: configuration.uri.toString()
     );
   }
 }

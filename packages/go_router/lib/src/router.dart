@@ -179,13 +179,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
-  void go(String location, {Object? extra}) {
+  void go(String location) {
     assert(() {
       log.info('going to $location');
       return true;
     }());
     _routeInformationProvider.value =
-        RouteInformation(location: location, state: extra);
+        RouteInformation(location: location);
   }
 
   /// Navigate to a named route w/ optional parameters, e.g.
@@ -195,23 +195,21 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
-    Object? extra,
   }) =>
       go(
         namedLocation(name, params: params, queryParams: queryParams),
-        extra: extra,
       );
 
   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
-  void push(String location, {Object? extra}) {
+  void push(String location, ) {
     assert(() {
       log.info('pushing $location');
       return true;
     }());
     _routeInformationParser
         .parseRouteInformationWithDependencies(
-      RouteInformation(location: location, state: extra),
+      RouteInformation(location: location),
       // TODO(chunhtai): avoid accessing the context directly through global key.
       // https://github.com/flutter/flutter/issues/99112
       _routerDelegate.navigatorKey.currentContext!,
@@ -227,11 +225,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
-    Object? extra,
   }) =>
       push(
         namedLocation(name, params: params, queryParams: queryParams),
-        extra: extra,
       );
 
   /// Replaces the top-most page of the page stack with the given URL location
@@ -240,10 +236,10 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [go] which navigates to the location.
   /// * [push] which pushes the location onto the page stack.
-  void pushReplacement(String location, {Object? extra}) {
+  void pushReplacement(String location) {
     routeInformationParser
         .parseRouteInformationWithDependencies(
-      RouteInformation(location: location, state: extra),
+      RouteInformation(location: location),
       // TODO(chunhtai): avoid accessing the context directly through global key.
       // https://github.com/flutter/flutter/issues/99112
       _routerDelegate.navigatorKey.currentContext!,
@@ -264,11 +260,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
-    Object? extra,
   }) {
     pushReplacement(
       namedLocation(name, params: params, queryParams: queryParams),
-      extra: extra,
     );
   }
 

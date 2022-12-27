@@ -75,7 +75,7 @@ class App extends StatelessWidget {
             path: 'family',
             builder: (BuildContext context, GoRouterState state) {
               final Map<String, Object> params =
-                  state.extra! as Map<String, String>;
+                  state.params! as Map<String, String>;
               final String fid = params['fid']! as String;
               return FamilyScreen(fid: fid);
             },
@@ -100,7 +100,7 @@ class HomeScreen extends StatelessWidget {
               ListTile(
                 title: Text(entry.value.name),
                 onTap: () => context.goNamed('family',
-                    extra: <String, String>{'fid': entry.key}),
+                    params: <String, String>{'fid': entry.key}),
               )
           ],
         ),
