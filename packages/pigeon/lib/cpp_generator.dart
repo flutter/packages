@@ -72,7 +72,7 @@ class CppOptions {
 
 /// Class that manages all Cpp header code generation.
 class CppGenerator extends Generator<CppOptions> {
-  /// Instantiates a Cpp Generator.
+  /// Instantiates a Cpp Generator for the specified file type.
   CppGenerator(this.fileType);
 
   /// Specifies which file type (header or source) will be generated.

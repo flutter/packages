@@ -380,12 +380,13 @@ DartOptions _dartOptionsWithCopyrightHeader(
           ? _lineReader(copyrightHeader)
           : null;
   return DartOptions(
-      dartOutPath: dartOutPath,
-      testOutPath: testOutPath,
-      copyrightHeader: parsedCopyrightHeader);
+    dartOutPath: dartOutPath,
+    testOutPath: testOutPath,
+    copyrightHeader: parsedCopyrightHeader,
+  );
 }
 
-/// An [GeneratorAdapter] that generates the AST.
+/// A [GeneratorAdapter] that generates the AST.
 class AstGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [AstGeneratorAdapter].
   const AstGeneratorAdapter();
@@ -402,7 +403,7 @@ class AstGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [GeneratorAdapter] that generates Dart source code.
+/// A [GeneratorAdapter] that generates Dart source code.
 class DartGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [DartGeneratorAdapter].
   const DartGeneratorAdapter();
@@ -422,7 +423,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [GeneratorAdapter] that generates Dart test source code.
+/// A [GeneratorAdapter] that generates Dart test source code.
 class DartTestGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [DartTestGeneratorAdapter].
   const DartTestGeneratorAdapter();
@@ -456,7 +457,7 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [GeneratorAdapter] that generates Objective-C header code.
+/// A [GeneratorAdapter] that generates Objective-C header code.
 class ObjcHeaderGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [ObjcHeaderGeneratorAdapter].
   const ObjcHeaderGeneratorAdapter();
@@ -481,7 +482,7 @@ class ObjcHeaderGeneratorAdapter implements GeneratorAdapter {
       validateObjc(options.objcOptions!, root);
 }
 
-/// An [GeneratorAdapter] that generates Objective-C source code.
+/// A [GeneratorAdapter] that generates Objective-C source code.
 class ObjcSourceGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [ObjcSourceGeneratorAdapter].
   const ObjcSourceGeneratorAdapter();
@@ -505,7 +506,7 @@ class ObjcSourceGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [GeneratorAdapter] that generates Java source code.
+/// A [GeneratorAdapter] that generates Java source code.
 class JavaGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [JavaGeneratorAdapter].
   const JavaGeneratorAdapter();
@@ -530,7 +531,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [GeneratorAdapter] that generates Swift source code.
+/// A [GeneratorAdapter] that generates Swift source code.
 class SwiftGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [SwiftGeneratorAdapter].
   const SwiftGeneratorAdapter();
@@ -553,7 +554,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [GeneratorAdapter] that generates C++ header code.
+/// A [GeneratorAdapter] that generates C++ header code.
 class CppHeaderGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [CppHeaderGeneratorAdapter].
   const CppHeaderGeneratorAdapter();
@@ -579,7 +580,7 @@ class CppHeaderGeneratorAdapter implements GeneratorAdapter {
       validateCpp(options.cppOptions!, root);
 }
 
-/// An [GeneratorAdapter] that generates C++ source code.
+/// A [GeneratorAdapter] that generates C++ source code.
 class CppSourceGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [CppSourceGeneratorAdapter].
   const CppSourceGeneratorAdapter();
@@ -603,7 +604,7 @@ class CppSourceGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [GeneratorAdapter] that generates Kotlin source code.
+/// A [GeneratorAdapter] that generates Kotlin source code.
 class KotlinGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [KotlinGeneratorAdapter].
   const KotlinGeneratorAdapter();
