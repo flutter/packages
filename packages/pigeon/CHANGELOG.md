@@ -1,4 +1,4 @@
-## 4.2.16
+## 5.0.0
 
 * Creates new Generator classes for each language.
 
