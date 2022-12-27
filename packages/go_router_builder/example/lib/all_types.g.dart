@@ -71,9 +71,11 @@ extension $AllTypesBaseRouteExtension on AllTypesBaseRoute {
         '/',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $BigIntRouteExtension on BigIntRoute {
@@ -90,9 +92,11 @@ extension $BigIntRouteExtension on BigIntRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $BoolRouteExtension on BoolRoute {
@@ -109,9 +113,11 @@ extension $BoolRouteExtension on BoolRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $DateTimeRouteExtension on DateTimeRoute {
@@ -130,9 +136,11 @@ extension $DateTimeRouteExtension on DateTimeRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $DoubleRouteExtension on DoubleRoute {
@@ -149,9 +157,11 @@ extension $DoubleRouteExtension on DoubleRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $IntRouteExtension on IntRoute {
@@ -167,9 +177,11 @@ extension $IntRouteExtension on IntRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $NumRouteExtension on NumRoute {
@@ -185,9 +197,11 @@ extension $NumRouteExtension on NumRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $EnumRouteExtension on EnumRoute {
@@ -206,9 +220,11 @@ extension $EnumRouteExtension on EnumRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
@@ -227,9 +243,11 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $StringRouteExtension on StringRoute {
@@ -245,9 +263,11 @@ extension $StringRouteExtension on StringRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $UriRouteExtension on UriRoute {
@@ -263,9 +283,11 @@ extension $UriRouteExtension on UriRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 const _$PersonDetailsEnumMap = {

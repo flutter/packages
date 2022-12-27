@@ -1,3 +1,7 @@
+## 1.0.16
+
+* Update router_config to not passing `extra` unconditionally.
+
 ## 1.0.15
 
 * Avoids using deprecated DartType.element2.

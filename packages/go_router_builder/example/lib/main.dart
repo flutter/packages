@@ -232,7 +232,7 @@ class PersonScreen extends StatelessWidget {
                     person.id,
                     entry.key,
                     $extra: ++_extraClickCount,
-                  ).go(context),
+                  ).go(context, extra: _extraClickCount),
                   child: const Text('With extra...'),
                 ),
                 onTap: () => PersonDetailsRoute(family.id, person.id, entry.key)

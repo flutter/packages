@@ -30,9 +30,11 @@ extension $HomeRouteExtension on HomeRoute {
         '/',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
@@ -44,7 +46,9 @@ extension $FamilyRouteExtension on FamilyRoute {
         '/family/${Uri.encodeComponent(familyId)}',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }

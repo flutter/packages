@@ -142,9 +142,11 @@ extension $_extensionName on $_className {
 
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context, {Object? extra}) =>
+      context.go(location, extra: extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context, {Object? extra}) =>
+      context.push(location, extra: extra);
 }
 ''';
 
