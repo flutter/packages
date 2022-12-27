@@ -110,13 +110,8 @@ class MigrateProject extends Project {
         '/V',
         '/mov',
       ]);
-      print('EXITCODE:');
-      print(res.exitCode);
-      print('STDERR:');
-      print(res.stderr);
-      print('STDOUT:');
-      print(res.stdout);
-      assert(res.exitCode == 0);
+      // Robocopy exit code 1 means some files were copied. 0 means no files were copied.
+      assert(res.exitCode == 1);
       res = await processManager.run(<String>[
         'takeown',
         '/f',
