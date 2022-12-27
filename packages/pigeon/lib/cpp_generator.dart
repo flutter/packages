@@ -45,10 +45,11 @@ class CppOptions {
   /// `x = CppOptions.fromMap(x.toMap())`.
   static CppOptions fromMap(Map<String, Object> map) {
     return CppOptions(
-        header: map['header'] as String?,
-        namespace: map['namespace'] as String?,
-        copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
-        cppHeaderOut: map['cppHeaderOut'] as String?);
+      header: map['header'] as String?,
+      namespace: map['namespace'] as String?,
+      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      cppHeaderOut: map['cppHeaderOut'] as String?,
+    );
   }
 
   /// Converts a [CppOptions] to a Map representation where:
