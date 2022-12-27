@@ -65,44 +65,35 @@ class ObjcOptions {
 }
 
 /// Class that manages all Objc header code generation.
-class ObjcHeaderGenerator extends Generator<ObjcOptions> {
-  /// Instantiates a Objc Generator.
-  ObjcHeaderGenerator();
+class ObjcGenerator extends Generator<ObjcOptions> {
+  /// Instantiates a Objc Generator for the specified file type.
+  ObjcGenerator(this.fileType);
+
+  /// Specifies which file type (header or source) will be generated.
+  FileType fileType;
 
   /// Generates Objc header files with specified [ObjcOptions]
   @override
   void generate(ObjcOptions languageOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent);
-    generateObjcHeader(languageOptions, root, sink, indent);
+    if (fileType == FileType.header) {
+      writeFileHeaders(languageOptions, root, sink, indent);
+      generateObjcHeader(languageOptions, root, sink, indent);
+    } else {
+      writeFileHeaders(languageOptions, root, sink, indent);
+      generateObjcSource(languageOptions, root, sink, indent);
+    }
   }
 
   @override
   void writeFileHeaders(
       ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
-    writeObjcHeaderHeader(languageOptions, root, sink, indent);
-  }
-}
-
-/// Class that manages all Objc code generation.
-class ObjcSourceGenerator extends Generator<ObjcOptions> {
-  /// Instantiates a Objc Generator.
-  ObjcSourceGenerator();
-
-  /// Generates Objc files with specified [ObjcOptions]
-  @override
-  void generate(ObjcOptions languageOptions, Root root, StringSink sink) {
-    final Indent indent = Indent(sink);
-
-    writeObjcSourceHeader(languageOptions, root, sink, indent);
-    generateObjcSource(languageOptions, root, sink, indent);
-  }
-
-  @override
-  void writeFileHeaders(
-      ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
-    writeObjcSourceHeader(languageOptions, root, sink, indent);
+    if (fileType == FileType.header) {
+      writeObjcHeaderHeader(languageOptions, root, sink, indent);
+    } else {
+      writeObjcSourceHeader(languageOptions, root, sink, indent);
+    }
   }
 }
 

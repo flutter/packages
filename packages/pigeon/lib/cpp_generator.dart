@@ -21,8 +21,12 @@ const String _defaultCodecSerializer = 'flutter::StandardCodecSerializer';
 /// Options that control how C++ code will be generated.
 class CppOptions {
   /// Creates a [CppOptions] object
-  const CppOptions(
-      {this.header, this.namespace, this.copyrightHeader, this.cppHeaderOut});
+  const CppOptions({
+    this.header,
+    this.namespace,
+    this.copyrightHeader,
+    this.cppHeaderOut,
+  });
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
@@ -34,17 +38,18 @@ class CppOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
-  ///
+  /// The path to the output header file location.
   final String? cppHeaderOut;
 
   /// Creates a [CppOptions] from a Map representation where:
   /// `x = CppOptions.fromMap(x.toMap())`.
   static CppOptions fromMap(Map<String, Object> map) {
     return CppOptions(
-        header: map['header'] as String?,
-        namespace: map['namespace'] as String?,
-        copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
-        cppHeaderOut: map['cppHeaderOut'] as String?);
+      header: map['header'] as String?,
+      namespace: map['namespace'] as String?,
+      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      cppHeaderOut: map['cppHeaderOut'] as String?,
+    );
   }
 
   /// Converts a [CppOptions] to a Map representation where:
@@ -66,45 +71,35 @@ class CppOptions {
 }
 
 /// Class that manages all Cpp header code generation.
-class CppHeaderGenerator extends Generator<CppOptions> {
-  /// Instantiates a Cpp Generator.
-  CppHeaderGenerator();
+class CppGenerator extends Generator<CppOptions> {
+  /// Instantiates a Cpp Generator for the specified file type.
+  CppGenerator(this.fileType);
+
+  /// Specifies which file type (header or source) will be generated.
+  FileType fileType;
 
   /// Generates Cpp header files with specified [CppOptions]
   @override
   void generate(CppOptions languageOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
-
-    writeFileHeaders(languageOptions, root, sink, indent);
-    generateCppHeader(
-        languageOptions.cppHeaderOut, languageOptions, root, sink, indent);
+    if (fileType == FileType.header) {
+      writeFileHeaders(languageOptions, root, sink, indent);
+      generateCppHeader(
+          languageOptions.cppHeaderOut, languageOptions, root, sink, indent);
+    } else {
+      writeFileHeaders(languageOptions, root, sink, indent);
+      generateCppSource(languageOptions, root, sink, indent);
+    }
   }
 
   @override
   void writeFileHeaders(
       CppOptions languageOptions, Root root, StringSink sink, Indent indent) {
-    writeCppHeaderHeader(languageOptions, root, sink, indent);
-  }
-}
-
-/// Class that manages all Cpp code generation.
-class CppSourceGenerator extends Generator<CppOptions> {
-  /// Instantiates a Cpp Generator.
-  CppSourceGenerator();
-
-  /// Generates Cpp files with specified [CppOptions]
-  @override
-  void generate(CppOptions languageOptions, Root root, StringSink sink) {
-    final Indent indent = Indent(sink);
-
-    writeFileHeaders(languageOptions, root, sink, indent);
-    generateCppSource(languageOptions, root, sink, indent);
-  }
-
-  @override
-  void writeFileHeaders(
-      CppOptions languageOptions, Root root, StringSink sink, Indent indent) {
-    writeCppSourceHeader(languageOptions, root, sink, indent);
+    if (fileType == FileType.header) {
+      writeCppHeaderHeader(languageOptions, root, sink, indent);
+    } else {
+      writeCppSourceHeader(languageOptions, root, sink, indent);
+    }
   }
 }
 

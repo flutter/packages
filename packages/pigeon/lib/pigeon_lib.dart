@@ -357,17 +357,17 @@ IOSink? _openSink(String? output) {
 
 /// An adapter that will call a generator to write code to a sink
 /// based on the contents of [PigeonOptions].
-abstract class Adapter {
-  /// Returns an [IOSink] instance to be written to if the [Adapter] should
-  /// generate.  If it returns `null`, the [Adapter] will be skipped.
+abstract class GeneratorAdapter {
+  /// Returns an [IOSink] instance to be written to if the [GeneratorAdapter] should
+  /// generate.  If it returns `null`, the [GeneratorAdapter] will be skipped.
   IOSink? shouldGenerate(PigeonOptions options);
 
   /// Write the generated code described in [root] to [sink] using the
   /// [options].
   void generate(StringSink sink, PigeonOptions options, Root root);
 
-  /// Generates errors that would only be appropriate for this [Adapter]. For
-  /// example, maybe a certain feature isn't implemented in a [Adapter] yet.
+  /// Generates errors that would only be appropriate for this [GeneratorAdapter]. For
+  /// example, maybe a certain feature isn't implemented in a [GeneratorAdapter] yet.
   List<Error> validate(PigeonOptions options, Root root);
 }
 
@@ -380,15 +380,16 @@ DartOptions _dartOptionsWithCopyrightHeader(
           ? _lineReader(copyrightHeader)
           : null;
   return DartOptions(
-      dartOutPath: dartOutPath,
-      testOutPath: testOutPath,
-      copyrightHeader: parsedCopyrightHeader);
+    dartOutPath: dartOutPath,
+    testOutPath: testOutPath,
+    copyrightHeader: parsedCopyrightHeader,
+  );
 }
 
-/// An [Adapter] that generates the AST.
-class AstAdapter implements Adapter {
-  /// Constructor for [AstAdapter].
-  const AstAdapter();
+/// A [GeneratorAdapter] that generates the AST.
+class AstGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [AstGeneratorAdapter].
+  const AstGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -402,10 +403,10 @@ class AstAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [Adapter] that generates Dart source code.
-class DartAdapter implements Adapter {
-  /// Constructor for [DartAdapter].
-  const DartAdapter();
+/// A [GeneratorAdapter] that generates Dart source code.
+class DartGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [DartGeneratorAdapter].
+  const DartGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -422,10 +423,10 @@ class DartAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [Adapter] that generates Dart test source code.
-class DartTestAdapter implements Adapter {
-  /// Constructor for [DartTestAdapter].
-  const DartTestAdapter();
+/// A [GeneratorAdapter] that generates Dart test source code.
+class DartTestGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [DartTestGeneratorAdapter].
+  const DartTestGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -456,10 +457,10 @@ class DartTestAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [Adapter] that generates Objective-C header code.
-class ObjcHeaderAdapter implements Adapter {
-  /// Constructor for [ObjcHeaderAdapter].
-  const ObjcHeaderAdapter();
+/// A [GeneratorAdapter] that generates Objective-C header code.
+class ObjcHeaderGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [ObjcHeaderGeneratorAdapter].
+  const ObjcHeaderGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -468,7 +469,7 @@ class ObjcHeaderAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(objcOptionsWithHeader, root, sink);
   }
 
@@ -481,10 +482,10 @@ class ObjcHeaderAdapter implements Adapter {
       validateObjc(options.objcOptions!, root);
 }
 
-/// An [Adapter] that generates Objective-C source code.
-class ObjcSourceAdapter implements Adapter {
-  /// Constructor for [ObjcSourceAdapter].
-  const ObjcSourceAdapter();
+/// A [GeneratorAdapter] that generates Objective-C source code.
+class ObjcSourceGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [ObjcSourceGeneratorAdapter].
+  const ObjcSourceGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -493,7 +494,7 @@ class ObjcSourceAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(objcOptionsWithHeader, root, sink);
   }
 
@@ -505,10 +506,10 @@ class ObjcSourceAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [Adapter] that generates Java source code.
-class JavaAdapter implements Adapter {
-  /// Constructor for [JavaAdapter].
-  const JavaAdapter();
+/// A [GeneratorAdapter] that generates Java source code.
+class JavaGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [JavaGeneratorAdapter].
+  const JavaGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -530,10 +531,10 @@ class JavaAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [Adapter] that generates Swift source code.
-class SwiftAdapter implements Adapter {
-  /// Constructor for [SwiftAdapter].
-  const SwiftAdapter();
+/// A [GeneratorAdapter] that generates Swift source code.
+class SwiftGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [SwiftGeneratorAdapter].
+  const SwiftGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -553,10 +554,10 @@ class SwiftAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [Adapter] that generates C++ header code.
-class CppHeaderAdapter implements Adapter {
-  /// Constructor for [CppHeaderAdapter].
-  const CppHeaderAdapter();
+/// A [GeneratorAdapter] that generates C++ header code.
+class CppHeaderGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [CppHeaderGeneratorAdapter].
+  const CppHeaderGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -566,7 +567,7 @@ class CppHeaderAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final CppHeaderGenerator generator = CppHeaderGenerator();
+    final CppGenerator generator = CppGenerator(FileType.header);
     generator.generate(cppOptionsWithHeader, root, sink);
   }
 
@@ -579,10 +580,10 @@ class CppHeaderAdapter implements Adapter {
       validateCpp(options.cppOptions!, root);
 }
 
-/// An [Adapter] that generates C++ source code.
-class CppSourceAdapter implements Adapter {
-  /// Constructor for [CppSourceAdapter].
-  const CppSourceAdapter();
+/// A [GeneratorAdapter] that generates C++ source code.
+class CppSourceGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [CppSourceGeneratorAdapter].
+  const CppSourceGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -591,7 +592,7 @@ class CppSourceAdapter implements Adapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final CppSourceGenerator generator = CppSourceGenerator();
+    final CppGenerator generator = CppGenerator(FileType.source);
     generator.generate(cppOptionsWithHeader, root, sink);
   }
 
@@ -603,10 +604,10 @@ class CppSourceAdapter implements Adapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// An [Adapter] that generates Kotlin source code.
-class KotlinAdapter implements Adapter {
-  /// Constructor for [KotlinAdapter].
-  const KotlinAdapter();
+/// A [GeneratorAdapter] that generates Kotlin source code.
+class KotlinGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [KotlinGeneratorAdapter].
+  const KotlinGeneratorAdapter();
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
@@ -1353,7 +1354,7 @@ ${_argParser.usage}''';
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
   static Future<int> run(List<String> args,
-      {List<Adapter>? adapters, String? sdkPath}) {
+      {List<GeneratorAdapter>? adapters, String? sdkPath}) {
     final PigeonOptions options = Pigeon.parseArgs(args);
     return runWithOptions(options, adapters: adapters, sdkPath: sdkPath);
   }
@@ -1363,23 +1364,23 @@ ${_argParser.usage}''';
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
   static Future<int> runWithOptions(PigeonOptions options,
-      {List<Adapter>? adapters, String? sdkPath}) async {
+      {List<GeneratorAdapter>? adapters, String? sdkPath}) async {
     final Pigeon pigeon = Pigeon.setup();
     if (options.debugGenerators ?? false) {
       generator_tools.debugGenerators = true;
     }
-    final List<Adapter> safeAdapters = adapters ??
-        <Adapter>[
-          const DartAdapter(),
-          const JavaAdapter(),
-          const SwiftAdapter(),
-          const KotlinAdapter(),
-          const CppHeaderAdapter(),
-          const CppSourceAdapter(),
-          const DartTestAdapter(),
-          const ObjcHeaderAdapter(),
-          const ObjcSourceAdapter(),
-          const AstAdapter(),
+    final List<GeneratorAdapter> safeGeneratorAdapters = adapters ??
+        <GeneratorAdapter>[
+          const DartGeneratorAdapter(),
+          const JavaGeneratorAdapter(),
+          const SwiftGeneratorAdapter(),
+          const KotlinGeneratorAdapter(),
+          const CppHeaderGeneratorAdapter(),
+          const CppSourceGeneratorAdapter(),
+          const DartTestGeneratorAdapter(),
+          const ObjcHeaderGeneratorAdapter(),
+          const ObjcSourceGeneratorAdapter(),
+          const AstGeneratorAdapter(),
         ];
     _executeConfigurePigeon(options);
 
@@ -1401,7 +1402,7 @@ ${_argParser.usage}''';
       }
     }
 
-    for (final Adapter adapter in safeAdapters) {
+    for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
       final IOSink? sink = adapter.shouldGenerate(options);
       if (sink != null) {
         final List<Error> adapterErrors =
@@ -1443,7 +1444,7 @@ ${_argParser.usage}''';
               CppOptions(header: path.basename(options.cppHeaderOut!)))));
     }
 
-    for (final Adapter adapter in safeAdapters) {
+    for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
       final IOSink? sink = adapter.shouldGenerate(options);
       if (sink != null) {
         adapter.generate(sink, options, parseResults.root);
