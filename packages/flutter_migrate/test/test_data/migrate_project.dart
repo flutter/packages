@@ -110,6 +110,12 @@ class MigrateProject extends Project {
         '/V',
         '/mov',
       ]);
+      print('EXITCODE:');
+      print(res.exitCode);
+      print('STDERR:');
+      print(res.stderr);
+      print('STDOUT:');
+      print(res.stdout);
       assert(res.exitCode == 0);
       res = await processManager.run(<String>[
         'takeown',
