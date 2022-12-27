@@ -43,9 +43,9 @@ extension $HomeRouteExtension on HomeRoute {
         '/',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
@@ -57,9 +57,9 @@ extension $FamilyRouteExtension on FamilyRoute {
         '/family/${Uri.encodeComponent(fid)}',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 }
 
 extension $PersonRouteExtension on PersonRoute {
@@ -72,9 +72,9 @@ extension $PersonRouteExtension on PersonRoute {
         '/family/${Uri.encodeComponent(fid)}/person/${Uri.encodeComponent(pid.toString())}',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 }
 
 extension $PersonDetailsRouteExtension on PersonDetailsRoute {
@@ -90,9 +90,9 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
         '/family/${Uri.encodeComponent(fid)}/person/${Uri.encodeComponent(pid.toString())}/details/${Uri.encodeComponent(_$PersonDetailsEnumMap[details]!)}',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 }
 
 const _$PersonDetailsEnumMap = {
@@ -123,7 +123,7 @@ extension $LoginRouteExtension on LoginRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 }
