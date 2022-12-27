@@ -458,6 +458,7 @@ void writeHeader(
   }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
+  indent.addln('');
 }
 
 /// Generates the ".swift" file for the AST represented by [root] to [sink] with the
@@ -642,7 +643,6 @@ import FlutterMacOS
     });
   }
 
-  indent.addln('');
   writeImports();
   indent.addln('');
   indent.writeln('$_docCommentPrefix Generated class from Pigeon.');

@@ -1054,15 +1054,15 @@ void writeCppHeaderHeader(
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');
   }
+  indent.writeln('$_commentPrefix $generatedCodeWarning');
+  indent.writeln('$_commentPrefix $seeAlsoWarning');
+  indent.addln('');
 }
 
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options] and [headerFileName].
 void generateCppHeader(String? headerFileName, CppOptions options, Root root,
     StringSink sink, Indent indent) {
-  indent.writeln('$_commentPrefix $generatedCodeWarning');
-  indent.writeln('$_commentPrefix $seeAlsoWarning');
-  indent.addln('');
   final String guardName = _getGuardName(headerFileName, options.namespace);
   indent.writeln('#ifndef $guardName');
   indent.writeln('#define $guardName');
@@ -1149,18 +1149,17 @@ void writeCppSourceHeader(
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');
   }
+  indent.writeln('$_commentPrefix $generatedCodeWarning');
+  indent.writeln('$_commentPrefix $seeAlsoWarning');
+  indent.addln('');
+  indent.addln('#undef _HAS_EXCEPTIONS');
+  indent.addln('');
 }
 
 /// Generates the ".cpp" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateCppSource(
     CppOptions options, Root root, StringSink sink, Indent indent) {
-  indent.writeln('$_commentPrefix $generatedCodeWarning');
-  indent.writeln('$_commentPrefix $seeAlsoWarning');
-  indent.addln('');
-  indent.addln('#undef _HAS_EXCEPTIONS');
-  indent.addln('');
-
   indent.writeln('#include "${options.header}"');
   indent.addln('');
   _writeSystemHeaderIncludeBlock(indent, <String>[

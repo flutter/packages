@@ -464,6 +464,7 @@ void writeHeader(
   }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
+  indent.addln('');
 }
 
 /// Generates the ".kotlin" file for the AST represented by [root] to [sink] with the
@@ -674,7 +675,6 @@ void generateKotlin(
     });
   }
 
-  indent.addln('');
   if (options.package != null) {
     indent.writeln('package ${options.package}');
   }

@@ -572,6 +572,7 @@ void writeObjcHeaderHeader(
   }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
+  indent.addln('');
 }
 
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
@@ -915,6 +916,7 @@ void writeObjcSourceHeader(
   }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
+  indent.addln('');
 }
 
 /// Generates the ".m" file for the AST represented by [root] to [sink] with the

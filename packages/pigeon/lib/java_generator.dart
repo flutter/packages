@@ -551,6 +551,7 @@ void writeHeader(
   }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
+  indent.addln('');
 }
 
 /// Generates the ".java" file for the AST represented by [root] to [sink] with the
@@ -775,7 +776,6 @@ void generateJava(
 }''');
   }
 
-  indent.addln('');
   if (options.package != null) {
     indent.writeln('package ${options.package};');
   }
