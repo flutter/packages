@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
@@ -17,7 +18,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -33,7 +34,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
@@ -51,7 +52,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
@@ -70,7 +71,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(prefix: 'PREFIX'), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
@@ -107,7 +108,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
@@ -140,14 +141,14 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const ObjcOptions options = ObjcOptions(header: 'foo.h', prefix: 'AC');
     {
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(options, root, sink);
       final String code = sink.toString();
       expect(code, contains('typedef NS_ENUM(NSUInteger, ACFoo)'));
       expect(code, contains(':(ACFoo)foo error:'));
     }
     {
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(options, root, sink);
       final String code = sink.toString();
       expect(
@@ -211,7 +212,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@property(nonatomic, assign) Enum1 enum1'));
@@ -244,7 +245,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Input'));
@@ -284,7 +285,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
@@ -332,7 +333,7 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -361,7 +362,7 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
@@ -383,7 +384,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code,
@@ -404,7 +405,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(
@@ -424,7 +425,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface ABCFoobar'));
@@ -439,7 +440,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation ABCFoobar'));
@@ -474,7 +475,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('property.*ABCInput'));
@@ -511,7 +512,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('ABCInput fromList'));
@@ -548,7 +549,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
@@ -588,7 +589,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
@@ -618,7 +619,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
 
@@ -649,7 +650,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -681,7 +682,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -711,7 +712,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -736,7 +737,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -760,7 +761,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -784,7 +785,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -811,7 +812,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -831,7 +832,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -847,7 +848,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -869,7 +870,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -899,7 +900,7 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('(NSDictionary<NSString *, id> *)foo'));
@@ -934,7 +935,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -974,7 +975,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -1002,7 +1003,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -1023,7 +1024,7 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -1063,7 +1064,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -1102,7 +1103,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -1123,7 +1124,7 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -1151,7 +1152,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -1168,7 +1169,7 @@ void main() {
   test('source copyright', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(
         ObjcOptions(
             header: 'foo.h',
@@ -1183,7 +1184,7 @@ void main() {
   test('header copyright', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         ObjcOptions(
             header: 'foo.h',
@@ -1215,7 +1216,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -1246,7 +1247,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1254,7 +1255,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1289,7 +1290,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1297,7 +1298,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1335,7 +1336,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1363,7 +1364,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1372,7 +1373,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1400,7 +1401,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1409,7 +1410,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1439,7 +1440,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1450,7 +1451,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1486,7 +1487,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1497,7 +1498,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1531,7 +1532,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1542,7 +1543,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
@@ -1587,7 +1588,7 @@ void main() {
     final Root divideRoot = getDivideRoot(ApiLocation.host);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
       final String code = sink.toString();
@@ -1595,7 +1596,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
 
@@ -1608,7 +1609,7 @@ void main() {
     final Root divideRoot = getDivideRoot(ApiLocation.flutter);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
       final String code = sink.toString();
@@ -1616,7 +1617,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
 
@@ -1634,7 +1635,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -1658,7 +1659,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(
@@ -1684,7 +1685,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches(r'doitWithCompletion.*NSNumber \*_Nullable'));
@@ -1707,7 +1708,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches(r'nullable NSNumber.*doitWithError'));
@@ -1735,14 +1736,14 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(const ObjcOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(const ObjcOptions(), root, sink);
       final String code = sink.toString();
       expect(code,
@@ -1772,14 +1773,14 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.header);
       generator.generate(const ObjcOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcSourceGenerator generator = ObjcSourceGenerator();
+      final ObjcGenerator generator = ObjcGenerator(FileType.source);
       generator.generate(const ObjcOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('- (void)doitFoo:(nullable NSNumber *)arg_foo'));
@@ -1804,7 +1805,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(
@@ -1889,7 +1890,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcHeaderGenerator generator = ObjcHeaderGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.header);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
@@ -1925,7 +1926,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains(' : FlutterStandardReader')));
@@ -1968,7 +1969,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcSourceGenerator generator = ObjcSourceGenerator();
+    final ObjcGenerator generator = ObjcGenerator(FileType.source);
     generator.generate(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains(' : FlutterStandardReader'));

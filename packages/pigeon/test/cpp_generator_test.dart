@@ -4,6 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/cpp_generator.dart';
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart' show Error;
 import 'package:test/test.dart';
 
@@ -45,7 +46,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('class Input'));
@@ -54,7 +55,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppSourceGenerator generator = CppSourceGenerator();
+      final CppGenerator generator = CppGenerator(FileType.source);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('Input::Input()'));
@@ -103,7 +104,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Method name and argument names should be adjusted.
@@ -119,7 +120,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppSourceGenerator generator = CppSourceGenerator();
+      final CppGenerator generator = CppGenerator(FileType.source);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('pointer_input_field'));
@@ -148,7 +149,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
 
@@ -189,7 +190,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
 
@@ -244,7 +245,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
@@ -252,7 +253,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppSourceGenerator generator = CppSourceGenerator();
+      final CppGenerator generator = CppGenerator(FileType.source);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
@@ -279,7 +280,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('''
@@ -295,7 +296,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppSourceGenerator generator = CppSourceGenerator();
+      final CppGenerator generator = CppGenerator(FileType.source);
       generator.generate(const CppOptions(header: 'a_header.h'), root, sink);
       final String code = sink.toString();
       expect(code, contains('''
@@ -332,7 +333,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(namespace: 'foo'), root, sink);
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
@@ -340,7 +341,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppSourceGenerator generator = CppSourceGenerator();
+      final CppGenerator generator = CppGenerator(FileType.source);
       generator.generate(const CppOptions(namespace: 'foo'), root, sink);
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
@@ -402,7 +403,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Getters should return const pointers.
@@ -435,7 +436,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppSourceGenerator generator = CppSourceGenerator();
+      final CppGenerator generator = CppGenerator(FileType.source);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Getters extract optionals.
@@ -535,7 +536,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       // POD getters should return copies references.
@@ -561,7 +562,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppSourceGenerator generator = CppSourceGenerator();
+      final CppGenerator generator = CppGenerator(FileType.source);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Getters just return the value.
@@ -660,7 +661,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(
@@ -766,7 +767,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('ErrorOr<bool> ReturnBool()'));
@@ -843,7 +844,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(
@@ -857,7 +858,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppSourceGenerator generator = CppSourceGenerator();
+      final CppGenerator generator = CppGenerator(FileType.source);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Most types should just use get_if, since the parameter is a pointer,
@@ -963,7 +964,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppHeaderGenerator generator = CppHeaderGenerator();
+      final CppGenerator generator = CppGenerator(FileType.header);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(
@@ -977,7 +978,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppSourceGenerator generator = CppSourceGenerator();
+      final CppGenerator generator = CppGenerator(FileType.source);
       generator.generate(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Most types should extract references. Since the type is non-nullable,
@@ -1032,7 +1033,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    final CppSourceGenerator generator = CppSourceGenerator();
+    final CppGenerator generator = CppGenerator(FileType.source);
     generator.generate(const CppOptions(), root, sink);
     final String code = sink.toString();
     // A bare 'auto' here would create a copy, not a reference, which is
@@ -1145,7 +1146,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    final CppHeaderGenerator generator = CppHeaderGenerator();
+    final CppGenerator generator = CppGenerator(FileType.header);
     generator.generate(const CppOptions(cppHeaderOut: 'foo'), root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
@@ -1181,7 +1182,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final CppHeaderGenerator generator = CppHeaderGenerator();
+    final CppGenerator generator = CppGenerator(FileType.header);
     generator.generate(const CppOptions(), root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
@@ -1224,7 +1225,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final CppHeaderGenerator generator = CppHeaderGenerator();
+    final CppGenerator generator = CppGenerator(FileType.header);
     generator.generate(const CppOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains(' : public flutter::StandardCodecSerializer'));
@@ -1294,7 +1295,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final CppSourceGenerator generator = CppSourceGenerator();
+    final CppGenerator generator = CppGenerator(FileType.source);
     generator.generate(const CppOptions(), root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains('reply(wrap')));
