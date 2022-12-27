@@ -374,16 +374,12 @@ abstract class GeneratorAdapter {
 DartOptions _dartOptionsWithCopyrightHeader(
     DartOptions? dartOptions, String? copyrightHeader,
     [String? dartOutPath, String? testOutPath]) {
-  final Iterable<String>? parsedCopyrightHeader = dartOptions != null
-      ? dartOptions.copyrightHeader
-      : copyrightHeader != null
-          ? _lineReader(copyrightHeader)
-          : null;
-  return DartOptions(
-    dartOutPath: dartOutPath,
-    testOutPath: testOutPath,
-    copyrightHeader: parsedCopyrightHeader,
-  );
+  dartOptions = dartOptions ?? DartOptions();
+  return dartOptions.merge(DartOptions(
+      dartOutPath: dartOutPath,
+      testOutPath: testOutPath,
+      copyrightHeader:
+          copyrightHeader != null ? _lineReader(copyrightHeader) : null));
 }
 
 /// A [GeneratorAdapter] that generates the AST.
