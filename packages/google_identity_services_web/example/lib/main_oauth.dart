@@ -4,7 +4,7 @@
 
 // ignore_for_file: avoid_print
 
-import 'package:google_identity_services_web/id.dart' as id show setLogLevel;
+import 'package:google_identity_services_web/id.dart';
 import 'package:google_identity_services_web/loader.dart' as gis;
 import 'package:google_identity_services_web/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;

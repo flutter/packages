@@ -6,7 +6,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:google_identity_services_web/id.dart' as id;
+import 'package:google_identity_services_web/id.dart';
 import 'package:google_identity_services_web/src/js_interop/dom.dart';
 
 import 'package:integration_test/integration_test.dart';
@@ -26,35 +26,35 @@ void main() async {
 
   group('prompt', () {
     testWidgets('supports a moment notification callback', (_) async {
-      id.initialize(id.IdConfiguration(client_id: 'testing_1-2-3'));
+      id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
 
-      final StreamController<id.PromptMomentNotification> controller =
-          StreamController<id.PromptMomentNotification>();
+      final StreamController<PromptMomentNotification> controller =
+          StreamController<PromptMomentNotification>();
 
       id.prompt(allowInterop(controller.add));
 
-      final id.PromptMomentNotification moment = await controller.stream.first;
+      final PromptMomentNotification moment = await controller.stream.first;
 
       // These defaults are set in mock-gis.js
-      expect(moment.getMomentType(), id.MomentType.skipped);
-      expect(moment.getSkippedReason(), id.MomentSkippedReason.user_cancel);
+      expect(moment.getMomentType(), MomentType.skipped);
+      expect(moment.getSkippedReason(), MomentSkippedReason.user_cancel);
     });
 
     testWidgets('calls config callback with credential response', (_) async {
       const String expected = 'should_be_a_proper_jwt_token';
       setMockCredentialResponse(expected);
 
-      final StreamController<id.CredentialResponse> controller =
-          StreamController<id.CredentialResponse>();
+      final StreamController<CredentialResponse> controller =
+          StreamController<CredentialResponse>();
 
-      id.initialize(id.IdConfiguration(
+      id.initialize(IdConfiguration(
         client_id: 'testing_1-2-3',
         callback: allowInterop(controller.add),
       ));
 
       id.prompt();
 
-      final id.CredentialResponse response = await controller.stream.first;
+      final CredentialResponse response = await controller.stream.first;
 
       expect(response.credential, expected);
     });

@@ -65,9 +65,10 @@ behind a [conditional import/export](https://dart.dev/guides/libraries/create-li
 
 Once the SDK has been loaded, it can be used by importing the correct library:
 
-* `import 'package:google_identity_services/id.dart' as id;` for Authentication
-* `import 'package:google_identity_services/oauth2.dart' as oauth2;` for
-  Authorization.
+* `import 'package:google_identity_services/id.dart';` for Authentication.
+  * This will expose an `id` JSObject that binds to `google.accounts.id`.
+* `import 'package:google_identity_services/oauth2.dart';` for Authorization.
+  * This will expose an `oauth2` JSObject that binds to `google.accounts.oauth2`.
 
 ## Browser compatibility
 

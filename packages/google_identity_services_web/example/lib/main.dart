@@ -4,7 +4,7 @@
 
 // ignore_for_file: avoid_print
 
-import 'package:google_identity_services_web/id.dart' as id;
+import 'package:google_identity_services_web/id.dart';
 // #docregion use-loader
 import 'package:google_identity_services_web/loader.dart' as gis;
 // #enddocregion use-loader
@@ -32,7 +32,7 @@ void main() async {
 
 /// Handles the ID token returned from the One Tap prompt.
 /// See: https://developers.google.com/identity/gsi/web/reference/js-reference#callback
-void onCredentialResponse(id.CredentialResponse o) {
+void onCredentialResponse(CredentialResponse o) {
   final Map<String, dynamic>? payload = jwt.JwtDecoder.tryDecode(o.credential);
   if (payload != null) {
     print('Hello, ${payload["name"]}');
@@ -45,8 +45,8 @@ void onCredentialResponse(id.CredentialResponse o) {
 
 /// Handles Prompt UI status notifications.
 /// See: https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.prompt
-void onPromptMoment(id.PromptMomentNotification o) {
-  final id.MomentType type = o.getMomentType();
+void onPromptMoment(PromptMomentNotification o) {
+  final MomentType type = o.getMomentType();
   print(type.runtimeType);
   print(type);
   print(type.index);
