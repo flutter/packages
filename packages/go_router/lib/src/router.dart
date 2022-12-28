@@ -165,16 +165,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Checks if the given path matches a registered route.
-  bool hasRoute(String path) {
-    bool hasRoute = false;
+  /// Returns a [RouteMatchList] if the path matches, otherwise returns `null`.
+  RouteMatchList? tryParseRoute(String path) {
     try {
-      hasRoute = _routeInformationParser.matcher.findMatch(path).isNotEmpty;
-    } catch (e) {
-      log.warning('Failed to match route $path: $e');
-      hasRoute = false;
+      return _routeInformationParser.matcher.findMatch(path);
+    } catch (_) {
+      return null;
     }
-
-    return hasRoute;
   }
 
   /// Get a location from route name and parameters.

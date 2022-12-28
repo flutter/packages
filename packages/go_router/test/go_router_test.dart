@@ -554,7 +554,7 @@ void main() {
     });
 
     testWidgets(
-        'hasRoute returns true if the route we pass in exists, false otherwise',
+        'tryParseRoute returns a RouteMatchList if the route we pass exists, null otherwise',
         (WidgetTester tester) async {
           final List<GoRoute> routes = <GoRoute>[
             GoRoute(path: '/', builder: dummy),
@@ -564,9 +564,9 @@ void main() {
           final GoRouter router = await createRouter(routes, tester);
           await tester.pumpAndSettle();
 
-          expect(router.hasRoute('/'), true);
-          expect(router.hasRoute('/page1'), true);
-          expect(router.hasRoute('/page2'), false);
+          expect(router.tryParseRoute('/'), isA<RouteMatchList>());
+          expect(router.tryParseRoute('/page1'), isA<RouteMatchList>());
+          expect(router.tryParseRoute('/page2'), null);
         });
 
     testWidgets(
