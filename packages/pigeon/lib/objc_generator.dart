@@ -67,14 +67,12 @@ class ObjcOptions {
 /// Class that manages all Objc header code generation.
 class ObjcGenerator extends Generator<ObjcOptions> {
   /// Instantiates a Objc Generator for the specified file type.
-  ObjcGenerator(this.fileType);
-
-  /// Specifies which file type (header or source) will be generated.
-  FileType fileType;
+  ObjcGenerator();
 
   /// Generates Objc files with specified [ObjcOptions]
   @override
-  void generate(ObjcOptions languageOptions, Root root, StringSink sink) {
+  void generate(ObjcOptions languageOptions, Root root, StringSink sink,
+      FileType fileType) {
     if (fileType == FileType.header) {
       generateObjcHeader(languageOptions, root, sink);
     } else {

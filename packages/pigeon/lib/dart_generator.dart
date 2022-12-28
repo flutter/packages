@@ -77,7 +77,8 @@ class DartGenerator extends Generator<DartOptions> {
 
   /// Generates Dart files with specified [DartOptions]
   @override
-  void generate(DartOptions languageOptions, Root root, StringSink sink) {
+  void generate(
+      DartOptions languageOptions, Root root, StringSink sink, FileType _) {
     generateDart(languageOptions, root, sink);
   }
 

@@ -73,14 +73,12 @@ class CppOptions {
 /// Class that manages all Cpp header code generation.
 class CppGenerator extends Generator<CppOptions> {
   /// Instantiates a Cpp Generator for the specified file type.
-  CppGenerator(this.fileType);
-
-  /// Specifies which file type (header or source) will be generated.
-  FileType fileType;
+  CppGenerator();
 
   /// Generates Cpp files with specified [CppOptions]
   @override
-  void generate(CppOptions languageOptions, Root root, StringSink sink) {
+  void generate(CppOptions languageOptions, Root root, StringSink sink,
+      FileType fileType) {
     if (fileType == FileType.header) {
       generateCppHeader(languageOptions, root, sink);
     } else {

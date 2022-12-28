@@ -92,7 +92,8 @@ class JavaGenerator extends Generator<JavaOptions> {
 
   /// Generates Java files with specified [JavaOptions]
   @override
-  void generate(JavaOptions languageOptions, Root root, StringSink sink) {
+  void generate(
+      JavaOptions languageOptions, Root root, StringSink sink, FileType _) {
     generateJava(languageOptions, root, sink);
   }
 }
