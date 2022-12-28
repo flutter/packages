@@ -19,14 +19,14 @@ const DocumentCommentSpecification _docCommentSpec =
 class ObjcOptions {
   /// Parametric constructor for ObjcOptions.
   const ObjcOptions({
-    this.header,
+    this.headerIncludePath,
     this.prefix,
     this.copyrightHeader,
   });
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  final String? header;
+  final String? headerIncludePath;
 
   /// Prefix that will be appended before all generated classes and protocols.
   final String? prefix;
@@ -40,7 +40,7 @@ class ObjcOptions {
     final Iterable<dynamic>? copyrightHeader =
         map['copyrightHeader'] as Iterable<dynamic>?;
     return ObjcOptions(
-      header: map['header'] as String?,
+      headerIncludePath: map['header'] as String?,
       prefix: map['prefix'] as String?,
       copyrightHeader: copyrightHeader?.cast<String>(),
     );
@@ -50,7 +50,7 @@ class ObjcOptions {
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
-      if (header != null) 'header': header!,
+      if (headerIncludePath != null) 'header': headerIncludePath!,
       if (prefix != null) 'prefix': prefix!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
     };
@@ -910,7 +910,7 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   }
 
   void writeImports() {
-    indent.writeln('#import "${options.header}"');
+    indent.writeln('#import "${options.headerIncludePath}"');
     indent.writeln('#import <Flutter/Flutter.h>');
   }
 

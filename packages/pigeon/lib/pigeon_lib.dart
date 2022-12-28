@@ -1430,8 +1430,8 @@ ${_argParser.usage}''';
 
     if (options.objcHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          objcOptions: options.objcOptions!.merge(
-              ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
+          objcOptions: options.objcOptions!.merge(ObjcOptions(
+              headerIncludePath: path.basename(options.objcHeaderOut!)))));
     }
 
     if (options.cppHeaderOut != null) {
