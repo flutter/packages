@@ -80,16 +80,9 @@ class DartGenerator extends Generator<DartOptions> {
   void generate(DartOptions languageOptions, Root root, StringSink sink) {
     generateDart(languageOptions, root, sink);
   }
-}
 
-/// Class that manages all Dart code generation.
-class DartTestGenerator extends Generator<DartOptions> {
-  /// Instantiates a Dart Generator.
-  DartTestGenerator();
-
-  /// Generates Dart files with specified [DartOptions]
-  @override
-  void generate(DartOptions languageOptions, Root root, StringSink sink) {
+  /// Generates Dart files for testing with specified [DartOptions]
+  void generateTest(DartOptions languageOptions, Root root, StringSink sink) {
     final String sourceOutPath = languageOptions.sourceOutPath ?? '';
     final String testOutPath = languageOptions.testOutPath ?? '';
     generateTestDart(

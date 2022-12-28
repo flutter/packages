@@ -432,8 +432,8 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
       options.dartOut,
       options.dartTestOut,
     );
-    final DartTestGenerator testGenerator = DartTestGenerator();
-    testGenerator.generate(
+    final DartGenerator testGenerator = DartGenerator();
+    testGenerator.generateTest(
       dartOptionsWithHeader,
       root,
       sink,
