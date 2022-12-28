@@ -22,15 +22,15 @@ const String _defaultCodecSerializer = 'flutter::StandardCodecSerializer';
 class CppOptions {
   /// Creates a [CppOptions] object
   const CppOptions({
-    this.header,
+    this.headerIncludePath,
     this.namespace,
     this.copyrightHeader,
-    this.cppHeaderOut,
+    this.headerOutPath,
   });
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  final String? header;
+  final String? headerIncludePath;
 
   /// The namespace where the generated class will live.
   final String? namespace;
@@ -39,16 +39,16 @@ class CppOptions {
   final Iterable<String>? copyrightHeader;
 
   /// The path to the output header file location.
-  final String? cppHeaderOut;
+  final String? headerOutPath;
 
   /// Creates a [CppOptions] from a Map representation where:
   /// `x = CppOptions.fromMap(x.toMap())`.
   static CppOptions fromMap(Map<String, Object> map) {
     return CppOptions(
-      header: map['header'] as String?,
+      headerIncludePath: map['header'] as String?,
       namespace: map['namespace'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
-      cppHeaderOut: map['cppHeaderOut'] as String?,
+      headerOutPath: map['cppHeaderOut'] as String?,
     );
   }
 
@@ -56,7 +56,7 @@ class CppOptions {
   /// `x = CppOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
-      if (header != null) 'header': header!,
+      if (headerIncludePath != null) 'header': headerIncludePath!,
       if (namespace != null) 'namespace': namespace!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
     };
@@ -82,8 +82,7 @@ class CppGenerator extends Generator<CppOptions> {
   @override
   void generate(CppOptions languageOptions, Root root, StringSink sink) {
     if (fileType == FileType.header) {
-      generateCppHeader(
-          languageOptions.cppHeaderOut, languageOptions, root, sink);
+      generateCppHeader(languageOptions, root, sink);
     } else {
       generateCppSource(languageOptions, root, sink);
     }
@@ -1037,8 +1036,8 @@ void _writeSystemHeaderIncludeBlock(Indent indent, List<String> headers) {
 
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options] and [headerFileName].
-void generateCppHeader(
-    String? headerFileName, CppOptions options, Root root, StringSink sink) {
+void generateCppHeader(CppOptions options, Root root, StringSink sink) {
+  final String? headerFileName = options.headerOutPath;
   final Indent indent = Indent(sink);
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');
@@ -1139,7 +1138,7 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
   indent.addln('#undef _HAS_EXCEPTIONS');
   indent.addln('');
 
-  indent.writeln('#include "${options.header}"');
+  indent.writeln('#include "${options.headerIncludePath}"');
   indent.addln('');
   _writeSystemHeaderIncludeBlock(indent, <String>[
     'flutter/basic_message_channel.h',

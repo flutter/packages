@@ -582,7 +582,7 @@ void main() {
       DartOptions(),
       root,
       testCodeSink,
-      dartOutPath: "fo'o.dart",
+      sourceOutPath: "fo'o.dart",
       testOutPath: 'test.dart',
     );
     final String testCode = testCodeSink.toString();
@@ -1154,7 +1154,7 @@ name: foobar
         DartOptions(),
         root,
         sink,
-        dartOutPath: path.join(foo.path, 'bar.dart'),
+        sourceOutPath: path.join(foo.path, 'bar.dart'),
         testOutPath: path.join(tempDir.path, 'test', 'bar_test.dart'),
       );
       final String code = sink.toString();
@@ -1358,7 +1358,7 @@ name: foobar
       DartOptions(),
       root,
       sink,
-      dartOutPath: 'code.dart',
+      sourceOutPath: 'code.dart',
       testOutPath: 'test.dart',
     );
     final String testCode = sink.toString();

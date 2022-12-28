@@ -27,7 +27,7 @@ class DartOptions {
   /// Constructor for DartOptions.
   DartOptions({
     this.copyrightHeader,
-    this.dartOutPath,
+    this.sourceOutPath,
     this.testOutPath,
   });
 
@@ -35,7 +35,7 @@ class DartOptions {
   final Iterable<String>? copyrightHeader;
 
   /// Path to output generated Dart file for tests.
-  String? dartOutPath;
+  String? sourceOutPath;
 
   /// Path to output generated Test file for tests.
   String? testOutPath;
@@ -47,7 +47,7 @@ class DartOptions {
         map['copyrightHeader'] as Iterable<dynamic>?;
     return DartOptions(
       copyrightHeader: copyrightHeader?.cast<String>(),
-      dartOutPath: map['dartOutPath'] as String?,
+      sourceOutPath: map['sourceOutPath'] as String?,
       testOutPath: map['testOutPath'] as String?,
     );
   }
@@ -57,7 +57,7 @@ class DartOptions {
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
-      if (dartOutPath != null) 'dartOutPath': dartOutPath!,
+      if (sourceOutPath != null) 'sourceOutPath': sourceOutPath!,
       if (testOutPath != null) 'testOutPath': testOutPath!,
     };
     return result;
@@ -90,13 +90,13 @@ class DartTestGenerator extends Generator<DartOptions> {
   /// Generates Dart files with specified [DartOptions]
   @override
   void generate(DartOptions languageOptions, Root root, StringSink sink) {
-    final String dartOutPath = languageOptions.dartOutPath ?? '';
+    final String sourceOutPath = languageOptions.sourceOutPath ?? '';
     final String testOutPath = languageOptions.testOutPath ?? '';
     generateTestDart(
       languageOptions,
       root,
       sink,
-      dartOutPath: dartOutPath,
+      sourceOutPath: sourceOutPath,
       testOutPath: testOutPath,
     );
   }
@@ -742,14 +742,14 @@ String _posixify(String inputPath) {
 }
 
 /// Generates Dart source code for test support libraries based on the given AST
-/// represented by [root], outputting the code to [sink]. [dartOutPath] is the
+/// represented by [root], outputting the code to [sink]. [sourceOutPath] is the
 /// path of the generated dart code to be tested. [testOutPath] is where the
 /// test code will be generated.
 void generateTestDart(
   DartOptions opt,
   Root root,
   StringSink sink, {
-  required String dartOutPath,
+  required String sourceOutPath,
   required String testOutPath,
 }) {
   final Indent indent = Indent(sink);
@@ -773,10 +773,10 @@ void generateTestDart(
   indent.writeln('');
   final String relativeDartPath =
       path.Context(style: path.Style.posix).relative(
-    _posixify(dartOutPath),
+    _posixify(sourceOutPath),
     from: _posixify(path.dirname(testOutPath)),
   );
-  late final String? packageName = _deducePackageName(dartOutPath);
+  late final String? packageName = _deducePackageName(sourceOutPath);
   if (!relativeDartPath.contains('/lib/') || packageName == null) {
     // If we can't figure out the package name or the relative path doesn't
     // include a 'lib' directory, try relative path import which only works in

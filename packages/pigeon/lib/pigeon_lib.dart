@@ -376,7 +376,7 @@ DartOptions _dartOptionsWithCopyrightHeader(
     [String? dartOutPath, String? testOutPath]) {
   dartOptions = dartOptions ?? DartOptions();
   return dartOptions.merge(DartOptions(
-      dartOutPath: dartOutPath,
+      sourceOutPath: dartOutPath,
       testOutPath: testOutPath,
       copyrightHeader:
           copyrightHeader != null ? _lineReader(copyrightHeader) : null));
@@ -559,7 +559,7 @@ class CppHeaderGeneratorAdapter implements GeneratorAdapter {
   void generate(StringSink sink, PigeonOptions options, Root root) {
     final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
     final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
-        cppHeaderOut: path.basenameWithoutExtension(options.cppHeaderOut!),
+        headerOutPath: path.basenameWithoutExtension(options.cppHeaderOut!),
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
@@ -1436,8 +1436,8 @@ ${_argParser.usage}''';
 
     if (options.cppHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          cppOptions: options.cppOptions!.merge(
-              CppOptions(header: path.basename(options.cppHeaderOut!)))));
+          cppOptions: options.cppOptions!.merge(CppOptions(
+              headerIncludePath: path.basename(options.cppHeaderOut!)))));
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
