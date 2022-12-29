@@ -82,6 +82,7 @@ class DartGenerator extends Generator<DartOptions> {
     final Indent indent = Indent(sink);
 
     writeFileHeaders(languageOptions, root, sink, indent, fileType);
+    writeFileImports(languageOptions, root, sink, indent, fileType);
     generateDart(languageOptions, root, sink, indent);
   }
 
@@ -89,6 +90,12 @@ class DartGenerator extends Generator<DartOptions> {
   void writeFileHeaders(DartOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     writeHeader(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileImports(DartOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
+    writeImports(languageOptions, root, sink, indent);
   }
 
   /// Generates Dart files for testing with specified [DartOptions]
@@ -553,6 +560,18 @@ void writeHeader(DartOptions opt, Root root, StringSink sink, Indent indent) {
   indent.addln('');
 }
 
+/// Writes file imports to sink.
+void writeImports(DartOptions opt, Root root, StringSink sink, Indent indent) {
+  indent.writeln("import 'dart:async';");
+  indent.writeln(
+    "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
+  );
+  indent.addln('');
+  indent.writeln(
+      "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
+  indent.writeln("import 'package:flutter/services.dart';");
+}
+
 /// Generates Dart source code for the given AST represented by [root],
 /// outputting the code to [sink].
 void generateDart(DartOptions opt, Root root, StringSink sink, Indent indent) {
@@ -575,17 +594,6 @@ void generateDart(DartOptions opt, Root root, StringSink sink, Indent indent) {
         }
       });
     }
-  }
-
-  void writeImports() {
-    indent.writeln("import 'dart:async';");
-    indent.writeln(
-      "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
-    );
-    indent.addln('');
-    indent.writeln(
-        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
-    indent.writeln("import 'package:flutter/services.dart';");
   }
 
   void writeDataClass(Class klass) {
@@ -718,7 +726,6 @@ $resultAt != null
     }
   }
 
-  writeImports();
   writeEnums();
   for (final Class klass in root.classes) {
     indent.writeln('');

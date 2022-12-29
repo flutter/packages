@@ -14,7 +14,8 @@ abstract class Generator<T> {
   /// This method, when overridden, should follow a generic structure that is currently:
   /// 1. Create Indent
   /// 2. Write File Headers
-  /// 3. Generate File
+  /// 3. Write Imports
+  /// 4. Generate File
   void generate(
     T languageOptions,
     Root root,
@@ -24,6 +25,15 @@ abstract class Generator<T> {
 
   /// Adds specified file headers.
   void writeFileHeaders(
+    T languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+  );
+
+  /// Adds specified imports.
+  void writeFileImports(
     T languageOptions,
     Root root,
     StringSink sink,
