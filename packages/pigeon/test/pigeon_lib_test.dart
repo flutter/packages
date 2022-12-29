@@ -6,20 +6,26 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
 
 class _ValidatorGeneratorAdapter implements GeneratorAdapter {
   _ValidatorGeneratorAdapter(this.sink);
+
+  @override
+  List<FileType> fileTypeList = const <FileType>[FileType.source];
+
   bool didCallValidate = false;
 
   final IOSink? sink;
 
   @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {}
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {}
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => sink;
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) => sink;
 
   @override
   List<Error> validate(PigeonOptions options, Root root) {
@@ -397,9 +403,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
-    const DartGeneratorAdapter dartGeneratorAdapter = DartGeneratorAdapter();
+    final DartGeneratorAdapter dartGeneratorAdapter = DartGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    dartGeneratorAdapter.generate(buffer, options, root);
+    dartGeneratorAdapter.generate(buffer, options, root, FileType.source);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -407,9 +413,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
         javaOut: 'Foo.java', copyrightHeader: './copyright_header.txt');
-    const JavaGeneratorAdapter javaGeneratorAdapter = JavaGeneratorAdapter();
+    final JavaGeneratorAdapter javaGeneratorAdapter = JavaGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    javaGeneratorAdapter.generate(buffer, options, root);
+    javaGeneratorAdapter.generate(buffer, options, root, FileType.source);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -417,10 +423,10 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
-    const ObjcHeaderGeneratorAdapter objcHeaderGeneratorAdapter =
-        ObjcHeaderGeneratorAdapter();
+    final ObjcGeneratorAdapter objcHeaderGeneratorAdapter =
+        ObjcGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    objcHeaderGeneratorAdapter.generate(buffer, options, root);
+    objcHeaderGeneratorAdapter.generate(buffer, options, root, FileType.header);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -428,10 +434,10 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
-    const ObjcSourceGeneratorAdapter objcSourceGeneratorAdapter =
-        ObjcSourceGeneratorAdapter();
+    final ObjcGeneratorAdapter objcSourceGeneratorAdapter =
+        ObjcGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    objcSourceGeneratorAdapter.generate(buffer, options, root);
+    objcSourceGeneratorAdapter.generate(buffer, options, root, FileType.source);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -439,9 +445,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
         swiftOut: 'Foo.swift', copyrightHeader: './copyright_header.txt');
-    const SwiftGeneratorAdapter swiftGeneratorAdapter = SwiftGeneratorAdapter();
+    final SwiftGeneratorAdapter swiftGeneratorAdapter = SwiftGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    swiftGeneratorAdapter.generate(buffer, options, root);
+    swiftGeneratorAdapter.generate(buffer, options, root, FileType.source);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -449,10 +455,9 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
         cppHeaderOut: 'Foo.h', copyrightHeader: './copyright_header.txt');
-    const CppHeaderGeneratorAdapter cppHeaderGeneratorAdapter =
-        CppHeaderGeneratorAdapter();
+    final CppGeneratorAdapter cppHeaderGeneratorAdapter = CppGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    cppHeaderGeneratorAdapter.generate(buffer, options, root);
+    cppHeaderGeneratorAdapter.generate(buffer, options, root, FileType.header);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -460,10 +465,10 @@ abstract class NestorApi {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
-    const CppSourceGeneratorAdapter cppSourceGeneratorAdapter =
-        CppSourceGeneratorAdapter();
+    final CppGeneratorAdapter cppSourceGeneratorAdapter =
+        CppGeneratorAdapter(fileTypeList: <FileType>[FileType.source]);
     final StringBuffer buffer = StringBuffer();
-    cppSourceGeneratorAdapter.generate(buffer, options, root);
+    cppSourceGeneratorAdapter.generate(buffer, options, root, FileType.source);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -933,10 +938,10 @@ abstract class Api {
       dartTestOut: 'stdout',
       dartOut: 'stdout',
     );
-    const DartTestGeneratorAdapter dartGeneratorAdapter =
+    final DartTestGeneratorAdapter dartGeneratorAdapter =
         DartTestGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    dartGeneratorAdapter.generate(buffer, options, root);
+    dartGeneratorAdapter.generate(buffer, options, root, FileType.source);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 

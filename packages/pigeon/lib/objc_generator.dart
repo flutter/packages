@@ -66,7 +66,7 @@ class ObjcOptions {
 
 /// Class that manages all Objc header code generation.
 class ObjcGenerator extends Generator<ObjcOptions> {
-  /// Instantiates a Objc Generator for the specified file type.
+  /// Instantiates a Objc Generator.
   ObjcGenerator();
 
   /// Generates Objc files with specified [ObjcOptions]
