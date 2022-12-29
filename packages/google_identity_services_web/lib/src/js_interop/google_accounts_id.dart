@@ -17,18 +17,18 @@ import 'package:js/js.dart';
 import 'dom.dart';
 import 'shared.dart';
 
-/// The Dart binding to the `google.accounts.id` global.
+/// Binding to the `google.accounts.id` JS global.
 ///
 /// See: https://developers.google.com/identity/gsi/web/reference/js-reference
 @JS('google.accounts.id')
 external GoogleAccountsId get id;
 
-/// A moment (status) notification from the [prompt] method.
+/// The Dart definition of the `google.accounts.id` global.
 @JS()
 @staticInterop
 abstract class GoogleAccountsId {}
 
-/// The methods of google.accounts.id
+/// The `google.accounts.id` methods
 extension GoogleAccountsIdExtension on GoogleAccountsId {
   /// An undocumented method.
   ///
@@ -369,9 +369,25 @@ abstract class GsiButtonConfiguration {
     String locale,
 
     /// A function to be called when the button is clicked.
-    VoidFn click_listener,
+    GsiButtonClickListenerFn click_listener,
   });
 }
+
+/// The object passed as an optional parameter to `click_listener` function.
+@JS()
+@staticInterop
+abstract class GsiButtonData {}
+
+/// The fields that are contained in the button data.
+extension GsiButtonDataExtension on GsiButtonData {
+  /// Nonce
+  external String? get nonce;
+  /// State
+  external String? get state;
+}
+
+/// The type of the [GsiButtonConfiguration] `click_listener` function.
+typedef GsiButtonClickListenerFn = void Function(GsiButtonData? gsiButtonData);
 
 /// The object passed to the [NativeCallbackFn]. Represents a PasswordCredential
 /// that was returned by the Browser.
