@@ -96,6 +96,7 @@ class DartGenerator extends Generator<DartOptions> {
     final Indent indent = Indent(sink);
     final String sourceOutPath = languageOptions.sourceOutPath ?? '';
     final String testOutPath = languageOptions.testOutPath ?? '';
+    writeTestHeader(languageOptions, root, sink, indent);
     generateTestDart(
       languageOptions,
       root,
