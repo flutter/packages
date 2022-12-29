@@ -115,38 +115,6 @@ class DartGenerator extends Generator<DartOptions> {
   }
 }
 
-/// Class that manages all Dart code generation.
-class DartTestGenerator extends Generator<DartOptions> {
-  /// Instantiates a Dart Generator.
-  DartTestGenerator();
-
-  /// Generates Dart files with specified [DartOptions]
-  @override
-  void generate(DartOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
-    final Indent indent = Indent(sink);
-
-    final String sourceOutPath = languageOptions.sourceOutPath ?? '';
-    final String testOutPath = languageOptions.testOutPath ?? '';
-
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    generateTestDart(
-      languageOptions,
-      root,
-      sink,
-      indent,
-      sourceOutPath: sourceOutPath,
-      testOutPath: testOutPath,
-    );
-  }
-
-  @override
-  void writeFileHeaders(DartOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    writeTestHeader(languageOptions, root, sink, indent);
-  }
-}
-
 String _escapeForDartSingleQuotedString(String raw) {
   return raw
       .replaceAll(r'\', r'\\')

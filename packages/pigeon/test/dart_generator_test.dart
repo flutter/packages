@@ -595,15 +595,15 @@ void main() {
     expect(mainCode, isNot(contains("'${Keys.result}': output")));
     expect(mainCode, isNot(contains('return <Object>[];')));
 
-    final DartTestGenerator testGenerator = DartTestGenerator();
-    testGenerator.generate(
-        DartOptions(
-          sourceOutPath: "fo'o.dart",
-          testOutPath: 'test.dart',
-        ),
-        root,
-        testCodeSink,
-        FileType.source);
+    final DartGenerator testGenerator = DartGenerator();
+    testGenerator.generateTest(
+      DartOptions(
+        sourceOutPath: "fo'o.dart",
+        testOutPath: 'test.dart',
+      ),
+      root,
+      testCodeSink,
+    );
     final String testCode = testCodeSink.toString();
     expect(testCode, contains(r"import 'fo\'o.dart';"));
     expect(testCode, isNot(contains('class Api {')));
@@ -1189,15 +1189,15 @@ name: foobar
       final Root root =
           Root(classes: <Class>[], apis: <Api>[], enums: <Enum>[]);
       final StringBuffer sink = StringBuffer();
-      final DartTestGenerator testGenerator = DartTestGenerator();
-      testGenerator.generate(
-          DartOptions(
-            sourceOutPath: path.join(foo.path, 'bar.dart'),
-            testOutPath: path.join(tempDir.path, 'test', 'bar_test.dart'),
-          ),
-          root,
-          sink,
-          FileType.source);
+      final DartGenerator testGenerator = DartGenerator();
+      testGenerator.generateTest(
+        DartOptions(
+          sourceOutPath: path.join(foo.path, 'bar.dart'),
+          testOutPath: path.join(tempDir.path, 'test', 'bar_test.dart'),
+        ),
+        root,
+        sink,
+      );
       final String code = sink.toString();
       expect(code, contains("import 'package:foobar/foo/bar.dart';"));
     } finally {
@@ -1399,15 +1399,15 @@ name: foobar
     );
     final StringBuffer sink = StringBuffer();
 
-    final DartTestGenerator testGenerator = DartTestGenerator();
-    testGenerator.generate(
-        DartOptions(
-          sourceOutPath: 'code.dart',
-          testOutPath: 'test.dart',
-        ),
-        root,
-        sink,
-        FileType.source);
+    final DartGenerator testGenerator = DartGenerator();
+    testGenerator.generateTest(
+      DartOptions(
+        sourceOutPath: 'code.dart',
+        testOutPath: 'test.dart',
+      ),
+      root,
+      sink,
+    );
 
     final String testCode = sink.toString();
     expect(
