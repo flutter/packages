@@ -72,16 +72,17 @@ class KotlinGenerator extends Generator<KotlinOptions> {
 
   /// Generates Kotlin files with specified [KotlinOptions]
   @override
-  void generate(KotlinOptions languageOptions, Root root, StringSink sink) {
+  void generate(KotlinOptions languageOptions, Root root, StringSink sink,
+      FileType fileType) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent);
+    writeFileHeaders(languageOptions, root, sink, indent, fileType);
     generateKotlin(languageOptions, root, sink, indent);
   }
 
   @override
   void writeFileHeaders(KotlinOptions languageOptions, Root root,
-      StringSink sink, Indent indent) {
+      StringSink sink, Indent indent, FileType fileType) {
     writeHeader(languageOptions, root, sink, indent);
   }
 }

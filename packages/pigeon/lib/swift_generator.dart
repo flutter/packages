@@ -55,15 +55,16 @@ class SwiftGenerator extends Generator<SwiftOptions> {
 
   /// Generates Swift files with specified [SwiftOptions]
   @override
-  void generate(SwiftOptions languageOptions, Root root, StringSink sink) {
+  void generate(SwiftOptions languageOptions, Root root, StringSink sink,
+      FileType fileType) {
     final Indent indent = Indent(sink);
-    writeFileHeaders(languageOptions, root, sink, indent);
+    writeFileHeaders(languageOptions, root, sink, indent, fileType);
     generateSwift(languageOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(
-      SwiftOptions languageOptions, Root root, StringSink sink, Indent indent) {
+  void writeFileHeaders(SwiftOptions languageOptions, Root root,
+      StringSink sink, Indent indent, FileType fileType) {
     writeHeader(languageOptions, root, sink, indent);
   }
 }

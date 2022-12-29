@@ -19,14 +19,14 @@ const DocumentCommentSpecification _docCommentSpec =
 class ObjcOptions {
   /// Parametric constructor for ObjcOptions.
   const ObjcOptions({
-    this.header,
+    this.headerIncludePath,
     this.prefix,
     this.copyrightHeader,
   });
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  final String? header;
+  final String? headerIncludePath;
 
   /// Prefix that will be appended before all generated classes and protocols.
   final String? prefix;
@@ -40,7 +40,7 @@ class ObjcOptions {
     final Iterable<dynamic>? copyrightHeader =
         map['copyrightHeader'] as Iterable<dynamic>?;
     return ObjcOptions(
-      header: map['header'] as String?,
+      headerIncludePath: map['header'] as String?,
       prefix: map['prefix'] as String?,
       copyrightHeader: copyrightHeader?.cast<String>(),
     );
@@ -50,7 +50,7 @@ class ObjcOptions {
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
-      if (header != null) 'header': header!,
+      if (headerIncludePath != null) 'header': headerIncludePath!,
       if (prefix != null) 'prefix': prefix!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
     };
@@ -66,29 +66,27 @@ class ObjcOptions {
 
 /// Class that manages all Objc header code generation.
 class ObjcGenerator extends Generator<ObjcOptions> {
-  /// Instantiates a Objc Generator for the specified file type.
-  ObjcGenerator(this.fileType);
-
-  /// Specifies which file type (header or source) will be generated.
-  FileType fileType;
+  /// Instantiates a Objc Generator.
+  ObjcGenerator();
 
   /// Generates Objc header files with specified [ObjcOptions]
   @override
-  void generate(ObjcOptions languageOptions, Root root, StringSink sink) {
+  void generate(ObjcOptions languageOptions, Root root, StringSink sink,
+      FileType fileType) {
     final Indent indent = Indent(sink);
 
     if (fileType == FileType.header) {
-      writeFileHeaders(languageOptions, root, sink, indent);
+      writeFileHeaders(languageOptions, root, sink, indent, fileType);
       generateObjcHeader(languageOptions, root, sink, indent);
     } else {
-      writeFileHeaders(languageOptions, root, sink, indent);
+      writeFileHeaders(languageOptions, root, sink, indent, fileType);
       generateObjcSource(languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeFileHeaders(
-      ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
+  void writeFileHeaders(ObjcOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
     if (fileType == FileType.header) {
       writeObjcHeaderHeader(languageOptions, root, sink, indent);
     } else {
@@ -928,7 +926,7 @@ void generateObjcSource(
   final List<String> enumNames = root.enums.map((Enum x) => x.name).toList();
 
   void writeImports() {
-    indent.writeln('#import "${options.header}"');
+    indent.writeln('#import "${options.headerIncludePath}"');
     indent.writeln('#import <Flutter/Flutter.h>');
   }
 

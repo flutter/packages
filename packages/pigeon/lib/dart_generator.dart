@@ -27,7 +27,7 @@ class DartOptions {
   /// Constructor for DartOptions.
   DartOptions({
     this.copyrightHeader,
-    this.dartOutPath,
+    this.sourceOutPath,
     this.testOutPath,
   });
 
@@ -35,7 +35,7 @@ class DartOptions {
   final Iterable<String>? copyrightHeader;
 
   /// Path to output generated Dart file for tests.
-  String? dartOutPath;
+  String? sourceOutPath;
 
   /// Path to output generated Test file for tests.
   String? testOutPath;
@@ -47,7 +47,7 @@ class DartOptions {
         map['copyrightHeader'] as Iterable<dynamic>?;
     return DartOptions(
       copyrightHeader: copyrightHeader?.cast<String>(),
-      dartOutPath: map['dartOutPath'] as String?,
+      sourceOutPath: map['sourceOutPath'] as String?,
       testOutPath: map['testOutPath'] as String?,
     );
   }
@@ -57,7 +57,7 @@ class DartOptions {
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
-      if (dartOutPath != null) 'dartOutPath': dartOutPath!,
+      if (sourceOutPath != null) 'sourceOutPath': sourceOutPath!,
       if (testOutPath != null) 'testOutPath': testOutPath!,
     };
     return result;
@@ -77,17 +77,33 @@ class DartGenerator extends Generator<DartOptions> {
 
   /// Generates Dart files with specified [DartOptions]
   @override
-  void generate(DartOptions languageOptions, Root root, StringSink sink) {
+  void generate(DartOptions languageOptions, Root root, StringSink sink,
+      FileType fileType) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent);
+    writeFileHeaders(languageOptions, root, sink, indent, fileType);
     generateDart(languageOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(
-      DartOptions languageOptions, Root root, StringSink sink, Indent indent) {
+  void writeFileHeaders(DartOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
     writeHeader(languageOptions, root, sink, indent);
+  }
+
+  /// Generates Dart files for testing with specified [DartOptions]
+  void generateTest(DartOptions languageOptions, Root root, StringSink sink) {
+    final Indent indent = Indent(sink);
+    final String sourceOutPath = languageOptions.sourceOutPath ?? '';
+    final String testOutPath = languageOptions.testOutPath ?? '';
+    generateTestDart(
+      languageOptions,
+      root,
+      sink,
+      indent,
+      sourceOutPath: sourceOutPath,
+      testOutPath: testOutPath,
+    );
   }
 }
 
@@ -98,26 +114,27 @@ class DartTestGenerator extends Generator<DartOptions> {
 
   /// Generates Dart files with specified [DartOptions]
   @override
-  void generate(DartOptions languageOptions, Root root, StringSink sink) {
+  void generate(DartOptions languageOptions, Root root, StringSink sink,
+      FileType fileType) {
     final Indent indent = Indent(sink);
 
-    final String dartOutPath = languageOptions.dartOutPath ?? '';
+    final String sourceOutPath = languageOptions.sourceOutPath ?? '';
     final String testOutPath = languageOptions.testOutPath ?? '';
 
-    writeFileHeaders(languageOptions, root, sink, indent);
+    writeFileHeaders(languageOptions, root, sink, indent, fileType);
     generateTestDart(
       languageOptions,
       root,
       sink,
       indent,
-      dartOutPath: dartOutPath,
+      sourceOutPath: sourceOutPath,
       testOutPath: testOutPath,
     );
   }
 
   @override
-  void writeFileHeaders(
-      DartOptions languageOptions, Root root, StringSink sink, Indent indent) {
+  void writeFileHeaders(DartOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
     writeTestHeader(languageOptions, root, sink, indent);
   }
 }
@@ -784,7 +801,7 @@ void generateTestDart(
   Root root,
   StringSink sink,
   Indent indent, {
-  required String dartOutPath,
+  required String sourceOutPath,
   required String testOutPath,
 }) {
   indent.writeln("import 'dart:async';");
@@ -798,10 +815,10 @@ void generateTestDart(
   indent.writeln('');
   final String relativeDartPath =
       path.Context(style: path.Style.posix).relative(
-    _posixify(dartOutPath),
+    _posixify(sourceOutPath),
     from: _posixify(path.dirname(testOutPath)),
   );
-  late final String? packageName = _deducePackageName(dartOutPath);
+  late final String? packageName = _deducePackageName(sourceOutPath);
   if (!relativeDartPath.contains('/lib/') || packageName == null) {
     // If we can't figure out the package name or the relative path doesn't
     // include a 'lib' directory, try relative path import which only works in

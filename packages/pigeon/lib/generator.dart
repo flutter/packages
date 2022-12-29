@@ -19,6 +19,7 @@ abstract class Generator<T> {
     T languageOptions,
     Root root,
     StringSink sink,
+    FileType fileType,
   );
 
   /// Adds specified file headers.
@@ -27,5 +28,6 @@ abstract class Generator<T> {
     Root root,
     StringSink sink,
     Indent indent,
+    FileType fileType,
   );
 }

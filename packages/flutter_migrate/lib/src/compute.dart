@@ -55,11 +55,8 @@ bool _skipped(String localPath, FileSystem fileSystem,
     }
   }
   if (skippedPrefixes != null) {
-    final Iterable<String> canonicalizedSkippedPrefixes =
-        _skippedFiles.map<String>((String path) => canonicalize(path));
-    return canonicalizedSkippedPrefixes.any((String prefix) =>
-        canonicalizedLocalPath
-            .startsWith('${canonicalize(prefix)}${fileSystem.path.separator}'));
+    return skippedPrefixes.any((String prefix) => localPath.startsWith(
+        '${normalize(prefix.replaceAll(r'\', fileSystem.path.separator))}${fileSystem.path.separator}'));
   }
   return false;
 }
@@ -114,7 +111,6 @@ Set<String> _getSkippedPrefixes(List<SupportedPlatform> platforms) {
   for (final SupportedPlatform platform in platforms) {
     skippedPrefixes.remove(platformToSubdirectoryPrefix(platform));
   }
-  skippedPrefixes.remove(null);
   return skippedPrefixes;
 }
 
@@ -275,10 +271,6 @@ Future<MigrateResult?> computeMigration({
     platforms: platforms,
     commandParameters: commandParameters,
   );
-  result.generatedBaseTemplateDirectory =
-      referenceProjects.baseProject.directory;
-  result.generatedTargetTemplateDirectory =
-      referenceProjects.targetProject.directory;
 
   // Generate diffs. These diffs are used to determine if a file is newly added, needs merging,
   // or deleted (rare). Only files with diffs between the base and target revisions need to be
@@ -377,8 +369,10 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   // Use user-provided projects if provided, if not, generate them internally.
   final bool customBaseProjectDir = commandParameters.baseAppPath != null;
   final bool customTargetProjectDir = commandParameters.targetAppPath != null;
-  Directory? baseProjectDir;
-  Directory? targetProjectDir;
+  Directory baseProjectDir =
+      context.fileSystem.systemTempDirectory.createTempSync('baseProject');
+  Directory targetProjectDir =
+      context.fileSystem.systemTempDirectory.createTempSync('targetProject');
   if (customBaseProjectDir) {
     baseProjectDir =
         context.fileSystem.directory(commandParameters.baseAppPath);
@@ -401,6 +395,9 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   // Git init to enable running further git commands on the reference projects.
   await context.migrateUtils.gitInit(baseProjectDir.absolute.path);
   await context.migrateUtils.gitInit(targetProjectDir.absolute.path);
+
+  result.generatedBaseTemplateDirectory = baseProjectDir;
+  result.generatedTargetTemplateDirectory = targetProjectDir;
 
   final String name =
       context.environment['FlutterProject.manifest.appname']! as String;
@@ -821,7 +818,7 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
         final List<String> platforms = <String>[];
         for (final MigratePlatformConfig config
             in revisionToConfigs[revision]!) {
-          if (config.component == null) {
+          if (config.component == FlutterProjectComponent.root) {
             continue;
           }
           platforms.add(config.component.toString().split('.').last);
