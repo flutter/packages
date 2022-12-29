@@ -9,34 +9,93 @@
 // * non_constant_identifier_names required to be able to use the same parameter
 //   names as the underlying library.
 
-@JS('google.accounts.oauth2')
-library oauth2;
+@JS()
+library google_accounts_oauth2;
 
 import 'package:js/js.dart';
 
 import 'shared.dart';
 
-// Code Client
+/// Binding to the `google.accounts.oauth2` JS global.
+///
+/// See: https://developers.google.com/identity/oauth2/web/reference/js-reference
+@JS('google.accounts.oauth2')
+external GoogleAccountsOauth2 get oauth2;
 
-/*
-// Method: google.accounts.oauth2.initCodeClient
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.initCodeClient
-*/
-
-/// The initCodeClient method initializes and returns a code client, with the
-/// passed-in [config].
+/// The Dart definition of the `google.accounts.oauth2` global.
 @JS()
-external InitCodeClientFn get initCodeClient;
+@staticInterop
+abstract class GoogleAccountsOauth2 {}
 
-/// The type of the [initCodeClient] function.
-typedef InitCodeClientFn = CodeClient Function(CodeClientConfig config);
+/// The `google.accounts.oauth2` methods
+extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
+  /// Initializes and returns a code client, with the passed-in [config].
+  ///
+  /// Method: google.accounts.oauth2.initCodeClient
+  /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.initCodeClient
+  external CodeClient initCodeClient(CodeClientConfig config);
 
-/*
-// Data type: CodeClientConfig
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#CodeClientConfig
-*/
+  /// Initializes and returns a token client, with the passed-in [config].
+  ///
+  /// Method: google.accounts.oauth2.initTokenClient
+  /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.initTokenClient
+  external TokenClient initTokenClient(TokenClientConfig config);
+
+  /// Checks if the user granted **all** the specified scopes (up to 10).
+  ///
+  /// Method: google.accounts.oauth2.hasGrantedAllScopes
+  /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
+  external bool hasGrantedAllScopes(
+    TokenResponse tokenResponse,
+    String firstScope, [
+    String? scope2,
+    String? scope3,
+    String? scope4,
+    String? scope5,
+    String? scope6,
+    String? scope7,
+    String? scope8,
+    String? scope9,
+    String? scope10,
+  ]);
+
+  /// Checks if the user granted **any** of the specified scopes (up to 10).
+  ///
+  /// Method: google.accounts.oauth2.hasGrantedAnyScopes
+  /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAnyScopes
+  external bool hasGrantedAnyScopes(
+    TokenResponse tokenResponse,
+    String firstScope, [
+    String? scope2,
+    String? scope3,
+    String? scope4,
+    String? scope5,
+    String? scope6,
+    String? scope7,
+    String? scope8,
+    String? scope9,
+    String? scope10,
+  ]);
+
+  /// Revokes all of the scopes that the user granted to the app.
+  ///
+  /// A valid [accessToken] is required to revoke permissions.
+  ///
+  /// The [done] callback is called once the revoke action is done. It must be
+  /// manually wrapped in [allowInterop] before being passed to this method.
+  ///
+  /// Method: google.accounts.oauth2.revoke
+  /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.revoke
+  external void revoke(
+    String accessToken, [
+    RevokeTokenDoneFn done,
+  ]);
+}
 
 /// The configuration object for the [initCodeClient] method.
+///
+/// Data type: CodeClientConfig
+/// https://developers.google.com/identity/oauth2/web/reference/js-reference#CodeClientConfig
 @JS()
 @anonymous
 @staticInterop
@@ -60,14 +119,12 @@ abstract class CodeClientConfig {
   });
 }
 
-/*
-// Data type: CodeClient
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#CodeClient
-*/
-
 /// A client that can start the OAuth 2.0 Code UX flow.
 ///
 /// See: https://developers.google.com/identity/oauth2/web/guides/use-code-model
+///
+/// Data type: CodeClient
+/// https://developers.google.com/identity/oauth2/web/reference/js-reference#CodeClient
 @JS()
 @staticInterop
 abstract class CodeClient {}
@@ -78,12 +135,10 @@ extension CodeClientExtension on CodeClient {
   external void requestCode();
 }
 
-/*
-// Data type: CodeResponse
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#CodeResponse
-*/
-
 /// The object passed as the parameter of your [CodeClientCallbackFn].
+///
+/// Data type: CodeResponse
+/// https://developers.google.com/identity/oauth2/web/reference/js-reference#CodeResponse
 @JS()
 @staticInterop
 abstract class CodeResponse {}
@@ -116,27 +171,10 @@ extension CodeResponseExtension on CodeResponse {
 /// The type of the `callback` function passed to [CodeClientConfig].
 typedef CodeClientCallbackFn = void Function(CodeResponse response);
 
-// Token Client
-
-/*
-// Method: google.accounts.oauth2.initTokenClient
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.initTokenClient
-*/
-
-/// The initCodeClient method initializes and returns a code client, with the
-/// passed-in [config].
-@JS()
-external InitTokenClientFn get initTokenClient;
-
-/// The type of the [initCodeClient] function.
-typedef InitTokenClientFn = TokenClient Function(TokenClientConfig config);
-
-/*
-// Data type: TokenClientConfig
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenClientConfig
-*/
-
 /// The configuration object for the [initTokenClient] method.
+///
+/// Data type: TokenClientConfig
+/// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenClientConfig
 @JS()
 @anonymous
 @staticInterop
@@ -157,14 +195,12 @@ abstract class TokenClientConfig {
   });
 }
 
-/*
-// Data type: TokenClient
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenClient
-*/
-
 /// A client that can start the OAuth 2.0 Token UX flow.
 ///
 /// See: https://developers.google.com/identity/oauth2/web/guides/use-token-model
+///
+/// Data type: TokenClient
+/// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenClient
 @JS()
 @staticInterop
 abstract class TokenClient {}
@@ -177,13 +213,10 @@ extension TokenClientExtension on TokenClient {
   ]);
 }
 
-/*
-// Data type: OverridableTokenClientConfig
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#OverridableTokenClientConfig
-*/
-
-/// The overridable configuration object for the
-/// [TokenClientExtension.requestAccessToken] method.
+/// The overridable configuration object for the [TokenClientExtension.requestAccessToken] method.
+///
+/// Data type: OverridableTokenClientConfig
+/// https://developers.google.com/identity/oauth2/web/reference/js-reference#OverridableTokenClientConfig
 @JS()
 @anonymous
 @staticInterop
@@ -232,12 +265,10 @@ abstract class OverridableTokenClientConfig {
   });
 }
 
-/*
-// Data type: TokenResponse
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenResponse
-*/
-
 /// The object passed as the parameter of your [TokenClientCallbackFn].
+///
+/// Data type: TokenResponse
+/// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenResponse
 @JS()
 @staticInterop
 abstract class TokenResponse {}
@@ -283,63 +314,27 @@ extension TokenResponseExtension on TokenResponse {
 /// The type of the `callback` function passed to [TokenClientConfig].
 typedef TokenClientCallbackFn = void Function(TokenResponse response);
 
-/*
-// Method: google.accounts.oauth2.hasGrantedAllScopes
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
-*/
+/// The signature of the `done` function for [revoke].
+typedef RevokeTokenDoneFn = void Function(TokenRevocationResponse response);
 
-/// Checks if the user granted **all** the specified scopes.
+/// The parameter passed to the `callback` of the [revoke] function.
+///
+/// Data type: RevocationResponse
+/// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenResponse
 @JS()
-external HasGrantedScopesFn get hasGrantedAllScopes;
+@staticInterop
+abstract class TokenRevocationResponse {}
 
-/*
-// Method: google.accounts.oauth2.hasGrantedAnyScopes
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAnyScopes
-*/
+/// The fields that are contained in the [TokenRevocationResponse] object.
+extension TokenRevocationResponseExtension on TokenRevocationResponse {
+  /// This field is a boolean value set to true if the revoke method call
+  /// succeeded or false on failure.
+  external bool get successful;
 
-/// Checks if the user granted **any** of the specified scopes.
-@JS()
-external HasGrantedScopesFn get hasGrantedAnyScopes;
+  /// This field is a string value and contains a detailed error message if the
+  /// revoke method call failed, it is undefined on success.
+  external String? get error;
 
-/// The signature for functions that check if any/all scopes have been granted.
-///
-/// Used by [hasGrantedAllScopes] and [hasGrantedAnyScope].
-typedef HasGrantedScopesFn = bool Function(
-  TokenResponse tokenResponse,
-  String firstScope, [
-  String? scope2,
-  String? scope3,
-  String? scope4,
-  String? scope5,
-  String? scope6,
-  String? scope7,
-  String? scope8,
-  String? scope9,
-  String? scope10,
-]);
-
-/*
-// Method: google.accounts.oauth2.revoke
-// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.revoke
-*/
-
-/// The [revokeToken] method revokes all of the scopes that the user granted to
-/// the app. A valid access token is required to revoke the permission.
-///
-/// The `done` callback is called once the revoke action is done.
-@JS('revoke')
-external RevokeTokenFn get revokeToken;
-
-/// The signature of the [revokeToken] function.
-///
-/// The (optional) [done] parameter must be manually wrapped in [allowInterop]
-/// before being passed to the [revokeToken] function.
-typedef RevokeTokenFn = void Function(
-  String accessToken, [
-  RevokeTokenDoneFn done,
-]);
-
-/// The signature of the `done` function for [revokeToken].
-///
-/// Work in progress here: b/248628502
-typedef RevokeTokenDoneFn = void Function(String jsonError);
+  /// The description of the error.
+  external String? get error_description;
+}
