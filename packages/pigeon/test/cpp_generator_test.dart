@@ -457,14 +457,13 @@ void main() {
       // Serialization handles optionals.
       expect(
           code,
-          contains('{flutter::EncodableValue("nullableBool"), '
-              'nullable_bool_ ? flutter::EncodableValue(*nullable_bool_) '
-              ': flutter::EncodableValue()}'));
+          contains('nullable_bool_ ? flutter::EncodableValue(*nullable_bool_) '
+              ': flutter::EncodableValue()'));
       expect(
           code,
-          contains('{flutter::EncodableValue("nullableNested"), '
-              'nullable_nested_ ? nullable_nested_->ToEncodableMap() '
-              ': flutter::EncodableValue()}'));
+          contains(
+              'nullable_nested_ ? flutter::EncodableValue(nullable_nested_->ToEncodableList()) '
+              ': flutter::EncodableValue()'));
     }
   });
 
@@ -560,14 +559,8 @@ void main() {
       expect(code, contains('non_nullable_string_ = value_arg;'));
       expect(code, contains('non_nullable_nested_ = value_arg;'));
       // Serialization uses the value directly.
-      expect(
-          code,
-          contains('{flutter::EncodableValue("nonNullableBool"), '
-              'flutter::EncodableValue(non_nullable_bool_)}'));
-      expect(
-          code,
-          contains('{flutter::EncodableValue("nonNullableNested"), '
-              'non_nullable_nested_.ToEncodableMap()}'));
+      expect(code, contains('flutter::EncodableValue(non_nullable_bool_)'));
+      expect(code, contains('non_nullable_nested_.ToEncodableList()'));
     }
   });
 
@@ -1045,7 +1038,10 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[
-        Enum(name: 'Foo', members: <String>['one', 'two'])
+        Enum(name: 'Foo', members: <EnumMember>[
+          EnumMember(name: 'one'),
+          EnumMember(name: 'two'),
+        ])
       ],
     );
     final List<Error> errors = validateCpp(const CppOptions(), root);
@@ -1059,6 +1055,7 @@ void main() {
       ' class comment',
       ' class field comment',
       ' enum comment',
+      ' enum member comment',
     ];
     int count = 0;
 
@@ -1114,9 +1111,12 @@ void main() {
             comments[count++],
             unspacedComments[unspacedCount++]
           ],
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
+            EnumMember(name: 'two'),
           ],
         ),
       ],
@@ -1202,5 +1202,75 @@ void main() {
     generateCppHeader('', const CppOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains(' : public flutter::StandardCodecSerializer'));
+  });
+
+  test('Does not send unwrapped EncodableLists', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'aBool',
+                type: const TypeDeclaration(
+                  baseName: 'bool',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anInt',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aString',
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aList',
+                type: const TypeDeclaration(
+                  baseName: 'List',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'Object', isNullable: true)
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aMap',
+                type: const TypeDeclaration(
+                  baseName: 'Map',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'Object', isNullable: true),
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anObject',
+                type: const TypeDeclaration(
+                  baseName: 'ParameterObject',
+                  isNullable: false,
+                )),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+        ),
+      ])
+    ], classes: <Class>[
+      Class(name: 'ParameterObject', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
+            ),
+            name: 'aValue'),
+      ]),
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateCppSource(const CppOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(contains('reply(wrap')));
+    expect(code, contains('reply(flutter::EncodableValue('));
   });
 }

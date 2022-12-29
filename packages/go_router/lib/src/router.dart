@@ -30,7 +30,7 @@ import 'typedefs.dart';
 /// changes.
 ///
 /// See also:
-/// * [Configuration](https://pub.dev/documentation/go_router/topics/Configuration-topic.html)
+/// * [Configuration](https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html)
 /// * [GoRoute], which provides APIs to define the routing table.
 /// * [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example),
 ///    which contains examples for different routing scenarios.
@@ -240,7 +240,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [go] which navigates to the location.
   /// * [push] which pushes the location onto the page stack.
-  void replace(String location, {Object? extra}) {
+  void pushReplacement(String location, {Object? extra}) {
     routeInformationParser
         .parseRouteInformationWithDependencies(
       RouteInformation(location: location, state: extra),
@@ -249,7 +249,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matchList) {
-      routerDelegate.replace(matchList);
+      routerDelegate.pushReplacement(matchList);
     });
   }
 
@@ -260,13 +260,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [goNamed] which navigates a named route.
   /// * [pushNamed] which pushes a named route onto the page stack.
-  void replaceNamed(
+  void pushReplacementNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) {
-    replace(
+    pushReplacement(
       namedLocation(name, params: params, queryParams: queryParams),
       extra: extra,
     );

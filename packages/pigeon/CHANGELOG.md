@@ -1,3 +1,27 @@
+## 4.2.15
+
+* Relocates generator classes. (Reverted)
+
+## 4.2.14
+
+* [c++] Fixes reply sending non EncodableValue wrapped lists.
+
+## 4.2.13
+
+* Add documentation comment support for Enum members.
+
+## 4.2.12
+
+* Updates serialization to use lists instead of maps to improve performance.
+
+## 4.2.11
+
+* [swift] Fixes compressed list data types.
+
+## 4.2.10
+
+* Changes generated Java enum field to be final.
+
 ## 4.2.9
 
 * Added public keyword to relevant structs, protocol and classes
