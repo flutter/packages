@@ -41,41 +41,30 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.initTokenClient
   external TokenClient initTokenClient(TokenClientConfig config);
 
-  /// Checks if the user granted **all** the specified scopes (up to 10).
+  // Method: google.accounts.oauth2.hasGrantedAllScopes
+  // https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
+  @JS('hasGrantedAllScopes')
+  external bool _hasGrantedScope(TokenResponse token, String scope);
+
+  /// Checks if hte user has granted **all** the specified [scopes].
+  ///
+  /// [scopes] is a space-separated list of scope names.
   ///
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
-  external bool hasGrantedAllScopes(
-    TokenResponse tokenResponse,
-    String firstScope, [
-    String? scope2,
-    String? scope3,
-    String? scope4,
-    String? scope5,
-    String? scope6,
-    String? scope7,
-    String? scope8,
-    String? scope9,
-    String? scope10,
-  ]);
+  bool hasGrantedAllScopes(TokenResponse tokenResponse, String scopes) {
+    return scopes.split(' ').every((String scope) => _hasGrantedScope(tokenResponse, scope));
+  }
 
-  /// Checks if the user granted **any** of the specified scopes (up to 10).
+  /// Checks if hte user has granted **all** the specified [scopes].
   ///
-  /// Method: google.accounts.oauth2.hasGrantedAnyScopes
-  /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAnyScopes
-  external bool hasGrantedAnyScopes(
-    TokenResponse tokenResponse,
-    String firstScope, [
-    String? scope2,
-    String? scope3,
-    String? scope4,
-    String? scope5,
-    String? scope6,
-    String? scope7,
-    String? scope8,
-    String? scope9,
-    String? scope10,
-  ]);
+  /// [scopes] is a space-separated list of scope names.
+  ///
+  /// Method: google.accounts.oauth2.hasGrantedAllScopes
+  /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
+  bool hasGrantedAnyScopes(TokenResponse tokenResponse, String scopes) {
+    return scopes.split(' ').any((String scope) => _hasGrantedScope(tokenResponse, scope));
+  }
 
   /// Revokes all of the scopes that the user granted to the app.
   ///
