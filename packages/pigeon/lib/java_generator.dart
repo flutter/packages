@@ -97,6 +97,7 @@ class JavaGenerator extends Generator<JavaOptions> {
     final Indent indent = Indent(sink);
 
     writeFileHeaders(languageOptions, root, sink, indent, fileType);
+    writeFileImports(languageOptions, root, sink, indent, fileType);
     generateJava(languageOptions, root, sink, indent);
   }
 
@@ -104,6 +105,12 @@ class JavaGenerator extends Generator<JavaOptions> {
   void writeFileHeaders(JavaOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     writeHeader(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileImports(JavaOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
+    writeImports(languageOptions, root, sink, indent);
   }
 }
 
@@ -555,6 +562,30 @@ void writeHeader(
   indent.addln('');
 }
 
+/// Writes file imports to sink.
+void writeImports(
+    JavaOptions options, Root root, StringSink sink, Indent indent) {
+  if (options.package != null) {
+    indent.writeln('package ${options.package};');
+  }
+  indent.writeln('import android.util.Log;');
+  indent.writeln('import androidx.annotation.NonNull;');
+  indent.writeln('import androidx.annotation.Nullable;');
+  indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
+  indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
+  indent.writeln('import io.flutter.plugin.common.MessageCodec;');
+  indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
+  indent.writeln('import java.io.ByteArrayOutputStream;');
+  indent.writeln('import java.nio.ByteBuffer;');
+  indent.writeln('import java.util.Arrays;');
+  indent.writeln('import java.util.ArrayList;');
+  indent.writeln('import java.util.Collections;');
+  indent.writeln('import java.util.List;');
+  indent.writeln('import java.util.Map;');
+  indent.writeln('import java.util.HashMap;');
+  indent.addln('');
+}
+
 /// Generates the ".java" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateJava(
@@ -563,24 +594,6 @@ void generateJava(
       root.classes.map((Class x) => x.name).toSet();
   final Set<String> rootEnumNameSet =
       root.enums.map((Enum x) => x.name).toSet();
-
-  void writeImports() {
-    indent.writeln('import android.util.Log;');
-    indent.writeln('import androidx.annotation.NonNull;');
-    indent.writeln('import androidx.annotation.Nullable;');
-    indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
-    indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
-    indent.writeln('import io.flutter.plugin.common.MessageCodec;');
-    indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
-    indent.writeln('import java.io.ByteArrayOutputStream;');
-    indent.writeln('import java.nio.ByteBuffer;');
-    indent.writeln('import java.util.Arrays;');
-    indent.writeln('import java.util.ArrayList;');
-    indent.writeln('import java.util.Collections;');
-    indent.writeln('import java.util.List;');
-    indent.writeln('import java.util.Map;');
-    indent.writeln('import java.util.HashMap;');
-  }
 
   String camelToSnake(String camelCase) {
     final RegExp regex = RegExp('([a-z])([A-Z]+)');
@@ -777,12 +790,6 @@ void generateJava(
 }''');
   }
 
-  if (options.package != null) {
-    indent.writeln('package ${options.package};');
-  }
-  indent.addln('');
-  writeImports();
-  indent.addln('');
   indent.writeln(
       '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
   indent.writeln(

@@ -80,11 +80,11 @@ class CppGenerator extends Generator<CppOptions> {
   void generate(CppOptions languageOptions, Root root, StringSink sink,
       FileType fileType) {
     final Indent indent = Indent(sink);
+    writeFileHeaders(languageOptions, root, sink, indent, fileType);
+    writeFileImports(languageOptions, root, sink, indent, fileType);
     if (fileType == FileType.header) {
-      writeFileHeaders(languageOptions, root, sink, indent, fileType);
       generateCppHeader(languageOptions, root, sink, indent);
     } else {
-      writeFileHeaders(languageOptions, root, sink, indent, fileType);
       generateCppSource(languageOptions, root, sink, indent);
     }
   }
@@ -96,6 +96,16 @@ class CppGenerator extends Generator<CppOptions> {
       writeCppHeaderHeader(languageOptions, root, sink, indent);
     } else {
       writeCppSourceHeader(languageOptions, root, sink, indent);
+    }
+  }
+
+  @override
+  void writeFileImports(CppOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
+    if (fileType == FileType.header) {
+      writeCppHeaderImports(languageOptions, root, sink, indent);
+    } else {
+      writeCppSourceImports(languageOptions, root, sink, indent);
     }
   }
 }
@@ -1056,9 +1066,8 @@ void writeCppHeaderHeader(
   indent.addln('');
 }
 
-/// Generates the ".h" file for the AST represented by [root] to [sink] with the
-/// provided [options] and [headerFileName].
-void generateCppHeader(
+/// Writes Cpp header file imports to sink.
+void writeCppHeaderImports(
     CppOptions options, Root root, StringSink sink, Indent indent) {
   final String guardName =
       _getGuardName(options.headerIncludePath, options.namespace);
@@ -1078,11 +1087,16 @@ void generateCppHeader(
     'optional',
   ]);
   indent.addln('');
-
   if (options.namespace != null) {
     indent.writeln('namespace ${options.namespace} {');
   }
+  indent.addln('');
+}
 
+/// Generates the ".h" file for the AST represented by [root] to [sink] with the
+/// provided [options] and [headerFileName].
+void generateCppHeader(
+    CppOptions options, Root root, StringSink sink, Indent indent) {
   // When generating for a Pigeon unit test, add a test fixture friend class to
   // allow unit testing private methods, since testing serialization via public
   // methods is essentially an end-to-end test.
@@ -1137,7 +1151,8 @@ void generateCppHeader(
   if (options.namespace != null) {
     indent.writeln('}  // namespace ${options.namespace}');
   }
-
+  final String guardName =
+      _getGuardName(options.headerIncludePath, options.namespace);
   indent.writeln('#endif  // $guardName');
 }
 
@@ -1154,9 +1169,8 @@ void writeCppSourceHeader(
   indent.addln('');
 }
 
-/// Generates the ".cpp" file for the AST represented by [root] to [sink] with the
-/// provided [options].
-void generateCppSource(
+/// Writes Cpp source file imports to sink.
+void writeCppSourceImports(
     CppOptions options, Root root, StringSink sink, Indent indent) {
   indent.writeln('#include "${options.headerIncludePath}"');
   indent.addln('');
@@ -1177,7 +1191,12 @@ void generateCppSource(
   if (options.namespace != null) {
     indent.writeln('namespace ${options.namespace} {');
   }
+}
 
+/// Generates the ".cpp" file for the AST represented by [root] to [sink] with the
+/// provided [options].
+void generateCppSource(
+    CppOptions options, Root root, StringSink sink, Indent indent) {
   for (final Class klass in root.classes) {
     _writeDataClassImplementation(indent, klass, root);
   }

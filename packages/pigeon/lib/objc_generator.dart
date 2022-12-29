@@ -75,11 +75,11 @@ class ObjcGenerator extends Generator<ObjcOptions> {
       FileType fileType) {
     final Indent indent = Indent(sink);
 
+    writeFileHeaders(languageOptions, root, sink, indent, fileType);
+    writeFileImports(languageOptions, root, sink, indent, fileType);
     if (fileType == FileType.header) {
-      writeFileHeaders(languageOptions, root, sink, indent, fileType);
       generateObjcHeader(languageOptions, root, sink, indent);
     } else {
-      writeFileHeaders(languageOptions, root, sink, indent, fileType);
       generateObjcSource(languageOptions, root, sink, indent);
     }
   }
@@ -91,6 +91,16 @@ class ObjcGenerator extends Generator<ObjcOptions> {
       writeObjcHeaderHeader(languageOptions, root, sink, indent);
     } else {
       writeObjcSourceHeader(languageOptions, root, sink, indent);
+    }
+  }
+
+  @override
+  void writeFileImports(ObjcOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
+    if (fileType == FileType.header) {
+      writeObjcHeaderImports(languageOptions, root, sink, indent);
+    } else {
+      writeObjcSourceImports(languageOptions, root, sink, indent);
     }
   }
 }
@@ -573,21 +583,23 @@ void writeObjcHeaderHeader(
   indent.addln('');
 }
 
+/// Writes Objc header file imports to sink.
+void writeObjcHeaderImports(
+    ObjcOptions options, Root root, StringSink sink, Indent indent) {
+  indent.writeln('#import <Foundation/Foundation.h>');
+  indent.addln('');
+
+  indent.writeln('@protocol FlutterBinaryMessenger;');
+  indent.writeln('@protocol FlutterMessageCodec;');
+  indent.writeln('@class FlutterError;');
+  indent.writeln('@class FlutterStandardTypedData;');
+  indent.addln('');
+}
+
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateObjcHeader(
     ObjcOptions options, Root root, StringSink sink, Indent indent) {
-  void writeImports() {
-    indent.writeln('#import <Foundation/Foundation.h>');
-  }
-
-  void writeForwardDeclarations() {
-    indent.writeln('@protocol FlutterBinaryMessenger;');
-    indent.writeln('@protocol FlutterMessageCodec;');
-    indent.writeln('@class FlutterError;');
-    indent.writeln('@class FlutterStandardTypedData;');
-  }
-
   void writeEnum(Enum anEnum) {
     final String enumName = _className(options.prefix, anEnum.name);
     addDocumentationComments(
@@ -605,8 +617,6 @@ void generateObjcHeader(
     });
   }
 
-  writeImports();
-  writeForwardDeclarations();
   indent.writeln('');
 
   indent.writeln('NS_ASSUME_NONNULL_BEGIN');
@@ -917,6 +927,19 @@ void writeObjcSourceHeader(
   indent.addln('');
 }
 
+/// Writes Objc source file imports to sink.
+void writeObjcSourceImports(
+    ObjcOptions options, Root root, StringSink sink, Indent indent) {
+  indent.writeln('#import "${options.headerIncludePath}"');
+  indent.writeln('#import <Flutter/Flutter.h>');
+  indent.addln('');
+
+  indent.writeln('#if !__has_feature(objc_arc)');
+  indent.writeln('#error File requires ARC to be enabled.');
+  indent.writeln('#endif');
+  indent.addln('');
+}
+
 /// Generates the ".m" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateObjcSource(
@@ -924,17 +947,6 @@ void generateObjcSource(
   final List<String> classNames =
       root.classes.map((Class x) => x.name).toList();
   final List<String> enumNames = root.enums.map((Enum x) => x.name).toList();
-
-  void writeImports() {
-    indent.writeln('#import "${options.headerIncludePath}"');
-    indent.writeln('#import <Flutter/Flutter.h>');
-  }
-
-  void writeArcEnforcer() {
-    indent.writeln('#if !__has_feature(objc_arc)');
-    indent.writeln('#error File requires ARC to be enabled.');
-    indent.writeln('#endif');
-  }
 
   void writeHelperFunctions() {
     indent.format('''
@@ -1041,10 +1053,6 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     }
   }
 
-  writeImports();
-  indent.writeln('');
-  writeArcEnforcer();
-  indent.addln('');
   writeHelperFunctions();
   indent.addln('');
   root.classes.forEach(writeDataClassExtension);

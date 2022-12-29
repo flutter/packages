@@ -17,6 +17,7 @@
 #include <string>
 
 namespace core_tests_pigeontest {
+
 class CoreTestsTest;
 
 // Generated class from Pigeon.

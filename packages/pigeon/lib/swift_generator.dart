@@ -59,6 +59,7 @@ class SwiftGenerator extends Generator<SwiftOptions> {
       FileType fileType) {
     final Indent indent = Indent(sink);
     writeFileHeaders(languageOptions, root, sink, indent, fileType);
+    writeFileImports(languageOptions, root, sink, indent, fileType);
     generateSwift(languageOptions, root, sink, indent);
   }
 
@@ -66,6 +67,12 @@ class SwiftGenerator extends Generator<SwiftOptions> {
   void writeFileHeaders(SwiftOptions languageOptions, Root root,
       StringSink sink, Indent indent, FileType fileType) {
     writeHeader(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileImports(SwiftOptions languageOptions, Root root,
+      StringSink sink, Indent indent, FileType fileType) {
+    writeImports(languageOptions, root, sink, indent);
   }
 }
 
@@ -462,6 +469,22 @@ void writeHeader(
   indent.addln('');
 }
 
+/// Writes file header to sink.
+void writeImports(
+    SwiftOptions options, Root root, StringSink sink, Indent indent) {
+  indent.writeln('import Foundation');
+  indent.format('''
+#if os(iOS)
+import Flutter
+#elseif os(macOS)
+import FlutterMacOS
+#else
+#error("Unsupported platform.")
+#endif
+''');
+  indent.writeln('');
+}
+
 /// Generates the ".swift" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateSwift(
@@ -474,19 +497,6 @@ void generateSwift(
   HostDatatype getHostDatatype(NamedType field) {
     return getFieldHostDatatype(field, root.classes, root.enums,
         (TypeDeclaration x) => _swiftTypeForBuiltinDartType(x));
-  }
-
-  void writeImports() {
-    indent.writeln('import Foundation');
-    indent.format('''
-#if os(iOS)
-import Flutter
-#elseif os(macOS)
-import FlutterMacOS
-#else
-#error("Unsupported platform.")
-#endif
-''');
   }
 
   void writeEnum(Enum anEnum) {
@@ -644,8 +654,6 @@ import FlutterMacOS
     });
   }
 
-  writeImports();
-  indent.addln('');
   indent.writeln('$_docCommentPrefix Generated class from Pigeon.');
   for (final Enum anEnum in root.enums) {
     indent.writeln('');

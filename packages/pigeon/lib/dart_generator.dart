@@ -104,6 +104,7 @@ class DartGenerator extends Generator<DartOptions> {
     final String sourceOutPath = languageOptions.sourceOutPath ?? '';
     final String testOutPath = languageOptions.testOutPath ?? '';
     writeTestHeader(languageOptions, root, sink, indent);
+    writeTestImports(languageOptions, root, sink, indent);
     generateTestDart(
       languageOptions,
       root,
@@ -768,6 +769,20 @@ void writeTestHeader(
   indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
 }
 
+/// Writes file imports to sink.
+void writeTestImports(
+    DartOptions opt, Root root, StringSink sink, Indent indent) {
+  indent.writeln("import 'dart:async';");
+  indent.writeln(
+    "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
+  );
+  indent.writeln(
+      "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
+  indent.writeln("import 'package:flutter/services.dart';");
+  indent.writeln("import 'package:flutter_test/flutter_test.dart';");
+  indent.writeln('');
+}
+
 /// Generates Dart source code for test support libraries based on the given AST
 /// represented by [root], outputting the code to [sink]. [dartOutPath] is the
 /// path of the generated dart code to be tested. [testOutPath] is where the
@@ -780,15 +795,6 @@ void generateTestDart(
   required String sourceOutPath,
   required String testOutPath,
 }) {
-  indent.writeln("import 'dart:async';");
-  indent.writeln(
-    "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
-  );
-  indent.writeln(
-      "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
-  indent.writeln("import 'package:flutter/services.dart';");
-  indent.writeln("import 'package:flutter_test/flutter_test.dart';");
-  indent.writeln('');
   final String relativeDartPath =
       path.Context(style: path.Style.posix).relative(
     _posixify(sourceOutPath),

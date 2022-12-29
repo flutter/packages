@@ -6,6 +6,7 @@
 // See also: https://pub.dev/packages/pigeon
 
 #import <Foundation/Foundation.h>
+
 @protocol FlutterBinaryMessenger;
 @protocol FlutterMessageCodec;
 @class FlutterError;

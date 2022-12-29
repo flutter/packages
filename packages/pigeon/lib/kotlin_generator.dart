@@ -77,6 +77,7 @@ class KotlinGenerator extends Generator<KotlinOptions> {
     final Indent indent = Indent(sink);
 
     writeFileHeaders(languageOptions, root, sink, indent, fileType);
+    writeFileImports(languageOptions, root, sink, indent, fileType);
     generateKotlin(languageOptions, root, sink, indent);
   }
 
@@ -84,6 +85,12 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   void writeFileHeaders(KotlinOptions languageOptions, Root root,
       StringSink sink, Indent indent, FileType fileType) {
     writeHeader(languageOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileImports(KotlinOptions languageOptions, Root root,
+      StringSink sink, Indent indent, FileType fileType) {
+    writeImports(languageOptions, root, sink, indent);
   }
 }
 
@@ -468,6 +475,23 @@ void writeHeader(
   indent.addln('');
 }
 
+/// Writes file imports to sink.
+void writeImports(
+    KotlinOptions options, Root root, StringSink sink, Indent indent) {
+  if (options.package != null) {
+    indent.writeln('package ${options.package}');
+  }
+  indent.addln('');
+  indent.writeln('import android.util.Log');
+  indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
+  indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
+  indent.writeln('import io.flutter.plugin.common.MessageCodec');
+  indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
+  indent.writeln('import java.io.ByteArrayOutputStream');
+  indent.writeln('import java.nio.ByteBuffer');
+  indent.addln('');
+}
+
 /// Generates the ".kotlin" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateKotlin(
@@ -480,16 +504,6 @@ void generateKotlin(
   HostDatatype getHostDatatype(NamedType field) {
     return getFieldHostDatatype(field, root.classes, root.enums,
         (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
-  }
-
-  void writeImports() {
-    indent.writeln('import android.util.Log');
-    indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
-    indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
-    indent.writeln('import io.flutter.plugin.common.MessageCodec');
-    indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
-    indent.writeln('import java.io.ByteArrayOutputStream');
-    indent.writeln('import java.nio.ByteBuffer');
   }
 
   void writeEnum(Enum anEnum) {
@@ -676,12 +690,6 @@ void generateKotlin(
     });
   }
 
-  if (options.package != null) {
-    indent.writeln('package ${options.package}');
-  }
-  indent.addln('');
-  writeImports();
-  indent.addln('');
   indent.writeln('/** Generated class from Pigeon. */');
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
