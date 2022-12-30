@@ -18,12 +18,13 @@ const String MY_PROFILE = 'https://content-people.googleapis.com/v1/people/me?pe
 /// People API to return all my connections.
 const String MY_CONNECTIONS = 'https://people.googleapis.com/v1/people/me/connections?requestMask.includeField=person.names';
 
-/// The scopes to be requested
+/// Basic scopes for self-id
 const List<String> scopes = <String>[
   'https://www.googleapis.com/auth/userinfo.profile',
   'https://www.googleapis.com/auth/userinfo.email',
 ];
 
+/// Scopes for the people API (read contacts)
 const List<String> myConnectionsScopes = <String>[
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
@@ -68,7 +69,7 @@ Future<void> onTokenResponse(TokenResponse token) async {
   // Has granted all the scopes?
   if (!oauth2.hasGrantedAllScopes(token, myConnectionsScopes.join(' '))) {
     print('The user has NOT granted all the required scopes!');
-    return;
+    print('The next get will probably throw an exception!');
   }
 
   final Object? contacts = await get(token, MY_CONNECTIONS);
