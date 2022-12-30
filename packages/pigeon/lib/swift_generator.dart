@@ -58,21 +58,57 @@ class SwiftGenerator extends Generator<SwiftOptions> {
   void generate(SwiftOptions languageOptions, Root root, StringSink sink,
       FileType fileType) {
     final Indent indent = Indent(sink);
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
+    writeHeaders(languageOptions, root, sink, indent, fileType);
+    writeImports(languageOptions, root, sink, indent, fileType);
+    indent.writeln('$_docCommentPrefix Generated class from Pigeon.');
+    for (final Enum anEnum in root.enums) {
+      indent.writeln('');
+      writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+    }
     generateSwift(languageOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(SwiftOptions languageOptions, Root root,
-      StringSink sink, Indent indent, FileType fileType) {
-    writeHeader(languageOptions, root, sink, indent);
+  void writeHeaders(SwiftOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
+    if (languageOptions.copyrightHeader != null) {
+      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
+    indent.addln('');
   }
 
   @override
-  void writeFileImports(SwiftOptions languageOptions, Root root,
-      StringSink sink, Indent indent, FileType fileType) {
-    writeImports(languageOptions, root, sink, indent);
+  void writeImports(SwiftOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
+    indent.writeln('import Foundation');
+    indent.format('''
+#if os(iOS)
+import Flutter
+#elseif os(macOS)
+import FlutterMacOS
+#else
+#error("Unsupported platform.")
+#endif
+''');
+    indent.writeln('');
+  }
+
+  @override
+  void writeEnum(SwiftOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Enum anEnum) {
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+
+    indent.write('enum ${anEnum.name}: Int ');
+    indent.scoped('{', '}', () {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        indent.writeln('case ${_camelCase(member.name)} = $index');
+      });
+    });
   }
 }
 
@@ -459,31 +495,8 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
 }
 
 /// Writes file header to sink.
-void writeHeader(
-    SwiftOptions options, Root root, StringSink sink, Indent indent) {
-  if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-  }
-  indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// $seeAlsoWarning');
-  indent.addln('');
-}
-
-/// Writes file header to sink.
 void writeImports(
-    SwiftOptions options, Root root, StringSink sink, Indent indent) {
-  indent.writeln('import Foundation');
-  indent.format('''
-#if os(iOS)
-import Flutter
-#elseif os(macOS)
-import FlutterMacOS
-#else
-#error("Unsupported platform.")
-#endif
-''');
-  indent.writeln('');
-}
+    SwiftOptions options, Root root, StringSink sink, Indent indent) {}
 
 /// Generates the ".swift" file for the AST represented by [root] to [sink] with the
 /// provided [options].
@@ -497,20 +510,6 @@ void generateSwift(
   HostDatatype getHostDatatype(NamedType field) {
     return getFieldHostDatatype(field, root.classes, root.enums,
         (TypeDeclaration x) => _swiftTypeForBuiltinDartType(x));
-  }
-
-  void writeEnum(Enum anEnum) {
-    addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentSpec);
-
-    indent.write('enum ${anEnum.name}: Int ');
-    indent.scoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
-        addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
-        indent.writeln('case ${_camelCase(member.name)} = $index');
-      });
-    });
   }
 
   void writeDataClass(Class klass) {
@@ -652,12 +651,6 @@ void generateSwift(
         indent.writeln('error.details');
       });
     });
-  }
-
-  indent.writeln('$_docCommentPrefix Generated class from Pigeon.');
-  for (final Enum anEnum in root.enums) {
-    indent.writeln('');
-    writeEnum(anEnum);
   }
 
   for (final Class klass in root.classes) {

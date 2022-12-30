@@ -96,21 +96,94 @@ class JavaGenerator extends Generator<JavaOptions> {
       FileType fileType) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
-    generateJava(languageOptions, root, sink, indent);
+    writeHeaders(languageOptions, root, sink, indent, fileType);
+    writeImports(languageOptions, root, sink, indent, fileType);
+    writeMainClass(languageOptions, root, sink, indent, fileType);
   }
 
   @override
-  void writeFileHeaders(JavaOptions languageOptions, Root root, StringSink sink,
+  void writeHeaders(JavaOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
-    writeHeader(languageOptions, root, sink, indent);
+    if (languageOptions.copyrightHeader != null) {
+      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
+    indent.addln('');
   }
 
   @override
-  void writeFileImports(JavaOptions languageOptions, Root root, StringSink sink,
+  void writeImports(JavaOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
-    writeImports(languageOptions, root, sink, indent);
+    if (languageOptions.package != null) {
+      indent.writeln('package ${languageOptions.package};');
+    }
+    indent.writeln('import android.util.Log;');
+    indent.writeln('import androidx.annotation.NonNull;');
+    indent.writeln('import androidx.annotation.Nullable;');
+    indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
+    indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
+    indent.writeln('import io.flutter.plugin.common.MessageCodec;');
+    indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
+    indent.writeln('import java.io.ByteArrayOutputStream;');
+    indent.writeln('import java.nio.ByteBuffer;');
+    indent.writeln('import java.util.Arrays;');
+    indent.writeln('import java.util.ArrayList;');
+    indent.writeln('import java.util.Collections;');
+    indent.writeln('import java.util.List;');
+    indent.writeln('import java.util.Map;');
+    indent.writeln('import java.util.HashMap;');
+    indent.addln('');
+  }
+
+  @override
+  void writeEnum(JavaOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Enum anEnum) {
+    String camelToSnake(String camelCase) {
+      final RegExp regex = RegExp('([a-z])([A-Z]+)');
+      return camelCase
+          .replaceAllMapped(regex, (Match m) => '${m[1]}_${m[2]}')
+          .toUpperCase();
+    }
+
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+
+    indent.write('public enum ${anEnum.name} ');
+    indent.scoped('{', '}', () {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        indent.writeln(
+            '${camelToSnake(member.name)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
+      });
+      indent.writeln('');
+      indent.writeln('private final int index;');
+      indent.write('private ${anEnum.name}(final int index) ');
+      indent.scoped('{', '}', () {
+        indent.writeln('this.index = index;');
+      });
+    });
+  }
+
+  /// Writes main class to sink. wraps enums, apis, and classes.
+  void writeMainClass(JavaOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
+    indent.writeln(
+        '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
+    indent.writeln(
+        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+    if (languageOptions.useGeneratedAnnotation ?? false) {
+      indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+    }
+    indent.write('public class ${languageOptions.className!} ');
+    indent.scoped('{', '}', () {
+      for (final Enum anEnum in root.enums) {
+        indent.writeln('');
+        writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+      }
+      generateJava(languageOptions, root, sink, indent);
+    });
   }
 }
 
@@ -551,41 +624,6 @@ String _castObject(
   }
 }
 
-/// Writes file header to sink.
-void writeHeader(
-    JavaOptions options, Root root, StringSink sink, Indent indent) {
-  if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-  }
-  indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// $seeAlsoWarning');
-  indent.addln('');
-}
-
-/// Writes file imports to sink.
-void writeImports(
-    JavaOptions options, Root root, StringSink sink, Indent indent) {
-  if (options.package != null) {
-    indent.writeln('package ${options.package};');
-  }
-  indent.writeln('import android.util.Log;');
-  indent.writeln('import androidx.annotation.NonNull;');
-  indent.writeln('import androidx.annotation.Nullable;');
-  indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
-  indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
-  indent.writeln('import io.flutter.plugin.common.MessageCodec;');
-  indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
-  indent.writeln('import java.io.ByteArrayOutputStream;');
-  indent.writeln('import java.nio.ByteBuffer;');
-  indent.writeln('import java.util.Arrays;');
-  indent.writeln('import java.util.ArrayList;');
-  indent.writeln('import java.util.Collections;');
-  indent.writeln('import java.util.List;');
-  indent.writeln('import java.util.Map;');
-  indent.writeln('import java.util.HashMap;');
-  indent.addln('');
-}
-
 /// Generates the ".java" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateJava(
@@ -594,34 +632,6 @@ void generateJava(
       root.classes.map((Class x) => x.name).toSet();
   final Set<String> rootEnumNameSet =
       root.enums.map((Enum x) => x.name).toSet();
-
-  String camelToSnake(String camelCase) {
-    final RegExp regex = RegExp('([a-z])([A-Z]+)');
-    return camelCase
-        .replaceAllMapped(regex, (Match m) => '${m[1]}_${m[2]}')
-        .toUpperCase();
-  }
-
-  void writeEnum(Enum anEnum) {
-    addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentSpec);
-
-    indent.write('public enum ${anEnum.name} ');
-    indent.scoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
-        addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
-        indent.writeln(
-            '${camelToSnake(member.name)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
-      });
-      indent.writeln('');
-      indent.writeln('private final int index;');
-      indent.write('private ${anEnum.name}(final int index) ');
-      indent.scoped('{', '}', () {
-        indent.writeln('this.index = index;');
-      });
-    });
-  }
 
   void writeDataClass(Class klass) {
     void writeField(NamedType field) {
@@ -790,40 +800,25 @@ void generateJava(
 }''');
   }
 
-  indent.writeln(
-      '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
-  indent.writeln(
-      '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
-  if (options.useGeneratedAnnotation ?? false) {
-    indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+  for (final Class klass in root.classes) {
+    indent.addln('');
+    writeDataClass(klass);
   }
-  indent.write('public class ${options.className!} ');
-  indent.scoped('{', '}', () {
-    for (final Enum anEnum in root.enums) {
-      indent.writeln('');
-      writeEnum(anEnum);
-    }
 
-    for (final Class klass in root.classes) {
+  if (root.apis.any((Api api) =>
+      api.location == ApiLocation.host &&
+      api.methods.any((Method it) => it.isAsynchronous))) {
+    indent.addln('');
+    writeResultInterface();
+  }
+
+  for (final Api api in root.apis) {
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(indent, api, root);
       indent.addln('');
-      writeDataClass(klass);
     }
+    writeApi(api);
+  }
 
-    if (root.apis.any((Api api) =>
-        api.location == ApiLocation.host &&
-        api.methods.any((Method it) => it.isAsynchronous))) {
-      indent.addln('');
-      writeResultInterface();
-    }
-
-    for (final Api api in root.apis) {
-      if (getCodecClasses(api, root).isNotEmpty) {
-        _writeCodec(indent, api, root);
-        indent.addln('');
-      }
-      writeApi(api);
-    }
-
-    writeWrapError();
-  });
+  writeWrapError();
 }

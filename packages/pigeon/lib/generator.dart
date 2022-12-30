@@ -23,8 +23,8 @@ abstract class Generator<T> {
     FileType fileType,
   );
 
-  /// Adds specified file headers.
-  void writeFileHeaders(
+  /// Adds specified headers to file.
+  void writeHeaders(
     T languageOptions,
     Root root,
     StringSink sink,
@@ -32,12 +32,22 @@ abstract class Generator<T> {
     FileType fileType,
   );
 
-  /// Adds specified imports.
-  void writeFileImports(
+  /// Adds specified imports to file.
+  void writeImports(
     T languageOptions,
     Root root,
     StringSink sink,
     Indent indent,
     FileType fileType,
+  );
+
+  /// Writes single Enum to file.
+  void writeEnum(
+    T languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Enum anEnum,
   );
 }

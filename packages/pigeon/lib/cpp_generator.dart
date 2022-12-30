@@ -80,8 +80,17 @@ class CppGenerator extends Generator<CppOptions> {
   void generate(CppOptions languageOptions, Root root, StringSink sink,
       FileType fileType) {
     final Indent indent = Indent(sink);
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
+    writeHeaders(languageOptions, root, sink, indent, fileType);
+    writeImports(languageOptions, root, sink, indent, fileType);
+
+    indent.writeln('$_commentPrefix Generated class from Pigeon.');
+
+    for (final Enum anEnum in root.enums) {
+      writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+    }
+
+    indent.addln('');
+
     if (fileType == FileType.header) {
       generateCppHeader(languageOptions, root, sink, indent);
     } else {
@@ -90,7 +99,7 @@ class CppGenerator extends Generator<CppOptions> {
   }
 
   @override
-  void writeFileHeaders(CppOptions languageOptions, Root root, StringSink sink,
+  void writeHeaders(CppOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     if (fileType == FileType.header) {
       writeCppHeaderHeader(languageOptions, root, sink, indent);
@@ -100,12 +109,20 @@ class CppGenerator extends Generator<CppOptions> {
   }
 
   @override
-  void writeFileImports(CppOptions languageOptions, Root root, StringSink sink,
+  void writeImports(CppOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     if (fileType == FileType.header) {
       writeCppHeaderImports(languageOptions, root, sink, indent);
     } else {
       writeCppSourceImports(languageOptions, root, sink, indent);
+    }
+  }
+
+  @override
+  void writeEnum(CppOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Enum anEnum) {
+    if (fileType == FileType.header) {
+      writeCppHeaderEnum(languageOptions, root, sink, indent, anEnum);
     }
   }
 }
@@ -1093,6 +1110,23 @@ void writeCppHeaderImports(
   indent.addln('');
 }
 
+/// Writes Cpp header enum to sink.
+void writeCppHeaderEnum(CppOptions options, Root root, StringSink sink,
+    Indent indent, Enum anEnum) {
+  indent.writeln('');
+  addDocumentationComments(
+      indent, anEnum.documentationComments, _docCommentSpec);
+  indent.write('enum class ${anEnum.name} ');
+  indent.scoped('{', '};', () {
+    enumerate(anEnum.members, (int index, final EnumMember member) {
+      addDocumentationComments(
+          indent, member.documentationComments, _docCommentSpec);
+      indent.writeln(
+          '${member.name} = $index${index == anEnum.members.length - 1 ? '' : ','}');
+    });
+  });
+}
+
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options] and [headerFileName].
 void generateCppHeader(
@@ -1106,26 +1140,6 @@ void generateCppHeader(
         '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
     indent.writeln('class $testFixtureClass;');
   }
-
-  indent.addln('');
-  indent.writeln('$_commentPrefix Generated class from Pigeon.');
-
-  for (final Enum anEnum in root.enums) {
-    indent.writeln('');
-    addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentSpec);
-    indent.write('enum class ${anEnum.name} ');
-    indent.scoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
-        addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
-        indent.writeln(
-            '${member.name} = $index${index == anEnum.members.length - 1 ? '' : ','}');
-      });
-    });
-  }
-
-  indent.addln('');
 
   _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
 

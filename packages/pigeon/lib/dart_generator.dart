@@ -81,21 +81,55 @@ class DartGenerator extends Generator<DartOptions> {
       FileType fileType) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
+    writeHeaders(languageOptions, root, sink, indent, fileType);
+    writeImports(languageOptions, root, sink, indent, fileType);
+    for (final Enum anEnum in root.enums) {
+      writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+    }
     generateDart(languageOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(DartOptions languageOptions, Root root, StringSink sink,
+  void writeHeaders(DartOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
-    writeHeader(languageOptions, root, sink, indent);
+    if (languageOptions.copyrightHeader != null) {
+      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
+    indent.writeln(
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import',
+    );
+    indent.addln('');
   }
 
   @override
-  void writeFileImports(DartOptions languageOptions, Root root, StringSink sink,
+  void writeImports(DartOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
-    writeImports(languageOptions, root, sink, indent);
+    indent.writeln("import 'dart:async';");
+    indent.writeln(
+      "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
+    );
+    indent.addln('');
+    indent.writeln(
+        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
+    indent.writeln("import 'package:flutter/services.dart';");
+  }
+
+  @override
+  void writeEnum(DartOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Enum anEnum) {
+    indent.writeln('');
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+    indent.write('enum ${anEnum.name} ');
+    indent.scoped('{', '}', () {
+      for (final EnumMember member in anEnum.members) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        indent.writeln('${member.name},');
+      }
+    });
   }
 
   /// Generates Dart files for testing with specified [DartOptions]
@@ -516,31 +550,6 @@ String _addGenericTypesNullable(TypeDeclaration type) {
   return type.isNullable ? '$genericdType?' : genericdType;
 }
 
-/// Writes file header to sink.
-void writeHeader(DartOptions opt, Root root, StringSink sink, Indent indent) {
-  if (opt.copyrightHeader != null) {
-    addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
-  }
-  indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// $seeAlsoWarning');
-  indent.writeln(
-    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import',
-  );
-  indent.addln('');
-}
-
-/// Writes file imports to sink.
-void writeImports(DartOptions opt, Root root, StringSink sink, Indent indent) {
-  indent.writeln("import 'dart:async';");
-  indent.writeln(
-    "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
-  );
-  indent.addln('');
-  indent.writeln(
-      "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
-  indent.writeln("import 'package:flutter/services.dart';");
-}
-
 /// Generates Dart source code for the given AST represented by [root],
 /// outputting the code to [sink].
 void generateDart(DartOptions opt, Root root, StringSink sink, Indent indent) {
@@ -548,22 +557,6 @@ void generateDart(DartOptions opt, Root root, StringSink sink, Indent indent) {
       root.classes.map((Class x) => x.name).toList();
   final List<String> customEnumNames =
       root.enums.map((Enum x) => x.name).toList();
-
-  void writeEnums() {
-    for (final Enum anEnum in root.enums) {
-      indent.writeln('');
-      addDocumentationComments(
-          indent, anEnum.documentationComments, _docCommentSpec);
-      indent.write('enum ${anEnum.name} ');
-      indent.scoped('{', '}', () {
-        for (final EnumMember member in anEnum.members) {
-          addDocumentationComments(
-              indent, member.documentationComments, _docCommentSpec);
-          indent.writeln('${member.name},');
-        }
-      });
-    }
-  }
 
   void writeDataClass(Class klass) {
     void writeConstructor() {
@@ -695,7 +688,6 @@ $resultAt != null
     }
   }
 
-  writeEnums();
   for (final Class klass in root.classes) {
     indent.writeln('');
     writeDataClass(klass);

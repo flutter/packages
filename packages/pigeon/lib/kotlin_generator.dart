@@ -76,21 +76,71 @@ class KotlinGenerator extends Generator<KotlinOptions> {
       FileType fileType) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
+    writeHeaders(languageOptions, root, sink, indent, fileType);
+    writeImports(languageOptions, root, sink, indent, fileType);
+    indent.writeln('/** Generated class from Pigeon. */');
+    for (final Enum anEnum in root.enums) {
+      indent.writeln('');
+      writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+    }
     generateKotlin(languageOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(KotlinOptions languageOptions, Root root,
-      StringSink sink, Indent indent, FileType fileType) {
-    writeHeader(languageOptions, root, sink, indent);
+  void writeHeaders(KotlinOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
+    if (languageOptions.copyrightHeader != null) {
+      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
+    indent.addln('');
   }
 
   @override
-  void writeFileImports(KotlinOptions languageOptions, Root root,
-      StringSink sink, Indent indent, FileType fileType) {
-    writeImports(languageOptions, root, sink, indent);
+  void writeImports(KotlinOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType) {
+    if (languageOptions.package != null) {
+      indent.writeln('package ${languageOptions.package}');
+    }
+    indent.addln('');
+    indent.writeln('import android.util.Log');
+    indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
+    indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
+    indent.writeln('import io.flutter.plugin.common.MessageCodec');
+    indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
+    indent.writeln('import java.io.ByteArrayOutputStream');
+    indent.writeln('import java.nio.ByteBuffer');
+    indent.addln('');
+  }
+
+  @override
+  void writeEnum(KotlinOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Enum anEnum) {
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+    indent.write('enum class ${anEnum.name}(val raw: Int) ');
+    indent.scoped('{', '}', () {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        indent.write('${member.name.toUpperCase()}($index)');
+        if (index != anEnum.members.length - 1) {
+          indent.addln(',');
+        } else {
+          indent.addln(';');
+        }
+      });
+
+      indent.writeln('');
+      indent.write('companion object ');
+      indent.scoped('{', '}', () {
+        indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
+        indent.scoped('{', '}', () {
+          indent.writeln('return values().firstOrNull { it.raw == raw }');
+        });
+      });
+    });
   }
 }
 
@@ -464,34 +514,6 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
   return '${_kotlinTypeForDartType(type)}$nullSafe';
 }
 
-/// Writes file header to sink.
-void writeHeader(
-    KotlinOptions options, Root root, StringSink sink, Indent indent) {
-  if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-  }
-  indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// $seeAlsoWarning');
-  indent.addln('');
-}
-
-/// Writes file imports to sink.
-void writeImports(
-    KotlinOptions options, Root root, StringSink sink, Indent indent) {
-  if (options.package != null) {
-    indent.writeln('package ${options.package}');
-  }
-  indent.addln('');
-  indent.writeln('import android.util.Log');
-  indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
-  indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
-  indent.writeln('import io.flutter.plugin.common.MessageCodec');
-  indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
-  indent.writeln('import java.io.ByteArrayOutputStream');
-  indent.writeln('import java.nio.ByteBuffer');
-  indent.addln('');
-}
-
 /// Generates the ".kotlin" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateKotlin(
@@ -504,33 +526,6 @@ void generateKotlin(
   HostDatatype getHostDatatype(NamedType field) {
     return getFieldHostDatatype(field, root.classes, root.enums,
         (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
-  }
-
-  void writeEnum(Enum anEnum) {
-    addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentSpec);
-    indent.write('enum class ${anEnum.name}(val raw: Int) ');
-    indent.scoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
-        addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
-        indent.write('${member.name.toUpperCase()}($index)');
-        if (index != anEnum.members.length - 1) {
-          indent.addln(',');
-        } else {
-          indent.addln(';');
-        }
-      });
-
-      indent.writeln('');
-      indent.write('companion object ');
-      indent.scoped('{', '}', () {
-        indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
-        indent.scoped('{', '}', () {
-          indent.writeln('return values().firstOrNull { it.raw == raw }');
-        });
-      });
-    });
   }
 
   void writeDataClass(Class klass) {
@@ -688,12 +683,6 @@ void generateKotlin(
             '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
       });
     });
-  }
-
-  indent.writeln('/** Generated class from Pigeon. */');
-  for (final Enum anEnum in root.enums) {
-    indent.writeln('');
-    writeEnum(anEnum);
   }
 
   for (final Class klass in root.classes) {
