@@ -361,27 +361,28 @@ abstract class GeneratorAdapter {
   /// Constructor for [GeneratorAdapter]
   GeneratorAdapter(this.fileTypeList);
 
-  /// A list of [FileType]
-  /// Used to tell the generator method which type of file to create.
+  /// A list of file types the generator should create.
   List<FileType> fileTypeList;
 
-  /// Returns an [IOSink] instance to be written to if the [GeneratorAdapter] should
-  /// generate.  If it returns `null`, the [GeneratorAdapter] will be skipped.
+  /// Returns an [IOSink] instance to be written to
+  /// if the [GeneratorAdapter] should generate.
+  ///
+  /// If it returns `null`, the [GeneratorAdapter] will be skipped.
   IOSink? shouldGenerate(PigeonOptions options, FileType fileType);
 
-  /// Write the generated code described in [root] to [sink] using the
-  /// [options].
+  /// Write the generated code described in [root] to [sink] using the [options].
   void generate(
       StringSink sink, PigeonOptions options, Root root, FileType fileType);
 
-  /// Generates errors that would only be appropriate for this [GeneratorAdapter]. For
-  /// example, maybe a certain feature isn't implemented in a [GeneratorAdapter] yet.
+  /// Generates errors that would only be appropriate for this [GeneratorAdapter].
+  ///
+  /// For example, if a certain feature isn't implemented in a [GeneratorAdapter] yet.
   List<Error> validate(PigeonOptions options, Root root);
 }
 
 DartOptions _dartOptionsWithCopyrightHeader(
     DartOptions? dartOptions, String? copyrightHeader,
-    [String? dartOutPath, String? testOutPath]) {
+    {String? dartOutPath, String? testOutPath}) {
   dartOptions = dartOptions ?? DartOptions();
   return dartOptions.merge(DartOptions(
       sourceOutPath: dartOutPath,
@@ -451,8 +452,8 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
       options.dartOptions,
       options.copyrightHeader,
-      options.dartOut,
-      options.dartTestOut,
+      dartOutPath: options.dartOut,
+      testOutPath: options.dartTestOut,
     );
     final DartGenerator testGenerator = DartGenerator();
     testGenerator.generateTest(

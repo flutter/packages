@@ -34,7 +34,7 @@ class DartOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
-  /// Path to output generated Dart file for tests.
+  /// Path to output generated Dart file.
   String? sourceOutPath;
 
   /// Path to output generated Test file for tests.
