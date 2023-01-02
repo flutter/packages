@@ -192,8 +192,9 @@ class RouteBuilder {
         onPopPage,
         keyToPages[shellNavigatorKey]!,
         shellNavigatorKey,
-        observers: [
-          ...observers.map((o) => _ProxyNavigatorObserver(o)),
+        observers: <NavigatorObserver>[
+          ...observers
+              .map<NavigatorObserver>((o) => _ProxyNavigatorObserver(o)),
           ...route.observers,
         ],
       );
@@ -491,12 +492,13 @@ class _RouteBuilderException implements Exception {
 
 /// An navigator observer that is a proxy for the parent navigator observer.
 class _ProxyNavigatorObserver extends NavigatorObserver {
+  _ProxyNavigatorObserver(this.parent);
+
   /// The navigator observer whose methods this navigator observer will call.
   final NavigatorObserver parent;
 
-  _ProxyNavigatorObserver(this.parent);
-
   /// The navigator that the observer is observing, if any.
+  @override
   NavigatorState? get navigator => _navigator;
   NavigatorState? _navigator;
 
@@ -504,6 +506,7 @@ class _ProxyNavigatorObserver extends NavigatorObserver {
   ///
   /// The route immediately below that one, and thus the previously active
   /// route, is `previousRoute`.
+  @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) =>
       parent.didPush(route, previousRoute);
 
@@ -511,6 +514,7 @@ class _ProxyNavigatorObserver extends NavigatorObserver {
   ///
   /// The route immediately below that one, and thus the newly active
   /// route, is `previousRoute`.
+  @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
       parent.didPop(route, previousRoute);
 
@@ -523,10 +527,12 @@ class _ProxyNavigatorObserver extends NavigatorObserver {
   /// bottommost route being removed, if any, is `previousRoute`, and this
   /// method will be called once for each removed route, from the topmost route
   /// to the bottommost route.
+  @override
   void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
       parent.didRemove(route, previousRoute);
 
   /// The [Navigator] replaced `oldRoute` with `newRoute`.
+  @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) =>
       parent.didReplace(newRoute: newRoute, oldRoute: oldRoute);
 
@@ -534,6 +540,7 @@ class _ProxyNavigatorObserver extends NavigatorObserver {
   ///
   /// For example, this is called when an iOS back gesture starts, and is used
   /// to disabled hero animations during such interactions.
+  @override
   void didStartUserGesture(
           Route<dynamic> route, Route<dynamic>? previousRoute) =>
       parent.didStartUserGesture(route, previousRoute);
@@ -541,5 +548,6 @@ class _ProxyNavigatorObserver extends NavigatorObserver {
   /// User gesture is no longer controlling the [Navigator].
   ///
   /// Paired with an earlier call to [didStartUserGesture].
+  @override
   void didStopUserGesture() => parent.didStopUserGesture();
 }

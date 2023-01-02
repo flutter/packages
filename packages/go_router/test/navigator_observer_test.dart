@@ -15,13 +15,13 @@ void main() {
       int didPushNotifyCount = 0;
       int didPopNotifyCount = 0;
 
-      final testObserver = TestObserver()
-        ..onPushed = (route, previousRoute) {
+      final TestObserver testObserver = TestObserver()
+        ..onPushed = (Route<dynamic>? route, Route<dynamic>? previousRoute) {
           if (route?.settings.name == 'new_route') {
             didPushNotifyCount++;
           }
         }
-        ..onPopped = (route, previousRoute) {
+        ..onPopped = (Route<dynamic>? route, Route<dynamic>? previousRoute) {
           if (route?.settings.name == 'new_route') {
             didPopNotifyCount++;
           }
@@ -31,7 +31,7 @@ void main() {
           GlobalKey<NavigatorState>();
       final GoRouter router = GoRouter(
         initialLocation: '/a',
-        observers: [testObserver],
+        observers: <NavigatorObserver>[testObserver],
         routes: <RouteBase>[
           ShellRoute(
             navigatorKey: shellNavigatorKey,
@@ -50,12 +50,12 @@ void main() {
                       onPressed: () async {
                         shellNavigatorKey.currentState!.push(
                           MaterialPageRoute<void>(
-                            settings: RouteSettings(name: 'new_route'),
+                            settings: const RouteSettings(name: 'new_route'),
                             builder: (BuildContext context) {
                               return Scaffold(
                                 body: Column(
-                                  children: [
-                                    Text('new route'),
+                                  children: <Widget>[
+                                    const Text('new route'),
                                     TextButton(
                                       onPressed: () => Navigator.pop(context),
                                       child: const Text('Pop'),
