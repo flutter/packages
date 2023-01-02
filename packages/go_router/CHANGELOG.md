@@ -1,3 +1,8 @@
+## 6.0.1
+
+- Fixes for `NavigatorObserver` in `ShellRoute`.
+- Adds an `observers` parameter to `ShellRoute` to receive notifications for routes only inside `ShellRoute`.
+
 ## 6.0.0
 
 - **BREAKING CHANGE**
