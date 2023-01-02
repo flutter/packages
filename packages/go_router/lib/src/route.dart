@@ -422,6 +422,7 @@ class ShellRoute extends RouteBase {
     this.pageBuilder,
     super.routes,
     GlobalKey<NavigatorState>? navigatorKey,
+    this.observers = const <NavigatorObserver>[],
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._() {
@@ -432,6 +433,10 @@ class ShellRoute extends RouteBase {
       }
     }
   }
+
+  /// NavigatorObserver is used to receive notifications when navigating between
+  /// this shell's routes.
+  final List<NavigatorObserver> observers;
 
   /// The widget builder for a shell route.
   ///
