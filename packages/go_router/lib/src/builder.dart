@@ -193,8 +193,8 @@ class RouteBuilder {
         keyToPages[shellNavigatorKey]!,
         shellNavigatorKey,
         observers: <NavigatorObserver>[
-          ...observers
-              .map<NavigatorObserver>((o) => _ProxyNavigatorObserver(o)),
+          ...observers.map<NavigatorObserver>((NavigatorObserver observer) =>
+              _ProxyNavigatorObserver(observer)),
           ...route.observers,
         ],
       );
