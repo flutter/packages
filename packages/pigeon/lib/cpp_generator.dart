@@ -70,7 +70,7 @@ class CppOptions {
   }
 }
 
-/// Class that manages all Cpp header code generation.
+/// Class that manages all Cpp code generation.
 class CppGenerator extends Generator<CppOptions> {
   /// Instantiates a Cpp Generator.
   CppGenerator();

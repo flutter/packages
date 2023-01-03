@@ -34,7 +34,7 @@ class DartOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
-  /// Path to output generated Dart file for tests.
+  /// Path to output generated Dart file.
   String? sourceOutPath;
 
   /// Path to output generated Test file for tests.
@@ -79,6 +79,7 @@ class DartGenerator extends Generator<DartOptions> {
   @override
   void generate(DartOptions languageOptions, Root root, StringSink sink,
       FileType fileType) {
+    assert(fileType == FileType.source);
     final Indent indent = Indent(sink);
 
     writeHeaders(languageOptions, root, sink, indent, fileType);
