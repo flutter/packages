@@ -18,9 +18,8 @@ void main() async {
 // #enddocregion use-loader
   id.setLogLevel('debug');
 
-  final id.IdConfiguration config = id.IdConfiguration(
+  final IdConfiguration config = IdConfiguration(
     client_id: 'your-client_id.apps.googleusercontent.com',
-    ux_mode: id.UxMode.popup,
     callback: allowInterop(onCredentialResponse),
   );
 
