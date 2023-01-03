@@ -83,8 +83,6 @@ class CppGenerator extends Generator<CppOptions> {
     writeHeaders(languageOptions, root, sink, indent, fileType);
     writeImports(languageOptions, root, sink, indent, fileType);
 
-    indent.writeln('$_commentPrefix Generated class from Pigeon.');
-
     for (final Enum anEnum in root.enums) {
       writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
     }
@@ -1108,6 +1106,13 @@ void writeCppHeaderImports(
     indent.writeln('namespace ${options.namespace} {');
   }
   indent.addln('');
+  if (options.namespace?.endsWith('_pigeontest') ?? false) {
+    final String testFixtureClass =
+        '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
+    indent.writeln('class $testFixtureClass;');
+  }
+  indent.addln('');
+  indent.writeln('$_commentPrefix Generated class from Pigeon.');
 }
 
 /// Writes Cpp header enum to sink.
@@ -1138,7 +1143,6 @@ void generateCppHeader(
   if (options.namespace?.endsWith('_pigeontest') ?? false) {
     testFixtureClass =
         '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
-    indent.writeln('class $testFixtureClass;');
   }
 
   _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
