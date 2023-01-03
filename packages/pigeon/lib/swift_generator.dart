@@ -55,8 +55,9 @@ class SwiftGenerator extends Generator<SwiftOptions> {
 
   /// Generates Swift files with specified [SwiftOptions]
   @override
-  void generate(
-      SwiftOptions languageOptions, Root root, StringSink sink, FileType _) {
+  void generate(SwiftOptions languageOptions, Root root, StringSink sink,
+      FileType fileType) {
+    assert(fileType == FileType.source);
     generateSwift(languageOptions, root, sink);
   }
 }

@@ -72,8 +72,9 @@ class KotlinGenerator extends Generator<KotlinOptions> {
 
   /// Generates Kotlin files with specified [KotlinOptions]
   @override
-  void generate(
-      KotlinOptions languageOptions, Root root, StringSink sink, FileType _) {
+  void generate(KotlinOptions languageOptions, Root root, StringSink sink,
+      FileType fileType) {
+    assert(fileType == FileType.source);
     generateKotlin(languageOptions, root, sink);
   }
 }
