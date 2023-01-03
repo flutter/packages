@@ -13,10 +13,12 @@ import 'package:http/http.dart' as http;
 import 'package:js/js.dart' show allowInterop;
 
 /// People API to return my profile info...
-const String MY_PROFILE = 'https://content-people.googleapis.com/v1/people/me?personFields=photos%2Cnames%2CemailAddresses';
+const String MY_PROFILE =
+    'https://content-people.googleapis.com/v1/people/me?personFields=photos%2Cnames%2CemailAddresses';
 
 /// People API to return all my connections.
-const String MY_CONNECTIONS = 'https://people.googleapis.com/v1/people/me/connections?requestMask.includeField=person.names';
+const String MY_CONNECTIONS =
+    'https://people.googleapis.com/v1/people/me/connections?requestMask.includeField=person.names';
 
 /// Basic scopes for self-id
 const List<String> scopes = <String>[
@@ -42,8 +44,8 @@ void main() async {
 
   final OverridableTokenClientConfig overridableCfg =
       OverridableTokenClientConfig(
-        scope: (scopes + myConnectionsScopes).join(' '),
-      );
+    scope: (scopes + myConnectionsScopes).join(' '),
+  );
 
   final TokenClient client = oauth2.initTokenClient(config);
 
@@ -76,7 +78,8 @@ Future<void> onTokenResponse(TokenResponse token) async {
   print(contacts);
 
   print('Revoking token...');
-  oauth2.revoke(token.access_token, allowInterop((TokenRevocationResponse response) {
+  oauth2.revoke(token.access_token,
+      allowInterop((TokenRevocationResponse response) {
     print(response.successful);
     print(response.error);
     print(response.error_description);
@@ -88,11 +91,9 @@ Future<void> onTokenResponse(TokenResponse token) async {
 /// Attempts to [jsonDecode] the result.
 Future<Object?> get(TokenResponse token, String url) async {
   final Uri uri = Uri.parse(url);
-  final http.Response response = await http.get(
-    uri,
-    headers: <String, String>{
-      'Authorization': '${token.token_type} ${token.access_token}',
-    });
+  final http.Response response = await http.get(uri, headers: <String, String>{
+    'Authorization': '${token.token_type} ${token.access_token}',
+  });
 
   if (response.statusCode != 200) {
     throw http.ClientException(response.body, uri);

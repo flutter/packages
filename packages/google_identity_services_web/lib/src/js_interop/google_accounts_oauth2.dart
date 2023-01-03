@@ -53,7 +53,9 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
   bool hasGrantedAllScopes(TokenResponse tokenResponse, String scopes) {
-    return scopes.split(' ').every((String scope) => _hasGrantedScope(tokenResponse, scope));
+    return scopes
+        .split(' ')
+        .every((String scope) => _hasGrantedScope(tokenResponse, scope));
   }
 
   /// Checks if hte user has granted **all** the specified [scopes].
@@ -63,7 +65,9 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
   bool hasGrantedAnyScopes(TokenResponse tokenResponse, String scopes) {
-    return scopes.split(' ').any((String scope) => _hasGrantedScope(tokenResponse, scope));
+    return scopes
+        .split(' ')
+        .any((String scope) => _hasGrantedScope(tokenResponse, scope));
   }
 
   /// Revokes all of the scopes that the user granted to the app.

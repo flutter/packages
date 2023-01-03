@@ -92,7 +92,10 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   ///
   /// Method: google.accounts.id.renderButton
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.renderButton
-  external void renderButton(DomHtmlElement parent, [GsiButtonConfiguration options]);
+  external void renderButton(
+    DomHtmlElement parent, [
+    GsiButtonConfiguration options,
+  ]);
 
   /// Record when the user signs out of your website in cookies.
   ///
@@ -382,6 +385,7 @@ abstract class GsiButtonData {}
 extension GsiButtonDataExtension on GsiButtonData {
   /// Nonce
   external String? get nonce;
+
   /// State
   external String? get state;
 }
