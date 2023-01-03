@@ -94,6 +94,7 @@ class JavaGenerator extends Generator<JavaOptions> {
   @override
   void generate(JavaOptions languageOptions, Root root, StringSink sink,
       FileType fileType) {
+    assert(fileType == FileType.source);
     final Indent indent = Indent(sink);
 
     writeFileHeaders(languageOptions, root, sink, indent, fileType);

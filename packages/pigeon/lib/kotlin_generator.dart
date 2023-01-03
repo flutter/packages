@@ -74,6 +74,7 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   @override
   void generate(KotlinOptions languageOptions, Root root, StringSink sink,
       FileType fileType) {
+    assert(fileType == FileType.source);
     final Indent indent = Indent(sink);
 
     writeFileHeaders(languageOptions, root, sink, indent, fileType);

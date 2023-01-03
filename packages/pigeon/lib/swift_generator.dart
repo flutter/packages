@@ -57,6 +57,7 @@ class SwiftGenerator extends Generator<SwiftOptions> {
   @override
   void generate(SwiftOptions languageOptions, Root root, StringSink sink,
       FileType fileType) {
+    assert(fileType == FileType.source);
     final Indent indent = Indent(sink);
     writeFileHeaders(languageOptions, root, sink, indent, fileType);
     writeFileImports(languageOptions, root, sink, indent, fileType);
