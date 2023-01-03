@@ -75,9 +75,16 @@ class ObjcGenerator extends Generator<ObjcOptions> {
       FileType fileType) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
+    writeHeaders(languageOptions, root, sink, indent, fileType);
+    writeImports(languageOptions, root, sink, indent, fileType);
     if (fileType == FileType.header) {
+      indent.writeln('NS_ASSUME_NONNULL_BEGIN');
+
+      for (final Enum anEnum in root.enums) {
+        indent.writeln('');
+        writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+      }
+      indent.writeln('');
       generateObjcHeader(languageOptions, root, sink, indent);
     } else {
       generateObjcSource(languageOptions, root, sink, indent);
@@ -85,7 +92,7 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   }
 
   @override
-  void writeFileHeaders(ObjcOptions languageOptions, Root root, StringSink sink,
+  void writeHeaders(ObjcOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     if (fileType == FileType.header) {
       writeObjcHeaderHeader(languageOptions, root, sink, indent);
@@ -95,12 +102,20 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   }
 
   @override
-  void writeFileImports(ObjcOptions languageOptions, Root root, StringSink sink,
+  void writeImports(ObjcOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     if (fileType == FileType.header) {
       writeObjcHeaderImports(languageOptions, root, sink, indent);
     } else {
       writeObjcSourceImports(languageOptions, root, sink, indent);
+    }
+  }
+
+  @override
+  void writeEnum(ObjcOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Enum anEnum) {
+    if (fileType == FileType.header) {
+      writeObjcHeaderEnum(languageOptions, root, sink, indent, anEnum);
     }
   }
 }
@@ -596,37 +611,29 @@ void writeObjcHeaderImports(
   indent.addln('');
 }
 
+/// Writes single Objc header enum.
+void writeObjcHeaderEnum(ObjcOptions options, Root root, StringSink sink,
+    Indent indent, Enum anEnum) {
+  final String enumName = _className(options.prefix, anEnum.name);
+  addDocumentationComments(
+      indent, anEnum.documentationComments, _docCommentSpec);
+
+  indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
+  indent.scoped('{', '};', () {
+    enumerate(anEnum.members, (int index, final EnumMember member) {
+      addDocumentationComments(
+          indent, member.documentationComments, _docCommentSpec);
+      // Capitalized first letter to ensure Swift compatibility
+      indent.writeln(
+          '$enumName${member.name[0].toUpperCase()}${member.name.substring(1)} = $index,');
+    });
+  });
+}
+
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateObjcHeader(
     ObjcOptions options, Root root, StringSink sink, Indent indent) {
-  void writeEnum(Enum anEnum) {
-    final String enumName = _className(options.prefix, anEnum.name);
-    addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentSpec);
-
-    indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
-    indent.scoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
-        addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
-        // Capitalized first letter to ensure Swift compatibility
-        indent.writeln(
-            '$enumName${member.name[0].toUpperCase()}${member.name.substring(1)} = $index,');
-      });
-    });
-  }
-
-  indent.writeln('');
-
-  indent.writeln('NS_ASSUME_NONNULL_BEGIN');
-
-  for (final Enum anEnum in root.enums) {
-    indent.writeln('');
-    writeEnum(anEnum);
-  }
-  indent.writeln('');
-
   for (final Class klass in root.classes) {
     indent.writeln('@class ${_className(options.prefix, klass.name)};');
   }
