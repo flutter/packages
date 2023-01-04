@@ -155,14 +155,6 @@ class KotlinGenerator extends Generator<KotlinOptions> {
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
         root.enums.map((Enum x) => x.name).toSet();
-    void writeField(NamedType field) {
-      addDocumentationComments(
-          indent, field.documentationComments, _docCommentSpec);
-      indent.write(
-          'val ${field.name}: ${_nullsafeKotlinTypeForDartType(field.type)}');
-      final String defaultNil = field.type.isNullable ? ' = null' : '';
-      indent.add(defaultNil);
-    }
 
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
@@ -174,7 +166,7 @@ class KotlinGenerator extends Generator<KotlinOptions> {
     indent.write('data class ${klass.name} ');
     indent.scoped('(', '', () {
       for (final NamedType element in getFieldsInSerializationOrder(klass)) {
-        writeField(element);
+        _writeClassField(indent, element);
         if (getFieldsInSerializationOrder(klass).last != element) {
           indent.addln(',');
         } else {
@@ -303,6 +295,15 @@ class KotlinGenerator extends Generator<KotlinOptions> {
         indent.addln(')');
       });
     });
+  }
+
+  void _writeClassField(Indent indent, NamedType field) {
+    addDocumentationComments(
+        indent, field.documentationComments, _docCommentSpec);
+    indent.write(
+        'val ${field.name}: ${_nullsafeKotlinTypeForDartType(field.type)}');
+    final String defaultNil = field.type.isNullable ? ' = null' : '';
+    indent.add(defaultNil);
   }
 
   HostDatatype _getHostDatatype(Root root, NamedType field) {

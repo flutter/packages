@@ -66,6 +66,10 @@ class SwiftGenerator extends Generator<SwiftOptions> {
       indent.writeln('');
       writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
     }
+    for (final Class klass in root.classes) {
+      indent.addln('');
+      writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+    }
     generateSwift(languageOptions, root, sink, indent);
   }
 
@@ -110,6 +114,155 @@ import FlutterMacOS
         indent.writeln('case ${_camelCase(member.name)} = $index');
       });
     });
+  }
+
+  @override
+  void writeDataClass(SwiftOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Class klass) {
+    final Set<String> customClassNames =
+        root.classes.map((Class x) => x.name).toSet();
+    final Set<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toSet();
+
+    const List<String> generatedComments = <String>[
+      ' Generated class from Pigeon that represents data sent in messages.'
+    ];
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec,
+        generatorComments: generatedComments);
+
+    indent.write('struct ${klass.name} ');
+    indent.scoped('{', '}', () {
+      getFieldsInSerializationOrder(klass).forEach((NamedType field) {
+        _writeClassField(indent, field);
+      });
+
+      indent.writeln('');
+      writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
+          customClassNames, customEnumNames);
+      writeClassEncode(languageOptions, root, sink, indent, fileType, klass,
+          customClassNames, customEnumNames);
+    });
+  }
+
+  void _writeClassField(Indent indent, NamedType field) {
+    addDocumentationComments(
+        indent, field.documentationComments, _docCommentSpec);
+
+    indent.write(
+        'var ${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
+    final String defaultNil = field.type.isNullable ? ' = nil' : '';
+    indent.addln(defaultNil);
+  }
+
+  @override
+  void writeClassEncode(
+    SwiftOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    indent.write('func toList() -> [Any?] ');
+    indent.scoped('{', '}', () {
+      indent.write('return ');
+      indent.scoped('[', ']', () {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          final HostDatatype hostDatatype = _getHostDatatype(root, field);
+          String toWriteValue = '';
+          final String fieldName = field.name;
+          final String nullsafe = field.type.isNullable ? '?' : '';
+          if (!hostDatatype.isBuiltin &&
+              customClassNames.contains(field.type.baseName)) {
+            toWriteValue = '$fieldName$nullsafe.toList()';
+          } else if (!hostDatatype.isBuiltin &&
+              customEnumNames.contains(field.type.baseName)) {
+            toWriteValue = '$fieldName$nullsafe.rawValue';
+          } else {
+            toWriteValue = field.name;
+          }
+
+          indent.writeln('$toWriteValue,');
+        }
+      });
+    });
+  }
+
+  @override
+  void writeClassDecode(
+    SwiftOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    final String className = klass.name;
+    indent.write('static func fromList(_ list: [Any?]) -> $className? ');
+
+    indent.scoped('{', '}', () {
+      enumerate(getFieldsInSerializationOrder(klass),
+          (int index, final NamedType field) {
+        final HostDatatype hostDatatype = _getHostDatatype(root, field);
+
+        final String listValue = 'list[$index]';
+        final String fieldType = _swiftTypeForDartType(field.type);
+
+        if (field.type.isNullable) {
+          if (!hostDatatype.isBuiltin &&
+              customClassNames.contains(field.type.baseName)) {
+            indent.writeln('var ${field.name}: $fieldType? = nil');
+            indent.write('if let ${field.name}List = $listValue as? [Any?] ');
+            indent.scoped('{', '}', () {
+              indent.writeln(
+                  '${field.name} = $fieldType.fromList(${field.name}List)');
+            });
+          } else if (!hostDatatype.isBuiltin &&
+              customEnumNames.contains(field.type.baseName)) {
+            indent.writeln('var ${field.name}: $fieldType? = nil');
+            indent.write('if let ${field.name}RawValue = $listValue as? Int ');
+            indent.scoped('{', '}', () {
+              indent.writeln(
+                  '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
+            });
+          } else {
+            indent.writeln('let ${field.name} = $listValue as? $fieldType ');
+          }
+        } else {
+          if (!hostDatatype.isBuiltin &&
+              customClassNames.contains(field.type.baseName)) {
+            indent.writeln(
+                'let ${field.name} = $fieldType.fromList($listValue as! [Any?])!');
+          } else if (!hostDatatype.isBuiltin &&
+              customEnumNames.contains(field.type.baseName)) {
+            indent.writeln(
+                'let ${field.name} = $fieldType(rawValue: $listValue as! Int)!');
+          } else {
+            indent.writeln('let ${field.name} = $listValue as! $fieldType');
+          }
+        }
+      });
+
+      indent.writeln('');
+      indent.write('return ');
+      indent.scoped('$className(', ')', () {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          final String comma =
+              getFieldsInSerializationOrder(klass).last == field ? '' : ',';
+          indent.writeln('${field.name}: ${field.name}$comma');
+        }
+      });
+    });
+  }
+
+  HostDatatype _getHostDatatype(Root root, NamedType field) {
+    return getFieldHostDatatype(field, root.classes, root.enums,
+        (TypeDeclaration x) => _swiftTypeForBuiltinDartType(x));
   }
 }
 
@@ -499,130 +652,6 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
 /// provided [options].
 void generateSwift(
     SwiftOptions options, Root root, StringSink sink, Indent indent) {
-  final Set<String> rootClassNameSet =
-      root.classes.map((Class x) => x.name).toSet();
-  final Set<String> rootEnumNameSet =
-      root.enums.map((Enum x) => x.name).toSet();
-
-  HostDatatype getHostDatatype(NamedType field) {
-    return getFieldHostDatatype(field, root.classes, root.enums,
-        (TypeDeclaration x) => _swiftTypeForBuiltinDartType(x));
-  }
-
-  void writeDataClass(Class klass) {
-    void writeField(NamedType field) {
-      addDocumentationComments(
-          indent, field.documentationComments, _docCommentSpec);
-
-      indent.write(
-          'var ${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
-      final String defaultNil = field.type.isNullable ? ' = nil' : '';
-      indent.addln(defaultNil);
-    }
-
-    void writeToList() {
-      indent.write('func toList() -> [Any?] ');
-      indent.scoped('{', '}', () {
-        indent.write('return ');
-        indent.scoped('[', ']', () {
-          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-            final HostDatatype hostDatatype = getHostDatatype(field);
-            String toWriteValue = '';
-            final String fieldName = field.name;
-            final String nullsafe = field.type.isNullable ? '?' : '';
-            if (!hostDatatype.isBuiltin &&
-                rootClassNameSet.contains(field.type.baseName)) {
-              toWriteValue = '$fieldName$nullsafe.toList()';
-            } else if (!hostDatatype.isBuiltin &&
-                rootEnumNameSet.contains(field.type.baseName)) {
-              toWriteValue = '$fieldName$nullsafe.rawValue';
-            } else {
-              toWriteValue = field.name;
-            }
-
-            indent.writeln('$toWriteValue,');
-          }
-        });
-      });
-    }
-
-    void writeFromList() {
-      final String className = klass.name;
-      indent.write('static func fromList(_ list: [Any?]) -> $className? ');
-
-      indent.scoped('{', '}', () {
-        enumerate(getFieldsInSerializationOrder(klass),
-            (int index, final NamedType field) {
-          final HostDatatype hostDatatype = getHostDatatype(field);
-
-          final String listValue = 'list[$index]';
-          final String fieldType = _swiftTypeForDartType(field.type);
-
-          if (field.type.isNullable) {
-            if (!hostDatatype.isBuiltin &&
-                rootClassNameSet.contains(field.type.baseName)) {
-              indent.writeln('var ${field.name}: $fieldType? = nil');
-              indent.write('if let ${field.name}List = $listValue as? [Any?] ');
-              indent.scoped('{', '}', () {
-                indent.writeln(
-                    '${field.name} = $fieldType.fromList(${field.name}List)');
-              });
-            } else if (!hostDatatype.isBuiltin &&
-                rootEnumNameSet.contains(field.type.baseName)) {
-              indent.writeln('var ${field.name}: $fieldType? = nil');
-              indent
-                  .write('if let ${field.name}RawValue = $listValue as? Int ');
-              indent.scoped('{', '}', () {
-                indent.writeln(
-                    '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
-              });
-            } else {
-              indent.writeln('let ${field.name} = $listValue as? $fieldType ');
-            }
-          } else {
-            if (!hostDatatype.isBuiltin &&
-                rootClassNameSet.contains(field.type.baseName)) {
-              indent.writeln(
-                  'let ${field.name} = $fieldType.fromList($listValue as! [Any?])!');
-            } else if (!hostDatatype.isBuiltin &&
-                rootEnumNameSet.contains(field.type.baseName)) {
-              indent.writeln(
-                  'let ${field.name} = $fieldType(rawValue: $listValue as! Int)!');
-            } else {
-              indent.writeln('let ${field.name} = $listValue as! $fieldType');
-            }
-          }
-        });
-
-        indent.writeln('');
-        indent.write('return ');
-        indent.scoped('$className(', ')', () {
-          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-            final String comma =
-                getFieldsInSerializationOrder(klass).last == field ? '' : ',';
-            indent.writeln('${field.name}: ${field.name}$comma');
-          }
-        });
-      });
-    }
-
-    const List<String> generatedComments = <String>[
-      ' Generated class from Pigeon that represents data sent in messages.'
-    ];
-    addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec,
-        generatorComments: generatedComments);
-
-    indent.write('struct ${klass.name} ');
-    indent.scoped('{', '}', () {
-      getFieldsInSerializationOrder(klass).forEach(writeField);
-
-      indent.writeln('');
-      writeFromList();
-      writeToList();
-    });
-  }
-
   void writeApi(Api api, Root root) {
     if (api.location == ApiLocation.host) {
       _writeHostApi(indent, api, root);
@@ -648,11 +677,6 @@ void generateSwift(
         indent.writeln('error.details');
       });
     });
-  }
-
-  for (final Class klass in root.classes) {
-    indent.addln('');
-    writeDataClass(klass);
   }
 
   if (root.apis.any((Api api) =>
