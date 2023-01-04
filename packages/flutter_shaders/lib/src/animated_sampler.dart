@@ -11,7 +11,6 @@ import 'package:flutter/rendering.dart';
 typedef AnimatedSamplerBuilder = void Function(
   ui.Image image,
   Size size,
-  Offset offset,
   ui.Canvas canvas,
 );
 
@@ -36,12 +35,12 @@ typedef AnimatedSamplerBuilder = void Function(
 /// ```dart
 /// Widget build(BuildContext context) {
 ///   return AnimatedSampler(
-///     (ui.Image image, Size size, Offset offset, Canvas canvas) {
+///     (ui.Image image, Size size, Canvas canvas) {
 ///       shader
 ///         ..setFloat(0, size.width)
 ///         ..setFloat(1, size.height)
 ///         ..setImageSampler(0, image);
-///       canvas.drawRect(offset & size, Paint()..shader = shader);
+///       canvas.drawRect(Offset.zero & size, Paint()..shader = shader);
 ///     },
 ///     child: widget.child,
 ///   );
@@ -122,6 +121,18 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
         _builder = builder,
         _enabled = enabled;
 
+  @override
+  OffsetLayer updateCompositedLayer(
+      {required covariant _ShaderSamplerBuilderLayer? oldLayer}) {
+    final _ShaderSamplerBuilderLayer layer =
+        oldLayer ?? _ShaderSamplerBuilderLayer(builder);
+    layer
+      ..callback = builder
+      ..size = size
+      ..devicePixelRatio = devicePixelRatio;
+    return layer;
+  }
+
   /// The device pixel ratio used to create the child image.
   double get devicePixelRatio => _devicePixelRatio;
   double _devicePixelRatio;
@@ -130,7 +141,7 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
       return;
     }
     _devicePixelRatio = value;
-    markNeedsPaint();
+    markNeedsCompositedLayerUpdate();
   }
 
   /// The painter used to paint the child snapshot or child widgets.
@@ -141,7 +152,7 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
       return;
     }
     _builder = value;
-    markNeedsPaint();
+    markNeedsCompositedLayerUpdate();
   }
 
   bool get enabled => _enabled;
@@ -156,6 +167,9 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
   }
 
   @override
+  bool get isRepaintBoundary => alwaysNeedsCompositing;
+
+  @override
   bool get alwaysNeedsCompositing => enabled;
 
   @override
@@ -163,38 +177,50 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
     if (size.isEmpty) {
       return;
     }
-
-    if (!enabled) {
-      return super.paint(context, offset);
-    }
-
-    context.pushLayer(
-      _ShaderSamplerBuilderLayer(offset, size, devicePixelRatio, builder),
-      super.paint,
-      offset,
-    );
+    assert(offset == Offset.zero);
+    return super.paint(context, offset);
   }
 }
 
 /// A [Layer] that uses an [AnimatedSamplerBuilder] to create a [ui.Picture]
 /// every time it is added to a scene.
 class _ShaderSamplerBuilderLayer extends OffsetLayer {
-  _ShaderSamplerBuilderLayer(
-    Offset offset,
-    this.size,
-    this.devicePixelRatio,
-    this.callback,
-  ) : super(offset: offset);
+  _ShaderSamplerBuilderLayer(this._callback);
 
-  final Size size;
-  final double devicePixelRatio;
-  final AnimatedSamplerBuilder callback;
+  Size get size => _size;
+  Size _size = Size.zero;
+  set size(Size value) {
+    if (value == size) {
+      return;
+    }
+    _size = value;
+    markNeedsAddToScene();
+  }
+
+  double get devicePixelRatio => _devicePixelRatio;
+  double _devicePixelRatio = 1.0;
+  set devicePixelRatio(double value) {
+    if (value == devicePixelRatio) {
+      return;
+    }
+    _devicePixelRatio = value;
+    markNeedsAddToScene();
+  }
+
+  AnimatedSamplerBuilder get callback => _callback;
+  AnimatedSamplerBuilder _callback;
+  set callback(AnimatedSamplerBuilder value) {
+    if (value == callback) {
+      return;
+    }
+    _callback = value;
+    markNeedsAddToScene();
+  }
 
   ui.Image _buildChildScene(Rect bounds, double pixelRatio) {
     final ui.SceneBuilder builder = ui.SceneBuilder();
     final Matrix4 transform =
         Matrix4.diagonal3Values(pixelRatio, pixelRatio, 1);
-    transform.translate(-(bounds.left + offset.dx), -(bounds.top + offset.dy));
     builder.pushTransform(transform.storage);
     addChildrenToScene(builder);
     builder.pop();
@@ -213,11 +239,11 @@ class _ShaderSamplerBuilderLayer extends OffsetLayer {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     try {
-      callback(image, size, offset, canvas);
+      callback(image, size, canvas);
     } finally {
       image.dispose();
     }
     final ui.Picture picture = pictureRecorder.endRecording();
-    builder.addPicture(Offset.zero, picture);
+    builder.addPicture(offset, picture);
   }
 }
