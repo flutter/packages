@@ -495,10 +495,6 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
 
-/// Writes file header to sink.
-void writeImports(
-    SwiftOptions options, Root root, StringSink sink, Indent indent) {}
-
 /// Generates the ".swift" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateSwift(
