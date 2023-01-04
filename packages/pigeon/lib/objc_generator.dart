@@ -85,6 +85,25 @@ class ObjcGenerator extends Generator<ObjcOptions> {
         writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
       }
       indent.writeln('');
+      for (final Class klass in root.classes) {
+        indent.writeln(
+            '@class ${_className(languageOptions.prefix, klass.name)};');
+      }
+    } else if (fileType == FileType.source) {
+      _writeObjcSourceHelperFunctions(indent);
+      indent.addln('');
+
+      for (final Class klass in root.classes) {
+        _writeObjcSourceDataClassExtension(languageOptions, indent, klass);
+      }
+      indent.writeln('');
+    }
+
+    for (final Class klass in root.classes) {
+      writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+    }
+
+    if (fileType == FileType.header) {
       generateObjcHeader(languageOptions, root, sink, indent);
     } else {
       generateObjcSource(languageOptions, root, sink, indent);
@@ -117,6 +136,46 @@ class ObjcGenerator extends Generator<ObjcOptions> {
     if (fileType == FileType.header) {
       writeObjcHeaderEnum(languageOptions, root, sink, indent, anEnum);
     }
+  }
+
+  @override
+  void writeDataClass(ObjcOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Class klass) {
+    if (fileType == FileType.header) {
+      _writeObjcHeaderDataClass(languageOptions, root, sink, indent, klass);
+    } else {
+      _writeObjcSourceDataClassImplementation(
+          languageOptions, root, sink, indent, klass);
+      indent.writeln('');
+    }
+  }
+
+  @override
+  void writeClassEncode(
+    ObjcOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    // Left blank until functions fully converted to methods.
+  }
+
+  @override
+  void writeClassDecode(
+    ObjcOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    // Left blank until functions fully converted to methods.
   }
 }
 
@@ -221,7 +280,7 @@ bool _isNullable(HostDatatype hostDatatype, TypeDeclaration type) =>
 /// Example '+ (instancetype)makeWithFoo:(NSString *)foo'
 void _writeInitializerDeclaration(Indent indent, Class klass,
     List<Class> classes, List<Enum> enums, String? prefix) {
-  final List<String> enumNames = enums.map((Enum x) => x.name).toList();
+  final List<String> customEnumNames = enums.map((Enum x) => x.name).toList();
   indent.write('+ (instancetype)makeWith');
   bool isFirst = true;
   indent.nest(2, () {
@@ -239,7 +298,7 @@ void _writeInitializerDeclaration(Indent indent, Class klass,
           classes,
           enums,
           (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
-          customResolver: enumNames.contains(field.type.baseName)
+          customResolver: customEnumNames.contains(field.type.baseName)
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
       final String nullable =
@@ -255,50 +314,52 @@ void _writeInitializerDeclaration(Indent indent, Class klass,
 /// @interface Foo : NSObject
 /// @property (nonatomic, copy) NSString *bar;
 /// @end
-void _writeClassDeclarations(
-    Indent indent, List<Class> classes, List<Enum> enums, String? prefix) {
-  final List<String> enumNames = enums.map((Enum x) => x.name).toList();
-  for (final Class klass in classes) {
-    addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec);
+void _writeObjcHeaderDataClass(ObjcOptions languageOptions, Root root,
+    StringSink sink, Indent indent, Class klass) {
+  final List<Class> classes = root.classes;
+  final List<Enum> enums = root.enums;
+  final String? prefix = languageOptions.prefix;
+  final List<String> customEnumNames = enums.map((Enum x) => x.name).toList();
 
-    indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
-    if (getFieldsInSerializationOrder(klass).isNotEmpty) {
-      if (getFieldsInSerializationOrder(klass)
-          .map((NamedType e) => !e.type.isNullable)
-          .any((bool e) => e)) {
-        indent.writeln(
-            '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.');
-        indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
-      }
-      _writeInitializerDeclaration(indent, klass, classes, enums, prefix);
-      indent.addln(';');
-    }
-    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-      final HostDatatype hostDatatype = getFieldHostDatatype(
-          field,
-          classes,
-          enums,
-          (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
-          customResolver: enumNames.contains(field.type.baseName)
-              ? (String x) => _className(prefix, x)
-              : (String x) => '${_className(prefix, x)} *');
-      late final String propertyType;
-      addDocumentationComments(
-          indent, field.documentationComments, _docCommentSpec);
-      if (enumNames.contains(field.type.baseName)) {
-        propertyType = 'assign';
-      } else {
-        propertyType = _propertyTypeForDartType(field);
-      }
-      final String nullability =
-          _isNullable(hostDatatype, field.type) ? ', nullable' : '';
+  addDocumentationComments(
+      indent, klass.documentationComments, _docCommentSpec);
+
+  indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
+  if (getFieldsInSerializationOrder(klass).isNotEmpty) {
+    if (getFieldsInSerializationOrder(klass)
+        .map((NamedType e) => !e.type.isNullable)
+        .any((bool e) => e)) {
       indent.writeln(
-          '@property(nonatomic, $propertyType$nullability) ${hostDatatype.datatype} ${field.name};');
+          '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.');
+      indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
     }
-    indent.writeln('@end');
-    indent.writeln('');
+    _writeInitializerDeclaration(indent, klass, classes, enums, prefix);
+    indent.addln(';');
   }
+  for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+    final HostDatatype hostDatatype = getFieldHostDatatype(
+        field,
+        classes,
+        enums,
+        (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+        customResolver: customEnumNames.contains(field.type.baseName)
+            ? (String x) => _className(prefix, x)
+            : (String x) => '${_className(prefix, x)} *');
+    late final String propertyType;
+    addDocumentationComments(
+        indent, field.documentationComments, _docCommentSpec);
+    if (customEnumNames.contains(field.type.baseName)) {
+      propertyType = 'assign';
+    } else {
+      propertyType = _propertyTypeForDartType(field);
+    }
+    final String nullability =
+        _isNullable(hostDatatype, field.type) ? ', nullable' : '';
+    indent.writeln(
+        '@property(nonatomic, $propertyType$nullability) ${hostDatatype.datatype} ${field.name};');
+  }
+  indent.writeln('@end');
+  indent.writeln('');
 }
 
 /// Generates the name of the codec that will be generated.
@@ -634,13 +695,7 @@ void writeObjcHeaderEnum(ObjcOptions options, Root root, StringSink sink,
 /// provided [options].
 void generateObjcHeader(
     ObjcOptions options, Root root, StringSink sink, Indent indent) {
-  for (final Class klass in root.classes) {
-    indent.writeln('@class ${_className(options.prefix, klass.name)};');
-  }
-
   indent.writeln('');
-
-  _writeClassDeclarations(indent, root.classes, root.enums, options.prefix);
 
   for (final Api api in root.apis) {
     indent.writeln(
@@ -658,9 +713,9 @@ void generateObjcHeader(
   indent.writeln('NS_ASSUME_NONNULL_END');
 }
 
-String _listGetter(List<String> classNames, String list, NamedType field,
+String _listGetter(Set<String> customClassNames, String list, NamedType field,
     int index, String? prefix) {
-  if (classNames.contains(field.type.baseName)) {
+  if (customClassNames.contains(field.type.baseName)) {
     String className = field.type.baseName;
     if (prefix != null) {
       className = '$prefix$className';
@@ -671,11 +726,11 @@ String _listGetter(List<String> classNames, String list, NamedType field,
   }
 }
 
-String _arrayValue(
-    List<String> classNames, List<String> enumNames, NamedType field) {
-  if (classNames.contains(field.type.baseName)) {
+String _arrayValue(Set<String> customClassNames, Set<String> customEnumNames,
+    NamedType field) {
+  if (customClassNames.contains(field.type.baseName)) {
     return '(self.${field.name} ? [self.${field.name} toList] : [NSNull null])';
-  } else if (enumNames.contains(field.type.baseName)) {
+  } else if (customEnumNames.contains(field.type.baseName)) {
     return '@(self.${field.name})';
   } else {
     return '(self.${field.name} ?: [NSNull null])';
@@ -947,23 +1002,15 @@ void writeObjcSourceImports(
   indent.addln('');
 }
 
-/// Generates the ".m" file for the AST represented by [root] to [sink] with the
-/// provided [options].
-void generateObjcSource(
-    ObjcOptions options, Root root, StringSink sink, Indent indent) {
-  final List<String> classNames =
-      root.classes.map((Class x) => x.name).toList();
-  final List<String> enumNames = root.enums.map((Enum x) => x.name).toList();
-
-  void writeHelperFunctions() {
-    indent.format('''
+void _writeObjcSourceHelperFunctions(Indent indent) {
+  indent.format('''
 static NSArray *wrapResult(id result, FlutterError *error) {
 \tif (error) {
 \t\treturn @[ error.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null] ];
 \t}
 \treturn @[ result ?: [NSNull null]  ];
 }''');
-    indent.format('''
+  indent.format('''
 static id GetNullableObject(NSDictionary* dict, id key) {
 \tid result = dict[key];
 \treturn (result == [NSNull null]) ? nil : result;
@@ -973,78 +1020,118 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 \treturn (result == [NSNull null]) ? nil : result;
 }
 ''');
-  }
+}
 
-  void writeDataClassExtension(Class klass) {
-    final String className = _className(options.prefix, klass.name);
-    indent.writeln('@interface $className ()');
-    indent.writeln('+ ($className *)fromList:(NSArray *)list;');
-    indent
-        .writeln('+ (nullable $className *)nullableFromList:(NSArray *)list;');
-    indent.writeln('- (NSArray *)toList;');
-    indent.writeln('@end');
-  }
+void _writeObjcSourceDataClassExtension(
+    ObjcOptions languageOptions, Indent indent, Class klass) {
+  final String className = _className(languageOptions.prefix, klass.name);
+  indent.writeln('@interface $className ()');
+  indent.writeln('+ ($className *)fromList:(NSArray *)list;');
+  indent.writeln('+ (nullable $className *)nullableFromList:(NSArray *)list;');
+  indent.writeln('- (NSArray *)toList;');
+  indent.writeln('@end');
+}
 
-  void writeDataClassImplementation(Class klass) {
-    final String className = _className(options.prefix, klass.name);
-    void writeInitializer() {
-      _writeInitializerDeclaration(
-          indent, klass, root.classes, root.enums, options.prefix);
-      indent.writeScoped(' {', '}', () {
-        const String result = 'pigeonResult';
-        indent.writeln('$className* $result = [[$className alloc] init];');
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          indent.writeln('$result.${field.name} = ${field.name};');
+void _writeObjcSourceDataClassImplementation(ObjcOptions options, Root root,
+    StringSink sink, Indent indent, Class klass) {
+  final Set<String> customClassNames =
+      root.classes.map((Class x) => x.name).toSet();
+  final Set<String> customEnumNames =
+      root.enums.map((Enum x) => x.name).toSet();
+  final String className = _className(options.prefix, klass.name);
+
+  indent.writeln('@implementation $className');
+  _writeInitializer(options, root, sink, indent, klass, customClassNames,
+      customEnumNames, className);
+  _writeClassDecode(options, root, sink, indent, klass, customClassNames,
+      customEnumNames, className);
+  _writeClassEncode(options, root, sink, indent, klass, customClassNames,
+      customEnumNames, className);
+  indent.writeln('@end');
+}
+
+void _writeInitializer(
+  ObjcOptions options,
+  Root root,
+  StringSink sink,
+  Indent indent,
+  Class klass,
+  Set<String> customClassNames,
+  Set<String> customEnumNames,
+  String className,
+) {
+  _writeInitializerDeclaration(
+      indent, klass, root.classes, root.enums, options.prefix);
+  indent.writeScoped(' {', '}', () {
+    const String result = 'pigeonResult';
+    indent.writeln('$className* $result = [[$className alloc] init];');
+    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      indent.writeln('$result.${field.name} = ${field.name};');
+    }
+    indent.writeln('return $result;');
+  });
+}
+
+void _writeClassDecode(
+  ObjcOptions options,
+  Root root,
+  StringSink sink,
+  Indent indent,
+  Class klass,
+  Set<String> customClassNames,
+  Set<String> customEnumNames,
+  String className,
+) {
+  indent.write('+ ($className *)fromList:(NSArray *)list ');
+  indent.scoped('{', '}', () {
+    const String resultName = 'pigeonResult';
+    indent.writeln('$className *$resultName = [[$className alloc] init];');
+    enumerate(getFieldsInSerializationOrder(klass),
+        (int index, final NamedType field) {
+      if (customEnumNames.contains(field.type.baseName)) {
+        indent.writeln(
+            '$resultName.${field.name} = [${_listGetter(customClassNames, 'list', field, index, options.prefix)} integerValue];');
+      } else {
+        indent.writeln(
+            '$resultName.${field.name} = ${_listGetter(customClassNames, 'list', field, index, options.prefix)};');
+        if (!field.type.isNullable) {
+          indent.writeln('NSAssert($resultName.${field.name} != nil, @"");');
         }
-        indent.writeln('return $result;');
-      });
-    }
+      }
+    });
+    indent.writeln('return $resultName;');
+  });
 
-    void writeFromList() {
-      indent.write('+ ($className *)fromList:(NSArray *)list ');
-      indent.scoped('{', '}', () {
-        const String resultName = 'pigeonResult';
-        indent.writeln('$className *$resultName = [[$className alloc] init];');
-        enumerate(getFieldsInSerializationOrder(klass),
-            (int index, final NamedType field) {
-          if (enumNames.contains(field.type.baseName)) {
-            indent.writeln(
-                '$resultName.${field.name} = [${_listGetter(classNames, 'list', field, index, options.prefix)} integerValue];');
-          } else {
-            indent.writeln(
-                '$resultName.${field.name} = ${_listGetter(classNames, 'list', field, index, options.prefix)};');
-            if (!field.type.isNullable) {
-              indent
-                  .writeln('NSAssert($resultName.${field.name} != nil, @"");');
-            }
-          }
-        });
-        indent.writeln('return $resultName;');
-      });
+  indent.writeln(
+      '+ (nullable $className *)nullableFromList:(NSArray *)list { return (list) ? [$className fromList:list] : nil; }');
+}
 
-      indent.writeln(
-          '+ (nullable $className *)nullableFromList:(NSArray *)list { return (list) ? [$className fromList:list] : nil; }');
-    }
+void _writeClassEncode(
+  ObjcOptions options,
+  Root root,
+  StringSink sink,
+  Indent indent,
+  Class klass,
+  Set<String> customClassNames,
+  Set<String> customEnumNames,
+  String className,
+) {
+  indent.write('- (NSArray *)toList ');
+  indent.scoped('{', '}', () {
+    indent.write('return');
+    indent.scoped(' @[', '];', () {
+      for (final NamedType field in klass.fields) {
+        indent.writeln(
+            '${_arrayValue(customClassNames, customEnumNames, field)},');
+      }
+    });
+  });
+}
 
-    void writeToList() {
-      indent.write('- (NSArray *)toList ');
-      indent.scoped('{', '}', () {
-        indent.write('return');
-        indent.scoped(' @[', '];', () {
-          for (final NamedType field in klass.fields) {
-            indent.writeln('${_arrayValue(classNames, enumNames, field)},');
-          }
-        });
-      });
-    }
-
-    indent.writeln('@implementation $className');
-    writeInitializer();
-    writeFromList();
-    writeToList();
-    indent.writeln('@end');
-  }
-
+/// Generates the ".m" file for the AST represented by [root] to [sink] with the
+/// provided [options].
+void generateObjcSource(
+    ObjcOptions options, Root root, StringSink sink, Indent indent) {
   void writeApi(Api api) {
     final String codecName = _getCodecName(options.prefix, api.name);
     if (getCodecClasses(api, root).isNotEmpty) {
@@ -1060,14 +1147,6 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     }
   }
 
-  writeHelperFunctions();
-  indent.addln('');
-  root.classes.forEach(writeDataClassExtension);
-  indent.writeln('');
-  for (final Class klass in root.classes) {
-    writeDataClassImplementation(klass);
-    indent.writeln('');
-  }
   root.apis.forEach(writeApi);
 }
 

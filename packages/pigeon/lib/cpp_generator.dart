@@ -88,7 +88,12 @@ class CppGenerator extends Generator<CppOptions> {
     }
 
     indent.addln('');
-
+    if (fileType == FileType.header) {
+      _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
+    }
+    for (final Class klass in root.classes) {
+      writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+    }
     if (fileType == FileType.header) {
       generateCppHeader(languageOptions, root, sink, indent);
     } else {
@@ -122,6 +127,53 @@ class CppGenerator extends Generator<CppOptions> {
     if (fileType == FileType.header) {
       writeCppHeaderEnum(languageOptions, root, sink, indent, anEnum);
     }
+  }
+
+  @override
+  void writeDataClass(CppOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Class klass) {
+    if (fileType == FileType.header) {
+      // When generating for a Pigeon unit test, add a test fixture friend class to
+      // allow unit testing private methods, since testing serialization via public
+      // methods is essentially an end-to-end test.
+      String? testFixtureClass;
+      if (languageOptions.namespace?.endsWith('_pigeontest') ?? false) {
+        testFixtureClass =
+            '${_pascalCaseFromSnakeCase(languageOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
+      }
+      _writeCppHeaderDataClass(languageOptions, root, sink, indent, klass,
+          testFriend: testFixtureClass);
+    } else {
+      _writeCppSourceDataClass(languageOptions, root, sink, indent, klass);
+    }
+  }
+
+  @override
+  void writeClassEncode(
+    CppOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    // Left blank until functions fully converted to methods.
+  }
+
+  @override
+  void writeClassDecode(
+    CppOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    // Left blank until functions fully converted to methods.
   }
 }
 
@@ -251,9 +303,10 @@ $friendLines
 
 /// Writes the declaration for the custom class [klass].
 ///
-/// See [_writeDataClassImplementation] for the corresponding declaration.
+/// See [_writeCppSourceDataClass] for the corresponding declaration.
 /// This is intended to be added to the header.
-void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
+void _writeCppHeaderDataClass(CppOptions languageOptions, Root root,
+    StringSink sink, Indent indent, Class klass,
     {String? testFriend}) {
   indent.addln('');
 
@@ -328,9 +381,10 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
 
 /// Writes the implementation for the custom class [klass].
 ///
-/// See [_writeDataClassDeclaration] for the corresponding declaration.
+/// See [_writeCppHeaderDataClass] for the corresponding declaration.
 /// This is intended to be added to the implementation file.
-void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
+void _writeCppSourceDataClass(CppOptions languageOptions, Root root,
+    StringSink sink, Indent indent, Class klass) {
   final Set<String> rootClassNameSet =
       root.classes.map((Class x) => x.name).toSet();
   final Set<String> rootEnumNameSet =
@@ -369,7 +423,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
         '{ return $returnExpression; }');
     indent.writeln(makeSetter(hostDatatype));
     if (hostDatatype.isNullable) {
-      // Write the non-nullable variant; see _writeDataClassDeclaration.
+      // Write the non-nullable variant; see _writeCppHeaderDataClass.
       final HostDatatype nonNullType = _nonNullableType(hostDatatype);
       indent.writeln(makeSetter(nonNullType));
     }
@@ -1136,24 +1190,6 @@ void writeCppHeaderEnum(CppOptions options, Root root, StringSink sink,
 /// provided [options] and [headerFileName].
 void generateCppHeader(
     CppOptions options, Root root, StringSink sink, Indent indent) {
-  // When generating for a Pigeon unit test, add a test fixture friend class to
-  // allow unit testing private methods, since testing serialization via public
-  // methods is essentially an end-to-end test.
-  String? testFixtureClass;
-  if (options.namespace?.endsWith('_pigeontest') ?? false) {
-    testFixtureClass =
-        '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
-  }
-
-  _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
-
-  for (final Class klass in root.classes) {
-    _writeDataClassDeclaration(indent, klass, root,
-        // Add a hook for unit testing data classes when using the namespace
-        // used by pigeon tests.
-        testFriend: testFixtureClass);
-  }
-
   for (final Api api in root.apis) {
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodecHeader(indent, api, root);
@@ -1215,10 +1251,6 @@ void writeCppSourceImports(
 /// provided [options].
 void generateCppSource(
     CppOptions options, Root root, StringSink sink, Indent indent) {
-  for (final Class klass in root.classes) {
-    _writeDataClassImplementation(indent, klass, root);
-  }
-
   for (final Api api in root.apis) {
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodecSource(indent, api, root);
