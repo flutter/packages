@@ -289,23 +289,23 @@ $resultAt != null
       });
     });
   }
-}
 
-/// Generates Dart files for testing with specified [DartOptions]
-void generateTest(DartOptions languageOptions, Root root, StringSink sink) {
-  final Indent indent = Indent(sink);
-  final String sourceOutPath = languageOptions.sourceOutPath ?? '';
-  final String testOutPath = languageOptions.testOutPath ?? '';
-  writeTestHeader(languageOptions, root, sink, indent);
-  writeTestImports(languageOptions, root, sink, indent);
-  generateTestDart(
-    languageOptions,
-    root,
-    sink,
-    indent,
-    sourceOutPath: sourceOutPath,
-    testOutPath: testOutPath,
-  );
+  /// Generates Dart files for testing with specified [DartOptions]
+  void generateTest(DartOptions languageOptions, Root root, StringSink sink) {
+    final Indent indent = Indent(sink);
+    final String sourceOutPath = languageOptions.sourceOutPath ?? '';
+    final String testOutPath = languageOptions.testOutPath ?? '';
+    writeTestHeader(languageOptions, root, sink, indent);
+    writeTestImports(languageOptions, root, sink, indent);
+    generateTestDart(
+      languageOptions,
+      root,
+      sink,
+      indent,
+      sourceOutPath: sourceOutPath,
+      testOutPath: testOutPath,
+    );
+  }
 }
 
 String _escapeForDartSingleQuotedString(String raw) {
