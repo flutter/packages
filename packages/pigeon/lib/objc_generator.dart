@@ -89,6 +89,7 @@ class ObjcGenerator extends Generator<ObjcOptions> {
         indent.writeln(
             '@class ${_className(languageOptions.prefix, klass.name)};');
       }
+      indent.addln('');
     } else if (fileType == FileType.source) {
       _writeObjcSourceHelperFunctions(indent);
       indent.addln('');
@@ -161,7 +162,12 @@ class ObjcGenerator extends Generator<ObjcOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    // Left blank until functions fully converted to methods.
+    if (fileType == FileType.source) {
+      final String className = _className(languageOptions.prefix, klass.name);
+
+      _writeClassEncode(languageOptions, root, sink, indent, klass,
+          customClassNames, customEnumNames, className);
+    }
   }
 
   @override
@@ -175,7 +181,12 @@ class ObjcGenerator extends Generator<ObjcOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    // Left blank until functions fully converted to methods.
+    if (fileType == FileType.source) {
+      final String className = _className(languageOptions.prefix, klass.name);
+
+      _writeClassDecode(languageOptions, root, sink, indent, klass,
+          customClassNames, customEnumNames, className);
+    }
   }
 }
 

@@ -159,7 +159,8 @@ class CppGenerator extends Generator<CppOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    // Left blank until functions fully converted to methods.
+    _writeCppSourceClassEncode(languageOptions, root, sink, indent, klass,
+        customClassNames, customEnumNames);
   }
 
   @override
@@ -173,7 +174,8 @@ class CppGenerator extends Generator<CppOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    // Left blank until functions fully converted to methods.
+    _writeCppSourceClassDecode(languageOptions, root, sink, indent, klass,
+        customClassNames, customEnumNames);
   }
 }
 
@@ -379,59 +381,15 @@ void _writeCppHeaderDataClass(CppOptions languageOptions, Root root,
   indent.writeln('');
 }
 
-/// Writes the implementation for the custom class [klass].
-///
-/// See [_writeCppHeaderDataClass] for the corresponding declaration.
-/// This is intended to be added to the implementation file.
-void _writeCppSourceDataClass(CppOptions languageOptions, Root root,
-    StringSink sink, Indent indent, Class klass) {
-  final Set<String> rootClassNameSet =
-      root.classes.map((Class x) => x.name).toSet();
-  final Set<String> rootEnumNameSet =
-      root.enums.map((Enum x) => x.name).toSet();
-
-  indent.addln('');
-  indent.writeln('$_commentPrefix ${klass.name}');
-  indent.addln('');
-
-  // Getters and setters.
-  for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-    final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
-        root.enums, (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-    final String instanceVariableName = _makeInstanceVariableName(field);
-    final String qualifiedGetterName =
-        '${klass.name}::${_makeGetterName(field)}';
-    final String qualifiedSetterName =
-        '${klass.name}::${_makeSetterName(field)}';
-    final String returnExpression = hostDatatype.isNullable
-        ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr'
-        : instanceVariableName;
-
-    // Generates the string for a setter treating the type as [type], to allow
-    // generating multiple setter variants.
-    String makeSetter(HostDatatype type) {
-      const String setterArgumentName = 'value_arg';
-      final String valueExpression = type.isNullable
-          ? '$setterArgumentName ? ${_valueType(type)}(*$setterArgumentName) : std::nullopt'
-          : setterArgumentName;
-      return 'void $qualifiedSetterName(${_unownedArgumentType(type)} $setterArgumentName) '
-          '{ $instanceVariableName = $valueExpression; }';
-    }
-
-    indent.writeln(
-        '${_getterReturnType(hostDatatype)} $qualifiedGetterName() const '
-        '{ return $returnExpression; }');
-    indent.writeln(makeSetter(hostDatatype));
-    if (hostDatatype.isNullable) {
-      // Write the non-nullable variant; see _writeCppHeaderDataClass.
-      final HostDatatype nonNullType = _nonNullableType(hostDatatype);
-      indent.writeln(makeSetter(nonNullType));
-    }
-
-    indent.addln('');
-  }
-
-  // Serialization.
+void _writeCppSourceClassEncode(
+  CppOptions languageOptions,
+  Root root,
+  StringSink sink,
+  Indent indent,
+  Class klass,
+  Set<String> customClassNames,
+  Set<String> customEnumNames,
+) {
   indent
       .write('flutter::EncodableList ${klass.name}::ToEncodableList() const ');
   indent.scoped('{', '}', () {
@@ -447,12 +405,12 @@ void _writeCppSourceDataClass(CppOptions languageOptions, Root root,
 
         String encodableValue = '';
         if (!hostDatatype.isBuiltin &&
-            rootClassNameSet.contains(field.type.baseName)) {
+            customClassNames.contains(field.type.baseName)) {
           final String operator = field.type.isNullable ? '->' : '.';
           encodableValue =
               'flutter::EncodableValue($instanceVariable${operator}ToEncodableList())';
         } else if (!hostDatatype.isBuiltin &&
-            rootEnumNameSet.contains(field.type.baseName)) {
+            customEnumNames.contains(field.type.baseName)) {
           final String nonNullValue =
               field.type.isNullable ? '(*$instanceVariable)' : instanceVariable;
           encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
@@ -472,12 +430,17 @@ void _writeCppSourceDataClass(CppOptions languageOptions, Root root,
     });
   });
   indent.addln('');
+}
 
-  // Default constructor.
-  indent.writeln('${klass.name}::${klass.name}() {}');
-  indent.addln('');
-
-  // Deserialization.
+void _writeCppSourceClassDecode(
+  CppOptions languageOptions,
+  Root root,
+  StringSink sink,
+  Indent indent,
+  Class klass,
+  Set<String> customClassNames,
+  Set<String> customEnumNames,
+) {
   indent.write(
       '${klass.name}::${klass.name}(const flutter::EncodableList& list) ');
   indent.scoped('{', '}', () {
@@ -489,7 +452,7 @@ void _writeCppSourceDataClass(CppOptions languageOptions, Root root,
       final String encodableFieldName =
           '${_encodablePrefix}_${_makeVariableName(field)}';
       indent.writeln('auto& $encodableFieldName = list[$index];');
-      if (rootEnumNameSet.contains(field.type.baseName)) {
+      if (customEnumNames.contains(field.type.baseName)) {
         indent.writeln(
             'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t$instanceVariableName = (${field.type.baseName})*$pointerFieldName;');
       } else {
@@ -525,6 +488,75 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
     });
   });
   indent.addln('');
+}
+
+void _writeCppSourceClassField(CppOptions languageOptions, Root root,
+    StringSink sink, Indent indent, Class klass, NamedType field) {
+  final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
+      root.enums, (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+  final String instanceVariableName = _makeInstanceVariableName(field);
+  final String qualifiedGetterName = '${klass.name}::${_makeGetterName(field)}';
+  final String qualifiedSetterName = '${klass.name}::${_makeSetterName(field)}';
+  final String returnExpression = hostDatatype.isNullable
+      ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr'
+      : instanceVariableName;
+
+  // Generates the string for a setter treating the type as [type], to allow
+  // generating multiple setter variants.
+  String makeSetter(HostDatatype type) {
+    const String setterArgumentName = 'value_arg';
+    final String valueExpression = type.isNullable
+        ? '$setterArgumentName ? ${_valueType(type)}(*$setterArgumentName) : std::nullopt'
+        : setterArgumentName;
+    return 'void $qualifiedSetterName(${_unownedArgumentType(type)} $setterArgumentName) '
+        '{ $instanceVariableName = $valueExpression; }';
+  }
+
+  indent.writeln(
+      '${_getterReturnType(hostDatatype)} $qualifiedGetterName() const '
+      '{ return $returnExpression; }');
+  indent.writeln(makeSetter(hostDatatype));
+  if (hostDatatype.isNullable) {
+    // Write the non-nullable variant; see _writeCppHeaderDataClass.
+    final HostDatatype nonNullType = _nonNullableType(hostDatatype);
+    indent.writeln(makeSetter(nonNullType));
+  }
+
+  indent.addln('');
+}
+
+/// Writes the implementation for the custom class [klass].
+///
+/// See [_writeCppHeaderDataClass] for the corresponding declaration.
+/// This is intended to be added to the implementation file.
+void _writeCppSourceDataClass(CppOptions languageOptions, Root root,
+    StringSink sink, Indent indent, Class klass) {
+  final Set<String> customClassNames =
+      root.classes.map((Class x) => x.name).toSet();
+  final Set<String> customEnumNames =
+      root.enums.map((Enum x) => x.name).toSet();
+
+  indent.addln('');
+  indent.writeln('$_commentPrefix ${klass.name}');
+  indent.addln('');
+
+  // Getters and setters.
+  for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+    _writeCppSourceClassField(
+        languageOptions, root, sink, indent, klass, field);
+  }
+
+  // Serialization.
+  _writeCppSourceClassEncode(languageOptions, root, sink, indent, klass,
+      customClassNames, customEnumNames);
+
+  // Default constructor.
+  indent.writeln('${klass.name}::${klass.name}() {}');
+  indent.addln('');
+
+  // Deserialization.
+  _writeCppSourceClassDecode(languageOptions, root, sink, indent, klass,
+      customClassNames, customEnumNames);
 }
 
 void _writeHostApiHeader(Indent indent, Api api, Root root) {
