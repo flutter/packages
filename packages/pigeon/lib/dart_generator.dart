@@ -84,9 +84,16 @@ class DartGenerator extends Generator<DartOptions> {
 
     writeHeaders(languageOptions, root, sink, indent, fileType);
     writeImports(languageOptions, root, sink, indent, fileType);
+
     for (final Enum anEnum in root.enums) {
       writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
     }
+
+    for (final Class klass in root.classes) {
+      indent.writeln('');
+      writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+    }
+
     generateDart(languageOptions, root, sink, indent);
   }
 
@@ -133,22 +140,172 @@ class DartGenerator extends Generator<DartOptions> {
     });
   }
 
-  /// Generates Dart files for testing with specified [DartOptions]
-  void generateTest(DartOptions languageOptions, Root root, StringSink sink) {
-    final Indent indent = Indent(sink);
-    final String sourceOutPath = languageOptions.sourceOutPath ?? '';
-    final String testOutPath = languageOptions.testOutPath ?? '';
-    writeTestHeader(languageOptions, root, sink, indent);
-    writeTestImports(languageOptions, root, sink, indent);
-    generateTestDart(
-      languageOptions,
-      root,
-      sink,
-      indent,
-      sourceOutPath: sourceOutPath,
-      testOutPath: testOutPath,
-    );
+  @override
+  void writeDataClass(DartOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Class klass) {
+    final List<String> customClassNames =
+        root.classes.map((Class x) => x.name).toList();
+    final List<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toList();
+    void writeConstructor() {
+      indent.write(klass.name);
+      indent.scoped('({', '});', () {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          final String required = field.type.isNullable ? '' : 'required ';
+          indent.writeln('${required}this.${field.name},');
+        }
+      });
+    }
+
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec);
+
+    indent.write('class ${klass.name} ');
+    indent.scoped('{', '}', () {
+      writeConstructor();
+      indent.addln('');
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        addDocumentationComments(
+            indent, field.documentationComments, _docCommentSpec);
+
+        final String datatype = _addGenericTypesNullable(field.type);
+        indent.writeln('$datatype ${field.name};');
+        indent.writeln('');
+      }
+      writeEncode(languageOptions, root, sink, indent, fileType, klass,
+          customClassNames, customEnumNames);
+      indent.writeln('');
+      writeDecode(languageOptions, root, sink, indent, fileType, klass,
+          customClassNames, customEnumNames);
+    });
   }
+
+  @override
+  void writeEncode(
+    DartOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    List<String> customClassNames,
+    List<String> customEnumNames,
+  ) {
+    indent.write('Object encode() ');
+    indent.scoped('{', '}', () {
+      indent.write(
+        'return <Object?>',
+      );
+      indent.scoped('[', '];', () {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          final String conditional = field.type.isNullable ? '?' : '';
+          if (customClassNames.contains(field.type.baseName)) {
+            indent.writeln(
+              '${field.name}$conditional.encode(),',
+            );
+          } else if (customEnumNames.contains(field.type.baseName)) {
+            indent.writeln(
+              '${field.name}$conditional.index,',
+            );
+          } else {
+            indent.writeln('${field.name},');
+          }
+        }
+      });
+    });
+  }
+
+  @override
+  void writeDecode(
+    DartOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    List<String> customClassNames,
+    List<String> customEnumNames,
+  ) {
+    void writeValueDecode(NamedType field, int index) {
+      final String resultAt = 'result[$index]';
+      if (customClassNames.contains(field.type.baseName)) {
+        final String nonNullValue =
+            '${field.type.baseName}.decode($resultAt! as List<Object?>)';
+        indent.format(
+            field.type.isNullable
+                ? '''
+$resultAt != null
+\t\t? $nonNullValue
+\t\t: null'''
+                : nonNullValue,
+            leadingSpace: false,
+            trailingNewline: false);
+      } else if (customEnumNames.contains(field.type.baseName)) {
+        final String nonNullValue =
+            '${field.type.baseName}.values[$resultAt! as int]';
+        indent.format(
+            field.type.isNullable
+                ? '''
+$resultAt != null
+\t\t? $nonNullValue
+\t\t: null'''
+                : nonNullValue,
+            leadingSpace: false,
+            trailingNewline: false);
+      } else if (field.type.typeArguments.isNotEmpty) {
+        final String genericType = _makeGenericTypeArguments(field.type);
+        final String castCall = _makeGenericCastCall(field.type);
+        final String castCallPrefix = field.type.isNullable ? '?' : '!';
+        indent.add(
+          '($resultAt as $genericType?)$castCallPrefix$castCall',
+        );
+      } else {
+        final String genericdType = _addGenericTypesNullable(field.type);
+        if (field.type.isNullable) {
+          indent.add(
+            '$resultAt as $genericdType',
+          );
+        } else {
+          indent.add(
+            '$resultAt! as $genericdType',
+          );
+        }
+      }
+    }
+
+    indent.write(
+      'static ${klass.name} decode(Object result) ',
+    );
+    indent.scoped('{', '}', () {
+      indent.writeln('result as List<Object?>;');
+      indent.write('return ${klass.name}');
+      indent.scoped('(', ');', () {
+        enumerate(getFieldsInSerializationOrder(klass),
+            (int index, final NamedType field) {
+          indent.write('${field.name}: ');
+          writeValueDecode(field, index);
+          indent.addln(',');
+        });
+      });
+    });
+  }
+}
+
+/// Generates Dart files for testing with specified [DartOptions]
+void generateTest(DartOptions languageOptions, Root root, StringSink sink) {
+  final Indent indent = Indent(sink);
+  final String sourceOutPath = languageOptions.sourceOutPath ?? '';
+  final String testOutPath = languageOptions.testOutPath ?? '';
+  writeTestHeader(languageOptions, root, sink, indent);
+  writeTestImports(languageOptions, root, sink, indent);
+  generateTestDart(
+    languageOptions,
+    root,
+    sink,
+    indent,
+    sourceOutPath: sourceOutPath,
+    testOutPath: testOutPath,
+  );
 }
 
 String _escapeForDartSingleQuotedString(String raw) {
@@ -554,133 +711,6 @@ String _addGenericTypesNullable(TypeDeclaration type) {
 /// Generates Dart source code for the given AST represented by [root],
 /// outputting the code to [sink].
 void generateDart(DartOptions opt, Root root, StringSink sink, Indent indent) {
-  final List<String> customClassNames =
-      root.classes.map((Class x) => x.name).toList();
-  final List<String> customEnumNames =
-      root.enums.map((Enum x) => x.name).toList();
-
-  void writeDataClass(Class klass) {
-    void writeConstructor() {
-      indent.write(klass.name);
-      indent.scoped('({', '});', () {
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          final String required = field.type.isNullable ? '' : 'required ';
-          indent.writeln('${required}this.${field.name},');
-        }
-      });
-    }
-
-    void writeEncode() {
-      indent.write('Object encode() ');
-      indent.scoped('{', '}', () {
-        indent.write(
-          'return <Object?>',
-        );
-        indent.scoped('[', '];', () {
-          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-            final String conditional = field.type.isNullable ? '?' : '';
-            if (customClassNames.contains(field.type.baseName)) {
-              indent.writeln(
-                '${field.name}$conditional.encode(),',
-              );
-            } else if (customEnumNames.contains(field.type.baseName)) {
-              indent.writeln(
-                '${field.name}$conditional.index,',
-              );
-            } else {
-              indent.writeln('${field.name},');
-            }
-          }
-        });
-      });
-    }
-
-    void writeDecode() {
-      void writeValueDecode(NamedType field, int index) {
-        final String resultAt = 'result[$index]';
-        if (customClassNames.contains(field.type.baseName)) {
-          final String nonNullValue =
-              '${field.type.baseName}.decode($resultAt! as List<Object?>)';
-          indent.format(
-              field.type.isNullable
-                  ? '''
-$resultAt != null
-\t\t? $nonNullValue
-\t\t: null'''
-                  : nonNullValue,
-              leadingSpace: false,
-              trailingNewline: false);
-        } else if (customEnumNames.contains(field.type.baseName)) {
-          final String nonNullValue =
-              '${field.type.baseName}.values[$resultAt! as int]';
-          indent.format(
-              field.type.isNullable
-                  ? '''
-$resultAt != null
-\t\t? $nonNullValue
-\t\t: null'''
-                  : nonNullValue,
-              leadingSpace: false,
-              trailingNewline: false);
-        } else if (field.type.typeArguments.isNotEmpty) {
-          final String genericType = _makeGenericTypeArguments(field.type);
-          final String castCall = _makeGenericCastCall(field.type);
-          final String castCallPrefix = field.type.isNullable ? '?' : '!';
-          indent.add(
-            '($resultAt as $genericType?)$castCallPrefix$castCall',
-          );
-        } else {
-          final String genericdType = _addGenericTypesNullable(field.type);
-          if (field.type.isNullable) {
-            indent.add(
-              '$resultAt as $genericdType',
-            );
-          } else {
-            indent.add(
-              '$resultAt! as $genericdType',
-            );
-          }
-        }
-      }
-
-      indent.write(
-        'static ${klass.name} decode(Object result) ',
-      );
-      indent.scoped('{', '}', () {
-        indent.writeln('result as List<Object?>;');
-        indent.write('return ${klass.name}');
-        indent.scoped('(', ');', () {
-          enumerate(getFieldsInSerializationOrder(klass),
-              (int index, final NamedType field) {
-            indent.write('${field.name}: ');
-            writeValueDecode(field, index);
-            indent.addln(',');
-          });
-        });
-      });
-    }
-
-    addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec);
-
-    indent.write('class ${klass.name} ');
-    indent.scoped('{', '}', () {
-      writeConstructor();
-      indent.addln('');
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        addDocumentationComments(
-            indent, field.documentationComments, _docCommentSpec);
-
-        final String datatype = _addGenericTypesNullable(field.type);
-        indent.writeln('$datatype ${field.name};');
-        indent.writeln('');
-      }
-      writeEncode();
-      indent.writeln('');
-      writeDecode();
-    });
-  }
-
   void writeApi(Api api) {
     if (api.location == ApiLocation.host) {
       _writeHostApi(opt, indent, api, root);
@@ -689,10 +719,6 @@ $resultAt != null
     }
   }
 
-  for (final Class klass in root.classes) {
-    indent.writeln('');
-    writeDataClass(klass);
-  }
   for (final Api api in root.apis) {
     indent.writeln('');
     writeApi(api);

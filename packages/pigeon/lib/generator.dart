@@ -9,13 +9,15 @@ import 'generator_tools.dart';
 ///
 /// This provides the structure that is common across generators for different languages.
 abstract class Generator<T> {
-  /// Generates files for specified language with specified [languageOptions]
+  /// Generates files for the specified language with specified [languageOptions]
   ///
   /// This method, when overridden, should follow a generic structure that is currently:
   /// 1. Create Indent
   /// 2. Write File Headers
   /// 3. Write Imports
-  /// 4. Generate File
+  /// 4. Write Enums
+  /// 5. Write Data Classes
+  /// 6. Write Apis
   void generate(
     T languageOptions,
     Root root,
@@ -41,7 +43,7 @@ abstract class Generator<T> {
     FileType fileType,
   );
 
-  /// Writes single Enum to file.
+  /// Writes a single Enum to file.
   void writeEnum(
     T languageOptions,
     Root root,
@@ -50,4 +52,46 @@ abstract class Generator<T> {
     FileType fileType,
     Enum anEnum,
   );
+
+  /// Writes a single data class to file.
+  void writeDataClass(
+    T languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+  );
+
+  /// Writes a single class encode method to file.
+  void writeEncode(
+    T languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    List<String> customClassNames,
+    List<String> customEnumNames,
+  );
+
+  /// Writes a single class decode method to file.
+  void writeDecode(
+    T languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    List<String> customClassNames,
+    List<String> customEnumNames,
+  );
+
+  // /// Writes a single Flutter Api to file.
+  // void writeFlutterApi(T languageOptions, Root root, StringSink sink,
+  //     Indent indent, FileType fileType, Api api,);
+
+  // /// Writes a single Host Api to file.
+  // void writeHostApi(T languageOptions, Root root, StringSink sink,
+  //     Indent indent, FileType fileType, Api api,);
 }
