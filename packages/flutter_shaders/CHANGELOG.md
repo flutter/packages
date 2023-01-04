@@ -1,3 +1,11 @@
+## 0.0.6
+
+* Fix bug in `AnimatedSampler` that caused children with non-zero offsets to
+  be rendered offscreen.
+* Removed `offset` parameter from `AnimatedSamplerBuilder`. The offset will
+  always be `Offset.zero` now and this is no longer necessary.
+
+
 ## 0.0.5
 
 * Remove restriction on `AnimatedSampler` child repainting.
