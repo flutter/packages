@@ -84,6 +84,10 @@ class KotlinGenerator extends Generator<KotlinOptions> {
       indent.writeln('');
       writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
     }
+    for (final Class klass in root.classes) {
+      indent.addln('');
+      writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+    }
     generateKotlin(languageOptions, root, sink, indent);
   }
 
@@ -142,6 +146,168 @@ class KotlinGenerator extends Generator<KotlinOptions> {
         });
       });
     });
+  }
+
+  @override
+  void writeDataClass(KotlinOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Class klass) {
+    final Set<String> customClassNames =
+        root.classes.map((Class x) => x.name).toSet();
+    final Set<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toSet();
+    void writeField(NamedType field) {
+      addDocumentationComments(
+          indent, field.documentationComments, _docCommentSpec);
+      indent.write(
+          'val ${field.name}: ${_nullsafeKotlinTypeForDartType(field.type)}');
+      final String defaultNil = field.type.isNullable ? ' = null' : '';
+      indent.add(defaultNil);
+    }
+
+    const List<String> generatedMessages = <String>[
+      ' Generated class from Pigeon that represents data sent in messages.'
+    ];
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec,
+        generatorComments: generatedMessages);
+
+    indent.write('data class ${klass.name} ');
+    indent.scoped('(', '', () {
+      for (final NamedType element in getFieldsInSerializationOrder(klass)) {
+        writeField(element);
+        if (getFieldsInSerializationOrder(klass).last != element) {
+          indent.addln(',');
+        } else {
+          indent.addln('');
+        }
+      }
+    });
+
+    indent.scoped(') {', '}', () {
+      writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
+          customClassNames, customEnumNames);
+      writeClassEncode(languageOptions, root, sink, indent, fileType, klass,
+          customClassNames, customEnumNames);
+    });
+  }
+
+  @override
+  void writeClassEncode(
+    KotlinOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    indent.write('fun toList(): List<Any?> ');
+    indent.scoped('{', '}', () {
+      indent.write('return listOf<Any?>');
+      indent.scoped('(', ')', () {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          final HostDatatype hostDatatype = _getHostDatatype(root, field);
+          String toWriteValue = '';
+          final String fieldName = field.name;
+          if (!hostDatatype.isBuiltin &&
+              customClassNames.contains(field.type.baseName)) {
+            toWriteValue = '$fieldName?.toList()';
+          } else if (!hostDatatype.isBuiltin &&
+              customEnumNames.contains(field.type.baseName)) {
+            toWriteValue = '$fieldName?.raw';
+          } else {
+            toWriteValue = fieldName;
+          }
+          indent.writeln('$toWriteValue,');
+        }
+      });
+    });
+  }
+
+  @override
+  void writeClassDecode(
+    KotlinOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    final String className = klass.name;
+
+    indent.write('companion object ');
+    indent.scoped('{', '}', () {
+      indent.writeln('@Suppress("UNCHECKED_CAST")');
+      indent.write('fun fromList(list: List<Any?>): $className ');
+
+      indent.scoped('{', '}', () {
+        enumerate(getFieldsInSerializationOrder(klass),
+            (int index, final NamedType field) {
+          final HostDatatype hostDatatype = _getHostDatatype(root, field);
+
+          // The StandardMessageCodec can give us [Integer, Long] for
+          // a Dart 'int'.  To keep things simple we just use 64bit
+          // longs in Pigeon with Kotlin.
+          final bool isInt = field.type.baseName == 'int';
+
+          final String listValue = 'list[$index]';
+          final String fieldType = _kotlinTypeForDartType(field.type);
+
+          if (field.type.isNullable) {
+            if (!hostDatatype.isBuiltin &&
+                customClassNames.contains(field.type.baseName)) {
+              indent.write('val ${field.name}: $fieldType? = ');
+              indent.add('($listValue as? List<Any?>)?.let ');
+              indent.scoped('{', '}', () {
+                indent.writeln('$fieldType.fromList(it)');
+              });
+            } else if (!hostDatatype.isBuiltin &&
+                customEnumNames.contains(field.type.baseName)) {
+              indent.write('val ${field.name}: $fieldType? = ');
+              indent.add('($listValue as? Int)?.let ');
+              indent.scoped('{', '}', () {
+                indent.writeln('$fieldType.ofRaw(it)');
+              });
+            } else if (isInt) {
+              indent.write('val ${field.name} = $listValue');
+              indent.addln(
+                  '.let { if (it is Int) it.toLong() else it as? Long }');
+            } else {
+              indent.writeln('val ${field.name} = $listValue as? $fieldType');
+            }
+          } else {
+            if (!hostDatatype.isBuiltin &&
+                customClassNames.contains(field.type.baseName)) {
+              indent.writeln(
+                  'val ${field.name} = $fieldType.fromList($listValue as List<Any?>)');
+            } else if (!hostDatatype.isBuiltin &&
+                customEnumNames.contains(field.type.baseName)) {
+              indent.write(
+                  'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
+            } else {
+              indent.writeln('val ${field.name} = $listValue as $fieldType');
+            }
+          }
+        });
+
+        indent.writeln('');
+        indent.write('return $className(');
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          final String comma =
+              getFieldsInSerializationOrder(klass).last == field ? '' : ', ';
+          indent.add('${field.name}$comma');
+        }
+        indent.addln(')');
+      });
+    });
+  }
+
+  HostDatatype _getHostDatatype(Root root, NamedType field) {
+    return getFieldHostDatatype(field, root.classes, root.enums,
+        (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
   }
 }
 
@@ -519,145 +685,6 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
 /// provided [options].
 void generateKotlin(
     KotlinOptions options, Root root, StringSink sink, Indent indent) {
-  final Set<String> rootClassNameSet =
-      root.classes.map((Class x) => x.name).toSet();
-  final Set<String> rootEnumNameSet =
-      root.enums.map((Enum x) => x.name).toSet();
-
-  HostDatatype getHostDatatype(NamedType field) {
-    return getFieldHostDatatype(field, root.classes, root.enums,
-        (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
-  }
-
-  void writeDataClass(Class klass) {
-    void writeField(NamedType field) {
-      addDocumentationComments(
-          indent, field.documentationComments, _docCommentSpec);
-      indent.write(
-          'val ${field.name}: ${_nullsafeKotlinTypeForDartType(field.type)}');
-      final String defaultNil = field.type.isNullable ? ' = null' : '';
-      indent.add(defaultNil);
-    }
-
-    void writeToList() {
-      indent.write('fun toList(): List<Any?> ');
-      indent.scoped('{', '}', () {
-        indent.write('return listOf<Any?>');
-        indent.scoped('(', ')', () {
-          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-            final HostDatatype hostDatatype = getHostDatatype(field);
-            String toWriteValue = '';
-            final String fieldName = field.name;
-            if (!hostDatatype.isBuiltin &&
-                rootClassNameSet.contains(field.type.baseName)) {
-              toWriteValue = '$fieldName?.toList()';
-            } else if (!hostDatatype.isBuiltin &&
-                rootEnumNameSet.contains(field.type.baseName)) {
-              toWriteValue = '$fieldName?.raw';
-            } else {
-              toWriteValue = fieldName;
-            }
-            indent.writeln('$toWriteValue,');
-          }
-        });
-      });
-    }
-
-    void writeFromList() {
-      final String className = klass.name;
-
-      indent.write('companion object ');
-      indent.scoped('{', '}', () {
-        indent.writeln('@Suppress("UNCHECKED_CAST")');
-        indent.write('fun fromList(list: List<Any?>): $className ');
-
-        indent.scoped('{', '}', () {
-          enumerate(getFieldsInSerializationOrder(klass),
-              (int index, final NamedType field) {
-            final HostDatatype hostDatatype = getHostDatatype(field);
-
-            // The StandardMessageCodec can give us [Integer, Long] for
-            // a Dart 'int'.  To keep things simple we just use 64bit
-            // longs in Pigeon with Kotlin.
-            final bool isInt = field.type.baseName == 'int';
-
-            final String listValue = 'list[$index]';
-            final String fieldType = _kotlinTypeForDartType(field.type);
-
-            if (field.type.isNullable) {
-              if (!hostDatatype.isBuiltin &&
-                  rootClassNameSet.contains(field.type.baseName)) {
-                indent.write('val ${field.name}: $fieldType? = ');
-                indent.add('($listValue as? List<Any?>)?.let ');
-                indent.scoped('{', '}', () {
-                  indent.writeln('$fieldType.fromList(it)');
-                });
-              } else if (!hostDatatype.isBuiltin &&
-                  rootEnumNameSet.contains(field.type.baseName)) {
-                indent.write('val ${field.name}: $fieldType? = ');
-                indent.add('($listValue as? Int)?.let ');
-                indent.scoped('{', '}', () {
-                  indent.writeln('$fieldType.ofRaw(it)');
-                });
-              } else if (isInt) {
-                indent.write('val ${field.name} = $listValue');
-                indent.addln(
-                    '.let { if (it is Int) it.toLong() else it as? Long }');
-              } else {
-                indent.writeln('val ${field.name} = $listValue as? $fieldType');
-              }
-            } else {
-              if (!hostDatatype.isBuiltin &&
-                  rootClassNameSet.contains(field.type.baseName)) {
-                indent.writeln(
-                    'val ${field.name} = $fieldType.fromList($listValue as List<Any?>)');
-              } else if (!hostDatatype.isBuiltin &&
-                  rootEnumNameSet.contains(field.type.baseName)) {
-                indent.write(
-                    'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
-              } else {
-                indent.writeln('val ${field.name} = $listValue as $fieldType');
-              }
-            }
-          });
-
-          indent.writeln('');
-          indent.write('return $className(');
-          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-            final String comma =
-                getFieldsInSerializationOrder(klass).last == field ? '' : ', ';
-            indent.add('${field.name}$comma');
-          }
-          indent.addln(')');
-        });
-      });
-    }
-
-    const List<String> generatedMessages = <String>[
-      ' Generated class from Pigeon that represents data sent in messages.'
-    ];
-    addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec,
-        generatorComments: generatedMessages);
-
-    indent.write('data class ${klass.name} ');
-    indent.scoped('(', '', () {
-      for (final NamedType element in getFieldsInSerializationOrder(klass)) {
-        writeField(element);
-        if (getFieldsInSerializationOrder(klass).last != element) {
-          indent.addln(',');
-        } else {
-          indent.addln('');
-        }
-      }
-    });
-
-    indent.scoped(') {', '}', () {
-      writeFromList();
-      writeToList();
-    });
-  }
-
   void writeApi(Api api) {
     if (api.location == ApiLocation.host) {
       _writeHostApi(indent, api, root);
@@ -684,11 +711,6 @@ void generateKotlin(
             '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
       });
     });
-  }
-
-  for (final Class klass in root.classes) {
-    indent.addln('');
-    writeDataClass(klass);
   }
 
   if (root.apis.any((Api api) =>

@@ -64,27 +64,27 @@ abstract class Generator<T> {
   );
 
   /// Writes a single class encode method to file.
-  void writeEncode(
+  void writeClassEncode(
     T languageOptions,
     Root root,
     StringSink sink,
     Indent indent,
     FileType fileType,
     Class klass,
-    List<String> customClassNames,
-    List<String> customEnumNames,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
   );
 
   /// Writes a single class decode method to file.
-  void writeDecode(
+  void writeClassDecode(
     T languageOptions,
     Root root,
     StringSink sink,
     Indent indent,
     FileType fileType,
     Class klass,
-    List<String> customClassNames,
-    List<String> customEnumNames,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
   );
 
   // /// Writes a single Flutter Api to file.

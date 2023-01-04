@@ -143,10 +143,10 @@ class DartGenerator extends Generator<DartOptions> {
   @override
   void writeDataClass(DartOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType, Class klass) {
-    final List<String> customClassNames =
-        root.classes.map((Class x) => x.name).toList();
-    final List<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toList();
+    final Set<String> customClassNames =
+        root.classes.map((Class x) => x.name).toSet();
+    final Set<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toSet();
     void writeConstructor() {
       indent.write(klass.name);
       indent.scoped('({', '});', () {
@@ -172,24 +172,24 @@ class DartGenerator extends Generator<DartOptions> {
         indent.writeln('$datatype ${field.name};');
         indent.writeln('');
       }
-      writeEncode(languageOptions, root, sink, indent, fileType, klass,
+      writeClassEncode(languageOptions, root, sink, indent, fileType, klass,
           customClassNames, customEnumNames);
       indent.writeln('');
-      writeDecode(languageOptions, root, sink, indent, fileType, klass,
+      writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
           customClassNames, customEnumNames);
     });
   }
 
   @override
-  void writeEncode(
+  void writeClassEncode(
     DartOptions languageOptions,
     Root root,
     StringSink sink,
     Indent indent,
     FileType fileType,
     Class klass,
-    List<String> customClassNames,
-    List<String> customEnumNames,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
   ) {
     indent.write('Object encode() ');
     indent.scoped('{', '}', () {
@@ -216,15 +216,15 @@ class DartGenerator extends Generator<DartOptions> {
   }
 
   @override
-  void writeDecode(
+  void writeClassDecode(
     DartOptions languageOptions,
     Root root,
     StringSink sink,
     Indent indent,
     FileType fileType,
     Class klass,
-    List<String> customClassNames,
-    List<String> customEnumNames,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
   ) {
     void writeValueDecode(NamedType field, int index) {
       final String resultAt = 'result[$index]';

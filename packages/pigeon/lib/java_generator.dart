@@ -112,6 +112,10 @@ class JavaGenerator extends Generator<JavaOptions> {
         indent.writeln('');
         writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
       }
+      for (final Class klass in root.classes) {
+        indent.addln('');
+        writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+      }
       generateJava(languageOptions, root, sink, indent);
     });
   }
@@ -178,6 +182,179 @@ class JavaGenerator extends Generator<JavaOptions> {
       indent.scoped('{', '}', () {
         indent.writeln('this.index = index;');
       });
+    });
+  }
+
+  @override
+  void writeDataClass(JavaOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, Class klass) {
+    final Set<String> customClassNames =
+        root.classes.map((Class x) => x.name).toSet();
+    final Set<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toSet();
+
+    const List<String> generatedMessages = <String>[
+      ' Generated class from Pigeon that represents data sent in messages.'
+    ];
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec,
+        generatorComments: generatedMessages);
+
+    indent.write('public static class ${klass.name} ');
+    indent.scoped('{', '}', () {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        _writeClassField(languageOptions, root, sink, indent, fileType, field);
+        indent.addln('');
+      }
+
+      if (getFieldsInSerializationOrder(klass)
+          .map((NamedType e) => !e.type.isNullable)
+          .any((bool e) => e)) {
+        indent.writeln(
+            '${_docCommentPrefix}Constructor is private to enforce null safety; use Builder.$_docCommentSuffix');
+        indent.writeln('private ${klass.name}() {}');
+      }
+
+      _writeClassBuilder(languageOptions, root, sink, indent, fileType, klass);
+      writeClassEncode(languageOptions, root, sink, indent, fileType, klass,
+          customClassNames, customEnumNames);
+      writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
+          customClassNames, customEnumNames);
+    });
+  }
+
+  void _writeClassField(JavaOptions languageOptions, Root root, StringSink sink,
+      Indent indent, FileType fileType, NamedType field) {
+    final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
+        root.enums, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+    final String nullability = field.type.isNullable ? '@Nullable' : '@NonNull';
+    addDocumentationComments(
+        indent, field.documentationComments, _docCommentSpec);
+
+    indent.writeln(
+        'private $nullability ${hostDatatype.datatype} ${field.name};');
+    indent.writeln(
+        'public $nullability ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
+    indent.writeScoped(
+        'public void ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
+        '}', () {
+      if (!field.type.isNullable) {
+        indent.writeScoped('if (setterArg == null) {', '}', () {
+          indent.writeln(
+              'throw new IllegalStateException("Nonnull field \\"${field.name}\\" is null.");');
+        });
+      }
+      indent.writeln('this.${field.name} = setterArg;');
+    });
+  }
+
+  void _writeClassBuilder(
+    JavaOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+  ) {
+    indent.write('public static final class Builder ');
+    indent.scoped('{', '}', () {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        final HostDatatype hostDatatype = getFieldHostDatatype(
+            field,
+            root.classes,
+            root.enums,
+            (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+        final String nullability =
+            field.type.isNullable ? '@Nullable' : '@NonNull';
+        indent.writeln(
+            'private @Nullable ${hostDatatype.datatype} ${field.name};');
+        indent.writeScoped(
+            'public @NonNull Builder ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
+            '}', () {
+          indent.writeln('this.${field.name} = setterArg;');
+          indent.writeln('return this;');
+        });
+      }
+      indent.write('public @NonNull ${klass.name} build() ');
+      indent.scoped('{', '}', () {
+        const String returnVal = 'pigeonReturn';
+        indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          indent.writeln('$returnVal.${_makeSetter(field)}(${field.name});');
+        }
+        indent.writeln('return $returnVal;');
+      });
+    });
+  }
+
+  @override
+  void writeClassEncode(
+    JavaOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    indent.write('@NonNull ArrayList<Object> toList() ');
+    indent.scoped('{', '}', () {
+      indent.writeln(
+          'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        final HostDatatype hostDatatype = getFieldHostDatatype(
+            field,
+            root.classes,
+            root.enums,
+            (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+        String toWriteValue = '';
+        final String fieldName = field.name;
+        if (!hostDatatype.isBuiltin &&
+            customClassNames.contains(field.type.baseName)) {
+          toWriteValue = '($fieldName == null) ? null : $fieldName.toList()';
+        } else if (!hostDatatype.isBuiltin &&
+            customEnumNames.contains(field.type.baseName)) {
+          toWriteValue = '$fieldName == null ? null : $fieldName.index';
+        } else {
+          toWriteValue = field.name;
+        }
+        indent.writeln('toListResult.add($toWriteValue);');
+      }
+      indent.writeln('return toListResult;');
+    });
+  }
+
+  @override
+  void writeClassDecode(
+    JavaOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    FileType fileType,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    indent.write(
+        'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
+    indent.scoped('{', '}', () {
+      const String result = 'pigeonResult';
+      indent.writeln('${klass.name} $result = new ${klass.name}();');
+      enumerate(getFieldsInSerializationOrder(klass),
+          (int index, final NamedType field) {
+        final String fieldVariable = field.name;
+        final String setter = _makeSetter(field);
+        indent.writeln('Object $fieldVariable = list.get($index);');
+        if (customEnumNames.contains(field.type.baseName)) {
+          indent.writeln(
+              '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName)});');
+        } else {
+          indent.writeln(
+              '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
+        }
+      });
+      indent.writeln('return $result;');
     });
   }
 }
@@ -623,151 +800,6 @@ String _castObject(
 /// provided [options].
 void generateJava(
     JavaOptions options, Root root, StringSink sink, Indent indent) {
-  final Set<String> rootClassNameSet =
-      root.classes.map((Class x) => x.name).toSet();
-  final Set<String> rootEnumNameSet =
-      root.enums.map((Enum x) => x.name).toSet();
-
-  void writeDataClass(Class klass) {
-    void writeField(NamedType field) {
-      final HostDatatype hostDatatype = getFieldHostDatatype(
-          field,
-          root.classes,
-          root.enums,
-          (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
-      final String nullability =
-          field.type.isNullable ? '@Nullable' : '@NonNull';
-      addDocumentationComments(
-          indent, field.documentationComments, _docCommentSpec);
-
-      indent.writeln(
-          'private $nullability ${hostDatatype.datatype} ${field.name};');
-      indent.writeln(
-          'public $nullability ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
-      indent.writeScoped(
-          'public void ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
-          '}', () {
-        if (!field.type.isNullable) {
-          indent.writeScoped('if (setterArg == null) {', '}', () {
-            indent.writeln(
-                'throw new IllegalStateException("Nonnull field \\"${field.name}\\" is null.");');
-          });
-        }
-        indent.writeln('this.${field.name} = setterArg;');
-      });
-    }
-
-    void writeToList() {
-      indent.write('@NonNull ArrayList<Object> toList() ');
-      indent.scoped('{', '}', () {
-        indent.writeln(
-            'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          final HostDatatype hostDatatype = getFieldHostDatatype(
-              field,
-              root.classes,
-              root.enums,
-              (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
-          String toWriteValue = '';
-          final String fieldName = field.name;
-          if (!hostDatatype.isBuiltin &&
-              rootClassNameSet.contains(field.type.baseName)) {
-            toWriteValue = '($fieldName == null) ? null : $fieldName.toList()';
-          } else if (!hostDatatype.isBuiltin &&
-              rootEnumNameSet.contains(field.type.baseName)) {
-            toWriteValue = '$fieldName == null ? null : $fieldName.index';
-          } else {
-            toWriteValue = field.name;
-          }
-          indent.writeln('toListResult.add($toWriteValue);');
-        }
-        indent.writeln('return toListResult;');
-      });
-    }
-
-    void writeFromList() {
-      indent.write(
-          'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
-      indent.scoped('{', '}', () {
-        const String result = 'pigeonResult';
-        indent.writeln('${klass.name} $result = new ${klass.name}();');
-        enumerate(getFieldsInSerializationOrder(klass),
-            (int index, final NamedType field) {
-          final String fieldVariable = field.name;
-          final String setter = _makeSetter(field);
-          indent.writeln('Object $fieldVariable = list.get($index);');
-          if (rootEnumNameSet.contains(field.type.baseName)) {
-            indent.writeln(
-                '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName)});');
-          } else {
-            indent.writeln(
-                '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
-          }
-        });
-        indent.writeln('return $result;');
-      });
-    }
-
-    void writeBuilder() {
-      indent.write('public static final class Builder ');
-      indent.scoped('{', '}', () {
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          final HostDatatype hostDatatype = getFieldHostDatatype(
-              field,
-              root.classes,
-              root.enums,
-              (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
-          final String nullability =
-              field.type.isNullable ? '@Nullable' : '@NonNull';
-          indent.writeln(
-              'private @Nullable ${hostDatatype.datatype} ${field.name};');
-          indent.writeScoped(
-              'public @NonNull Builder ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
-              '}', () {
-            indent.writeln('this.${field.name} = setterArg;');
-            indent.writeln('return this;');
-          });
-        }
-        indent.write('public @NonNull ${klass.name} build() ');
-        indent.scoped('{', '}', () {
-          const String returnVal = 'pigeonReturn';
-          indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
-          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-            indent.writeln('$returnVal.${_makeSetter(field)}(${field.name});');
-          }
-          indent.writeln('return $returnVal;');
-        });
-      });
-    }
-
-    const List<String> generatedMessages = <String>[
-      ' Generated class from Pigeon that represents data sent in messages.'
-    ];
-    addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec,
-        generatorComments: generatedMessages);
-
-    indent.write('public static class ${klass.name} ');
-    indent.scoped('{', '}', () {
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        writeField(field);
-        indent.addln('');
-      }
-
-      if (getFieldsInSerializationOrder(klass)
-          .map((NamedType e) => !e.type.isNullable)
-          .any((bool e) => e)) {
-        indent.writeln(
-            '${_docCommentPrefix}Constructor is private to enforce null safety; use Builder.$_docCommentSuffix');
-        indent.writeln('private ${klass.name}() {}');
-      }
-
-      writeBuilder();
-      writeToList();
-      writeFromList();
-    });
-  }
-
   void writeResultInterface() {
     indent.write('public interface Result<T> ');
     indent.scoped('{', '}', () {
@@ -793,11 +825,6 @@ void generateJava(
 \terrorList.add("Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
 \treturn errorList;
 }''');
-  }
-
-  for (final Class klass in root.classes) {
-    indent.addln('');
-    writeDataClass(klass);
   }
 
   if (root.apis.any((Api api) =>
