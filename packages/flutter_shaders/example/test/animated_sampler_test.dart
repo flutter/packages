@@ -24,14 +24,12 @@ void main() {
         key: globalKey,
         child: ShaderBuilder(assetKey: 'shaders/sampler.frag',
             (BuildContext context, FragmentShader shader, Widget? child) {
-          return AnimatedSampler(
-              (ui.Image image, Size size, Offset offset, Canvas canvas) {
+          return AnimatedSampler((ui.Image image, Size size, Canvas canvas) {
             usedShader = true;
             shader.setFloat(0, size.width);
             shader.setFloat(1, size.height);
             shader.setImageSampler(0, image);
 
-            canvas.translate(offset.dx, offset.dy);
             canvas.drawRect(Offset.zero & size, Paint()..shader = shader);
           }, child: Container(color: Colors.red));
         }),
