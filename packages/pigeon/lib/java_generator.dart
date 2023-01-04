@@ -99,7 +99,21 @@ class JavaGenerator extends Generator<JavaOptions> {
 
     writeHeaders(languageOptions, root, sink, indent, fileType);
     writeImports(languageOptions, root, sink, indent, fileType);
-    writeMainClass(languageOptions, root, sink, indent, fileType);
+    indent.writeln(
+        '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
+    indent.writeln(
+        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+    if (languageOptions.useGeneratedAnnotation ?? false) {
+      indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+    }
+    indent.write('public class ${languageOptions.className!} ');
+    indent.scoped('{', '}', () {
+      for (final Enum anEnum in root.enums) {
+        indent.writeln('');
+        writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+      }
+      generateJava(languageOptions, root, sink, indent);
+    });
   }
 
   @override
@@ -164,26 +178,6 @@ class JavaGenerator extends Generator<JavaOptions> {
       indent.scoped('{', '}', () {
         indent.writeln('this.index = index;');
       });
-    });
-  }
-
-  /// Writes main class to sink. wraps enums, apis, and classes.
-  void writeMainClass(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    indent.writeln(
-        '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
-    indent.writeln(
-        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
-    if (languageOptions.useGeneratedAnnotation ?? false) {
-      indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
-    }
-    indent.write('public class ${languageOptions.className!} ');
-    indent.scoped('{', '}', () {
-      for (final Enum anEnum in root.enums) {
-        indent.writeln('');
-        writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
-      }
-      generateJava(languageOptions, root, sink, indent);
     });
   }
 }
