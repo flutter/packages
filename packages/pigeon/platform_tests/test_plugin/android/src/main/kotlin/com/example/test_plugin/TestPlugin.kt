@@ -64,7 +64,7 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aUint8List
   }
 
-  override fun fun echoObject(anObject: Any): Any {
+  override fun echoObject(anObject: Any): Any {
     return anObject
   }
 
@@ -100,7 +100,7 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aNullableUint8List
   }
 
-  override fun fun echoNullableObject(aNullableObject: Any?): Any? {
+  override fun echoNullableObject(aNullableObject: Any?): Any? {
     return aNullableObject
   }
 
