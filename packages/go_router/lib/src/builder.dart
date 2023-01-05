@@ -281,10 +281,14 @@ class RouteBuilder {
     PopPageCallback onPopPage,
     String? restorationScopeId,
   ) {
+    final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
+        <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
+    _buildRecursive(context, matchList, startIndex, onPopPage, true, keyToPage,
+        navigatorKey, <Page<Object?>, GoRouterState>{});
+
     return _buildNavigator(
       onPopPage,
-      buildPages(context, matchList, startIndex, onPopPage, true, navigatorKey,
-          <Page<Object?>, GoRouterState>{}),
+      keyToPage[navigatorKey]!,
       navigatorKey,
       restorationScopeId: restorationScopeId,
     );
