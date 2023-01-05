@@ -1,3 +1,8 @@
+## 4.2.16
+
+* [swift] Fixes warnings with `Object` parameters.
+* [c++] Generation of APIs that use `Object` no longer fails.
+
 ## 4.2.15
 
 * Relocates generator classes. (Reverted)
