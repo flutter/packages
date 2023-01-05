@@ -505,4 +505,7 @@ enum FileType {
 
   /// source file.
   source,
+
+  /// file type is not applicable.
+  NA,
 }

@@ -10,6 +10,6 @@ import 'generator_tools.dart';
 /// This provides the structure that is common across generators for different languages.
 abstract class Generator<T> {
   /// Generates files for specified language with specified [languageOptions]
-  void generate(
-      T languageOptions, Root root, StringSink sink, FileType fileType);
+  void generate(T languageOptions, Root root, StringSink sink,
+      {required FileType fileType});
 }

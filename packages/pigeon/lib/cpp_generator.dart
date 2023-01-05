@@ -78,7 +78,8 @@ class CppGenerator extends Generator<CppOptions> {
   /// Generates Cpp files with specified [CppOptions]
   @override
   void generate(CppOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
+      {required FileType fileType}) {
+    assert(fileType == FileType.header || fileType == FileType.source);
     if (fileType == FileType.header) {
       generateCppHeader(languageOptions, root, sink);
     } else {

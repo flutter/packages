@@ -72,7 +72,9 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   /// Generates Objc files with specified [ObjcOptions]
   @override
   void generate(ObjcOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
+      {required FileType fileType}) {
+    assert(fileType == FileType.header || fileType == FileType.source);
+
     if (fileType == FileType.header) {
       generateObjcHeader(languageOptions, root, sink);
     } else {
