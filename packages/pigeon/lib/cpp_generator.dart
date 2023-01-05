@@ -26,7 +26,6 @@ class CppOptions {
     this.namespace,
     this.copyrightHeader,
     this.headerOutPath,
-    this.multiFileOptions,
   });
 
   /// The path to the header that will get placed in the source filed (example:
@@ -42,9 +41,6 @@ class CppOptions {
   /// The path to the output header file location.
   final String? headerOutPath;
 
-  /// A subset of options for specific files being generated.
-  final MultiFileOptions? multiFileOptions;
-
   /// Creates a [CppOptions] from a Map representation where:
   /// `x = CppOptions.fromMap(x.toMap())`.
   static CppOptions fromMap(Map<String, Object> map) {
@@ -53,8 +49,6 @@ class CppOptions {
       namespace: map['namespace'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       headerOutPath: map['cppHeaderOut'] as String?,
-      multiFileOptions: MultiFileOptions.fromMap(
-          map['multiFileOptions'] as Map<String, Object>?),
     );
   }
 
@@ -65,8 +59,6 @@ class CppOptions {
       if (headerIncludePath != null) 'header': headerIncludePath!,
       if (namespace != null) 'namespace': namespace!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
-      if (multiFileOptions != null)
-        'multiFileOptions': multiFileOptions!.toMap(),
     };
     return result;
   }
@@ -79,19 +71,20 @@ class CppOptions {
 }
 
 /// Class that manages all Cpp code generation.
-class CppGenerator extends Generator<CppOptions> {
+class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
   /// Instantiates a Cpp Generator.
   CppGenerator();
 
-  /// Generates Cpp files with specified [CppOptions]
+  /// Generates Cpp files with specified [OutputFileOptions<CppOptions>]
   @override
-  void generate(CppOptions languageOptions, Root root, StringSink sink) {
-    final FileType? fileType = languageOptions.multiFileOptions?.fileType;
+  void generate(OutputFileOptions<CppOptions> languageOptions, Root root,
+      StringSink sink) {
+    final FileType fileType = languageOptions.fileType;
     assert(fileType == FileType.header || fileType == FileType.source);
     if (fileType == FileType.header) {
-      generateCppHeader(languageOptions, root, sink);
+      generateCppHeader(languageOptions.languageOptions, root, sink);
     } else {
-      generateCppSource(languageOptions, root, sink);
+      generateCppSource(languageOptions.languageOptions, root, sink);
     }
   }
 }

@@ -488,17 +488,17 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
   @override
   void generate(
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
-    final MultiFileOptions multiFileOptions =
-        MultiFileOptions(fileType: fileType);
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(options.copyrightHeader!)
           : null,
-      multiFileOptions: multiFileOptions,
     ));
+    final OutputFileOptions<ObjcOptions> outputFileOptions =
+        OutputFileOptions<ObjcOptions>(
+            fileType: fileType, languageOptions: objcOptionsWithHeader);
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(objcOptionsWithHeader, root, sink);
+    generator.generate(outputFileOptions, root, sink);
   }
 
   @override
@@ -584,17 +584,17 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   @override
   void generate(
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
-    final MultiFileOptions multiFileOptions =
-        MultiFileOptions(fileType: fileType);
     final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
     final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(options.copyrightHeader!)
           : null,
-      multiFileOptions: multiFileOptions,
     ));
+    final OutputFileOptions<CppOptions> outputFileOptions =
+        OutputFileOptions<CppOptions>(
+            fileType: fileType, languageOptions: cppOptionsWithHeader);
     final CppGenerator generator = CppGenerator();
-    generator.generate(cppOptionsWithHeader, root, sink);
+    generator.generate(outputFileOptions, root, sink);
   }
 
   @override
