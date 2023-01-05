@@ -876,8 +876,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     WrapError("an_object_arg unexpectedly null.")));
                 return;
               }
-              const auto& an_object_arg =
-                  std::get<flutter::EncodableValue>(encodable_an_object_arg);
+              const auto& an_object_arg = encodable_an_object_arg;
               ErrorOr<flutter::EncodableValue> output =
                   api->EchoObject(an_object_arg);
               if (output.has_error()) {
@@ -1231,8 +1230,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& args = std::get<flutter::EncodableList>(message);
               const auto& encodable_a_nullable_object_arg = args.at(0);
               const auto* a_nullable_object_arg =
-                  std::get_if<flutter::EncodableValue>(
-                      &encodable_a_nullable_object_arg);
+                  &encodable_a_nullable_object_arg;
               ErrorOr<std::optional<flutter::EncodableValue>> output =
                   api->EchoNullableObject(a_nullable_object_arg);
               if (output.has_error()) {
