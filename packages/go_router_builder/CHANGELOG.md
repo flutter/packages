@@ -1,3 +1,7 @@
+## 1.0.17
+
+* Support for the generation of the pushReplacement method has been added.
+
 ## 1.0.16
 
 * Update the documentation to go_router v6.0.0.

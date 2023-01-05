@@ -74,6 +74,9 @@ extension $AllTypesBaseRouteExtension on AllTypesBaseRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $BigIntRouteExtension on BigIntRoute {
@@ -93,6 +96,9 @@ extension $BigIntRouteExtension on BigIntRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $BoolRouteExtension on BoolRoute {
@@ -112,6 +118,9 @@ extension $BoolRouteExtension on BoolRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $DateTimeRouteExtension on DateTimeRoute {
@@ -133,6 +142,9 @@ extension $DateTimeRouteExtension on DateTimeRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $DoubleRouteExtension on DoubleRoute {
@@ -152,6 +164,9 @@ extension $DoubleRouteExtension on DoubleRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $IntRouteExtension on IntRoute {
@@ -170,6 +185,9 @@ extension $IntRouteExtension on IntRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $NumRouteExtension on NumRoute {
@@ -188,6 +206,9 @@ extension $NumRouteExtension on NumRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $EnumRouteExtension on EnumRoute {
@@ -209,6 +230,9 @@ extension $EnumRouteExtension on EnumRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
@@ -230,6 +254,9 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $StringRouteExtension on StringRoute {
@@ -248,6 +275,9 @@ extension $StringRouteExtension on StringRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 extension $UriRouteExtension on UriRoute {
@@ -266,6 +296,9 @@ extension $UriRouteExtension on UriRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 const _$PersonDetailsEnumMap = {
