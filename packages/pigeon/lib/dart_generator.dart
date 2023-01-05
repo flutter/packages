@@ -230,13 +230,17 @@ final BinaryMessenger? _binaryMessenger;
           indent.writeln('binaryMessenger: _binaryMessenger);');
         });
         final String returnType = _makeGenericTypeArguments(func.returnType);
-        final String castCall = _makeGenericCastCall(func.returnType);
+        final String genericCastCall = _makeGenericCastCall(func.returnType);
         const String accessor = 'replyList[0]';
-        final String nullHandler =
-            func.returnType.isNullable ? (castCall.isEmpty ? '' : '?') : '!';
+        // Avoid warnings from pointlessly casting to `Object?`.
+        final String nullablyTypedAccessor =
+            returnType == 'Object' ? accessor : '($accessor as $returnType?)';
+        final String nullHandler = func.returnType.isNullable
+            ? (genericCastCall.isEmpty ? '' : '?')
+            : '!';
         final String returnStatement = func.returnType.isVoid
             ? 'return;'
-            : 'return ($accessor as $returnType?)$nullHandler$castCall;';
+            : 'return $nullablyTypedAccessor$nullHandler$genericCastCall;';
         indent.format('''
 final List<Object?>? replyList =
 \t\tawait channel.send($sendArgument) as List<Object?>?;
