@@ -144,7 +144,8 @@ class CppGenerator extends Generator<CppOptions> {
       _writeCppHeaderDataClass(languageOptions, root, sink, indent, klass,
           testFriend: testFixtureClass);
     } else {
-      _writeCppSourceDataClass(languageOptions, root, sink, indent, klass);
+      _writeCppSourceDataClass(
+          languageOptions, root, sink, indent, fileType, klass);
     }
   }
 
@@ -176,6 +177,365 @@ class CppGenerator extends Generator<CppOptions> {
   ) {
     _writeCppSourceClassDecode(languageOptions, root, sink, indent, klass,
         customClassNames, customEnumNames);
+  }
+
+  /// Writes the declaration for the custom class [klass].
+  ///
+  /// See [_writeCppSourceDataClass] for the corresponding declaration.
+  /// This is intended to be added to the header.
+  void _writeCppHeaderDataClass(CppOptions languageOptions, Root root,
+      StringSink sink, Indent indent, Class klass,
+      {String? testFriend}) {
+    indent.addln('');
+
+    const List<String> generatedMessages = <String>[
+      ' Generated class from Pigeon that represents data sent in messages.'
+    ];
+
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec,
+        generatorComments: generatedMessages);
+
+    indent.write('class ${klass.name} ');
+    indent.scoped('{', '};', () {
+      indent.scoped(' public:', '', () {
+        indent.writeln('${klass.name}();');
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          addDocumentationComments(
+              indent, field.documentationComments, _docCommentSpec);
+          final HostDatatype baseDatatype = getFieldHostDatatype(
+              field,
+              root.classes,
+              root.enums,
+              (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+          indent.writeln(
+              '${_getterReturnType(baseDatatype)} ${_makeGetterName(field)}() const;');
+          indent.writeln(
+              'void ${_makeSetterName(field)}(${_unownedArgumentType(baseDatatype)} value_arg);');
+          if (field.type.isNullable) {
+            // Add a second setter that takes the non-nullable version of the
+            // argument for convenience, since setting literal values with the
+            // pointer version is non-trivial.
+            final HostDatatype nonNullType = _nonNullableType(baseDatatype);
+            indent.writeln(
+                'void ${_makeSetterName(field)}(${_unownedArgumentType(nonNullType)} value_arg);');
+          }
+          indent.addln('');
+        }
+      });
+
+      indent.scoped(' private:', '', () {
+        indent.writeln('${klass.name}(const flutter::EncodableList& list);');
+        indent.writeln('flutter::EncodableList ToEncodableList() const;');
+        for (final Class friend in root.classes) {
+          if (friend != klass &&
+              friend.fields.any(
+                  (NamedType element) => element.type.baseName == klass.name)) {
+            indent.writeln('friend class ${friend.name};');
+          }
+        }
+        for (final Api api in root.apis) {
+          // TODO(gaaclarke): Find a way to be more precise with our
+          // friendships.
+          indent.writeln('friend class ${api.name};');
+          indent.writeln('friend class ${_getCodecSerializerName(api)};');
+        }
+        if (testFriend != null) {
+          indent.writeln('friend class $testFriend;');
+        }
+
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          final HostDatatype hostDatatype = getFieldHostDatatype(
+              field,
+              root.classes,
+              root.enums,
+              (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+          indent.writeln(
+              '${_valueType(hostDatatype)} ${_makeInstanceVariableName(field)};');
+        }
+      });
+    }, nestCount: 0);
+    indent.writeln('');
+  }
+
+  void _writeCppSourceClassEncode(
+    CppOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    indent.write(
+        'flutter::EncodableList ${klass.name}::ToEncodableList() const ');
+    indent.scoped('{', '}', () {
+      indent.scoped('return flutter::EncodableList{', '};', () {
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          final HostDatatype hostDatatype = getFieldHostDatatype(
+              field,
+              root.classes,
+              root.enums,
+              (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+
+          final String instanceVariable = _makeInstanceVariableName(field);
+
+          String encodableValue = '';
+          if (!hostDatatype.isBuiltin &&
+              customClassNames.contains(field.type.baseName)) {
+            final String operator = field.type.isNullable ? '->' : '.';
+            encodableValue =
+                'flutter::EncodableValue($instanceVariable${operator}ToEncodableList())';
+          } else if (!hostDatatype.isBuiltin &&
+              customEnumNames.contains(field.type.baseName)) {
+            final String nonNullValue = field.type.isNullable
+                ? '(*$instanceVariable)'
+                : instanceVariable;
+            encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
+          } else {
+            final String operator = field.type.isNullable ? '*' : '';
+            encodableValue =
+                'flutter::EncodableValue($operator$instanceVariable)';
+          }
+
+          if (field.type.isNullable) {
+            encodableValue =
+                '$instanceVariable ? $encodableValue : flutter::EncodableValue()';
+          }
+
+          indent.writeln('$encodableValue,');
+        }
+      });
+    });
+    indent.addln('');
+  }
+
+  void _writeCppSourceClassDecode(
+    CppOptions languageOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    indent.write(
+        '${klass.name}::${klass.name}(const flutter::EncodableList& list) ');
+    indent.scoped('{', '}', () {
+      enumerate(getFieldsInSerializationOrder(klass),
+          (int index, final NamedType field) {
+        final String instanceVariableName = _makeInstanceVariableName(field);
+        final String pointerFieldName =
+            '${_pointerPrefix}_${_makeVariableName(field)}';
+        final String encodableFieldName =
+            '${_encodablePrefix}_${_makeVariableName(field)}';
+        indent.writeln('auto& $encodableFieldName = list[$index];');
+        if (customEnumNames.contains(field.type.baseName)) {
+          indent.writeln(
+              'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t$instanceVariableName = (${field.type.baseName})*$pointerFieldName;');
+        } else {
+          final HostDatatype hostDatatype = getFieldHostDatatype(
+              field,
+              root.classes,
+              root.enums,
+              (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+          if (field.type.baseName == 'int') {
+            indent.format('''
+if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))
+\t$instanceVariableName = *$pointerFieldName;
+else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodableFieldName))
+\t$instanceVariableName = *${pointerFieldName}_64;''');
+          } else if (!hostDatatype.isBuiltin &&
+              root.classes
+                  .map((Class x) => x.name)
+                  .contains(field.type.baseName)) {
+            indent.write(
+                'if (const flutter::EncodableList* $pointerFieldName = std::get_if<flutter::EncodableList>(&$encodableFieldName)) ');
+            indent.scoped('{', '}', () {
+              indent.writeln(
+                  '$instanceVariableName = ${hostDatatype.datatype}(*$pointerFieldName);');
+            });
+          } else {
+            indent.write(
+                'if (const ${hostDatatype.datatype}* $pointerFieldName = std::get_if<${hostDatatype.datatype}>(&$encodableFieldName)) ');
+            indent.scoped('{', '}', () {
+              indent.writeln('$instanceVariableName = *$pointerFieldName;');
+            });
+          }
+        }
+      });
+    });
+    indent.addln('');
+  }
+
+  void _writeCppSourceClassField(CppOptions languageOptions, Root root,
+      StringSink sink, Indent indent, Class klass, NamedType field) {
+    final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
+        root.enums, (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+    final String instanceVariableName = _makeInstanceVariableName(field);
+    final String qualifiedGetterName =
+        '${klass.name}::${_makeGetterName(field)}';
+    final String qualifiedSetterName =
+        '${klass.name}::${_makeSetterName(field)}';
+    final String returnExpression = hostDatatype.isNullable
+        ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr'
+        : instanceVariableName;
+
+    // Generates the string for a setter treating the type as [type], to allow
+    // generating multiple setter variants.
+    String makeSetter(HostDatatype type) {
+      const String setterArgumentName = 'value_arg';
+      final String valueExpression = type.isNullable
+          ? '$setterArgumentName ? ${_valueType(type)}(*$setterArgumentName) : std::nullopt'
+          : setterArgumentName;
+      return 'void $qualifiedSetterName(${_unownedArgumentType(type)} $setterArgumentName) '
+          '{ $instanceVariableName = $valueExpression; }';
+    }
+
+    indent.writeln(
+        '${_getterReturnType(hostDatatype)} $qualifiedGetterName() const '
+        '{ return $returnExpression; }');
+    indent.writeln(makeSetter(hostDatatype));
+    if (hostDatatype.isNullable) {
+      // Write the non-nullable variant; see _writeCppHeaderDataClass.
+      final HostDatatype nonNullType = _nonNullableType(hostDatatype);
+      indent.writeln(makeSetter(nonNullType));
+    }
+
+    indent.addln('');
+  }
+
+  /// Writes the implementation for the custom class [klass].
+  ///
+  /// See [_writeCppHeaderDataClass] for the corresponding declaration.
+  /// This is intended to be added to the implementation file.
+  void _writeCppSourceDataClass(CppOptions languageOptions, Root root,
+      StringSink sink, Indent indent, FileType fileType, Class klass) {
+    final Set<String> customClassNames =
+        root.classes.map((Class x) => x.name).toSet();
+    final Set<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toSet();
+
+    indent.addln('');
+    indent.writeln('$_commentPrefix ${klass.name}');
+    indent.addln('');
+
+    // Getters and setters.
+    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      _writeCppSourceClassField(
+          languageOptions, root, sink, indent, klass, field);
+    }
+
+    // Serialization.
+    writeClassEncode(languageOptions, root, sink, indent, fileType, klass,
+        customClassNames, customEnumNames);
+
+    // Default constructor.
+    indent.writeln('${klass.name}::${klass.name}() {}');
+    indent.addln('');
+
+    // Deserialization.
+    writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
+        customClassNames, customEnumNames);
+  }
+
+  /// Writes Cpp header file header to sink.
+  void writeCppHeaderHeader(
+      CppOptions options, Root root, StringSink sink, Indent indent) {
+    if (options.copyrightHeader != null) {
+      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('$_commentPrefix $generatedCodeWarning');
+    indent.writeln('$_commentPrefix $seeAlsoWarning');
+    indent.addln('');
+  }
+
+  /// Writes Cpp header file imports to sink.
+  void writeCppHeaderImports(
+      CppOptions options, Root root, StringSink sink, Indent indent) {
+    final String guardName =
+        _getGuardName(options.headerIncludePath, options.namespace);
+    indent.writeln('#ifndef $guardName');
+    indent.writeln('#define $guardName');
+
+    _writeSystemHeaderIncludeBlock(indent, <String>[
+      'flutter/basic_message_channel.h',
+      'flutter/binary_messenger.h',
+      'flutter/encodable_value.h',
+      'flutter/standard_message_codec.h',
+    ]);
+    indent.addln('');
+    _writeSystemHeaderIncludeBlock(indent, <String>[
+      'map',
+      'string',
+      'optional',
+    ]);
+    indent.addln('');
+    if (options.namespace != null) {
+      indent.writeln('namespace ${options.namespace} {');
+    }
+    indent.addln('');
+    if (options.namespace?.endsWith('_pigeontest') ?? false) {
+      final String testFixtureClass =
+          '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
+      indent.writeln('class $testFixtureClass;');
+    }
+    indent.addln('');
+    indent.writeln('$_commentPrefix Generated class from Pigeon.');
+  }
+
+  /// Writes Cpp header enum to sink.
+  void writeCppHeaderEnum(CppOptions options, Root root, StringSink sink,
+      Indent indent, Enum anEnum) {
+    indent.writeln('');
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+    indent.write('enum class ${anEnum.name} ');
+    indent.scoped('{', '};', () {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        indent.writeln(
+            '${member.name} = $index${index == anEnum.members.length - 1 ? '' : ','}');
+      });
+    });
+  }
+
+  /// Writes Cpp source file header to sink.
+  void writeCppSourceHeader(
+      CppOptions options, Root root, StringSink sink, Indent indent) {
+    if (options.copyrightHeader != null) {
+      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('$_commentPrefix $generatedCodeWarning');
+    indent.writeln('$_commentPrefix $seeAlsoWarning');
+    indent.addln('');
+    indent.addln('#undef _HAS_EXCEPTIONS');
+    indent.addln('');
+  }
+
+  /// Writes Cpp source file imports to sink.
+  void writeCppSourceImports(
+      CppOptions options, Root root, StringSink sink, Indent indent) {
+    indent.writeln('#include "${options.headerIncludePath}"');
+    indent.addln('');
+    _writeSystemHeaderIncludeBlock(indent, <String>[
+      'flutter/basic_message_channel.h',
+      'flutter/binary_messenger.h',
+      'flutter/encodable_value.h',
+      'flutter/standard_message_codec.h',
+    ]);
+    indent.addln('');
+    _writeSystemHeaderIncludeBlock(indent, <String>[
+      'map',
+      'string',
+      'optional',
+    ]);
+    indent.addln('');
+
+    if (options.namespace != null) {
+      indent.writeln('namespace ${options.namespace} {');
+    }
   }
 }
 
@@ -301,262 +661,6 @@ $friendLines
 \tstd::variant<T, FlutterError> v_;
 };
 ''');
-}
-
-/// Writes the declaration for the custom class [klass].
-///
-/// See [_writeCppSourceDataClass] for the corresponding declaration.
-/// This is intended to be added to the header.
-void _writeCppHeaderDataClass(CppOptions languageOptions, Root root,
-    StringSink sink, Indent indent, Class klass,
-    {String? testFriend}) {
-  indent.addln('');
-
-  const List<String> generatedMessages = <String>[
-    ' Generated class from Pigeon that represents data sent in messages.'
-  ];
-
-  addDocumentationComments(indent, klass.documentationComments, _docCommentSpec,
-      generatorComments: generatedMessages);
-
-  indent.write('class ${klass.name} ');
-  indent.scoped('{', '};', () {
-    indent.scoped(' public:', '', () {
-      indent.writeln('${klass.name}();');
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        addDocumentationComments(
-            indent, field.documentationComments, _docCommentSpec);
-        final HostDatatype baseDatatype = getFieldHostDatatype(
-            field,
-            root.classes,
-            root.enums,
-            (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-        indent.writeln(
-            '${_getterReturnType(baseDatatype)} ${_makeGetterName(field)}() const;');
-        indent.writeln(
-            'void ${_makeSetterName(field)}(${_unownedArgumentType(baseDatatype)} value_arg);');
-        if (field.type.isNullable) {
-          // Add a second setter that takes the non-nullable version of the
-          // argument for convenience, since setting literal values with the
-          // pointer version is non-trivial.
-          final HostDatatype nonNullType = _nonNullableType(baseDatatype);
-          indent.writeln(
-              'void ${_makeSetterName(field)}(${_unownedArgumentType(nonNullType)} value_arg);');
-        }
-        indent.addln('');
-      }
-    });
-
-    indent.scoped(' private:', '', () {
-      indent.writeln('${klass.name}(const flutter::EncodableList& list);');
-      indent.writeln('flutter::EncodableList ToEncodableList() const;');
-      for (final Class friend in root.classes) {
-        if (friend != klass &&
-            friend.fields.any(
-                (NamedType element) => element.type.baseName == klass.name)) {
-          indent.writeln('friend class ${friend.name};');
-        }
-      }
-      for (final Api api in root.apis) {
-        // TODO(gaaclarke): Find a way to be more precise with our
-        // friendships.
-        indent.writeln('friend class ${api.name};');
-        indent.writeln('friend class ${_getCodecSerializerName(api)};');
-      }
-      if (testFriend != null) {
-        indent.writeln('friend class $testFriend;');
-      }
-
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        final HostDatatype hostDatatype = getFieldHostDatatype(
-            field,
-            root.classes,
-            root.enums,
-            (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-        indent.writeln(
-            '${_valueType(hostDatatype)} ${_makeInstanceVariableName(field)};');
-      }
-    });
-  }, nestCount: 0);
-  indent.writeln('');
-}
-
-void _writeCppSourceClassEncode(
-  CppOptions languageOptions,
-  Root root,
-  StringSink sink,
-  Indent indent,
-  Class klass,
-  Set<String> customClassNames,
-  Set<String> customEnumNames,
-) {
-  indent
-      .write('flutter::EncodableList ${klass.name}::ToEncodableList() const ');
-  indent.scoped('{', '}', () {
-    indent.scoped('return flutter::EncodableList{', '};', () {
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        final HostDatatype hostDatatype = getFieldHostDatatype(
-            field,
-            root.classes,
-            root.enums,
-            (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-
-        final String instanceVariable = _makeInstanceVariableName(field);
-
-        String encodableValue = '';
-        if (!hostDatatype.isBuiltin &&
-            customClassNames.contains(field.type.baseName)) {
-          final String operator = field.type.isNullable ? '->' : '.';
-          encodableValue =
-              'flutter::EncodableValue($instanceVariable${operator}ToEncodableList())';
-        } else if (!hostDatatype.isBuiltin &&
-            customEnumNames.contains(field.type.baseName)) {
-          final String nonNullValue =
-              field.type.isNullable ? '(*$instanceVariable)' : instanceVariable;
-          encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
-        } else {
-          final String operator = field.type.isNullable ? '*' : '';
-          encodableValue =
-              'flutter::EncodableValue($operator$instanceVariable)';
-        }
-
-        if (field.type.isNullable) {
-          encodableValue =
-              '$instanceVariable ? $encodableValue : flutter::EncodableValue()';
-        }
-
-        indent.writeln('$encodableValue,');
-      }
-    });
-  });
-  indent.addln('');
-}
-
-void _writeCppSourceClassDecode(
-  CppOptions languageOptions,
-  Root root,
-  StringSink sink,
-  Indent indent,
-  Class klass,
-  Set<String> customClassNames,
-  Set<String> customEnumNames,
-) {
-  indent.write(
-      '${klass.name}::${klass.name}(const flutter::EncodableList& list) ');
-  indent.scoped('{', '}', () {
-    enumerate(getFieldsInSerializationOrder(klass),
-        (int index, final NamedType field) {
-      final String instanceVariableName = _makeInstanceVariableName(field);
-      final String pointerFieldName =
-          '${_pointerPrefix}_${_makeVariableName(field)}';
-      final String encodableFieldName =
-          '${_encodablePrefix}_${_makeVariableName(field)}';
-      indent.writeln('auto& $encodableFieldName = list[$index];');
-      if (customEnumNames.contains(field.type.baseName)) {
-        indent.writeln(
-            'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t$instanceVariableName = (${field.type.baseName})*$pointerFieldName;');
-      } else {
-        final HostDatatype hostDatatype = getFieldHostDatatype(
-            field,
-            root.classes,
-            root.enums,
-            (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-        if (field.type.baseName == 'int') {
-          indent.format('''
-if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))
-\t$instanceVariableName = *$pointerFieldName;
-else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodableFieldName))
-\t$instanceVariableName = *${pointerFieldName}_64;''');
-        } else if (!hostDatatype.isBuiltin &&
-            root.classes
-                .map((Class x) => x.name)
-                .contains(field.type.baseName)) {
-          indent.write(
-              'if (const flutter::EncodableList* $pointerFieldName = std::get_if<flutter::EncodableList>(&$encodableFieldName)) ');
-          indent.scoped('{', '}', () {
-            indent.writeln(
-                '$instanceVariableName = ${hostDatatype.datatype}(*$pointerFieldName);');
-          });
-        } else {
-          indent.write(
-              'if (const ${hostDatatype.datatype}* $pointerFieldName = std::get_if<${hostDatatype.datatype}>(&$encodableFieldName)) ');
-          indent.scoped('{', '}', () {
-            indent.writeln('$instanceVariableName = *$pointerFieldName;');
-          });
-        }
-      }
-    });
-  });
-  indent.addln('');
-}
-
-void _writeCppSourceClassField(CppOptions languageOptions, Root root,
-    StringSink sink, Indent indent, Class klass, NamedType field) {
-  final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
-      root.enums, (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-  final String instanceVariableName = _makeInstanceVariableName(field);
-  final String qualifiedGetterName = '${klass.name}::${_makeGetterName(field)}';
-  final String qualifiedSetterName = '${klass.name}::${_makeSetterName(field)}';
-  final String returnExpression = hostDatatype.isNullable
-      ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr'
-      : instanceVariableName;
-
-  // Generates the string for a setter treating the type as [type], to allow
-  // generating multiple setter variants.
-  String makeSetter(HostDatatype type) {
-    const String setterArgumentName = 'value_arg';
-    final String valueExpression = type.isNullable
-        ? '$setterArgumentName ? ${_valueType(type)}(*$setterArgumentName) : std::nullopt'
-        : setterArgumentName;
-    return 'void $qualifiedSetterName(${_unownedArgumentType(type)} $setterArgumentName) '
-        '{ $instanceVariableName = $valueExpression; }';
-  }
-
-  indent.writeln(
-      '${_getterReturnType(hostDatatype)} $qualifiedGetterName() const '
-      '{ return $returnExpression; }');
-  indent.writeln(makeSetter(hostDatatype));
-  if (hostDatatype.isNullable) {
-    // Write the non-nullable variant; see _writeCppHeaderDataClass.
-    final HostDatatype nonNullType = _nonNullableType(hostDatatype);
-    indent.writeln(makeSetter(nonNullType));
-  }
-
-  indent.addln('');
-}
-
-/// Writes the implementation for the custom class [klass].
-///
-/// See [_writeCppHeaderDataClass] for the corresponding declaration.
-/// This is intended to be added to the implementation file.
-void _writeCppSourceDataClass(CppOptions languageOptions, Root root,
-    StringSink sink, Indent indent, Class klass) {
-  final Set<String> customClassNames =
-      root.classes.map((Class x) => x.name).toSet();
-  final Set<String> customEnumNames =
-      root.enums.map((Enum x) => x.name).toSet();
-
-  indent.addln('');
-  indent.writeln('$_commentPrefix ${klass.name}');
-  indent.addln('');
-
-  // Getters and setters.
-  for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-    _writeCppSourceClassField(
-        languageOptions, root, sink, indent, klass, field);
-  }
-
-  // Serialization.
-  _writeCppSourceClassEncode(languageOptions, root, sink, indent, klass,
-      customClassNames, customEnumNames);
-
-  // Default constructor.
-  indent.writeln('${klass.name}::${klass.name}() {}');
-  indent.addln('');
-
-  // Deserialization.
-  _writeCppSourceClassDecode(languageOptions, root, sink, indent, klass,
-      customClassNames, customEnumNames);
 }
 
 void _writeHostApiHeader(Indent indent, Api api, Root root) {
@@ -1156,68 +1260,6 @@ void _writeSystemHeaderIncludeBlock(Indent indent, List<String> headers) {
   }
 }
 
-/// Writes Cpp header file header to sink.
-void writeCppHeaderHeader(
-    CppOptions options, Root root, StringSink sink, Indent indent) {
-  if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-  }
-  indent.writeln('$_commentPrefix $generatedCodeWarning');
-  indent.writeln('$_commentPrefix $seeAlsoWarning');
-  indent.addln('');
-}
-
-/// Writes Cpp header file imports to sink.
-void writeCppHeaderImports(
-    CppOptions options, Root root, StringSink sink, Indent indent) {
-  final String guardName =
-      _getGuardName(options.headerIncludePath, options.namespace);
-  indent.writeln('#ifndef $guardName');
-  indent.writeln('#define $guardName');
-
-  _writeSystemHeaderIncludeBlock(indent, <String>[
-    'flutter/basic_message_channel.h',
-    'flutter/binary_messenger.h',
-    'flutter/encodable_value.h',
-    'flutter/standard_message_codec.h',
-  ]);
-  indent.addln('');
-  _writeSystemHeaderIncludeBlock(indent, <String>[
-    'map',
-    'string',
-    'optional',
-  ]);
-  indent.addln('');
-  if (options.namespace != null) {
-    indent.writeln('namespace ${options.namespace} {');
-  }
-  indent.addln('');
-  if (options.namespace?.endsWith('_pigeontest') ?? false) {
-    final String testFixtureClass =
-        '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
-    indent.writeln('class $testFixtureClass;');
-  }
-  indent.addln('');
-  indent.writeln('$_commentPrefix Generated class from Pigeon.');
-}
-
-/// Writes Cpp header enum to sink.
-void writeCppHeaderEnum(CppOptions options, Root root, StringSink sink,
-    Indent indent, Enum anEnum) {
-  indent.writeln('');
-  addDocumentationComments(
-      indent, anEnum.documentationComments, _docCommentSpec);
-  indent.write('enum class ${anEnum.name} ');
-  indent.scoped('{', '};', () {
-    enumerate(anEnum.members, (int index, final EnumMember member) {
-      addDocumentationComments(
-          indent, member.documentationComments, _docCommentSpec);
-      indent.writeln(
-          '${member.name} = $index${index == anEnum.members.length - 1 ? '' : ','}');
-    });
-  });
-}
-
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options] and [headerFileName].
 void generateCppHeader(
@@ -1240,43 +1282,6 @@ void generateCppHeader(
   final String guardName =
       _getGuardName(options.headerIncludePath, options.namespace);
   indent.writeln('#endif  // $guardName');
-}
-
-/// Writes Cpp source file header to sink.
-void writeCppSourceHeader(
-    CppOptions options, Root root, StringSink sink, Indent indent) {
-  if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-  }
-  indent.writeln('$_commentPrefix $generatedCodeWarning');
-  indent.writeln('$_commentPrefix $seeAlsoWarning');
-  indent.addln('');
-  indent.addln('#undef _HAS_EXCEPTIONS');
-  indent.addln('');
-}
-
-/// Writes Cpp source file imports to sink.
-void writeCppSourceImports(
-    CppOptions options, Root root, StringSink sink, Indent indent) {
-  indent.writeln('#include "${options.headerIncludePath}"');
-  indent.addln('');
-  _writeSystemHeaderIncludeBlock(indent, <String>[
-    'flutter/basic_message_channel.h',
-    'flutter/binary_messenger.h',
-    'flutter/encodable_value.h',
-    'flutter/standard_message_codec.h',
-  ]);
-  indent.addln('');
-  _writeSystemHeaderIncludeBlock(indent, <String>[
-    'map',
-    'string',
-    'optional',
-  ]);
-  indent.addln('');
-
-  if (options.namespace != null) {
-    indent.writeln('namespace ${options.namespace} {');
-  }
 }
 
 /// Generates the ".cpp" file for the AST represented by [root] to [sink] with the
