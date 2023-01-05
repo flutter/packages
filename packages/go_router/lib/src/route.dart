@@ -3,12 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import 'configuration.dart';
-import 'misc/stateful_navigation_shell.dart';
 import 'pages/custom_transition_page.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
@@ -344,6 +342,10 @@ abstract class ShellRouteBase extends RouteBase {
   /// matching sub-routes. Typically, a shell route builds its shell around this
   /// Widget.
   final ShellRoutePageBuilder? pageBuilder;
+
+  /// Returns the key for the [Navigator] that is to be used for the specified
+  /// immediate sub-route of this shell route.
+  GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute);
 }
 
 /// A route that displays a UI shell around the matching child route.
@@ -468,6 +470,12 @@ class ShellRoute extends ShellRouteBase {
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
+
+  @override
+  GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute) {
+    assert(routes.contains(subRoute));
+    return navigatorKey;
+  }
 }
 
 /// A route that displays a UI shell with separate [Navigator]s for its
@@ -481,55 +489,54 @@ class ShellRoute extends ShellRouteBase {
 /// implementing a UI with a [BottomNavigationBar], with a persistent navigation
 /// state for each tab.
 ///
-/// A StatefulShellRoute is created by providing a List of [StatefulShellBranch]
-/// items, each representing a separate stateful branch in the route tree. The
-/// branches can be provided either statically, by passing a list of branches in
-/// the constructor, or dynamically by instead providing a [branchBuilder].
-/// StatefulShellBranch defines the root location(s) of the branch, as well as
-/// the Navigator key ([GlobalKey]) for the Navigator associated with the
-/// branch.
+/// A StatefulShellRoute is created by specifying a List of [ShellRouteBranch]
+/// items, each representing a separate stateful branch in the route tree.
+/// ShellRouteBranch provides the root routes and the Navigator key ([GlobalKey])
+/// for the branch, as well as an optional default location.
 ///
 /// Like [ShellRoute], you can provide a [builder] and [pageBuilder] when
 /// creating a StatefulShellRoute. However, StatefulShellRoute differs in that
-/// the builder is mandatory and the pageBuilder will be used in addition to the
-/// builder. The child parameters of the builders are also a bit different, even
-/// though this should normally not affect how you implemented the builders.
+/// the builder is mandatory and the pageBuilder may optionally be used in
+/// addition to the builder. The reason for this is that the builder function is
+/// not used to generate the final Widget used to represent the
+/// StatefulShellRoute. Instead, the returned Widget will only form part of the
+/// stateful navigation shell for this route. This means that the role of the
+/// [builder] is to provide part of the navigation shell, whereas the role of
+/// [pageBuilder] is simply to customize the Page used for this route (see
+/// example below).
 ///
-/// For the pageBuilder, the child parameter will simply be the stateful shell
-/// already built for this route, using the builder function. In the builder
-/// function however, the child parameter is a Widget that contains - and is
+/// In the builder function, the child parameter is a Widget that contains - and is
 /// responsible for managing - the Navigators for the different route branches
 /// of this StatefulShellRoute. This widget is meant to be used as the body of a
 /// custom shell implementation, for example as the body of [Scaffold] with a
 /// [BottomNavigationBar].
 ///
-/// The builder function of a StatefulShellRoute will be invoked from within a
-/// wrapper Widget that provides access to the current [StatefulShellRouteState]
-/// associated with the route (via the method [StatefulShellRoute.of]). That
-/// state object exposes information such as the current branch index, the state
-/// of the route branches etc. It is also with the help this state object you
-/// can change the active branch, i.e. restore the navigation stack of another
-/// branch. This is accomplished using the method
-/// [StatefulShellRouteState.goBranch], and providing either a Navigator key,
-/// branch name or branch index. For example:
+/// The state of a StatefulShellRoute is represented by
+/// [StatefulShellRouteState], which can be accessed by calling
+/// [StatefulShellRouteState.of]. This state object exposes information such
+/// as the current branch index, the state of the route branches etc. The state
+/// object also provides support for changing the active branch, i.e. restoring
+/// the navigation stack of another branch. This is accomplished using the
+/// method [StatefulShellRouteState.goBranch], and providing either a Navigator
+/// key, branch name or branch index. For example:
 ///
 /// ```
 /// void _onBottomNavigationBarItemTapped(BuildContext context, int index) {
-///   final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
+///   final StatefulShellRouteState shellState = StatefulShellRouteState.of(context);
 ///   shellState.goBranch(index: index);
 /// }
 /// ```
 ///
-/// Sometimes you need greater control over the layout and animations of the
+/// Sometimes greater control is needed over the layout and animations of the
 /// Widgets representing the branch Navigators. In such cases, the child
 /// argument in the builder function can be ignored, and a custom implementation
 /// can instead be built using the child widgets of the branches
 /// (see [StatefulShellRouteState.children]) directly. For example:
 ///
 /// ```
-/// final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
+/// final StatefulShellRouteState shellState = StatefulShellRouteState.of(context);
 /// final int currentIndex = shellState.currentIndex;
-/// final List<Widget?> children = shellRouteState.children;
+/// final List<Widget> children = shellRouteState.children;
 /// return MyCustomShell(currentIndex, children);
 /// ```
 ///
@@ -541,49 +548,59 @@ class ShellRoute extends ShellRouteBase {
 /// of the builder function.
 ///
 /// ```
+/// final GlobalKey<NavigatorState> _tabANavigatorKey =
+///   GlobalKey<NavigatorState>(debugLabel: 'tabANavigator');
+/// final GlobalKey<NavigatorState> _tabBNavigatorKey =
+///   GlobalKey<NavigatorState>(debugLabel: 'tabBNavigator');
+///
 /// final GoRouter _router = GoRouter(
 ///   initialLocation: '/a',
 ///   routes: <RouteBase>[
 ///     StatefulShellRoute(
-///       routes: <RouteBase>[
-///         GoRoute(
-///           /// The screen to display as the root in the first tab of the
-///           /// bottom navigation bar.
-///           path: '/a',
-///           builder: (BuildContext context, GoRouterState state) =>
-///               const RootScreen(label: 'A', detailsPath: '/a/details'),
-///           routes: <RouteBase>[
-///             /// Will cover screen A but not the bottom navigation bar
-///             GoRoute(
-///               path: 'details',
-///               builder: (BuildContext context, GoRouterState state) =>
-///                   const DetailsScreen(label: 'A'),
-///             ),
-///           ],
-///         ),
-///         GoRoute(
-///           /// The screen to display as the root in the second tab of the
-///           /// bottom navigation bar.
-///           path: '/b',
-///           builder: (BuildContext context, GoRouterState state) =>
-///               const RootScreen(label: 'B', detailsPath: '/b/details'),
-///           routes: <RouteBase>[
-///             /// Will cover screen B but not the bottom navigation bar
-///             GoRoute(
-///               path: 'details',
-///               builder: (BuildContext context, GoRouterState state) =>
-///                   const DetailsScreen(label: 'B'),
-///             ),
-///           ],
-///         ),
-///       ],
-///       branches: <StatefulShellBranch>[
-///         StatefulShellBranch(rootLocation: '/a'),
-///         StatefulShellBranch(rootLocation: '/b'),
-///       ],
-///       builder: (BuildContext context, GoRouterState state, Widget child) {
-///         return ScaffoldWithNavBar(body: child);
+///       builder: (BuildContext context, GoRouterState state,
+///           Widget navigatorContainer) {
+///         return ScaffoldWithNavBar(body: navigatorContainer);
 ///       },
+///       branches: [
+///         /// The first branch, i.e. tab 'A'
+///         ShellRouteBranch(
+///           navigatorKey: _tabANavigatorKey,
+///           routes: <RouteBase>[
+///             GoRoute(
+///               path: '/a',
+///               builder: (BuildContext context, GoRouterState state) =>
+///                   const RootScreen(label: 'A', detailsPath: '/a/details'),
+///               routes: <RouteBase>[
+///                 /// Will cover screen A but not the bottom navigation bar
+///                 GoRoute(
+///                   path: 'details',
+///                   builder: (BuildContext context, GoRouterState state) =>
+///                       const DetailsScreen(label: 'A'),
+///                 ),
+///               ],
+///             ),
+///           ],
+///         ),
+///         /// The second branch, i.e. tab 'B'
+///         ShellRouteBranch(
+///           navigatorKey: _tabBNavigatorKey,
+///           routes: <RouteBase>[
+///             GoRoute(
+///               path: '/b',
+///               builder: (BuildContext context, GoRouterState state) =>
+///                   const RootScreen(label: 'B', detailsPath: '/b/details'),
+///               routes: <RouteBase>[
+///                 /// Will cover screen B but not the bottom navigation bar
+///                 GoRoute(
+///                   path: 'details',
+///                   builder: (BuildContext context, GoRouterState state) =>
+///                       const DetailsScreen(label: 'B'),
+///                 ),
+///               ],
+///             ),
+///           ],
+///         ),
+///       ],
 ///     ),
 ///   ],
 /// );
@@ -600,34 +617,34 @@ class ShellRoute extends ShellRouteBase {
 ///   initialLocation: '/a',
 ///   routes: <RouteBase>[
 ///     StatefulShellRoute(
-///       routes: <RouteBase>[
-///         GoRoute(
-///           /// The screen to display as the root in the first tab of the
-///           /// bottom navigation bar.
-///           path: '/a',
-///           builder: (BuildContext context, GoRouterState state) =>
-///               const RootScreen(label: 'A', detailsPath: '/a/details'),
-///         ),
-///         GoRoute(
-///           /// The screen to display as the root in the second tab of the
-///           /// bottom navigation bar.
-///           path: '/b',
-///           builder: (BuildContext context, GoRouterState state) =>
-///               const RootScreen(label: 'B', detailsPath: '/b/details'),
-///         ),
-///       ],
-///       /// To enable a dynamic set of StatefulShellBranches (and thus
-///       /// Navigators), use 'branchBuilder' instead of 'branches'.
-///       branchBuilder: (BuildContext context, GoRouterState state) =>
-///       <StatefulShellBranch>[
-///         StatefulShellBranch(rootLocation: '/a'),
-///         StatefulShellBranch(rootLocation: '/b'),
-///       ],
-///       builder: (BuildContext context, GoRouterState state, Widget child) =>
-///         ScaffoldWithNavBar(body: child),
+///       builder: (BuildContext context, GoRouterState state,
+///           Widget navigationContainer) {
+///         return ScaffoldWithNavBar(body: navigationContainer);
+///       },
 ///       pageBuilder:
-///           (BuildContext context, GoRouterState state, Widget statefulShell) =>
-///         NoTransitionPage<dynamic>(child: statefulShell),
+///           (BuildContext context, GoRouterState state, Widget statefulShell) {
+///         return NoTransitionPage<dynamic>(child: statefulShell);
+///       },
+///       branches: <ShellRouteBranch>[
+///         /// The first branch, i.e. root of tab 'A'
+///         ShellRouteBranch(routes: <RouteBase>[
+///           GoRoute(
+///             parentNavigatorKey: _tabANavigatorKey,
+///             path: '/a',
+///             builder: (BuildContext context, GoRouterState state) =>
+///               const RootScreen(label: 'A', detailsPath: '/a/details'),
+///           ),
+///         ]),
+///         /// The second branch, i.e. root of tab 'B'
+///         ShellRouteBranch(routes: <RouteBase>[
+///           GoRoute(
+///             parentNavigatorKey: _tabBNavigatorKey,
+///             path: '/b',
+///             builder: (BuildContext context, GoRouterState state) =>
+///               const RootScreen(label: 'B', detailsPath: '/b/details/1'),
+///           ),
+///         ]),
+///       ],
 ///     ),
 ///   ],
 /// );
@@ -635,19 +652,17 @@ class ShellRoute extends ShellRouteBase {
 ///
 /// To access the current state of this route, to for instance access the
 /// index of the current route branch - use the method
-/// [StatefulShellRoute.of]. For example:
+/// [StatefulShellRouteState.of]. For example:
 ///
 /// ```
-/// final StatefulShellRouteState shellState = StatefulShellRoute.of(context);
+/// final StatefulShellRouteState shellState = StatefulShellRouteState.of(context);
 /// ```
 ///
 /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_nested_navigation.dart)
 /// for a complete runnable example using StatefulShellRoute.
-/// For an example of the use of dynamic branches, see
-/// [Dynamic Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/dynamic_stateful_shell_branches.dart).
 class StatefulShellRoute extends ShellRouteBase {
-  /// Constructs a [StatefulShellRoute] from a list of [StatefulShellBranch], each
-  /// representing a root in a stateful route branch.
+  /// Constructs a [StatefulShellRoute] from a list of [StatefulShellBranch]es,
+  /// each representing a separate nested navigation tree (branch).
   ///
   /// A separate [Navigator] will be created for each of the branches, using
   /// the navigator key specified in [StatefulShellBranch]. Note that unlike
@@ -655,68 +670,71 @@ class StatefulShellRoute extends ShellRouteBase {
   /// a StatefulShellRoute. The pageBuilder however is optional, and is used
   /// in addition to the builder.
   StatefulShellRoute({
-    required super.routes,
+    required this.branches,
     required super.builder,
-    StatefulShellBranchBuilder? branchBuilder,
-    List<StatefulShellBranch>? branches,
     super.pageBuilder,
-  })  : assert(branchBuilder != null || branches != null),
-        branchBuilder = branchBuilder ?? _builderFromBranches(branches!),
-        super._() {
+  })  : assert(branches.isNotEmpty),
+        assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
+            'Navigator keys must be unique'),
+        super._(routes: _routes(branches)) {
     for (int i = 0; i < routes.length; ++i) {
       final RouteBase route = routes[i];
       if (route is GoRoute) {
-        assert(route.parentNavigatorKey == null);
+        assert(route.parentNavigatorKey == null ||
+            route.parentNavigatorKey == branches[i].navigatorKey);
       }
     }
   }
 
-  static StatefulShellBranchBuilder _builderFromBranches(
-      List<StatefulShellBranch> branches) {
-    return (_, __) => branches;
-  }
-
-  /// The navigation branch builder for this shell route.
+  /// Representations of the different stateful route branches that this
+  /// shell route will manage.
   ///
-  /// This builder is used to provide the currently active StatefulShellBranches
-  /// at any point in time. Each branch uses a separate [Navigator], identified
-  /// by [StatefulShellBranch.navigatorKey].
-  final StatefulShellBranchBuilder branchBuilder;
+  /// Each branch uses a separate [Navigator], identified
+  /// [StatefulShellBranch.navigatorKey].
+  final List<StatefulShellBranch> branches;
 
-  /// Gets the state for the nearest stateful shell route in the Widget tree.
-  static StatefulShellRouteState of(BuildContext context) {
-    final InheritedStatefulNavigationShell? inherited = context
-        .dependOnInheritedWidgetOfExactType<InheritedStatefulNavigationShell>();
-    assert(inherited != null,
-        'No InheritedStatefulNavigationShell found in context');
-    return inherited!.routeState;
+  @override
+  GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute) {
+    return branchForSubRoute(subRoute).navigatorKey;
   }
+
+  /// Returns the StatefulShellBranch that is to be used for the specified
+  /// immediate sub-route of this shell route.
+  StatefulShellBranch branchForSubRoute(RouteBase subRoute) {
+    final StatefulShellBranch? branch = branches.firstWhereOrNull(
+        (StatefulShellBranch e) => e.routes.contains(subRoute));
+    assert(branch != null);
+    return branch!;
+  }
+
+  static List<RouteBase> _routes(List<StatefulShellBranch> branches) =>
+      branches.expand((StatefulShellBranch e) => e.routes).toList();
+
+  static Set<GlobalKey<NavigatorState>> _debugUniqueNavigatorKeys(
+          List<StatefulShellBranch> branches) =>
+      Set<GlobalKey<NavigatorState>>.from(
+          branches.map((StatefulShellBranch e) => e.navigatorKey));
 }
 
-/// Representation of a separate navigation branch in a [StatefulShellRoute].
+/// Representation of a separate branch in a stateful navigation tree, used to
+/// configure [StatefulShellRoute].
 ///
-/// The only required argument is the rootLocation (or [rootLocations]), which
-/// identify the [defaultLocation] to be used when loading the branch for the
-/// first time (for instance when switching branch using the goBranch method in
-/// [StatefulShellBranchState]). The rootLocations also identify the valid root
-/// locations for a particular StatefulShellBranch, and thus on which Navigator
-/// those routes should be placed on.
-///
-/// A [navigatorKey] is optional, but can be useful to provide in case you need
+/// The only required argument when creating a ShellRouteBranch is the
+/// sub-routes ([routes]), however in some cases you may also need to specify
+/// the [defaultLocation], for instance of you're using another shell route as
+/// direct sub-route. A [navigatorKey] can be useful to provide in case you need
 /// to use the [Navigator] created for this branch elsewhere.
 @immutable
 class StatefulShellBranch {
   /// Constructs a [StatefulShellBranch].
   StatefulShellBranch({
+    required this.routes,
     GlobalKey<NavigatorState>? navigatorKey,
-    List<String>? rootLocations,
-    String? rootLocation,
+    this.defaultLocation,
     this.name,
     this.restorationScopeId,
     this.preload = false,
-  })  : assert(rootLocation != null || (rootLocations?.isNotEmpty ?? false)),
-        rootLocations = rootLocations ?? <String>[rootLocation!],
-        navigatorKey = navigatorKey ??
+  }) : navigatorKey = navigatorKey ??
             GlobalKey<NavigatorState>(
                 debugLabel: name != null ? 'Branch-$name' : null);
 
@@ -728,8 +746,14 @@ class StatefulShellBranch {
   /// Navigator instead of the root Navigator.
   final GlobalKey<NavigatorState> navigatorKey;
 
-  /// The valid root locations for this branch.
-  final List<String> rootLocations;
+  /// The list of child routes associated with this route branch.
+  final List<RouteBase> routes;
+
+  /// The default location for this route branch.
+  ///
+  /// If none is specified, the first descendant [GoRoute] will be used (i.e.
+  /// first element in [routes], or a descendant).
+  final String? defaultLocation;
 
   /// An optional name for this branch.
   final String? name;
@@ -738,29 +762,16 @@ class StatefulShellBranch {
   /// [StatefulShellRoute] is visited for the first time.
   ///
   /// If this is true, this branch will be preloaded by navigating to
-  /// the root location (first entry in [rootLocations]).
+  /// the default location (see [defaultLocation]). The primary purpose of
+  /// branch preloading is to enhance the user experience when switching
+  /// branches, which might for instance involve preparing the UI for animated
+  /// transitions etc. Care must be taken to **keep the preloading to an
+  /// absolute minimum** to avoid any unnecessary resource use.
   final bool preload;
 
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
-
-  /// Returns the default location for this branch (by default the first
-  /// entry in [rootLocations]).
-  String get defaultLocation => rootLocations.first;
-
-  /// Checks if this branch is intended to be used for the provided
-  /// GoRouterState.
-  bool isBranchFor(GoRouterState state) {
-    final String? match = rootLocations
-        .firstWhereOrNull((String e) => state.location.startsWith(e));
-    return match != null;
-  }
-
-  /// Gets the state for the current branch of the nearest stateful shell route
-  /// in the Widget tree.
-  static StatefulShellBranchState of(BuildContext context) =>
-      StatefulShellRoute.of(context).currentBranchState;
 
   @override
   bool operator ==(Object other) {
@@ -771,7 +782,7 @@ class StatefulShellBranch {
       return false;
     }
     return other.navigatorKey == navigatorKey &&
-        listEquals(other.rootLocations, rootLocations) &&
+        other.defaultLocation == defaultLocation &&
         other.name == name &&
         other.preload == preload &&
         other.restorationScopeId == restorationScopeId;
@@ -779,28 +790,5 @@ class StatefulShellBranch {
 
   @override
   int get hashCode => Object.hash(
-      navigatorKey, rootLocations, name, preload, restorationScopeId);
-}
-
-/// StatefulShellRoute extension that provides support for resolving the
-/// current StatefulShellBranch.
-///
-/// Should not be used directly, consider using [StatefulShellRoute.of] or
-/// [StatefulShellBranch.of] to access [StatefulShellBranchState] for the
-/// current context.
-extension StatefulShellBranchResolver on StatefulShellRoute {
-  static final Expando<StatefulShellBranch> _shellBranchCache =
-      Expando<StatefulShellBranch>();
-
-  /// The current StatefulShellBranch, previously resolved using [resolveBranch].
-  StatefulShellBranch? get currentBranch => _shellBranchCache[this];
-
-  /// Resolves the current StatefulShellBranch, given the provided GoRouterState.
-  StatefulShellBranch? resolveBranch(
-      List<StatefulShellBranch> branches, GoRouterState state) {
-    final StatefulShellBranch? branch = branches
-        .firstWhereOrNull((StatefulShellBranch e) => e.isBranchFor(state));
-    _shellBranchCache[this] = branch;
-    return branch;
-  }
+      navigatorKey, defaultLocation, name, preload, restorationScopeId);
 }

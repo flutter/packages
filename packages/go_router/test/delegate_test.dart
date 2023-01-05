@@ -38,13 +38,8 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
     routes: <RouteBase>[
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
       GoRoute(path: '/a', builder: (_, __) => const DummyStatefulWidget()),
-      StatefulShellRoute(
-        branches: <StatefulShellBranch>[
-          StatefulShellBranch(rootLocation: '/c'),
-          StatefulShellBranch(rootLocation: '/d'),
-        ],
-        builder: (_, __, Widget child) => child,
-        routes: <RouteBase>[
+      StatefulShellRoute(branches: <StatefulShellBranch>[
+        StatefulShellBranch(routes: <RouteBase>[
           GoRoute(
               path: '/c',
               builder: (_, __) => const DummyStatefulWidget(),
@@ -56,6 +51,8 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
                     path: 'c2',
                     builder: (_, __) => const DummyStatefulWidget()),
               ]),
+        ]),
+        StatefulShellBranch(routes: <RouteBase>[
           GoRoute(
               path: '/d',
               builder: (_, __) => const DummyStatefulWidget(),
@@ -64,8 +61,8 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
                     path: 'd1',
                     builder: (_, __) => const DummyStatefulWidget()),
               ]),
-        ],
-      ),
+        ]),
+      ], builder: (_, __, Widget child) => child),
     ],
   );
   await tester.pumpWidget(MaterialApp.router(

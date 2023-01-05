@@ -2295,41 +2295,46 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
           builder: (BuildContext context, _, Widget child) {
-            routeState = StatefulShellRoute.of(context);
+            routeState = StatefulShellRouteState.of(context);
             return child;
           },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/a',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen A'),
-            ),
-            GoRoute(
-                path: '/family',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Families'),
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: ':fid',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        FamilyScreen(state.params['fid']!),
-                    routes: <GoRoute>[
-                      GoRoute(
-                        path: 'person/:pid',
-                        builder: (BuildContext context, GoRouterState state) {
-                          final String fid = state.params['fid']!;
-                          final String pid = state.params['pid']!;
-
-                          return PersonScreen(fid, pid);
-                        },
-                      ),
-                    ],
-                  )
-                ]),
-          ],
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(rootLocation: '/a'),
-            StatefulShellBranch(rootLocation: '/family'),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                    path: '/family',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Families'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: ':fid',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            FamilyScreen(state.params['fid']!),
+                        routes: <GoRoute>[
+                          GoRoute(
+                            path: 'person/:pid',
+                            builder:
+                                (BuildContext context, GoRouterState state) {
+                              final String fid = state.params['fid']!;
+                              final String pid = state.params['pid']!;
+
+                              return PersonScreen(fid, pid);
+                            },
+                          ),
+                        ],
+                      )
+                    ]),
+              ],
+            ),
           ],
         ),
       ];
@@ -2811,37 +2816,48 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRoute.of(context);
+            routeState = StatefulShellRouteState.of(context);
             return child;
           },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/a',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen A'),
-            ),
-            GoRoute(
-              path: '/b',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen B'),
-            ),
-            GoRoute(
-              path: '/c',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen C'),
-            ),
-            GoRoute(
-              path: '/d',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen D'),
-            ),
-          ],
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(rootLocation: '/a'),
-            StatefulShellBranch(rootLocation: '/b', name: 'B'),
             StatefulShellBranch(
-                rootLocation: '/c', navigatorKey: branchCNavigatorKey),
-            StatefulShellBranch(rootLocation: '/d'),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              name: 'B',
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/b',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen B'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: branchCNavigatorKey,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/c',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen C'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/d',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen D'),
+                ),
+              ],
+            ),
           ],
         ),
       ];
@@ -2908,34 +2924,34 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRoute.of(context);
+            routeState = StatefulShellRouteState.of(context);
             return child;
           },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/a',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen A'),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'detailA',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      Column(children: <Widget>[
-                    const Text('Screen A Detail'),
-                    DummyStatefulWidget(key: statefulWidgetKey),
-                  ]),
-                ),
-              ],
-            ),
-            GoRoute(
-              path: '/b',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen B'),
-            ),
-          ],
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(rootLocation: '/a'),
-            StatefulShellBranch(rootLocation: '/b'),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen A'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'detailA',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        Column(children: <Widget>[
+                      const Text('Screen A Detail'),
+                      DummyStatefulWidget(key: statefulWidgetKey),
+                    ]),
+                  ),
+                ],
+              ),
+            ]),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen B'),
+              ),
+            ]),
           ],
         ),
       ];
@@ -2980,40 +2996,42 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRoute.of(context);
+            routeState = StatefulShellRouteState.of(context);
             return child;
           },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/a',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen A'),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'detailA',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen A Detail'),
-                ),
-              ],
-            ),
-            GoRoute(
-              path: '/b',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen B'),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'detailB',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen B Detail'),
-                ),
-              ],
-            ),
-          ],
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
-                rootLocation: '/a', navigatorKey: sectionANavigatorKey),
+                navigatorKey: sectionANavigatorKey,
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: '/a',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen A'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'detailA',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            const Text('Screen A Detail'),
+                      ),
+                    ],
+                  ),
+                ]),
             StatefulShellBranch(
-                rootLocation: '/b', navigatorKey: sectionBNavigatorKey),
+                navigatorKey: sectionBNavigatorKey,
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen B'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'detailB',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            const Text('Screen B Detail'),
+                      ),
+                    ],
+                  ),
+                ]),
           ],
         ),
       ];
@@ -3062,24 +3080,24 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
           builder: (BuildContext context, _, Widget child) {
-            routeState = StatefulShellRoute.of(context);
+            routeState = StatefulShellRouteState.of(context);
             return child;
           },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/a',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen A'),
-            ),
-            GoRoute(
-              path: '/b',
-              builder: (BuildContext context, GoRouterState state) =>
-                  Text('Screen B - ${state.extra}'),
-            ),
-          ],
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(rootLocation: '/a'),
-            StatefulShellBranch(rootLocation: '/b'),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen A'),
+              ),
+            ]),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) =>
+                    Text('Screen B - ${state.extra}'),
+              ),
+            ]),
           ],
         ),
       ];
@@ -3120,24 +3138,24 @@ void main() {
         ),
         StatefulShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRoute.of(context);
+            routeState = StatefulShellRouteState.of(context);
             return child;
           },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/a',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen A'),
-            ),
-            GoRoute(
-              path: '/b',
-              builder: (BuildContext context, GoRouterState state) =>
-                  Text('Screen B - ${state.extra ?? ''}'),
-            ),
-          ],
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(rootLocation: '/a'),
-            StatefulShellBranch(rootLocation: '/b'),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen A'),
+              ),
+            ]),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen B'),
+              ),
+            ]),
           ],
         ),
       ];
@@ -3149,7 +3167,7 @@ void main() {
       router.go('/b');
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen B - '), findsOneWidget);
+      expect(find.text('Screen B'), findsOneWidget);
 
       router.push('/common', extra: 'X');
       await tester.pumpAndSettle();
@@ -3187,53 +3205,63 @@ void main() {
         StatefulShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) =>
               child,
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/a',
-              builder: (BuildContext context, GoRouterState state) =>
-                  DummyStatefulWidget(key: statefulWidgetKeyA),
-            ),
-            GoRoute(
-              path: '/b',
-              builder: (BuildContext context, GoRouterState state) =>
-                  DummyStatefulWidget(key: statefulWidgetKeyB),
-            ),
-          ],
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(rootLocation: '/a'),
-            StatefulShellBranch(rootLocation: '/b'),
+            StatefulShellBranch(routes: <RouteBase>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    DummyStatefulWidget(key: statefulWidgetKeyA),
+              ),
+            ]),
+            StatefulShellBranch(routes: <RouteBase>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) =>
+                    DummyStatefulWidget(key: statefulWidgetKeyB),
+              ),
+            ]),
           ],
         ),
         StatefulShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) =>
               Scaffold(body: child),
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/c',
-              builder: (BuildContext context, GoRouterState state) =>
-                  DummyStatefulWidget(key: statefulWidgetKeyC),
-            ),
-            GoRoute(
-              path: '/d',
-              builder: (BuildContext context, GoRouterState state) =>
-                  DummyStatefulWidget(key: statefulWidgetKeyD),
-            ),
-            GoRoute(
-                path: '/e',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('E'),
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: 'details',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        DummyStatefulWidget(key: statefulWidgetKeyE),
-                  ),
-                ]),
-          ],
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(rootLocation: '/c', preload: true),
-            StatefulShellBranch(rootLocation: '/d', preload: true),
-            StatefulShellBranch(rootLocation: '/e', preload: true),
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/c',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyC),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/d',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyD),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                    path: '/e',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('E'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'details',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            DummyStatefulWidget(key: statefulWidgetKeyE),
+                      ),
+                    ]),
+              ],
+            ),
           ],
         ),
       ];
@@ -3272,51 +3300,52 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRoute.of(context);
+            routeState = StatefulShellRouteState.of(context);
             return child;
           },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/a',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen A'),
-            ),
-            GoRoute(
-              path: '/b',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen B'),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'details1',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen B Detail1'),
-                ),
-                GoRoute(
-                  path: 'details2',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen B Detail2'),
-                ),
-              ],
-            ),
-            GoRoute(
-              path: '/c',
-              redirect: (_, __) => '/c/main2',
-            ),
-            GoRoute(
-              path: '/c/main1',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen C1'),
-            ),
-            GoRoute(
-              path: '/c/main2',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen C2'),
-            ),
-          ],
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(rootLocation: '/a'),
-            StatefulShellBranch(rootLocation: '/b'),
-            StatefulShellBranch(rootLocation: '/c'),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen A'),
+              ),
+            ]),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen B'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'details1',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen B Detail1'),
+                  ),
+                  GoRoute(
+                    path: 'details2',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen B Detail2'),
+                  ),
+                ],
+              ),
+            ]),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/c',
+                redirect: (_, __) => '/c/main2',
+              ),
+              GoRoute(
+                path: '/c/main1',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen C1'),
+              ),
+              GoRoute(
+                path: '/c/main2',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen C2'),
+              ),
+            ]),
           ],
         ),
       ];
@@ -3365,38 +3394,38 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRoute.of(context);
+            routeState = StatefulShellRouteState.of(context);
             return child;
           },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/a',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen A'),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'detail',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen A Detail'),
-                ),
-              ],
-            ),
-            GoRoute(
-              path: '/b',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Text('Screen B'),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'detail',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen B Detail'),
-                ),
-              ],
-            ),
-          ],
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(rootLocation: '/a'),
-            StatefulShellBranch(rootLocation: '/b'),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen A'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'detail',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen A Detail'),
+                  ),
+                ],
+              ),
+            ]),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen B'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'detail',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen B Detail'),
+                  ),
+                ],
+              ),
+            ]),
           ],
         ),
       ];
@@ -3420,138 +3449,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen A Detail'), findsNothing);
-    });
-
-    testWidgets(
-        'Dynamic branches are created, removed and updated correctly in '
-        'a StatefulShellRoute', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> branch0 =
-          GlobalKey<NavigatorState>(debugLabel: 'branch0');
-      final GlobalKey<NavigatorState> branch1 =
-          GlobalKey<NavigatorState>(debugLabel: 'branch1');
-      final GlobalKey<NavigatorState> branch2 =
-          GlobalKey<NavigatorState>(debugLabel: 'branch2');
-
-      StatefulShellRouteState? routeState;
-      final ValueNotifier<int> scenario = ValueNotifier<int>(1);
-
-      final GoRouter router = GoRouter(
-        navigatorKey: rootNavigatorKey,
-        initialLocation: '/a/0',
-        routes: <RouteBase>[
-          StatefulShellRoute(
-            builder: (BuildContext context, GoRouterState state, Widget child) {
-              routeState = StatefulShellRoute.of(context);
-              return child;
-            },
-            branchBuilder: (_, __) => <StatefulShellBranch>[
-              StatefulShellBranch(rootLocation: '/a/0', navigatorKey: branch0),
-              if (scenario.value == 2) ...<StatefulShellBranch>[
-                StatefulShellBranch(
-                    rootLocation: '/a/1', navigatorKey: branch1),
-                StatefulShellBranch(
-                    rootLocation: '/a/2', navigatorKey: branch2),
-              ],
-              if (scenario.value == 3) ...<StatefulShellBranch>[
-                StatefulShellBranch(
-                    rootLocation: '/a/1',
-                    name: 'branch1',
-                    navigatorKey: branch1),
-                StatefulShellBranch(
-                    rootLocation: '/a/2', navigatorKey: branch2),
-              ],
-              if (scenario.value == 4)
-                StatefulShellBranch(
-                    rootLocation: '/a/1', navigatorKey: branch1),
-            ],
-            routes: <RouteBase>[
-              GoRoute(
-                  path: '/a/:id',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return Text('a-${state.params['id']}');
-                  },
-                  routes: <RouteBase>[
-                    GoRoute(
-                      path: 'detail',
-                      builder: (BuildContext context, GoRouterState state) {
-                        return Text('a-detail-${state.params['id']}');
-                      },
-                    ),
-                  ]),
-            ],
-          ),
-        ],
-        errorBuilder: (BuildContext context, GoRouterState state) =>
-            Text('error:${GoRouter.of(context).location}'),
-      );
-
-      await tester.pumpWidget(
-        ValueListenableBuilder<int>(
-            valueListenable: scenario,
-            builder: (_, __, ___) {
-              return MaterialApp.router(routerConfig: router);
-            }),
-      );
-
-      expect(find.text('a-0'), findsOneWidget);
-      expect(find.text('a-detail-0'), findsNothing);
-      expect(find.byKey(branch0), findsOneWidget);
-
-      router.go('/a/0/detail');
-      await tester.pumpAndSettle();
-      expect(find.text('a-0'), findsNothing);
-      expect(find.text('a-detail-0'), findsOneWidget);
-
-      router.go('/a/1');
-      await tester.pumpAndSettle();
-      expect(find.text('a-1'), findsNothing);
-      expect(find.text('error:/a/1'), findsOneWidget);
-
-      scenario.value = 2;
-      await tester.pumpAndSettle();
-      routeState!.goBranch(navigatorKey: branch2);
-      await tester.pumpAndSettle();
-      expect(find.text('a-0'), findsNothing);
-      expect(find.text('a-1'), findsNothing);
-      expect(find.text('a-2'), findsOneWidget);
-
-      expect(() {
-        // Name 'branch1' hasn't yet been assigned, so this should fail
-        routeState!.goBranch(name: 'branch1');
-      }, throwsA(isA<GoError>()));
-      scenario.value = 3;
-      await tester.pumpAndSettle();
-      routeState!.goBranch(name: 'branch1');
-      await tester.pumpAndSettle();
-      expect(find.text('a-0'), findsNothing);
-      expect(find.text('a-1'), findsOneWidget);
-      expect(find.text('a-2'), findsNothing);
-      expect(routeState!.branchStates.length, 3);
-
-      router.go('/a/2/detail');
-      await tester.pumpAndSettle();
-      expect(find.text('a-2'), findsNothing);
-      expect(find.text('a-detail-2'), findsOneWidget);
-      routeState!.goBranch(name: 'branch1');
-      await tester.pumpAndSettle();
-
-      // Test removal of branch2
-      scenario.value = 4;
-      await tester.pumpAndSettle();
-      expect(routeState!.branchStates.length, 2);
-      expect(() {
-        routeState!.goBranch(navigatorKey: branch2);
-      }, throwsA(isA<GoError>()));
-
-      // Test that state of branch2 is forgotten (not restored) after removal
-      scenario.value = 3;
-      await tester.pumpAndSettle();
-      routeState!.goBranch(navigatorKey: branch2);
-      await tester.pumpAndSettle();
-      expect(find.text('a-2'), findsOneWidget);
-      expect(find.text('a-detail-2'), findsNothing);
     });
   });
 
@@ -3689,37 +3586,37 @@ void main() {
                     body: child,
                   );
                 },
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: '/a',
-                    builder: (BuildContext context, _) {
-                      return const Scaffold(
-                        body: Text('Screen A'),
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: '/b',
-                    builder: (BuildContext context, _) {
-                      return const Scaffold(
-                        body: Text('Screen B'),
-                      );
-                    },
-                    routes: <RouteBase>[
-                      GoRoute(
-                        path: 'detail',
-                        builder: (BuildContext context, _) {
-                          return const Scaffold(
-                            body: Text('Screen B detail'),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
                 branches: <StatefulShellBranch>[
-                  StatefulShellBranch(rootLocation: '/a'),
-                  StatefulShellBranch(rootLocation: '/b'),
+                  StatefulShellBranch(routes: <GoRoute>[
+                    GoRoute(
+                      path: '/a',
+                      builder: (BuildContext context, _) {
+                        return const Scaffold(
+                          body: Text('Screen A'),
+                        );
+                      },
+                    ),
+                  ]),
+                  StatefulShellBranch(routes: <GoRoute>[
+                    GoRoute(
+                      path: '/b',
+                      builder: (BuildContext context, _) {
+                        return const Scaffold(
+                          body: Text('Screen B'),
+                        );
+                      },
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'detail',
+                          builder: (BuildContext context, _) {
+                            return const Scaffold(
+                              body: Text('Screen B detail'),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ]),
                 ],
               ),
             ],
@@ -3745,6 +3642,7 @@ void main() {
           expect(rootNavigatorKey.currentState?.canPop(), false);
         },
       );
+
       testWidgets('Pageless route should include in can pop',
           (WidgetTester tester) async {
         final GlobalKey<NavigatorState> root =

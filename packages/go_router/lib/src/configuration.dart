@@ -12,6 +12,7 @@ import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
 export 'route.dart';
+export 'shell_state.dart';
 export 'state.dart';
 
 /// The route configuration for GoRouter configured by the app.
@@ -27,6 +28,8 @@ class RouteConfiguration {
             _debugVerifyNoDuplicatePathParameter(routes, <String, GoRoute>{})),
         assert(_debugCheckParentNavigatorKeys(
             routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
+    assert(_debugCheckShellRouteBranchDefaultLocations(
+        routes, RouteMatcher(this)));
     _cacheNameToPath('', routes);
     log.info(_debugKnownRoutes());
   }
@@ -89,6 +92,12 @@ class RouteConfiguration {
           <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
         );
       } else if (route is StatefulShellRoute) {
+        for (final StatefulShellBranch branch in route.branches) {
+          assert(
+              !allowedKeys.contains(branch.navigatorKey),
+              'StatefulShellBranch must not reuse an ancestor navigatorKey '
+              '(${branch.navigatorKey})');
+        }
         _debugCheckParentNavigatorKeys(route.routes, allowedKeys);
       }
     }
@@ -115,6 +124,90 @@ class RouteConfiguration {
     return true;
   }
 
+  // Check to see that the configured defaultLocation of StatefulShellBranches
+  // points to a descendant route of the route branch.
+  bool _debugCheckShellRouteBranchDefaultLocations(
+      List<RouteBase> routes, RouteMatcher matcher) {
+    try {
+      for (final RouteBase route in routes) {
+        if (route is StatefulShellRoute) {
+          for (final StatefulShellBranch branch in route.branches) {
+            if (branch.defaultLocation == null) {
+              // Recursively search for the first GoRoute descendant. Will
+              // throw assertion error if not found.
+              findShellRouteBranchDefaultLocation(branch);
+            } else {
+              final RouteBase defaultLocationRoute =
+                  matcher.findMatch(branch.defaultLocation!).last.route;
+              final RouteBase? match = branch.routes.firstWhereOrNull(
+                  (RouteBase e) => _debugIsDescendantOrSame(
+                      ancestor: e, route: defaultLocationRoute));
+              assert(
+                  match != null,
+                  'The defaultLocation (${branch.defaultLocation}) of '
+                  'StatefulShellBranch must match a descendant route of the '
+                  'branch');
+            }
+          }
+        }
+        _debugCheckShellRouteBranchDefaultLocations(route.routes, matcher);
+      }
+    } on MatcherError catch (e) {
+      assert(
+          false,
+          'defaultLocation (${e.location}) of StatefulShellBranch must '
+          'be a valid location');
+    }
+    return true;
+  }
+
+  static Iterable<RouteBase> _subRoutesRecursively(List<RouteBase> routes) =>
+      routes.expand(
+          (RouteBase e) => <RouteBase>[e, ..._subRoutesRecursively(e.routes)]);
+
+  static GoRoute? _findFirstGoRoute(List<RouteBase> routes) =>
+      _subRoutesRecursively(routes)
+          .firstWhereOrNull((RouteBase e) => e is GoRoute) as GoRoute?;
+
+  /// Tests if a route is a descendant of, or same as, an ancestor route.
+  bool _debugIsDescendantOrSame(
+          {required RouteBase ancestor, required RouteBase route}) =>
+      ancestor == route ||
+      _subRoutesRecursively(ancestor.routes).contains(route);
+
+  /// Recursively traverses the routes of the provided ShellRouteBranch to find
+  /// the first GoRoute, from which a full path will be derived.
+  String findShellRouteBranchDefaultLocation(StatefulShellBranch branch) {
+    final GoRoute? route = _findFirstGoRoute(branch.routes);
+    final String? defaultLocation =
+        route != null ? _fullPathForRoute(route, '', routes) : null;
+    assert(
+        defaultLocation != null,
+        'The default location of a ShellRouteBranch'
+        ' must be configured or derivable from GoRoute descendant');
+    return defaultLocation!;
+  }
+
+  static String? _fullPathForRoute(
+      RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
+    for (final RouteBase route in routes) {
+      final String fullPath = (route is GoRoute)
+          ? concatenatePaths(parentFullpath, route.path)
+          : parentFullpath;
+
+      if (route == targetRoute) {
+        return fullPath;
+      } else {
+        final String? subRoutePath =
+            _fullPathForRoute(targetRoute, fullPath, route.routes);
+        if (subRoutePath != null) {
+          return subRoutePath;
+        }
+      }
+    }
+    return null;
+  }
+
   /// The list of top level routes used by [GoRouterDelegate].
   final List<RouteBase> routes;
 
@@ -128,9 +221,6 @@ class RouteConfiguration {
   final GlobalKey<NavigatorState> navigatorKey;
 
   final Map<String, String> _nameToPath = <String, String>{};
-
-  late final Set<GlobalKey<NavigatorState>> _debugAllNavigatorKeys =
-      _debugAllNavigatorsRecursively(routes);
 
   /// Looks up the url location by a [GoRoute]'s name.
   String namedLocation(
@@ -172,105 +262,6 @@ class RouteConfiguration {
             path: location,
             queryParameters: queryParams.isEmpty ? null : queryParams)
         .toString();
-  }
-
-  static Set<GlobalKey<NavigatorState>> _debugAllNavigatorsRecursively(
-      List<RouteBase> routes) {
-    return routes.expand((RouteBase e) {
-      if (e is GoRoute && e.parentNavigatorKey != null) {
-        return <GlobalKey<NavigatorState>>{
-          e.parentNavigatorKey!,
-          ..._debugAllNavigatorsRecursively(e.routes)
-        };
-      } else if (e is ShellRoute) {
-        return <GlobalKey<NavigatorState>>{
-          e.navigatorKey,
-          ..._debugAllNavigatorsRecursively(e.routes)
-        };
-      } else {
-        return _debugAllNavigatorsRecursively(e.routes);
-      }
-    }).toSet();
-  }
-
-  /// Validates the branches of a [StatefulShellRoute].
-  bool debugValidateStatefulShellBranches(
-      StatefulShellRoute shellRoute, List<StatefulShellBranch> branches) {
-    assert(() {
-      final Set<GlobalKey<NavigatorState>> uniqueBranchNavigatorKeys =
-          branches.map((StatefulShellBranch e) => e.navigatorKey).toSet();
-      assert(uniqueBranchNavigatorKeys.length == branches.length,
-          'StatefulShellRoute must not uses duplicate Navigator keys for the branches');
-
-      final Set<String> uniqueDefaultLocations =
-          branches.map((StatefulShellBranch e) => e.defaultLocation).toSet();
-      assert(uniqueDefaultLocations.length == branches.length,
-          'StatefulShellRoute must not uses duplicate defaultLocations for the branches');
-
-      assert(
-          _debugAllNavigatorKeys
-              .intersection(uniqueBranchNavigatorKeys)
-              .isEmpty,
-          'StatefulShellBranch Navigator key must be unique');
-
-      // Check to see that the configured defaultLocation of
-      // StatefulShellBranches points to a descendant route of the route branch.
-      void checkBranchDefaultLocations(
-          List<RouteBase> routes, RouteMatcher matcher) {
-        try {
-          for (final RouteBase route in routes) {
-            if (route is StatefulShellRoute) {
-              for (final StatefulShellBranch branch in branches) {
-                final String defaultLocation = branch.defaultLocation;
-                final RouteBase defaultLocationRoute =
-                    matcher.findMatch(defaultLocation).last.route;
-                final RouteBase? match = shellRoute.routes.firstWhereOrNull(
-                    (RouteBase e) => _debugIsDescendantOrSame(
-                        ancestor: e, route: defaultLocationRoute));
-                assert(
-                    match != null,
-                    'The defaultLocation (${branch.defaultLocation}) of '
-                    'StatefulShellBranch must match a descendant route of the '
-                    'StatefulShellRoute');
-              }
-            }
-            checkBranchDefaultLocations(route.routes, matcher);
-          }
-        } on MatcherError catch (e) {
-          assert(
-              false,
-              'defaultLocation (${e.location}) of StatefulShellBranch must '
-              'be a valid location');
-        }
-      }
-
-      checkBranchDefaultLocations(routes, RouteMatcher(this));
-
-      return true;
-    }());
-    return true;
-  }
-
-  /// Tests if a route is a descendant of, or same as, an ancestor route.
-  bool _debugIsDescendantOrSame(
-      {required RouteBase ancestor, required RouteBase route}) {
-    return _debugAncestorsForRoute(route, routes).contains(ancestor);
-  }
-
-  static List<RouteBase> _debugAncestorsForRoute<T extends RouteBase>(
-      RouteBase targetRoute, List<RouteBase> routes) {
-    for (final RouteBase route in routes) {
-      if (route.routes.contains(targetRoute)) {
-        return <RouteBase>[route, targetRoute];
-      } else {
-        final List<RouteBase> ancestors =
-            _debugAncestorsForRoute(targetRoute, route.routes);
-        if (ancestors.isNotEmpty) {
-          return <RouteBase>[route, ...ancestors];
-        }
-      }
-    }
-    return <RouteBase>[];
   }
 
   @override

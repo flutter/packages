@@ -181,55 +181,35 @@ class RouteBuilder {
       // that the page for this ShellRoute is placed at the right index.
       final int shellPageIdx = keyToPages[parentNavigatorKey]!.length;
 
-      void buildRecursive(GlobalKey<NavigatorState> shellNavigatorKey) {
-        // Add an entry for the shell route's navigator
-        keyToPages.putIfAbsent(shellNavigatorKey, () => <Page<Object?>>[]);
+      // Get the current sub-route of this shell route from the match list.
+      final RouteBase subRoute = matchList.matches[startIndex + 1].route;
 
-        // Build the remaining pages
-        _buildRecursive(context, matchList, startIndex + 1, onPopPage,
-            routerNeglect, keyToPages, shellNavigatorKey, registry);
-      }
+      // The key to provide to the shell route's Navigator.
+      final GlobalKey<NavigatorState> shellNavigatorKey =
+          route.navigatorKeyForSubRoute(subRoute);
+
+      // Add an entry for the shell route's navigator
+      keyToPages.putIfAbsent(shellNavigatorKey, () => <Page<Object?>>[]);
+
+      // Build the remaining pages
+      _buildRecursive(context, matchList, startIndex + 1, onPopPage,
+          routerNeglect, keyToPages, shellNavigatorKey, registry);
 
       // Build the Navigator and/or StatefulNavigationShell
-      Widget? child;
+      Navigator buildNavigator(String? restorationScopeId) => _buildNavigator(
+          onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
+          restorationScopeId: restorationScopeId);
+      Widget child;
       if (route is StatefulShellRoute) {
-        final List<StatefulShellBranch> branches =
-            route.branchBuilder(context, state);
-        final StatefulShellBranch? branch =
-            route.resolveBranch(branches, state);
-        // Since branches may be generated dynamically, validation needs to
-        // occur at build time, rather than at creation of RouteConfiguration
-        assert(() {
-          return configuration.debugValidateStatefulShellBranches(
-              route, branches);
-        }());
-
-        if (branch == null) {
-          throw _RouteBuilderError('Shell routes must always provide a '
-              'navigator key for its immediate sub-routes');
-        }
-        // The key to provide to the shell route's Navigator.
-        final GlobalKey<NavigatorState> shellNavigatorKey = branch.navigatorKey;
-        buildRecursive(shellNavigatorKey);
-
-        Navigator buildBranchNavigator() {
-          return _buildNavigator(
-              onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
-              restorationScopeId: branch.restorationScopeId);
-        }
-
-        child = _buildStatefulNavigationShell(route, state, branches, branch,
-            buildBranchNavigator, matchList, onPopPage, registry);
-      } else if (route is ShellRoute) {
-        // The key to provide to the shell route's Navigator.
-        final GlobalKey<NavigatorState> shellNavigatorKey = route.navigatorKey;
-        buildRecursive(shellNavigatorKey);
-        final String? restorationScopeId = route.restorationScopeId;
-        child = _buildNavigator(
-            onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
-            restorationScopeId: restorationScopeId);
+        final String? restorationScopeId =
+            route.branchForSubRoute(subRoute).restorationScopeId;
+        child = buildNavigator(restorationScopeId);
+        child = _buildStatefulNavigationShell(
+            route, child as Navigator, state, matchList, onPopPage, registry);
       } else {
-        assert(false, 'Unknown route type ($route)');
+        final String? restorationScopeId =
+            (route is ShellRoute) ? route.restorationScopeId : null;
+        child = buildNavigator(restorationScopeId);
       }
 
       // Build the Page for this route
@@ -261,10 +241,8 @@ class RouteBuilder {
 
   StatefulNavigationShell _buildStatefulNavigationShell(
     StatefulShellRoute shellRoute,
+    Navigator navigator,
     GoRouterState shellRouterState,
-    List<StatefulShellBranch> branches,
-    StatefulShellBranch currentBranch,
-    BranchNavigatorBuilder currentNavigatorBuilder,
     RouteMatchList currentMatchList,
     PopPageCallback pop,
     Map<Page<Object?>, GoRouterState> registry,
@@ -273,11 +251,9 @@ class RouteBuilder {
         configuration: configuration,
         shellRoute: shellRoute,
         shellGoRouterState: shellRouterState,
-        branches: branches,
-        currentBranch: currentBranch,
-        currentNavigatorBuilder: currentNavigatorBuilder,
+        currentNavigator: navigator,
         currentMatchList: currentMatchList.unmodifiableRouteMatchList(),
-        branchNavigatorBuilder: (BuildContext context,
+        branchPreloadNavigatorBuilder: (BuildContext context,
             RouteMatchList matchList,
             int startIndex,
             GlobalKey<NavigatorState> navigatorKey,
@@ -288,11 +264,6 @@ class RouteBuilder {
               restorationScopeId: restorationScopeId);
         });
   }
-
-  /// Gets the current [StatefulShellBranch] for the provided
-  /// [StatefulShellRoute].
-  StatefulShellBranch? currentStatefulShellBranch(StatefulShellRoute route) =>
-      route.currentBranch;
 
   /// Helper method that builds a [GoRouterState] object for the given [match]
   /// and [params].
@@ -336,15 +307,9 @@ class RouteBuilder {
       if (pageBuilder != null) {
         page = pageBuilder(context, state);
       }
-    } else if (route is StatefulShellRoute) {
-      final ShellRoutePageBuilder? pageForShell = route.pageBuilder;
-      assert(child != null, 'StatefulShellRoute must contain a child route');
-      if (pageForShell != null) {
-        page = pageForShell(context, state, child!);
-      }
-    } else if (route is ShellRoute) {
+    } else if (route is ShellRouteBase) {
       final ShellRoutePageBuilder? pageBuilder = route.pageBuilder;
-      assert(child != null, 'ShellRoute must contain a child route');
+      assert(child != null, '${route.runtimeType} must contain a child route');
       if (pageBuilder != null) {
         page = pageBuilder(context, state, child!);
       }

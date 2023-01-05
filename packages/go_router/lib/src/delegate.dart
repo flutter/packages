@@ -206,6 +206,7 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
     if (index < 0) {
       return false;
     }
+    late RouteBase subRoute;
     for (index -= 1; index >= 0; index -= 1) {
       final RouteMatch match = matchList.matches[index];
       final RouteBase route = match.route;
@@ -246,15 +247,8 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
       } else if (route is ShellRouteBase) {
         // Must have a ModalRoute parent because the navigator ShellRoute
         // created must not be the root navigator.
-        final GlobalKey<NavigatorState> navigatorKey;
-        if (route is ShellRoute) {
-          navigatorKey = route.navigatorKey;
-        } else if (route is StatefulShellRoute) {
-          navigatorKey = route.currentBranch!.navigatorKey;
-        } else {
-          continue;
-        }
-
+        final GlobalKey<NavigatorState> navigatorKey =
+            route.navigatorKeyForSubRoute(subRoute);
         final ModalRoute<Object?> parentModalRoute =
             ModalRoute.of(navigatorKey.currentContext!)!;
         // There may be pageless route on top of ModalRoute that the
@@ -265,6 +259,7 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
         current = navigatorKey.currentState!;
         return true;
       }
+      subRoute = route;
     }
     assert(index == -1);
     current = root;
