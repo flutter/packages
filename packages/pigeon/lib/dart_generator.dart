@@ -78,8 +78,8 @@ class DartGenerator extends Generator<DartOptions> {
   /// Generates Dart files with specified [DartOptions]
   @override
   void generate(DartOptions languageOptions, Root root, StringSink sink,
-      {FileType fileType = FileType.NA}) {
-    assert(fileType == FileType.NA);
+      {FileType fileType = FileType.na}) {
+    assert(fileType == FileType.na);
     generateDart(languageOptions, root, sink);
   }
 

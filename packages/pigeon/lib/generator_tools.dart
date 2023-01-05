@@ -507,10 +507,10 @@ enum FileType {
   source,
 
   /// file type is not applicable.
-  NA,
+  na,
 }
 
-/// Options for [Generator]'s that have multiple files.
+/// Options for [Generator]'s that have multiple output file types.
 ///
 /// Specifies which file to write as well as wraps all language options.
 class OutputFileOptions<T> {

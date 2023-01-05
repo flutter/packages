@@ -397,7 +397,7 @@ class AstGeneratorAdapter implements GeneratorAdapter {
   AstGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.NA];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -419,7 +419,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
   DartGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.NA];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -444,7 +444,7 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
   DartTestGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.NA];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -520,7 +520,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
   JavaGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.NA];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -550,7 +550,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
   SwiftGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.NA];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -613,7 +613,7 @@ class CppGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates Kotlin source code.
 class KotlinGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [KotlinGeneratorAdapter].
-  KotlinGeneratorAdapter({this.fileTypeList = const <FileType>[FileType.NA]});
+  KotlinGeneratorAdapter({this.fileTypeList = const <FileType>[FileType.na]});
 
   @override
   List<FileType> fileTypeList;

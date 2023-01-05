@@ -14,7 +14,7 @@ class _ValidatorGeneratorAdapter implements GeneratorAdapter {
   _ValidatorGeneratorAdapter(this.sink);
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.NA];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   bool didCallValidate = false;
 
@@ -405,7 +405,7 @@ abstract class NestorApi {
         PigeonOptions(copyrightHeader: './copyright_header.txt');
     final DartGeneratorAdapter dartGeneratorAdapter = DartGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    dartGeneratorAdapter.generate(buffer, options, root, FileType.NA);
+    dartGeneratorAdapter.generate(buffer, options, root, FileType.na);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -415,7 +415,7 @@ abstract class NestorApi {
         javaOut: 'Foo.java', copyrightHeader: './copyright_header.txt');
     final JavaGeneratorAdapter javaGeneratorAdapter = JavaGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    javaGeneratorAdapter.generate(buffer, options, root, FileType.NA);
+    javaGeneratorAdapter.generate(buffer, options, root, FileType.na);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -447,7 +447,7 @@ abstract class NestorApi {
         swiftOut: 'Foo.swift', copyrightHeader: './copyright_header.txt');
     final SwiftGeneratorAdapter swiftGeneratorAdapter = SwiftGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    swiftGeneratorAdapter.generate(buffer, options, root, FileType.NA);
+    swiftGeneratorAdapter.generate(buffer, options, root, FileType.na);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 

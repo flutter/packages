@@ -93,8 +93,8 @@ class JavaGenerator extends Generator<JavaOptions> {
   /// Generates Java files with specified [JavaOptions]
   @override
   void generate(JavaOptions languageOptions, Root root, StringSink sink,
-      {FileType fileType = FileType.NA}) {
-    assert(fileType == FileType.NA);
+      {FileType fileType = FileType.na}) {
+    assert(fileType == FileType.na);
     generateJava(languageOptions, root, sink);
   }
 }
