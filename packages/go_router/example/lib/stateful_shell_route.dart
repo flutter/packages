@@ -32,12 +32,12 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     initialLocation: '/a',
     routes: <RouteBase>[
       StatefulShellRoute(
-        /// To enable preloading of the root routes of the branches, pass true
-        /// for the parameter preloadBranches.
-        // preloadBranches: true,
         branches: <StatefulShellBranch>[
           /// The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
+            /// To enable preloading of the default locations of branches, pass
+            /// true for the parameter preload.
+            // preload: true,
             navigatorKey: _tabANavigatorKey,
             routes: <RouteBase>[
               GoRoute(
@@ -93,10 +93,10 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 
           /// The route branch for the third tab of the bottom navigation bar.
           StatefulShellBranch(
-            /// ShellRouteBranch will automatically use the first descendant
+            /// StatefulShellBranch will automatically use the first descendant
             /// GoRoute as the default location of the branch. If another route
-            /// is desired, you can specify the location of it using the
-            /// defaultLocation parameter.
+            /// is desired, specify the location of it using the defaultLocation
+            /// parameter.
             // defaultLocation: '/c2',
             routes: <RouteBase>[
               StatefulShellRoute(
@@ -162,20 +162,22 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           return ScaffoldWithNavBar(body: child);
         },
 
-        /// If you need to create a custom container for the branch routes, to
-        /// for instance setup custom animations, you can implement your builder
-        /// something like below (see _AnimatedRouteBranchContainer). Note that
-        /// in this case, you should not add the Widget provided in the child
-        /// parameter to the widget tree. Instead, you should use the child
-        /// widgets of each branch (see StatefulShellRouteState.children).
+        /// It's possible to customize the container for the branch navigators
+        /// even further, to for instance setup custom animations. The code
+        /// below is an example of such a customization (see
+        /// _AnimatedRouteBranchContainer). Note that in this case, the Widget
+        /// provided in the child parameter should not be added to the widget
+        /// tree. Instead, access the child widgets of each branch directly
+        /// (see StatefulShellRouteState.children) to implement a custom layout
+        /// and container for the navigators.
         // builder: (BuildContext context, GoRouterState state, Widget child) {
         //   return ScaffoldWithNavBar(
         //     body: _AnimatedRouteBranchContainer(),
         //   );
         // },
 
-        /// If you need to customize the Page for StatefulShellRoute, pass a
-        /// pageBuilder function in addition to the builder, for example:
+        /// If it's necessary to customize the Page for StatefulShellRoute,
+        /// provide a pageBuilder function in addition to the builder, for example:
         // pageBuilder:
         //     (BuildContext context, GoRouterState state, Widget statefulShell) {
         //   return NoTransitionPage<dynamic>(child: statefulShell);

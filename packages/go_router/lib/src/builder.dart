@@ -199,13 +199,12 @@ class RouteBuilder {
       Navigator buildNavigator(String? restorationScopeId) => _buildNavigator(
           onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
           restorationScopeId: restorationScopeId);
-      Widget child;
+      final Widget child;
       if (route is StatefulShellRoute) {
         final String? restorationScopeId =
             route.branchForSubRoute(subRoute).restorationScopeId;
-        child = buildNavigator(restorationScopeId);
         child = _buildStatefulNavigationShell(
-            route, child as Navigator, state, matchList, onPopPage, registry);
+            route, buildNavigator(restorationScopeId), state, matchList);
       } else {
         final String? restorationScopeId =
             (route is ShellRoute) ? route.restorationScopeId : null;
@@ -244,25 +243,32 @@ class RouteBuilder {
     Navigator navigator,
     GoRouterState shellRouterState,
     RouteMatchList currentMatchList,
-    PopPageCallback pop,
-    Map<Page<Object?>, GoRouterState> registry,
   ) {
     return StatefulNavigationShell(
-        configuration: configuration,
-        shellRoute: shellRoute,
-        shellGoRouterState: shellRouterState,
-        currentNavigator: navigator,
-        currentMatchList: currentMatchList.unmodifiableRouteMatchList(),
-        branchPreloadNavigatorBuilder: (BuildContext context,
-            RouteMatchList matchList,
-            int startIndex,
-            GlobalKey<NavigatorState> navigatorKey,
-            String? restorationScopeId) {
-          final List<Page<dynamic>> pages = buildPages(context, matchList,
-              startIndex, pop, true, navigatorKey, registry);
-          return _buildNavigator(pop, pages, navigatorKey,
-              restorationScopeId: restorationScopeId);
-        });
+      configuration: configuration,
+      shellRoute: shellRoute,
+      shellGoRouterState: shellRouterState,
+      currentNavigator: navigator,
+      currentMatchList: currentMatchList.unmodifiableRouteMatchList(),
+      branchPreloadNavigatorBuilder: _preloadShellBranchNavigator,
+    );
+  }
+
+  Navigator _preloadShellBranchNavigator(
+    BuildContext context,
+    RouteMatchList matchList,
+    int startIndex,
+    GlobalKey<NavigatorState> navigatorKey,
+    PopPageCallback onPopPage,
+    String? restorationScopeId,
+  ) {
+    return _buildNavigator(
+      onPopPage,
+      buildPages(context, matchList, startIndex, onPopPage, true, navigatorKey,
+          <Page<Object?>, GoRouterState>{}),
+      navigatorKey,
+      restorationScopeId: restorationScopeId,
+    );
   }
 
   /// Helper method that builds a [GoRouterState] object for the given [match]

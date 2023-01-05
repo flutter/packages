@@ -393,7 +393,7 @@ void main() {
     });
 
     test(
-      'derives the correct defaultLocation for a ShellRouteBranch',
+      'derives the correct defaultLocation for a StatefulShellBranch',
       () {
         final StatefulShellBranch branchA;
         final StatefulShellBranch branchY;
@@ -467,9 +467,10 @@ void main() {
           },
         );
 
-        expect('/a', config.findShellRouteBranchDefaultLocation(branchA));
-        expect('/a/x/y1', config.findShellRouteBranchDefaultLocation(branchY));
-        expect('/b1', config.findShellRouteBranchDefaultLocation(branchB));
+        expect('/a', config.findStatefulShellBranchDefaultLocation(branchA));
+        expect(
+            '/a/x/y1', config.findStatefulShellBranchDefaultLocation(branchY));
+        expect('/b1', config.findStatefulShellBranchDefaultLocation(branchB));
       },
     );
 

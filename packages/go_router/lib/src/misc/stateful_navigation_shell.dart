@@ -38,6 +38,7 @@ typedef BranchNavigatorPreloadBuilder = Navigator Function(
   RouteMatchList navigatorMatchList,
   int startIndex,
   GlobalKey<NavigatorState> navigatorKey,
+  PopPageCallback onPopPage,
   String? restorationScopeId,
 );
 
@@ -98,6 +99,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
 
   List<StatefulShellBranch> get _branches => widget.shellRoute.branches;
 
+  PopPageCallback get _onPopPage => widget.currentNavigator.onPopPage!;
+
   Navigator? _navigatorForBranch(StatefulShellBranch branch) {
     return _navigatorCache[branch.navigatorKey];
   }
@@ -134,7 +137,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
   String _defaultBranchLocation(StatefulShellBranchState branchState) {
     String? defaultLocation = branchState.branch.defaultLocation;
     defaultLocation ??= widget.configuration
-        .findShellRouteBranchDefaultLocation(branchState.branch);
+        .findStatefulShellBranchDefaultLocation(branchState.branch);
     return defaultLocation;
   }
 
@@ -178,6 +181,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
           matchList,
           shellRouteIndex + 1,
           branch.navigatorKey,
+          _onPopPage,
           branch.restorationScopeId,
         );
       }

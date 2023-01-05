@@ -489,12 +489,12 @@ class ShellRoute extends ShellRouteBase {
 /// implementing a UI with a [BottomNavigationBar], with a persistent navigation
 /// state for each tab.
 ///
-/// A StatefulShellRoute is created by specifying a List of [ShellRouteBranch]
+/// A StatefulShellRoute is created by specifying a List of [StatefulShellBranch]
 /// items, each representing a separate stateful branch in the route tree.
-/// ShellRouteBranch provides the root routes and the Navigator key ([GlobalKey])
+/// StatefulShellBranch provides the root routes and the Navigator key ([GlobalKey])
 /// for the branch, as well as an optional default location.
 ///
-/// Like [ShellRoute], you can provide a [builder] and [pageBuilder] when
+/// Like [ShellRoute], a [builder] and [pageBuilder] can be provided when
 /// creating a StatefulShellRoute. However, StatefulShellRoute differs in that
 /// the builder is mandatory and the pageBuilder may optionally be used in
 /// addition to the builder. The reason for this is that the builder function is
@@ -563,7 +563,7 @@ class ShellRoute extends ShellRouteBase {
 ///       },
 ///       branches: [
 ///         /// The first branch, i.e. tab 'A'
-///         ShellRouteBranch(
+///         StatefulShellBranch(
 ///           navigatorKey: _tabANavigatorKey,
 ///           routes: <RouteBase>[
 ///             GoRoute(
@@ -582,7 +582,7 @@ class ShellRoute extends ShellRouteBase {
 ///           ],
 ///         ),
 ///         /// The second branch, i.e. tab 'B'
-///         ShellRouteBranch(
+///         StatefulShellBranch(
 ///           navigatorKey: _tabBNavigatorKey,
 ///           routes: <RouteBase>[
 ///             GoRoute(
@@ -606,11 +606,12 @@ class ShellRoute extends ShellRouteBase {
 /// );
 /// ```
 ///
-/// When the [Page] for this route needs to be customized, you need to pass a
-/// function for pageBuilder. Note that this page builder doesn't replace
-/// the builder function, but instead receives the stateful shell built by
+/// When the [Page] for this route needs to be customized, a pageBuilder needs
+/// to be provided. Note that this page builder doesn't replace the builder
+/// function, but instead receives the stateful shell built by
 /// [StatefulShellRoute] (using the builder function) as input. In other words,
-/// you need to specify both when customizing a page. For example:
+/// builder and pageBuilder must both be provided when using a custom page for
+/// a StatefulShellRoute. For example:
 ///
 /// ```
 /// final GoRouter _router = GoRouter(
@@ -625,9 +626,9 @@ class ShellRoute extends ShellRouteBase {
 ///           (BuildContext context, GoRouterState state, Widget statefulShell) {
 ///         return NoTransitionPage<dynamic>(child: statefulShell);
 ///       },
-///       branches: <ShellRouteBranch>[
+///       branches: <StatefulShellBranch>[
 ///         /// The first branch, i.e. root of tab 'A'
-///         ShellRouteBranch(routes: <RouteBase>[
+///         StatefulShellBranch(routes: <RouteBase>[
 ///           GoRoute(
 ///             parentNavigatorKey: _tabANavigatorKey,
 ///             path: '/a',
@@ -636,7 +637,7 @@ class ShellRoute extends ShellRouteBase {
 ///           ),
 ///         ]),
 ///         /// The second branch, i.e. root of tab 'B'
-///         ShellRouteBranch(routes: <RouteBase>[
+///         StatefulShellBranch(routes: <RouteBase>[
 ///           GoRoute(
 ///             parentNavigatorKey: _tabBNavigatorKey,
 ///             path: '/b',
@@ -666,8 +667,8 @@ class StatefulShellRoute extends ShellRouteBase {
   ///
   /// A separate [Navigator] will be created for each of the branches, using
   /// the navigator key specified in [StatefulShellBranch]. Note that unlike
-  /// [ShellRoute], you must always provide a builder when creating
-  /// a StatefulShellRoute. The pageBuilder however is optional, and is used
+  /// [ShellRoute], a builder must always be provided when creating a
+  /// StatefulShellRoute. The pageBuilder however is optional, and is used
   /// in addition to the builder.
   StatefulShellRoute({
     required this.branches,
@@ -719,11 +720,13 @@ class StatefulShellRoute extends ShellRouteBase {
 /// Representation of a separate branch in a stateful navigation tree, used to
 /// configure [StatefulShellRoute].
 ///
-/// The only required argument when creating a ShellRouteBranch is the
-/// sub-routes ([routes]), however in some cases you may also need to specify
-/// the [defaultLocation], for instance of you're using another shell route as
-/// direct sub-route. A [navigatorKey] can be useful to provide in case you need
-/// to use the [Navigator] created for this branch elsewhere.
+/// The only required argument when creating a StatefulShellBranch is the
+/// sub-routes ([routes]), however sometimes it may be convenient to also
+/// provide a [defaultLocation]. The value of this parameter is used when
+/// loading the branch for the first time (for instance when switching branch
+/// using the goBranch method in [StatefulShellBranchState]). A [navigatorKey]
+/// can be useful to provide in case it's necessary to access the [Navigator]
+/// created for this branch elsewhere.
 @immutable
 class StatefulShellBranch {
   /// Constructs a [StatefulShellBranch].
@@ -751,8 +754,11 @@ class StatefulShellBranch {
 
   /// The default location for this route branch.
   ///
-  /// If none is specified, the first descendant [GoRoute] will be used (i.e.
-  /// first element in [routes], or a descendant).
+  /// If none is specified, the location of the first descendant [GoRoute] will
+  /// be used (i.e. first element in [routes], or a descendant). The default
+  /// location is used when loading the branch for the first time (for instance
+  /// when switching branch using the goBranch method in
+  /// [StatefulShellBranchState]).
   final String? defaultLocation;
 
   /// An optional name for this branch.

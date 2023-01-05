@@ -28,7 +28,7 @@ class RouteConfiguration {
             _debugVerifyNoDuplicatePathParameter(routes, <String, GoRoute>{})),
         assert(_debugCheckParentNavigatorKeys(
             routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
-    assert(_debugCheckShellRouteBranchDefaultLocations(
+    assert(_debugCheckStatefulShellBranchDefaultLocations(
         routes, RouteMatcher(this)));
     _cacheNameToPath('', routes);
     log.info(_debugKnownRoutes());
@@ -126,7 +126,7 @@ class RouteConfiguration {
 
   // Check to see that the configured defaultLocation of StatefulShellBranches
   // points to a descendant route of the route branch.
-  bool _debugCheckShellRouteBranchDefaultLocations(
+  bool _debugCheckStatefulShellBranchDefaultLocations(
       List<RouteBase> routes, RouteMatcher matcher) {
     try {
       for (final RouteBase route in routes) {
@@ -135,7 +135,7 @@ class RouteConfiguration {
             if (branch.defaultLocation == null) {
               // Recursively search for the first GoRoute descendant. Will
               // throw assertion error if not found.
-              findShellRouteBranchDefaultLocation(branch);
+              findStatefulShellBranchDefaultLocation(branch);
             } else {
               final RouteBase defaultLocationRoute =
                   matcher.findMatch(branch.defaultLocation!).last.route;
@@ -150,7 +150,7 @@ class RouteConfiguration {
             }
           }
         }
-        _debugCheckShellRouteBranchDefaultLocations(route.routes, matcher);
+        _debugCheckStatefulShellBranchDefaultLocations(route.routes, matcher);
       }
     } on MatcherError catch (e) {
       assert(
@@ -175,16 +175,16 @@ class RouteConfiguration {
       ancestor == route ||
       _subRoutesRecursively(ancestor.routes).contains(route);
 
-  /// Recursively traverses the routes of the provided ShellRouteBranch to find
-  /// the first GoRoute, from which a full path will be derived.
-  String findShellRouteBranchDefaultLocation(StatefulShellBranch branch) {
+  /// Recursively traverses the routes of the provided StatefulShellBranch to
+  /// find the first GoRoute, from which a full path will be derived.
+  String findStatefulShellBranchDefaultLocation(StatefulShellBranch branch) {
     final GoRoute? route = _findFirstGoRoute(branch.routes);
     final String? defaultLocation =
         route != null ? _fullPathForRoute(route, '', routes) : null;
     assert(
         defaultLocation != null,
-        'The default location of a ShellRouteBranch'
-        ' must be configured or derivable from GoRoute descendant');
+        'The default location of a StatefulShellBranch must be derivable from '
+        'GoRoute descendant');
     return defaultLocation!;
   }
 
