@@ -902,6 +902,7 @@ String? _baseCppTypeForBuiltinDartType(TypeDeclaration type) {
     'Float64List': 'std::vector<double>',
     'Map': 'flutter::EncodableMap',
     'List': 'flutter::EncodableList',
+    'Object': 'flutter::EncodableValue',
   };
   if (cppTypeForDartTypeMap.containsKey(type.baseName)) {
     return cppTypeForDartTypeMap[type.baseName];
@@ -931,6 +932,8 @@ String _unownedArgumentType(HostDatatype type) {
   if (isString || _isPodType(type)) {
     return type.isNullable ? 'const $baseType*' : baseType;
   }
+  // TODO(stuartmorgan): Consider special-casing `Object?` here, so that there
+  // aren't two ways of representing null (nullptr or an isNull EncodableValue).
   return type.isNullable ? 'const $baseType*' : 'const $baseType&';
 }
 
