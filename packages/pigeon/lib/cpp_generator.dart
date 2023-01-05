@@ -26,6 +26,7 @@ class CppOptions {
     this.namespace,
     this.copyrightHeader,
     this.headerOutPath,
+    this.multiFileOptions,
   });
 
   /// The path to the header that will get placed in the source filed (example:
@@ -41,6 +42,9 @@ class CppOptions {
   /// The path to the output header file location.
   final String? headerOutPath;
 
+  /// A subset of options for specific files being generated.
+  final MultiFileOptions? multiFileOptions;
+
   /// Creates a [CppOptions] from a Map representation where:
   /// `x = CppOptions.fromMap(x.toMap())`.
   static CppOptions fromMap(Map<String, Object> map) {
@@ -49,6 +53,8 @@ class CppOptions {
       namespace: map['namespace'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       headerOutPath: map['cppHeaderOut'] as String?,
+      multiFileOptions: MultiFileOptions.fromMap(
+          map['multiFileOptions'] as Map<String, Object>?),
     );
   }
 
@@ -59,6 +65,8 @@ class CppOptions {
       if (headerIncludePath != null) 'header': headerIncludePath!,
       if (namespace != null) 'namespace': namespace!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (multiFileOptions != null)
+        'multiFileOptions': multiFileOptions!.toMap(),
     };
     return result;
   }
@@ -77,8 +85,8 @@ class CppGenerator extends Generator<CppOptions> {
 
   /// Generates Cpp files with specified [CppOptions]
   @override
-  void generate(CppOptions languageOptions, Root root, StringSink sink,
-      {required FileType fileType}) {
+  void generate(CppOptions languageOptions, Root root, StringSink sink) {
+    final FileType? fileType = languageOptions.multiFileOptions?.fileType;
     assert(fileType == FileType.header || fileType == FileType.source);
     if (fileType == FileType.header) {
       generateCppHeader(languageOptions, root, sink);

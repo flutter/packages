@@ -509,3 +509,32 @@ enum FileType {
   /// file type is not applicable.
   NA,
 }
+
+/// Options for [Generator]'s that have multiple files.
+class MultiFileOptions {
+  /// Constructor.
+  MultiFileOptions({this.fileType});
+
+  /// To specify which file type should be created.
+  FileType? fileType;
+
+  /// Creates a [MultiFileOptions] from a Map representation where:
+  /// `x = MultiFileOptions.fromMap(x.toMap())`.
+  static MultiFileOptions? fromMap(Map<String, Object>? map) {
+    if (map == null) {
+      return null;
+    }
+    return MultiFileOptions(
+      fileType: map['fileType'] as FileType?,
+    );
+  }
+
+  /// Converts a [MultiFileOptions] to a Map representation where:
+  /// `x = MultiFileOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{
+      if (fileType != null) 'fileType': fileType!,
+    };
+    return result;
+  }
+}

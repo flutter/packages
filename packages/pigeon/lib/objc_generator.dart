@@ -22,6 +22,7 @@ class ObjcOptions {
     this.headerIncludePath,
     this.prefix,
     this.copyrightHeader,
+    this.multiFileOptions,
   });
 
   /// The path to the header that will get placed in the source filed (example:
@@ -34,6 +35,9 @@ class ObjcOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
+  /// A subset of options for specific files being generated.
+  final MultiFileOptions? multiFileOptions;
+
   /// Creates a [ObjcOptions] from a Map representation where:
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   static ObjcOptions fromMap(Map<String, Object> map) {
@@ -43,6 +47,8 @@ class ObjcOptions {
       headerIncludePath: map['header'] as String?,
       prefix: map['prefix'] as String?,
       copyrightHeader: copyrightHeader?.cast<String>(),
+      multiFileOptions: MultiFileOptions.fromMap(
+          map['multiFileOptions'] as Map<String, Object>?),
     );
   }
 
@@ -53,6 +59,8 @@ class ObjcOptions {
       if (headerIncludePath != null) 'header': headerIncludePath!,
       if (prefix != null) 'prefix': prefix!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (multiFileOptions != null)
+        'multiFileOptions': multiFileOptions!.toMap(),
     };
     return result;
   }
@@ -71,8 +79,8 @@ class ObjcGenerator extends Generator<ObjcOptions> {
 
   /// Generates Objc files with specified [ObjcOptions]
   @override
-  void generate(ObjcOptions languageOptions, Root root, StringSink sink,
-      {required FileType fileType}) {
+  void generate(ObjcOptions languageOptions, Root root, StringSink sink) {
+    final FileType? fileType = languageOptions.multiFileOptions?.fileType;
     assert(fileType == FileType.header || fileType == FileType.source);
 
     if (fileType == FileType.header) {
