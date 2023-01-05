@@ -585,7 +585,6 @@ void generateKotlin(KotlinOptions options, Root root, StringSink sink) {
             }
           });
 
-          indent.writeln('');
           indent.write('return $className(');
           for (final NamedType field in getFieldsInSerializationOrder(klass)) {
             final String comma =
