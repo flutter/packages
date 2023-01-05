@@ -507,7 +507,7 @@ class HostIntegrationCoreApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as Object?)!;
+      return replyList[0]!;
     }
   }
 
@@ -735,7 +735,7 @@ class HostIntegrationCoreApi {
         details: replyList[2],
       );
     } else {
-      return (replyList[0] as Object?);
+      return replyList[0];
     }
   }
 
