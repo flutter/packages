@@ -19,12 +19,6 @@ class AndroidNestedRequest {
   AndroidSetRequest? request;
 }
 
-class AndroidNotNullableRequest {
-  late int value;
-  late AndroidLoadingState state;
-  late String context;
-}
-
 @HostApi()
 abstract class AndroidApi {
   void setValue(AndroidSetRequest request);
@@ -33,9 +27,4 @@ abstract class AndroidApi {
 @HostApi()
 abstract class AndroidNestedApi {
   void setValueWithContext(AndroidNestedRequest request);
-}
-
-@HostApi()
-abstract class AndroidNotNullableApi {
-  void setValueWithNotNullable(AndroidNotNullableRequest request);
 }

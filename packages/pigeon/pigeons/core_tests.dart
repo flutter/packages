@@ -23,7 +23,8 @@ class AllTypes {
     required this.aFloatArray,
     this.aList = const <Object?>[],
     this.aMap = const <String?, Object?>{},
-    this.anEnum = AnEnum.one,
+    this.anEnum1 = AnEnum.one,
+    this.anEnum2 = AnEnum.two,
   });
 
   bool aBool;
@@ -38,7 +39,8 @@ class AllTypes {
   List aList;
   // ignore: always_specify_types, strict_raw_type
   Map aMap;
-  AnEnum anEnum;
+  AnEnum anEnum1; // Declare two enum fields to reproduce flutter/flutter#118012
+  AnEnum anEnum2;
 }
 
 // A class containing all supported nullable types.
