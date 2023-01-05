@@ -16,7 +16,6 @@ class AllTypes {
     this.aBool = false,
     this.anInt = 0,
     this.aDouble = 0,
-    this.aString = '',
     required this.aByteArray,
     required this.a4ByteArray,
     required this.a8ByteArray,
@@ -24,12 +23,12 @@ class AllTypes {
     this.aList = const <Object?>[],
     this.aMap = const <String?, Object?>{},
     this.anEnum = AnEnum.one,
+    this.aString = '',
   });
 
   bool aBool;
   int anInt;
   double aDouble;
-  String aString;
   Uint8List aByteArray;
   Int32List a4ByteArray;
   Int64List a8ByteArray;
@@ -39,6 +38,7 @@ class AllTypes {
   // ignore: always_specify_types, strict_raw_type
   Map aMap;
   AnEnum anEnum;
+  String aString;
 }
 
 // A class containing all supported nullable types.
@@ -47,7 +47,6 @@ class AllNullableTypes {
     this.aNullableBool,
     this.aNullableInt,
     this.aNullableDouble,
-    this.aNullableString,
     this.aNullableByteArray,
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
@@ -58,12 +57,12 @@ class AllNullableTypes {
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
+    this.aNullableString,
   );
 
   bool? aNullableBool;
   int? aNullableInt;
   double? aNullableDouble;
-  String? aNullableString;
   Uint8List? aNullableByteArray;
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
@@ -76,6 +75,7 @@ class AllNullableTypes {
   Map<String?, String?>? nullableMapWithAnnotations;
   Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
+  String? aNullableString;
 }
 
 // A class for testing nested object handling.
