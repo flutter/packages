@@ -375,67 +375,82 @@ class FlutterIntegrationCoreApi {
   static const flutter::StandardMessageCodec& GetCodec();
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic calling.
-  void noop(std::function<void(void)>&& callback);
+  void Noop(std::function<void(void)>&& on_success,
+            std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed object, to test serialization and deserialization.
-  void echoAllTypes(const AllTypes& everything_arg,
-                    std::function<void(const AllTypes&)>&& callback);
+  void EchoAllTypes(const AllTypes& everything,
+                    std::function<void(const AllTypes&)>&& on_success,
+                    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed object, to test serialization and deserialization.
-  void echoAllNullableTypes(
-      const AllNullableTypes& everything_arg,
-      std::function<void(const AllNullableTypes&)>&& callback);
+  void EchoAllNullableTypes(
+      const AllNullableTypes& everything,
+      std::function<void(const AllNullableTypes&)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
   // Returns passed in arguments of multiple types.
   //
   // Tests multiple-arity FlutterApi handling.
-  void sendMultipleNullableTypes(
-      std::optional<bool> a_nullable_bool_arg,
-      std::optional<int64_t> a_nullable_int_arg,
-      std::optional<std::string> a_nullable_string_arg,
-      std::function<void(const AllNullableTypes&)>&& callback);
+  void SendMultipleNullableTypes(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string,
+      std::function<void(const AllNullableTypes&)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed boolean, to test serialization and deserialization.
-  void echoBool(bool a_bool_arg, std::function<void(bool)>&& callback);
+  void EchoBool(bool a_bool, std::function<void(bool)>&& on_success,
+                std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed int, to test serialization and deserialization.
-  void echoInt(int64_t an_int_arg, std::function<void(int64_t)>&& callback);
+  void EchoInt(int64_t an_int, std::function<void(int64_t)>&& on_success,
+               std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed double, to test serialization and deserialization.
-  void echoDouble(double a_double_arg, std::function<void(double)>&& callback);
+  void EchoDouble(double a_double, std::function<void(double)>&& on_success,
+                  std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed string, to test serialization and deserialization.
-  void echoString(const std::string& a_string_arg,
-                  std::function<void(const std::string&)>&& callback);
+  void EchoString(std::string_view a_string,
+                  std::function<void(const std::string&)>&& on_success,
+                  std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed byte list, to test serialization and deserialization.
-  void echoUint8List(
-      const std::vector<uint8_t>& a_list_arg,
-      std::function<void(const std::vector<uint8_t>&)>&& callback);
+  void EchoUint8List(
+      const std::vector<uint8_t>& a_list,
+      std::function<void(const std::vector<uint8_t>&)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
-  void echoList(const flutter::EncodableList& a_list_arg,
-                std::function<void(const flutter::EncodableList&)>&& callback);
+  void EchoList(const flutter::EncodableList& a_list,
+                std::function<void(const flutter::EncodableList&)>&& on_success,
+                std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
-  void echoMap(const flutter::EncodableMap& a_map_arg,
-               std::function<void(const flutter::EncodableMap&)>&& callback);
+  void EchoMap(const flutter::EncodableMap& a_map,
+               std::function<void(const flutter::EncodableMap&)>&& on_success,
+               std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed boolean, to test serialization and deserialization.
-  void echoNullableBool(std::optional<bool> a_bool_arg,
-                        std::function<void(std::optional<bool>)>&& callback);
+  void EchoNullableBool(const bool* a_bool,
+                        std::function<void(const bool*)>&& on_success,
+                        std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed int, to test serialization and deserialization.
-  void echoNullableInt(std::optional<int64_t> an_int_arg,
-                       std::function<void(std::optional<int64_t>)>&& callback);
+  void EchoNullableInt(const int64_t* an_int,
+                       std::function<void(const int64_t*)>&& on_success,
+                       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed double, to test serialization and deserialization.
-  void echoNullableDouble(
-      std::optional<double> a_double_arg,
-      std::function<void(std::optional<double>)>&& callback);
+  void EchoNullableDouble(const double* a_double,
+                          std::function<void(const double*)>&& on_success,
+                          std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed string, to test serialization and deserialization.
-  void echoNullableString(
-      std::optional<std::string> a_string_arg,
-      std::function<void(std::optional<std::string>)>&& callback);
+  void EchoNullableString(const std::string* a_string,
+                          std::function<void(const std::string*)>&& on_success,
+                          std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed byte list, to test serialization and deserialization.
-  void echoNullableUint8List(
-      std::optional<std::vector<uint8_t>> a_list_arg,
-      std::function<void(std::optional<std::vector<uint8_t>>)>&& callback);
+  void EchoNullableUint8List(
+      const std::vector<uint8_t>* a_list,
+      std::function<void(const std::vector<uint8_t>*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
-  void echoNullableList(
-      std::optional<flutter::EncodableList> a_list_arg,
-      std::function<void(std::optional<flutter::EncodableList>)>&& callback);
+  void EchoNullableList(
+      const flutter::EncodableList* a_list,
+      std::function<void(const flutter::EncodableList*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
-  void echoNullableMap(
-      const flutter::EncodableMap& a_map_arg,
-      std::function<void(const flutter::EncodableMap&)>&& callback);
+  void EchoNullableMap(
+      const flutter::EncodableMap& a_map,
+      std::function<void(const flutter::EncodableMap&)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
 };
 
 // An API that can be implemented for minimal, compile-only tests.

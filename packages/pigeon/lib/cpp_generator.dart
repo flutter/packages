@@ -353,30 +353,8 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
             root.enums,
             (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
 
-        final String instanceVariable = _makeInstanceVariableName(field);
-
-        String encodableValue = '';
-        if (!hostDatatype.isBuiltin &&
-            rootClassNameSet.contains(field.type.baseName)) {
-          final String operator = field.type.isNullable ? '->' : '.';
-          encodableValue =
-              'flutter::EncodableValue($instanceVariable${operator}ToEncodableList())';
-        } else if (!hostDatatype.isBuiltin &&
-            rootEnumNameSet.contains(field.type.baseName)) {
-          final String nonNullValue =
-              field.type.isNullable ? '(*$instanceVariable)' : instanceVariable;
-          encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
-        } else {
-          final String operator = field.type.isNullable ? '*' : '';
-          encodableValue =
-              'flutter::EncodableValue($operator$instanceVariable)';
-        }
-
-        if (field.type.isNullable) {
-          encodableValue =
-              '$instanceVariable ? $encodableValue : flutter::EncodableValue()';
-        }
-
+        final String encodableValue = _wrappedHostApiArgumentExpression(
+            root, _makeInstanceVariableName(field), field.type, hostDatatype);
         indent.writeln('$encodableValue,');
       }
     });
@@ -437,6 +415,88 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
   indent.addln('');
 }
 
+/// Returns the expression to create an EncodableValue from a host API argument
+/// with the given [variableName] and types.
+String _wrappedHostApiArgumentExpression(Root root, String variableName,
+    TypeDeclaration dartType, HostDatatype hostType) {
+  final String encodableValue;
+  if (!hostType.isBuiltin &&
+      root.classes.any((Class c) => c.name == dartType.baseName)) {
+    final String operator = hostType.isNullable ? '*' : '';
+    encodableValue = 'flutter::CustomEncodableValue($operator$variableName)';
+  } else if (!hostType.isBuiltin &&
+      root.enums.any((Enum e) => e.name == dartType.baseName)) {
+    final String nonNullValue =
+        hostType.isNullable ? '(*$variableName)' : variableName;
+    encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
+  } else {
+    final String operator = hostType.isNullable ? '*' : '';
+    encodableValue = 'flutter::EncodableValue($operator$variableName)';
+  }
+
+  if (hostType.isNullable) {
+    return '$variableName ? $encodableValue : flutter::EncodableValue()';
+  }
+  return encodableValue;
+}
+
+// Writes the code to declare and populate a variable called  [argName] to use
+// as a parameter to an API method call from an existing EncodableValue
+// variable called [encodableArgName] which corresponds to [arg] in the API
+// definition.
+void _writeEncodedArgumentExtraction(
+  Indent indent,
+  HostDatatype hostType, {
+  required String argName,
+  required String encodableArgName,
+}) {
+  if (hostType.isNullable) {
+    // Nullable arguments are always pointers, with nullptr corresponding to
+    // null.
+    if (hostType.datatype == 'int64_t') {
+      // The EncodableValue will either be an int32_t or an int64_t depending
+      // on the value, but the generated API requires an int64_t so that it can
+      // handle any case. Create a local variable for the 64-bit value...
+      final String valueVarName = '${argName}_value';
+      indent.writeln(
+          'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
+      // ... then declare the arg as a reference to that local.
+      indent.writeln(
+          'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &$valueVarName;');
+    } else if (hostType.datatype == 'flutter::EncodableValue') {
+      // Generic objects just pass the EncodableValue through directly.
+      indent.writeln('const auto* $argName = &$encodableArgName;');
+    } else if (hostType.isBuiltin) {
+      indent.writeln(
+          'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
+    } else {
+      indent.writeln(
+          'const auto* $argName = &(std::any_cast<const ${hostType.datatype}&>(std::get<flutter::CustomEncodableValue>($encodableArgName)));');
+    }
+  } else {
+    // Non-nullable arguments are either passed by value or reference, but the
+    // extraction doesn't need to distinguish since those are the same at the
+    // call site.
+    if (hostType.datatype == 'int64_t') {
+      // The EncodableValue will either be an int32_t or an int64_t depending
+      // on the value, but the generated API requires an int64_t so that it can
+      // handle any case.
+      indent.writeln('const int64_t $argName = $encodableArgName.LongValue();');
+    } else if (hostType.datatype == 'flutter::EncodableValue') {
+      // Generic objects just pass the EncodableValue through directly. This
+      // creates an alias just to avoid having to special-case the
+      // argName/encodableArgName distinction at a higher level.
+      indent.writeln('const auto& $argName = $encodableArgName;');
+    } else if (hostType.isBuiltin) {
+      indent.writeln(
+          'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
+    } else {
+      indent.writeln(
+          'const auto& $argName = std::any_cast<const ${hostType.datatype}&>(std::get<flutter::CustomEncodableValue>($encodableArgName));');
+    }
+  }
+}
+
 void _writeHostApiHeader(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
 
@@ -457,7 +517,7 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
             root.classes,
             root.enums,
             (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-        final String returnTypeName = _apiReturnType(returnType);
+        final String returnTypeName = _hostApiReturnType(returnType);
 
         final List<String> argSignature = <String>[];
         if (method.arguments.isNotEmpty) {
@@ -530,12 +590,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       indent.write('');
       indent.scoped('{', '}', () {
         indent.writeln(
-            'auto channel = std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(');
-        indent.inc();
-        indent.inc();
-        indent.writeln('binary_messenger, "$channelName", &GetCodec());');
-        indent.dec();
-        indent.dec();
+            'auto channel = std::make_unique<flutter::BasicMessageChannel<>>(binary_messenger, '
+            '"$channelName", &GetCodec());');
         indent.write('if (api != nullptr) ');
         indent.scoped('{', '} else {', () {
           indent.write(
@@ -547,68 +603,6 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
               if (method.arguments.isNotEmpty) {
                 indent.writeln(
                     'const auto& args = std::get<flutter::EncodableList>(message);');
-
-                // Writes the code to declare and populate a variable called
-                // [argName] to use as a parameter to an API method call from
-                // an existing EncodablValue variable called [encodableArgName]
-                // which corresponds to [arg] in the API definition.
-                void extractEncodedArgument(
-                    String argName,
-                    String encodableArgName,
-                    NamedType arg,
-                    HostDatatype hostType) {
-                  if (arg.type.isNullable) {
-                    // Nullable arguments are always pointers, with nullptr
-                    // corresponding to null.
-                    if (hostType.datatype == 'int64_t') {
-                      // The EncodableValue will either be an int32_t or an
-                      // int64_t depending on the value, but the generated API
-                      // requires an int64_t so that it can handle any case.
-                      // Create a local variable for the 64-bit value...
-                      final String valueVarName = '${argName}_value';
-                      indent.writeln(
-                          'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
-                      // ... then declare the arg as a reference to that local.
-                      indent.writeln(
-                          'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &$valueVarName;');
-                    } else if (hostType.datatype == 'flutter::EncodableValue') {
-                      // Generic objects just pass the EncodableValue through
-                      // directly.
-                      indent.writeln(
-                          'const auto* $argName = &$encodableArgName;');
-                    } else if (hostType.isBuiltin) {
-                      indent.writeln(
-                          'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
-                    } else {
-                      indent.writeln(
-                          'const auto* $argName = &(std::any_cast<const ${hostType.datatype}&>(std::get<flutter::CustomEncodableValue>($encodableArgName)));');
-                    }
-                  } else {
-                    // Non-nullable arguments are either passed by value or
-                    // reference, but the extraction doesn't need to distinguish
-                    // since those are the same at the call site.
-                    if (hostType.datatype == 'int64_t') {
-                      // The EncodableValue will either be an int32_t or an
-                      // int64_t depending on the value, but the generated API
-                      // requires an int64_t so that it can handle any case.
-                      indent.writeln(
-                          'const int64_t $argName = $encodableArgName.LongValue();');
-                    } else if (hostType.datatype == 'flutter::EncodableValue') {
-                      // Generic objects just pass the EncodableValue through
-                      // directly. This creates an alias just to avoid having to
-                      // special-case the argName/encodableArgName distinction
-                      // at a higher level.
-                      indent
-                          .writeln('const auto& $argName = $encodableArgName;');
-                    } else if (hostType.isBuiltin) {
-                      indent.writeln(
-                          'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
-                    } else {
-                      indent.writeln(
-                          'const auto& $argName = std::any_cast<const ${hostType.datatype}&>(std::get<flutter::CustomEncodableValue>($encodableArgName));');
-                    }
-                  }
-                }
 
                 enumerate(method.arguments, (int index, NamedType arg) {
                   final HostDatatype hostType = getHostDatatype(
@@ -630,8 +624,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                       indent.writeln('return;');
                     });
                   }
-                  extractEncodedArgument(
-                      argName, encodableArgName, arg, hostType);
+                  _writeEncodedArgumentExtraction(indent, hostType,
+                      argName: argName, encodableArgName: encodableArgName);
                   methodArgument.add(argName);
                 });
               }
@@ -693,7 +687,7 @@ ${prefix}reply(flutter::EncodableValue(std::move(wrapped)));''';
                   root.classes,
                   root.enums,
                   (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-              final String returnTypeName = _apiReturnType(returnType);
+              final String returnTypeName = _hostApiReturnType(returnType);
               if (method.isAsynchronous) {
                 methodArgument.add(
                   '[reply]($returnTypeName&& output) {${indent.newline}'
@@ -739,7 +733,7 @@ String _getArgumentName(int count, NamedType argument) =>
 String _getSafeArgumentName(int count, NamedType argument) =>
     '${_getArgumentName(count, argument)}_arg';
 
-void _writeFlutterApiHeader(Indent indent, Api api) {
+void _writeFlutterApiHeader(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
 
   const List<String> generatedMessages = <String>[
@@ -757,27 +751,52 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
       indent.writeln('');
       indent.writeln('static const flutter::StandardMessageCodec& GetCodec();');
       for (final Method func in api.methods) {
-        final String returnType = func.returnType.isVoid
-            ? 'void'
-            : _nullSafeCppTypeForDartType(func.returnType);
-        final String callback = 'std::function<void($returnType)>&& callback';
+        final HostDatatype returnType = getHostDatatype(
+            func.returnType,
+            root.classes,
+            root.enums,
+            (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+        final String successCallback =
+            'std::function<void(${_flutterApiReturnType(returnType)})>&& on_success';
+        const String errorCallback =
+            'std::function<void(const FlutterError&)>&& on_error';
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
         if (func.arguments.isEmpty) {
-          indent.writeln('void ${func.name}($callback);');
+          indent.writeln('void ${_makeMethodName(func)}($successCallback, '
+              '$errorCallback);');
         } else {
-          final Iterable<String> argTypes = func.arguments
-              .map((NamedType e) => _nullSafeCppTypeForDartType(e.type));
+          final Iterable<String> argTypes = func.arguments.map((NamedType arg) {
+            final HostDatatype hostType = getFieldHostDatatype(
+                arg,
+                root.classes,
+                root.enums,
+                (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+            return _flutterApiArgumentType(hostType);
+          });
           final Iterable<String> argNames =
-              indexMap(func.arguments, _getSafeArgumentName);
+              indexMap(func.arguments, _getArgumentName);
           final String argsSignature =
               map2(argTypes, argNames, (String x, String y) => '$x $y')
                   .join(', ');
-          indent.writeln('void ${func.name}($argsSignature, $callback);');
+          indent.writeln('void ${_makeMethodName(func)}($argsSignature, '
+              '$successCallback, $errorCallback);');
         }
       }
     });
   }, nestCount: 0);
+}
+
+/// Contains information about a host function argument.
+///
+/// This is comparable to a [NamedType], but has already gone through host type
+/// and variable name mapping, and it tracks the original [NamedType] that it
+/// was created from.
+class _HostNamedType {
+  const _HostNamedType(this.name, this.hostType, this.originalType);
+  final String name;
+  final HostDatatype hostType;
+  final TypeDeclaration originalType;
 }
 
 void _writeFlutterApiSource(Indent indent, Api api, Root root) {
@@ -800,79 +819,70 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
 ''');
   for (final Method func in api.methods) {
     final String channelName = makeChannelName(api, func);
-    final String returnType = func.returnType.isVoid
-        ? 'void'
-        : _nullSafeCppTypeForDartType(func.returnType);
+    final HostDatatype returnType = getHostDatatype(
+        func.returnType,
+        root.classes,
+        root.enums,
+        (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
     String sendArgument;
-    final String callback = 'std::function<void($returnType)>&& callback';
-    if (func.arguments.isEmpty) {
-      indent.write('void ${api.name}::${func.name}($callback) ');
-      sendArgument = 'flutter::EncodableValue()';
-    } else {
-      final Iterable<String> argTypes = func.arguments
-          .map((NamedType e) => _nullSafeCppTypeForDartType(e.type));
-      final Iterable<String> argNames =
-          indexMap(func.arguments, _getSafeArgumentName);
-      sendArgument =
-          'flutter::EncodableList { ${argNames.map((String arg) => 'flutter::CustomEncodableValue($arg)').join(', ')} }';
-      final String argsSignature =
-          map2(argTypes, argNames, (String x, String y) => '$x $y').join(', ');
-      indent
-          .write('void ${api.name}::${func.name}($argsSignature, $callback) ');
-    }
+    final String successCallback =
+        'std::function<void(${_flutterApiReturnType(returnType)})>&& on_success';
+    const String errorCallback =
+        'std::function<void(const FlutterError&)>&& on_error';
+
+    // Determine the input argument list, saved in a structured form for later
+    // use as platform channel call arguments.
+    final Iterable<_HostNamedType> hostArgs =
+        indexMap(func.arguments, (int i, NamedType arg) {
+      final HostDatatype hostType = getFieldHostDatatype(arg, root.classes,
+          root.enums, (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
+      return _HostNamedType(_getSafeArgumentName(i, arg), hostType, arg.type);
+    });
+    final String inputArgumentList = hostArgs
+        .map((_HostNamedType arg) => '${arg.hostType} ${arg.name}')
+        .join(', ');
+    indent.write('void ${api.name}::${_makeMethodName(func)}('
+        '${inputArgumentList.isEmpty ? '' : '$inputArgumentList, '}'
+        '$successCallback, $errorCallback) ');
     indent.scoped('{', '}', () {
       const String channel = 'channel';
       indent.writeln(
-          'auto channel = std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(');
-      indent.inc();
-      indent.inc();
-      indent.writeln('binary_messenger_, "$channelName", &GetCodec());');
-      indent.dec();
-      indent.dec();
+          'auto channel = std::make_unique<flutter::BasicMessageChannel<>>(binary_messenger_, '
+          '"$channelName", &GetCodec());');
+
+      // Convert arguments to EncodableValue versions
+      const String argumentListVariableName = 'encoded_api_arguments';
+      indent.write('flutter::EncodableValue $argumentListVariableName = ');
+      if (func.arguments.isEmpty) {
+        indent.writeln('flutter::EncodableValue()');
+      } else {
+        indent.scoped('flutter::EncodableValue(flutter::EncodableList{', '});',
+            () {
+          for (_HostNamedType arg in hostArgs) {
+            final String encodedArgument = _wrappedHostApiArgumentExpression(
+                root, arg.name, arg.originalType, arg.hostType);
+            indent.writeln('$encodedArgument,');
+          }
+        });
+      }
+
       indent.write(
-          '$channel->Send($sendArgument, [callback](const uint8_t* reply, size_t reply_size) ');
+          '$channel->Send($argumentListVariableName, [on_success, on_error](const uint8_t* reply, size_t reply_size) ');
       indent.scoped('{', '});', () {
+        final String successCallbackArgument;
         if (func.returnType.isVoid) {
-          indent.writeln('callback();');
+          successCallbackArgument = '';
         } else {
+          successCallbackArgument = 'return_value';
+          final String encodedReplyName = 'encodable_$successCallbackArgument';
           indent.writeln(
-              'std::unique_ptr<flutter::EncodableValue> decoded_reply = GetCodec().DecodeMessage(reply, reply_size);');
-          indent.writeln(
-              'flutter::EncodableValue args = *(flutter::EncodableValue*)(decoded_reply.release());');
-          const String output = 'output';
-
-          final bool isBuiltin =
-              _baseCppTypeForBuiltinDartType(func.returnType) != null;
-          final String returnTypeName =
-              _baseCppTypeForDartType(func.returnType);
-          if (func.returnType.isNullable) {
-            indent.writeln('$returnType $output{};');
-          } else {
-            indent.writeln('$returnTypeName $output{};');
-          }
-          const String pointerVariable = '${_pointerPrefix}_$output';
-          if (func.returnType.baseName == 'int') {
-            indent.format('''
-if (const int32_t* $pointerVariable = std::get_if<int32_t>(&args))
-\t$output = *$pointerVariable;
-else if (const int64_t* ${pointerVariable}_64 = std::get_if<int64_t>(&args))
-\t$output = *${pointerVariable}_64;''');
-          } else if (!isBuiltin) {
-            indent.write(
-                'if (const flutter::EncodableList* $pointerVariable = std::get_if<flutter::EncodableList>(&args)) ');
-            indent.scoped('{', '}', () {
-              indent.writeln('$output = $returnTypeName(*$pointerVariable);');
-            });
-          } else {
-            indent.write(
-                'if (const $returnTypeName* $pointerVariable = std::get_if<$returnTypeName>(&args)) ');
-            indent.scoped('{', '}', () {
-              indent.writeln('$output = *$pointerVariable;');
-            });
-          }
-
-          indent.writeln('callback($output);');
+              'std::unique_ptr<flutter::EncodableValue> response = GetCodec().DecodeMessage(reply, reply_size);');
+          indent.writeln('const auto& $encodedReplyName = *response;');
+          _writeEncodedArgumentExtraction(indent, returnType,
+              argName: successCallbackArgument,
+              encodableArgName: encodedReplyName);
         }
+        indent.writeln('on_success($successCallbackArgument);');
       });
     });
   }
@@ -990,6 +1000,16 @@ String _hostApiArgumentType(HostDatatype type) {
   return type.isNullable ? 'const $baseType*' : 'const $baseType&';
 }
 
+/// Returns the C++ type to use for arguments to a Flutter API.
+String _flutterApiArgumentType(HostDatatype type) {
+  // Nullable strings use std::string* rather than std::string_view*
+  // since there's no implicit conversion for pointer types.
+  if (type.datatype == 'std::string' && type.isNullable) {
+    return 'const std::string*';
+  }
+  return _unownedArgumentType(type);
+}
+
 /// Returns the C++ type to use for the return of a getter for a field of type
 /// [type].
 String _getterReturnType(HostDatatype type) {
@@ -1003,9 +1023,9 @@ String _getterReturnType(HostDatatype type) {
   return type.isNullable ? 'const $baseType*' : 'const $baseType&';
 }
 
-/// Returns the C++ type to use for the return of an API method retutrning
+/// Returns the C++ type to use for the return of a host API method returning
 /// [type].
-String _apiReturnType(HostDatatype type) {
+String _hostApiReturnType(HostDatatype type) {
   if (type.datatype == 'void') {
     return 'std::optional<FlutterError>';
   }
@@ -1014,6 +1034,18 @@ String _apiReturnType(HostDatatype type) {
     valueType = 'std::optional<$valueType>';
   }
   return 'ErrorOr<$valueType>';
+}
+
+/// Returns the C++ type to use for the paramer to the asyncronous "return"
+/// callback of a Flutter API method returning [type].
+String _flutterApiReturnType(HostDatatype type) {
+  if (type.datatype == 'void') {
+    return 'void';
+  }
+  // For anything other than void, handle it the same way as a host API argument
+  // since it has the same basic structure of being a function defined by the
+  // client, being called by the generated code.
+  return _hostApiArgumentType(type);
 }
 
 // TODO(stuartmorgan): Audit all uses of this and convert them to context-based
@@ -1133,7 +1165,7 @@ void generateCppHeader(CppOptions options, Root root, StringSink sink) {
     if (api.location == ApiLocation.host) {
       _writeHostApiHeader(indent, api, root);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApiHeader(indent, api);
+      _writeFlutterApiHeader(indent, api, root);
     }
   }
 
@@ -1196,14 +1228,14 @@ flutter::EncodableValue ${api.name}::WrapError(std::string_view error_message) {
 \t\tflutter::EncodableValue(std::string(error_message)),
 \t\tflutter::EncodableValue("Error"),
 \t\tflutter::EncodableValue()
-\t});
+\t};
 }
 flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
 \treturn flutter::EncodableValue(flutter::EncodableList{
 \t\tflutter::EncodableValue(error.message()),
 \t\tflutter::EncodableValue(error.code()),
 \t\terror.details()
-\t});
+\t};
 }''');
       indent.addln('');
     } else if (api.location == ApiLocation.flutter) {

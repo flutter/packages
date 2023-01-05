@@ -465,7 +465,7 @@ void AllNullableTypesWrapper::set_values(const AllNullableTypes& value_arg) {
 
 flutter::EncodableList AllNullableTypesWrapper::ToEncodableList() const {
   return flutter::EncodableList{
-      flutter::EncodableValue(values_.ToEncodableList()),
+      flutter::CustomEncodableValue(values_),
   };
 }
 
@@ -545,10 +545,9 @@ const flutter::StandardMessageCodec& HostIntegrationCoreApi::GetCodec() {
 void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                    HostIntegrationCoreApi* api) {
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger, "dev.flutter.pigeon.HostIntegrationCoreApi.noop",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger, "dev.flutter.pigeon.HostIntegrationCoreApi.noop",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -571,11 +570,9 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllTypes",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllTypes", &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -608,11 +605,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -648,11 +644,9 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.throwError",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.throwError", &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -675,10 +669,9 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoInt", &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoInt",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -709,11 +702,9 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoDouble",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoDouble", &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -745,10 +736,9 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoBool", &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoBool",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -779,11 +769,9 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoString",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoString", &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -815,11 +803,9 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoUint8List",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoUint8List", &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -852,11 +838,9 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoObject",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoObject", &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -888,8 +872,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel = std::make_unique<
-        flutter::BasicMessageChannel<flutter::EncodableValue>>(
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedNullableString",
         &GetCodec());
@@ -932,8 +915,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel = std::make_unique<
-        flutter::BasicMessageChannel<flutter::EncodableValue>>(
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.HostIntegrationCoreApi.createNestedNullableString",
         &GetCodec());
@@ -965,8 +947,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel = std::make_unique<
-        flutter::BasicMessageChannel<flutter::EncodableValue>>(
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.HostIntegrationCoreApi.sendMultipleNullableTypes",
         &GetCodec());
@@ -1011,11 +992,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableInt",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableInt",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1055,11 +1035,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableDouble",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableDouble",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1093,11 +1072,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableBool",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableBool",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1131,11 +1109,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableString",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableString",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1169,11 +1146,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableUint8List",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableUint8List",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1208,11 +1184,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableObject",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableObject",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1246,10 +1221,9 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.noopAsync", &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger, "dev.flutter.pigeon.HostIntegrationCoreApi.noopAsync",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1273,11 +1247,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncString",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncString",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1311,11 +1284,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterNoop",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterNoop",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1340,11 +1312,10 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger,
-            "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoString",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoString",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1382,14 +1353,18 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 flutter::EncodableValue HostIntegrationCoreApi::WrapError(
     std::string_view error_message) {
   return flutter::EncodableValue(flutter::EncodableList{
-      flutter::EncodableValue(std::string(error_message)),
-      flutter::EncodableValue("Error"), flutter::EncodableValue()});
+    flutter::EncodableValue(std::string(error_message)),
+    flutter::EncodableValue("Error"),
+    flutter::EncodableValue()
+  };
 }
 flutter::EncodableValue HostIntegrationCoreApi::WrapError(
     const FlutterError& error) {
   return flutter::EncodableValue(flutter::EncodableList{
-      flutter::EncodableValue(error.message()),
-      flutter::EncodableValue(error.code()), error.details()});
+    flutter::EncodableValue(error.message()),
+    flutter::EncodableValue(error.code()),
+    error.details()
+  };
 }
 
 FlutterIntegrationCoreApiCodecSerializer::
@@ -1459,398 +1434,414 @@ const flutter::StandardMessageCodec& FlutterIntegrationCoreApi::GetCodec() {
       &FlutterIntegrationCoreApiCodecSerializer::GetInstance());
 }
 
-void FlutterIntegrationCoreApi::noop(std::function<void(void)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.noop", &GetCodec());
-  channel->Send(
-      flutter::EncodableValue(),
-      [callback](const uint8_t* reply, size_t reply_size) { callback(); });
+void FlutterIntegrationCoreApi::Noop(
+    std::function<void(void)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_, "dev.flutter.pigeon.FlutterIntegrationCoreApi.noop",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue() channel->Send(
+          encoded_api_arguments,
+          [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+            on_success();
+          });
 }
-void FlutterIntegrationCoreApi::echoAllTypes(
-    const AllTypes& everything_arg,
-    std::function<void(const AllTypes&)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoAllTypes(
+    Instance of 'HostDatatype' everything_arg,
+    std::function<void(const AllTypes&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes", &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::CustomEncodableValue(everything_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(everything_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        AllTypes output{};
-        if (const flutter::EncodableList* pointer_output =
-                std::get_if<flutter::EncodableList>(&args)) {
-          output = AllTypes(*pointer_output);
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value = std::any_cast<const AllTypes&>(
+            std::get<flutter::CustomEncodableValue>(encodable_return_value));
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoAllNullableTypes(
-    const AllNullableTypes& everything_arg,
-    std::function<void(const AllNullableTypes&)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoAllNullableTypes(
+    Instance of 'HostDatatype' everything_arg,
+    std::function<void(const AllNullableTypes&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::CustomEncodableValue(everything_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(everything_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        AllNullableTypes output{};
-        if (const flutter::EncodableList* pointer_output =
-                std::get_if<flutter::EncodableList>(&args)) {
-          output = AllNullableTypes(*pointer_output);
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value = std::any_cast<const AllNullableTypes&>(
+            std::get<flutter::CustomEncodableValue>(encodable_return_value));
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::sendMultipleNullableTypes(
-    std::optional<bool> a_nullable_bool_arg,
-    std::optional<int64_t> a_nullable_int_arg,
-    std::optional<std::string> a_nullable_string_arg,
-    std::function<void(const AllNullableTypes&)>&& callback) {
-  auto channel = std::make_unique<
-      flutter::BasicMessageChannel<flutter::EncodableValue>>(
+void FlutterIntegrationCoreApi::SendMultipleNullableTypes(
+    Instance of 'HostDatatype' a_nullable_bool_arg,
+    Instance of 'HostDatatype' a_nullable_int_arg,
+    Instance of 'HostDatatype' a_nullable_string_arg,
+    std::function<void(const AllNullableTypes&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
       binary_messenger_,
       "dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes",
       &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          a_nullable_bool_arg ? flutter::EncodableValue(*a_nullable_bool_arg)
+                              : flutter::EncodableValue(),
+          a_nullable_int_arg ? flutter::EncodableValue(*a_nullable_int_arg)
+                             : flutter::EncodableValue(),
+          a_nullable_string_arg
+              ? flutter::EncodableValue(*a_nullable_string_arg)
+              : flutter::EncodableValue(),
+      });
   channel->Send(
-      flutter::EncodableList{
-          flutter::CustomEncodableValue(a_nullable_bool_arg),
-          flutter::CustomEncodableValue(a_nullable_int_arg),
-          flutter::CustomEncodableValue(a_nullable_string_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        AllNullableTypes output{};
-        if (const flutter::EncodableList* pointer_output =
-                std::get_if<flutter::EncodableList>(&args)) {
-          output = AllNullableTypes(*pointer_output);
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value = std::any_cast<const AllNullableTypes&>(
+            std::get<flutter::CustomEncodableValue>(encodable_return_value));
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoBool(bool a_bool_arg,
-                                         std::function<void(bool)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool", &GetCodec());
+void FlutterIntegrationCoreApi::EchoBool(
+    Instance of 'HostDatatype' a_bool_arg,
+    std::function<void(bool)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool", &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::EncodableValue(a_bool_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_bool_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        bool output{};
-        if (const bool* pointer_output = std::get_if<bool>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value = std::get<bool>(encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoInt(
-    int64_t an_int_arg, std::function<void(int64_t)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt", &GetCodec());
+void FlutterIntegrationCoreApi::EchoInt(
+    Instance of 'HostDatatype' an_int_arg,
+    std::function<void(int64_t)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::EncodableValue(an_int_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(an_int_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        int64_t output{};
-        if (const int32_t* pointer_output = std::get_if<int32_t>(&args))
-          output = *pointer_output;
-        else if (const int64_t* pointer_output_64 = std::get_if<int64_t>(&args))
-          output = *pointer_output_64;
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const int64_t return_value = encodable_return_value.LongValue();
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoDouble(
-    double a_double_arg, std::function<void(double)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoDouble(
+    Instance of 'HostDatatype' a_double_arg,
+    std::function<void(double)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble", &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::EncodableValue(a_double_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_double_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        double output{};
-        if (const double* pointer_output = std::get_if<double>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value = std::get<double>(encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoString(
-    const std::string& a_string_arg,
-    std::function<void(const std::string&)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoString(
+    Instance of 'HostDatatype' a_string_arg,
+    std::function<void(const std::string&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString", &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::EncodableValue(a_string_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_string_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        std::string output{};
-        if (const std::string* pointer_output =
-                std::get_if<std::string>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value =
+            std::get<std::string>(encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoUint8List(
-    const std::vector<uint8_t>& a_list_arg,
-    std::function<void(const std::vector<uint8_t>&)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoUint8List(
+    Instance of 'HostDatatype' a_list_arg,
+    std::function<void(const std::vector<uint8_t>&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::EncodableValue(a_list_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_list_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        std::vector<uint8_t> output{};
-        if (const std::vector<uint8_t>* pointer_output =
-                std::get_if<std::vector<uint8_t>>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value =
+            std::get<std::vector<uint8_t>>(encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoList(
-    const flutter::EncodableList& a_list_arg,
-    std::function<void(const flutter::EncodableList&)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList", &GetCodec());
+void FlutterIntegrationCoreApi::EchoList(
+    Instance of 'HostDatatype' a_list_arg,
+    std::function<void(const flutter::EncodableList&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList", &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::EncodableValue(a_list_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_list_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        flutter::EncodableList output{};
-        if (const flutter::EncodableList* pointer_output =
-                std::get_if<flutter::EncodableList>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value =
+            std::get<flutter::EncodableList>(encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoMap(
-    const flutter::EncodableMap& a_map_arg,
-    std::function<void(const flutter::EncodableMap&)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap", &GetCodec());
+void FlutterIntegrationCoreApi::EchoMap(
+    Instance of 'HostDatatype' a_map_arg,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::EncodableValue(a_map_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_map_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        flutter::EncodableMap output{};
-        if (const flutter::EncodableMap* pointer_output =
-                std::get_if<flutter::EncodableMap>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value =
+            std::get<flutter::EncodableMap>(encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoNullableBool(
-    std::optional<bool> a_bool_arg,
-    std::function<void(std::optional<bool>)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoNullableBool(
+    Instance of 'HostDatatype' a_bool_arg,
+    std::function<void(const bool*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          a_bool_arg ? flutter::EncodableValue(*a_bool_arg)
+                     : flutter::EncodableValue(),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_bool_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        std::optional<bool> output{};
-        if (const bool* pointer_output = std::get_if<bool>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto* return_value = std::get_if<bool>(&encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoNullableInt(
-    std::optional<int64_t> an_int_arg,
-    std::function<void(std::optional<int64_t>)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoNullableInt(
+    Instance of 'HostDatatype' an_int_arg,
+    std::function<void(const int64_t*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          an_int_arg ? flutter::EncodableValue(*an_int_arg)
+                     : flutter::EncodableValue(),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(an_int_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        std::optional<int64_t> output{};
-        if (const int32_t* pointer_output = std::get_if<int32_t>(&args))
-          output = *pointer_output;
-        else if (const int64_t* pointer_output_64 = std::get_if<int64_t>(&args))
-          output = *pointer_output_64;
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const int64_t return_value_value =
+            encodable_return_value.IsNull()
+                ? 0
+                : encodable_return_value.LongValue();
+        const auto* return_value =
+            encodable_return_value.IsNull() ? nullptr : &return_value_value;
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoNullableDouble(
-    std::optional<double> a_double_arg,
-    std::function<void(std::optional<double>)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoNullableDouble(
+    Instance of 'HostDatatype' a_double_arg,
+    std::function<void(const double*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          a_double_arg ? flutter::EncodableValue(*a_double_arg)
+                       : flutter::EncodableValue(),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_double_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        std::optional<double> output{};
-        if (const double* pointer_output = std::get_if<double>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto* return_value = std::get_if<double>(&encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoNullableString(
-    std::optional<std::string> a_string_arg,
-    std::function<void(std::optional<std::string>)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoNullableString(
+    Instance of 'HostDatatype' a_string_arg,
+    std::function<void(const std::string*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          a_string_arg ? flutter::EncodableValue(*a_string_arg)
+                       : flutter::EncodableValue(),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_string_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        std::optional<std::string> output{};
-        if (const std::string* pointer_output =
-                std::get_if<std::string>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto* return_value =
+            std::get_if<std::string>(&encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoNullableUint8List(
-    std::optional<std::vector<uint8_t>> a_list_arg,
-    std::function<void(std::optional<std::vector<uint8_t>>)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoNullableUint8List(
+    Instance of 'HostDatatype' a_list_arg,
+    std::function<void(const std::vector<uint8_t>*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          a_list_arg ? flutter::EncodableValue(*a_list_arg)
+                     : flutter::EncodableValue(),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_list_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        std::optional<std::vector<uint8_t>> output{};
-        if (const std::vector<uint8_t>* pointer_output =
-                std::get_if<std::vector<uint8_t>>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto* return_value =
+            std::get_if<std::vector<uint8_t>>(&encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoNullableList(
-    std::optional<flutter::EncodableList> a_list_arg,
-    std::function<void(std::optional<flutter::EncodableList>)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoNullableList(
+    Instance of 'HostDatatype' a_list_arg,
+    std::function<void(const flutter::EncodableList*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          a_list_arg ? flutter::EncodableValue(*a_list_arg)
+                     : flutter::EncodableValue(),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_list_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        std::optional<flutter::EncodableList> output{};
-        if (const flutter::EncodableList* pointer_output =
-                std::get_if<flutter::EncodableList>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto* return_value =
+            std::get_if<flutter::EncodableList>(&encodable_return_value);
+        on_success(return_value);
       });
 }
-void FlutterIntegrationCoreApi::echoNullableMap(
-    const flutter::EncodableMap& a_map_arg,
-    std::function<void(const flutter::EncodableMap&)>&& callback) {
-  auto channel =
-      std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-          binary_messenger_,
-          "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap",
-          &GetCodec());
+void FlutterIntegrationCoreApi::EchoNullableMap(
+    Instance of 'HostDatatype' a_map_arg,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap",
+      &GetCodec());
+  flutter::EncodableValue encoded_api_arguments =
+      flutter::EncodableValue(flutter::EncodableList{
+          flutter::EncodableValue(a_map_arg),
+      });
   channel->Send(
-      flutter::EncodableList{flutter::CustomEncodableValue(a_map_arg)},
-      [callback](const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<flutter::EncodableValue> decoded_reply =
+      encoded_api_arguments,
+      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
-        flutter::EncodableValue args =
-            *(flutter::EncodableValue*)(decoded_reply.release());
-        flutter::EncodableMap output{};
-        if (const flutter::EncodableMap* pointer_output =
-                std::get_if<flutter::EncodableMap>(&args)) {
-          output = *pointer_output;
-        }
-        callback(output);
+        const auto& encodable_return_value = *response;
+        const auto& return_value =
+            std::get<flutter::EncodableMap>(encodable_return_value);
+        on_success(return_value);
       });
 }
 /// The codec used by HostTrivialApi.
@@ -1864,10 +1855,9 @@ const flutter::StandardMessageCodec& HostTrivialApi::GetCodec() {
 void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                            HostTrivialApi* api) {
   {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            binary_messenger, "dev.flutter.pigeon.HostTrivialApi.noop",
-            &GetCodec());
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger, "dev.flutter.pigeon.HostTrivialApi.noop",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const flutter::EncodableValue& message,
@@ -1894,13 +1884,17 @@ void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 flutter::EncodableValue HostTrivialApi::WrapError(
     std::string_view error_message) {
   return flutter::EncodableValue(flutter::EncodableList{
-      flutter::EncodableValue(std::string(error_message)),
-      flutter::EncodableValue("Error"), flutter::EncodableValue()});
+    flutter::EncodableValue(std::string(error_message)),
+    flutter::EncodableValue("Error"),
+    flutter::EncodableValue()
+  };
 }
 flutter::EncodableValue HostTrivialApi::WrapError(const FlutterError& error) {
   return flutter::EncodableValue(flutter::EncodableList{
-      flutter::EncodableValue(error.message()),
-      flutter::EncodableValue(error.code()), error.details()});
+    flutter::EncodableValue(error.message()),
+    flutter::EncodableValue(error.code()),
+    error.details()
+  };
 }
 
 }  // namespace core_tests_pigeontest

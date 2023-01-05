@@ -463,7 +463,7 @@ void main() {
       expect(
           code,
           contains(
-              'nullable_nested_ ? flutter::EncodableValue(nullable_nested_->ToEncodableList()) '
+              'nullable_nested_ ? flutter::CustomEncodableValue(*nullable_nested_) '
               ': flutter::EncodableValue()'));
     }
   });
@@ -561,7 +561,8 @@ void main() {
       expect(code, contains('non_nullable_nested_ = value_arg;'));
       // Serialization uses the value directly.
       expect(code, contains('flutter::EncodableValue(non_nullable_bool_)'));
-      expect(code, contains('non_nullable_nested_.ToEncodableList()'));
+      expect(code,
+          contains('flutter::CustomEncodableValue(non_nullable_nested_)'));
     }
   });
 
@@ -1067,6 +1068,12 @@ void main() {
                   baseName: 'ParameterObject',
                   isNullable: true,
                 )),
+            NamedType(
+                name: 'aGenericObject',
+                type: const TypeDeclaration(
+                  baseName: 'Object',
+                  isNullable: true,
+                )),
           ],
           returnType: const TypeDeclaration(
             baseName: 'bool',
@@ -1104,12 +1111,13 @@ void main() {
               'const std::string* a_string, '
               'const flutter::EncodableList* a_list, '
               'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object,'));
+              'const ParameterObject* an_object, '
+              'const flutter::EncodableValue* a_generic_object, '));
       // The callback should pass a pointer as well.
       expect(
           code,
-          contains('std::function<void(const int64_t*)>&& callback, '
-              'std::function<void(const FlutterError&)>&& error_handler)'));
+          contains('std::function<void(const bool*)>&& on_success, '
+              'std::function<void(const FlutterError&)>&& on_error)'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1120,28 +1128,28 @@ void main() {
       expect(
           code,
           contains(
-              'encodable_a_bool_arg ? flutter::EncodableValue(*encodable_a_bool_arg) : flutter::EncodableValue()'));
+              'a_bool_arg ? flutter::EncodableValue(*a_bool_arg) : flutter::EncodableValue()'));
       expect(
           code,
           contains(
-              'encodable_an_int_arg ? flutter::EncodableValue(*encodable_an_int_arg) : flutter::EncodableValue()'));
+              'an_int_arg ? flutter::EncodableValue(*an_int_arg) : flutter::EncodableValue()'));
       expect(
           code,
           contains(
-              'encodable_a_string_arg ? flutter::EncodableValue(*encodable_a_string_arg) : flutter::EncodableValue()'));
+              'a_string_arg ? flutter::EncodableValue(*a_string_arg) : flutter::EncodableValue()'));
       expect(
           code,
           contains(
-              'encodable_a_list_arg ? flutter::EncodableValue(*encodable_a_list_arg) : flutter::EncodableValue()'));
+              'a_list_arg ? flutter::EncodableValue(*a_list_arg) : flutter::EncodableValue()'));
       expect(
           code,
           contains(
-              'encodable_a_map_arg ? flutter::EncodableValue(*encodable_a_map_arg) : flutter::EncodableValue()'));
+              'a_map_arg ? flutter::EncodableValue(*a_map_arg) : flutter::EncodableValue()'));
       // Class types use CustomEncodableValue.
       expect(
           code,
           contains(
-              'encodable_an_object_arg ? flutter::CustomEncodableValue(*encodable_an_object_arg) : flutter::EncodableValue()'));
+              'an_object_arg ? flutter::CustomEncodableValue(*an_object_arg) : flutter::EncodableValue()'));
     }
   });
 
@@ -1194,6 +1202,12 @@ void main() {
                   baseName: 'ParameterObject',
                   isNullable: false,
                 )),
+            NamedType(
+                name: 'aGenericObject',
+                type: const TypeDeclaration(
+                  baseName: 'Object',
+                  isNullable: false,
+                )),
           ],
           returnType: const TypeDeclaration(
             baseName: 'bool',
@@ -1224,29 +1238,26 @@ void main() {
               // Non-POD types use const references.
               'const flutter::EncodableList& a_list, '
               'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object,'));
+              'const ParameterObject& an_object, '
+              'const flutter::EncodableValue& a_generic_object, '));
       // The callback should pass a value.
       expect(
           code,
-          contains('std::function<void(int64_t)>&& callback, '
-              'std::function<void(const FlutterError&)>&& error_handler)'));
+          contains('std::function<void(bool)>&& on_success, '
+              'std::function<void(const FlutterError&)>&& on_error)'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateCppSource(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Standard types are wrapped an EncodableValues.
-      expect(code, contains('flutter::EncodableValue(*encodable_a_bool_arg)'));
-      expect(code, contains('flutter::EncodableValue(*encodable_an_int_arg)'));
-      expect(
-          code, contains('flutter::EncodableValue(*encodable_a_string_arg)'));
-      expect(code, contains('flutter::EncodableValue(*encodable_a_list_arg)'));
-      expect(code, contains('flutter::EncodableValue(*encodable_a_map_arg)'));
+      expect(code, contains('flutter::EncodableValue(a_bool_arg)'));
+      expect(code, contains('flutter::EncodableValue(an_int_arg)'));
+      expect(code, contains('flutter::EncodableValue(a_string_arg)'));
+      expect(code, contains('flutter::EncodableValue(a_list_arg)'));
+      expect(code, contains('flutter::EncodableValue(a_map_arg)'));
       // Class types use CustomEncodableValue.
-      expect(
-          code,
-          contains(
-              'const auto& an_object_arg = std::any_cast<const ParameterObject&>(std::get<flutter::CustomEncodableValue>(encodable_an_object_arg));'));
+      expect(code, contains('flutter::CustomEncodableValue(an_object_arg)'));
     }
   });
 
