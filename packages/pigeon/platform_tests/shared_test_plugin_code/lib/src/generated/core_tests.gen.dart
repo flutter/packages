@@ -205,14 +205,11 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
     if (value is AllNullableTypes) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
+    } else if (value is AllNullableTypesWrapper) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWrapper) {
-      buffer.putUint8(130);
-      writeValue(buffer, value.encode());
     } else if (value is AllTypes) {
-      buffer.putUint8(131);
+      buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -226,12 +223,9 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
         return AllNullableTypes.decode(readValue(buffer)!);
 
       case 129:
-        return AllNullableTypes.decode(readValue(buffer)!);
-
-      case 130:
         return AllNullableTypesWrapper.decode(readValue(buffer)!);
 
-      case 131:
+      case 130:
         return AllTypes.decode(readValue(buffer)!);
 
       default:
@@ -489,6 +483,34 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed in generic Object.
+  Future<Object> echoObject(Object arg_anObject) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoObject', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anObject]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as Object?)!;
+    }
+  }
+
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   Future<String?> extractNestedNullableString(
@@ -691,6 +713,29 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (replyList[0] as Uint8List?);
+    }
+  }
+
+  /// Returns the passed in generic Object.
+  Future<Object?> echoNullableObject(Object? arg_aNullableObject) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableObject', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_aNullableObject]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as Object?);
     }
   }
 
