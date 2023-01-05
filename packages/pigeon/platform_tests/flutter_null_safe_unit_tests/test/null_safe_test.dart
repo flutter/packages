@@ -28,7 +28,7 @@ void main() {
     final FlutterSearchReply reply = FlutterSearchReply()
       ..result = 'foo'
       ..error = 'bar';
-    final Object encoded = reply.encode();
+    final List<Object?> encoded = reply.encode() as List<Object?>;
     final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
     expect(reply.error, decoded.error);
@@ -38,7 +38,7 @@ void main() {
     final FlutterSearchReply reply = FlutterSearchReply()
       ..result = 'foo'
       ..error = null;
-    final Object encoded = reply.encode();
+    final List<Object?> encoded = reply.encode() as List<Object?>;
     final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
     expect(reply.error, decoded.error);
@@ -49,8 +49,7 @@ void main() {
     final FlutterSearchReply reply = FlutterSearchReply()..result = 'ho';
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     final Completer<ByteData?> completer = Completer<ByteData?>();
-    completer
-        .complete(Api.codec.encodeMessage(<String, Object>{'result': reply}));
+    completer.complete(Api.codec.encodeMessage(<Object>[reply]));
     final Future<ByteData?> sendResult = completer.future;
     when(mockMessenger.send('dev.flutter.pigeon.Api.search', any))
         .thenAnswer((Invocation realInvocation) => sendResult);
@@ -93,7 +92,7 @@ void main() {
     const String channel = 'dev.flutter.pigeon.Api.anInt';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
-      return Api.codec.encodeMessage(<String?, Object?>{'result': null});
+      return Api.codec.encodeMessage(<Object?>[null]);
     });
     final Api api = Api(binaryMessenger: mockMessenger);
     expect(() async => api.anInt(1),
@@ -105,7 +104,7 @@ void main() {
     const String channel = 'dev.flutter.pigeon.NullableArgHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
-      return Api.codec.encodeMessage(<String?, Object?>{'result': 123});
+      return Api.codec.encodeMessage(<Object?>[123]);
     });
     final NullableArgHostApi api =
         NullableArgHostApi(binaryMessenger: mockMessenger);
@@ -118,9 +117,9 @@ void main() {
         'dev.flutter.pigeon.NullableCollectionArgHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
-      return Api.codec.encodeMessage(<String?, Object?>{
-        'result': <String?>['123']
-      });
+      return Api.codec.encodeMessage(<Object?>[
+        <String?>['123']
+      ]);
     });
     final NullableCollectionArgHostApi api =
         NullableCollectionArgHostApi(binaryMessenger: mockMessenger);
@@ -182,8 +181,7 @@ void main() {
     const String channel = 'dev.flutter.pigeon.NullableReturnHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
-      return NullableReturnHostApi.codec
-          .encodeMessage(<String?, Object?>{'result': null});
+      return NullableReturnHostApi.codec.encodeMessage(<Object?>[null]);
     });
     final NullableReturnHostApi api =
         NullableReturnHostApi(binaryMessenger: mockMessenger);
@@ -197,7 +195,7 @@ void main() {
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
       return NullableCollectionReturnHostApi.codec
-          .encodeMessage(<String?, Object?>{'result': null});
+          .encodeMessage(<Object?>[null]);
     });
     final NullableCollectionReturnHostApi api =
         NullableCollectionReturnHostApi(binaryMessenger: mockMessenger);

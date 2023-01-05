@@ -1,4 +1,4 @@
-## 5.3.0
+## 6.1.0
 
 - Introduces `StatefulShellRoute` to support using separate
   navigators for child routes as well as preserving state in each navigation tree
@@ -6,6 +6,21 @@
 - Updates documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
   describe the meaning of the child argument in the builder functions.
 - Adds support for restorationId to ShellRoute (and StatefulShellRoute).
+
+## 6.0.1
+
+- Fixes crashes when popping navigators manually.
+- Fixes trailing slashes after pops.
+
+## 6.0.0
+
+- **BREAKING CHANGE**
+  - `GoRouteData`'s `redirect` now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `GoRouteData`'s `build` now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `GoRouteData`'s `buildPageWithState` has been removed and replaced by `buildPage` with now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`. 
+  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`. 
+  - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
 
 ## 5.2.4
 
