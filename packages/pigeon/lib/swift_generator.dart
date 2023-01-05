@@ -365,6 +365,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     final String nullableConditionPrefix =
         type.isNullable ? '$value == nil ? nil : ' : '';
     return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$forceUnwrap';
+  } else if (type.baseName == 'Object') {
+    // Special-cased to avoid warnings about using 'as' with Any.
+    return type.isNullable ? value : '$value!';
   } else {
     final String castUnwrap = type.isNullable ? '?' : '!';
     return '$value as$castUnwrap ${_swiftTypeForDartType(type)}';

@@ -389,7 +389,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoObjectChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anObjectArg = args[0] as! Any
+        let anObjectArg = args[0]!
         let result = api.echoObject(anObject: anObjectArg)
         reply(wrapResult(result))
       }
@@ -501,7 +501,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableObjectChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aNullableObjectArg = args[0] as? Any
+        let aNullableObjectArg = args[0]
         let result = api.echoNullableObject(aNullableObject: aNullableObjectArg)
         reply(wrapResult(result))
       }
