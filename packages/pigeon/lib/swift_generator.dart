@@ -55,10 +55,16 @@ class SwiftGenerator extends Generator<SwiftOptions> {
 
   /// Generates Swift files with specified [SwiftOptions]
   @override
-  void generate(SwiftOptions languageOptions, Root root, StringSink sink,
-      {FileType fileType = FileType.na}) {
-    assert(fileType == FileType.na);
-    generateSwift(languageOptions, root, sink);
+  void generate(SwiftOptions generatorOptions, Root root, StringSink sink) {
+    final Indent indent = Indent(sink);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    generateSwift(generatorOptions, root, sink, indent);
+  }
+
+  @override
+  void writeFileHeaders(SwiftOptions generatorOptions, Root root,
+      StringSink sink, Indent indent) {
+    writeHeader(generatorOptions, root, sink, indent);
   }
 }
 
@@ -447,26 +453,29 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
 
+/// Writes file header to sink.
+void writeHeader(
+    SwiftOptions options, Root root, StringSink sink, Indent indent) {
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
+  indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
+  indent.addln('');
+}
+
 /// Generates the ".swift" file for the AST represented by [root] to [sink] with the
 /// provided [options].
-void generateSwift(SwiftOptions options, Root root, StringSink sink) {
+void generateSwift(
+    SwiftOptions options, Root root, StringSink sink, Indent indent) {
   final Set<String> rootClassNameSet =
       root.classes.map((Class x) => x.name).toSet();
   final Set<String> rootEnumNameSet =
       root.enums.map((Enum x) => x.name).toSet();
-  final Indent indent = Indent(sink);
 
   HostDatatype getHostDatatype(NamedType field) {
     return getFieldHostDatatype(field, root.classes, root.enums,
         (TypeDeclaration x) => _swiftTypeForBuiltinDartType(x));
-  }
-
-  void writeHeader() {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// $generatedCodeWarning');
-    indent.writeln('// $seeAlsoWarning');
   }
 
   void writeImports() {
@@ -637,8 +646,6 @@ import FlutterMacOS
     });
   }
 
-  writeHeader();
-  indent.addln('');
   writeImports();
   indent.addln('');
   indent.writeln('$_docCommentPrefix Generated class from Pigeon.');

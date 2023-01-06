@@ -456,11 +456,7 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
       testOutPath: options.dartTestOut,
     );
     final DartGenerator testGenerator = DartGenerator();
-    testGenerator.generateTest(
-      dartOptionsWithHeader,
-      root,
-      sink,
-    );
+    testGenerator.generateTest(dartOptionsWithHeader, root, sink);
   }
 
   @override
