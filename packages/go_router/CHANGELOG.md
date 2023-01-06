@@ -1,5 +1,5 @@
 ## 6.0.2
-- Make `CustomTransitionPage.barrierDismissible` work
+- Makes `CustomTransitionPage.barrierDismissible` work
 
 ## 6.0.1
 
