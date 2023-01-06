@@ -45,7 +45,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('class Input'));
       expect(code, contains('class Output'));
@@ -101,7 +101,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Method name and argument names should be adjusted.
       expect(code, contains(' DoSomething(const Input& some_input)'));
@@ -144,7 +144,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
 
       expect(
@@ -184,7 +184,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
 
       expect(
@@ -238,7 +238,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
       expect(code, isNot(contains('const{')));
@@ -271,7 +271,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('''
 #include <flutter/basic_message_channel.h>
@@ -286,7 +286,8 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(header: 'a_header.h'), root, sink);
+      generateCppSource(
+          const CppOptions(headerIncludePath: 'a_header.h'), root, sink);
       final String code = sink.toString();
       expect(code, contains('''
 #include "a_header.h"
@@ -322,7 +323,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(namespace: 'foo'), root, sink);
+      generateCppHeader(const CppOptions(namespace: 'foo'), root, sink);
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
       expect(code, contains('}  // namespace foo'));
@@ -390,7 +391,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Getters should return const pointers.
       expect(code, contains('const bool* nullable_bool()'));
@@ -521,7 +522,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       // POD getters should return copies references.
       expect(code, contains('bool non_nullable_bool()'));
@@ -644,7 +645,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(
           code, contains('ErrorOr<std::optional<bool>> ReturnNullableBool()'));
@@ -749,7 +750,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('ErrorOr<bool> ReturnBool()'));
       expect(code, contains('ErrorOr<int64_t> ReturnInt()'));
@@ -831,7 +832,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -962,7 +963,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1148,7 +1149,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    generateCppHeader('foo', const CppOptions(), root, sink);
+    generateCppHeader(const CppOptions(headerIncludePath: 'foo'), root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
       expect(code, contains('//$comment'));
@@ -1183,7 +1184,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateCppHeader('', const CppOptions(), root, sink);
+    generateCppHeader(const CppOptions(), root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
   });
@@ -1225,7 +1226,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateCppHeader('', const CppOptions(), root, sink);
+    generateCppHeader(const CppOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains(' : public flutter::StandardCodecSerializer'));
   });
