@@ -84,6 +84,38 @@ void main() {
       homeScreenPositionInTheMiddleOfRemoval,
     );
   });
+
+  testWidgets('Dismiss a screen by tapping a modal barrier',
+      (WidgetTester tester) async {
+    const ValueKey<String> homeKey = ValueKey<String>('home');
+    const ValueKey<String> dismissibleModalKey =
+        ValueKey<String>('dismissibleModal');
+
+    final GoRouter router = GoRouter(
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const HomeScreen(key: homeKey),
+        ),
+        GoRoute(
+          path: '/dismissible-modal',
+          pageBuilder: (_, __) => CustomTransitionPage<void>(
+            barrierDismissible: true,
+            transitionsBuilder: (_, __, ___, Widget child) => child,
+            child: const DismissibleModal(key: dismissibleModalKey),
+          ),
+        ),
+      ],
+    );
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    expect(find.byKey(homeKey), findsOneWidget);
+    router.push('/dismissible-modal');
+    await tester.pumpAndSettle();
+    expect(find.byKey(dismissibleModalKey), findsOneWidget);
+    await tester.tapAt(const Offset(50, 50));
+    await tester.pumpAndSettle();
+    expect(find.byKey(homeKey), findsOneWidget);
+  });
 }
 
 class HomeScreen extends StatelessWidget {
@@ -108,6 +140,19 @@ class LoginScreen extends StatelessWidget {
       body: Center(
         child: Text('LoginScreen'),
       ),
+    );
+  }
+}
+
+class DismissibleModal extends StatelessWidget {
+  const DismissibleModal({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 200,
+      height: 200,
+      child: Center(child: Text('Dismissible Modal')),
     );
   }
 }
