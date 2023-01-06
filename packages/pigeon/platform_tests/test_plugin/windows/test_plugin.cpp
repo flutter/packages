@@ -73,6 +73,11 @@ ErrorOr<std::vector<uint8_t>> TestPlugin::EchoUint8List(
   return a_uint8_list;
 }
 
+ErrorOr<flutter::EncodableValue> TestPlugin::EchoObject(
+    const flutter::EncodableValue& an_object) {
+  return an_object;
+}
+
 ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
     const AllNullableTypesWrapper& wrapper) {
   const std::string* inner_string = wrapper.values().a_nullable_string();
@@ -151,6 +156,14 @@ ErrorOr<std::optional<std::vector<uint8_t>>> TestPlugin::EchoNullableUint8List(
     return std::nullopt;
   }
   return *a_nullable_uint8_list;
+};
+
+ErrorOr<std::optional<flutter::EncodableValue>> TestPlugin::EchoNullableObject(
+    const flutter::EncodableValue* a_nullable_object) {
+  if (!a_nullable_object) {
+    return std::nullopt;
+  }
+  return *a_nullable_object;
 };
 
 void TestPlugin::NoopAsync(

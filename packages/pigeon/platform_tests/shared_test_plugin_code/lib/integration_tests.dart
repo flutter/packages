@@ -351,6 +351,19 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedUint8List, sentUint8List);
     });
 
+    testWidgets('generic Objects serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const Object sentString = "I'm a computer";
+      final Object receivedString = await api.echoObject(sentString);
+      expect(receivedString, sentString);
+
+      // Echo a second type as well to ensure the handling is generic.
+      const Object sentInt = 42;
+      final Object receivedInt = await api.echoObject(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
     testWidgets('Nullable Ints serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -448,6 +461,27 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Uint8List? receivedNullUint8List =
           await api.echoNullableUint8List(null);
       expect(receivedNullUint8List, null);
+    });
+
+    testWidgets('generic nullable Objects serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const Object sentString = "I'm a computer";
+      final Object? receivedString = await api.echoNullableObject(sentString);
+      expect(receivedString, sentString);
+
+      // Echo a second type as well to ensure the handling is generic.
+      const Object sentInt = 42;
+      final Object? receivedInt = await api.echoNullableObject(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Null generic Objects serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Object? receivedNullObject = await api.echoNullableObject(null);
+      expect(receivedNullObject, null);
     });
   });
 

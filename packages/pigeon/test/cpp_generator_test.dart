@@ -810,6 +810,12 @@ void main() {
                   baseName: 'ParameterObject',
                   isNullable: true,
                 )),
+            NamedType(
+                name: 'aGenericObject',
+                type: const TypeDeclaration(
+                  baseName: 'Object',
+                  isNullable: true,
+                )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
         ),
@@ -835,7 +841,8 @@ void main() {
               'const std::string* a_string, '
               'const flutter::EncodableList* a_list, '
               'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object)'));
+              'const ParameterObject* an_object, '
+              'const flutter::EncodableValue* a_generic_object)'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -876,6 +883,12 @@ void main() {
           code,
           contains(
               'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<flutter::CustomEncodableValue>(encodable_an_object_arg)));'));
+      // "Object" requires no extraction at all since it has to use
+      // EncodableValue directly.
+      expect(
+          code,
+          contains(
+              'const auto* a_generic_object_arg = &encodable_a_generic_object_arg;'));
     }
   });
 
@@ -928,6 +941,12 @@ void main() {
                   baseName: 'ParameterObject',
                   isNullable: false,
                 )),
+            NamedType(
+                name: 'aGenericObject',
+                type: const TypeDeclaration(
+                  baseName: 'Object',
+                  isNullable: false,
+                )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
         ),
@@ -953,7 +972,8 @@ void main() {
               'const std::string& a_string, '
               'const flutter::EncodableList& a_list, '
               'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object)'));
+              'const ParameterObject& an_object, '
+              'const flutter::EncodableValue& a_generic_object)'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -989,6 +1009,12 @@ void main() {
           code,
           contains(
               'const auto& an_object_arg = std::any_cast<const ParameterObject&>(std::get<flutter::CustomEncodableValue>(encodable_an_object_arg));'));
+      // "Object" requires no extraction at all since it has to use
+      // EncodableValue directly.
+      expect(
+          code,
+          contains(
+              'const auto& a_generic_object_arg = encodable_a_generic_object_arg;'));
     }
   });
 

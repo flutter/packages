@@ -283,6 +283,9 @@ class HostIntegrationCoreApi {
   // Returns the passed in Uint8List.
   virtual ErrorOr<std::vector<uint8_t>> EchoUint8List(
       const std::vector<uint8_t>& a_uint8_list) = 0;
+  // Returns the passed in generic Object.
+  virtual ErrorOr<flutter::EncodableValue> EchoObject(
+      const flutter::EncodableValue& an_object) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
   virtual ErrorOr<std::optional<std::string>> ExtractNestedNullableString(
@@ -310,6 +313,9 @@ class HostIntegrationCoreApi {
   // Returns the passed in Uint8List.
   virtual ErrorOr<std::optional<std::vector<uint8_t>>> EchoNullableUint8List(
       const std::vector<uint8_t>* a_nullable_uint8_list) = 0;
+  // Returns the passed in generic Object.
+  virtual ErrorOr<std::optional<flutter::EncodableValue>> EchoNullableObject(
+      const flutter::EncodableValue* a_nullable_object) = 0;
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic asynchronous calling.
   virtual void NoopAsync(
