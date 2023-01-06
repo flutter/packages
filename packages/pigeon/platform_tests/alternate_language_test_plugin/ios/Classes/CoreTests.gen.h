@@ -132,6 +132,10 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable FlutterStandardTypedData *)echoUint8List:(FlutterStandardTypedData *)aUint8List
                                                error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed in generic Object.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable id)echoObject:(id)anObject error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the inner `aString` value from the wrapped object, to test
 /// sending of nested objects.
 - (nullable NSString *)extractNestedNullableStringFrom:(AllNullableTypesWrapper *)wrapper
@@ -167,6 +171,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (nullable FlutterStandardTypedData *)
     echoNullableUint8List:(nullable FlutterStandardTypedData *)aNullableUint8List
                     error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed in generic Object.
+- (nullable id)echoNullableObject:(nullable id)aNullableObject
+                            error:(FlutterError *_Nullable *_Nonnull)error;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;

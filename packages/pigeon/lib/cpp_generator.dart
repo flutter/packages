@@ -589,6 +589,11 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                       // ... then declare the arg as a reference to that local.
                       indent.writeln(
                           'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &$valueVarName;');
+                    } else if (hostType.datatype == 'flutter::EncodableValue') {
+                      // Generic objects just pass the EncodableValue through
+                      // directly.
+                      indent.writeln(
+                          'const auto* $argName = &$encodableArgName;');
                     } else if (hostType.isBuiltin) {
                       indent.writeln(
                           'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
@@ -606,6 +611,13 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                       // requires an int64_t so that it can handle any case.
                       indent.writeln(
                           'const int64_t $argName = $encodableArgName.LongValue();');
+                    } else if (hostType.datatype == 'flutter::EncodableValue') {
+                      // Generic objects just pass the EncodableValue through
+                      // directly. This creates an alias just to avoid having to
+                      // special-case the argName/encodableArgName distinction
+                      // at a higher level.
+                      indent
+                          .writeln('const auto& $argName = $encodableArgName;');
                     } else if (hostType.isBuiltin) {
                       indent.writeln(
                           'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
@@ -944,6 +956,7 @@ String? _baseCppTypeForBuiltinDartType(TypeDeclaration type) {
     'Float64List': 'std::vector<double>',
     'Map': 'flutter::EncodableMap',
     'List': 'flutter::EncodableList',
+    'Object': 'flutter::EncodableValue',
   };
   if (cppTypeForDartTypeMap.containsKey(type.baseName)) {
     return cppTypeForDartTypeMap[type.baseName];
@@ -973,6 +986,8 @@ String _unownedArgumentType(HostDatatype type) {
   if (isString || _isPodType(type)) {
     return type.isNullable ? 'const $baseType*' : baseType;
   }
+  // TODO(stuartmorgan): Consider special-casing `Object?` here, so that there
+  // aren't two ways of representing null (nullptr or an isNull EncodableValue).
   return type.isNullable ? 'const $baseType*' : 'const $baseType&';
 }
 
