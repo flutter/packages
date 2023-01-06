@@ -99,7 +99,8 @@ void main() {
         ),
         GoRoute(
           path: '/dismissible-modal',
-          pageBuilder: (_, __) => CustomTransitionPage<void>(
+          pageBuilder: (_, GoRouterState state) => CustomTransitionPage<void>(
+            key: state.pageKey,
             barrierDismissible: true,
             transitionsBuilder: (_, __, ___, Widget child) => child,
             child: const DismissibleModal(key: dismissibleModalKey),
