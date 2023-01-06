@@ -73,6 +73,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull Object echoObject(@NonNull Object anObject) {
+    return anObject;
+  }
+
+  @Override
   public @Nullable String extractNestedNullableString(@NonNull AllNullableTypesWrapper wrapper) {
     return wrapper.getValues().getANullableString();
   }
@@ -122,6 +127,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public @Nullable byte[] echoNullableUint8List(@Nullable byte[] aNullableUint8List) {
     return aNullableUint8List;
+  }
+
+  @Override
+  public @Nullable Object echoNullableObject(@Nullable Object aNullableObject) {
+    return aNullableObject;
   }
 
   @Override

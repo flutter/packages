@@ -65,57 +65,62 @@ class ObjcOptions {
 }
 
 /// Class that manages all Objc header code generation.
-class ObjcGenerator extends Generator<ObjcOptions> {
+class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
   /// Instantiates a Objc Generator.
   ObjcGenerator();
 
   /// Generates Objc header files with specified [ObjcOptions]
   @override
-  void generate(ObjcOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
+  void generate(OutputFileOptions<ObjcOptions> generatorOptions, Root root,
+      StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeHeaders(languageOptions, root, sink, indent, fileType);
-    writeImports(languageOptions, root, sink, indent, fileType);
-    if (fileType == FileType.header) {
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
+    if (generatorOptions.fileType == FileType.header) {
       indent.writeln('NS_ASSUME_NONNULL_BEGIN');
 
       for (final Enum anEnum in root.enums) {
         indent.writeln('');
-        writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+        writeEnum(generatorOptions, root, sink, indent, anEnum);
       }
       indent.writeln('');
-      generateObjcHeader(languageOptions, root, sink, indent);
+      generateObjcHeader(generatorOptions.languageOptions, root, sink, indent);
     } else {
-      generateObjcSource(languageOptions, root, sink, indent);
+      generateObjcSource(generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeHeaders(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (fileType == FileType.header) {
-      writeObjcHeaderHeader(languageOptions, root, sink, indent);
+  void writeFileHeaders(OutputFileOptions<ObjcOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.fileType == FileType.header) {
+      writeObjcHeaderHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeObjcSourceHeader(languageOptions, root, sink, indent);
+      writeObjcSourceHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeImports(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (fileType == FileType.header) {
-      writeObjcHeaderImports(languageOptions, root, sink, indent);
+  void writeFileImports(OutputFileOptions<ObjcOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.fileType == FileType.header) {
+      writeObjcHeaderImports(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeObjcSourceImports(languageOptions, root, sink, indent);
+      writeObjcSourceImports(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeEnum(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Enum anEnum) {
-    if (fileType == FileType.header) {
-      writeObjcHeaderEnum(languageOptions, root, sink, indent, anEnum);
+  void writeEnum(OutputFileOptions<ObjcOptions> generatorOptions, Root root,
+      StringSink sink, Indent indent, Enum anEnum) {
+    if (generatorOptions.fileType == FileType.header) {
+      writeObjcHeaderEnum(
+          generatorOptions.languageOptions, root, sink, indent, anEnum);
     }
   }
 }

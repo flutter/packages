@@ -9,7 +9,7 @@ import 'generator_tools.dart';
 ///
 /// This provides the structure that is common across generators for different languages.
 abstract class Generator<T> {
-  /// Generates files for specified language with specified [languageOptions]
+  /// Generates files for specified language with specified [generatorOptions]
   ///
   /// This method, when overridden, should follow a generic structure that is currently:
   /// 1. Create Indent
@@ -17,37 +17,33 @@ abstract class Generator<T> {
   /// 3. Write Imports
   /// 4. Generate File
   void generate(
-    T languageOptions,
+    T generatorOptions,
     Root root,
     StringSink sink,
-    FileType fileType,
   );
 
   /// Adds specified headers to file.
-  void writeHeaders(
-    T languageOptions,
+  void writeFileHeaders(
+    T generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
   );
 
   /// Adds specified imports to file.
-  void writeImports(
-    T languageOptions,
+  void writeFileImports(
+    T generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
   );
 
   /// Writes single Enum to file.
   void writeEnum(
-    T languageOptions,
+    T generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Enum anEnum,
   );
 }

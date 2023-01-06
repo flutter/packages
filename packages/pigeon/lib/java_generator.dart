@@ -92,35 +92,33 @@ class JavaGenerator extends Generator<JavaOptions> {
 
   /// Generates Java files with specified [JavaOptions]
   @override
-  void generate(JavaOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
-    assert(fileType == FileType.source);
+  void generate(JavaOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeHeaders(languageOptions, root, sink, indent, fileType);
-    writeImports(languageOptions, root, sink, indent, fileType);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
     indent.writeln(
         '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
-    if (languageOptions.useGeneratedAnnotation ?? false) {
+    if (generatorOptions.useGeneratedAnnotation ?? false) {
       indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
     }
-    indent.write('public class ${languageOptions.className!} ');
+    indent.write('public class ${generatorOptions.className!} ');
     indent.scoped('{', '}', () {
       for (final Enum anEnum in root.enums) {
         indent.writeln('');
-        writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+        writeEnum(generatorOptions, root, sink, indent, anEnum);
       }
-      generateJava(languageOptions, root, sink, indent);
+      generateJava(generatorOptions, root, sink, indent);
     });
   }
 
   @override
-  void writeHeaders(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (languageOptions.copyrightHeader != null) {
-      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
+  void writeFileHeaders(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.copyrightHeader != null) {
+      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
@@ -128,10 +126,10 @@ class JavaGenerator extends Generator<JavaOptions> {
   }
 
   @override
-  void writeImports(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (languageOptions.package != null) {
-      indent.writeln('package ${languageOptions.package};');
+  void writeFileImports(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.package != null) {
+      indent.writeln('package ${generatorOptions.package};');
     }
     indent.writeln('import android.util.Log;');
     indent.writeln('import androidx.annotation.NonNull;');
@@ -152,8 +150,8 @@ class JavaGenerator extends Generator<JavaOptions> {
   }
 
   @override
-  void writeEnum(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Enum anEnum) {
+  void writeEnum(JavaOptions generatorOptions, Root root, StringSink sink,
+      Indent indent, Enum anEnum) {
     String camelToSnake(String camelCase) {
       final RegExp regex = RegExp('([a-z])([A-Z]+)');
       return camelCase

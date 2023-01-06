@@ -71,56 +71,67 @@ class CppOptions {
 }
 
 /// Class that manages all Cpp code generation.
-class CppGenerator extends Generator<CppOptions> {
+class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
   /// Instantiates a Cpp Generator.
   CppGenerator();
 
   /// Generates Cpp header files with specified [CppOptions]
   @override
-  void generate(CppOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
+  void generate(OutputFileOptions<CppOptions> generatorOptions, Root root,
+      StringSink sink) {
+    final FileType fileType = generatorOptions.fileType;
+    assert(fileType == FileType.header || fileType == FileType.source);
+
     final Indent indent = Indent(sink);
-    writeHeaders(languageOptions, root, sink, indent, fileType);
-    writeImports(languageOptions, root, sink, indent, fileType);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
 
     for (final Enum anEnum in root.enums) {
-      writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+      writeEnum(generatorOptions, root, sink, indent, anEnum);
     }
 
     indent.addln('');
 
     if (fileType == FileType.header) {
-      generateCppHeader(languageOptions, root, sink, indent);
+      generateCppHeader(generatorOptions.languageOptions, root, sink, indent);
     } else {
-      generateCppSource(languageOptions, root, sink, indent);
+      generateCppSource(generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeHeaders(CppOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
+  void writeFileHeaders(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      writeCppHeaderHeader(languageOptions, root, sink, indent);
+      writeCppHeaderHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeCppSourceHeader(languageOptions, root, sink, indent);
+      writeCppSourceHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeImports(CppOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
+  void writeFileImports(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      writeCppHeaderImports(languageOptions, root, sink, indent);
+      writeCppHeaderImports(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeCppSourceImports(languageOptions, root, sink, indent);
+      writeCppSourceImports(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeEnum(CppOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Enum anEnum) {
+  void writeEnum(OutputFileOptions<CppOptions> generatorOptions, Root root,
+      StringSink sink, Indent indent, Enum anEnum) {
+    final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      writeCppHeaderEnum(languageOptions, root, sink, indent, anEnum);
+      writeCppHeaderEnum(
+          generatorOptions.languageOptions, root, sink, indent, anEnum);
     }
   }
 }
@@ -608,6 +619,11 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                       // ... then declare the arg as a reference to that local.
                       indent.writeln(
                           'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &$valueVarName;');
+                    } else if (hostType.datatype == 'flutter::EncodableValue') {
+                      // Generic objects just pass the EncodableValue through
+                      // directly.
+                      indent.writeln(
+                          'const auto* $argName = &$encodableArgName;');
                     } else if (hostType.isBuiltin) {
                       indent.writeln(
                           'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
@@ -625,6 +641,13 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                       // requires an int64_t so that it can handle any case.
                       indent.writeln(
                           'const int64_t $argName = $encodableArgName.LongValue();');
+                    } else if (hostType.datatype == 'flutter::EncodableValue') {
+                      // Generic objects just pass the EncodableValue through
+                      // directly. This creates an alias just to avoid having to
+                      // special-case the argName/encodableArgName distinction
+                      // at a higher level.
+                      indent
+                          .writeln('const auto& $argName = $encodableArgName;');
                     } else if (hostType.isBuiltin) {
                       indent.writeln(
                           'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
@@ -963,6 +986,7 @@ String? _baseCppTypeForBuiltinDartType(TypeDeclaration type) {
     'Float64List': 'std::vector<double>',
     'Map': 'flutter::EncodableMap',
     'List': 'flutter::EncodableList',
+    'Object': 'flutter::EncodableValue',
   };
   if (cppTypeForDartTypeMap.containsKey(type.baseName)) {
     return cppTypeForDartTypeMap[type.baseName];
@@ -992,6 +1016,8 @@ String _unownedArgumentType(HostDatatype type) {
   if (isString || _isPodType(type)) {
     return type.isNullable ? 'const $baseType*' : baseType;
   }
+  // TODO(stuartmorgan): Consider special-casing `Object?` here, so that there
+  // aren't two ways of representing null (nullptr or an isNull EncodableValue).
   return type.isNullable ? 'const $baseType*' : 'const $baseType&';
 }
 
