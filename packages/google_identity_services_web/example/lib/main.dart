@@ -32,7 +32,7 @@ void main() async {
 /// Handles the ID token returned from the One Tap prompt.
 /// See: https://developers.google.com/identity/gsi/web/reference/js-reference#callback
 void onCredentialResponse(CredentialResponse o) {
-  final Map<String, dynamic>? payload = jwt.JwtDecoder.tryDecode(o.credential);
+  final Map<String, dynamic>? payload = jwt.JwtDecoder.tryDecode(o.credential!);
   if (payload != null) {
     print('Hello, ${payload["name"]}');
     print(o.select_by);

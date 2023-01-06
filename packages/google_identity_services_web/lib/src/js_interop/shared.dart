@@ -347,3 +347,25 @@ enum ButtonLogoAlignment {
   @override
   String toString() => _alignment;
 }
+
+/// The `type` of the error object passed into the `error_callback` function.
+enum GoogleIdentityServicesErrorType {
+  /// Missing required parameter.
+  missing_required_parameter('missing_required_parameter'),
+
+  /// The popup was closed before the flow was completed.
+  popup_closed('popup_closed'),
+
+  /// Popup failed to open.
+  popup_failed_to_open('popup_failed_to_open'),
+
+  /// Unknown error.
+  unknown('unknown');
+
+  ///
+  const GoogleIdentityServicesErrorType(String type) : _type = type;
+  final String _type;
+
+  @override
+  String toString() => _type;
+}

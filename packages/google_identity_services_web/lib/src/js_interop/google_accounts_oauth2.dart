@@ -14,6 +14,7 @@ library google_accounts_oauth2;
 
 import 'package:js/js.dart';
 
+import 'dom.dart';
 import 'shared.dart';
 
 /// Binding to the `google.accounts.oauth2` JS global.
@@ -103,6 +104,7 @@ abstract class CodeClientConfig {
     String? redirect_uri,
     bool? auto_select,
     CodeClientCallbackFn? callback,
+    ErrorCallbackFn? error_callback,
     String? state,
     bool? enable_serial_consent,
     String? hint,
@@ -180,6 +182,7 @@ abstract class TokenClientConfig {
     required String client_id,
     required TokenClientCallbackFn? callback,
     required String scope,
+    ErrorCallbackFn? error_callback,
     String? prompt,
     bool? enable_serial_consent,
     String? hint,
@@ -306,6 +309,34 @@ extension TokenResponseExtension on TokenResponse {
 
 /// The type of the `callback` function passed to [TokenClientConfig].
 typedef TokenClientCallbackFn = void Function(TokenResponse response);
+
+/// The type of the `error_callback` in both oauth2 initXClient calls.
+///
+/// (Currently undocumented)
+///
+/// `error` should be of type [GoogleIdentityServicesError]?, but it cannot be
+/// because of this DDC bug: https://github.com/dart-lang/sdk/issues/50899
+typedef ErrorCallbackFn = void Function(Object? error);
+
+/// An error returned by `initTokenClient` or `initDataClient`.
+///
+/// Cannot be used: https://github.com/dart-lang/sdk/issues/50899
+@JS()
+@staticInterop
+abstract class GoogleIdentityServicesError extends DomError {}
+
+/// Methods of the GoogleIdentityServicesError object.
+///
+/// Cannot be used: https://github.com/dart-lang/sdk/issues/50899
+extension GoogleIdentityServicesErrorExtension on GoogleIdentityServicesError {
+  @JS('type')
+  external String get _type;
+  // String get _type => js_util.getProperty<String>(this, 'type');
+
+  /// The type of error
+  GoogleIdentityServicesErrorType get type =>
+      GoogleIdentityServicesErrorType.values.byName(_type);
+}
 
 /// The signature of the `done` function for [revoke].
 typedef RevokeTokenDoneFn = void Function(TokenRevocationResponse response);

@@ -11,6 +11,7 @@ import 'package:google_identity_services_web/loader.dart' as gis;
 import 'package:google_identity_services_web/oauth2.dart';
 import 'package:http/http.dart' as http;
 import 'package:js/js.dart' show allowInterop;
+import 'package:js/js_util.dart' show getProperty;
 
 /// People API to return my profile info...
 const String MY_PROFILE =
@@ -40,6 +41,7 @@ void main() async {
     client_id: 'your-client_id.apps.googleusercontent.com',
     scope: scopes.join(' '),
     callback: allowInterop(onTokenResponse),
+    error_callback: allowInterop(onError),
   );
 
   final OverridableTokenClientConfig overridableCfg =
@@ -51,6 +53,14 @@ void main() async {
 
   // Disable the Popup Blocker for this to work, or move this to a Button press.
   client.requestAccessToken(overridableCfg);
+}
+
+/// Triggers when there's an error with the OAuth2 popup.
+///
+/// We cannot use the proper type for `error` here yet, because of:
+/// https://github.com/dart-lang/sdk/issues/50899
+Future<void> onError(Object? error) async {
+  print('Error! ${getProperty(error!, "type")}');
 }
 
 /// Handles the returned (auth) token response.

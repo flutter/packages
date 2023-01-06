@@ -302,13 +302,22 @@ abstract class CredentialResponse {}
 
 /// The fields that are contained in the credential response object.
 extension CredentialResponseExtension on CredentialResponse {
+  /// The ClientID for this Credential.
+  external String? get client_id;
+
+  /// Error while signing in.
+  external String? get error;
+
+  /// Details of the error while signing in.
+  external String? get error_detail;
+
   /// This field is the ID token as a base64-encoded JSON Web Token (JWT)
   /// string.
   ///
   /// See more: https://developers.google.com/identity/gsi/web/reference/js-reference#credential
-  external String get credential;
+  external String? get credential;
   @JS('select_by')
-  external String get _select_by;
+  external String? get _select_by;
 
   /// This field sets how the credential was selected.
   ///
@@ -316,8 +325,8 @@ extension CredentialResponseExtension on CredentialResponse {
   /// to set the value.
   ///
   /// See more: https://developers.google.com/identity/gsi/web/reference/js-reference#select_by
-  CredentialSelectBy get select_by =>
-      CredentialSelectBy.values.byName(_select_by);
+  CredentialSelectBy? get select_by =>
+      maybeEnum(_select_by, CredentialSelectBy.values);
 }
 
 /// The type of the `callback` used to create an [IdConfiguration].
