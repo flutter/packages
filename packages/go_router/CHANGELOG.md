@@ -1,3 +1,6 @@
+## 6.0.2
+- Make `CustomTransitionPage.barrierDismissible` work
+
 ## 6.0.1
 
 - Fixes crashes when popping navigators manually.
