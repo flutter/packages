@@ -1,3 +1,7 @@
+## 5.0.0
+
+* Creates new Generator classes for each language.
+
 ## 4.2.16
 
 * [swift] Fixes warnings with `Object` parameters.

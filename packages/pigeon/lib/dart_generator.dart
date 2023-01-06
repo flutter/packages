@@ -9,6 +9,7 @@ import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 
 /// Documentation comment open symbol.
@@ -24,10 +25,20 @@ const String _standardMessageCodec = 'StandardMessageCodec';
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
-  const DartOptions({this.copyrightHeader});
+  DartOptions({
+    this.copyrightHeader,
+    this.sourceOutPath,
+    this.testOutPath,
+  });
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
+
+  /// Path to output generated Dart file.
+  String? sourceOutPath;
+
+  /// Path to output generated Test file for tests.
+  String? testOutPath;
 
   /// Creates a [DartOptions] from a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
@@ -36,6 +47,8 @@ class DartOptions {
         map['copyrightHeader'] as Iterable<dynamic>?;
     return DartOptions(
       copyrightHeader: copyrightHeader?.cast<String>(),
+      sourceOutPath: map['sourceOutPath'] as String?,
+      testOutPath: map['testOutPath'] as String?,
     );
   }
 
@@ -44,6 +57,8 @@ class DartOptions {
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (sourceOutPath != null) 'sourceOutPath': sourceOutPath!,
+      if (testOutPath != null) 'testOutPath': testOutPath!,
     };
     return result;
   }
@@ -52,6 +67,33 @@ class DartOptions {
   /// [DartOptions].
   DartOptions merge(DartOptions options) {
     return DartOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
+}
+
+/// Class that manages all Dart code generation.
+class DartGenerator extends Generator<DartOptions> {
+  /// Instantiates a Dart Generator.
+  DartGenerator();
+
+  /// Generates Dart files with specified [DartOptions]
+  @override
+  void generate(DartOptions languageOptions, Root root, StringSink sink,
+      {FileType fileType = FileType.na}) {
+    assert(fileType == FileType.na);
+    generateDart(languageOptions, root, sink);
+  }
+
+  /// Generates Dart files for testing with specified [DartOptions]
+  void generateTest(DartOptions languageOptions, Root root, StringSink sink) {
+    final String sourceOutPath = languageOptions.sourceOutPath ?? '';
+    final String testOutPath = languageOptions.testOutPath ?? '';
+    generateTestDart(
+      languageOptions,
+      root,
+      sink,
+      sourceOutPath: sourceOutPath,
+      testOutPath: testOutPath,
+    );
   }
 }
 
@@ -699,14 +741,14 @@ String _posixify(String inputPath) {
 }
 
 /// Generates Dart source code for test support libraries based on the given AST
-/// represented by [root], outputting the code to [sink]. [dartOutPath] is the
+/// represented by [root], outputting the code to [sink]. [sourceOutPath] is the
 /// path of the generated dart code to be tested. [testOutPath] is where the
 /// test code will be generated.
 void generateTestDart(
   DartOptions opt,
   Root root,
   StringSink sink, {
-  required String dartOutPath,
+  required String sourceOutPath,
   required String testOutPath,
 }) {
   final Indent indent = Indent(sink);
@@ -730,10 +772,10 @@ void generateTestDart(
   indent.writeln('');
   final String relativeDartPath =
       path.Context(style: path.Style.posix).relative(
-    _posixify(dartOutPath),
+    _posixify(sourceOutPath),
     from: _posixify(path.dirname(testOutPath)),
   );
-  late final String? packageName = _deducePackageName(dartOutPath);
+  late final String? packageName = _deducePackageName(sourceOutPath);
   if (!relativeDartPath.contains('/lib/') || packageName == null) {
     // If we can't figure out the package name or the relative path doesn't
     // include a 'lib' directory, try relative path import which only works in

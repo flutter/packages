@@ -4,6 +4,7 @@
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show TaskQueueType;
 
@@ -81,6 +82,20 @@ class JavaOptions {
   /// [JavaOptions].
   JavaOptions merge(JavaOptions options) {
     return JavaOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
+}
+
+/// Class that manages all Java code generation.
+class JavaGenerator extends Generator<JavaOptions> {
+  /// Instantiates a Java Generator.
+  JavaGenerator();
+
+  /// Generates Java files with specified [JavaOptions]
+  @override
+  void generate(JavaOptions languageOptions, Root root, StringSink sink,
+      {FileType fileType = FileType.na}) {
+    assert(fileType == FileType.na);
+    generateJava(languageOptions, root, sink);
   }
 }
 

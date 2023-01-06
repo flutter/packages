@@ -4,6 +4,7 @@
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 import 'pigeon_lib.dart' show Error, TaskQueueType;
 
@@ -18,14 +19,14 @@ const DocumentCommentSpecification _docCommentSpec =
 class ObjcOptions {
   /// Parametric constructor for ObjcOptions.
   const ObjcOptions({
-    this.header,
+    this.headerIncludePath,
     this.prefix,
     this.copyrightHeader,
   });
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  final String? header;
+  final String? headerIncludePath;
 
   /// Prefix that will be appended before all generated classes and protocols.
   final String? prefix;
@@ -39,7 +40,7 @@ class ObjcOptions {
     final Iterable<dynamic>? copyrightHeader =
         map['copyrightHeader'] as Iterable<dynamic>?;
     return ObjcOptions(
-      header: map['header'] as String?,
+      headerIncludePath: map['header'] as String?,
       prefix: map['prefix'] as String?,
       copyrightHeader: copyrightHeader?.cast<String>(),
     );
@@ -49,7 +50,7 @@ class ObjcOptions {
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
-      if (header != null) 'header': header!,
+      if (headerIncludePath != null) 'header': headerIncludePath!,
       if (prefix != null) 'prefix': prefix!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
     };
@@ -60,6 +61,26 @@ class ObjcOptions {
   /// [ObjcOptions].
   ObjcOptions merge(ObjcOptions options) {
     return ObjcOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
+}
+
+/// Class that manages all Objc header code generation.
+class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
+  /// Instantiates a Objc Generator.
+  ObjcGenerator();
+
+  /// Generates Objc files with specified [OutputFileOptions<ObjcOptions>]
+  @override
+  void generate(OutputFileOptions<ObjcOptions> languageOptions, Root root,
+      StringSink sink) {
+    final FileType fileType = languageOptions.fileType;
+    assert(fileType == FileType.header || fileType == FileType.source);
+
+    if (fileType == FileType.header) {
+      generateObjcHeader(languageOptions.languageOptions, root, sink);
+    } else {
+      generateObjcSource(languageOptions.languageOptions, root, sink);
+    }
   }
 }
 
@@ -890,7 +911,7 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   }
 
   void writeImports() {
-    indent.writeln('#import "${options.header}"');
+    indent.writeln('#import "${options.headerIncludePath}"');
     indent.writeln('#import <Flutter/Flutter.h>');
   }
 
