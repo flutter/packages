@@ -115,9 +115,9 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   void writeHeaders(ObjcOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     if (fileType == FileType.header) {
-      writeObjcHeaderHeader(languageOptions, root, sink, indent);
+      _writeObjcHeaderHeader(languageOptions, root, sink, indent);
     } else {
-      writeObjcSourceHeader(languageOptions, root, sink, indent);
+      _writeObjcSourceHeader(languageOptions, root, sink, indent);
     }
   }
 
@@ -125,9 +125,9 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   void writeImports(ObjcOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     if (fileType == FileType.header) {
-      writeObjcHeaderImports(languageOptions, root, sink, indent);
+      _writeObjcHeaderImports(languageOptions, root, sink, indent);
     } else {
-      writeObjcSourceImports(languageOptions, root, sink, indent);
+      _writeObjcSourceImports(languageOptions, root, sink, indent);
     }
   }
 
@@ -135,7 +135,7 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   void writeEnum(ObjcOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType, Enum anEnum) {
     if (fileType == FileType.header) {
-      writeObjcHeaderEnum(languageOptions, root, sink, indent, anEnum);
+      _writeObjcHeaderEnum(languageOptions, root, sink, indent, anEnum);
     }
   }
 
@@ -190,6 +190,49 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   }
 
   // Header File Methods.
+
+  /// Writes Objc header file header to sink.
+  void _writeObjcHeaderHeader(
+      ObjcOptions options, Root root, StringSink sink, Indent indent) {
+    if (options.copyrightHeader != null) {
+      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
+    indent.addln('');
+  }
+
+  /// Writes Objc header file imports to sink.
+  void _writeObjcHeaderImports(
+      ObjcOptions options, Root root, StringSink sink, Indent indent) {
+    indent.writeln('#import <Foundation/Foundation.h>');
+    indent.addln('');
+
+    indent.writeln('@protocol FlutterBinaryMessenger;');
+    indent.writeln('@protocol FlutterMessageCodec;');
+    indent.writeln('@class FlutterError;');
+    indent.writeln('@class FlutterStandardTypedData;');
+    indent.addln('');
+  }
+
+  /// Writes single Objc header enum.
+  void _writeObjcHeaderEnum(ObjcOptions options, Root root, StringSink sink,
+      Indent indent, Enum anEnum) {
+    final String enumName = _className(options.prefix, anEnum.name);
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+
+    indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
+    indent.scoped('{', '};', () {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        // Capitalized first letter to ensure Swift compatibility
+        indent.writeln(
+            '$enumName${member.name[0].toUpperCase()}${member.name.substring(1)} = $index,');
+      });
+    });
+  }
 
   /// Writes the class declaration for a data class.
   ///
@@ -246,53 +289,10 @@ class ObjcGenerator extends Generator<ObjcOptions> {
     indent.writeln('');
   }
 
-  /// Writes Objc header file header to sink.
-  void writeObjcHeaderHeader(
-      ObjcOptions options, Root root, StringSink sink, Indent indent) {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// $generatedCodeWarning');
-    indent.writeln('// $seeAlsoWarning');
-    indent.addln('');
-  }
-
-  /// Writes Objc header file imports to sink.
-  void writeObjcHeaderImports(
-      ObjcOptions options, Root root, StringSink sink, Indent indent) {
-    indent.writeln('#import <Foundation/Foundation.h>');
-    indent.addln('');
-
-    indent.writeln('@protocol FlutterBinaryMessenger;');
-    indent.writeln('@protocol FlutterMessageCodec;');
-    indent.writeln('@class FlutterError;');
-    indent.writeln('@class FlutterStandardTypedData;');
-    indent.addln('');
-  }
-
-  /// Writes single Objc header enum.
-  void writeObjcHeaderEnum(ObjcOptions options, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
-    final String enumName = _className(options.prefix, anEnum.name);
-    addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentSpec);
-
-    indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
-    indent.scoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
-        addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
-        // Capitalized first letter to ensure Swift compatibility
-        indent.writeln(
-            '$enumName${member.name[0].toUpperCase()}${member.name.substring(1)} = $index,');
-      });
-    });
-  }
-
   // Source File Methods.
 
   /// Writes Objc Source file header to sink.
-  void writeObjcSourceHeader(
+  void _writeObjcSourceHeader(
       ObjcOptions options, Root root, StringSink sink, Indent indent) {
     if (options.copyrightHeader != null) {
       addLines(indent, options.copyrightHeader!, linePrefix: '// ');
@@ -303,7 +303,7 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   }
 
   /// Writes Objc source file imports to sink.
-  void writeObjcSourceImports(
+  void _writeObjcSourceImports(
       ObjcOptions options, Root root, StringSink sink, Indent indent) {
     indent.writeln('#import "${options.headerIncludePath}"');
     indent.writeln('#import <Flutter/Flutter.h>');

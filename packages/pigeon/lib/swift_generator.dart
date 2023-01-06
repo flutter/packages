@@ -145,16 +145,6 @@ import FlutterMacOS
     });
   }
 
-  void _writeClassField(Indent indent, NamedType field) {
-    addDocumentationComments(
-        indent, field.documentationComments, _docCommentSpec);
-
-    indent.write(
-        'var ${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
-    final String defaultNil = field.type.isNullable ? ' = nil' : '';
-    indent.addln(defaultNil);
-  }
-
   @override
   void writeClassEncode(
     SwiftOptions languageOptions,
@@ -258,6 +248,16 @@ import FlutterMacOS
         }
       });
     });
+  }
+
+  void _writeClassField(Indent indent, NamedType field) {
+    addDocumentationComments(
+        indent, field.documentationComments, _docCommentSpec);
+
+    indent.write(
+        'var ${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
+    final String defaultNil = field.type.isNullable ? ' = nil' : '';
+    indent.addln(defaultNil);
   }
 
   HostDatatype _getHostDatatype(Root root, NamedType field) {

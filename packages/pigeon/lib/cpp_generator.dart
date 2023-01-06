@@ -105,9 +105,9 @@ class CppGenerator extends Generator<CppOptions> {
   void writeHeaders(CppOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     if (fileType == FileType.header) {
-      writeCppHeaderHeader(languageOptions, root, sink, indent);
+      _writeCppHeaderHeader(languageOptions, root, sink, indent);
     } else {
-      writeCppSourceHeader(languageOptions, root, sink, indent);
+      _writeCppSourceHeader(languageOptions, root, sink, indent);
     }
   }
 
@@ -115,9 +115,9 @@ class CppGenerator extends Generator<CppOptions> {
   void writeImports(CppOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType) {
     if (fileType == FileType.header) {
-      writeCppHeaderImports(languageOptions, root, sink, indent);
+      _writeCppHeaderImports(languageOptions, root, sink, indent);
     } else {
-      writeCppSourceImports(languageOptions, root, sink, indent);
+      _writeCppSourceImports(languageOptions, root, sink, indent);
     }
   }
 
@@ -125,7 +125,7 @@ class CppGenerator extends Generator<CppOptions> {
   void writeEnum(CppOptions languageOptions, Root root, StringSink sink,
       Indent indent, FileType fileType, Enum anEnum) {
     if (fileType == FileType.header) {
-      writeCppHeaderEnum(languageOptions, root, sink, indent, anEnum);
+      _writeCppHeaderEnum(languageOptions, root, sink, indent, anEnum);
     }
   }
 
@@ -177,6 +177,68 @@ class CppGenerator extends Generator<CppOptions> {
   ) {
     _writeCppSourceClassDecode(languageOptions, root, sink, indent, klass,
         customClassNames, customEnumNames);
+  }
+
+  /// Writes Cpp header file header to sink.
+  void _writeCppHeaderHeader(
+      CppOptions options, Root root, StringSink sink, Indent indent) {
+    if (options.copyrightHeader != null) {
+      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('$_commentPrefix $generatedCodeWarning');
+    indent.writeln('$_commentPrefix $seeAlsoWarning');
+    indent.addln('');
+  }
+
+  /// Writes Cpp header file imports to sink.
+  void _writeCppHeaderImports(
+      CppOptions options, Root root, StringSink sink, Indent indent) {
+    final String guardName =
+        _getGuardName(options.headerIncludePath, options.namespace);
+    indent.writeln('#ifndef $guardName');
+    indent.writeln('#define $guardName');
+
+    _writeSystemHeaderIncludeBlock(indent, <String>[
+      'flutter/basic_message_channel.h',
+      'flutter/binary_messenger.h',
+      'flutter/encodable_value.h',
+      'flutter/standard_message_codec.h',
+    ]);
+    indent.addln('');
+    _writeSystemHeaderIncludeBlock(indent, <String>[
+      'map',
+      'string',
+      'optional',
+    ]);
+    indent.addln('');
+    if (options.namespace != null) {
+      indent.writeln('namespace ${options.namespace} {');
+    }
+    indent.addln('');
+    if (options.namespace?.endsWith('_pigeontest') ?? false) {
+      final String testFixtureClass =
+          '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
+      indent.writeln('class $testFixtureClass;');
+    }
+    indent.addln('');
+    indent.writeln('$_commentPrefix Generated class from Pigeon.');
+  }
+
+  /// Writes Cpp header enum to sink.
+  void _writeCppHeaderEnum(CppOptions options, Root root, StringSink sink,
+      Indent indent, Enum anEnum) {
+    indent.writeln('');
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+    indent.write('enum class ${anEnum.name} ');
+    indent.scoped('{', '};', () {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        indent.writeln(
+            '${member.name} = $index${index == anEnum.members.length - 1 ? '' : ','}');
+      });
+    });
   }
 
   /// Writes the declaration for the custom class [klass].
@@ -256,6 +318,43 @@ class CppGenerator extends Generator<CppOptions> {
       });
     }, nestCount: 0);
     indent.writeln('');
+  }
+
+  /// Writes Cpp source file header to sink.
+  void _writeCppSourceHeader(
+      CppOptions options, Root root, StringSink sink, Indent indent) {
+    if (options.copyrightHeader != null) {
+      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('$_commentPrefix $generatedCodeWarning');
+    indent.writeln('$_commentPrefix $seeAlsoWarning');
+    indent.addln('');
+    indent.addln('#undef _HAS_EXCEPTIONS');
+    indent.addln('');
+  }
+
+  /// Writes Cpp source file imports to sink.
+  void _writeCppSourceImports(
+      CppOptions options, Root root, StringSink sink, Indent indent) {
+    indent.writeln('#include "${options.headerIncludePath}"');
+    indent.addln('');
+    _writeSystemHeaderIncludeBlock(indent, <String>[
+      'flutter/basic_message_channel.h',
+      'flutter/binary_messenger.h',
+      'flutter/encodable_value.h',
+      'flutter/standard_message_codec.h',
+    ]);
+    indent.addln('');
+    _writeSystemHeaderIncludeBlock(indent, <String>[
+      'map',
+      'string',
+      'optional',
+    ]);
+    indent.addln('');
+
+    if (options.namespace != null) {
+      indent.writeln('namespace ${options.namespace} {');
+    }
   }
 
   void _writeCppSourceClassEncode(
@@ -437,105 +536,6 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
     // Deserialization.
     writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
         customClassNames, customEnumNames);
-  }
-
-  /// Writes Cpp header file header to sink.
-  void writeCppHeaderHeader(
-      CppOptions options, Root root, StringSink sink, Indent indent) {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('$_commentPrefix $generatedCodeWarning');
-    indent.writeln('$_commentPrefix $seeAlsoWarning');
-    indent.addln('');
-  }
-
-  /// Writes Cpp header file imports to sink.
-  void writeCppHeaderImports(
-      CppOptions options, Root root, StringSink sink, Indent indent) {
-    final String guardName =
-        _getGuardName(options.headerIncludePath, options.namespace);
-    indent.writeln('#ifndef $guardName');
-    indent.writeln('#define $guardName');
-
-    _writeSystemHeaderIncludeBlock(indent, <String>[
-      'flutter/basic_message_channel.h',
-      'flutter/binary_messenger.h',
-      'flutter/encodable_value.h',
-      'flutter/standard_message_codec.h',
-    ]);
-    indent.addln('');
-    _writeSystemHeaderIncludeBlock(indent, <String>[
-      'map',
-      'string',
-      'optional',
-    ]);
-    indent.addln('');
-    if (options.namespace != null) {
-      indent.writeln('namespace ${options.namespace} {');
-    }
-    indent.addln('');
-    if (options.namespace?.endsWith('_pigeontest') ?? false) {
-      final String testFixtureClass =
-          '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
-      indent.writeln('class $testFixtureClass;');
-    }
-    indent.addln('');
-    indent.writeln('$_commentPrefix Generated class from Pigeon.');
-  }
-
-  /// Writes Cpp header enum to sink.
-  void writeCppHeaderEnum(CppOptions options, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
-    indent.writeln('');
-    addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentSpec);
-    indent.write('enum class ${anEnum.name} ');
-    indent.scoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
-        addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
-        indent.writeln(
-            '${member.name} = $index${index == anEnum.members.length - 1 ? '' : ','}');
-      });
-    });
-  }
-
-  /// Writes Cpp source file header to sink.
-  void writeCppSourceHeader(
-      CppOptions options, Root root, StringSink sink, Indent indent) {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('$_commentPrefix $generatedCodeWarning');
-    indent.writeln('$_commentPrefix $seeAlsoWarning');
-    indent.addln('');
-    indent.addln('#undef _HAS_EXCEPTIONS');
-    indent.addln('');
-  }
-
-  /// Writes Cpp source file imports to sink.
-  void writeCppSourceImports(
-      CppOptions options, Root root, StringSink sink, Indent indent) {
-    indent.writeln('#include "${options.headerIncludePath}"');
-    indent.addln('');
-    _writeSystemHeaderIncludeBlock(indent, <String>[
-      'flutter/basic_message_channel.h',
-      'flutter/binary_messenger.h',
-      'flutter/encodable_value.h',
-      'flutter/standard_message_codec.h',
-    ]);
-    indent.addln('');
-    _writeSystemHeaderIncludeBlock(indent, <String>[
-      'map',
-      'string',
-      'optional',
-    ]);
-    indent.addln('');
-
-    if (options.namespace != null) {
-      indent.writeln('namespace ${options.namespace} {');
-    }
   }
 }
 
