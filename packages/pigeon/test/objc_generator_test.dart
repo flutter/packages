@@ -19,7 +19,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSString.*field1'));
@@ -35,8 +40,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -54,7 +63,12 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
     expect(code, contains('  Enum1One = 0,'));
@@ -73,8 +87,12 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-        const ObjcOptions(prefix: 'PREFIX'), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(prefix: 'PREFIX'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
     expect(code, contains('  PREFIXEnum1One = 0,'));
@@ -111,8 +129,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -146,14 +168,24 @@ void main() {
         ObjcOptions(headerIncludePath: 'foo.h', prefix: 'AC');
     {
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(options, root, sink, FileType.header);
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions: options,
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('typedef NS_ENUM(NSUInteger, ACFoo)'));
       expect(code, contains(':(ACFoo)foo error:'));
     }
     {
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(options, root, sink, FileType.source);
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions: options,
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -217,8 +249,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@property(nonatomic, assign) Enum1 enum1'));
   });
@@ -251,7 +287,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
@@ -291,8 +332,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
@@ -340,8 +385,12 @@ void main() {
 
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@class FlutterStandardTypedData;'));
@@ -370,8 +419,12 @@ void main() {
 
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
     expect(code,
@@ -393,8 +446,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code,
         contains('@property(nonatomic, strong, nullable) Input * nested;'));
@@ -415,8 +472,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -436,8 +497,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-        const ObjcOptions(prefix: 'ABC'), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(prefix: 'ABC'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface ABCFoobar'));
   });
@@ -452,8 +517,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-        const ObjcOptions(prefix: 'ABC'), root, sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(prefix: 'ABC'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation ABCFoobar'));
   });
@@ -488,8 +557,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-        const ObjcOptions(prefix: 'ABC'), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(prefix: 'ABC'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, matches('property.*ABCInput'));
     expect(code, matches('ABCNested.*doSomething.*ABCInput'));
@@ -526,8 +599,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-        const ObjcOptions(prefix: 'ABC'), root, sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(prefix: 'ABC'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('ABCInput fromList'));
     expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
@@ -564,8 +641,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
     expect(
@@ -605,8 +686,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(headerIncludePath: 'foo.h'), root,
-        sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
     expect(code, matches('void.*doSomething.*Input.*Output.*{'));
@@ -636,13 +721,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.header,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('(void)doSomething:'));
   });
@@ -671,12 +756,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.source,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, matches('[.*doSomething:.*]'));
@@ -707,12 +793,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.header,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
   });
@@ -741,12 +828,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.source,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
     expect(code, contains('completion(nil)'));
@@ -770,12 +858,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.header,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, matches('ABCOutput.*doSomethingWithError:[(]FlutterError'));
   });
@@ -798,12 +887,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.source,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, matches('output.*=.*api doSomethingWithError:&error'));
   });
@@ -826,12 +916,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.header,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -857,11 +948,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -880,7 +973,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSArray.*field1'));
@@ -896,7 +994,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSDictionary.*field1'));
@@ -918,7 +1021,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(
@@ -948,7 +1056,12 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('(NSDictionary<NSString *, id> *)foo'));
   });
@@ -983,12 +1096,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.header,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1027,12 +1141,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.header,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1059,12 +1174,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.header,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1084,12 +1200,13 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.header,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1128,12 +1245,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.source,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1171,12 +1289,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.source,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1196,12 +1315,13 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.source,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1228,12 +1348,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.source,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1249,15 +1370,15 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      ObjcOptions(
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: ObjcOptions(
           headerIncludePath: 'foo.h',
           prefix: 'ABC',
           copyrightHeader: makeIterable('hello world')),
-      root,
-      sink,
-      FileType.source,
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -1266,15 +1387,15 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      ObjcOptions(
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: ObjcOptions(
           headerIncludePath: 'foo.h',
           prefix: 'ABC',
           copyrightHeader: makeIterable('hello world')),
-      root,
-      sink,
-      FileType.header,
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -1300,12 +1421,13 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(
-      const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-      root,
-      sink,
-      FileType.header,
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('NSArray<NSNumber *> * field1'));
   });
@@ -1335,24 +1457,26 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.source,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1386,24 +1510,26 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.source,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
@@ -1440,12 +1566,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSArray<NSNumber *> *> *)arg'));
     }
@@ -1472,12 +1599,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code, contains('- (nullable NSArray<NSNumber *> *)doitWithError:'));
@@ -1485,12 +1613,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.source,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray<NSNumber *> *output ='));
     }
@@ -1517,12 +1646,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
@@ -1530,12 +1660,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.source,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
@@ -1564,12 +1695,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1579,12 +1711,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.source,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
       expect(code,
@@ -1619,12 +1752,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1634,12 +1768,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.source,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
       expect(code,
@@ -1672,12 +1807,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1687,12 +1823,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        root,
-        sink,
-        FileType.source,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1736,25 +1873,26 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        divideRoot,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, divideRoot, sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        divideRoot,
-        sink,
-        FileType.source,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-
+      generator.generate(generatorOptions, divideRoot, sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
@@ -1765,25 +1903,26 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        divideRoot,
-        sink,
-        FileType.header,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
+      generator.generate(generatorOptions, divideRoot, sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*;'));
     }
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(
-        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
-        divideRoot,
-        sink,
-        FileType.source,
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions:
+            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-
+      generator.generate(generatorOptions, divideRoot, sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*{'));
     }
@@ -1799,7 +1938,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@property(nonatomic, copy) NSString * field1'));
@@ -1823,7 +1967,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1849,7 +1998,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, matches(r'doitWithCompletion.*NSNumber \*_Nullable'));
   });
@@ -1872,7 +2026,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, matches(r'nullable NSNumber.*doitWithError'));
   });
@@ -1900,14 +2059,24 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(const ObjcOptions(), root, sink, FileType.header);
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions: const ObjcOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(const ObjcOptions(), root, sink, FileType.source);
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions: const ObjcOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code,
           contains('NSNumber *arg_foo = GetNullableObjectAtIndex(args, 0);'));
@@ -1937,14 +2106,24 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(const ObjcOptions(), root, sink, FileType.header);
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.header,
+        languageOptions: const ObjcOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
       final StringBuffer sink = StringBuffer();
       final ObjcGenerator generator = ObjcGenerator();
-      generator.generate(const ObjcOptions(), root, sink, FileType.source);
+      final OutputFileOptions<ObjcOptions> generatorOptions =
+          OutputFileOptions<ObjcOptions>(
+        fileType: FileType.source,
+        languageOptions: const ObjcOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('- (void)doitFoo:(nullable NSNumber *)arg_foo'));
     }
@@ -1969,7 +2148,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -2054,7 +2238,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.header);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
       expect(code, contains('///$comment'));
@@ -2090,7 +2279,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains(' : FlutterStandardReader')));
   });
@@ -2133,7 +2327,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(const ObjcOptions(), root, sink, FileType.source);
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains(' : FlutterStandardReader'));
   });

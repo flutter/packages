@@ -505,4 +505,21 @@ enum FileType {
 
   /// source file.
   source,
+
+  /// file type is not applicable.
+  na,
+}
+
+/// Options for [Generator]s that have multiple output file types.
+///
+/// Specifies which file to write as well as wraps all language options.
+class OutputFileOptions<T> {
+  /// Constructor.
+  OutputFileOptions({required this.fileType, required this.languageOptions});
+
+  /// To specify which file type should be created.
+  FileType fileType;
+
+  /// Options for specified language across all file types.
+  T languageOptions;
 }

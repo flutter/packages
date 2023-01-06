@@ -65,42 +65,46 @@ class ObjcOptions {
 }
 
 /// Class that manages all Objc header code generation.
-class ObjcGenerator extends Generator<ObjcOptions> {
+class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
   /// Instantiates a Objc Generator.
   ObjcGenerator();
 
   /// Generates Objc header files with specified [ObjcOptions]
   @override
-  void generate(ObjcOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
+  void generate(OutputFileOptions<ObjcOptions> generatorOptions, Root root,
+      StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
-    if (fileType == FileType.header) {
-      generateObjcHeader(languageOptions, root, sink, indent);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
+    if (generatorOptions.fileType == FileType.header) {
+      generateObjcHeader(generatorOptions.languageOptions, root, sink, indent);
     } else {
-      generateObjcSource(languageOptions, root, sink, indent);
+      generateObjcSource(generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeFileHeaders(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (fileType == FileType.header) {
-      writeObjcHeaderHeader(languageOptions, root, sink, indent);
+  void writeFileHeaders(OutputFileOptions<ObjcOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.fileType == FileType.header) {
+      writeObjcHeaderHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeObjcSourceHeader(languageOptions, root, sink, indent);
+      writeObjcSourceHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeFileImports(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (fileType == FileType.header) {
-      writeObjcHeaderImports(languageOptions, root, sink, indent);
+  void writeFileImports(OutputFileOptions<ObjcOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.fileType == FileType.header) {
+      writeObjcHeaderImports(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeObjcSourceImports(languageOptions, root, sink, indent);
+      writeObjcSourceImports(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 }

@@ -77,37 +77,35 @@ class DartGenerator extends Generator<DartOptions> {
 
   /// Generates Dart files with specified [DartOptions]
   @override
-  void generate(DartOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
-    assert(fileType == FileType.source);
+  void generate(DartOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
-    generateDart(languageOptions, root, sink, indent);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
+    generateDart(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(DartOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    writeHeader(languageOptions, root, sink, indent);
+  void writeFileHeaders(
+      DartOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    writeHeader(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileImports(DartOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    writeImports(languageOptions, root, sink, indent);
+  void writeFileImports(
+      DartOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    writeImports(generatorOptions, root, sink, indent);
   }
 
   /// Generates Dart files for testing with specified [DartOptions]
-  void generateTest(DartOptions languageOptions, Root root, StringSink sink) {
+  void generateTest(DartOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
-    final String sourceOutPath = languageOptions.sourceOutPath ?? '';
-    final String testOutPath = languageOptions.testOutPath ?? '';
-    writeTestHeader(languageOptions, root, sink, indent);
-    writeTestImports(languageOptions, root, sink, indent);
+    final String sourceOutPath = generatorOptions.sourceOutPath ?? '';
+    final String testOutPath = generatorOptions.testOutPath ?? '';
+    writeTestHeader(generatorOptions, root, sink, indent);
+    writeTestImports(generatorOptions, root, sink, indent);
     generateTestDart(
-      languageOptions,
+      generatorOptions,
       root,
       sink,
       indent,
@@ -292,13 +290,17 @@ final BinaryMessenger? _binaryMessenger;
           indent.writeln('binaryMessenger: _binaryMessenger);');
         });
         final String returnType = _makeGenericTypeArguments(func.returnType);
-        final String castCall = _makeGenericCastCall(func.returnType);
+        final String genericCastCall = _makeGenericCastCall(func.returnType);
         const String accessor = 'replyList[0]';
-        final String nullHandler =
-            func.returnType.isNullable ? (castCall.isEmpty ? '' : '?') : '!';
+        // Avoid warnings from pointlessly casting to `Object?`.
+        final String nullablyTypedAccessor =
+            returnType == 'Object' ? accessor : '($accessor as $returnType?)';
+        final String nullHandler = func.returnType.isNullable
+            ? (genericCastCall.isEmpty ? '' : '?')
+            : '!';
         final String returnStatement = func.returnType.isVoid
             ? 'return;'
-            : 'return ($accessor as $returnType?)$nullHandler$castCall;';
+            : 'return $nullablyTypedAccessor$nullHandler$genericCastCall;';
         indent.format('''
 final List<Object?>? replyList =
 \t\tawait channel.send($sendArgument) as List<Object?>?;

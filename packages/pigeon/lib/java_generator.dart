@@ -92,26 +92,24 @@ class JavaGenerator extends Generator<JavaOptions> {
 
   /// Generates Java files with specified [JavaOptions]
   @override
-  void generate(JavaOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
-    assert(fileType == FileType.source);
+  void generate(JavaOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
-    generateJava(languageOptions, root, sink, indent);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
+    generateJava(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    writeHeader(languageOptions, root, sink, indent);
+  void writeFileHeaders(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    writeHeader(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileImports(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    writeImports(languageOptions, root, sink, indent);
+  void writeFileImports(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    writeImports(generatorOptions, root, sink, indent);
   }
 }
 

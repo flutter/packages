@@ -55,25 +55,23 @@ class SwiftGenerator extends Generator<SwiftOptions> {
 
   /// Generates Swift files with specified [SwiftOptions]
   @override
-  void generate(SwiftOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
-    assert(fileType == FileType.source);
+  void generate(SwiftOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    writeFileImports(languageOptions, root, sink, indent, fileType);
-    generateSwift(languageOptions, root, sink, indent);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
+    generateSwift(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(SwiftOptions languageOptions, Root root,
-      StringSink sink, Indent indent, FileType fileType) {
-    writeHeader(languageOptions, root, sink, indent);
+  void writeFileHeaders(SwiftOptions generatorOptions, Root root,
+      StringSink sink, Indent indent) {
+    writeHeader(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileImports(SwiftOptions languageOptions, Root root,
-      StringSink sink, Indent indent, FileType fileType) {
-    writeImports(languageOptions, root, sink, indent);
+  void writeFileImports(SwiftOptions generatorOptions, Root root,
+      StringSink sink, Indent indent) {
+    writeImports(generatorOptions, root, sink, indent);
   }
 }
 
@@ -395,6 +393,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     final String nullableConditionPrefix =
         type.isNullable ? '$value == nil ? nil : ' : '';
     return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$forceUnwrap';
+  } else if (type.baseName == 'Object') {
+    // Special-cased to avoid warnings about using 'as' with Any.
+    return type.isNullable ? value : '$value!';
   } else {
     final String castUnwrap = type.isNullable ? '?' : '!';
     return '$value as$castUnwrap ${_swiftTypeForDartType(type)}';
