@@ -44,6 +44,20 @@ final GoRouter _router = GoRouter(
             );
           },
         ),
+        GoRoute(
+          path: 'dismissible-details',
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage<void>(
+              key: state.pageKey,
+              child: const DismissibleDetails(),
+              barrierDismissible: true,
+              barrierColor: Colors.black38,
+              opaque: false,
+              transitionDuration: Duration.zero,
+              transitionsBuilder: (_, __, ___, Widget child) => child,
+            );
+          },
+        ),
       ],
     ),
   ],
@@ -79,6 +93,11 @@ class HomeScreen extends StatelessWidget {
               onPressed: () => context.go('/details'),
               child: const Text('Go to the Details screen'),
             ),
+            const SizedBox(height: 48),
+            ElevatedButton(
+              onPressed: () => context.go('/dismissible-details'),
+              child: const Text('Go to the Dismissible Details screen'),
+            ),
           ],
         ),
       ),
@@ -106,6 +125,20 @@ class DetailsScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// The dismissible details screen
+class DismissibleDetails extends StatelessWidget {
+  /// Constructs a [DismissibleDetails]
+  const DismissibleDetails({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(48),
+      child: ColoredBox(color: Colors.red),
     );
   }
 }
