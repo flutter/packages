@@ -77,19 +77,17 @@ class DartGenerator extends Generator<DartOptions> {
 
   /// Generates Dart files with specified [DartOptions]
   @override
-  void generate(DartOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
-    assert(fileType == FileType.source);
+  void generate(DartOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(languageOptions, root, sink, indent, fileType);
-    generateDart(languageOptions, root, sink, indent);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    generateDart(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(DartOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    writeHeader(languageOptions, root, sink, indent);
+  void writeFileHeaders(
+      DartOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    writeHeader(generatorOptions, root, sink, indent);
   }
 
   /// Generates Dart files for testing with specified [DartOptions]

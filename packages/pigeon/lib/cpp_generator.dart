@@ -71,31 +71,37 @@ class CppOptions {
 }
 
 /// Class that manages all Cpp code generation.
-class CppGenerator extends Generator<CppOptions> {
+class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
   /// Instantiates a Cpp Generator.
   CppGenerator();
 
   /// Generates Cpp header files with specified [CppOptions]
   @override
-  void generate(CppOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
+  void generate(OutputFileOptions<CppOptions> generatorOptions, Root root,
+      StringSink sink) {
+    final FileType fileType = generatorOptions.fileType;
+    assert(fileType == FileType.header || fileType == FileType.source);
+
     final Indent indent = Indent(sink);
     if (fileType == FileType.header) {
-      writeFileHeaders(languageOptions, root, sink, indent, fileType);
-      generateCppHeader(languageOptions, root, sink, indent);
+      writeFileHeaders(generatorOptions, root, sink, indent);
+      generateCppHeader(generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeFileHeaders(languageOptions, root, sink, indent, fileType);
-      generateCppSource(languageOptions, root, sink, indent);
+      writeFileHeaders(generatorOptions, root, sink, indent);
+      generateCppSource(generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeFileHeaders(CppOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
+  void writeFileHeaders(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      writeCppHeaderHeader(languageOptions, root, sink, indent);
+      writeCppHeaderHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeCppSourceHeader(languageOptions, root, sink, indent);
+      writeCppSourceHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 }

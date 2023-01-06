@@ -65,32 +65,36 @@ class ObjcOptions {
 }
 
 /// Class that manages all Objc header code generation.
-class ObjcGenerator extends Generator<ObjcOptions> {
+class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
   /// Instantiates a Objc Generator.
   ObjcGenerator();
 
   /// Generates Objc header files with specified [ObjcOptions]
   @override
-  void generate(ObjcOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
+  void generate(OutputFileOptions<ObjcOptions> generatorOptions, Root root,
+      StringSink sink) {
+    final FileType fileType = generatorOptions.fileType;
     final Indent indent = Indent(sink);
 
     if (fileType == FileType.header) {
-      writeFileHeaders(languageOptions, root, sink, indent, fileType);
-      generateObjcHeader(languageOptions, root, sink, indent);
+      writeFileHeaders(generatorOptions, root, sink, indent);
+      generateObjcHeader(generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeFileHeaders(languageOptions, root, sink, indent, fileType);
-      generateObjcSource(languageOptions, root, sink, indent);
+      writeFileHeaders(generatorOptions, root, sink, indent);
+      generateObjcSource(generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeFileHeaders(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
+  void writeFileHeaders(OutputFileOptions<ObjcOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      writeObjcHeaderHeader(languageOptions, root, sink, indent);
+      writeObjcHeaderHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeObjcSourceHeader(languageOptions, root, sink, indent);
+      writeObjcSourceHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 }

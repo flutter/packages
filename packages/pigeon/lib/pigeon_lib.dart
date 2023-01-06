@@ -397,7 +397,7 @@ class AstGeneratorAdapter implements GeneratorAdapter {
   AstGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.source];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -419,7 +419,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
   DartGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.source];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -427,7 +427,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
         options.dartOptions, options.copyrightHeader);
     final DartGenerator generator = DartGenerator();
-    generator.generate(dartOptionsWithHeader, root, sink, fileType);
+    generator.generate(dartOptionsWithHeader, root, sink);
   }
 
   @override
@@ -444,7 +444,7 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
   DartTestGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.source];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -486,11 +486,15 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(options.copyrightHeader!)
+          : null,
+    ));
+    final OutputFileOptions<ObjcOptions> outputFileOptions =
+        OutputFileOptions<ObjcOptions>(
+            fileType: fileType, languageOptions: objcOptionsWithHeader);
     final ObjcGenerator generator = ObjcGenerator();
-    generator.generate(objcOptionsWithHeader, root, sink, fileType);
+    generator.generate(outputFileOptions, root, sink);
   }
 
   @override
@@ -512,7 +516,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
   JavaGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.source];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -525,7 +529,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
             ? _lineReader(options.copyrightHeader!)
             : null));
     final JavaGenerator generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, fileType);
+    generator.generate(javaOptions, root, sink);
   }
 
   @override
@@ -542,7 +546,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
   SwiftGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.source];
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -553,7 +557,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
             ? _lineReader(options.copyrightHeader!)
             : null));
     final SwiftGenerator generator = SwiftGenerator();
-    generator.generate(swiftOptions, root, sink, fileType);
+    generator.generate(swiftOptions, root, sink);
   }
 
   @override
@@ -578,11 +582,15 @@ class CppGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
     final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(options.copyrightHeader!)
+          : null,
+    ));
+    final OutputFileOptions<CppOptions> outputFileOptions =
+        OutputFileOptions<CppOptions>(
+            fileType: fileType, languageOptions: cppOptionsWithHeader);
     final CppGenerator generator = CppGenerator();
-    generator.generate(cppOptionsWithHeader, root, sink, fileType);
+    generator.generate(outputFileOptions, root, sink);
   }
 
   @override
@@ -601,8 +609,7 @@ class CppGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates Kotlin source code.
 class KotlinGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [KotlinGeneratorAdapter].
-  KotlinGeneratorAdapter(
-      {this.fileTypeList = const <FileType>[FileType.source]});
+  KotlinGeneratorAdapter({this.fileTypeList = const <FileType>[FileType.na]});
 
   @override
   List<FileType> fileTypeList;
@@ -617,7 +624,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
             ? _lineReader(options.copyrightHeader!)
             : null));
     final KotlinGenerator generator = KotlinGenerator();
-    generator.generate(kotlinOptions, root, sink, fileType);
+    generator.generate(kotlinOptions, root, sink);
   }
 
   @override
