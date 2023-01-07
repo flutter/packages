@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
-import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/swift_generator.dart';
 import 'package:test/test.dart';
 
