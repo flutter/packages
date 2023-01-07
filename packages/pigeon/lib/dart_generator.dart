@@ -80,7 +80,7 @@ class DartGenerator extends Generator<DartOptions> {
   void generate(DartOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     writeFileImports(generatorOptions, root, sink, indent);
     for (final Enum anEnum in root.enums) {
       writeEnum(generatorOptions, root, sink, indent, anEnum);
@@ -94,7 +94,7 @@ class DartGenerator extends Generator<DartOptions> {
   }
 
   @override
-  void writeFileHeaders(
+  void writeFilePrologue(
       DartOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');

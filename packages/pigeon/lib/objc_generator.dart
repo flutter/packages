@@ -75,7 +75,7 @@ class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
       StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     writeFileImports(generatorOptions, root, sink, indent);
     if (generatorOptions.fileType == FileType.header) {
       indent.writeln('NS_ASSUME_NONNULL_BEGIN');
@@ -113,13 +113,13 @@ class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
   }
 
   @override
-  void writeFileHeaders(OutputFileOptions<ObjcOptions> generatorOptions,
+  void writeFilePrologue(OutputFileOptions<ObjcOptions> generatorOptions,
       Root root, StringSink sink, Indent indent) {
     if (generatorOptions.fileType == FileType.header) {
-      _writeObjcHeaderHeader(
+      _writeObjcHeaderPrologue(
           generatorOptions.languageOptions, root, sink, indent);
     } else {
-      _writeObjcSourceHeader(
+      _writeObjcSourcePrologue(
           generatorOptions.languageOptions, root, sink, indent);
     }
   }
@@ -199,7 +199,7 @@ class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
   // Header File Methods.
 
   /// Writes Objc header file header to sink.
-  void _writeObjcHeaderHeader(
+  void _writeObjcHeaderPrologue(
       ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
     if (languageOptions.copyrightHeader != null) {
       addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
@@ -299,7 +299,7 @@ class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
   // Source File Methods.
 
   /// Writes Objc Source file header to sink.
-  void _writeObjcSourceHeader(
+  void _writeObjcSourcePrologue(
       ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
     if (languageOptions.copyrightHeader != null) {
       addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
