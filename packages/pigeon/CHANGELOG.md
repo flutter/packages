@@ -1,3 +1,7 @@
+## 5.0.3
+
+* Adds writeEnum method to Generator classes.
+
 ## 5.0.2
 
 * Adds writeImports method to Generator classes.
