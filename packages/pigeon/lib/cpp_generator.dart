@@ -83,7 +83,7 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
     assert(fileType == FileType.header || fileType == FileType.source);
 
     final Indent indent = Indent(sink);
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     writeFileImports(generatorOptions, root, sink, indent);
     if (fileType == FileType.header) {
       generateCppHeader(generatorOptions.languageOptions, root, sink, indent);
@@ -93,14 +93,14 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
   }
 
   @override
-  void writeFileHeaders(OutputFileOptions<CppOptions> generatorOptions,
+  void writeFilePrologue(OutputFileOptions<CppOptions> generatorOptions,
       Root root, StringSink sink, Indent indent) {
     final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      writeCppHeaderHeader(
+      writeCppHeaderPrologue(
           generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeCppSourceHeader(
+      writeCppSourcePrologue(
           generatorOptions.languageOptions, root, sink, indent);
     }
   }
@@ -1080,7 +1080,7 @@ void _writeSystemHeaderIncludeBlock(Indent indent, List<String> headers) {
 }
 
 /// Writes Cpp header file header to sink.
-void writeCppHeaderHeader(
+void writeCppHeaderPrologue(
     CppOptions options, Root root, StringSink sink, Indent indent) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');
@@ -1181,7 +1181,7 @@ void generateCppHeader(
 }
 
 /// Writes Cpp source file header to sink.
-void writeCppSourceHeader(
+void writeCppSourcePrologue(
     CppOptions options, Root root, StringSink sink, Indent indent) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');

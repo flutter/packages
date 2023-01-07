@@ -95,15 +95,15 @@ class JavaGenerator extends Generator<JavaOptions> {
   void generate(JavaOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     writeFileImports(generatorOptions, root, sink, indent);
     generateJava(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(
+  void writeFilePrologue(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
-    writeHeader(generatorOptions, root, sink, indent);
+    writePrologue(generatorOptions, root, sink, indent);
   }
 
   @override
@@ -551,7 +551,7 @@ String _castObject(
 }
 
 /// Writes file header to sink.
-void writeHeader(
+void writePrologue(
     JavaOptions options, Root root, StringSink sink, Indent indent) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');
