@@ -22,7 +22,7 @@ abstract class Generator<T> {
   );
 
   /// Adds specified file headers.
-  void writeFileHeaders(
+  void writeFilePrologue(
     T generatorOptions,
     Root root,
     StringSink sink,

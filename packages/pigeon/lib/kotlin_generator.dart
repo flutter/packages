@@ -79,14 +79,14 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   ) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     generateKotlin(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(KotlinOptions generatorOptions, Root root,
+  void writeFilePrologue(KotlinOptions generatorOptions, Root root,
       StringSink sink, Indent indent) {
-    writeHeader(generatorOptions, root, sink, indent);
+    writePrologue(generatorOptions, root, sink, indent);
   }
 }
 
@@ -461,7 +461,7 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
 }
 
 /// Writes file header to sink.
-void writeHeader(
+void writePrologue(
     KotlinOptions options, Root root, StringSink sink, Indent indent) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');

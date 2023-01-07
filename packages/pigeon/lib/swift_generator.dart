@@ -57,14 +57,14 @@ class SwiftGenerator extends Generator<SwiftOptions> {
   @override
   void generate(SwiftOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     generateSwift(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(SwiftOptions generatorOptions, Root root,
+  void writeFilePrologue(SwiftOptions generatorOptions, Root root,
       StringSink sink, Indent indent) {
-    writeHeader(generatorOptions, root, sink, indent);
+    writePrologue(generatorOptions, root, sink, indent);
   }
 }
 
@@ -454,7 +454,7 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
 }
 
 /// Writes file header to sink.
-void writeHeader(
+void writePrologue(
     SwiftOptions options, Root root, StringSink sink, Indent indent) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');

@@ -80,14 +80,14 @@ class DartGenerator extends Generator<DartOptions> {
   void generate(DartOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     generateDart(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeFileHeaders(
+  void writeFilePrologue(
       DartOptions generatorOptions, Root root, StringSink sink, Indent indent) {
-    writeHeader(generatorOptions, root, sink, indent);
+    writePrologue(generatorOptions, root, sink, indent);
   }
 
   /// Generates Dart files for testing with specified [DartOptions]
@@ -512,7 +512,7 @@ String _addGenericTypesNullable(TypeDeclaration type) {
 }
 
 /// Writes file header to sink.
-void writeHeader(DartOptions opt, Root root, StringSink sink, Indent indent) {
+void writePrologue(DartOptions opt, Root root, StringSink sink, Indent indent) {
   if (opt.copyrightHeader != null) {
     addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
   }

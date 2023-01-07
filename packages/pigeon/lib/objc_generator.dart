@@ -77,23 +77,23 @@ class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
     final Indent indent = Indent(sink);
 
     if (fileType == FileType.header) {
-      writeFileHeaders(generatorOptions, root, sink, indent);
+      writeFilePrologue(generatorOptions, root, sink, indent);
       generateObjcHeader(generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeFileHeaders(generatorOptions, root, sink, indent);
+      writeFilePrologue(generatorOptions, root, sink, indent);
       generateObjcSource(generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeFileHeaders(OutputFileOptions<ObjcOptions> generatorOptions,
+  void writeFilePrologue(OutputFileOptions<ObjcOptions> generatorOptions,
       Root root, StringSink sink, Indent indent) {
     final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      writeObjcHeaderHeader(
+      writeObjcHeaderPrologue(
           generatorOptions.languageOptions, root, sink, indent);
     } else {
-      writeObjcSourceHeader(
+      writeObjcSourcePrologue(
           generatorOptions.languageOptions, root, sink, indent);
     }
   }
@@ -567,7 +567,7 @@ void _writeFlutterApiDeclaration(
 }
 
 /// Writes Objc header file header to sink.
-void writeObjcHeaderHeader(
+void writeObjcHeaderPrologue(
     ObjcOptions options, Root root, StringSink sink, Indent indent) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');
@@ -911,7 +911,7 @@ void _writeFlutterApiSource(
 }
 
 /// Writes Objc Source file header to sink.
-void writeObjcSourceHeader(
+void writeObjcSourcePrologue(
     ObjcOptions options, Root root, StringSink sink, Indent indent) {
   if (options.copyrightHeader != null) {
     addLines(indent, options.copyrightHeader!, linePrefix: '// ');
