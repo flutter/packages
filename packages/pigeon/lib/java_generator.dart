@@ -95,7 +95,7 @@ class JavaGenerator extends Generator<JavaOptions> {
   void generate(JavaOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     writeFileImports(generatorOptions, root, sink, indent);
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
@@ -119,7 +119,7 @@ class JavaGenerator extends Generator<JavaOptions> {
   }
 
   @override
-  void writeFileHeaders(
+  void writeFilePrologue(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');

@@ -84,7 +84,7 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
         generatorOptions.fileType == FileType.source);
 
     final Indent indent = Indent(sink);
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     writeFileImports(generatorOptions, root, sink, indent);
 
     for (final Enum anEnum in root.enums) {
@@ -106,13 +106,13 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
   }
 
   @override
-  void writeFileHeaders(OutputFileOptions<CppOptions> generatorOptions,
+  void writeFilePrologue(OutputFileOptions<CppOptions> generatorOptions,
       Root root, StringSink sink, Indent indent) {
     final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      _writeCppHeaderHeader(generatorOptions, root, sink, indent);
+      _writeCppHeaderPrologue(generatorOptions, root, sink, indent);
     } else {
-      _writeCppSourceHeader(generatorOptions, root, sink, indent);
+      _writeCppSourcePrologue(generatorOptions, root, sink, indent);
     }
   }
 
@@ -185,7 +185,7 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
   }
 
   /// Writes Cpp header file header to sink.
-  void _writeCppHeaderHeader(OutputFileOptions<CppOptions> generatorOptions,
+  void _writeCppHeaderPrologue(OutputFileOptions<CppOptions> generatorOptions,
       Root root, StringSink sink, Indent indent) {
     if (generatorOptions.languageOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.languageOptions.copyrightHeader!,
@@ -330,7 +330,7 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
   }
 
   /// Writes Cpp source file header to sink.
-  void _writeCppSourceHeader(OutputFileOptions<CppOptions> generatorOptions,
+  void _writeCppSourcePrologue(OutputFileOptions<CppOptions> generatorOptions,
       Root root, StringSink sink, Indent indent) {
     if (generatorOptions.languageOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.languageOptions.copyrightHeader!,

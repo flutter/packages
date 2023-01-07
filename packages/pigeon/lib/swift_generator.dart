@@ -57,7 +57,7 @@ class SwiftGenerator extends Generator<SwiftOptions> {
   @override
   void generate(SwiftOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     writeFileImports(generatorOptions, root, sink, indent);
     indent.writeln('$_docCommentPrefix Generated class from Pigeon.');
     for (final Enum anEnum in root.enums) {
@@ -72,7 +72,7 @@ class SwiftGenerator extends Generator<SwiftOptions> {
   }
 
   @override
-  void writeFileHeaders(SwiftOptions generatorOptions, Root root,
+  void writeFilePrologue(SwiftOptions generatorOptions, Root root,
       StringSink sink, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
