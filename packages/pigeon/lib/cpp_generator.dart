@@ -79,7 +79,6 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
   @override
   void generate(OutputFileOptions<CppOptions> generatorOptions, Root root,
       StringSink sink) {
-    final FileType fileType = generatorOptions.fileType;
     assert(generatorOptions.fileType == FileType.header ||
         generatorOptions.fileType == FileType.source);
 
@@ -100,8 +99,10 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
     }
 
     for (final Api api in root.apis) {
-      _writeCodec(generatorOptions, root, sink, indent, api);
-      indent.addln('');
+      if (getCodecClasses(api, root).isNotEmpty) {
+        _writeCodec(generatorOptions, root, sink, indent, api);
+        indent.addln('');
+      }
       if (api.location == ApiLocation.host) {
         writeHostApi(generatorOptions, root, sink, indent, api);
       } else if (api.location == ApiLocation.flutter) {
@@ -587,6 +588,7 @@ $friendLines
         }
       });
     }, nestCount: 0);
+    indent.writeln('');
   }
 
   // Source methods.
