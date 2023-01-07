@@ -563,9 +563,6 @@ class JavaGenerator extends Generator<JavaOptions> {
   ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
   void _writeMethodSetup(JavaOptions generatorOptions, Root root,
       StringSink sink, Indent indent, Api api, final Method method) {
-    //TODO(tarrinneal): See if this is needed or if generator_tools is enough
-    bool isEnum(TypeDeclaration type) =>
-        root.enums.map((Enum e) => e.name).contains(type.baseName);
     final String channelName = makeChannelName(api, method);
     indent.write('');
     indent.scoped('{', '}', () {
@@ -614,7 +611,7 @@ class JavaGenerator extends Generator<JavaOptions> {
                     ? '($argName == null) ? null : $argName.longValue()'
                     : argName;
                 String accessor = 'args.get($index)';
-                if (isEnum(arg.type)) {
+                if (isEnum(root, arg.type)) {
                   accessor = _intToEnum(accessor, arg.type.baseName);
                 } else if (argType != 'Object') {
                   accessor = '($argType)$accessor';
