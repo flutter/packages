@@ -65,127 +65,134 @@ class ObjcOptions {
 }
 
 /// Class that manages all Objc header code generation.
-class ObjcGenerator extends Generator<ObjcOptions> {
+class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
   /// Instantiates a Objc Generator.
   ObjcGenerator();
 
   /// Generates Objc header files with specified [ObjcOptions]
   @override
-  void generate(ObjcOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
+  void generate(OutputFileOptions<ObjcOptions> generatorOptions, Root root,
+      StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeHeaders(languageOptions, root, sink, indent, fileType);
-    writeImports(languageOptions, root, sink, indent, fileType);
-    if (fileType == FileType.header) {
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
+    if (generatorOptions.fileType == FileType.header) {
       indent.writeln('NS_ASSUME_NONNULL_BEGIN');
 
       for (final Enum anEnum in root.enums) {
         indent.writeln('');
-        writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+        writeEnum(generatorOptions, root, sink, indent, anEnum);
       }
       indent.writeln('');
       for (final Class klass in root.classes) {
         indent.writeln(
-            '@class ${_className(languageOptions.prefix, klass.name)};');
+            '@class ${_className(generatorOptions.languageOptions.prefix, klass.name)};');
       }
       indent.addln('');
-    } else if (fileType == FileType.source) {
+    } else if (generatorOptions.fileType == FileType.source) {
       _writeObjcSourceHelperFunctions(indent);
       indent.addln('');
 
       for (final Class klass in root.classes) {
-        _writeObjcSourceDataClassExtension(languageOptions, indent, klass);
+        _writeObjcSourceDataClassExtension(
+            generatorOptions.languageOptions, indent, klass);
       }
       indent.writeln('');
     }
 
     for (final Class klass in root.classes) {
-      writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+      writeDataClass(generatorOptions, root, sink, indent, klass);
     }
 
-    if (fileType == FileType.header) {
-      generateObjcHeader(languageOptions, root, sink, indent);
+    if (generatorOptions.fileType == FileType.header) {
+      generateObjcHeader(generatorOptions.languageOptions, root, sink, indent);
     } else {
-      generateObjcSource(languageOptions, root, sink, indent);
+      generateObjcSource(generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeHeaders(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (fileType == FileType.header) {
-      _writeObjcHeaderHeader(languageOptions, root, sink, indent);
+  void writeFileHeaders(OutputFileOptions<ObjcOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.fileType == FileType.header) {
+      _writeObjcHeaderHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      _writeObjcSourceHeader(languageOptions, root, sink, indent);
+      _writeObjcSourceHeader(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeImports(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (fileType == FileType.header) {
-      _writeObjcHeaderImports(languageOptions, root, sink, indent);
+  void writeFileImports(OutputFileOptions<ObjcOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.fileType == FileType.header) {
+      _writeObjcHeaderImports(
+          generatorOptions.languageOptions, root, sink, indent);
     } else {
-      _writeObjcSourceImports(languageOptions, root, sink, indent);
+      _writeObjcSourceImports(
+          generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeEnum(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Enum anEnum) {
-    if (fileType == FileType.header) {
-      _writeObjcHeaderEnum(languageOptions, root, sink, indent, anEnum);
+  void writeEnum(OutputFileOptions<ObjcOptions> generatorOptions, Root root,
+      StringSink sink, Indent indent, Enum anEnum) {
+    if (generatorOptions.fileType == FileType.header) {
+      _writeObjcHeaderEnum(
+          generatorOptions.languageOptions, root, sink, indent, anEnum);
     }
   }
 
   @override
-  void writeDataClass(ObjcOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Class klass) {
-    if (fileType == FileType.header) {
-      _writeObjcHeaderDataClass(languageOptions, root, sink, indent, klass);
+  void writeDataClass(OutputFileOptions<ObjcOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent, Class klass) {
+    if (generatorOptions.fileType == FileType.header) {
+      _writeObjcHeaderDataClass(
+          generatorOptions.languageOptions, root, sink, indent, klass);
     } else {
       _writeObjcSourceDataClassImplementation(
-          languageOptions, root, sink, indent, fileType, klass);
+          generatorOptions, root, sink, indent, klass);
       indent.writeln('');
     }
   }
 
   @override
   void writeClassEncode(
-    ObjcOptions languageOptions,
+    OutputFileOptions<ObjcOptions> generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    if (fileType == FileType.source) {
-      final String className = _className(languageOptions.prefix, klass.name);
+    if (generatorOptions.fileType == FileType.source) {
+      final String className =
+          _className(generatorOptions.languageOptions.prefix, klass.name);
 
-      _writeObjcSourceClassEncode(languageOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames, className);
+      _writeObjcSourceClassEncode(generatorOptions.languageOptions, root, sink,
+          indent, klass, customClassNames, customEnumNames, className);
     }
   }
 
   @override
   void writeClassDecode(
-    ObjcOptions languageOptions,
+    OutputFileOptions<ObjcOptions> generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    if (fileType == FileType.source) {
-      final String className = _className(languageOptions.prefix, klass.name);
+    if (generatorOptions.fileType == FileType.source) {
+      final String className =
+          _className(generatorOptions.languageOptions.prefix, klass.name);
 
-      _writeObjcSourceClassDecode(languageOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames, className);
+      _writeObjcSourceClassDecode(generatorOptions.languageOptions, root, sink,
+          indent, klass, customClassNames, customEnumNames, className);
     }
   }
 
@@ -193,9 +200,9 @@ class ObjcGenerator extends Generator<ObjcOptions> {
 
   /// Writes Objc header file header to sink.
   void _writeObjcHeaderHeader(
-      ObjcOptions options, Root root, StringSink sink, Indent indent) {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+      ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    if (languageOptions.copyrightHeader != null) {
+      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
@@ -204,7 +211,7 @@ class ObjcGenerator extends Generator<ObjcOptions> {
 
   /// Writes Objc header file imports to sink.
   void _writeObjcHeaderImports(
-      ObjcOptions options, Root root, StringSink sink, Indent indent) {
+      ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
     indent.writeln('#import <Foundation/Foundation.h>');
     indent.addln('');
 
@@ -216,9 +223,9 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   }
 
   /// Writes single Objc header enum.
-  void _writeObjcHeaderEnum(ObjcOptions options, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
-    final String enumName = _className(options.prefix, anEnum.name);
+  void _writeObjcHeaderEnum(ObjcOptions languageOptions, Root root,
+      StringSink sink, Indent indent, Enum anEnum) {
+    final String enumName = _className(languageOptions.prefix, anEnum.name);
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
@@ -240,11 +247,11 @@ class ObjcGenerator extends Generator<ObjcOptions> {
   /// @interface Foo : NSObject
   /// @property (nonatomic, copy) NSString *bar;
   /// @end
-  void _writeObjcHeaderDataClass(ObjcOptions languageOptions, Root root,
+  void _writeObjcHeaderDataClass(ObjcOptions generatorOptions, Root root,
       StringSink sink, Indent indent, Class klass) {
     final List<Class> classes = root.classes;
     final List<Enum> enums = root.enums;
-    final String? prefix = languageOptions.prefix;
+    final String? prefix = generatorOptions.prefix;
     final List<String> customEnumNames = enums.map((Enum x) => x.name).toList();
 
     addDocumentationComments(
@@ -293,9 +300,9 @@ class ObjcGenerator extends Generator<ObjcOptions> {
 
   /// Writes Objc Source file header to sink.
   void _writeObjcSourceHeader(
-      ObjcOptions options, Root root, StringSink sink, Indent indent) {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+      ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    if (languageOptions.copyrightHeader != null) {
+      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
@@ -304,8 +311,8 @@ class ObjcGenerator extends Generator<ObjcOptions> {
 
   /// Writes Objc source file imports to sink.
   void _writeObjcSourceImports(
-      ObjcOptions options, Root root, StringSink sink, Indent indent) {
-    indent.writeln('#import "${options.headerIncludePath}"');
+      ObjcOptions languageOptions, Root root, StringSink sink, Indent indent) {
+    indent.writeln('#import "${languageOptions.headerIncludePath}"');
     indent.writeln('#import <Flutter/Flutter.h>');
     indent.addln('');
 
@@ -346,26 +353,31 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     indent.writeln('@end');
   }
 
-  void _writeObjcSourceDataClassImplementation(ObjcOptions options, Root root,
-      StringSink sink, Indent indent, FileType fileType, Class klass) {
+  void _writeObjcSourceDataClassImplementation(
+      OutputFileOptions<ObjcOptions> generatorOptions,
+      Root root,
+      StringSink sink,
+      Indent indent,
+      Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
         root.enums.map((Enum x) => x.name).toSet();
-    final String className = _className(options.prefix, klass.name);
+    final String className =
+        _className(generatorOptions.languageOptions.prefix, klass.name);
 
     indent.writeln('@implementation $className');
-    _writeObjcSourceClassInitializer(options, root, sink, indent, klass,
-        customClassNames, customEnumNames, className);
-    writeClassDecode(options, root, sink, indent, fileType, klass,
+    _writeObjcSourceClassInitializer(generatorOptions.languageOptions, root,
+        sink, indent, klass, customClassNames, customEnumNames, className);
+    writeClassDecode(generatorOptions, root, sink, indent, klass,
         customClassNames, customEnumNames);
-    writeClassEncode(options, root, sink, indent, fileType, klass,
+    writeClassEncode(generatorOptions, root, sink, indent, klass,
         customClassNames, customEnumNames);
     indent.writeln('@end');
   }
 
   void _writeObjcSourceClassInitializer(
-    ObjcOptions options,
+    ObjcOptions languageOptions,
     Root root,
     StringSink sink,
     Indent indent,
@@ -375,7 +387,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     String className,
   ) {
     _writeObjcSourceClassInitializerDeclaration(
-        indent, klass, root.classes, root.enums, options.prefix);
+        indent, klass, root.classes, root.enums, languageOptions.prefix);
     indent.writeScoped(' {', '}', () {
       const String result = 'pigeonResult';
       indent.writeln('$className* $result = [[$className alloc] init];');
@@ -387,7 +399,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   }
 
   void _writeObjcSourceClassDecode(
-    ObjcOptions options,
+    ObjcOptions languageOptions,
     Root root,
     StringSink sink,
     Indent indent,
@@ -404,10 +416,10 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
           (int index, final NamedType field) {
         if (customEnumNames.contains(field.type.baseName)) {
           indent.writeln(
-              '$resultName.${field.name} = [${_listGetter(customClassNames, 'list', field, index, options.prefix)} integerValue];');
+              '$resultName.${field.name} = [${_listGetter(customClassNames, 'list', field, index, languageOptions.prefix)} integerValue];');
         } else {
           indent.writeln(
-              '$resultName.${field.name} = ${_listGetter(customClassNames, 'list', field, index, options.prefix)};');
+              '$resultName.${field.name} = ${_listGetter(customClassNames, 'list', field, index, languageOptions.prefix)};');
           if (!field.type.isNullable) {
             indent.writeln('NSAssert($resultName.${field.name} != nil, @"");');
           }
@@ -421,7 +433,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   }
 
   void _writeObjcSourceClassEncode(
-    ObjcOptions options,
+    ObjcOptions languageOptions,
     Root root,
     StringSink sink,
     Indent indent,

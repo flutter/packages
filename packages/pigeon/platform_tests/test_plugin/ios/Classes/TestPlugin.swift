@@ -59,6 +59,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aUint8List
   }
 
+  func echoObject(anObject: Any) -> Any {
+    return anObject
+  }
+
   func extractNestedNullableString(wrapper: AllNullableTypesWrapper) -> String? {
     return wrapper.values.aNullableString;
   }
@@ -90,6 +94,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echoNullableUint8List(aNullableUint8List: FlutterStandardTypedData?) -> FlutterStandardTypedData? {
     return aNullableUint8List
+  }
+
+  func echoNullableObject(aNullableObject: Any?) -> Any? {
+    return aNullableObject
   }
 
   func noopAsync(completion: @escaping () -> Void) {

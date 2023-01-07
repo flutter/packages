@@ -71,119 +71,125 @@ class CppOptions {
 }
 
 /// Class that manages all Cpp code generation.
-class CppGenerator extends Generator<CppOptions> {
+class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
   /// Instantiates a Cpp Generator.
   CppGenerator();
 
   /// Generates Cpp header files with specified [CppOptions]
   @override
-  void generate(CppOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
+  void generate(OutputFileOptions<CppOptions> generatorOptions, Root root,
+      StringSink sink) {
+    final FileType fileType = generatorOptions.fileType;
+    assert(generatorOptions.fileType == FileType.header ||
+        generatorOptions.fileType == FileType.source);
+
     final Indent indent = Indent(sink);
-    writeHeaders(languageOptions, root, sink, indent, fileType);
-    writeImports(languageOptions, root, sink, indent, fileType);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
 
     for (final Enum anEnum in root.enums) {
-      writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+      writeEnum(generatorOptions, root, sink, indent, anEnum);
     }
 
     indent.addln('');
-    if (fileType == FileType.header) {
+    if (generatorOptions.fileType == FileType.header) {
       _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
     }
     for (final Class klass in root.classes) {
-      writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+      writeDataClass(generatorOptions, root, sink, indent, klass);
     }
-    if (fileType == FileType.header) {
-      generateCppHeader(languageOptions, root, sink, indent);
+    if (generatorOptions.fileType == FileType.header) {
+      generateCppHeader(generatorOptions.languageOptions, root, sink, indent);
     } else {
-      generateCppSource(languageOptions, root, sink, indent);
+      generateCppSource(generatorOptions.languageOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeHeaders(CppOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
+  void writeFileHeaders(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      _writeCppHeaderHeader(languageOptions, root, sink, indent);
+      _writeCppHeaderHeader(generatorOptions, root, sink, indent);
     } else {
-      _writeCppSourceHeader(languageOptions, root, sink, indent);
+      _writeCppSourceHeader(generatorOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeImports(CppOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
+  void writeFileImports(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      _writeCppHeaderImports(languageOptions, root, sink, indent);
+      _writeCppHeaderImports(generatorOptions, root, sink, indent);
     } else {
-      _writeCppSourceImports(languageOptions, root, sink, indent);
+      _writeCppSourceImports(generatorOptions, root, sink, indent);
     }
   }
 
   @override
-  void writeEnum(CppOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Enum anEnum) {
+  void writeEnum(OutputFileOptions<CppOptions> generatorOptions, Root root,
+      StringSink sink, Indent indent, Enum anEnum) {
+    final FileType fileType = generatorOptions.fileType;
     if (fileType == FileType.header) {
-      _writeCppHeaderEnum(languageOptions, root, sink, indent, anEnum);
+      _writeCppHeaderEnum(generatorOptions, root, sink, indent, anEnum);
     }
   }
 
   @override
-  void writeDataClass(CppOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Class klass) {
-    if (fileType == FileType.header) {
+  void writeDataClass(OutputFileOptions<CppOptions> generatorOptions, Root root,
+      StringSink sink, Indent indent, Class klass) {
+    if (generatorOptions.fileType == FileType.header) {
       // When generating for a Pigeon unit test, add a test fixture friend class to
       // allow unit testing private methods, since testing serialization via public
       // methods is essentially an end-to-end test.
       String? testFixtureClass;
-      if (languageOptions.namespace?.endsWith('_pigeontest') ?? false) {
+      if (generatorOptions.languageOptions.namespace?.endsWith('_pigeontest') ??
+          false) {
         testFixtureClass =
-            '${_pascalCaseFromSnakeCase(languageOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
+            '${_pascalCaseFromSnakeCase(generatorOptions.languageOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
       }
-      _writeCppHeaderDataClass(languageOptions, root, sink, indent, klass,
+      _writeCppHeaderDataClass(generatorOptions, root, sink, indent, klass,
           testFriend: testFixtureClass);
     } else {
-      _writeCppSourceDataClass(
-          languageOptions, root, sink, indent, fileType, klass);
+      _writeCppSourceDataClass(generatorOptions, root, sink, indent, klass);
     }
   }
 
   @override
   void writeClassEncode(
-    CppOptions languageOptions,
+    OutputFileOptions<CppOptions> generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    _writeCppSourceClassEncode(languageOptions, root, sink, indent, klass,
-        customClassNames, customEnumNames);
+    _writeCppSourceClassEncode(generatorOptions.languageOptions, root, sink,
+        indent, klass, customClassNames, customEnumNames);
   }
 
   @override
   void writeClassDecode(
-    CppOptions languageOptions,
+    OutputFileOptions<CppOptions> generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    _writeCppSourceClassDecode(languageOptions, root, sink, indent, klass,
+    _writeCppSourceClassDecode(generatorOptions, root, sink, indent, klass,
         customClassNames, customEnumNames);
   }
 
   /// Writes Cpp header file header to sink.
-  void _writeCppHeaderHeader(
-      CppOptions options, Root root, StringSink sink, Indent indent) {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  void _writeCppHeaderHeader(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.languageOptions.copyrightHeader != null) {
+      addLines(indent, generatorOptions.languageOptions.copyrightHeader!,
+          linePrefix: '// ');
     }
     indent.writeln('$_commentPrefix $generatedCodeWarning');
     indent.writeln('$_commentPrefix $seeAlsoWarning');
@@ -191,10 +197,11 @@ class CppGenerator extends Generator<CppOptions> {
   }
 
   /// Writes Cpp header file imports to sink.
-  void _writeCppHeaderImports(
-      CppOptions options, Root root, StringSink sink, Indent indent) {
-    final String guardName =
-        _getGuardName(options.headerIncludePath, options.namespace);
+  void _writeCppHeaderImports(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    final String guardName = _getGuardName(
+        generatorOptions.languageOptions.headerIncludePath,
+        generatorOptions.languageOptions.namespace);
     indent.writeln('#ifndef $guardName');
     indent.writeln('#define $guardName');
 
@@ -211,13 +218,15 @@ class CppGenerator extends Generator<CppOptions> {
       'optional',
     ]);
     indent.addln('');
-    if (options.namespace != null) {
-      indent.writeln('namespace ${options.namespace} {');
+    if (generatorOptions.languageOptions.namespace != null) {
+      indent
+          .writeln('namespace ${generatorOptions.languageOptions.namespace} {');
     }
     indent.addln('');
-    if (options.namespace?.endsWith('_pigeontest') ?? false) {
+    if (generatorOptions.languageOptions.namespace?.endsWith('_pigeontest') ??
+        false) {
       final String testFixtureClass =
-          '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
+          '${_pascalCaseFromSnakeCase(generatorOptions.languageOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
       indent.writeln('class $testFixtureClass;');
     }
     indent.addln('');
@@ -225,8 +234,8 @@ class CppGenerator extends Generator<CppOptions> {
   }
 
   /// Writes Cpp header enum to sink.
-  void _writeCppHeaderEnum(CppOptions options, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
+  void _writeCppHeaderEnum(OutputFileOptions<CppOptions> options, Root root,
+      StringSink sink, Indent indent, Enum anEnum) {
     indent.writeln('');
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
@@ -245,8 +254,8 @@ class CppGenerator extends Generator<CppOptions> {
   ///
   /// See [_writeCppSourceDataClass] for the corresponding declaration.
   /// This is intended to be added to the header.
-  void _writeCppHeaderDataClass(CppOptions languageOptions, Root root,
-      StringSink sink, Indent indent, Class klass,
+  void _writeCppHeaderDataClass(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent, Class klass,
       {String? testFriend}) {
     indent.addln('');
 
@@ -321,10 +330,11 @@ class CppGenerator extends Generator<CppOptions> {
   }
 
   /// Writes Cpp source file header to sink.
-  void _writeCppSourceHeader(
-      CppOptions options, Root root, StringSink sink, Indent indent) {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  void _writeCppSourceHeader(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.languageOptions.copyrightHeader != null) {
+      addLines(indent, generatorOptions.languageOptions.copyrightHeader!,
+          linePrefix: '// ');
     }
     indent.writeln('$_commentPrefix $generatedCodeWarning');
     indent.writeln('$_commentPrefix $seeAlsoWarning');
@@ -334,9 +344,10 @@ class CppGenerator extends Generator<CppOptions> {
   }
 
   /// Writes Cpp source file imports to sink.
-  void _writeCppSourceImports(
-      CppOptions options, Root root, StringSink sink, Indent indent) {
-    indent.writeln('#include "${options.headerIncludePath}"');
+  void _writeCppSourceImports(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent) {
+    indent.writeln(
+        '#include "${generatorOptions.languageOptions.headerIncludePath}"');
     indent.addln('');
     _writeSystemHeaderIncludeBlock(indent, <String>[
       'flutter/basic_message_channel.h',
@@ -352,13 +363,14 @@ class CppGenerator extends Generator<CppOptions> {
     ]);
     indent.addln('');
 
-    if (options.namespace != null) {
-      indent.writeln('namespace ${options.namespace} {');
+    if (generatorOptions.languageOptions.namespace != null) {
+      indent
+          .writeln('namespace ${generatorOptions.languageOptions.namespace} {');
     }
   }
 
   void _writeCppSourceClassEncode(
-    CppOptions languageOptions,
+    CppOptions generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
@@ -410,7 +422,7 @@ class CppGenerator extends Generator<CppOptions> {
   }
 
   void _writeCppSourceClassDecode(
-    CppOptions languageOptions,
+    OutputFileOptions<CppOptions> generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
@@ -467,8 +479,8 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
     indent.addln('');
   }
 
-  void _writeCppSourceClassField(CppOptions languageOptions, Root root,
-      StringSink sink, Indent indent, Class klass, NamedType field) {
+  void _writeCppSourceClassField(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent, Class klass, NamedType field) {
     final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
         root.enums, (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
     final String instanceVariableName = _makeInstanceVariableName(field);
@@ -508,8 +520,8 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
   ///
   /// See [_writeCppHeaderDataClass] for the corresponding declaration.
   /// This is intended to be added to the implementation file.
-  void _writeCppSourceDataClass(CppOptions languageOptions, Root root,
-      StringSink sink, Indent indent, FileType fileType, Class klass) {
+  void _writeCppSourceDataClass(OutputFileOptions<CppOptions> generatorOptions,
+      Root root, StringSink sink, Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -522,11 +534,11 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
     // Getters and setters.
     for (final NamedType field in getFieldsInSerializationOrder(klass)) {
       _writeCppSourceClassField(
-          languageOptions, root, sink, indent, klass, field);
+          generatorOptions, root, sink, indent, klass, field);
     }
 
     // Serialization.
-    writeClassEncode(languageOptions, root, sink, indent, fileType, klass,
+    writeClassEncode(generatorOptions, root, sink, indent, klass,
         customClassNames, customEnumNames);
 
     // Default constructor.
@@ -534,7 +546,7 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
     indent.addln('');
 
     // Deserialization.
-    writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
+    writeClassDecode(generatorOptions, root, sink, indent, klass,
         customClassNames, customEnumNames);
   }
 }
@@ -798,6 +810,11 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                       // ... then declare the arg as a reference to that local.
                       indent.writeln(
                           'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &$valueVarName;');
+                    } else if (hostType.datatype == 'flutter::EncodableValue') {
+                      // Generic objects just pass the EncodableValue through
+                      // directly.
+                      indent.writeln(
+                          'const auto* $argName = &$encodableArgName;');
                     } else if (hostType.isBuiltin) {
                       indent.writeln(
                           'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
@@ -815,6 +832,13 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                       // requires an int64_t so that it can handle any case.
                       indent.writeln(
                           'const int64_t $argName = $encodableArgName.LongValue();');
+                    } else if (hostType.datatype == 'flutter::EncodableValue') {
+                      // Generic objects just pass the EncodableValue through
+                      // directly. This creates an alias just to avoid having to
+                      // special-case the argName/encodableArgName distinction
+                      // at a higher level.
+                      indent
+                          .writeln('const auto& $argName = $encodableArgName;');
                     } else if (hostType.isBuiltin) {
                       indent.writeln(
                           'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
@@ -1153,6 +1177,7 @@ String? _baseCppTypeForBuiltinDartType(TypeDeclaration type) {
     'Float64List': 'std::vector<double>',
     'Map': 'flutter::EncodableMap',
     'List': 'flutter::EncodableList',
+    'Object': 'flutter::EncodableValue',
   };
   if (cppTypeForDartTypeMap.containsKey(type.baseName)) {
     return cppTypeForDartTypeMap[type.baseName];
@@ -1182,6 +1207,8 @@ String _unownedArgumentType(HostDatatype type) {
   if (isString || _isPodType(type)) {
     return type.isNullable ? 'const $baseType*' : baseType;
   }
+  // TODO(stuartmorgan): Consider special-casing `Object?` here, so that there
+  // aren't two ways of representing null (nullptr or an isNull EncodableValue).
   return type.isNullable ? 'const $baseType*' : 'const $baseType&';
 }
 

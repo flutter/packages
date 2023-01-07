@@ -92,39 +92,37 @@ class JavaGenerator extends Generator<JavaOptions> {
 
   /// Generates Java files with specified [JavaOptions]
   @override
-  void generate(JavaOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
-    assert(fileType == FileType.source);
+  void generate(JavaOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeHeaders(languageOptions, root, sink, indent, fileType);
-    writeImports(languageOptions, root, sink, indent, fileType);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
     indent.writeln(
         '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
-    if (languageOptions.useGeneratedAnnotation ?? false) {
+    if (generatorOptions.useGeneratedAnnotation ?? false) {
       indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
     }
-    indent.write('public class ${languageOptions.className!} ');
+    indent.write('public class ${generatorOptions.className!} ');
     indent.scoped('{', '}', () {
       for (final Enum anEnum in root.enums) {
         indent.writeln('');
-        writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+        writeEnum(generatorOptions, root, sink, indent, anEnum);
       }
       for (final Class klass in root.classes) {
         indent.addln('');
-        writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+        writeDataClass(generatorOptions, root, sink, indent, klass);
       }
-      generateJava(languageOptions, root, sink, indent);
+      generateJava(generatorOptions, root, sink, indent);
     });
   }
 
   @override
-  void writeHeaders(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (languageOptions.copyrightHeader != null) {
-      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
+  void writeFileHeaders(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.copyrightHeader != null) {
+      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
@@ -132,10 +130,10 @@ class JavaGenerator extends Generator<JavaOptions> {
   }
 
   @override
-  void writeImports(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (languageOptions.package != null) {
-      indent.writeln('package ${languageOptions.package};');
+  void writeFileImports(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.package != null) {
+      indent.writeln('package ${generatorOptions.package};');
     }
     indent.writeln('import android.util.Log;');
     indent.writeln('import androidx.annotation.NonNull;');
@@ -156,8 +154,8 @@ class JavaGenerator extends Generator<JavaOptions> {
   }
 
   @override
-  void writeEnum(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Enum anEnum) {
+  void writeEnum(JavaOptions generatorOptions, Root root, StringSink sink,
+      Indent indent, Enum anEnum) {
     String camelToSnake(String camelCase) {
       final RegExp regex = RegExp('([a-z])([A-Z]+)');
       return camelCase
@@ -186,8 +184,8 @@ class JavaGenerator extends Generator<JavaOptions> {
   }
 
   @override
-  void writeDataClass(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Class klass) {
+  void writeDataClass(JavaOptions generatorOptions, Root root, StringSink sink,
+      Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -203,7 +201,7 @@ class JavaGenerator extends Generator<JavaOptions> {
     indent.write('public static class ${klass.name} ');
     indent.scoped('{', '}', () {
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        _writeClassField(languageOptions, root, sink, indent, fileType, field);
+        _writeClassField(generatorOptions, root, sink, indent, field);
         indent.addln('');
       }
 
@@ -215,16 +213,16 @@ class JavaGenerator extends Generator<JavaOptions> {
         indent.writeln('private ${klass.name}() {}');
       }
 
-      _writeClassBuilder(languageOptions, root, sink, indent, fileType, klass);
-      writeClassEncode(languageOptions, root, sink, indent, fileType, klass,
+      _writeClassBuilder(generatorOptions, root, sink, indent, klass);
+      writeClassEncode(generatorOptions, root, sink, indent, klass,
           customClassNames, customEnumNames);
-      writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
+      writeClassDecode(generatorOptions, root, sink, indent, klass,
           customClassNames, customEnumNames);
     });
   }
 
-  void _writeClassField(JavaOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, NamedType field) {
+  void _writeClassField(JavaOptions generatorOptions, Root root,
+      StringSink sink, Indent indent, NamedType field) {
     final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
         root.enums, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
     final String nullability = field.type.isNullable ? '@Nullable' : '@NonNull';
@@ -249,11 +247,10 @@ class JavaGenerator extends Generator<JavaOptions> {
   }
 
   void _writeClassBuilder(
-    JavaOptions languageOptions,
+    JavaOptions generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
   ) {
     indent.write('public static final class Builder ');
@@ -289,11 +286,10 @@ class JavaGenerator extends Generator<JavaOptions> {
 
   @override
   void writeClassEncode(
-    JavaOptions languageOptions,
+    JavaOptions generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
@@ -327,11 +323,10 @@ class JavaGenerator extends Generator<JavaOptions> {
 
   @override
   void writeClassDecode(
-    JavaOptions languageOptions,
+    JavaOptions generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,

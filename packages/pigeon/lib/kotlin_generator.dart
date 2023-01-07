@@ -72,30 +72,28 @@ class KotlinGenerator extends Generator<KotlinOptions> {
 
   /// Generates Kotlin files with specified [KotlinOptions]
   @override
-  void generate(KotlinOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
-    assert(fileType == FileType.source);
+  void generate(KotlinOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeHeaders(languageOptions, root, sink, indent, fileType);
-    writeImports(languageOptions, root, sink, indent, fileType);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
     indent.writeln('/** Generated class from Pigeon. */');
     for (final Enum anEnum in root.enums) {
       indent.writeln('');
-      writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+      writeEnum(generatorOptions, root, sink, indent, anEnum);
     }
     for (final Class klass in root.classes) {
       indent.addln('');
-      writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+      writeDataClass(generatorOptions, root, sink, indent, klass);
     }
-    generateKotlin(languageOptions, root, sink, indent);
+    generateKotlin(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeHeaders(KotlinOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (languageOptions.copyrightHeader != null) {
-      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
+  void writeFileHeaders(KotlinOptions generatorOptions, Root root,
+      StringSink sink, Indent indent) {
+    if (generatorOptions.copyrightHeader != null) {
+      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
@@ -103,10 +101,10 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   }
 
   @override
-  void writeImports(KotlinOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (languageOptions.package != null) {
-      indent.writeln('package ${languageOptions.package}');
+  void writeFileImports(KotlinOptions generatorOptions, Root root,
+      StringSink sink, Indent indent) {
+    if (generatorOptions.package != null) {
+      indent.writeln('package ${generatorOptions.package}');
     }
     indent.addln('');
     indent.writeln('import android.util.Log');
@@ -120,8 +118,8 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   }
 
   @override
-  void writeEnum(KotlinOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Enum anEnum) {
+  void writeEnum(KotlinOptions generatorOptions, Root root, StringSink sink,
+      Indent indent, Enum anEnum) {
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
@@ -149,8 +147,8 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   }
 
   @override
-  void writeDataClass(KotlinOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Class klass) {
+  void writeDataClass(KotlinOptions generatorOptions, Root root,
+      StringSink sink, Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -176,20 +174,19 @@ class KotlinGenerator extends Generator<KotlinOptions> {
     });
 
     indent.scoped(') {', '}', () {
-      writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
+      writeClassDecode(generatorOptions, root, sink, indent, klass,
           customClassNames, customEnumNames);
-      writeClassEncode(languageOptions, root, sink, indent, fileType, klass,
+      writeClassEncode(generatorOptions, root, sink, indent, klass,
           customClassNames, customEnumNames);
     });
   }
 
   @override
   void writeClassEncode(
-    KotlinOptions languageOptions,
+    KotlinOptions generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
@@ -219,11 +216,10 @@ class KotlinGenerator extends Generator<KotlinOptions> {
 
   @override
   void writeClassDecode(
-    KotlinOptions languageOptions,
+    KotlinOptions generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,

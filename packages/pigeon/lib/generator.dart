@@ -9,7 +9,7 @@ import 'generator_tools.dart';
 ///
 /// This provides the structure that is common across generators for different languages.
 abstract class Generator<T> {
-  /// Generates files for the specified language with specified [languageOptions]
+  /// Generates files for specified language with specified [generatorOptions]
   ///
   /// This method, when overridden, should follow a generic structure that is currently:
   /// 1. Create Indent
@@ -19,57 +19,51 @@ abstract class Generator<T> {
   /// 5. Write Data Classes
   /// 6. Write Apis
   void generate(
-    T languageOptions,
+    T generatorOptions,
     Root root,
     StringSink sink,
-    FileType fileType,
   );
 
   /// Adds specified headers to file.
-  void writeHeaders(
-    T languageOptions,
+  void writeFileHeaders(
+    T generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
   );
 
   /// Adds specified imports to file.
-  void writeImports(
-    T languageOptions,
+  void writeFileImports(
+    T generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
   );
 
   /// Writes a single Enum to file.
   void writeEnum(
-    T languageOptions,
+    T generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Enum anEnum,
   );
 
   /// Writes a single data class to file.
   void writeDataClass(
-    T languageOptions,
+    T generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
   );
 
   /// Writes a single class encode method to file.
   void writeClassEncode(
-    T languageOptions,
+    T generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
@@ -77,21 +71,20 @@ abstract class Generator<T> {
 
   /// Writes a single class decode method to file.
   void writeClassDecode(
-    T languageOptions,
+    T generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
   );
 
   // /// Writes a single Flutter Api to file.
-  // void writeFlutterApi(T languageOptions, Root root, StringSink sink,
+  // void writeFlutterApi(T generatorOptions, Root root, StringSink sink,
   //     Indent indent, FileType fileType, Api api,);
 
   // /// Writes a single Host Api to file.
-  // void writeHostApi(T languageOptions, Root root, StringSink sink,
+  // void writeHostApi(T generatorOptions, Root root, StringSink sink,
   //     Indent indent, FileType fileType, Api api,);
 }

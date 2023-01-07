@@ -63,6 +63,10 @@
   return aUint8List;
 }
 
+- (nullable id)echoObject:(id)anObject error:(FlutterError *_Nullable *_Nonnull)error {
+  return anObject;
+}
+
 - (nullable NSString *)extractNestedNullableStringFrom:(AllNullableTypesWrapper *)wrapper
                                                  error:(FlutterError *_Nullable *_Nonnull)error {
   return wrapper.values.aNullableString;
@@ -112,6 +116,11 @@
     echoNullableUint8List:(nullable FlutterStandardTypedData *)aNullableUint8List
                     error:(FlutterError *_Nullable *_Nonnull)error {
   return aNullableUint8List;
+}
+
+- (nullable id)echoNullableObject:(nullable id)aNullableObject
+                            error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableObject;
 }
 
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {

@@ -55,29 +55,27 @@ class SwiftGenerator extends Generator<SwiftOptions> {
 
   /// Generates Swift files with specified [SwiftOptions]
   @override
-  void generate(SwiftOptions languageOptions, Root root, StringSink sink,
-      FileType fileType) {
-    assert(fileType == FileType.source);
+  void generate(SwiftOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
-    writeHeaders(languageOptions, root, sink, indent, fileType);
-    writeImports(languageOptions, root, sink, indent, fileType);
+    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
     indent.writeln('$_docCommentPrefix Generated class from Pigeon.');
     for (final Enum anEnum in root.enums) {
       indent.writeln('');
-      writeEnum(languageOptions, root, sink, indent, fileType, anEnum);
+      writeEnum(generatorOptions, root, sink, indent, anEnum);
     }
     for (final Class klass in root.classes) {
       indent.addln('');
-      writeDataClass(languageOptions, root, sink, indent, fileType, klass);
+      writeDataClass(generatorOptions, root, sink, indent, klass);
     }
-    generateSwift(languageOptions, root, sink, indent);
+    generateSwift(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeHeaders(SwiftOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
-    if (languageOptions.copyrightHeader != null) {
-      addLines(indent, languageOptions.copyrightHeader!, linePrefix: '// ');
+  void writeFileHeaders(SwiftOptions generatorOptions, Root root,
+      StringSink sink, Indent indent) {
+    if (generatorOptions.copyrightHeader != null) {
+      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
@@ -85,8 +83,8 @@ class SwiftGenerator extends Generator<SwiftOptions> {
   }
 
   @override
-  void writeImports(SwiftOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType) {
+  void writeFileImports(SwiftOptions generatorOptions, Root root,
+      StringSink sink, Indent indent) {
     indent.writeln('import Foundation');
     indent.format('''
 #if os(iOS)
@@ -101,8 +99,8 @@ import FlutterMacOS
   }
 
   @override
-  void writeEnum(SwiftOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Enum anEnum) {
+  void writeEnum(SwiftOptions generatorOptions, Root root, StringSink sink,
+      Indent indent, Enum anEnum) {
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
@@ -117,8 +115,8 @@ import FlutterMacOS
   }
 
   @override
-  void writeDataClass(SwiftOptions languageOptions, Root root, StringSink sink,
-      Indent indent, FileType fileType, Class klass) {
+  void writeDataClass(SwiftOptions generatorOptions, Root root, StringSink sink,
+      Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -138,20 +136,19 @@ import FlutterMacOS
       });
 
       indent.writeln('');
-      writeClassDecode(languageOptions, root, sink, indent, fileType, klass,
+      writeClassDecode(generatorOptions, root, sink, indent, klass,
           customClassNames, customEnumNames);
-      writeClassEncode(languageOptions, root, sink, indent, fileType, klass,
+      writeClassEncode(generatorOptions, root, sink, indent, klass,
           customClassNames, customEnumNames);
     });
   }
 
   @override
   void writeClassEncode(
-    SwiftOptions languageOptions,
+    SwiftOptions generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
@@ -183,11 +180,10 @@ import FlutterMacOS
 
   @override
   void writeClassDecode(
-    SwiftOptions languageOptions,
+    SwiftOptions generatorOptions,
     Root root,
     StringSink sink,
     Indent indent,
-    FileType fileType,
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
@@ -584,6 +580,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     final String nullableConditionPrefix =
         type.isNullable ? '$value == nil ? nil : ' : '';
     return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$forceUnwrap';
+  } else if (type.baseName == 'Object') {
+    // Special-cased to avoid warnings about using 'as' with Any.
+    return type.isNullable ? value : '$value!';
   } else {
     final String castUnwrap = type.isNullable ? '?' : '!';
     return '$value as$castUnwrap ${_swiftTypeForDartType(type)}';
