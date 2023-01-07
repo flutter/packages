@@ -80,11 +80,21 @@ abstract class Generator<T> {
     Set<String> customEnumNames,
   );
 
-  // /// Writes a single Flutter Api to file.
-  // void writeFlutterApi(T generatorOptions, Root root, StringSink sink,
-  //     Indent indent, FileType fileType, Api api,);
+  /// Writes a single Flutter Api to file.
+  void writeFlutterApi(
+    T generatorOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    Api api,
+  );
 
-  // /// Writes a single Host Api to file.
-  // void writeHostApi(T generatorOptions, Root root, StringSink sink,
-  //     Indent indent, FileType fileType, Api api,);
+  /// Writes a single Host Api to file.
+  void writeHostApi(
+    T generatorOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+    Api api,
+  );
 }
