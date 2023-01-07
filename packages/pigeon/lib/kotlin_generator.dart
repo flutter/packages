@@ -75,7 +75,7 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   void generate(KotlinOptions generatorOptions, Root root, StringSink sink) {
     final Indent indent = Indent(sink);
 
-    writeFileHeaders(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
     writeFileImports(generatorOptions, root, sink, indent);
     indent.writeln('/** Generated class from Pigeon. */');
     for (final Enum anEnum in root.enums) {
@@ -86,7 +86,7 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   }
 
   @override
-  void writeFileHeaders(KotlinOptions generatorOptions, Root root,
+  void writeFilePrologue(KotlinOptions generatorOptions, Root root,
       StringSink sink, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
