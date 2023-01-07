@@ -1,3 +1,7 @@
+## 5.0.2
+
+* Adds writeImports method to Generator classes.
+
 ## 5.0.1
 
 * Adds writeHeaders method to Generator classes and updates tests to use new Generators.
