@@ -90,8 +90,8 @@ void main() async {
 
       final TokenResponse response = await utils.fakeAuthZWithScopes(scopes);
 
-      final bool all = oauth2.hasGrantedAllScopes(response, scopes.join(' '));
-      final bool any = oauth2.hasGrantedAnyScopes(response, scopes.join(' '));
+      final bool all = oauth2.hasGrantedAllScopes(response, scopes);
+      final bool any = oauth2.hasGrantedAnyScopes(response, scopes);
 
       expect(all, isTrue);
       expect(any, isTrue);
@@ -102,8 +102,8 @@ void main() async {
 
       final TokenResponse response = await utils.fakeAuthZWithScopes(scopes);
 
-      final bool all = oauth2.hasGrantedAllScopes(response, scopes.join(' '));
-      final bool any = oauth2.hasGrantedAnyScopes(response, scopes.join(' '));
+      final bool all = oauth2.hasGrantedAllScopes(response, scopes);
+      final bool any = oauth2.hasGrantedAnyScopes(response, scopes);
 
       expect(all, isFalse, reason: 'Scope: $notGranted should not be granted!');
       expect(any, isTrue);
@@ -114,8 +114,8 @@ void main() async {
 
       final TokenResponse response = await utils.fakeAuthZWithScopes(scopes);
 
-      final bool all = oauth2.hasGrantedAllScopes(response, scopes.join(' '));
-      final bool any = oauth2.hasGrantedAnyScopes(response, scopes.join(' '));
+      final bool all = oauth2.hasGrantedAllScopes(response, scopes);
+      final bool any = oauth2.hasGrantedAnyScopes(response, scopes);
 
       expect(all, isFalse);
       expect(any, isFalse, reason: 'No scopes were granted.');

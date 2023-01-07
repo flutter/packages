@@ -53,9 +53,8 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   ///
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
-  bool hasGrantedAllScopes(TokenResponse tokenResponse, String scopes) {
+  bool hasGrantedAllScopes(TokenResponse tokenResponse, List<String> scopes) {
     return scopes
-        .split(' ')
         .every((String scope) => _hasGrantedScope(tokenResponse, scope));
   }
 
@@ -65,10 +64,8 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   ///
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
-  bool hasGrantedAnyScopes(TokenResponse tokenResponse, String scopes) {
-    return scopes
-        .split(' ')
-        .any((String scope) => _hasGrantedScope(tokenResponse, scope));
+  bool hasGrantedAnyScopes(TokenResponse tokenResponse, List<String> scopes) {
+    return scopes.any((String scope) => _hasGrantedScope(tokenResponse, scope));
   }
 
   /// Revokes all of the scopes that the user granted to the app.
@@ -258,6 +255,11 @@ abstract class OverridableTokenClientConfig {
     /// uses to maintain state between your authorization request and the
     /// authorization server's response.
     String? state,
+
+    /// Preserves previously requested scopes in this new request.
+    ///
+    /// (Undocumented)
+    bool? include_granted_scopes,
   });
 }
 

@@ -79,7 +79,7 @@ Future<void> onTokenResponse(TokenResponse token) async {
   print(profile);
 
   // Has granted all the scopes?
-  if (!oauth2.hasGrantedAllScopes(token, myConnectionsScopes.join(' '))) {
+  if (!oauth2.hasGrantedAllScopes(token, myConnectionsScopes)) {
     print('The user has NOT granted all the required scopes!');
     print('The next get will probably throw an exception!');
   }
