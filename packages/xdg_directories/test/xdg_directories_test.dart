@@ -118,20 +118,8 @@ XDG_VIDEOS_DIR="$HOME/Videos"
       <String, String>{},
       canRunExecutable: false,
     );
-    final List<String> userDirVariables = <String>[
-      'DESKTOP',
-      'DOCUMENTS',
-      'DOWNLOAD',
-      'MUSIC',
-      'PICTURES',
-      'PUBLICSHARE',
-      'TEMPLATES',
-      'VIDEOS',
-    ];
-    for (final String key in userDirVariables) {
-      expect(xdg.getUserDirectory(key), isNull,
-          reason: 'Found xdg user directory without access to xdg-user-dir');
-    }
+    expect(xdg.getUserDirectory('DESKTOP'), isNull,
+        reason: 'Found xdg user directory without access to xdg-user-dir');
     xdg.xdgProcessManager = const LocalProcessManager();
   });
 

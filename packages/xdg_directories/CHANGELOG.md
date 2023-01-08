@@ -1,6 +1,6 @@
 ## 0.2.0+3
 
-* Return null instead of throwing exception from xdg_directories/getUserDirectory when xdg-user-dir executable is missing.
+* Returns null instead of throwing exception from getUserDirectory when xdg-user-dir executable is missing.
 
 ## 0.2.0+2
 
