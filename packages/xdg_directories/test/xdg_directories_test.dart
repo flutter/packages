@@ -113,6 +113,28 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     xdg.xdgProcessManager = const LocalProcessManager();
   });
 
+  test('Returns null when xdg-user-dir executable is not present', () {
+    xdg.xdgProcessManager = FakeProcessManager(
+      <String, String>{},
+      canRunExecutable: false,
+    );
+    final List<String> userDirVariables = <String>[
+      'DESKTOP',
+      'DOCUMENTS',
+      'DOWNLOAD',
+      'MUSIC',
+      'PICTURES',
+      'PUBLICSHARE',
+      'TEMPLATES',
+      'VIDEOS',
+    ];
+    for (final String key in userDirVariables) {
+      expect(xdg.getUserDirectory(key), isNull,
+          reason: 'Found xdg user directory without access to xdg-user-dir');
+    }
+    xdg.xdgProcessManager = const LocalProcessManager();
+  });
+
   test('Throws StateError when HOME not set', () {
     fakeEnv.clear();
     expect(() {
@@ -122,9 +144,10 @@ XDG_VIDEOS_DIR="$HOME/Videos"
 }
 
 class FakeProcessManager extends Fake implements ProcessManager {
-  FakeProcessManager(this.expected);
+  FakeProcessManager(this.expected, {this.canRunExecutable = true});
 
   Map<String, String> expected;
+  final bool canRunExecutable;
 
   @override
   ProcessResult runSync(
@@ -137,5 +160,10 @@ class FakeProcessManager extends Fake implements ProcessManager {
     Encoding stderrEncoding = systemEncoding,
   }) {
     return ProcessResult(0, 0, expected[command[1]], '');
+  }
+
+  @override
+  bool canRun(dynamic executable, {String? workingDirectory}) {
+    return canRunExecutable;
   }
 }
