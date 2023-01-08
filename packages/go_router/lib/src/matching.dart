@@ -134,6 +134,11 @@ class RouteMatchList {
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.first.error;
+
+  @override
+  String toString() {
+    return fullpath;
+  }
 }
 
 /// An error that occurred during matching.
