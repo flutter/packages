@@ -4,6 +4,7 @@
 
 import 'ast.dart';
 import 'functional.dart';
+import 'generator.dart';
 import 'generator_tools.dart';
 
 /// Documentation comment open symbol.
@@ -44,6 +45,20 @@ class SwiftOptions {
   /// [SwiftOptions].
   SwiftOptions merge(SwiftOptions options) {
     return SwiftOptions.fromList(mergeMaps(toMap(), options.toMap()));
+  }
+}
+
+/// Class that manages all Swift code generation.
+class SwiftGenerator extends Generator<SwiftOptions> {
+  /// Instantiates a Swift Generator.
+  SwiftGenerator();
+
+  /// Generates Swift files with specified [SwiftOptions]
+  @override
+  void generate(SwiftOptions languageOptions, Root root, StringSink sink,
+      {FileType fileType = FileType.na}) {
+    assert(fileType == FileType.na);
+    generateSwift(languageOptions, root, sink);
   }
 }
 
@@ -365,6 +380,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     final String nullableConditionPrefix =
         type.isNullable ? '$value == nil ? nil : ' : '';
     return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$forceUnwrap';
+  } else if (type.baseName == 'Object') {
+    // Special-cased to avoid warnings about using 'as' with Any.
+    return type.isNullable ? value : '$value!';
   } else {
     final String castUnwrap = type.isNullable ? '?' : '!';
     return '$value as$castUnwrap ${_swiftTypeForDartType(type)}';

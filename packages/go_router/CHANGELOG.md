@@ -1,3 +1,8 @@
+## 6.0.1
+
+- Fixes crashes when popping navigators manually.
+- Fixes trailing slashes after pops.
+
 ## 6.0.0
 
 - **BREAKING CHANGE**

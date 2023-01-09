@@ -125,6 +125,10 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoUint8List:')
   Uint8List echoUint8List(Uint8List aUint8List);
 
+  /// Returns the passed in generic Object.
+  @ObjCSelector('echoObject:')
+  Object echoObject(Object anObject);
+
   // ========== Syncronous nullable method tests ==========
 
   /// Returns the inner `aString` value from the wrapped object, to test
@@ -161,6 +165,10 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed in Uint8List.
   @ObjCSelector('echoNullableUint8List:')
   Uint8List? echoNullableUint8List(Uint8List? aNullableUint8List);
+
+  /// Returns the passed in generic Object.
+  @ObjCSelector('echoNullableObject:')
+  Object? echoNullableObject(Object? aNullableObject);
 
   // ========== Asyncronous method tests ==========
 

@@ -1,6 +1,10 @@
-## 4.2.16
+## 5.0.1
 
 * [kotlin] Fixes a bug with a missed line break between generated statements in the `fromList` function of the companion object.
+
+## 5.0.0
+
+* Creates new Generator classes for each language.
 
 ## 4.2.15
 

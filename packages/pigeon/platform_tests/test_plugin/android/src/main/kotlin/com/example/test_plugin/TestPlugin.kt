@@ -64,6 +64,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aUint8List
   }
 
+  override fun echoObject(anObject: Any): Any {
+    return anObject
+  }
+
   override fun extractNestedNullableString(wrapper: AllNullableTypesWrapper): String? {
     return wrapper.values.aNullableString
   }
@@ -75,20 +79,29 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun sendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): AllNullableTypes {
     return AllNullableTypes(aNullableBool = aNullableBool, aNullableInt = aNullableInt, aNullableString = aNullableString)
   }
+
   override fun echoNullableInt(aNullableInt: Long?): Long? {
     return aNullableInt
   }
+
   override fun echoNullableDouble(aNullableDouble: Double?): Double? {
     return aNullableDouble
   }
+
   override fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
     return aNullableBool
   }
+
   override fun echoNullableString(aNullableString: String?): String? {
     return aNullableString
   }
+
   override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
     return aNullableUint8List
+  }
+
+  override fun echoNullableObject(aNullableObject: Any?): Any? {
+    return aNullableObject
   }
 
   override fun noopAsync(callback: () -> Unit) {
