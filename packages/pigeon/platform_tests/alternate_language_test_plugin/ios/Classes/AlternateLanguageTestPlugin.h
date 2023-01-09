@@ -4,5 +4,7 @@
 
 #import <Flutter/Flutter.h>
 
-@interface AlternateLanguageTestPlugin : NSObject <FlutterPlugin>
+#import "CoreTests.gen.h"
+
+@interface AlternateLanguageTestPlugin : NSObject <FlutterPlugin, HostIntegrationCoreApi>
 @end

@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "test/primitive.g.h"
+#include "pigeon/primitive.gen.h"
 #include "test/utils/fake_host_messenger.h"
 
 namespace primitive_pigeontest {
@@ -50,7 +50,7 @@ class TestHostApi : public PrimitiveHostApi {
 };
 
 const EncodableValue& GetResult(const EncodableValue& pigeon_response) {
-  return std::get<EncodableMap>(pigeon_response).at(EncodableValue("result"));
+  return std::get<EncodableList>(pigeon_response)[0];
 }
 }  // namespace
 

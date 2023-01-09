@@ -31,16 +31,16 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
-    expect(code, contains('fun fromMap(map: Map<String, Any?>): Foobar'));
-    expect(code, contains('fun toMap(): Map<String, Any?>'));
+    expect(code, contains('fun fromList(list: List<Any?>): Foobar'));
+    expect(code, contains('fun toList(): List<Any?>'));
   });
 
   test('gen one enum', () {
     final Enum anEnum = Enum(
       name: 'Foobar',
-      members: <String>[
-        'one',
-        'two',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
       ],
     );
     final Root root = Root(
@@ -71,7 +71,10 @@ void main() {
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <String>['one', 'two'])
+      Enum(name: 'Foo', members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ])
     ]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
@@ -129,13 +132,13 @@ void main() {
     expect(code, contains('''
         if (api != null) {
           channel.setMessageHandler { message, reply ->
-            val wrapped = hashMapOf<String, Any?>()
+            var wrapped = listOf<Any?>()
             try {
               val args = message as List<Any?>
               val inputArg = args[0] as Input
-              wrapped["result"] = api.doSomething(inputArg)
+              wrapped = listOf<Any?>(api.doSomething(inputArg))
             } catch (exception: Error) {
-              wrapped["error"] = wrapError(exception)
+              wrapped = wrapError(exception)
             }
             reply.reply(wrapped)
           }
@@ -367,8 +370,8 @@ void main() {
     generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
-    expect(code, contains('wrapped["result"] = api.doSomething()'));
-    expect(code, contains('wrapped["error"] = wrapError(exception)'));
+    expect(code, contains('wrapped = listOf<Any?>(api.doSomething())'));
+    expect(code, contains('wrapped = wrapError(exception)'));
     expect(code, contains('reply(wrapped)'));
   });
 
@@ -478,13 +481,11 @@ void main() {
     expect(code, contains('data class Outer'));
     expect(code, contains('data class Nested'));
     expect(code, contains('val nested: Nested? = null'));
-    expect(code, contains('fun fromMap(map: Map<String, Any?>): Outer'));
+    expect(code, contains('fun fromList(list: List<Any?>): Outer'));
     expect(
-        code,
-        contains(
-            'val nested: Nested? = (map["nested"] as? Map<String, Any?>)?.let'));
-    expect(code, contains('Nested.fromMap(it)'));
-    expect(code, contains('fun toMap(): Map<String, Any?>'));
+        code, contains('val nested: Nested? = (list[0] as? List<Any?>)?.let'));
+    expect(code, contains('Nested.fromList(it)'));
+    expect(code, contains('fun toList(): List<Any?>'));
   });
 
   test('gen one async Host Api', () {
@@ -585,9 +586,9 @@ void main() {
   test('gen one enum class', () {
     final Enum anEnum = Enum(
       name: 'Enum1',
-      members: <String>[
-        'one',
-        'two',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
       ],
     );
     final Class klass = Class(
@@ -771,7 +772,7 @@ void main() {
     generateKotlin(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
-    expect(code, contains('wrapped["result"] = api.doit()'));
+    expect(code, contains('wrapped = listOf<Any?>(api.doit())'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -835,7 +836,7 @@ void main() {
         code,
         contains(
             'val yArg = args[1].let { if (it is Int) it.toLong() else it as Long }'));
-    expect(code, contains('wrapped["result"] = api.add(xArg, yArg)'));
+    expect(code, contains('wrapped = listOf<Any?>(api.add(xArg, yArg))'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -1016,6 +1017,7 @@ void main() {
       ' class comment',
       ' class field comment',
       ' enum comment',
+      ' enum member comment',
     ];
     int count = 0;
 
@@ -1072,9 +1074,12 @@ void main() {
             comments[count++],
             unspacedComments[unspacedCount++]
           ],
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
+            EnumMember(name: 'two'),
           ],
         ),
       ],

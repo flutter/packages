@@ -1,3 +1,49 @@
+## 5.0.0
+
+* Creates new Generator classes for each language.
+
+## 4.2.16
+
+* [swift] Fixes warnings with `Object` parameters.
+* [dart] Fixes warnings with `Object` return values.
+* [c++] Generation of APIs that use `Object` no longer fails.
+
+## 4.2.15
+
+* Relocates generator classes. (Reverted)
+
+## 4.2.14
+
+* [c++] Fixes reply sending non EncodableValue wrapped lists.
+
+## 4.2.13
+
+* Add documentation comment support for Enum members.
+
+## 4.2.12
+
+* Updates serialization to use lists instead of maps to improve performance.
+
+## 4.2.11
+
+* [swift] Fixes compressed list data types.
+
+## 4.2.10
+
+* Changes generated Java enum field to be final.
+
+## 4.2.9
+
+* [kotlin] Fixes a bug with some methods that return `void`.
+
+## 4.2.8
+
+* Adds the ability to use `runWithOptions` entrypoint to allow external libraries to use the pigeon easier.
+
+## 4.2.7
+
+* [swift] Fixes a bug when calling methods that return `void`.
+
 ## 4.2.6
 
 * Fixes bug with parsing documentation comments that start with '/'.

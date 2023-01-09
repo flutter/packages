@@ -30,17 +30,16 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: Int32? = nil'));
-    expect(code,
-        contains('static func fromMap(_ map: [String: Any?]) -> Foobar?'));
-    expect(code, contains('func toMap() -> [String: Any?]'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Foobar?'));
+    expect(code, contains('func toList() -> [Any?]'));
   });
 
   test('gen one enum', () {
     final Enum anEnum = Enum(
       name: 'Foobar',
-      members: <String>[
-        'one',
-        'two',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
       ],
     );
     final Root root = Root(
@@ -71,7 +70,10 @@ void main() {
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <String>['one', 'two'])
+      Enum(name: 'Foo', members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ])
     ]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
@@ -187,10 +189,10 @@ void main() {
     expect(code, contains('var aInt: Int32? = nil'));
     expect(code, contains('var aDouble: Double? = nil'));
     expect(code, contains('var aString: String? = nil'));
-    expect(code, contains('var aUint8List: [UInt8]? = nil'));
-    expect(code, contains('var aInt32List: [Int32]? = nil'));
-    expect(code, contains('var aInt64List: [Int64]? = nil'));
-    expect(code, contains('var aFloat64List: [Float64]? = nil'));
+    expect(code, contains('var aUint8List: FlutterStandardTypedData? = nil'));
+    expect(code, contains('var aInt32List: FlutterStandardTypedData? = nil'));
+    expect(code, contains('var aInt64List: FlutterStandardTypedData? = nil'));
+    expect(code, contains('var aFloat64List: FlutterStandardTypedData? = nil'));
   });
 
   test('gen one flutter api', () {
@@ -436,10 +438,9 @@ void main() {
     expect(code, contains('struct Outer'));
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
-    expect(
-        code, contains('static func fromMap(_ map: [String: Any?]) -> Outer?'));
-    expect(code, contains('nested = Nested.fromMap(nestedMap)'));
-    expect(code, contains('func toMap() -> [String: Any?]'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Outer?'));
+    expect(code, contains('nested = Nested.fromList(nestedList)'));
+    expect(code, contains('func toList() -> [Any?]'));
   });
 
   test('gen one async Host Api', () {
@@ -534,9 +535,9 @@ void main() {
   test('gen one enum class', () {
     final Enum anEnum = Enum(
       name: 'Enum1',
-      members: <String>[
-        'one',
-        'two',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
       ],
     );
     final Class klass = Class(
@@ -955,6 +956,7 @@ void main() {
       ' class comment',
       ' class field comment',
       ' enum comment',
+      ' enum member comment',
     ];
     int count = 0;
 
@@ -1011,9 +1013,12 @@ void main() {
             comments[count++],
             unspacedComments[unspacedCount++]
           ],
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
+            EnumMember(name: 'two'),
           ],
         ),
       ],

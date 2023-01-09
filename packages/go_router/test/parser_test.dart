@@ -56,9 +56,8 @@ void main() {
             const RouteInformation(location: '/'), context);
     List<RouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
-    expect(matches[0].queryParams.isEmpty, isTrue);
+    expect(matchesObj.uri.toString(), '/');
     expect(matches[0].extra, isNull);
-    expect(matches[0].fullUriString, '/');
     expect(matches[0].subloc, '/');
     expect(matches[0].route, routes[0]);
 
@@ -67,17 +66,12 @@ void main() {
         RouteInformation(location: '/abc?def=ghi', state: extra), context);
     matches = matchesObj.matches;
     expect(matches.length, 2);
-    expect(matches[0].queryParams.length, 1);
-    expect(matches[0].queryParams['def'], 'ghi');
+    expect(matchesObj.uri.toString(), '/abc?def=ghi');
     expect(matches[0].extra, extra);
-    expect(matches[0].fullUriString, '/?def=ghi');
     expect(matches[0].subloc, '/');
     expect(matches[0].route, routes[0]);
 
-    expect(matches[1].queryParams.length, 1);
-    expect(matches[1].queryParams['def'], 'ghi');
     expect(matches[1].extra, extra);
-    expect(matches[1].fullUriString, '/abc?def=ghi');
     expect(matches[1].subloc, '/abc');
     expect(matches[1].route, routes[0].routes[0]);
   });
@@ -195,9 +189,8 @@ void main() {
             const RouteInformation(location: '/def'), context);
     final List<RouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
-    expect(matches[0].queryParams.isEmpty, isTrue);
+    expect(matchesObj.uri.toString(), '/def');
     expect(matches[0].extra, isNull);
-    expect(matches[0].fullUriString, '/def');
     expect(matches[0].subloc, '/def');
     expect(matches[0].error!.toString(),
         'Exception: no routes for location: /def');
@@ -231,18 +224,15 @@ void main() {
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
-    expect(matches[0].queryParams.isEmpty, isTrue);
+    expect(matchesObj.uri.toString(), '/123/family/456');
+    expect(matchesObj.pathParameters.length, 2);
+    expect(matchesObj.pathParameters['uid'], '123');
+    expect(matchesObj.pathParameters['fid'], '456');
     expect(matches[0].extra, isNull);
-    expect(matches[0].fullUriString, '/');
     expect(matches[0].subloc, '/');
 
-    expect(matches[1].queryParams.isEmpty, isTrue);
     expect(matches[1].extra, isNull);
-    expect(matches[1].fullUriString, '/123/family/456');
     expect(matches[1].subloc, '/123/family/456');
-    expect(matches[1].encodedParams.length, 2);
-    expect(matches[1].encodedParams['uid'], '123');
-    expect(matches[1].encodedParams['fid'], '456');
   });
 
   testWidgets(
@@ -279,10 +269,9 @@ void main() {
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
-    expect(matches[0].fullUriString, '/');
+    expect(matchesObj.uri.toString(), '/123/family/345');
     expect(matches[0].subloc, '/');
 
-    expect(matches[1].fullUriString, '/123/family/345');
     expect(matches[1].subloc, '/123/family/345');
   });
 
@@ -320,10 +309,9 @@ void main() {
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches.length, 2);
-    expect(matches[0].fullUriString, '/');
+    expect(matchesObj.uri.toString(), '/123/family/345');
     expect(matches[0].subloc, '/');
 
-    expect(matches[1].fullUriString, '/123/family/345');
     expect(matches[1].subloc, '/123/family/345');
   });
 
