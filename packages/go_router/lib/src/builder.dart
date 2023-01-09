@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -51,6 +52,18 @@ class RouteBuilder {
 
   final GoRouterStateRegistry _registry = GoRouterStateRegistry();
 
+  final Map<Page<Object?>, RouteMatch> _routeMatchLookUp =
+      <Page<Object?>, RouteMatch>{};
+
+  /// Looks the the [RouteMatch] for a given [Page].
+  ///
+  /// The [Page] must be in the latest [Navigator.pages]; otherwise, this method
+  /// returns null.
+  RouteMatch? getRouteMatchForPage(Page<Object?> page) =>
+      _routeMatchLookUp[page];
+
+  // final Map<>
+
   /// Builds the top-level Navigator for the given [RouteMatchList].
   Widget build(
     BuildContext context,
@@ -58,6 +71,7 @@ class RouteBuilder {
     PopPageCallback onPopPage,
     bool routerNeglect,
   ) {
+    _routeMatchLookUp.clear();
     if (matchList.isEmpty) {
       // The build method can be called before async redirect finishes. Build a
       // empty box until then.
@@ -120,10 +134,15 @@ class RouteBuilder {
       GlobalKey<NavigatorState> navigatorKey,
       Map<Page<Object?>, GoRouterState> registry) {
     try {
+      assert(_routeMatchLookUp.isEmpty);
       final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
           <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
       _buildRecursive(context, matchList, 0, onPopPage, routerNeglect,
           keyToPage, navigatorKey, registry);
+
+      // Every Page should have a corresponding RouteMatch.
+      assert(keyToPage.values.flattened
+          .every((Page<Object?> page) => _routeMatchLookUp.containsKey(page)));
       return keyToPage[navigatorKey]!;
     } on _RouteBuilderError catch (e) {
       return <Page<Object?>>[
@@ -272,12 +291,13 @@ class RouteBuilder {
       page = null;
     }
 
+    page ??= buildPage(context, state, Builder(builder: (BuildContext context) {
+      return _callRouteBuilder(context, state, match, childWidget: child);
+    }));
+    _routeMatchLookUp[page] = match;
+
     // Return the result of the route's builder() or pageBuilder()
-    return page ??
-        // Uses a Builder to make sure its rebuild scope is limited to the page.
-        buildPage(context, state, Builder(builder: (BuildContext context) {
-          return _callRouteBuilder(context, state, match, childWidget: child);
-        }));
+    return page;
   }
 
   /// Calls the user-provided route builder from the [RouteMatch]'s [RouteBase].
@@ -364,7 +384,7 @@ class RouteBuilder {
     _cacheAppType(context);
     return _pageBuilderForAppType!(
       key: state.pageKey,
-      name: state.name ?? state.fullpath,
+      name: state.name ?? state.path,
       arguments: <String, String>{...state.params, ...state.queryParams},
       restorationId: state.pageKey.fullPath,
       child: child,

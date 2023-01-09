@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
+import 'delegate.dart';
 import 'match.dart';
 import 'page_key.dart';
 import 'path_utils.dart';
@@ -57,7 +58,7 @@ class RouteMatchList {
   static RouteMatchList empty =
       RouteMatchList(<RouteMatch>[], Uri.parse(''), const <String, String>{});
 
-  static String _generateFullPath(List<RouteMatch> matches) {
+  static String _generateFullPath(Iterable<RouteMatch> matches) {
     final StringBuffer buffer = StringBuffer();
     bool addsSlash = false;
     for (final RouteMatch match in matches) {
@@ -97,18 +98,27 @@ class RouteMatchList {
     _matches.add(match);
   }
 
-  /// Removes the last match.
-  RouteMatch pop() {
-    if (_matches.last.route is GoRoute) {
-      final GoRoute route = _matches.last.route as GoRoute;
-      _uri = _uri.replace(path: removePatternFromPath(route.path, _uri.path));
-    }
-    final RouteMatch routeMatch = _matches.removeLast();
+  /// Removes the match from the list.
+  void remove(RouteMatch match) {
+    final int index = _matches.indexOf(match);
+    assert(index != -1);
+    _matches.removeRange(index, _matches.length);
+
     // Also pop ShellRoutes when there are no subsequent route matches
     while (_matches.isNotEmpty && _matches.last.route is ShellRoute) {
       _matches.removeLast();
     }
-    return routeMatch;
+
+    final String fullPath = _generateFullPath(
+        _matches.where((RouteMatch match) => match is! ImperativeRouteMatch));
+    // Need to remove path parameters that are no longer in the fullPath.
+    final List<String> newParameters = <String>[];
+    patternToRegExp(fullPath, newParameters);
+    final Set<String> validParameters = newParameters.toSet();
+    pathParameters.removeWhere(
+        (String key, String value) => !validParameters.contains(key));
+
+    _uri = _uri.replace(path: patternToPath(fullPath, pathParameters));
   }
 
   /// An optional object provided by the app during navigation.
@@ -234,7 +244,7 @@ RouteMatchList errorScreen(Uri uri, String errorMessage) {
               throw UnimplementedError();
             },
           ),
-          pageKey: const PageKey(path :'error'),
+          pageKey: const PageKey(path: 'error'),
         ),
       ],
       uri,

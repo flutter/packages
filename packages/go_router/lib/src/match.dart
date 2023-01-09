@@ -71,6 +71,6 @@ class RouteMatch {
   /// An exception if there was an error during matching.
   final Exception? error;
 
-  /// Optional value key of type string, to hold a unique reference to a page.
+  /// Value key, to hold a unique reference to a page.
   final PageKey pageKey;
 }

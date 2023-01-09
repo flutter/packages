@@ -47,6 +47,8 @@ class TestPlugin : public flutter::Plugin,
       const std::string& a_string) override;
   core_tests_pigeontest::ErrorOr<std::vector<uint8_t>> EchoUint8List(
       const std::vector<uint8_t>& a_uint8_list) override;
+  core_tests_pigeontest::ErrorOr<flutter::EncodableValue> EchoObject(
+      const flutter::EncodableValue& an_object) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>>
   ExtractNestedNullableString(
       const core_tests_pigeontest::AllNullableTypesWrapper& wrapper) override;
@@ -67,7 +69,8 @@ class TestPlugin : public flutter::Plugin,
   core_tests_pigeontest::ErrorOr<std::optional<std::vector<uint8_t>>>
   EchoNullableUint8List(
       const std::vector<uint8_t>* a_nullable_uint8_list) override;
-
+  core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+  EchoNullableObject(const flutter::EncodableValue* a_nullable_object) override;
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;

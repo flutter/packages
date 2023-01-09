@@ -17,7 +17,7 @@ import 'typedefs.dart';
 
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
-    with PopNavigatorRouterDelegateMixin<RouteMatchList>, ChangeNotifier {
+    with ChangeNotifier {
   /// Constructor for GoRouter's implementation of the RouterDelegate base
   /// class.
   GoRouterDelegate({
@@ -146,7 +146,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (!route.didPop(result)) {
       return false;
     }
-    _matchList.pop();
+    final Page<Object?> page = route.settings as Page<Object?>;
+    final RouteMatch? match = builder.getRouteMatchForPage(page);
+    if (match == null) {
+      return true;
+    }
+    _matchList.remove(match);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
@@ -164,7 +169,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///   the page key when possible.
   void pushReplacement(RouteMatchList matches) {
     assert(matches.last.route is! ShellRoute);
-    _matchList.pop();
+    _matchList.remove(_matchList.last);
     push(matches); // [push] will notify the listeners.
   }
 
@@ -177,7 +182,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///   always use a new page key.
   void replace(RouteMatchList matches) {
     assert(matches.last.route is! ShellRoute);
-    PageKey pageKey = _matchList.pop().pageKey;
+    final RouteMatch routeMatch = _matchList.last;
+    PageKey pageKey = routeMatch.pageKey;
+    _matchList.remove(routeMatch);
     if (pageKey.path != matches.fullpath) {
       // If the same page is not being replace, (ex: 'family' and
       // 'family/:fid'), We don't try to reuse the same key.
@@ -192,7 +199,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   RouteMatchList get matches => _matchList;
 
   /// For use by the Router architecture as part of the RouterDelegate.
-  @override
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;
 
   /// For use by the Router architecture as part of the RouterDelegate.

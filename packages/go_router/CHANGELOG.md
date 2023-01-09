@@ -2,6 +2,11 @@
 
 - Adds `replace` method to that replaces the current route with a new one and keeps the same page key if the path is the same. This is useful for when you want to update the query params without changing the page key ([#115902]https://github.com/flutter/flutter/issues/115902).
 
+## 6.0.1
+
+- Fixes crashes when popping navigators manually.
+- Fixes trailing slashes after pops.
+
 ## 6.0.0
 
 - **BREAKING CHANGE**
