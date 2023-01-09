@@ -299,6 +299,26 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     });
   }
 
+  /// Replaces the top-most page of the page stack with the named route w/
+  /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
+  /// 'p1'}`.
+  ///
+  /// See also:
+  /// * [pushNamed] which pushes the given location onto the page stack.
+  /// * [pushReplacementNamed] which replaces the top-most page of the page
+  ///   stack but always use a new page key.
+  void replaceNamed(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Object? extra,
+  }) {
+    replace(
+      namedLocation(name, params: params, queryParams: queryParams),
+      extra: extra,
+    );
+  }
+
   /// Pop the top-most route off the current screen.
   ///
   /// If the top-most route is a pop up or dialog, this method pops it instead

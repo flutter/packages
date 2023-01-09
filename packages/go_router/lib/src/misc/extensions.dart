@@ -105,5 +105,21 @@ extension GoRouterHelper on BuildContext {
   /// * [pushReplacement] which replaces the top-most page of the page stack but
   ///   always use a new page key.
   void replace(String location, {Object? extra}) =>
-      GoRouter.of(this).pushReplacement(location, extra: extra);
+      GoRouter.of(this).replace(location, extra: extra);
+
+  /// Replaces the top-most page of the page stack with the named route w/
+  /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
+  /// 'p1'}`.
+  ///
+  /// See also:
+  /// * [pushNamed] which pushes the given location onto the page stack.
+  /// * [pushReplacementNamed] which replaces the top-most page of the page
+  ///   stack but always use a new page key.
+  void replaceNamed(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Object? extra,
+  }) =>
+      GoRouter.of(this).replaceNamed(name, extra: extra);
 }
