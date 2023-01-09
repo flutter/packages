@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart = 2.8
-
 import 'package:flutter_migrate/src/base/context.dart';
 import 'package:flutter_migrate/src/base/file_system.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
@@ -22,13 +20,13 @@ import 'src/fakes.dart';
 import 'src/test_flutter_command_runner.dart';
 
 void main() {
-  FileSystem fileSystem;
-  BufferLogger logger;
-  FakeTerminal terminal;
-  ProcessManager processManager;
-  Directory appDir;
-  Directory stagingDir;
-  MigrateResolveConflictsCommand command;
+  late FileSystem fileSystem;
+  late BufferLogger logger;
+  late FakeTerminal terminal;
+  late ProcessManager processManager;
+  late Directory appDir;
+  late Directory stagingDir;
+  late MigrateResolveConflictsCommand command;
 
   setUp(() {
     fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
@@ -709,7 +707,7 @@ class FakeTerminal extends Fake implements Terminal {
   }
 
   FakeTerminal._private({
-    this.stdio,
+    required this.stdio,
   }) : terminal = AnsiTerminal(
           stdio: stdio,
         );
@@ -732,9 +730,9 @@ class FakeTerminal extends Fake implements Terminal {
 
   @override
   Future<String> promptForCharInput(List<String> acceptedCharacters,
-          {Logger logger,
-          String prompt,
-          int defaultChoiceIndex,
+          {required Logger logger,
+          String? prompt,
+          int? defaultChoiceIndex,
           bool displayAcceptedCharacters = true}) =>
       terminal.promptForCharInput(acceptedCharacters,
           logger: logger,
