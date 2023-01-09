@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
+import 'delegate.dart';
 import 'match.dart';
 import 'path_utils.dart';
 
@@ -18,27 +19,27 @@ class RouteMatcher {
 
   /// Finds the routes that matched the given URL.
   RouteMatchList findMatch(String location, {Object? extra}) {
-    final String canonicalLocation = canonicalUri(location);
+    final Uri uri = Uri.parse(canonicalUri(location));
+
+    final Map<String, String> pathParameters = <String, String>{};
     final List<RouteMatch> matches =
-        _getLocRouteMatches(canonicalLocation, extra);
-    return RouteMatchList(matches);
+        _getLocRouteMatches(uri, extra, pathParameters);
+    return RouteMatchList(matches, uri, pathParameters);
   }
 
-  List<RouteMatch> _getLocRouteMatches(String location, Object? extra) {
-    final Uri uri = Uri.parse(location);
-    final List<RouteMatch> result = _getLocRouteRecursively(
+  List<RouteMatch> _getLocRouteMatches(
+      Uri uri, Object? extra, Map<String, String> pathParameters) {
+    final List<RouteMatch>? result = _getLocRouteRecursively(
       loc: uri.path,
       restLoc: uri.path,
       routes: configuration.routes,
-      parentFullpath: '',
       parentSubloc: '',
-      queryParams: uri.queryParameters,
-      queryParametersAll: uri.queryParametersAll,
+      pathParameters: pathParameters,
       extra: extra,
     );
 
-    if (result.isEmpty) {
-      throw MatcherError('no routes for location', location);
+    if (result == null) {
+      throw MatcherError('no routes for location', uri.toString());
     }
 
     return result;
@@ -48,12 +49,42 @@ class RouteMatcher {
 /// The list of [RouteMatch] objects.
 class RouteMatchList {
   /// RouteMatchList constructor.
-  RouteMatchList(this._matches);
+  RouteMatchList(List<RouteMatch> matches, this._uri, this.pathParameters)
+      : _matches = matches,
+        fullpath = _generateFullPath(matches);
 
   /// Constructs an empty matches object.
-  factory RouteMatchList.empty() => RouteMatchList(<RouteMatch>[]);
+  static RouteMatchList empty =
+      RouteMatchList(<RouteMatch>[], Uri.parse(''), const <String, String>{});
+
+  static String _generateFullPath(Iterable<RouteMatch> matches) {
+    final StringBuffer buffer = StringBuffer();
+    bool addsSlash = false;
+    for (final RouteMatch match in matches) {
+      final RouteBase route = match.route;
+      if (route is GoRoute) {
+        if (addsSlash) {
+          buffer.write('/');
+        }
+        buffer.write(route.path);
+        addsSlash = addsSlash || route.path != '/';
+      }
+    }
+    return buffer.toString();
+  }
 
   final List<RouteMatch> _matches;
+
+  /// the full path pattern that matches the uri.
+  /// /family/:fid/person/:pid
+  final String fullpath;
+
+  /// Parameters for the matched route, URI-encoded.
+  final Map<String, String> pathParameters;
+
+  /// The uri of the current match.
+  Uri get uri => _uri;
+  Uri _uri;
 
   /// Returns true if there are no matches.
   bool get isEmpty => _matches.isEmpty;
@@ -61,23 +92,32 @@ class RouteMatchList {
   /// Returns true if there are matches.
   bool get isNotEmpty => _matches.isNotEmpty;
 
-  /// The original URL that was matched.
-  Uri get location =>
-      _matches.isEmpty ? Uri() : Uri.parse(_matches.last.fullUriString);
-
   /// Pushes a match onto the list of matches.
   void push(RouteMatch match) {
     _matches.add(match);
   }
 
-  /// Removes the last match.
-  void pop() {
-    _matches.removeLast();
+  /// Removes the match from the list.
+  void remove(RouteMatch match) {
+    final int index = _matches.indexOf(match);
+    assert(index != -1);
+    _matches.removeRange(index, _matches.length);
 
     // Also pop ShellRoutes when there are no subsequent route matches
     while (_matches.isNotEmpty && _matches.last.route is ShellRoute) {
       _matches.removeLast();
     }
+
+    final String fullPath = _generateFullPath(
+        _matches.where((RouteMatch match) => match is! ImperativeRouteMatch));
+    // Need to remove path parameters that are no longer in the fullPath.
+    final List<String> newParameters = <String>[];
+    patternToRegExp(fullPath, newParameters);
+    final Set<String> validParameters = newParameters.toSet();
+    pathParameters.removeWhere(
+        (String key, String value) => !validParameters.contains(key));
+
+    _uri = _uri.replace(path: patternToPath(fullPath, pathParameters));
   }
 
   /// An optional object provided by the app during navigation.
@@ -113,38 +153,25 @@ class MatcherError extends Error {
   }
 }
 
-List<RouteMatch> _getLocRouteRecursively({
+List<RouteMatch>? _getLocRouteRecursively({
   required String loc,
   required String restLoc,
   required String parentSubloc,
   required List<RouteBase> routes,
-  required String parentFullpath,
-  required Map<String, String> queryParams,
-  required Map<String, List<String>> queryParametersAll,
+  required Map<String, String> pathParameters,
   required Object? extra,
 }) {
-  bool debugGatherAllMatches = false;
-  assert(() {
-    debugGatherAllMatches = true;
-    return true;
-  }());
-  final List<List<RouteMatch>> result = <List<RouteMatch>>[];
+  List<RouteMatch>? result;
+  late Map<String, String> subPathParameters;
   // find the set of matches at this level of the tree
   for (final RouteBase route in routes) {
-    late final String fullpath;
-    if (route is GoRoute) {
-      fullpath = concatenatePaths(parentFullpath, route.path);
-    } else if (route is ShellRoute) {
-      fullpath = parentFullpath;
-    }
+    subPathParameters = <String, String>{};
 
     final RouteMatch? match = RouteMatch.match(
       route: route,
       restLoc: restLoc,
       parentSubloc: parentSubloc,
-      fullpath: fullpath,
-      queryParams: queryParams,
-      queryParametersAll: queryParametersAll,
+      pathParameters: subPathParameters,
       extra: extra,
     );
 
@@ -157,7 +184,7 @@ List<RouteMatch> _getLocRouteRecursively({
       // If it is a complete match, then return the matched route
       // NOTE: need a lower case match because subloc is canonicalized to match
       // the path case whereas the location can be of any case and still match
-      result.add(<RouteMatch>[match]);
+      result = <RouteMatch>[match];
     } else if (route.routes.isEmpty) {
       // If it is partial match but no sub-routes, bail.
       continue;
@@ -177,59 +204,48 @@ List<RouteMatch> _getLocRouteRecursively({
         newParentSubLoc = match.subloc;
       }
 
-      final List<RouteMatch> subRouteMatch = _getLocRouteRecursively(
+      final List<RouteMatch>? subRouteMatch = _getLocRouteRecursively(
         loc: loc,
         restLoc: childRestLoc,
         parentSubloc: newParentSubLoc,
         routes: route.routes,
-        parentFullpath: fullpath,
-        queryParams: queryParams,
-        queryParametersAll: queryParametersAll,
+        pathParameters: subPathParameters,
         extra: extra,
-      ).toList();
+      );
 
       // If there's no sub-route matches, there is no match for this location
-      if (subRouteMatch.isEmpty) {
+      if (subRouteMatch == null) {
         continue;
       }
-      result.add(<RouteMatch>[match, ...subRouteMatch]);
+      result = <RouteMatch>[match, ...subRouteMatch];
     }
     // Should only reach here if there is a match.
-    if (debugGatherAllMatches) {
-      continue;
-    } else {
-      break;
-    }
+    break;
   }
-
-  if (result.isEmpty) {
-    return <RouteMatch>[];
+  if (result != null) {
+    pathParameters.addAll(subPathParameters);
   }
-
-  // If there are multiple routes that match the location, returning the first one.
-  // To make predefined routes to take precedence over dynamic routes eg. '/:id'
-  // consider adding the dynamic route at the end of the routes
-  return result.first;
+  return result;
 }
 
 /// The match used when there is an error during parsing.
 RouteMatchList errorScreen(Uri uri, String errorMessage) {
   final Exception error = Exception(errorMessage);
-  return RouteMatchList(<RouteMatch>[
-    RouteMatch(
-      subloc: uri.path,
-      fullpath: uri.path,
-      encodedParams: <String, String>{},
-      queryParams: uri.queryParameters,
-      queryParametersAll: uri.queryParametersAll,
-      extra: null,
-      error: error,
-      route: GoRoute(
-        path: uri.toString(),
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          throw UnimplementedError();
-        },
-      ),
-    ),
-  ]);
+  return RouteMatchList(
+      <RouteMatch>[
+        RouteMatch(
+          subloc: uri.path,
+          extra: null,
+          error: error,
+          route: GoRoute(
+            path: uri.toString(),
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              throw UnimplementedError();
+            },
+          ),
+          pageKey: const ValueKey<String>('error'),
+        ),
+      ],
+      uri,
+      const <String, String>{});
 }

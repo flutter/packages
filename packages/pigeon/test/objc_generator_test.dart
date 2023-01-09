@@ -32,7 +32,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -42,9 +43,9 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[
       Enum(
         name: 'Enum1',
-        members: <String>[
-          'one',
-          'two',
+        members: <EnumMember>[
+          EnumMember(name: 'one'),
+          EnumMember(name: 'two'),
         ],
       )
     ]);
@@ -60,9 +61,9 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[
       Enum(
         name: 'Enum1',
-        members: <String>[
-          'one',
-          'two',
+        members: <EnumMember>[
+          EnumMember(name: 'one'),
+          EnumMember(name: 'two'),
         ],
       )
     ]);
@@ -95,22 +96,23 @@ void main() {
       enums: <Enum>[
         Enum(
           name: 'Enum1',
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(name: 'one'),
+            EnumMember(name: 'two'),
           ],
         )
       ],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
     expect(
         code,
         contains(
-            'pigeonResult.enum1 = [GetNullableObject(dict, @"enum1") integerValue];'));
+            'pigeonResult.enum1 = [GetNullableObjectAtIndex(list, 1) integerValue];'));
   });
 
   test('primitive enum host', () {
@@ -127,10 +129,14 @@ void main() {
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <String>['one', 'two'])
+      Enum(name: 'Foo', members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ])
     ]);
     final StringBuffer sink = StringBuffer();
-    const ObjcOptions options = ObjcOptions(header: 'foo.h', prefix: 'AC');
+    const ObjcOptions options =
+        ObjcOptions(headerIncludePath: 'foo.h', prefix: 'AC');
     {
       generateObjcHeader(options, root, sink);
       final String code = sink.toString();
@@ -161,9 +167,12 @@ void main() {
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <String>['one', 'two'])
+      Enum(name: 'Foo', members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ])
     ]);
-    const ObjcOptions options = ObjcOptions(header: 'foo.h');
+    const ObjcOptions options = ObjcOptions(headerIncludePath: 'foo.h');
     final List<Error> errors = validateObjc(options, root);
     expect(errors.length, 1);
     expect(errors[0].message, contains('Nullable enum'));
@@ -190,15 +199,16 @@ void main() {
       enums: <Enum>[
         Enum(
           name: 'Enum1',
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(name: 'one'),
+            EnumMember(name: 'two'),
           ],
         )
       ],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@property(nonatomic, assign) Enum1 enum1'));
   });
@@ -269,7 +279,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
@@ -316,7 +327,8 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@class FlutterStandardTypedData;'));
@@ -344,11 +356,12 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
     expect(code,
-        contains('pigeonResult.aBool = GetNullableObject(dict, @"aBool");'));
+        contains('pigeonResult.aBool = GetNullableObjectAtIndex(list, 0);'));
   });
 
   test('nested class header', () {
@@ -365,7 +378,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code,
         contains('@property(nonatomic, strong, nullable) Input * nested;'));
@@ -385,13 +399,15 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(
         code,
         contains(
-            'pigeonResult.nested = [Input nullableFromMap:GetNullableObject(dict, @"nested")];'));
-    expect(code, matches('[self.nested toMap].*@"nested"'));
+            'pigeonResult.nested = [Input nullableFromList:(GetNullableObjectAtIndex(list, 0))];'));
+    expect(
+        code, contains('self.nested ? [self.nested toList] : [NSNull null]'));
   });
 
   test('prefix class header', () {
@@ -489,7 +505,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('ABCInput fromMap'));
+    expect(code, contains('ABCInput fromList'));
     expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
     expect(code, contains('void ABCApiSetup('));
   });
@@ -523,7 +539,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
     expect(
@@ -562,7 +579,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(headerIncludePath: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
     expect(code, matches('void.*doSomething.*Input.*Output.*{'));
@@ -592,7 +610,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(code, contains('(void)doSomething:'));
   });
@@ -621,7 +641,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, matches('[.*doSomething:.*]'));
@@ -652,7 +674,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
   });
@@ -681,7 +705,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
     expect(code, contains('completion(nil)'));
@@ -705,7 +731,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(code, matches('ABCOutput.*doSomethingWithError:[(]FlutterError'));
   });
@@ -728,7 +756,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(code, matches('output.*=.*api doSomethingWithError:&error'));
   });
@@ -751,7 +781,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -777,7 +809,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -895,7 +929,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -934,7 +970,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -961,7 +999,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -981,7 +1021,9 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1020,7 +1062,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1058,7 +1102,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1078,7 +1124,9 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1105,7 +1153,9 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1122,7 +1172,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
       ObjcOptions(
-          header: 'foo.h',
+          headerIncludePath: 'foo.h',
           prefix: 'ABC',
           copyrightHeader: makeIterable('hello world')),
       root,
@@ -1137,7 +1187,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
       ObjcOptions(
-          header: 'foo.h',
+          headerIncludePath: 'foo.h',
           prefix: 'ABC',
           copyrightHeader: makeIterable('hello world')),
       root,
@@ -1168,7 +1218,9 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        root,
+        sink);
     final String code = sink.toString();
     expect(code, contains('NSArray<NSNumber *> * field1'));
   });
@@ -1198,14 +1250,18 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1239,14 +1295,18 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
@@ -1283,7 +1343,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSArray<NSNumber *> *> *)arg'));
     }
@@ -1310,7 +1372,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(
           code, contains('- (nullable NSArray<NSNumber *> *)doitWithError:'));
@@ -1318,7 +1382,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(code, contains('NSArray<NSNumber *> *output ='));
     }
@@ -1345,7 +1411,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(
           code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
@@ -1353,7 +1421,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(
           code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
@@ -1382,7 +1452,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1392,7 +1464,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
       expect(code,
@@ -1427,7 +1501,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1437,7 +1513,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
       expect(code,
@@ -1470,7 +1548,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1480,7 +1560,9 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          root,
+          sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1524,14 +1606,18 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          divideRoot,
+          sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
-          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          divideRoot,
+          sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
@@ -1542,7 +1628,7 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
         divideRoot,
         sink,
       );
@@ -1552,7 +1638,7 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
-        const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
+        const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
         divideRoot,
         sink,
       );
@@ -1748,8 +1834,12 @@ void main() {
       ' class comment',
       ' class field comment',
       ' enum comment',
+      ' enum member comment',
     ];
     int count = 0;
+
+    final List<String> unspacedComments = <String>['////////'];
+    int unspacedCount = 0;
 
     final Root root = Root(
       apis: <Api>[
@@ -1797,10 +1887,16 @@ void main() {
       enums: <Enum>[
         Enum(
           name: 'enum',
-          documentationComments: <String>[comments[count++]],
-          members: <String>[
-            'one',
-            'two',
+          documentationComments: <String>[
+            comments[count++],
+            unspacedComments[unspacedCount++]
+          ],
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
+            EnumMember(name: 'two'),
           ],
         ),
       ],
@@ -1811,6 +1907,7 @@ void main() {
     for (final String comment in comments) {
       expect(code, contains('///$comment'));
     }
+    expect(code, contains('/// ///'));
   });
 
   test('doesnt create codecs if no custom datatypes', () {

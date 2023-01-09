@@ -6,7 +6,7 @@
 
 #include <optional>
 
-#include "test/nullable_returns.g.h"
+#include "pigeon/nullable_returns.gen.h"
 #include "test/utils/fake_host_messenger.h"
 
 namespace nullable_returns_pigeontest {
@@ -42,7 +42,7 @@ class TestNullableReturnHostApi : public NullableReturnHostApi {
 };
 
 const EncodableValue& GetResult(const EncodableValue& pigeon_response) {
-  return std::get<EncodableMap>(pigeon_response).at(EncodableValue("result"));
+  return std::get<EncodableList>(pigeon_response)[0];
 }
 }  // namespace
 

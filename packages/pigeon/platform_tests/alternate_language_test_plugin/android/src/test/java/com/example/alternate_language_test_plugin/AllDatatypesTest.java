@@ -7,19 +7,19 @@ package com.example.alternate_language_test_plugin;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import com.example.alternate_language_test_plugin.AllDatatypes.*;
+import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
+import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import org.junit.Test;
 
 public class AllDatatypesTest {
   @Test
   public void nullValues() {
-    Everything everything = new Everything();
+    AllNullableTypes everything = new AllNullableTypes();
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
     doAnswer(
             invocation -> {
@@ -27,31 +27,32 @@ public class AllDatatypesTest {
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
               ArrayList<Object> args =
-                  (ArrayList<Object>) FlutterEverything.getCodec().decodeMessage(message);
-              ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
+                  (ArrayList<Object>) FlutterIntegrationCoreApi.getCodec().decodeMessage(message);
+              ByteBuffer replyData =
+                  FlutterIntegrationCoreApi.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);
               return null;
             })
         .when(binaryMessenger)
         .send(anyString(), any(), any());
-    FlutterEverything api = new FlutterEverything(binaryMessenger);
+    FlutterIntegrationCoreApi api = new FlutterIntegrationCoreApi(binaryMessenger);
     boolean[] didCall = {false};
-    api.echo(
+    api.echoAllNullableTypes(
         everything,
         (result) -> {
           didCall[0] = true;
-          assertNull(everything.getABool());
-          assertNull(everything.getAnInt());
-          assertNull(everything.getADouble());
-          assertNull(everything.getAString());
-          assertNull(everything.getAByteArray());
-          assertNull(everything.getA4ByteArray());
-          assertNull(everything.getA8ByteArray());
-          assertNull(everything.getAFloatArray());
-          assertNull(everything.getAList());
-          assertNull(everything.getAMap());
-          assertNull(everything.getMapWithObject());
+          assertNull(everything.getANullableBool());
+          assertNull(everything.getANullableInt());
+          assertNull(everything.getANullableDouble());
+          assertNull(everything.getANullableString());
+          assertNull(everything.getANullableByteArray());
+          assertNull(everything.getANullable4ByteArray());
+          assertNull(everything.getANullable8ByteArray());
+          assertNull(everything.getANullableFloatArray());
+          assertNull(everything.getANullableList());
+          assertNull(everything.getANullableMap());
+          assertNull(everything.getNullableMapWithObject());
         });
     assertTrue(didCall[0]);
   }
@@ -82,18 +83,18 @@ public class AllDatatypesTest {
 
   @Test
   public void hasValues() {
-    Everything everything = new Everything();
-    everything.setABool(false);
-    everything.setAnInt(1234L);
-    everything.setADouble(2.0);
-    everything.setAString("hello");
-    everything.setAByteArray(new byte[] {1, 2, 3, 4});
-    everything.setA4ByteArray(new int[] {1, 2, 3, 4});
-    everything.setA8ByteArray(new long[] {1, 2, 3, 4});
-    everything.setAFloatArray(new double[] {0.5, 0.25, 1.5, 1.25});
-    everything.setAList(Arrays.asList(new int[] {1, 2, 3}));
-    everything.setAMap(makeMap("hello", 1234));
-    everything.setMapWithObject(makeStringMap("hello", 1234));
+    AllNullableTypes everything = new AllNullableTypes();
+    everything.setANullableBool(false);
+    everything.setANullableInt(1234L);
+    everything.setANullableDouble(2.0);
+    everything.setANullableString("hello");
+    everything.setANullableByteArray(new byte[] {1, 2, 3, 4});
+    everything.setANullable4ByteArray(new int[] {1, 2, 3, 4});
+    everything.setANullable8ByteArray(new long[] {1, 2, 3, 4});
+    everything.setANullableFloatArray(new double[] {0.5, 0.25, 1.5, 1.25});
+    everything.setANullableList(Arrays.asList(new int[] {1, 2, 3}));
+    everything.setANullableMap(makeMap("hello", 1234));
+    everything.setNullableMapWithObject(makeStringMap("hello", 1234));
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
     doAnswer(
             invocation -> {
@@ -101,48 +102,56 @@ public class AllDatatypesTest {
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
               ArrayList<Object> args =
-                  (ArrayList<Object>) FlutterEverything.getCodec().decodeMessage(message);
-              ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
+                  (ArrayList<Object>) FlutterIntegrationCoreApi.getCodec().decodeMessage(message);
+              ByteBuffer replyData =
+                  FlutterIntegrationCoreApi.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);
               return null;
             })
         .when(binaryMessenger)
         .send(anyString(), any(), any());
-    FlutterEverything api = new FlutterEverything(binaryMessenger);
+    FlutterIntegrationCoreApi api = new FlutterIntegrationCoreApi(binaryMessenger);
     boolean[] didCall = {false};
-    api.echo(
+    api.echoAllNullableTypes(
         everything,
         (result) -> {
           didCall[0] = true;
-          assertEquals(everything.getABool(), result.getABool());
-          assertEquals(everything.getAnInt(), result.getAnInt());
-          assertEquals(everything.getADouble(), result.getADouble());
-          assertEquals(everything.getAString(), result.getAString());
-          assertArrayEquals(everything.getAByteArray(), result.getAByteArray());
-          assertArrayEquals(everything.getA4ByteArray(), result.getA4ByteArray());
-          assertArrayEquals(everything.getA8ByteArray(), result.getA8ByteArray());
-          assertTrue(floatArraysEqual(everything.getAFloatArray(), result.getAFloatArray()));
-          assertArrayEquals(everything.getAList().toArray(), result.getAList().toArray());
+          assertEquals(everything.getANullableBool(), result.getANullableBool());
+          assertEquals(everything.getANullableInt(), result.getANullableInt());
+          assertEquals(everything.getANullableDouble(), result.getANullableDouble());
+          assertEquals(everything.getANullableString(), result.getANullableString());
+          assertArrayEquals(everything.getANullableByteArray(), result.getANullableByteArray());
+          assertArrayEquals(everything.getANullable4ByteArray(), result.getANullable4ByteArray());
+          assertArrayEquals(everything.getANullable8ByteArray(), result.getANullable8ByteArray());
+          assertTrue(
+              floatArraysEqual(
+                  everything.getANullableFloatArray(), result.getANullableFloatArray()));
           assertArrayEquals(
-              everything.getAMap().keySet().toArray(), result.getAMap().keySet().toArray());
+              everything.getANullableList().toArray(), result.getANullableList().toArray());
           assertArrayEquals(
-              everything.getAMap().values().toArray(), result.getAMap().values().toArray());
+              everything.getANullableMap().keySet().toArray(),
+              result.getANullableMap().keySet().toArray());
           assertArrayEquals(
-              everything.getMapWithObject().values().toArray(),
-              result.getMapWithObject().values().toArray());
+              everything.getANullableMap().values().toArray(),
+              result.getANullableMap().values().toArray());
+          assertArrayEquals(
+              everything.getNullableMapWithObject().values().toArray(),
+              result.getNullableMapWithObject().values().toArray());
         });
     assertTrue(didCall[0]);
   }
 
   @Test
   public void integerToLong() {
-    Everything everything = new Everything();
-    everything.setAnInt(123L);
-    Map<String, Object> map = everything.toMap();
-    assertTrue(map.containsKey("anInt"));
-    map.put("anInt", 123);
-    Everything readEverything = Everything.fromMap(map);
-    assertEquals(readEverything.getAnInt(), everything.getAnInt());
+    AllNullableTypes everything = new AllNullableTypes();
+    everything.setANullableInt(123L);
+    ArrayList<Object> list = everything.toList();
+    assertNotNull(list);
+    assertNull(list.get(0));
+    assertNotNull(list.get(1));
+    list.set(1, 123);
+    AllNullableTypes readEverything = AllNullableTypes.fromList(list);
+    assertEquals(readEverything.getANullableInt(), everything.getANullableInt());
   }
 }

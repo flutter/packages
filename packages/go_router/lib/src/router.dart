@@ -30,7 +30,7 @@ import 'typedefs.dart';
 /// changes.
 ///
 /// See also:
-/// * [Configuration](https://pub.dev/documentation/go_router/topics/Configuration-topic.html)
+/// * [Configuration](https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html)
 /// * [GoRoute], which provides APIs to define the routing table.
 /// * [examples](https://github.com/flutter/packages/tree/main/packages/go_router/example),
 ///    which contains examples for different routing scenarios.
@@ -142,12 +142,22 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   String get location => _location;
   String _location = '/';
 
-  /// Returns `true` if there is more than 1 page on the stack.
+  /// Returns `true` if there is at least two or more route can be pop.
   bool canPop() => _routerDelegate.canPop();
 
   void _handleStateMayChange() {
-    final String newLocation =
-        _routerDelegate.currentConfiguration.location.toString();
+    final String newLocation;
+    if (routerDelegate.currentConfiguration.isNotEmpty &&
+        routerDelegate.currentConfiguration.matches.last
+            is ImperativeRouteMatch) {
+      newLocation = (routerDelegate.currentConfiguration.matches.last
+              as ImperativeRouteMatch)
+          .matches
+          .uri
+          .toString();
+    } else {
+      newLocation = _routerDelegate.currentConfiguration.uri.toString();
+    }
     if (_location != newLocation) {
       _location = newLocation;
       notifyListeners();
@@ -207,7 +217,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matches) {
-      _routerDelegate.push(matches.last);
+      _routerDelegate.push(matches);
     });
   }
 
@@ -230,7 +240,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [go] which navigates to the location.
   /// * [push] which pushes the location onto the page stack.
-  void replace(String location, {Object? extra}) {
+  void pushReplacement(String location, {Object? extra}) {
     routeInformationParser
         .parseRouteInformationWithDependencies(
       RouteInformation(location: location, state: extra),
@@ -239,7 +249,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       _routerDelegate.navigatorKey.currentContext!,
     )
         .then<void>((RouteMatchList matchList) {
-      routerDelegate.replace(matchList.matches.last);
+      routerDelegate.pushReplacement(matchList);
     });
   }
 
@@ -250,25 +260,28 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [goNamed] which navigates a named route.
   /// * [pushNamed] which pushes a named route onto the page stack.
-  void replaceNamed(
+  void pushReplacementNamed(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) {
-    replace(
+    pushReplacement(
       namedLocation(name, params: params, queryParams: queryParams),
       extra: extra,
     );
   }
 
-  /// Pop the top page off the GoRouter's page stack.
-  void pop() {
+  /// Pop the top-most route off the current screen.
+  ///
+  /// If the top-most route is a pop up or dialog, this method pops it instead
+  /// of any GoRoute under it.
+  void pop<T extends Object?>([T? result]) {
     assert(() {
       log.info('popping $location');
       return true;
     }());
-    _routerDelegate.pop();
+    _routerDelegate.pop<T>(result);
   }
 
   /// Refresh the route.
