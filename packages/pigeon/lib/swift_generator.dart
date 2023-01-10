@@ -338,7 +338,7 @@ void _writeFlutterApi(Indent indent, Api api, Root root) {
             indexMap(func.arguments, _getArgumentName);
         final Iterable<String> argNames =
             indexMap(func.arguments, _getSafeArgumentName);
-        sendArgument = '[${argNames.join(', ')}]';
+        sendArgument = '[${argNames.join(', ')}] as [Any?]';
         final String argsSignature = map3(
             argTypes,
             argLabels,
