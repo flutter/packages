@@ -250,7 +250,7 @@ abstract class FlutterIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
-  Map<Object?, Object?> echoMap(Map<Object?, Object?> aMap);
+  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
 
   // ========== Nullable argument/return type tests ==========
 
@@ -280,7 +280,7 @@ abstract class FlutterIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableMap:')
-  Map<Object?, Object?> echoNullableMap(Map<Object?, Object?> aMap);
+  Map<String?, Object?> echoNullableMap(Map<String?, Object?> aMap);
 }
 
 /// An API that can be implemented for minimal, compile-only tests.
