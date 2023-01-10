@@ -572,7 +572,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   List<Object?> echoList(List<Object?> aList) => aList;
 
   @override
-  Map<Object?, Object?> echoMap(Map<Object?, Object?> aMap) => aMap;
+  Map<String?, Object?> echoMap(Map<String?, Object?> aMap) => aMap;
 
   @override
   bool? echoNullableBool(bool? aBool) => aBool;
@@ -587,7 +587,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   List<Object?>? echoNullableList(List<Object?>? aList) => aList;
 
   @override
-  Map<Object?, Object?> echoNullableMap(Map<Object?, Object?> aMap) => aMap;
+  Map<String?, Object?> echoNullableMap(Map<String?, Object?> aMap) => aMap;
 
   @override
   String? echoNullableString(String? aString) => aString;

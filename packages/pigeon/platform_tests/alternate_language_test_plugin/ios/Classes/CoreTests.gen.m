@@ -979,15 +979,15 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
                    completion(output, nil);
                  }];
 }
-- (void)echoMap:(NSDictionary<id, id> *)arg_aMap
-     completion:(void (^)(NSDictionary<id, id> *_Nullable, NSError *_Nullable))completion {
+- (void)echoMap:(NSDictionary<NSString *, id> *)arg_aMap
+     completion:(void (^)(NSDictionary<NSString *, id> *_Nullable, NSError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
       messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
                  reply:^(id reply) {
-                   NSDictionary<id, id> *output = reply;
+                   NSDictionary<NSString *, id> *output = reply;
                    completion(output, nil);
                  }];
 }
@@ -1064,15 +1064,16 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
                    completion(output, nil);
                  }];
 }
-- (void)echoNullableMap:(NSDictionary<id, id> *)arg_aMap
-             completion:(void (^)(NSDictionary<id, id> *_Nullable, NSError *_Nullable))completion {
+- (void)echoNullableMap:(NSDictionary<NSString *, id> *)arg_aMap
+             completion:
+                 (void (^)(NSDictionary<NSString *, id> *_Nullable, NSError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
       messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
                  reply:^(id reply) {
-                   NSDictionary<id, id> *output = reply;
+                   NSDictionary<NSString *, id> *output = reply;
                    completion(output, nil);
                  }];
 }

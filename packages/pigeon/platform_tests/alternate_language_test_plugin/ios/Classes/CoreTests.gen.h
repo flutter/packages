@@ -230,8 +230,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoList:(NSArray<id> *)aList
       completion:(void (^)(NSArray<id> *_Nullable, NSError *_Nullable))completion;
 /// Returns the passed map, to test serialization and deserialization.
-- (void)echoMap:(NSDictionary<id, id> *)aMap
-     completion:(void (^)(NSDictionary<id, id> *_Nullable, NSError *_Nullable))completion;
+- (void)echoMap:(NSDictionary<NSString *, id> *)aMap
+     completion:(void (^)(NSDictionary<NSString *, id> *_Nullable, NSError *_Nullable))completion;
 /// Returns the passed boolean, to test serialization and deserialization.
 - (void)echoNullableBool:(nullable NSNumber *)aBool
               completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;
@@ -252,8 +252,9 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoNullableList:(nullable NSArray<id> *)aList
               completion:(void (^)(NSArray<id> *_Nullable, NSError *_Nullable))completion;
 /// Returns the passed map, to test serialization and deserialization.
-- (void)echoNullableMap:(NSDictionary<id, id> *)aMap
-             completion:(void (^)(NSDictionary<id, id> *_Nullable, NSError *_Nullable))completion;
+- (void)echoNullableMap:(NSDictionary<NSString *, id> *)aMap
+             completion:
+                 (void (^)(NSDictionary<NSString *, id> *_Nullable, NSError *_Nullable))completion;
 @end
 /// The codec used by HostTrivialApi.
 NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void);

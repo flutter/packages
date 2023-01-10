@@ -1710,7 +1710,7 @@ public class CoreTests {
           });
     }
     /** Returns the passed map, to test serialization and deserialization. */
-    public void echoMap(@NonNull Map<Object, Object> aMapArg, Reply<Map<Object, Object>> callback) {
+    public void echoMap(@NonNull Map<String, Object> aMapArg, Reply<Map<String, Object>> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap", getCodec());
@@ -1718,7 +1718,7 @@ public class CoreTests {
           new ArrayList<Object>(Collections.singletonList(aMapArg)),
           channelReply -> {
             @SuppressWarnings("ConstantConditions")
-            Map<Object, Object> output = (Map<Object, Object>) channelReply;
+            Map<String, Object> output = (Map<String, Object>) channelReply;
             callback.reply(output);
           });
     }
@@ -1814,7 +1814,7 @@ public class CoreTests {
     }
     /** Returns the passed map, to test serialization and deserialization. */
     public void echoNullableMap(
-        @NonNull Map<Object, Object> aMapArg, Reply<Map<Object, Object>> callback) {
+        @NonNull Map<String, Object> aMapArg, Reply<Map<String, Object>> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -1824,7 +1824,7 @@ public class CoreTests {
           new ArrayList<Object>(Collections.singletonList(aMapArg)),
           channelReply -> {
             @SuppressWarnings("ConstantConditions")
-            Map<Object, Object> output = (Map<Object, Object>) channelReply;
+            Map<String, Object> output = (Map<String, Object>) channelReply;
             callback.reply(output);
           });
     }
