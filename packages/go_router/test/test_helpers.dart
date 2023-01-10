@@ -127,10 +127,12 @@ class GoRouterPopSpy extends GoRouter {
   GoRouterPopSpy({required super.routes});
 
   bool popped = false;
+  dynamic poppedResult;
 
   @override
   void pop<T extends Object?>([T? result]) {
     popped = true;
+    poppedResult = result;
   }
 }
 
