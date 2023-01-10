@@ -295,8 +295,6 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
 /// See [_writeDataClassDeclaration] for the corresponding declaration.
 /// This is intended to be added to the implementation file.
 void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
-  final Set<String> rootClassNameSet =
-      root.classes.map((Class x) => x.name).toSet();
   final Set<String> rootEnumNameSet =
       root.enums.map((Enum x) => x.name).toSet();
 
@@ -824,7 +822,6 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
         root.classes,
         root.enums,
         (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-    String sendArgument;
     final String successCallback =
         'std::function<void(${_flutterApiReturnType(returnType)})>&& on_success';
     const String errorCallback =
@@ -839,7 +836,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       return _HostNamedType(_getSafeArgumentName(i, arg), hostType, arg.type);
     });
     final String inputArgumentList = hostArgs
-        .map((_HostNamedType arg) => '${arg.hostType} ${arg.name}')
+        .map((_HostNamedType arg) => '${arg.hostType.datatype} ${arg.name}')
         .join(', ');
     indent.write('void ${api.name}::${_makeMethodName(func)}('
         '${inputArgumentList.isEmpty ? '' : '$inputArgumentList, '}'
@@ -858,7 +855,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       } else {
         indent.scoped('flutter::EncodableValue(flutter::EncodableList{', '});',
             () {
-          for (_HostNamedType arg in hostArgs) {
+          for (final _HostNamedType arg in hostArgs) {
             final String encodedArgument = _wrappedHostApiArgumentExpression(
                 root, arg.name, arg.originalType, arg.hostType);
             indent.writeln('$encodedArgument,');
@@ -962,12 +959,6 @@ String? _baseCppTypeForBuiltinDartType(TypeDeclaration type) {
   }
 }
 
-/// Returns the base C++ type (without pointer, reference, optional, etc.) for
-/// the given [type].
-String _baseCppTypeForDartType(TypeDeclaration type) {
-  return _baseCppTypeForBuiltinDartType(type) ?? type.baseName;
-}
-
 /// Returns the C++ type to use in a value context (variable declaration,
 /// pass-by-value, etc.) for the given C++ base type.
 String _valueType(HostDatatype type) {
@@ -1046,25 +1037,6 @@ String _flutterApiReturnType(HostDatatype type) {
   // since it has the same basic structure of being a function defined by the
   // client, being called by the generated code.
   return _hostApiArgumentType(type);
-}
-
-// TODO(stuartmorgan): Audit all uses of this and convert them to context-based
-// methods like those above. Code still using this method may well have bugs.
-String _nullSafeCppTypeForDartType(TypeDeclaration type,
-    {bool considerReference = true}) {
-  if (type.isNullable) {
-    return 'std::optional<${_baseCppTypeForDartType(type)}>';
-  } else {
-    String typeName = _baseCppTypeForDartType(type);
-    if (_isReferenceType(typeName)) {
-      if (considerReference) {
-        typeName = 'const $typeName&';
-      } else {
-        typeName = 'std::unique_ptr<$typeName>';
-      }
-    }
-    return typeName;
-  }
 }
 
 String _getGuardName(String? headerFileName, String? namespace) {
