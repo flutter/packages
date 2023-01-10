@@ -191,9 +191,9 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('callFlutterEchoString:')
   String callFlutterEchoString(String aString);
 
-  // TODO(stuartmorgan): Add callFlutterEchoString and the associated test once
-  // either https://github.com/flutter/flutter/issues/116117 is fixed, or the
-  // problematic type is moved out of AllTypes and into its own test, since
+  // TODO(stuartmorgan): Add callFlutterEchoAllTypes and the associated test
+  // once either https://github.com/flutter/flutter/issues/116117 is fixed, or
+  // the problematic type is moved out of AllTypes and into its own test, since
   // the type mismatch breaks the second `encode` round.
 }
 
