@@ -836,7 +836,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       return _HostNamedType(_getSafeArgumentName(i, arg), hostType, arg.type);
     });
     final String inputArgumentList = hostArgs
-        .map((_HostNamedType arg) => '${arg.hostType.datatype} ${arg.name}')
+        .map((_HostNamedType arg) =>
+            '${_flutterApiArgumentType(arg.hostType)} ${arg.name}')
         .join(', ');
     indent.write('void ${api.name}::${_makeMethodName(func)}('
         '${inputArgumentList.isEmpty ? '' : '$inputArgumentList, '}'

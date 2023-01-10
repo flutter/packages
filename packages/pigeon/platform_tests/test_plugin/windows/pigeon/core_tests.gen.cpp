@@ -1448,7 +1448,8 @@ void FlutterIntegrationCoreApi::Noop(
           });
 }
 void FlutterIntegrationCoreApi::EchoAllTypes(
-    AllTypes everything_arg, std::function<void(const AllTypes&)>&& on_success,
+    const AllTypes& everything_arg,
+    std::function<void(const AllTypes&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
       binary_messenger_,
@@ -1469,7 +1470,7 @@ void FlutterIntegrationCoreApi::EchoAllTypes(
       });
 }
 void FlutterIntegrationCoreApi::EchoAllNullableTypes(
-    AllNullableTypes everything_arg,
+    const AllNullableTypes& everything_arg,
     std::function<void(const AllNullableTypes&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
@@ -1492,8 +1493,8 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypes(
       });
 }
 void FlutterIntegrationCoreApi::SendMultipleNullableTypes(
-    bool a_nullable_bool_arg, int64_t a_nullable_int_arg,
-    std::string a_nullable_string_arg,
+    const bool* a_nullable_bool_arg, const int64_t* a_nullable_int_arg,
+    const std::string* a_nullable_string_arg,
     std::function<void(const AllNullableTypes&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
@@ -1582,7 +1583,7 @@ void FlutterIntegrationCoreApi::EchoDouble(
       });
 }
 void FlutterIntegrationCoreApi::EchoString(
-    std::string a_string_arg,
+    std::string_view a_string_arg,
     std::function<void(const std::string&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
@@ -1604,7 +1605,7 @@ void FlutterIntegrationCoreApi::EchoString(
       });
 }
 void FlutterIntegrationCoreApi::EchoUint8List(
-    std::vector<uint8_t> a_list_arg,
+    const std::vector<uint8_t>& a_list_arg,
     std::function<void(const std::vector<uint8_t>&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
@@ -1627,7 +1628,7 @@ void FlutterIntegrationCoreApi::EchoUint8List(
       });
 }
 void FlutterIntegrationCoreApi::EchoList(
-    flutter::EncodableList a_list_arg,
+    const flutter::EncodableList& a_list_arg,
     std::function<void(const flutter::EncodableList&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
@@ -1649,7 +1650,7 @@ void FlutterIntegrationCoreApi::EchoList(
       });
 }
 void FlutterIntegrationCoreApi::EchoMap(
-    flutter::EncodableMap a_map_arg,
+    const flutter::EncodableMap& a_map_arg,
     std::function<void(const flutter::EncodableMap&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
@@ -1671,7 +1672,7 @@ void FlutterIntegrationCoreApi::EchoMap(
       });
 }
 void FlutterIntegrationCoreApi::EchoNullableBool(
-    bool a_bool_arg, std::function<void(const bool*)>&& on_success,
+    const bool* a_bool_arg, std::function<void(const bool*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
       binary_messenger_,
@@ -1693,7 +1694,7 @@ void FlutterIntegrationCoreApi::EchoNullableBool(
       });
 }
 void FlutterIntegrationCoreApi::EchoNullableInt(
-    int64_t an_int_arg, std::function<void(const int64_t*)>&& on_success,
+    const int64_t* an_int_arg, std::function<void(const int64_t*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
       binary_messenger_,
@@ -1720,7 +1721,7 @@ void FlutterIntegrationCoreApi::EchoNullableInt(
       });
 }
 void FlutterIntegrationCoreApi::EchoNullableDouble(
-    double a_double_arg, std::function<void(const double*)>&& on_success,
+    const double* a_double_arg, std::function<void(const double*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
       binary_messenger_,
@@ -1742,7 +1743,7 @@ void FlutterIntegrationCoreApi::EchoNullableDouble(
       });
 }
 void FlutterIntegrationCoreApi::EchoNullableString(
-    std::string a_string_arg,
+    const std::string* a_string_arg,
     std::function<void(const std::string*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
@@ -1766,7 +1767,7 @@ void FlutterIntegrationCoreApi::EchoNullableString(
       });
 }
 void FlutterIntegrationCoreApi::EchoNullableUint8List(
-    std::vector<uint8_t> a_list_arg,
+    const std::vector<uint8_t>* a_list_arg,
     std::function<void(const std::vector<uint8_t>*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
@@ -1790,7 +1791,7 @@ void FlutterIntegrationCoreApi::EchoNullableUint8List(
       });
 }
 void FlutterIntegrationCoreApi::EchoNullableList(
-    flutter::EncodableList a_list_arg,
+    const flutter::EncodableList* a_list_arg,
     std::function<void(const flutter::EncodableList*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
@@ -1814,7 +1815,7 @@ void FlutterIntegrationCoreApi::EchoNullableList(
       });
 }
 void FlutterIntegrationCoreApi::EchoNullableMap(
-    flutter::EncodableMap a_map_arg,
+    const flutter::EncodableMap& a_map_arg,
     std::function<void(const flutter::EncodableMap&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
