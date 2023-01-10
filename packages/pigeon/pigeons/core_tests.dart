@@ -195,6 +195,8 @@ abstract class HostIntegrationCoreApi {
   // once either https://github.com/flutter/flutter/issues/116117 is fixed, or
   // the problematic type is moved out of AllTypes and into its own test, since
   // the type mismatch breaks the second `encode` round.
+
+  // TODO(stuartmorgan): Fill in the rest of the callFlutterEcho* tests.
 }
 
 /// The core interface that the Dart platform_test code implements for host
