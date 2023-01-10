@@ -995,9 +995,12 @@ String _hostApiArgumentType(HostDatatype type) {
 /// Returns the C++ type to use for arguments to a Flutter API.
 String _flutterApiArgumentType(HostDatatype type) {
   // Nullable strings use std::string* rather than std::string_view*
-  // since there's no implicit conversion for pointer types.
-  if (type.datatype == 'std::string' && type.isNullable) {
-    return 'const std::string*';
+  // since there's no implicit conversion for the pointer types, making them
+  // more awkward to use. For consistency, and since EncodableValue will end
+  // up making a std::string internally anyway, std::string is used for the
+  // non-nullable case as well.
+  if (type.datatype == 'std::string') {
+    return type.isNullable ? 'const std::string*' : 'const std::string&';
   }
   return _unownedArgumentType(type);
 }

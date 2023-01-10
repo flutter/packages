@@ -1581,7 +1581,7 @@ void FlutterIntegrationCoreApi::EchoDouble(
       });
 }
 void FlutterIntegrationCoreApi::EchoString(
-    std::string_view a_string_arg,
+    const std::string& a_string_arg,
     std::function<void(const std::string&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(

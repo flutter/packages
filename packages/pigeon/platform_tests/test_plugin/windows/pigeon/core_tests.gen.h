@@ -404,7 +404,7 @@ class FlutterIntegrationCoreApi {
   void EchoDouble(double a_double, std::function<void(double)>&& on_success,
                   std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed string, to test serialization and deserialization.
-  void EchoString(std::string_view a_string,
+  void EchoString(const std::string& a_string,
                   std::function<void(const std::string&)>&& on_success,
                   std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed byte list, to test serialization and deserialization.

@@ -1233,8 +1233,9 @@ void main() {
           code,
           contains('DoSomething(bool a_bool, '
               'int64_t an_int, '
-              // Non-nullable strings use string_view for flexibility.
-              'std::string_view a_string, '
+              // Non-nullable strings use std::string for consistency with
+              // nullable strings.
+              'const std::string& a_string, '
               // Non-POD types use const references.
               'const flutter::EncodableList& a_list, '
               'const flutter::EncodableMap& a_map, '
