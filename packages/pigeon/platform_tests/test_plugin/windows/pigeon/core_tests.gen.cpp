@@ -1440,12 +1440,10 @@ void FlutterIntegrationCoreApi::Noop(
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
       binary_messenger_, "dev.flutter.pigeon.FlutterIntegrationCoreApi.noop",
       &GetCodec());
-  flutter::EncodableValue encoded_api_arguments =
-      flutter::EncodableValue() channel->Send(
-          encoded_api_arguments,
-          [on_success, on_error](const uint8_t* reply, size_t reply_size) {
-            on_success();
-          });
+  flutter::EncodableValue encoded_api_arguments = flutter::EncodableValue();
+  channel->Send(encoded_api_arguments,
+                [on_success, on_error](const uint8_t* reply,
+                                       size_t reply_size) { on_success(); });
 }
 void FlutterIntegrationCoreApi::EchoAllTypes(
     const AllTypes& everything_arg,

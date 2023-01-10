@@ -852,7 +852,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       const String argumentListVariableName = 'encoded_api_arguments';
       indent.write('flutter::EncodableValue $argumentListVariableName = ');
       if (func.arguments.isEmpty) {
-        indent.writeln('flutter::EncodableValue()');
+        indent.addln('flutter::EncodableValue();');
       } else {
         indent.scoped('flutter::EncodableValue(flutter::EncodableList{', '});',
             () {
