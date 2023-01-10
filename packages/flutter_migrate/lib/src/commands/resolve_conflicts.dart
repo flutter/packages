@@ -148,35 +148,41 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
     for (int lineNumber = 0; lineNumber < lines.length; lineNumber++) {
       final String line = lines[lineNumber];
       switch (state) {
-        case _ParseConflictState.lookingForConflictStart: {
-          if (line.contains(_conflictStartMarker)) {
-            currentConflict.startLine = lineNumber;
-            state = _ParseConflictState.lookingForConflictDivider;
-          } else if (line.contains(_conflictEndMarker) || line.contains(_conflictDividerMarker)) {
-            _throwParseError(localPath, lineNumber);
+        case _ParseConflictState.lookingForConflictStart:
+          {
+            if (line.contains(_conflictStartMarker)) {
+              currentConflict.startLine = lineNumber;
+              state = _ParseConflictState.lookingForConflictDivider;
+            } else if (line.contains(_conflictEndMarker) ||
+                line.contains(_conflictDividerMarker)) {
+              _throwParseError(localPath, lineNumber);
+            }
+            break;
           }
-          break;
-        }
-        case _ParseConflictState.lookingForConflictDivider: {
-          if (line.contains(_conflictDividerMarker)) {
-            currentConflict.dividerLine = lineNumber;
-            state = _ParseConflictState.lookingForConflictEnd;
-          } else if (line.contains(_conflictEndMarker) || line.contains(_conflictStartMarker)) {
-            _throwParseError(localPath, lineNumber);
+        case _ParseConflictState.lookingForConflictDivider:
+          {
+            if (line.contains(_conflictDividerMarker)) {
+              currentConflict.dividerLine = lineNumber;
+              state = _ParseConflictState.lookingForConflictEnd;
+            } else if (line.contains(_conflictEndMarker) ||
+                line.contains(_conflictStartMarker)) {
+              _throwParseError(localPath, lineNumber);
+            }
+            break;
           }
-          break;
-        }
-        case _ParseConflictState.lookingForConflictEnd: {
-          if (line.contains(_conflictEndMarker)) {
-            currentConflict.endLine = lineNumber;
-            state = _ParseConflictState.lookingForConflictStart;
-            conflicts.add(currentConflict);
-            currentConflict = Conflict.empty();
-          } else if (line.contains(_conflictStartMarker) || line.contains(_conflictDividerMarker)) {
-            _throwParseError(localPath, lineNumber);
+        case _ParseConflictState.lookingForConflictEnd:
+          {
+            if (line.contains(_conflictEndMarker)) {
+              currentConflict.endLine = lineNumber;
+              state = _ParseConflictState.lookingForConflictStart;
+              conflicts.add(currentConflict);
+              currentConflict = Conflict.empty();
+            } else if (line.contains(_conflictStartMarker) ||
+                line.contains(_conflictDividerMarker)) {
+              _throwParseError(localPath, lineNumber);
+            }
+            break;
           }
-          break;
-        }
       }
     }
     return conflicts;
@@ -184,7 +190,7 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
 
   void _throwParseError(String path, int lineNumber) {
     throw StateError(
-      'Invalid merge conflict detected in $path: Improperly ordered conflict markers at line $lineNumber.');
+        'Invalid merge conflict detected in $path: Improperly ordered conflict markers at line $lineNumber.');
   }
 
   /// Display a detected conflict and prompt the developer on whether to accept the original lines, new lines,
@@ -205,25 +211,22 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
       logger.printStatus(' = New lines.\n', newline: true);
 
       // Print the conflict for reference.
-      _printLineRange(
-        lines,
-        max(conflict.startLine! - contextLineCount, 0),
-        conflict.startLine!,
-        TerminalColor.grey
-      );
+      _printLineRange(lines, max(conflict.startLine! - contextLineCount, 0),
+          conflict.startLine!, TerminalColor.grey);
 
       printConflictLine(lines[conflict.startLine!], conflict.startLine!);
-      _printLineRange(lines, conflict.startLine! + 1, conflict.dividerLine!, TerminalColor.cyan);
+      _printLineRange(lines, conflict.startLine! + 1, conflict.dividerLine!,
+          TerminalColor.cyan);
       printConflictLine(lines[conflict.dividerLine!], conflict.dividerLine!);
-      _printLineRange(lines, conflict.dividerLine! + 1, conflict.endLine!, TerminalColor.green);
+      _printLineRange(lines, conflict.dividerLine! + 1, conflict.endLine!,
+          TerminalColor.green);
       printConflictLine(lines[conflict.endLine!], conflict.endLine!);
 
       _printLineRange(
-        lines,
-        conflict.endLine! + 1,
-        (conflict.endLine! + contextLineCount + 1).clamp(0, lines.length),
-        TerminalColor.grey
-      );
+          lines,
+          conflict.endLine! + 1,
+          (conflict.endLine! + contextLineCount + 1).clamp(0, lines.length),
+          TerminalColor.grey);
 
       logger.printStatus('\nConflict in $localPath.');
       // Select action.
@@ -264,12 +267,10 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
     return null;
   }
 
-  void _printLineRange(List<String> lines, int start, int end, TerminalColor color) {
-    for (int lineNumber = start;
-        lineNumber < end;
-        lineNumber++) {
-      printConflictLine(lines[lineNumber], lineNumber,
-          color: color);
+  void _printLineRange(
+      List<String> lines, int start, int end, TerminalColor color) {
+    for (int lineNumber = start; lineNumber < end; lineNumber++) {
+      printConflictLine(lines[lineNumber], lineNumber, color: color);
     }
   }
 
@@ -283,7 +284,7 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
     int newCount = 0;
     int skipCount = 0;
 
-    StringBuffer result = StringBuffer();
+    final StringBuffer result = StringBuffer();
     int lastPrintedLine = 0;
     bool hasChanges =
         false; // don't unecessarily write file if no changes were made.
@@ -302,17 +303,20 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
       switch (conflict.selection) {
         case ConflictSelection.skip:
           // Skipped this conflict. Add all lines.
-          _addLinesToBuffer(result, lines, conflict.startLine!, conflict.endLine! + 1);
+          _addLinesToBuffer(
+              result, lines, conflict.startLine!, conflict.endLine! + 1);
           skipCount++;
           break;
         case ConflictSelection.keepOriginal:
           // Keeping original lines.
-          _addLinesToBuffer(result, lines, conflict.startLine! + 1, conflict.dividerLine!);
+          _addLinesToBuffer(
+              result, lines, conflict.startLine! + 1, conflict.dividerLine!);
           originalCount++;
           break;
         case ConflictSelection.keepNew:
           // Keeping new lines.
-          _addLinesToBuffer(result, lines, conflict.dividerLine! + 1, conflict.endLine!);
+          _addLinesToBuffer(
+              result, lines, conflict.dividerLine! + 1, conflict.endLine!);
           newCount++;
           break;
       }
@@ -358,10 +362,9 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
     return true;
   }
 
-  void _addLinesToBuffer(StringBuffer buffer, List<String> lines, int start, int end) {
-    for (int lineNumber = start;
-        lineNumber < end;
-        lineNumber++) {
+  void _addLinesToBuffer(
+      StringBuffer buffer, List<String> lines, int start, int end) {
+    for (int lineNumber = start; lineNumber < end; lineNumber++) {
       buffer.write('${lines[lineNumber]}\n');
     }
   }
