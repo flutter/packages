@@ -15,7 +15,6 @@ import FlutterMacOS
 #endif
 
 
-/// Generated class from Pigeon.
 
 enum AnEnum: Int {
   case one = 0

@@ -86,7 +86,7 @@ class JavaOptions {
 }
 
 /// Class that manages all Java code generation.
-class JavaGenerator extends Generator<JavaOptions> {
+class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Instantiates a Java Generator.
   JavaGenerator();
 
@@ -98,42 +98,22 @@ class JavaGenerator extends Generator<JavaOptions> {
 
     writeFilePrologue(generatorOptions, root, sink, indent);
     writeFileImports(generatorOptions, root, sink, indent);
-    indent.writeln(
-        '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
-    indent.writeln(
-        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
-    if (generatorOptions.useGeneratedAnnotation ?? false) {
-      indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+    preEnums(generatorOptions, root, sink, indent);
+    for (final Enum anEnum in root.enums) {
+      writeEnum(generatorOptions, root, sink, indent, anEnum);
     }
-    indent.write('public class ${generatorOptions.className!} ');
-    indent.scoped('{', '}', () {
-      for (final Enum anEnum in root.enums) {
-        indent.writeln('');
-        writeEnum(generatorOptions, root, sink, indent, anEnum);
+    for (final Class klass in root.classes) {
+      writeDataClass(generatorOptions, root, sink, indent, klass);
+    }
+    preApis(generatorOptions, root, sink, indent);
+    for (final Api api in root.apis) {
+      if (api.location == ApiLocation.host) {
+        writeHostApi(generatorOptions, root, sink, indent, api);
+      } else if (api.location == ApiLocation.flutter) {
+        writeFlutterApi(generatorOptions, root, sink, indent, api);
       }
-      for (final Class klass in root.classes) {
-        indent.addln('');
-        writeDataClass(generatorOptions, root, sink, indent, klass);
-      }
-      if (root.apis.any((Api api) =>
-          api.location == ApiLocation.host &&
-          api.methods.any((Method it) => it.isAsynchronous))) {
-        indent.addln('');
-        _writeResultInterface(indent);
-      }
-      for (final Api api in root.apis) {
-        if (getCodecClasses(api, root).isNotEmpty) {
-          _writeCodec(indent, api, root);
-          indent.addln('');
-        }
-        if (api.location == ApiLocation.host) {
-          writeHostApi(generatorOptions, root, sink, indent, api);
-        } else if (api.location == ApiLocation.flutter) {
-          writeFlutterApi(generatorOptions, root, sink, indent, api);
-        }
-      }
-      _writeWrapError(indent);
-    });
+    }
+    postWriteFile(generatorOptions, root, sink, indent);
   }
 
   @override
@@ -172,6 +152,20 @@ class JavaGenerator extends Generator<JavaOptions> {
   }
 
   @override
+  void preEnums(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    indent.writeln(
+        '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
+    indent.writeln(
+        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+    if (generatorOptions.useGeneratedAnnotation ?? false) {
+      indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+    }
+    indent.writeln('public class ${generatorOptions.className!} {');
+    indent.inc();
+  }
+
+  @override
   void writeEnum(JavaOptions generatorOptions, Root root, StringSink sink,
       Indent indent, Enum anEnum) {
     String camelToSnake(String camelCase) {
@@ -181,6 +175,7 @@ class JavaGenerator extends Generator<JavaOptions> {
           .toUpperCase();
     }
 
+    indent.writeln('');
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
@@ -212,6 +207,7 @@ class JavaGenerator extends Generator<JavaOptions> {
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
+    indent.addln('');
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
@@ -389,6 +385,9 @@ class JavaGenerator extends Generator<JavaOptions> {
     Api api,
   ) {
     assert(api.location == ApiLocation.flutter);
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(indent, api, root);
+    }
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from Java.'
     ];
@@ -479,6 +478,17 @@ class JavaGenerator extends Generator<JavaOptions> {
     });
   }
 
+  @override
+  void preApis(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    if (root.apis.any((Api api) =>
+        api.location == ApiLocation.host &&
+        api.methods.any((Method it) => it.isAsynchronous))) {
+      indent.addln('');
+      _writeResultInterface(indent);
+    }
+  }
+
   /// Write the java code that represents a host [Api], [api].
   /// Example:
   /// public interface Foo {
@@ -489,7 +499,9 @@ class JavaGenerator extends Generator<JavaOptions> {
   void writeHostApi(JavaOptions generatorOptions, Root root, StringSink sink,
       Indent indent, Api api) {
     assert(api.location == ApiLocation.host);
-
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(indent, api, root);
+    }
     const List<String> generatedMessages = <String>[
       ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
     ];
@@ -727,6 +739,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
         });
       });
     });
+    indent.addln('');
   }
 
   void _writeResultInterface(Indent indent) {
@@ -746,6 +759,14 @@ Result<$returnType> $resultName = new Result<$returnType>() {
 \terrorList.add("Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
 \treturn errorList;
 }''');
+  }
+
+  @override
+  void postWriteFile(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    _writeWrapError(indent);
+    indent.dec();
+    indent.addln('}');
   }
 }
 

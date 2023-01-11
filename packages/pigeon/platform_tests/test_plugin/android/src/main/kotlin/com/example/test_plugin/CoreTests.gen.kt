@@ -15,8 +15,6 @@ import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
-/** Generated class from Pigeon. */
-
 enum class AnEnum(val raw: Int) {
   ONE(0),
   TWO(1),

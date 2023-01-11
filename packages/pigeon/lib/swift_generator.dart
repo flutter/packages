@@ -49,49 +49,9 @@ class SwiftOptions {
 }
 
 /// Class that manages all Swift code generation.
-class SwiftGenerator extends Generator<SwiftOptions> {
+class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
   /// Instantiates a Swift Generator.
   SwiftGenerator();
-
-  /// Generates Swift files with specified [SwiftOptions]
-  @override
-  void generate(SwiftOptions generatorOptions, Root root, StringSink sink) {
-    final Indent indent = Indent(sink);
-    writeFilePrologue(generatorOptions, root, sink, indent);
-    writeFileImports(generatorOptions, root, sink, indent);
-    indent.writeln('$_docCommentPrefix Generated class from Pigeon.');
-    for (final Enum anEnum in root.enums) {
-      indent.writeln('');
-      writeEnum(generatorOptions, root, sink, indent, anEnum);
-    }
-    for (final Class klass in root.classes) {
-      indent.addln('');
-      writeDataClass(generatorOptions, root, sink, indent, klass);
-    }
-
-    if (root.apis.any((Api api) =>
-        api.location == ApiLocation.host &&
-        api.methods.any((Method it) => it.isAsynchronous))) {
-      indent.addln('');
-    }
-
-    for (final Api api in root.apis) {
-      if (getCodecClasses(api, root).isNotEmpty) {
-        _writeCodec(indent, api, root);
-        indent.addln('');
-      }
-      if (api.location == ApiLocation.host) {
-        writeHostApi(generatorOptions, root, sink, indent, api);
-      } else if (api.location == ApiLocation.flutter) {
-        writeFlutterApi(generatorOptions, root, sink, indent, api);
-      }
-    }
-
-    indent.addln('');
-    _writeWrapResult(indent);
-    indent.addln('');
-    _writeWrapError(indent);
-  }
 
   @override
   void writeFilePrologue(SwiftOptions generatorOptions, Root root,
@@ -123,6 +83,7 @@ import FlutterMacOS
   @override
   void writeEnum(SwiftOptions generatorOptions, Root root, StringSink sink,
       Indent indent, Enum anEnum) {
+    indent.writeln('');
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
@@ -147,6 +108,7 @@ import FlutterMacOS
     const List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
+    indent.addln('');
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
@@ -278,6 +240,20 @@ import FlutterMacOS
     indent.addln(defaultNil);
   }
 
+  @override
+  void preApis(
+    SwiftOptions generatorOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+  ) {
+    if (root.apis.any((Api api) =>
+        api.location == ApiLocation.host &&
+        api.methods.any((Method it) => it.isAsynchronous))) {
+      indent.addln('');
+    }
+  }
+
   /// Writes the code for a flutter [Api], [api].
   /// Example:
   /// class Foo {
@@ -294,6 +270,10 @@ import FlutterMacOS
     Api api,
   ) {
     assert(api.location == ApiLocation.flutter);
+    final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
+    if (isCustomCodec) {
+      _writeCodec(indent, api, root);
+    }
     const List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from Swift.'
     ];
@@ -388,6 +368,11 @@ import FlutterMacOS
     assert(api.location == ApiLocation.host);
 
     final String apiName = api.name;
+
+    final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
+    if (isCustomCodec) {
+      _writeCodec(indent, api, root);
+    }
 
     const List<String> generatedComments = <String>[
       ' Generated protocol from Pigeon that represents a handler of messages from Flutter.'
@@ -587,9 +572,11 @@ import FlutterMacOS
       indent.writeln(
           'static let shared = $codecName(readerWriter: $readerWriterName())');
     });
+    indent.addln('');
   }
 
   void _writeWrapResult(Indent indent) {
+    indent.addln('');
     indent.write('private func wrapResult(_ result: Any?) -> [Any?] ');
     indent.scoped('{', '}', () {
       indent.writeln('return [result]');
@@ -597,6 +584,7 @@ import FlutterMacOS
   }
 
   void _writeWrapError(Indent indent) {
+    indent.addln('');
     indent.write('private func wrapError(_ error: FlutterError) -> [Any?] ');
     indent.scoped('{', '}', () {
       indent.write('return ');
@@ -606,6 +594,13 @@ import FlutterMacOS
         indent.writeln('error.details');
       });
     });
+  }
+
+  @override
+  void postWriteFile(SwiftOptions generatorOptions, Root root, StringSink sink,
+      Indent indent) {
+    _writeWrapResult(indent);
+    _writeWrapError(indent);
   }
 }
 

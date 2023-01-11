@@ -10,19 +10,57 @@ import 'generator_tools.dart';
 /// This provides the structure that is common across generators for different languages.
 abstract class Generator<T> {
   /// Generates files for specified language with specified [generatorOptions]
-  ///
-  /// This method, when overridden, should follow a generic structure that is currently:
-  /// 1. Create Indent
-  /// 2. Write File Headers
-  /// 3. Write Imports
-  /// 4. Write Enums
-  /// 5. Write Data Classes
-  /// 6. Write Apis
   void generate(
     T generatorOptions,
     Root root,
     StringSink sink,
   );
+}
+
+/// A Superclass that enforces code generation across platforms.
+abstract class StructuredGenerator<T> extends Generator<T> {
+  @override
+  void generate(
+    T generatorOptions,
+    Root root,
+    StringSink sink,
+  ) {
+    final Indent indent = Indent(sink);
+
+    prePrologue(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, sink, indent);
+
+    preEnums(generatorOptions, root, sink, indent);
+    for (final Enum anEnum in root.enums) {
+      writeEnum(generatorOptions, root, sink, indent, anEnum);
+    }
+
+    preDataClasses(generatorOptions, root, sink, indent);
+    for (final Class klass in root.classes) {
+      writeDataClass(generatorOptions, root, sink, indent, klass);
+    }
+
+    preApis(generatorOptions, root, sink, indent);
+    for (final Api api in root.apis) {
+      if (api.location == ApiLocation.host) {
+        writeHostApi(generatorOptions, root, sink, indent, api);
+      } else if (api.location == ApiLocation.flutter) {
+        writeFlutterApi(generatorOptions, root, sink, indent, api);
+      }
+    }
+    postWriteFile(generatorOptions, root, sink, indent);
+  }
+
+  /// Pre-process or write before [writeFilePrologue].
+  ///
+  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  void prePrologue(
+    T generatorOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+  ) {}
 
   /// Adds specified headers to file.
   void writeFilePrologue(
@@ -40,6 +78,16 @@ abstract class Generator<T> {
     Indent indent,
   );
 
+  /// Pre-process for enums or writes before any [writeEnum] calls.
+  ///
+  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  void preEnums(
+    T generatorOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+  ) {}
+
   /// Writes a single Enum to file.
   void writeEnum(
     T generatorOptions,
@@ -48,6 +96,16 @@ abstract class Generator<T> {
     Indent indent,
     Enum anEnum,
   );
+
+  /// Pre-process for data classes or writes before any [writeDataClass] calls.
+  ///
+  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  void preDataClasses(
+    T generatorOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+  ) {}
 
   /// Writes a single data class to file.
   void writeDataClass(
@@ -80,6 +138,16 @@ abstract class Generator<T> {
     Set<String> customEnumNames,
   );
 
+  /// Pre-process for apis and/or writes before any [writeFlutterApi] or [writeHostApi] calls.
+  ///
+  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  void preApis(
+    T generatorOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+  ) {}
+
   /// Writes a single Flutter Api to file.
   void writeFlutterApi(
     T generatorOptions,
@@ -97,4 +165,14 @@ abstract class Generator<T> {
     Indent indent,
     Api api,
   );
+
+  /// Post-process for generate and/or writes after all other methods.
+  ///
+  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  void postWriteFile(
+    T generatorOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+  ) {}
 }

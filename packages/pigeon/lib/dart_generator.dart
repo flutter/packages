@@ -71,34 +71,9 @@ class DartOptions {
 }
 
 /// Class that manages all Dart code generation.
-class DartGenerator extends Generator<DartOptions> {
+class DartGenerator extends StructuredGenerator<DartOptions> {
   /// Instantiates a Dart Generator.
   DartGenerator();
-
-  /// Generates Dart files with specified [DartOptions]
-  @override
-  void generate(DartOptions generatorOptions, Root root, StringSink sink) {
-    final Indent indent = Indent(sink);
-
-    writeFilePrologue(generatorOptions, root, sink, indent);
-    writeFileImports(generatorOptions, root, sink, indent);
-    for (final Enum anEnum in root.enums) {
-      writeEnum(generatorOptions, root, sink, indent, anEnum);
-    }
-    for (final Class klass in root.classes) {
-      indent.writeln('');
-      writeDataClass(generatorOptions, root, sink, indent, klass);
-    }
-
-    for (final Api api in root.apis) {
-      indent.writeln('');
-      if (api.location == ApiLocation.host) {
-        writeHostApi(generatorOptions, root, sink, indent, api);
-      } else if (api.location == ApiLocation.flutter) {
-        writeFlutterApi(generatorOptions, root, sink, indent, api);
-      }
-    }
-  }
 
   @override
   void writeFilePrologue(
@@ -150,22 +125,14 @@ class DartGenerator extends Generator<DartOptions> {
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
         root.enums.map((Enum x) => x.name).toSet();
-    void writeConstructor() {
-      indent.write(klass.name);
-      indent.scoped('({', '});', () {
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          final String required = field.type.isNullable ? '' : 'required ';
-          indent.writeln('${required}this.${field.name},');
-        }
-      });
-    }
 
+    indent.writeln('');
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec);
 
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
-      writeConstructor();
+      _writeConstructor(indent, klass);
       indent.addln('');
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         addDocumentationComments(
@@ -180,6 +147,16 @@ class DartGenerator extends Generator<DartOptions> {
       indent.writeln('');
       writeClassDecode(generatorOptions, root, sink, indent, klass,
           customClassNames, customEnumNames);
+    });
+  }
+
+  void _writeConstructor(Indent indent, Class klass) {
+    indent.write(klass.name);
+    indent.scoped('({', '});', () {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        final String required = field.type.isNullable ? '' : 'required ';
+        indent.writeln('${required}this.${field.name},');
+      }
     });
   }
 

@@ -66,50 +66,9 @@ class KotlinOptions {
 }
 
 /// Class that manages all Kotlin code generation.
-class KotlinGenerator extends Generator<KotlinOptions> {
+class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   /// Instantiates a Kotlin Generator.
   KotlinGenerator();
-
-  /// Generates the ".kotlin" file for the AST represented by [root] to [sink] with the
-  /// provided [KotlinOptions].
-  @override
-  void generate(KotlinOptions generatorOptions, Root root, StringSink sink) {
-    final Indent indent = Indent(sink);
-
-    writeFilePrologue(generatorOptions, root, sink, indent);
-    writeFileImports(generatorOptions, root, sink, indent);
-    indent.writeln('/** Generated class from Pigeon. */');
-    for (final Enum anEnum in root.enums) {
-      indent.writeln('');
-      writeEnum(generatorOptions, root, sink, indent, anEnum);
-    }
-    for (final Class klass in root.classes) {
-      indent.addln('');
-      writeDataClass(generatorOptions, root, sink, indent, klass);
-    }
-    if (root.apis.any((Api api) =>
-        api.location == ApiLocation.host &&
-        api.methods.any((Method it) => it.isAsynchronous))) {
-      indent.addln('');
-    }
-
-    for (final Api api in root.apis) {
-      if (getCodecClasses(api, root).isNotEmpty) {
-        _writeCodec(indent, api, root);
-        indent.addln('');
-      }
-      if (api.location == ApiLocation.host) {
-        writeHostApi(generatorOptions, root, sink, indent, api);
-      } else if (api.location == ApiLocation.flutter) {
-        writeFlutterApi(generatorOptions, root, sink, indent, api);
-      }
-    }
-
-    indent.addln('');
-    _writeWrapResult(indent);
-    indent.addln('');
-    _writeWrapError(indent);
-  }
 
   @override
   void writeFilePrologue(KotlinOptions generatorOptions, Root root,
@@ -119,12 +78,12 @@ class KotlinGenerator extends Generator<KotlinOptions> {
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
-    indent.addln('');
   }
 
   @override
   void writeFileImports(KotlinOptions generatorOptions, Root root,
       StringSink sink, Indent indent) {
+    indent.addln('');
     if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package}');
     }
@@ -136,12 +95,12 @@ class KotlinGenerator extends Generator<KotlinOptions> {
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
     indent.writeln('import java.io.ByteArrayOutputStream');
     indent.writeln('import java.nio.ByteBuffer');
-    indent.addln('');
   }
 
   @override
   void writeEnum(KotlinOptions generatorOptions, Root root, StringSink sink,
       Indent indent, Enum anEnum) {
+    indent.writeln('');
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
@@ -179,6 +138,7 @@ class KotlinGenerator extends Generator<KotlinOptions> {
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
+    indent.addln('');
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
@@ -324,6 +284,20 @@ class KotlinGenerator extends Generator<KotlinOptions> {
     indent.add(defaultNil);
   }
 
+  @override
+  void preApis(
+    KotlinOptions generatorOptions,
+    Root root,
+    StringSink sink,
+    Indent indent,
+  ) {
+    if (root.apis.any((Api api) =>
+        api.location == ApiLocation.host &&
+        api.methods.any((Method it) => it.isAsynchronous))) {
+      indent.addln('');
+    }
+  }
+
   /// Writes the code for a flutter [Api], [api].
   /// Example:
   /// class Foo(private val binaryMessenger: BinaryMessenger) {
@@ -339,6 +313,9 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   ) {
     assert(api.location == ApiLocation.flutter);
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
+    if (isCustomCodec) {
+      _writeCodec(indent, api, root);
+    }
 
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.'
@@ -435,6 +412,9 @@ class KotlinGenerator extends Generator<KotlinOptions> {
     final String apiName = api.name;
 
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
+    if (isCustomCodec) {
+      _writeCodec(indent, api, root);
+    }
 
     const List<String> generatedMessages = <String>[
       ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
@@ -617,9 +597,11 @@ class KotlinGenerator extends Generator<KotlinOptions> {
         });
       });
     });
+    indent.addln('');
   }
 
   void _writeWrapResult(Indent indent) {
+    indent.addln('');
     indent.write('private fun wrapResult(result: Any?): List<Any?> ');
     indent.scoped('{', '}', () {
       indent.writeln('return listOf(result)');
@@ -627,6 +609,7 @@ class KotlinGenerator extends Generator<KotlinOptions> {
   }
 
   void _writeWrapError(Indent indent) {
+    indent.addln('');
     indent.write('private fun wrapError(exception: Throwable): List<Any> ');
     indent.scoped('{', '}', () {
       indent.write('return ');
@@ -637,6 +620,13 @@ class KotlinGenerator extends Generator<KotlinOptions> {
             '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
       });
     });
+  }
+
+  @override
+  void postWriteFile(KotlinOptions generatorOptions, Root root, StringSink sink,
+      Indent indent) {
+    _writeWrapResult(indent);
+    _writeWrapError(indent);
   }
 }
 
