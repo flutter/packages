@@ -69,7 +69,7 @@ class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
   /// Instantiates a Objc Generator.
   ObjcGenerator();
 
-  /// Generates Objc files of type specified in [ObjcOptions]
+  /// Generates Objc file of type specified in [generatorOptions]
   @override
   void generate(OutputFileOptions<ObjcOptions> generatorOptions, Root root,
       StringSink sink) {
