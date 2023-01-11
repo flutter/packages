@@ -435,7 +435,7 @@ inline static $codeSerializerName& GetInstance() {
   }
 
   @override
-  void postWriteFile(
+  void finalWriteFile(
     CppOptions generatorOptions,
     Root root,
     StringSink sink,
@@ -997,7 +997,7 @@ flutter::EncodableList ${api.name}::WrapError(const FlutterError& error) {
   }
 
   @override
-  void postWriteFile(
+  void finalWriteFile(
       CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     if (generatorOptions.namespace != null) {
       indent.writeln('}  // namespace ${generatorOptions.namespace}');

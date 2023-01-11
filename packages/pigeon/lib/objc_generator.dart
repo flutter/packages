@@ -323,7 +323,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   }
 
   @override
-  void postWriteFile(
+  void finalWriteFile(
       ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     indent.writeln('NS_ASSUME_NONNULL_END');
   }

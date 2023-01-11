@@ -113,7 +113,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         writeFlutterApi(generatorOptions, root, sink, indent, api);
       }
     }
-    postWriteFile(generatorOptions, root, sink, indent);
+    finalWriteFile(generatorOptions, root, sink, indent);
   }
 
   @override
@@ -762,7 +762,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
   }
 
   @override
-  void postWriteFile(
+  void finalWriteFile(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     _writeWrapError(indent);
     indent.dec();

@@ -597,7 +597,7 @@ import FlutterMacOS
   }
 
   @override
-  void postWriteFile(SwiftOptions generatorOptions, Root root, StringSink sink,
+  void finalWriteFile(SwiftOptions generatorOptions, Root root, StringSink sink,
       Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);

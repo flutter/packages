@@ -49,7 +49,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
         writeFlutterApi(generatorOptions, root, sink, indent, api);
       }
     }
-    postWriteFile(generatorOptions, root, sink, indent);
+    finalWriteFile(generatorOptions, root, sink, indent);
   }
 
   /// Pre-process or write before [writeFilePrologue].
@@ -169,7 +169,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
   /// Post-process for generate and/or writes after all other methods.
   ///
   /// This method is not a reqiured method, and does not need to be overriden if not needed.
-  void postWriteFile(
+  void finalWriteFile(
     T generatorOptions,
     Root root,
     StringSink sink,

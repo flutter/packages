@@ -623,8 +623,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 
   @override
-  void postWriteFile(KotlinOptions generatorOptions, Root root, StringSink sink,
-      Indent indent) {
+  void finalWriteFile(KotlinOptions generatorOptions, Root root,
+      StringSink sink, Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);
   }
