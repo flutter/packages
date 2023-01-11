@@ -1205,14 +1205,14 @@ flutter::EncodableValue ${api.name}::WrapError(std::string_view error_message) {
 \t\tflutter::EncodableValue(std::string(error_message)),
 \t\tflutter::EncodableValue("Error"),
 \t\tflutter::EncodableValue()
-\t};
+\t});
 }
 flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
 \treturn flutter::EncodableValue(flutter::EncodableList{
 \t\tflutter::EncodableValue(error.message()),
 \t\tflutter::EncodableValue(error.code()),
 \t\terror.details()
-\t};
+\t});
 }''');
       indent.addln('');
     } else if (api.location == ApiLocation.flutter) {

@@ -465,7 +465,7 @@ void AllNullableTypesWrapper::set_values(const AllNullableTypes& value_arg) {
 
 flutter::EncodableList AllNullableTypesWrapper::ToEncodableList() const {
   return flutter::EncodableList{
-      flutter::CustomEncodableValue(values_),
+      flutter::EncodableValue(values_.ToEncodableList()),
   };
 }
 
@@ -1353,18 +1353,14 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 flutter::EncodableValue HostIntegrationCoreApi::WrapError(
     std::string_view error_message) {
   return flutter::EncodableValue(flutter::EncodableList{
-    flutter::EncodableValue(std::string(error_message)),
-    flutter::EncodableValue("Error"),
-    flutter::EncodableValue()
-  };
+      flutter::EncodableValue(std::string(error_message)),
+      flutter::EncodableValue("Error"), flutter::EncodableValue()});
 }
 flutter::EncodableValue HostIntegrationCoreApi::WrapError(
     const FlutterError& error) {
   return flutter::EncodableValue(flutter::EncodableList{
-    flutter::EncodableValue(error.message()),
-    flutter::EncodableValue(error.code()),
-    error.details()
-  };
+      flutter::EncodableValue(error.message()),
+      flutter::EncodableValue(error.code()), error.details()});
 }
 
 FlutterIntegrationCoreApiCodecSerializer::
@@ -1454,7 +1450,7 @@ void FlutterIntegrationCoreApi::EchoAllTypes(
       "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes", &GetCodec());
   flutter::EncodableValue encoded_api_arguments =
       flutter::EncodableValue(flutter::EncodableList{
-          flutter::CustomEncodableValue(everything_arg),
+          flutter::EncodableValue(everything_arg.ToEncodableList()),
       });
   channel->Send(
       encoded_api_arguments,
@@ -1477,7 +1473,7 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypes(
       &GetCodec());
   flutter::EncodableValue encoded_api_arguments =
       flutter::EncodableValue(flutter::EncodableList{
-          flutter::CustomEncodableValue(everything_arg),
+          flutter::EncodableValue(everything_arg.ToEncodableList()),
       });
   channel->Send(
       encoded_api_arguments,
@@ -1875,17 +1871,13 @@ void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 flutter::EncodableValue HostTrivialApi::WrapError(
     std::string_view error_message) {
   return flutter::EncodableValue(flutter::EncodableList{
-    flutter::EncodableValue(std::string(error_message)),
-    flutter::EncodableValue("Error"),
-    flutter::EncodableValue()
-  };
+      flutter::EncodableValue(std::string(error_message)),
+      flutter::EncodableValue("Error"), flutter::EncodableValue()});
 }
 flutter::EncodableValue HostTrivialApi::WrapError(const FlutterError& error) {
   return flutter::EncodableValue(flutter::EncodableList{
-    flutter::EncodableValue(error.message()),
-    flutter::EncodableValue(error.code()),
-    error.details()
-  };
+      flutter::EncodableValue(error.message()),
+      flutter::EncodableValue(error.code()), error.details()});
 }
 
 }  // namespace core_tests_pigeontest
