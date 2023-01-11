@@ -336,8 +336,8 @@ class HostIntegrationCoreApi {
   // the `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     HostIntegrationCoreApi* api);
-  static flutter::EncodableList WrapError(std::string_view error_message);
-  static flutter::EncodableList WrapError(const FlutterError& error);
+  static flutter::EncodableValue WrapError(std::string_view error_message);
+  static flutter::EncodableValue WrapError(const FlutterError& error);
 
  protected:
   HostIntegrationCoreApi() = default;
@@ -405,8 +405,8 @@ class HostTrivialApi {
   // `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     HostTrivialApi* api);
-  static flutter::EncodableList WrapError(std::string_view error_message);
-  static flutter::EncodableList WrapError(const FlutterError& error);
+  static flutter::EncodableValue WrapError(std::string_view error_message);
+  static flutter::EncodableValue WrapError(const FlutterError& error);
 
  protected:
   HostTrivialApi() = default;
