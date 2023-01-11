@@ -34,11 +34,13 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 + (nullable AllTypes *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
+
 @interface AllNullableTypes ()
 + (AllNullableTypes *)fromList:(NSArray *)list;
 + (nullable AllNullableTypes *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
+
 @interface AllNullableTypesWrapper ()
 + (AllNullableTypesWrapper *)fromList:(NSArray *)list;
 + (nullable AllNullableTypesWrapper *)nullableFromList:(NSArray *)list;
@@ -895,6 +897,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
                  }];
 }
 @end
+
 NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec() {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   sSharedObject = [FlutterStandardMessageCodec sharedInstance];

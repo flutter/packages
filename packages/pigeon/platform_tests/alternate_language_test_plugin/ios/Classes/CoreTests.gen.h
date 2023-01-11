@@ -209,6 +209,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoString:(NSString *)aString
         completion:(void (^)(NSString *_Nullable, NSError *_Nullable))completion;
 @end
+
 /// The codec used by HostTrivialApi.
 NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void);
 
