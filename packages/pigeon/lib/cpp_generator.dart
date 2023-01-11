@@ -696,7 +696,7 @@ ${prefix}reply(flutter::EncodableValue(std::move(wrapped)));''';
               final String returnTypeName = _apiReturnType(returnType);
               if (method.isAsynchronous) {
                 methodArgument.add(
-                  '[&reply]($returnTypeName&& output) {${indent.newline}'
+                  '[reply]($returnTypeName&& output) {${indent.newline}'
                   '${wrapResponse(method.returnType, prefix: '\t')}${indent.newline}'
                   '}',
                 );
@@ -712,6 +712,14 @@ ${prefix}reply(flutter::EncodableValue(std::move(wrapped)));''';
             });
             indent.write('catch (const std::exception& exception) ');
             indent.scoped('{', '}', () {
+              // There is a potential here for `reply` to be called twice, which
+              // is a violation of the API contract, because there's no way of
+              // knowing whether or not the plugin code called `reply` before
+              // throwing. Since use of `@async` suggests that the reply is
+              // probably not sent within the scope of the stack, err on the
+              // side of potential double-call rather than no call (which is
+              // also an API violation) so that unexpected errors have a better
+              // chance of being caught and handled in a useful way.
               indent.writeln('reply(WrapError(exception.what()));');
             });
           });

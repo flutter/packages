@@ -1255,7 +1255,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
           [api](const flutter::EncodableValue& message,
                 const flutter::MessageReply<flutter::EncodableValue>& reply) {
             try {
-              api->NoopAsync([&reply](std::optional<FlutterError>&& output) {
+              api->NoopAsync([reply](std::optional<FlutterError>&& output) {
                 if (output.has_value()) {
                   reply(WrapError(output.value()));
                   return;
@@ -1292,7 +1292,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& a_string_arg =
                   std::get<std::string>(encodable_a_string_arg);
               api->EchoAsyncString(
-                  a_string_arg, [&reply](ErrorOr<std::string>&& output) {
+                  a_string_arg, [reply](ErrorOr<std::string>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -1322,7 +1322,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<flutter::EncodableValue>& reply) {
             try {
               api->CallFlutterNoop(
-                  [&reply](std::optional<FlutterError>&& output) {
+                  [reply](std::optional<FlutterError>&& output) {
                     if (output.has_value()) {
                       reply(WrapError(output.value()));
                       return;
@@ -1359,7 +1359,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& a_string_arg =
                   std::get<std::string>(encodable_a_string_arg);
               api->CallFlutterEchoString(
-                  a_string_arg, [&reply](ErrorOr<std::string>&& output) {
+                  a_string_arg, [reply](ErrorOr<std::string>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;

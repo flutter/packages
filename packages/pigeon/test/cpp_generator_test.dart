@@ -1351,7 +1351,13 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateCppSource(const CppOptions(), root, sink);
     final String code = sink.toString();
+    // Nothing should be captured by reference for async handlers, since their
+    // lifetime is unknown (and expected to be longer than the stack's).
     expect(code, isNot(contains('&reply')));
     expect(code, isNot(contains('&wrapped')));
+    // Check for the exact capture format that is currently being used, to
+    // ensure that the negative tests above get updated if there are any
+    // changes to lambda capture.
+    expect(code, contains('[reply]('));
   });
 }
