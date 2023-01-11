@@ -420,8 +420,9 @@ String _wrappedHostApiArgumentExpression(Root root, String variableName,
   final String encodableValue;
   if (!hostType.isBuiltin &&
       root.classes.any((Class c) => c.name == dartType.baseName)) {
-    final String operator = hostType.isNullable ? '*' : '';
-    encodableValue = 'flutter::CustomEncodableValue($operator$variableName)';
+    final String operator = hostType.isNullable ? '->' : '.';
+    encodableValue =
+        'flutter::EncodableValue($variableName${operator}ToEncodableList())';
   } else if (!hostType.isBuiltin &&
       root.enums.any((Enum e) => e.name == dartType.baseName)) {
     final String nonNullValue =

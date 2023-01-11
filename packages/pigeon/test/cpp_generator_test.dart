@@ -463,7 +463,7 @@ void main() {
       expect(
           code,
           contains(
-              'nullable_nested_ ? flutter::CustomEncodableValue(*nullable_nested_) '
+              'nullable_nested_ ? flutter::EncodableValue(nullable_nested_->ToEncodableList()) '
               ': flutter::EncodableValue()'));
     }
   });
@@ -561,8 +561,7 @@ void main() {
       expect(code, contains('non_nullable_nested_ = value_arg;'));
       // Serialization uses the value directly.
       expect(code, contains('flutter::EncodableValue(non_nullable_bool_)'));
-      expect(code,
-          contains('flutter::CustomEncodableValue(non_nullable_nested_)'));
+      expect(code, contains('non_nullable_nested_.ToEncodableList()'));
     }
   });
 
@@ -1145,11 +1144,11 @@ void main() {
           code,
           contains(
               'a_map_arg ? flutter::EncodableValue(*a_map_arg) : flutter::EncodableValue()'));
-      // Class types use CustomEncodableValue.
+      // Class types use ToEncodableList.
       expect(
           code,
           contains(
-              'an_object_arg ? flutter::CustomEncodableValue(*an_object_arg) : flutter::EncodableValue()'));
+              'an_object_arg ? flutter::EncodableValue(an_object_arg->ToEncodableList()) : flutter::EncodableValue()'));
     }
   });
 
@@ -1257,8 +1256,9 @@ void main() {
       expect(code, contains('flutter::EncodableValue(a_string_arg)'));
       expect(code, contains('flutter::EncodableValue(a_list_arg)'));
       expect(code, contains('flutter::EncodableValue(a_map_arg)'));
-      // Class types use CustomEncodableValue.
-      expect(code, contains('flutter::CustomEncodableValue(an_object_arg)'));
+      // Class types use ToEncodableList.
+      expect(code,
+          contains('flutter::EncodableValue(an_object_arg.ToEncodableList())'));
     }
   });
 
