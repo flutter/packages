@@ -254,7 +254,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    // Intentionally left blank.
+    // Intentionally left empty.
   }
 
   @override
@@ -267,7 +267,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    // Intentionally left blank.
+    // Intentionally left empty.
   }
 
   @override

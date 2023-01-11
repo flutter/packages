@@ -358,7 +358,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   @override
   void writeEnum(ObjcOptions generatorOptions, Root root, StringSink sink,
       Indent indent, Enum anEnum) {
-    // Intentionally left blank.
+    // Intentionally left empty.
   }
 
   @override
