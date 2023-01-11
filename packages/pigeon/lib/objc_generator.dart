@@ -450,8 +450,8 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         '+ (nullable $className *)nullableFromList:(NSArray *)list { return (list) ? [$className fromList:list] : nil; }');
   }
 
-  _writeCodecAndGetter(ObjcOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Api api) {
+  void _writeCodecAndGetter(ObjcOptions generatorOptions, Root root,
+      StringSink sink, Indent indent, Api api) {
     final String codecName = _getCodecName(generatorOptions.prefix, api.name);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, codecName, generatorOptions, api, root);
@@ -679,9 +679,6 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     indent.writeln('@end');
     indent.writeln('');
   }
-
-  void _writeObjcSourceDataClassImplementation(ObjcOptions generatorOptions,
-      Root root, StringSink sink, Indent indent, Class klass) {}
 
   void _writeObjcSourceClassInitializer(
     ObjcOptions languageOptions,
