@@ -96,6 +96,9 @@ String _stateValueAccess(ParameterElement element) {
   if (element.isOptional) {
     String value = 'queryParams[${escapeDartString(element.name.kebab)}]';
     if (element.hasDefaultValue) {
+      if (element.type.isNullableType) {
+        throw NullableDefaultValueError(element);
+      }
       value += ' ?? ${element.defaultValueCode!}';
     }
     return value;
@@ -285,4 +288,16 @@ extension ParameterElementExtension on ParameterElement {
 
   /// Returns `true` if `this` has a name that matches [extraFieldName];
   bool get isExtraField => name == extraFieldName;
+}
+
+/// An error thrown when a default value is used with a nullable type.
+class NullableDefaultValueError extends InvalidGenerationSourceError {
+  /// An error thrown when a default value is used with a nullable type.
+  NullableDefaultValueError(
+    Element element,
+  ) : super(
+          'Default value used with a nullable type. Only non-nullable type can have a default value.',
+          todo: 'Remove the default value or make the type non-nullable.',
+          element: element,
+        );
 }
