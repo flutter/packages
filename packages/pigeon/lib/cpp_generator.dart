@@ -498,9 +498,9 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
       indent.writeln(
           'static void SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api);');
       indent.writeln(
-          'static flutter::EncodableList WrapError(std::string_view error_message);');
+          'static flutter::EncodableValue WrapError(std::string_view error_message);');
       indent.writeln(
-          'static flutter::EncodableList WrapError(const FlutterError& error);');
+          'static flutter::EncodableValue WrapError(const FlutterError& error);');
     });
     indent.scoped(' protected:', '', () {
       indent.writeln('${api.name}() = default;');
@@ -541,7 +541,6 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           indent.write(
               'channel->SetMessageHandler([api](const flutter::EncodableValue& message, const flutter::MessageReply<flutter::EncodableValue>& reply) ');
           indent.scoped('{', '});', () {
-            indent.writeln('flutter::EncodableList wrapped;');
             indent.write('try ');
             indent.scoped('{', '}', () {
               final List<String> methodArgument = <String>[];
@@ -627,7 +626,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.write('if ($encodableArgName.IsNull()) ');
                     indent.scoped('{', '}', () {
                       indent.writeln(
-                          'reply(flutter::EncodableValue(WrapError("$argName unexpectedly null.")));');
+                          'reply(WrapError("$argName unexpectedly null."));');
                       indent.writeln('return;');
                     });
                   }
@@ -637,17 +636,16 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 });
               }
 
-              String wrapResponse(String reply, TypeDeclaration returnType) {
-                String elseBody = '';
-                final String ifCondition;
+              String wrapResponse(TypeDeclaration returnType,
+                  {String prefix = ''}) {
+                final String nonErrorPath;
+                final String errorCondition;
                 final String errorGetter;
-                final String prefix = (reply != '') ? '\t' : '';
-
                 const String nullValue = 'flutter::EncodableValue()';
+
                 if (returnType.isVoid) {
-                  elseBody =
-                      '$prefix\twrapped.push_back($nullValue);${indent.newline}';
-                  ifCondition = 'output.has_value()';
+                  nonErrorPath = '${prefix}wrapped.push_back($nullValue);';
+                  errorCondition = 'output.has_value()';
                   errorGetter = 'value';
                 } else {
                   final HostDatatype hostType = getHostDatatype(
@@ -662,26 +660,32 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                   if (returnType.isNullable) {
                     // The value is a std::optional, so needs an extra layer of
                     // handling.
-                    elseBody = '''
-$prefix\tauto output_optional = $extractedValue;
-$prefix\tif (output_optional) {
-$prefix\t\twrapped.push_back($wrapperType(std::move(output_optional).value()));
-$prefix\t} else {
-$prefix\t\twrapped.push_back($nullValue);
-$prefix\t}${indent.newline}''';
+                    nonErrorPath = '''
+${prefix}auto output_optional = $extractedValue;
+${prefix}if (output_optional) {
+$prefix\twrapped.push_back($wrapperType(std::move(output_optional).value()));
+$prefix} else {
+$prefix\twrapped.push_back($nullValue);
+$prefix}''';
                   } else {
-                    elseBody =
-                        '$prefix\twrapped.push_back($wrapperType($extractedValue));${indent.newline}';
+                    nonErrorPath =
+                        '${prefix}wrapped.push_back($wrapperType($extractedValue));';
                   }
-                  ifCondition = 'output.has_error()';
+                  errorCondition = 'output.has_error()';
                   errorGetter = 'error';
                 }
-                return '${prefix}if ($ifCondition) {${indent.newline}'
-                    '$prefix\twrapped = WrapError(output.$errorGetter());${indent.newline}'
-                    '$prefix} else {${indent.newline}'
-                    '$elseBody'
-                    '$prefix}'
-                    '$prefix$reply';
+                // Ideally this code would use an initializer list to create
+                // an EncodableList inline, which would be less code. However,
+                // that would always copy the element, so the slightly more
+                // verbose create-and-push approach is used instead.
+                return '''
+${prefix}if ($errorCondition) {
+$prefix\treply(WrapError(output.$errorGetter()));
+$prefix\treturn;
+$prefix}
+${prefix}flutter::EncodableList wrapped;
+$nonErrorPath
+${prefix}reply(flutter::EncodableValue(std::move(wrapped)));''';
               }
 
               final HostDatatype returnType = getHostDatatype(
@@ -692,8 +696,8 @@ $prefix\t}${indent.newline}''';
               final String returnTypeName = _apiReturnType(returnType);
               if (method.isAsynchronous) {
                 methodArgument.add(
-                  '[&wrapped, &reply]($returnTypeName&& output) {${indent.newline}'
-                  '${wrapResponse('\treply(flutter::EncodableValue(std::move(wrapped)));${indent.newline}', method.returnType)}'
+                  '[reply]($returnTypeName&& output) {${indent.newline}'
+                  '${wrapResponse(method.returnType, prefix: '\t')}${indent.newline}'
                   '}',
                 );
               }
@@ -703,21 +707,21 @@ $prefix\t}${indent.newline}''';
                 indent.format('$call;');
               } else {
                 indent.writeln('$returnTypeName output = $call;');
-                indent.format(wrapResponse('', method.returnType));
+                indent.format(wrapResponse(method.returnType));
               }
             });
             indent.write('catch (const std::exception& exception) ');
             indent.scoped('{', '}', () {
-              indent.writeln('wrapped = WrapError(exception.what());');
-              if (method.isAsynchronous) {
-                indent.writeln(
-                    'reply(flutter::EncodableValue(std::move(wrapped)));');
-              }
+              // There is a potential here for `reply` to be called twice, which
+              // is a violation of the API contract, because there's no way of
+              // knowing whether or not the plugin code called `reply` before
+              // throwing. Since use of `@async` suggests that the reply is
+              // probably not sent within the scope of the stack, err on the
+              // side of potential double-call rather than no call (which is
+              // also an API violation) so that unexpected errors have a better
+              // chance of being caught and handled in a useful way.
+              indent.writeln('reply(WrapError(exception.what()));');
             });
-            if (!method.isAsynchronous) {
-              indent.writeln(
-                  'reply(flutter::EncodableValue(std::move(wrapped)));');
-            }
           });
         });
         indent.scoped(null, '}', () {
@@ -1187,15 +1191,15 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
 
       indent.addln('');
       indent.format('''
-flutter::EncodableList ${api.name}::WrapError(std::string_view error_message) {
-\treturn flutter::EncodableList({
+flutter::EncodableValue ${api.name}::WrapError(std::string_view error_message) {
+\treturn flutter::EncodableValue(flutter::EncodableList{
 \t\tflutter::EncodableValue(std::string(error_message)),
 \t\tflutter::EncodableValue("Error"),
 \t\tflutter::EncodableValue()
 \t});
 }
-flutter::EncodableList ${api.name}::WrapError(const FlutterError& error) {
-\treturn flutter::EncodableList({
+flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
+\treturn flutter::EncodableValue(flutter::EncodableList{
 \t\tflutter::EncodableValue(error.message()),
 \t\tflutter::EncodableValue(error.code()),
 \t\terror.details()

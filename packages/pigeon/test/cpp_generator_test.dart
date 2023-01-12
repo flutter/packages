@@ -1300,4 +1300,64 @@ void main() {
     expect(code, isNot(contains('reply(wrap')));
     expect(code, contains('reply(flutter::EncodableValue('));
   });
+
+  test('does not keep unowned references in async handlers', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'HostApi', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'noop',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          isAsynchronous: true,
+        ),
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
+                name: '')
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'double', isNullable: false),
+          isAsynchronous: true,
+        ),
+      ]),
+      Api(name: 'FlutterApi', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'noop',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          isAsynchronous: true,
+        ),
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                ),
+                name: '')
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'bool', isNullable: false),
+          isAsynchronous: true,
+        ),
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateCppSource(const CppOptions(), root, sink);
+    final String code = sink.toString();
+    // Nothing should be captured by reference for async handlers, since their
+    // lifetime is unknown (and expected to be longer than the stack's).
+    expect(code, isNot(contains('&reply')));
+    expect(code, isNot(contains('&wrapped')));
+    // Check for the exact capture format that is currently being used, to
+    // ensure that the negative tests above get updated if there are any
+    // changes to lambda capture.
+    expect(code, contains('[reply]('));
+  });
 }

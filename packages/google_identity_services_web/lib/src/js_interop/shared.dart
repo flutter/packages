@@ -213,3 +213,159 @@ enum CredentialSelectBy {
   @override
   String toString() => _selectBy;
 }
+
+/// The type of button to be rendered.
+///
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#type
+enum ButtonType {
+  /// A button with text or personalized information.
+  standard('standard'),
+
+  /// An icon button without text.
+  icon('icon');
+
+  ///
+  const ButtonType(String type) : _type = type;
+  final String _type;
+
+  @override
+  String toString() => _type;
+}
+
+/// The theme of the button to be rendered.
+///
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#theme
+enum ButtonTheme {
+  /// A standard button theme.
+  outline('outline'),
+
+  /// A blue-filled button theme.
+  filled_blue('filled_blue'),
+
+  /// A black-filled button theme.
+  filled_black('filled_black');
+
+  ///
+  const ButtonTheme(String theme) : _theme = theme;
+  final String _theme;
+
+  @override
+  String toString() => _theme;
+}
+
+/// The theme of the button to be rendered.
+///
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#size
+enum ButtonSize {
+  /// A large button (about 40px tall).
+  large('large'),
+
+  /// A medium-sized button (about 32px tall).
+  medium('medium'),
+
+  /// A small button (about 20px tall).
+  small('small');
+
+  ///
+  const ButtonSize(String size) : _size = size;
+  final String _size;
+
+  @override
+  String toString() => _size;
+}
+
+/// The button text.
+///
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#text
+enum ButtonText {
+  /// The button text is "Sign in with Google".
+  signin_with('signin_with'),
+
+  /// The button text is "Sign up with Google".
+  signup_with('signup_with'),
+
+  /// The button text is "Continue with Google".
+  continue_with('continue_with'),
+
+  /// The button text is "Sign in".
+  signin('signin');
+
+  ///
+  const ButtonText(String text) : _text = text;
+  final String _text;
+
+  @override
+  String toString() => _text;
+}
+
+/// The button shape.
+///
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#shape
+enum ButtonShape {
+  /// The rectangular-shaped button.
+  ///
+  /// If used for the [ButtonType.icon], then it's the same as [square].
+  rectangular('rectangular'),
+
+  /// The pill-shaped button.
+  ///
+  /// If used for the [ButtonType.icon], then it's the same as [circle].
+  pill('pill'),
+
+  /// The circle-shaped button.
+  ///
+  /// If used for the [ButtonType.standard], then it's the same as [pill].
+  circle('circle'),
+
+  /// The square-shaped button.
+  ///
+  /// If used for the [ButtonType.standard], then it's the same as [rectangular].
+  square('square');
+
+  ///
+  const ButtonShape(String shape) : _shape = shape;
+  final String _shape;
+
+  @override
+  String toString() => _shape;
+}
+
+/// The type of button to be rendered.
+///
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#type
+enum ButtonLogoAlignment {
+  /// Left-aligns the Google logo.
+  left('left'),
+
+  /// Center-aligns the Google logo.
+  center('center');
+
+  ///
+  const ButtonLogoAlignment(String alignment) : _alignment = alignment;
+  final String _alignment;
+
+  @override
+  String toString() => _alignment;
+}
+
+/// The `type` of the error object passed into the `error_callback` function.
+enum GoogleIdentityServicesErrorType {
+  /// Missing required parameter.
+  missing_required_parameter('missing_required_parameter'),
+
+  /// The popup was closed before the flow was completed.
+  popup_closed('popup_closed'),
+
+  /// Popup failed to open.
+  popup_failed_to_open('popup_failed_to_open'),
+
+  /// Unknown error.
+  unknown('unknown');
+
+  ///
+  const GoogleIdentityServicesErrorType(String type) : _type = type;
+  final String _type;
+
+  @override
+  String toString() => _type;
+}
