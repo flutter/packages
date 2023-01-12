@@ -26,8 +26,8 @@ class _ExampleAppState extends State<ExampleApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: Text('Shaders!')),
-        body: Center(child:
-          Column(
+        body: Center(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               SampledText(text: 'This is some sampled text', value: _value),
