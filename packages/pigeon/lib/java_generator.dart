@@ -741,6 +741,8 @@ Result<$returnType> $resultName = new Result<$returnType>() {
   void writeGeneralUtilities(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     _writeWrapError(indent);
+
+    // These lines close the main class.
     indent.dec();
     indent.addln('}');
   }

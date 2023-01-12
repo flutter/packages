@@ -272,6 +272,18 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
+  void writeApis(
+      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    super.writeApis(generatorOptions, root, sink, indent);
+    if (generatorOptions.namespace != null) {
+      indent.writeln('}  // namespace ${generatorOptions.namespace}');
+    }
+    final String guardName = _getGuardName(
+        generatorOptions.headerIncludePath, generatorOptions.namespace);
+    indent.writeln('#endif  // $guardName');
+  }
+
+  @override
   void writeFlutterApi(
     CppOptions generatorOptions,
     Root root,
@@ -433,21 +445,6 @@ inline static $codeSerializerName& GetInstance() {
       });
     }, nestCount: 0);
     indent.addln('');
-  }
-
-  @override
-  void writeGeneralUtilities(
-    CppOptions generatorOptions,
-    Root root,
-    StringSink sink,
-    Indent indent,
-  ) {
-    if (generatorOptions.namespace != null) {
-      indent.writeln('}  // namespace ${generatorOptions.namespace}');
-    }
-    final String guardName = _getGuardName(
-        generatorOptions.headerIncludePath, generatorOptions.namespace);
-    indent.writeln('#endif  // $guardName');
   }
 
   void _writeErrorOr(Indent indent,
@@ -686,6 +683,15 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
       });
     });
     indent.addln('');
+  }
+
+  @override
+  void writeApis(
+      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    super.writeApis(generatorOptions, root, sink, indent);
+    if (generatorOptions.namespace != null) {
+      indent.writeln('}  // namespace ${generatorOptions.namespace}');
+    }
   }
 
   @override
@@ -995,14 +1001,6 @@ flutter::EncodableList ${api.name}::WrapError(const FlutterError& error) {
 \t});
 }''');
     indent.addln('');
-  }
-
-  @override
-  void writeGeneralUtilities(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
-    if (generatorOptions.namespace != null) {
-      indent.writeln('}  // namespace ${generatorOptions.namespace}');
-    }
   }
 
   void _writeCodec(

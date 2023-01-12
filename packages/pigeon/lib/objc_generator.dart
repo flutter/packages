@@ -215,6 +215,13 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   ) {}
 
   @override
+  void writeApis(
+      ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    super.writeApis(generatorOptions, root, sink, indent);
+    indent.writeln('NS_ASSUME_NONNULL_END');
+  }
+
+  @override
   void writeFlutterApi(
     ObjcOptions generatorOptions,
     Root root,
@@ -321,12 +328,6 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln(
         'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api);');
     indent.writeln('');
-  }
-
-  @override
-  void writeGeneralUtilities(
-      ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
-    indent.writeln('NS_ASSUME_NONNULL_END');
   }
 }
 
