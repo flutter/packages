@@ -1092,7 +1092,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       // Nullable arguments should all be pointers. This will make them somewhat
       // awkward for some uses (literals, values that could be inlined) but
@@ -1226,7 +1226,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      generateCppHeader(const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(
           code,
