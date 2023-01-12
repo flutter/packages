@@ -1,22 +1,6 @@
-## 5.0.5
+## 6.0.0
 
-* Adds writeApi method to Generator classes.
-
-## 5.0.4
-
-* Adds writeEnum method to Generator classes.
-
-## 5.0.3
-
-* Adds writeEnum method to Generator classes.
-
-## 5.0.2
-
-* Adds writeImports method to Generator classes.
-
-## 5.0.1
-
-* Adds writeHeaders method to Generator classes and updates tests to use new Generators.
+* Creates StructuredGenerator class and implements it on all platforms.
 
 ## 5.0.0
 
