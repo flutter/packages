@@ -241,7 +241,7 @@ import FlutterMacOS
   }
 
   @override
-  void preApis(
+  void writeApis(
     SwiftOptions generatorOptions,
     Root root,
     StringSink sink,
@@ -252,6 +252,7 @@ import FlutterMacOS
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.addln('');
     }
+    super.writeApis(generatorOptions, root, sink, indent);
   }
 
   /// Writes the code for a flutter [Api], [api].
@@ -597,8 +598,8 @@ import FlutterMacOS
   }
 
   @override
-  void finalWriteFile(SwiftOptions generatorOptions, Root root, StringSink sink,
-      Indent indent) {
+  void writeGeneralUtilities(SwiftOptions generatorOptions, Root root,
+      StringSink sink, Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);
   }

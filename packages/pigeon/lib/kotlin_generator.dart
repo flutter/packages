@@ -285,7 +285,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 
   @override
-  void preApis(
+  void writeApis(
     KotlinOptions generatorOptions,
     Root root,
     StringSink sink,
@@ -296,6 +296,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.addln('');
     }
+    super.writeApis(generatorOptions, root, sink, indent);
   }
 
   /// Writes the code for a flutter [Api], [api].
@@ -623,7 +624,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 
   @override
-  void finalWriteFile(KotlinOptions generatorOptions, Root root,
+  void writeGeneralUtilities(KotlinOptions generatorOptions, Root root,
       StringSink sink, Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);

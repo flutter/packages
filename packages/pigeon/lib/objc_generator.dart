@@ -131,7 +131,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   }
 
   @override
-  void preDataClasses(
+  void writeDataClasses(
       ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     indent.writeln('');
     for (final Class klass in root.classes) {
@@ -139,6 +139,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
           '@class ${_className(generatorOptions.prefix, klass.name)};');
     }
     indent.writeln('');
+    super.writeDataClasses(generatorOptions, root, sink, indent);
   }
 
   @override
@@ -323,7 +324,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   }
 
   @override
-  void finalWriteFile(
+  void writeGeneralUtilities(
       ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     indent.writeln('NS_ASSUME_NONNULL_END');
   }
@@ -362,7 +363,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   }
 
   @override
-  void preDataClasses(
+  void writeDataClasses(
       ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     _writeObjcSourceHelperFunctions(indent);
     indent.addln('');
@@ -371,6 +372,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       _writeObjcSourceDataClassExtension(generatorOptions, indent, klass);
     }
     indent.writeln('');
+    super.writeDataClasses(generatorOptions, root, sink, indent);
   }
 
   @override

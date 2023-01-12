@@ -156,9 +156,10 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void preDataClasses(
+  void writeDataClasses(
       CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
+    super.writeDataClasses(generatorOptions, root, sink, indent);
   }
 
   @override
@@ -435,7 +436,7 @@ inline static $codeSerializerName& GetInstance() {
   }
 
   @override
-  void finalWriteFile(
+  void writeGeneralUtilities(
     CppOptions generatorOptions,
     Root root,
     StringSink sink,
@@ -997,7 +998,7 @@ flutter::EncodableList ${api.name}::WrapError(const FlutterError& error) {
   }
 
   @override
-  void finalWriteFile(
+  void writeGeneralUtilities(
       CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     if (generatorOptions.namespace != null) {
       indent.writeln('}  // namespace ${generatorOptions.namespace}');

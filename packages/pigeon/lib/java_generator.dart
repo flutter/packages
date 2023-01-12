@@ -90,32 +90,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Instantiates a Java Generator.
   JavaGenerator();
 
-  /// Generates the ".java" file for the AST represented by [root] to [sink] with the
-  /// provided [generatorOptions].
-  @override
-  void generate(JavaOptions generatorOptions, Root root, StringSink sink) {
-    final Indent indent = Indent(sink);
-
-    writeFilePrologue(generatorOptions, root, sink, indent);
-    writeFileImports(generatorOptions, root, sink, indent);
-    preEnums(generatorOptions, root, sink, indent);
-    for (final Enum anEnum in root.enums) {
-      writeEnum(generatorOptions, root, sink, indent, anEnum);
-    }
-    for (final Class klass in root.classes) {
-      writeDataClass(generatorOptions, root, sink, indent, klass);
-    }
-    preApis(generatorOptions, root, sink, indent);
-    for (final Api api in root.apis) {
-      if (api.location == ApiLocation.host) {
-        writeHostApi(generatorOptions, root, sink, indent, api);
-      } else if (api.location == ApiLocation.flutter) {
-        writeFlutterApi(generatorOptions, root, sink, indent, api);
-      }
-    }
-    finalWriteFile(generatorOptions, root, sink, indent);
-  }
-
   @override
   void writeFilePrologue(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
@@ -152,7 +126,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   @override
-  void preEnums(
+  void writeEnums(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
@@ -163,6 +137,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
+    super.writeEnums(generatorOptions, root, sink, indent);
   }
 
   @override
@@ -479,7 +454,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   @override
-  void preApis(
+  void writeApis(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
@@ -487,6 +462,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.addln('');
       _writeResultInterface(indent);
     }
+    super.writeApis(generatorOptions, root, sink, indent);
   }
 
   /// Write the java code that represents a host [Api], [api].
@@ -762,7 +738,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
   }
 
   @override
-  void finalWriteFile(
+  void writeGeneralUtilities(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     _writeWrapError(indent);
     indent.dec();
