@@ -318,7 +318,7 @@ GoRouteData.\$route(
     for (final ParameterElement param in _ctorQueryParams) {
       final String parameterName = param.name;
 
-      final List<String> conditions = [];
+      final List<String> conditions = <String>[];
       if (param.hasDefaultValue) {
         if (param.type.isNullableType) {
           throw NullableDefaultValueError(param);
