@@ -54,7 +54,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
 
   /// Pre-process or write before [writeFilePrologue].
   ///
-  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  /// This method is not a reqiured method, and does not need to be overridden if not needed.
   void prePrologue(
     T generatorOptions,
     Root root,
@@ -80,7 +80,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
 
   /// Pre-process for enums or writes before any [writeEnum] calls.
   ///
-  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  /// This method is not a reqiured method, and does not need to be overridden if not needed.
   void preEnums(
     T generatorOptions,
     Root root,
@@ -99,7 +99,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
 
   /// Pre-process for data classes or writes before any [writeDataClass] calls.
   ///
-  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  /// This method is not a reqiured method, and does not need to be overridden if not needed.
   void preDataClasses(
     T generatorOptions,
     Root root,
@@ -140,7 +140,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
 
   /// Pre-process for apis and/or writes before any [writeFlutterApi] or [writeHostApi] calls.
   ///
-  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  /// This method is not a reqiured method, and does not need to be overridden if not needed.
   void preApis(
     T generatorOptions,
     Root root,
@@ -168,7 +168,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
 
   /// Post-process for generate and/or writes after all other methods.
   ///
-  /// This method is not a reqiured method, and does not need to be overriden if not needed.
+  /// This method is not a reqiured method, and does not need to be overridden if not needed.
   void finalWriteFile(
     T generatorOptions,
     Root root,
