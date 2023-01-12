@@ -1,3 +1,9 @@
+## 5.0.2
+
+* [c++] Fixes most non-class arguments and return values in Flutter APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
+
 ## 5.0.1
 
 * [c++] Fixes undefined behavior in `@async` methods.
