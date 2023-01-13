@@ -10,7 +10,10 @@ environment:
 
 dependencies:
   args: ^2.3.1
+  file: 6.1.4
   intl: 0.17.0
+  meta: 1.8.0
+  path: ^1.8.0
   process: 4.2.4
   yaml: 3.1.1
 
@@ -18,4 +21,3 @@ dev_dependencies:
   file_testing: ^3.0.0
   test: ^1.16.0
   test_api: ^0.4.13
-
