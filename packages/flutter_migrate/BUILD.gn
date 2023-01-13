@@ -2,6 +2,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# This build file is used by the flutter engine build system
+# to generate artifacts which are uploaded and then consumed
+# by the flutter tool.
+
 import("//flutter/build/dart/rules.gni")
 
 application_snapshot("flutter_migrate") {
