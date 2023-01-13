@@ -109,8 +109,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeFileImports(CppOptions generatorOptions, Root root, Indent indent) {
-    final String guardName = _getGuardName(
-        generatorOptions.headerIncludePath, generatorOptions.namespace);
+    final String guardName = _getGuardName(generatorOptions.headerIncludePath);
     indent.writeln('#ifndef $guardName');
     indent.writeln('#define $guardName');
 
@@ -252,8 +251,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     if (generatorOptions.namespace != null) {
       indent.writeln('}  // namespace ${generatorOptions.namespace}');
     }
-    final String guardName = _getGuardName(
-        generatorOptions.headerIncludePath, generatorOptions.namespace);
+    final String guardName = _getGuardName(generatorOptions.headerIncludePath);
     indent.writeln('#endif  // $guardName');
   }
 
@@ -1275,13 +1273,10 @@ String _nullSafeCppTypeForDartType(TypeDeclaration type,
   }
 }
 
-String _getGuardName(String? headerFileName, String? namespace) {
+String _getGuardName(String? headerFileName) {
   String guardName = 'PIGEON_';
   if (headerFileName != null) {
     guardName += '${headerFileName.replaceAll('.', '_').toUpperCase()}_';
-  }
-  if (namespace != null) {
-    guardName += '${namespace.toUpperCase()}_';
   }
   return '${guardName}H_';
 }
