@@ -74,9 +74,9 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     }
   }
 
-  /// Writes a single Enum to file.
+  /// Writes a single Enum to file. This is needed in most generators.
   void writeEnum(T generatorOptions, Root root, StringSink sink, Indent indent,
-      Enum anEnum);
+      Enum anEnum) {}
 
   /// Writes all apis to file. Can be overridden to add extra code before/after apis.
   void writeDataClasses(

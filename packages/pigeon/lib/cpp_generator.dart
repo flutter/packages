@@ -521,12 +521,6 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void writeEnum(CppOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
-    // Intentionally left empty as there are no enums in this file.
-  }
-
-  @override
   void writeDataClass(CppOptions generatorOptions, Root root, StringSink sink,
       Indent indent, Class klass) {
     final Set<String> customClassNames =

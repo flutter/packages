@@ -364,12 +364,6 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   }
 
   @override
-  void writeEnum(ObjcOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
-    // Intentionally left empty as there are no enums in this file.
-  }
-
-  @override
   void writeDataClasses(
       ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     _writeObjcSourceHelperFunctions(indent);
