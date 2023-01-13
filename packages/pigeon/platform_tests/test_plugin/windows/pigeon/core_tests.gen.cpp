@@ -1437,9 +1437,10 @@ void FlutterIntegrationCoreApi::Noop(
       binary_messenger_, "dev.flutter.pigeon.FlutterIntegrationCoreApi.noop",
       &GetCodec());
   flutter::EncodableValue encoded_api_arguments = flutter::EncodableValue();
-  channel->Send(encoded_api_arguments,
-                [on_success, on_error](const uint8_t* reply,
-                                       size_t reply_size) { on_success(); });
+  channel->Send(
+      encoded_api_arguments,
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) { on_success(); });
 }
 void FlutterIntegrationCoreApi::EchoAllTypes(
     const AllTypes& everything_arg,
@@ -1454,7 +1455,8 @@ void FlutterIntegrationCoreApi::EchoAllTypes(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1477,7 +1479,8 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypes(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1507,7 +1510,8 @@ void FlutterIntegrationCoreApi::SendMultipleNullableTypes(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1528,7 +1532,8 @@ void FlutterIntegrationCoreApi::EchoBool(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1548,7 +1553,8 @@ void FlutterIntegrationCoreApi::EchoInt(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1568,7 +1574,8 @@ void FlutterIntegrationCoreApi::EchoDouble(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1589,7 +1596,8 @@ void FlutterIntegrationCoreApi::EchoString(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1612,7 +1620,8 @@ void FlutterIntegrationCoreApi::EchoUint8List(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1634,7 +1643,8 @@ void FlutterIntegrationCoreApi::EchoList(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1656,7 +1666,8 @@ void FlutterIntegrationCoreApi::EchoMap(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1679,7 +1690,8 @@ void FlutterIntegrationCoreApi::EchoNullableBool(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1701,7 +1713,8 @@ void FlutterIntegrationCoreApi::EchoNullableInt(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1728,7 +1741,8 @@ void FlutterIntegrationCoreApi::EchoNullableDouble(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1751,7 +1765,8 @@ void FlutterIntegrationCoreApi::EchoNullableString(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1775,7 +1790,8 @@ void FlutterIntegrationCoreApi::EchoNullableUint8List(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1799,7 +1815,8 @@ void FlutterIntegrationCoreApi::EchoNullableList(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
@@ -1822,7 +1839,8 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
       });
   channel->Send(
       encoded_api_arguments,
-      [on_success, on_error](const uint8_t* reply, size_t reply_size) {
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
