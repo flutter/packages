@@ -426,7 +426,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
         options.dartOptions, options.copyrightHeader);
-    final DartGenerator generator = DartGenerator();
+    const DartGenerator generator = DartGenerator();
     generator.generate(dartOptionsWithHeader, root, sink);
   }
 
@@ -455,12 +455,8 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
       dartOutPath: options.dartOut,
       testOutPath: options.dartTestOut,
     );
-    final DartGenerator testGenerator = DartGenerator();
-    testGenerator.generateTest(
-      dartOptionsWithHeader,
-      root,
-      sink,
-    );
+    const DartGenerator testGenerator = DartGenerator();
+    testGenerator.generateTest(dartOptionsWithHeader, root, sink);
   }
 
   @override
@@ -497,7 +493,7 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
     final OutputFileOptions<ObjcOptions> outputFileOptions =
         OutputFileOptions<ObjcOptions>(
             fileType: fileType, languageOptions: objcOptionsWithHeader);
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     generator.generate(outputFileOptions, root, sink);
   }
 
@@ -532,7 +528,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final JavaGenerator generator = JavaGenerator();
+    const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
   }
 
@@ -560,7 +556,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
   }
 
@@ -593,7 +589,7 @@ class CppGeneratorAdapter implements GeneratorAdapter {
     final OutputFileOptions<CppOptions> outputFileOptions =
         OutputFileOptions<CppOptions>(
             fileType: fileType, languageOptions: cppOptionsWithHeader);
-    final CppGenerator generator = CppGenerator();
+    const CppGenerator generator = CppGenerator();
     generator.generate(outputFileOptions, root, sink);
   }
 
@@ -627,7 +623,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    final KotlinGenerator generator = KotlinGenerator();
+    const KotlinGenerator generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink);
   }
 
