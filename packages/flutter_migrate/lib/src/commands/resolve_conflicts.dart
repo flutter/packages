@@ -17,6 +17,7 @@ import '../utils.dart';
 /// allowing them to accept the original, the new lines, or skip and resolve manually.
 class MigrateResolveConflictsCommand extends MigrateCommand {
   MigrateResolveConflictsCommand({
+    required bool verbose,
     required this.logger,
     required this.fileSystem,
     required this.terminal,
@@ -47,6 +48,7 @@ class MigrateResolveConflictsCommand extends MigrateCommand {
     );
     argParser.addFlag(
       'flutter-subcommand',
+      hide: !verbose,
       help:
           'Enable when using the flutter tool as a subcommand. This changes the '
           'wording of log messages to indicate the correct suggested commands to use.',

@@ -14,6 +14,7 @@ import 'src/base_dependencies.dart';
 
 import 'src/commands/abandon.dart';
 import 'src/commands/apply.dart';
+import 'src/commands/resolve_conflicts.dart';
 import 'src/commands/start.dart';
 import 'src/commands/status.dart';
 
@@ -41,13 +42,21 @@ Future<void> main(List<String> args) async {
         logger: baseDependencies.logger,
         fileSystem: baseDependencies.fileSystem,
         terminal: baseDependencies.terminal,
-        processManager: baseDependencies.processManager),
+        processManager: baseDependencies.processManager
+    ),
     MigrateApplyCommand(
         verbose: verbose,
         logger: baseDependencies.logger,
         fileSystem: baseDependencies.fileSystem,
         terminal: baseDependencies.terminal,
-        processManager: baseDependencies.processManager),
+        processManager: baseDependencies.processManager
+    ),
+    MigrateResolveConflictsCommand(
+        verbose: verbose,
+        logger: baseDependencies.logger,
+        fileSystem: baseDependencies.fileSystem,
+        terminal: baseDependencies.terminal
+    ),
   ];
 
   final MigrateCommandRunner runner = MigrateCommandRunner();

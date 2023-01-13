@@ -56,6 +56,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true''', flush: true);
     command = MigrateResolveConflictsCommand(
+      verbose: true,
       logger: logger,
       fileSystem: fileSystem,
       terminal: terminal,
