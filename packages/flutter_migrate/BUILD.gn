@@ -5,15 +5,10 @@
 import("//flutter/build/dart/rules.gni")
 
 application_snapshot("flutter_migrate") {
-  main_dart = "bin/flutter_migrate.dart"
+  main_dart = "lib/executable.dart"
   package_config = ".dart_tool/package_config.json"
   snapshot_kind = "kernel"
   output = "$root_gen_dir/flutter_migrate.dill"
 
-  training_args = [ "--help" ]
-
-  inputs = [
-    "bin/flutter_migrate.dart",
-    ".dart_tool/package_config.json",
-  ]
+  training_args = []
 }
