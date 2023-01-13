@@ -92,7 +92,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeFilePrologue(
-      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      JavaOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -103,7 +103,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeFileImports(
-      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      JavaOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package};');
     }
@@ -127,7 +127,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeOpenNamespace(
-      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      JavaOptions generatorOptions, Root root, Indent indent) {
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
     indent.writeln(
@@ -140,8 +140,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   @override
-  void writeEnum(JavaOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
+  void writeEnum(
+      JavaOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
     String camelToSnake(String camelCase) {
       final RegExp regex = RegExp('([a-z])([A-Z]+)');
       return camelCase
@@ -171,8 +171,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   @override
-  void writeDataClass(JavaOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Class klass) {
+  void writeDataClass(
+      JavaOptions generatorOptions, Root root, Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -189,7 +189,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.write('public static class ${klass.name} ');
     indent.scoped('{', '}', () {
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        _writeClassField(generatorOptions, root, sink, indent, field);
+        _writeClassField(generatorOptions, root, indent, field);
         indent.addln('');
       }
 
@@ -201,16 +201,16 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.writeln('private ${klass.name}() {}');
       }
 
-      _writeClassBuilder(generatorOptions, root, sink, indent, klass);
-      writeClassEncode(generatorOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames);
-      writeClassDecode(generatorOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames);
+      _writeClassBuilder(generatorOptions, root, indent, klass);
+      writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
+      writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
     });
   }
 
-  void _writeClassField(JavaOptions generatorOptions, Root root,
-      StringSink sink, Indent indent, NamedType field) {
+  void _writeClassField(
+      JavaOptions generatorOptions, Root root, Indent indent, NamedType field) {
     final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
         root.enums, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
     final String nullability = field.type.isNullable ? '@Nullable' : '@NonNull';
@@ -237,7 +237,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   void _writeClassBuilder(
     JavaOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
   ) {
@@ -276,7 +275,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   void writeClassEncode(
     JavaOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -313,7 +311,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   void writeClassDecode(
     JavaOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -354,7 +351,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   void writeFlutterApi(
     JavaOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
@@ -453,15 +449,14 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   @override
-  void writeApis(
-      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+  void writeApis(JavaOptions generatorOptions, Root root, Indent indent) {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.addln('');
       _writeResultInterface(indent);
     }
-    super.writeApis(generatorOptions, root, sink, indent);
+    super.writeApis(generatorOptions, root, indent);
   }
 
   /// Write the java code that represents a host [Api], [api].
@@ -471,8 +466,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
   /// }
   @override
-  void writeHostApi(JavaOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Api api) {
+  void writeHostApi(
+      JavaOptions generatorOptions, Root root, Indent indent, Api api) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
@@ -486,8 +481,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.write('public interface ${api.name} ');
     indent.scoped('{', '}', () {
       for (final Method method in api.methods) {
-        _writeInterfaceMethod(
-            generatorOptions, root, sink, indent, api, method);
+        _writeInterfaceMethod(generatorOptions, root, indent, api, method);
       }
       indent.addln('');
       final String codecName = _getCodecName(api);
@@ -508,7 +502,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
       indent.scoped('{', '}', () {
         for (final Method method in api.methods) {
-          _writeMethodSetup(generatorOptions, root, sink, indent, api, method);
+          _writeMethodSetup(generatorOptions, root, indent, api, method);
         }
       });
     });
@@ -518,7 +512,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Example:
   ///   int add(int x, int y);
   void _writeInterfaceMethod(JavaOptions generatorOptions, Root root,
-      StringSink sink, Indent indent, Api api, final Method method) {
+      Indent indent, Api api, final Method method) {
     final String returnType = method.isAsynchronous
         ? 'void'
         : _nullsafeJavaTypeForDartType(method.returnType);
@@ -548,8 +542,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Write a static setup function in the interface.
   /// Example:
   ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
-  void _writeMethodSetup(JavaOptions generatorOptions, Root root,
-      StringSink sink, Indent indent, Api api, final Method method) {
+  void _writeMethodSetup(JavaOptions generatorOptions, Root root, Indent indent,
+      Api api, final Method method) {
     final String channelName = makeChannelName(api, method);
     indent.write('');
     indent.scoped('{', '}', () {
@@ -738,13 +732,13 @@ Result<$returnType> $resultName = new Result<$returnType>() {
 
   @override
   void writeGeneralUtilities(
-      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      JavaOptions generatorOptions, Root root, Indent indent) {
     _writeWrapError(indent);
   }
 
   @override
   void writeCloseNamespace(
-      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      JavaOptions generatorOptions, Root root, Indent indent) {
     indent.dec();
     indent.addln('}');
   }

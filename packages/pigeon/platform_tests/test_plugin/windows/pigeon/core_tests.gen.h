@@ -22,8 +22,6 @@ class CoreTestsTest;
 
 // Generated class from Pigeon.
 
-enum class AnEnum { one = 0, two = 1, three = 2 };
-
 class FlutterError {
  public:
   explicit FlutterError(const std::string& code) : code_(code) {}
@@ -64,6 +62,8 @@ class ErrorOr {
 
   std::variant<T, FlutterError> v_;
 };
+
+enum class AnEnum { one = 0, two = 1, three = 2 };
 
 // Generated class from Pigeon that represents data sent in messages.
 class AllTypes {

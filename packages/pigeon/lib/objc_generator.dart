@@ -90,7 +90,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFilePrologue(
-      ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      ObjcOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -101,7 +101,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFileImports(
-      ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      ObjcOptions generatorOptions, Root root, Indent indent) {
     indent.writeln('#import <Foundation/Foundation.h>');
     indent.addln('');
 
@@ -114,8 +114,8 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   }
 
   @override
-  void writeEnum(ObjcOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
+  void writeEnum(
+      ObjcOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
     final String enumName = _className(generatorOptions.prefix, anEnum.name);
     indent.writeln('');
     addDocumentationComments(
@@ -135,19 +135,19 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeDataClasses(
-      ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      ObjcOptions generatorOptions, Root root, Indent indent) {
     indent.writeln('');
     for (final Class klass in root.classes) {
       indent.writeln(
           '@class ${_className(generatorOptions.prefix, klass.name)};');
     }
     indent.writeln('');
-    super.writeDataClasses(generatorOptions, root, sink, indent);
+    super.writeDataClasses(generatorOptions, root, indent);
   }
 
   @override
-  void writeDataClass(ObjcOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Class klass) {
+  void writeDataClass(
+      ObjcOptions generatorOptions, Root root, Indent indent, Class klass) {
     final List<Class> classes = root.classes;
     final List<Enum> enums = root.enums;
     final String? prefix = generatorOptions.prefix;
@@ -199,7 +199,6 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   void writeClassEncode(
     ObjcOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -210,7 +209,6 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   void writeClassDecode(
     ObjcOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -218,9 +216,8 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   ) {}
 
   @override
-  void writeApis(
-      ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
-    super.writeApis(generatorOptions, root, sink, indent);
+  void writeApis(ObjcOptions generatorOptions, Root root, Indent indent) {
+    super.writeApis(generatorOptions, root, indent);
     indent.writeln('NS_ASSUME_NONNULL_END');
   }
 
@@ -228,7 +225,6 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   void writeFlutterApi(
     ObjcOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
@@ -268,7 +264,6 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   void writeHostApi(
     ObjcOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
@@ -341,7 +336,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFilePrologue(
-      ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      ObjcOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -352,7 +347,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFileImports(
-      ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      ObjcOptions generatorOptions, Root root, Indent indent) {
     indent.writeln('#import "${generatorOptions.headerIncludePath}"');
     indent.writeln('#import <Flutter/Flutter.h>');
     indent.addln('');
@@ -365,7 +360,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeDataClasses(
-      ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      ObjcOptions generatorOptions, Root root, Indent indent) {
     _writeObjcSourceHelperFunctions(indent);
     indent.addln('');
 
@@ -373,12 +368,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       _writeObjcSourceDataClassExtension(generatorOptions, indent, klass);
     }
     indent.writeln('');
-    super.writeDataClasses(generatorOptions, root, sink, indent);
+    super.writeDataClasses(generatorOptions, root, indent);
   }
 
   @override
-  void writeDataClass(ObjcOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Class klass) {
+  void writeDataClass(
+      ObjcOptions generatorOptions, Root root, Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -386,12 +381,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     final String className = _className(generatorOptions.prefix, klass.name);
 
     indent.writeln('@implementation $className');
-    _writeObjcSourceClassInitializer(generatorOptions, root, sink, indent,
-        klass, customClassNames, customEnumNames, className);
-    writeClassDecode(generatorOptions, root, sink, indent, klass,
-        customClassNames, customEnumNames);
-    writeClassEncode(generatorOptions, root, sink, indent, klass,
-        customClassNames, customEnumNames);
+    _writeObjcSourceClassInitializer(generatorOptions, root, indent, klass,
+        customClassNames, customEnumNames, className);
+    writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
+        customEnumNames);
+    writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
+        customEnumNames);
     indent.writeln('@end');
     indent.writeln('');
   }
@@ -400,7 +395,6 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   void writeClassEncode(
     ObjcOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -422,7 +416,6 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   void writeClassDecode(
     ObjcOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -453,8 +446,8 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         '+ (nullable $className *)nullableFromList:(NSArray *)list { return (list) ? [$className fromList:list] : nil; }');
   }
 
-  void _writeCodecAndGetter(ObjcOptions generatorOptions, Root root,
-      StringSink sink, Indent indent, Api api) {
+  void _writeCodecAndGetter(
+      ObjcOptions generatorOptions, Root root, Indent indent, Api api) {
     final String codecName = _getCodecName(generatorOptions.prefix, api.name);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, codecName, generatorOptions, api, root);
@@ -468,14 +461,13 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   void writeFlutterApi(
     ObjcOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
     assert(api.location == ApiLocation.flutter);
     final String apiName = _className(generatorOptions.prefix, api.name);
 
-    _writeCodecAndGetter(generatorOptions, root, sink, indent, api);
+    _writeCodecAndGetter(generatorOptions, root, indent, api);
 
     _writeExtension(indent, apiName);
     indent.addln('');
@@ -493,14 +485,13 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   void writeHostApi(
     ObjcOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
     assert(api.location == ApiLocation.host);
     final String apiName = _className(generatorOptions.prefix, api.name);
 
-    _writeCodecAndGetter(generatorOptions, root, sink, indent, api);
+    _writeCodecAndGetter(generatorOptions, root, indent, api);
 
     const String channelName = 'channel';
     indent.write(
@@ -686,7 +677,6 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   void _writeObjcSourceClassInitializer(
     ObjcOptions languageOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -1024,8 +1014,7 @@ String _makeObjcSignature({
 
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options].
-void generateObjcHeader(
-    ObjcOptions options, Root root, StringSink sink, Indent indent) {}
+void generateObjcHeader(ObjcOptions options, Root root, Indent indent) {}
 
 String _listGetter(Set<String> customClassNames, String list, NamedType field,
     int index, String? prefix) {

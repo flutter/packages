@@ -1,6 +1,6 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// found in the LICENSE [indent].
 
 import 'ast.dart';
 import 'generator_tools.dart';
@@ -29,112 +29,93 @@ abstract class StructuredGenerator<T> extends Generator<T> {
   ) {
     final Indent indent = Indent(sink);
 
-    writeFilePrologue(generatorOptions, root, sink, indent);
+    writeFilePrologue(generatorOptions, root, indent);
 
-    writeFileImports(generatorOptions, root, sink, indent);
+    writeFileImports(generatorOptions, root, indent);
 
-    writeOpenNamespace(generatorOptions, root, sink, indent);
+    writeOpenNamespace(generatorOptions, root, indent);
 
-    writeGeneralUtilities(generatorOptions, root, sink, indent);
+    writeGeneralUtilities(generatorOptions, root, indent);
 
-    writeEnums(generatorOptions, root, sink, indent);
+    writeEnums(generatorOptions, root, indent);
 
-    writeDataClasses(generatorOptions, root, sink, indent);
+    writeDataClasses(generatorOptions, root, indent);
 
-    writeApis(generatorOptions, root, sink, indent);
+    writeApis(generatorOptions, root, indent);
 
-    writeCloseNamespace(generatorOptions, root, sink, indent);
+    writeCloseNamespace(generatorOptions, root, indent);
   }
 
-  /// Adds specified headers to file.
-  void writeFilePrologue(
-      T generatorOptions, Root root, StringSink sink, Indent indent);
+  /// Adds specified headers to [indent].
+  void writeFilePrologue(T generatorOptions, Root root, Indent indent);
 
-  /// Writes specified imports to file.
-  void writeFileImports(
-      T generatorOptions, Root root, StringSink sink, Indent indent);
+  /// Writes specified imports to [indent].
+  void writeFileImports(T generatorOptions, Root root, Indent indent);
 
-  /// Writes necessary code that opens file namespace if needed.
+  /// Writes code to [indent] that opens file namespace if needed.
   ///
   /// This method is not required, and does not need to be overridden.
-  void writeOpenNamespace(
-      T generatorOptions, Root root, StringSink sink, Indent indent) {}
+  void writeOpenNamespace(T generatorOptions, Root root, Indent indent) {}
 
-  /// Writes any necessary helper utilities to file if needed.
+  /// Writes code to [indent] that closes file namespace if needed.
   ///
   /// This method is not required, and does not need to be overridden.
-  void writeGeneralUtilities(
-      T generatorOptions, Root root, StringSink sink, Indent indent) {}
+  void writeCloseNamespace(T generatorOptions, Root root, Indent indent) {}
 
-  /// Writes all enums to file. Can be overridden to add extra code before/after enums.
-  void writeEnums(
-      T generatorOptions, Root root, StringSink sink, Indent indent) {
+  /// Writes any necessary helper utilities to [indent] if needed.
+  ///
+  /// This method is not required, and does not need to be overridden.
+  void writeGeneralUtilities(T generatorOptions, Root root, Indent indent) {}
+
+  /// Writes all enums to [indent].
+  ///
+  /// Can be overridden to add extra code before/after enums.
+  void writeEnums(T generatorOptions, Root root, Indent indent) {
     for (final Enum anEnum in root.enums) {
-      writeEnum(generatorOptions, root, sink, indent, anEnum);
+      writeEnum(generatorOptions, root, indent, anEnum);
     }
   }
 
-  /// Writes a single Enum to file. This is needed in most generators.
-  void writeEnum(T generatorOptions, Root root, StringSink sink, Indent indent,
-      Enum anEnum) {}
+  /// Writes a single Enum to [indent]. This is needed in most generators.
+  void writeEnum(T generatorOptions, Root root, Indent indent, Enum anEnum) {}
 
-  /// Writes all apis to file. Can be overridden to add extra code before/after apis.
-  void writeDataClasses(
-      T generatorOptions, Root root, StringSink sink, Indent indent) {
+  /// Writes all data classes to [indent].
+  ///
+  /// Can be overridden to add extra code before/after apis.
+  void writeDataClasses(T generatorOptions, Root root, Indent indent) {
     for (final Class klass in root.classes) {
-      writeDataClass(generatorOptions, root, sink, indent, klass);
+      writeDataClass(generatorOptions, root, indent, klass);
     }
   }
 
-  /// Writes a single data class to file.
-  void writeDataClass(T generatorOptions, Root root, StringSink sink,
-      Indent indent, Class klass);
+  /// Writes a single data class to [indent].
+  void writeDataClass(
+      T generatorOptions, Root root, Indent indent, Class klass);
 
-  /// Writes a single class encode method to file.
-  void writeClassEncode(
-    T generatorOptions,
-    Root root,
-    StringSink sink,
-    Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {}
+  /// Writes a single class encode method to [indent].
+  void writeClassEncode(T generatorOptions, Root root, Indent indent,
+      Class klass, Set<String> customClassNames, Set<String> customEnumNames) {}
 
-  /// Writes a single class decode method to file.
-  void writeClassDecode(
-    T generatorOptions,
-    Root root,
-    StringSink sink,
-    Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {}
+  /// Writes a single class decode method to [indent].
+  void writeClassDecode(T generatorOptions, Root root, Indent indent,
+      Class klass, Set<String> customClassNames, Set<String> customEnumNames) {}
 
-  /// Writes all data classes to file. Can be overridden to add extra code before/after classes.
-  void writeApis(
-      T generatorOptions, Root root, StringSink sink, Indent indent) {
+  /// Writes all apis to [indent].
+  ///
+  /// Can be overridden to add extra code before/after classes.
+  void writeApis(T generatorOptions, Root root, Indent indent) {
     for (final Api api in root.apis) {
       if (api.location == ApiLocation.host) {
-        writeHostApi(generatorOptions, root, sink, indent, api);
+        writeHostApi(generatorOptions, root, indent, api);
       } else if (api.location == ApiLocation.flutter) {
-        writeFlutterApi(generatorOptions, root, sink, indent, api);
+        writeFlutterApi(generatorOptions, root, indent, api);
       }
     }
   }
 
-  /// Writes a single Flutter Api to file.
-  void writeFlutterApi(
-      T generatorOptions, Root root, StringSink sink, Indent indent, Api api);
+  /// Writes a single Flutter Api to [indent].
+  void writeFlutterApi(T generatorOptions, Root root, Indent indent, Api api);
 
-  /// Writes a single Host Api to file.
-  void writeHostApi(
-      T generatorOptions, Root root, StringSink sink, Indent indent, Api api);
-
-  /// Writes necessary code that closes file namespace if needed.
-  ///
-  /// This method is not required, and does not need to be overridden.
-  void writeCloseNamespace(
-      T generatorOptions, Root root, StringSink sink, Indent indent) {}
+  /// Writes a single Host Api to [indent].
+  void writeHostApi(T generatorOptions, Root root, Indent indent, Api api);
 }

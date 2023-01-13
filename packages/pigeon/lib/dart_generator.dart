@@ -77,7 +77,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   @override
   void writeFilePrologue(
-      DartOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      DartOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -91,7 +91,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   @override
   void writeFileImports(
-      DartOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      DartOptions generatorOptions, Root root, Indent indent) {
     indent.writeln("import 'dart:async';");
     indent.writeln(
       "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
@@ -103,8 +103,8 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   }
 
   @override
-  void writeEnum(DartOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
+  void writeEnum(
+      DartOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
     indent.writeln('');
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
@@ -119,8 +119,8 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   }
 
   @override
-  void writeDataClass(DartOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Class klass) {
+  void writeDataClass(
+      DartOptions generatorOptions, Root root, Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -142,11 +142,11 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         indent.writeln('$datatype ${field.name};');
         indent.writeln('');
       }
-      writeClassEncode(generatorOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames);
+      writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
       indent.writeln('');
-      writeClassDecode(generatorOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames);
+      writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
     });
   }
 
@@ -164,7 +164,6 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   void writeClassEncode(
     DartOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -198,7 +197,6 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   void writeClassDecode(
     DartOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -281,7 +279,6 @@ $resultAt != null
   void writeFlutterApi(
     DartOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api, {
     String Function(Method)? channelNameFunc,
@@ -441,8 +438,8 @@ $resultAt != null
   /// If the message was a failure, the list will contain 3 items:
   /// a code, a message, and details in that order.
   @override
-  void writeHostApi(DartOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Api api) {
+  void writeHostApi(
+      DartOptions generatorOptions, Root root, Indent indent, Api api) {
     assert(api.location == ApiLocation.host);
     String codecName = _standardMessageCodec;
     if (getCodecClasses(api, root).isNotEmpty) {
@@ -559,8 +556,8 @@ if (replyList == null) {
     final Indent indent = Indent(sink);
     final String sourceOutPath = generatorOptions.sourceOutPath ?? '';
     final String testOutPath = generatorOptions.testOutPath ?? '';
-    _writeTestPrologue(generatorOptions, root, sink, indent);
-    _writeTestImports(generatorOptions, root, sink, indent);
+    _writeTestPrologue(generatorOptions, root, indent);
+    _writeTestImports(generatorOptions, root, indent);
     final String relativeDartPath =
         path.Context(style: path.Style.posix).relative(
       _posixify(sourceOutPath),
@@ -592,7 +589,6 @@ if (replyList == null) {
         writeFlutterApi(
           generatorOptions,
           root,
-          sink,
           indent,
           mockApi,
           channelNameFunc: (Method func) => makeChannelName(api, func),
@@ -603,8 +599,7 @@ if (replyList == null) {
   }
 
   /// Writes file header to sink.
-  void _writeTestPrologue(
-      DartOptions opt, Root root, StringSink sink, Indent indent) {
+  void _writeTestPrologue(DartOptions opt, Root root, Indent indent) {
     if (opt.copyrightHeader != null) {
       addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
     }
@@ -617,8 +612,7 @@ if (replyList == null) {
   }
 
   /// Writes file imports to sink.
-  void _writeTestImports(
-      DartOptions opt, Root root, StringSink sink, Indent indent) {
+  void _writeTestImports(DartOptions opt, Root root, Indent indent) {
     indent.writeln("import 'dart:async';");
     indent.writeln(
       "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
@@ -764,7 +758,7 @@ String _addGenericTypesNullable(TypeDeclaration type) {
 
 /// Generates Dart source code for the given AST represented by [root],
 /// outputting the code to [sink].
-void generateDart(DartOptions opt, Root root, StringSink sink, Indent indent) {}
+void generateDart(DartOptions opt, Root root, Indent indent) {}
 
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
 /// parent directory and returns its path.

@@ -54,8 +54,8 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
   const SwiftGenerator();
 
   @override
-  void writeFilePrologue(SwiftOptions generatorOptions, Root root,
-      StringSink sink, Indent indent) {
+  void writeFilePrologue(
+      SwiftOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -65,8 +65,8 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
   }
 
   @override
-  void writeFileImports(SwiftOptions generatorOptions, Root root,
-      StringSink sink, Indent indent) {
+  void writeFileImports(
+      SwiftOptions generatorOptions, Root root, Indent indent) {
     indent.writeln('import Foundation');
     indent.format('''
 #if os(iOS)
@@ -81,8 +81,8 @@ import FlutterMacOS
   }
 
   @override
-  void writeEnum(SwiftOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
+  void writeEnum(
+      SwiftOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
     indent.writeln('');
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
@@ -98,8 +98,8 @@ import FlutterMacOS
   }
 
   @override
-  void writeDataClass(SwiftOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Class klass) {
+  void writeDataClass(
+      SwiftOptions generatorOptions, Root root, Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -120,10 +120,10 @@ import FlutterMacOS
       });
 
       indent.writeln('');
-      writeClassDecode(generatorOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames);
-      writeClassEncode(generatorOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames);
+      writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
+      writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
     });
   }
 
@@ -131,7 +131,6 @@ import FlutterMacOS
   void writeClassEncode(
     SwiftOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -166,7 +165,6 @@ import FlutterMacOS
   void writeClassDecode(
     SwiftOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -244,7 +242,6 @@ import FlutterMacOS
   void writeApis(
     SwiftOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
   ) {
     if (root.apis.any((Api api) =>
@@ -252,7 +249,7 @@ import FlutterMacOS
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.addln('');
     }
-    super.writeApis(generatorOptions, root, sink, indent);
+    super.writeApis(generatorOptions, root, indent);
   }
 
   /// Writes the code for a flutter [Api], [api].
@@ -266,7 +263,6 @@ import FlutterMacOS
   void writeFlutterApi(
     SwiftOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
@@ -362,7 +358,6 @@ import FlutterMacOS
   void writeHostApi(
     SwiftOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
@@ -598,8 +593,8 @@ import FlutterMacOS
   }
 
   @override
-  void writeGeneralUtilities(SwiftOptions generatorOptions, Root root,
-      StringSink sink, Indent indent) {
+  void writeGeneralUtilities(
+      SwiftOptions generatorOptions, Root root, Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);
   }
@@ -702,5 +697,4 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
 
 /// Generates the ".swift" file for the AST represented by [root] to [sink] with the
 /// provided [options].
-void generateSwift(
-    SwiftOptions options, Root root, StringSink sink, Indent indent) {}
+void generateSwift(SwiftOptions options, Root root, Indent indent) {}

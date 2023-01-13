@@ -71,8 +71,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   const KotlinGenerator();
 
   @override
-  void writeFilePrologue(KotlinOptions generatorOptions, Root root,
-      StringSink sink, Indent indent) {
+  void writeFilePrologue(
+      KotlinOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -81,8 +81,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 
   @override
-  void writeFileImports(KotlinOptions generatorOptions, Root root,
-      StringSink sink, Indent indent) {
+  void writeFileImports(
+      KotlinOptions generatorOptions, Root root, Indent indent) {
     indent.addln('');
     if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package}');
@@ -98,8 +98,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 
   @override
-  void writeEnum(KotlinOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
+  void writeEnum(
+      KotlinOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
     indent.writeln('');
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
@@ -128,8 +128,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 
   @override
-  void writeDataClass(KotlinOptions generatorOptions, Root root,
-      StringSink sink, Indent indent, Class klass) {
+  void writeDataClass(
+      KotlinOptions generatorOptions, Root root, Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -156,10 +156,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     });
 
     indent.scoped(') {', '}', () {
-      writeClassDecode(generatorOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames);
-      writeClassEncode(generatorOptions, root, sink, indent, klass,
-          customClassNames, customEnumNames);
+      writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
+      writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
     });
   }
 
@@ -167,7 +167,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   void writeClassEncode(
     KotlinOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -200,7 +199,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   void writeClassDecode(
     KotlinOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -288,7 +286,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   void writeApis(
     KotlinOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
   ) {
     if (root.apis.any((Api api) =>
@@ -296,7 +293,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.addln('');
     }
-    super.writeApis(generatorOptions, root, sink, indent);
+    super.writeApis(generatorOptions, root, indent);
   }
 
   /// Writes the code for a flutter [Api], [api].
@@ -308,7 +305,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   void writeFlutterApi(
     KotlinOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
@@ -404,7 +400,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   void writeHostApi(
     KotlinOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
@@ -624,8 +619,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 
   @override
-  void writeGeneralUtilities(KotlinOptions generatorOptions, Root root,
-      StringSink sink, Indent indent) {
+  void writeGeneralUtilities(
+      KotlinOptions generatorOptions, Root root, Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);
   }

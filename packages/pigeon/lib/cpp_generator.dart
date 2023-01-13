@@ -98,7 +98,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeFilePrologue(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      CppOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -108,8 +108,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void writeFileImports(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+  void writeFileImports(CppOptions generatorOptions, Root root, Indent indent) {
     final String guardName = _getGuardName(
         generatorOptions.headerIncludePath, generatorOptions.namespace);
     indent.writeln('#ifndef $guardName');
@@ -142,8 +141,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void writeEnum(CppOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Enum anEnum) {
+  void writeEnum(
+      CppOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
     indent.writeln('');
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
@@ -159,15 +158,14 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void writeDataClasses(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+  void writeGeneralUtilities(
+      CppOptions generatorOptions, Root root, Indent indent) {
     _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
-    super.writeDataClasses(generatorOptions, root, sink, indent);
   }
 
   @override
-  void writeDataClass(CppOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Class klass) {
+  void writeDataClass(
+      CppOptions generatorOptions, Root root, Indent indent, Class klass) {
     // When generating for a Pigeon unit test, add a test fixture friend class to
     // allow unit testing private methods, since testing serialization via public
     // methods is essentially an end-to-end test.
@@ -249,9 +247,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void writeApis(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
-    super.writeApis(generatorOptions, root, sink, indent);
+  void writeApis(CppOptions generatorOptions, Root root, Indent indent) {
+    super.writeApis(generatorOptions, root, indent);
     if (generatorOptions.namespace != null) {
       indent.writeln('}  // namespace ${generatorOptions.namespace}');
     }
@@ -264,13 +261,12 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   void writeFlutterApi(
     CppOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
-      _writeCodec(generatorOptions, root, sink, indent, api);
+      _writeCodec(generatorOptions, root, indent, api);
     }
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from C++.'
@@ -317,13 +313,12 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   void writeHostApi(
     CppOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
-      _writeCodec(generatorOptions, root, sink, indent, api);
+      _writeCodec(generatorOptions, root, indent, api);
     }
     const List<String> generatedMessages = <String>[
       ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
@@ -395,8 +390,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     }, nestCount: 0);
   }
 
-  void _writeCodec(CppOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Api api) {
+  void _writeCodec(
+      CppOptions generatorOptions, Root root, Indent indent, Api api) {
     assert(getCodecClasses(api, root).isNotEmpty);
     final String codeSerializerName = _getCodecSerializerName(api);
     indent
@@ -481,7 +476,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeFilePrologue(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      CppOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -493,8 +488,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void writeFileImports(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+  void writeFileImports(CppOptions generatorOptions, Root root, Indent indent) {
     indent.writeln('#include "${generatorOptions.headerIncludePath}"');
     indent.addln('');
     _writeSystemHeaderIncludeBlock(indent, <String>[
@@ -514,15 +508,15 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeOpenNamespace(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      CppOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.namespace != null) {
       indent.writeln('namespace ${generatorOptions.namespace} {');
     }
   }
 
   @override
-  void writeDataClass(CppOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Class klass) {
+  void writeDataClass(
+      CppOptions generatorOptions, Root root, Indent indent, Class klass) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -534,28 +528,26 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
     // Getters and setters.
     for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-      _writeCppSourceClassField(
-          generatorOptions, root, sink, indent, klass, field);
+      _writeCppSourceClassField(generatorOptions, root, indent, klass, field);
     }
 
     // Serialization.
-    writeClassEncode(generatorOptions, root, sink, indent, klass,
-        customClassNames, customEnumNames);
+    writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
+        customEnumNames);
 
     // Default constructor.
     indent.writeln('${klass.name}::${klass.name}() {}');
     indent.addln('');
 
     // Deserialization.
-    writeClassDecode(generatorOptions, root, sink, indent, klass,
-        customClassNames, customEnumNames);
+    writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
+        customEnumNames);
   }
 
   @override
   void writeClassEncode(
     CppOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -608,7 +600,6 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
   void writeClassDecode(
     CppOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Class klass,
     Set<String> customClassNames,
@@ -667,13 +658,12 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
   void writeFlutterApi(
     CppOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
-      _writeCodec(generatorOptions, root, sink, indent, api);
+      _writeCodec(generatorOptions, root, indent, api);
     }
     indent.writeln(
         '$_commentPrefix Generated class from Pigeon that represents Flutter messages that can be called from C++.');
@@ -773,11 +763,11 @@ else if (const int64_t* ${pointerVariable}_64 = std::get_if<int64_t>(&args))
   }
 
   @override
-  void writeHostApi(CppOptions generatorOptions, Root root, StringSink sink,
-      Indent indent, Api api) {
+  void writeHostApi(
+      CppOptions generatorOptions, Root root, Indent indent, Api api) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
-      _writeCodec(generatorOptions, root, sink, indent, api);
+      _writeCodec(generatorOptions, root, indent, api);
     }
 
     final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
@@ -973,7 +963,6 @@ flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
   void _writeCodec(
     CppOptions generatorOptions,
     Root root,
-    StringSink sink,
     Indent indent,
     Api api,
   ) {
@@ -1023,7 +1012,7 @@ flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
   }
 
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
-      StringSink sink, Indent indent, Class klass, NamedType field) {
+      Indent indent, Class klass, NamedType field) {
     final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
         root.enums, (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
     final String instanceVariableName = _makeInstanceVariableName(field);
@@ -1110,7 +1099,7 @@ ${prefix}reply(flutter::EncodableValue(std::move(wrapped)));''';
 
   @override
   void writeCloseNamespace(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+      CppOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.namespace != null) {
       indent.writeln('}  // namespace ${generatorOptions.namespace}');
     }
