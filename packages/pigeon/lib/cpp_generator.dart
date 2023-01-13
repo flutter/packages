@@ -246,16 +246,6 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void writeApis(CppOptions generatorOptions, Root root, Indent indent) {
-    super.writeApis(generatorOptions, root, indent);
-    if (generatorOptions.namespace != null) {
-      indent.writeln('}  // namespace ${generatorOptions.namespace}');
-    }
-    final String guardName = _getGuardName(generatorOptions.headerIncludePath);
-    indent.writeln('#endif  // $guardName');
-  }
-
-  @override
   void writeFlutterApi(
     CppOptions generatorOptions,
     Root root,
@@ -464,6 +454,16 @@ $friendLines
 \tstd::variant<T, FlutterError> v_;
 };
 ''');
+  }
+
+  @override
+  void writeCloseNamespace(
+      CppOptions generatorOptions, Root root, Indent indent) {
+    if (generatorOptions.namespace != null) {
+      indent.writeln('}  // namespace ${generatorOptions.namespace}');
+    }
+    final String guardName = _getGuardName(generatorOptions.headerIncludePath);
+    indent.writeln('#endif  // $guardName');
   }
 }
 

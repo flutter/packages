@@ -756,10 +756,6 @@ String _addGenericTypesNullable(TypeDeclaration type) {
   return type.isNullable ? '$genericdType?' : genericdType;
 }
 
-/// Generates Dart source code for the given AST represented by [root],
-/// outputting the code to [sink].
-void generateDart(DartOptions opt, Root root, Indent indent) {}
-
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
 /// parent directory and returns its path.
 String? _findPubspecPath(String dartFilePath) {

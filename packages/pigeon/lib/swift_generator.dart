@@ -694,7 +694,3 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
-
-/// Generates the ".swift" file for the AST represented by [root] to [sink] with the
-/// provided [options].
-void generateSwift(SwiftOptions options, Root root, Indent indent) {}
