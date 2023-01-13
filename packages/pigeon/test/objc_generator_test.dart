@@ -18,7 +18,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -39,7 +39,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -62,7 +62,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -86,7 +86,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -128,7 +128,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -167,7 +167,7 @@ void main() {
     const ObjcOptions options =
         ObjcOptions(headerIncludePath: 'foo.h', prefix: 'AC');
     {
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -179,7 +179,7 @@ void main() {
       expect(code, contains(':(ACFoo)foo error:'));
     }
     {
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -248,7 +248,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -286,7 +286,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -331,7 +331,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -384,7 +384,7 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -418,7 +418,7 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -445,7 +445,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -471,7 +471,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -496,7 +496,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -516,7 +516,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -556,7 +556,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -598,7 +598,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -640,7 +640,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -685,7 +685,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -720,7 +720,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -755,7 +755,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -792,7 +792,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -827,7 +827,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -857,7 +857,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -886,7 +886,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -915,7 +915,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -947,7 +947,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -972,7 +972,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -993,7 +993,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1020,7 +1020,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1055,7 +1055,7 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1095,7 +1095,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1140,7 +1140,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1173,7 +1173,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1199,7 +1199,7 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1244,7 +1244,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -1288,7 +1288,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -1314,7 +1314,7 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -1347,7 +1347,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -1369,7 +1369,7 @@ void main() {
   test('source copyright', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -1386,7 +1386,7 @@ void main() {
   test('header copyright', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1420,7 +1420,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1456,7 +1456,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1469,7 +1469,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -1509,7 +1509,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1522,7 +1522,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -1565,7 +1565,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1598,7 +1598,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1612,7 +1612,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -1645,7 +1645,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1659,7 +1659,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -1694,7 +1694,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1710,7 +1710,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -1751,7 +1751,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1767,7 +1767,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -1806,7 +1806,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1822,7 +1822,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -1872,7 +1872,7 @@ void main() {
     final Root divideRoot = getDivideRoot(ApiLocation.host);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1885,7 +1885,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -1902,7 +1902,7 @@ void main() {
     final Root divideRoot = getDivideRoot(ApiLocation.flutter);
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -1915,7 +1915,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -1937,7 +1937,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1966,7 +1966,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -1997,7 +1997,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -2025,7 +2025,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -2058,7 +2058,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -2070,7 +2070,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -2105,7 +2105,7 @@ void main() {
     );
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.header,
@@ -2117,7 +2117,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final ObjcGenerator generator = ObjcGenerator();
+      const ObjcGenerator generator = ObjcGenerator();
       final OutputFileOptions<ObjcOptions> generatorOptions =
           OutputFileOptions<ObjcOptions>(
         fileType: FileType.source,
@@ -2147,7 +2147,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -2237,7 +2237,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
@@ -2278,7 +2278,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
@@ -2326,7 +2326,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final ObjcGenerator generator = ObjcGenerator();
+    const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
         OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,

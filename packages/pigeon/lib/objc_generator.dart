@@ -67,17 +67,17 @@ class ObjcOptions {
 /// Class that manages all Objc code generation.
 class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
   /// Instantiates a Objc Generator.
-  ObjcGenerator();
+  const ObjcGenerator();
 
   /// Generates Objc file of type specified in [generatorOptions]
   @override
   void generate(OutputFileOptions<ObjcOptions> generatorOptions, Root root,
       StringSink sink) {
     if (generatorOptions.fileType == FileType.header) {
-      ObjcHeaderGenerator()
+      const ObjcHeaderGenerator()
           .generate(generatorOptions.languageOptions, root, sink);
     } else if (generatorOptions.fileType == FileType.source) {
-      ObjcSourceGenerator()
+      const ObjcSourceGenerator()
           .generate(generatorOptions.languageOptions, root, sink);
     }
   }
@@ -85,6 +85,9 @@ class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
 
 /// Generates Objc .h file.
 class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
+  /// Constructor.
+  const ObjcHeaderGenerator();
+
   @override
   void writeFilePrologue(
       ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
@@ -333,6 +336,9 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
 /// Generates Objc .m file.
 class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
+  /// Constructor.
+  const ObjcSourceGenerator();
+
   @override
   void writeFilePrologue(
       ObjcOptions generatorOptions, Root root, StringSink sink, Indent indent) {
@@ -360,7 +366,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   @override
   void writeEnum(ObjcOptions generatorOptions, Root root, StringSink sink,
       Indent indent, Enum anEnum) {
-    // Intentionally left empty.
+    // Intentionally left empty as there are no enums in this file.
   }
 
   @override

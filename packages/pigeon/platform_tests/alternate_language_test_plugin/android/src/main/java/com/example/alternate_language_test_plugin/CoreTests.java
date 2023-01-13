@@ -24,6 +24,15 @@ import java.util.Map;
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})
 public class CoreTests {
+  @NonNull
+  private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
+    ArrayList<Object> errorList = new ArrayList<>(3);
+    errorList.add(exception.toString());
+    errorList.add(exception.getClass().getSimpleName());
+    errorList.add(
+        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+    return errorList;
+  }
 
   public enum AnEnum {
     ONE(0),
@@ -1646,15 +1655,5 @@ public class CoreTests {
         }
       }
     }
-  }
-
-  @NonNull
-  private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-    ArrayList<Object> errorList = new ArrayList<>(3);
-    errorList.add(exception.toString());
-    errorList.add(exception.getClass().getSimpleName());
-    errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
-    return errorList;
   }
 }

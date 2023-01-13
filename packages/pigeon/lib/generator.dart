@@ -5,16 +5,22 @@
 import 'ast.dart';
 import 'generator_tools.dart';
 
-/// A superclass of generator classes.
+/// An abstract base class of generators.
 ///
 /// This provides the structure that is common across generators for different languages.
 abstract class Generator<T> {
+  /// Constructor.
+  const Generator();
+
   /// Generates files for specified language with specified [generatorOptions]
   void generate(T generatorOptions, Root root, StringSink sink);
 }
 
-/// A Superclass that enforces code generation across platforms.
+/// An abstract base class that enforces code generation across platforms.
 abstract class StructuredGenerator<T> extends Generator<T> {
+  /// Constructor.
+  const StructuredGenerator();
+
   @override
   void generate(
     T generatorOptions,
@@ -27,13 +33,17 @@ abstract class StructuredGenerator<T> extends Generator<T> {
 
     writeFileImports(generatorOptions, root, sink, indent);
 
+    writeOpenNamespace(generatorOptions, root, sink, indent);
+
+    writeGeneralUtilities(generatorOptions, root, sink, indent);
+
     writeEnums(generatorOptions, root, sink, indent);
 
     writeDataClasses(generatorOptions, root, sink, indent);
 
     writeApis(generatorOptions, root, sink, indent);
 
-    writeGeneralUtilities(generatorOptions, root, sink, indent);
+    writeCloseNamespace(generatorOptions, root, sink, indent);
   }
 
   /// Adds specified headers to file.
@@ -43,6 +53,18 @@ abstract class StructuredGenerator<T> extends Generator<T> {
   /// Writes specified imports to file.
   void writeFileImports(
       T generatorOptions, Root root, StringSink sink, Indent indent);
+
+  /// Writes necessary code that opens file namespace if needed.
+  ///
+  /// This method is not required, and does not need to be overridden.
+  void writeOpenNamespace(
+      T generatorOptions, Root root, StringSink sink, Indent indent) {}
+
+  /// Writes any necessary helper utilities to file if needed.
+  ///
+  /// This method is not required, and does not need to be overridden.
+  void writeGeneralUtilities(
+      T generatorOptions, Root root, StringSink sink, Indent indent) {}
 
   /// Writes all enums to file. Can be overridden to add extra code before/after enums.
   void writeEnums(
@@ -77,7 +99,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
-  );
+  ) {}
 
   /// Writes a single class decode method to file.
   void writeClassDecode(
@@ -88,7 +110,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames,
-  );
+  ) {}
 
   /// Writes all data classes to file. Can be overridden to add extra code before/after classes.
   void writeApis(
@@ -110,9 +132,9 @@ abstract class StructuredGenerator<T> extends Generator<T> {
   void writeHostApi(
       T generatorOptions, Root root, StringSink sink, Indent indent, Api api);
 
-  /// Writes any necessary helper utilities to file if needed.
+  /// Writes necessary code that closes file namespace if needed.
   ///
-  /// This method is not reqiured, and does not need to be overridden.
-  void writeGeneralUtilities(
+  /// This method is not required, and does not need to be overridden.
+  void writeCloseNamespace(
       T generatorOptions, Root root, StringSink sink, Indent indent) {}
 }

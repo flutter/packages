@@ -46,7 +46,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -60,7 +60,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.source,
@@ -114,7 +114,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -135,7 +135,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.source,
@@ -169,7 +169,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -219,7 +219,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -279,7 +279,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -292,7 +292,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.source,
@@ -324,7 +324,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -345,7 +345,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.source,
@@ -387,7 +387,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -400,7 +400,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.source,
@@ -467,7 +467,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -505,7 +505,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.source,
@@ -610,7 +610,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -641,7 +641,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.source,
@@ -745,7 +745,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -856,7 +856,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -944,7 +944,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -964,7 +964,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.source,
@@ -1087,7 +1087,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.header,
@@ -1107,7 +1107,7 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      final CppGenerator generator = CppGenerator();
+      const CppGenerator generator = CppGenerator();
       final OutputFileOptions<CppOptions> generatorOptions =
           OutputFileOptions<CppOptions>(
         fileType: FileType.source,
@@ -1173,7 +1173,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    final CppGenerator generator = CppGenerator();
+    const CppGenerator generator = CppGenerator();
     final OutputFileOptions<CppOptions> generatorOptions =
         OutputFileOptions<CppOptions>(
       fileType: FileType.source,
@@ -1291,7 +1291,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    final CppGenerator generator = CppGenerator();
+    const CppGenerator generator = CppGenerator();
     final OutputFileOptions<CppOptions> generatorOptions =
         OutputFileOptions<CppOptions>(
       fileType: FileType.header,
@@ -1332,7 +1332,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final CppGenerator generator = CppGenerator();
+    const CppGenerator generator = CppGenerator();
     final OutputFileOptions<CppOptions> generatorOptions =
         OutputFileOptions<CppOptions>(
       fileType: FileType.header,
@@ -1380,7 +1380,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final CppGenerator generator = CppGenerator();
+    const CppGenerator generator = CppGenerator();
     final OutputFileOptions<CppOptions> generatorOptions =
         OutputFileOptions<CppOptions>(
       fileType: FileType.header,
@@ -1455,7 +1455,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final CppGenerator generator = CppGenerator();
+    const CppGenerator generator = CppGenerator();
     final OutputFileOptions<CppOptions> generatorOptions =
         OutputFileOptions<CppOptions>(
       fileType: FileType.source,
@@ -1515,7 +1515,7 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final CppGenerator generator = CppGenerator();
+    const CppGenerator generator = CppGenerator();
     final OutputFileOptions<CppOptions> generatorOptions =
         OutputFileOptions<CppOptions>(
       fileType: FileType.source,

@@ -88,7 +88,7 @@ class JavaOptions {
 /// Class that manages all Java code generation.
 class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Instantiates a Java Generator.
-  JavaGenerator();
+  const JavaGenerator();
 
   @override
   void writeFilePrologue(
@@ -126,7 +126,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   @override
-  void writeEnums(
+  void writeOpenNamespace(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
@@ -137,7 +137,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
-    super.writeEnums(generatorOptions, root, sink, indent);
   }
 
   @override
@@ -741,8 +740,11 @@ Result<$returnType> $resultName = new Result<$returnType>() {
   void writeGeneralUtilities(
       JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     _writeWrapError(indent);
+  }
 
-    // These lines close the main class.
+  @override
+  void writeCloseNamespace(
+      JavaOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     indent.dec();
     indent.addln('}');
   }

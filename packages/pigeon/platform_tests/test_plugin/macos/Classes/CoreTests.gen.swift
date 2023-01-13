@@ -16,6 +16,18 @@ import FlutterMacOS
 
 
 
+private func wrapResult(_ result: Any?) -> [Any?] {
+  return [result]
+}
+
+private func wrapError(_ error: FlutterError) -> [Any?] {
+  return [
+    error.code,
+    error.message,
+    error.details
+  ]
+}
+
 enum AnEnum: Int {
   case one = 0
   case two = 1
@@ -664,16 +676,4 @@ class HostTrivialApiSetup {
       noopChannel.setMessageHandler(nil)
     }
   }
-}
-
-private func wrapResult(_ result: Any?) -> [Any?] {
-  return [result]
-}
-
-private func wrapError(_ error: FlutterError) -> [Any?] {
-  return [
-    error.code,
-    error.message,
-    error.details
-  ]
 }

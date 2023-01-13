@@ -73,7 +73,7 @@ class DartOptions {
 /// Class that manages all Dart code generation.
 class DartGenerator extends StructuredGenerator<DartOptions> {
   /// Instantiates a Dart Generator.
-  DartGenerator();
+  const DartGenerator();
 
   @override
   void writeFilePrologue(

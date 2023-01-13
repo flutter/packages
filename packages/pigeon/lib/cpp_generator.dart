@@ -72,8 +72,8 @@ class CppOptions {
 
 /// Class that manages all Cpp code generation.
 class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
-  /// Instantiates a Cpp Generator.
-  CppGenerator();
+  /// Constructor.
+  const CppGenerator();
 
   /// Generates C++ file of type specified in [generatorOptions]
   @override
@@ -82,10 +82,10 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
     assert(generatorOptions.fileType == FileType.header ||
         generatorOptions.fileType == FileType.source);
     if (generatorOptions.fileType == FileType.header) {
-      CppHeaderGenerator()
+      const CppHeaderGenerator()
           .generate(generatorOptions.languageOptions, root, sink);
     } else if (generatorOptions.fileType == FileType.source) {
-      CppSourceGenerator()
+      const CppSourceGenerator()
           .generate(generatorOptions.languageOptions, root, sink);
     }
   }
@@ -93,6 +93,9 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
 
 /// Writes C++ header (.h) file to sink.
 class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
+  /// Constructor.
+  const CppHeaderGenerator();
+
   @override
   void writeFilePrologue(
       CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
@@ -243,32 +246,6 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       });
     }, nestCount: 0);
     indent.writeln('');
-  }
-
-  @override
-  void writeClassEncode(
-    CppOptions generatorOptions,
-    Root root,
-    StringSink sink,
-    Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
-    // Intentionally left empty.
-  }
-
-  @override
-  void writeClassDecode(
-    CppOptions generatorOptions,
-    Root root,
-    StringSink sink,
-    Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
-    // Intentionally left empty.
   }
 
   @override
@@ -499,6 +476,9 @@ $friendLines
 
 /// Writes C++ source (.cpp) file to sink.
 class CppSourceGenerator extends StructuredGenerator<CppOptions> {
+  /// Constructor.
+  const CppSourceGenerator();
+
   @override
   void writeFilePrologue(
       CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
@@ -530,7 +510,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       'optional',
     ]);
     indent.addln('');
+  }
 
+  @override
+  void writeOpenNamespace(
+      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
     if (generatorOptions.namespace != null) {
       indent.writeln('namespace ${generatorOptions.namespace} {');
     }
@@ -539,7 +523,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
   @override
   void writeEnum(CppOptions generatorOptions, Root root, StringSink sink,
       Indent indent, Enum anEnum) {
-    // Intentionally left empty.
+    // Intentionally left empty as there are no enums in this file.
   }
 
   @override
@@ -683,15 +667,6 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
       });
     });
     indent.addln('');
-  }
-
-  @override
-  void writeApis(
-      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
-    super.writeApis(generatorOptions, root, sink, indent);
-    if (generatorOptions.namespace != null) {
-      indent.writeln('}  // namespace ${generatorOptions.namespace}');
-    }
   }
 
   @override
@@ -1137,6 +1112,14 @@ $prefix}
 ${prefix}flutter::EncodableList wrapped;
 $nonErrorPath
 ${prefix}reply(flutter::EncodableValue(std::move(wrapped)));''';
+  }
+
+  @override
+  void writeCloseNamespace(
+      CppOptions generatorOptions, Root root, StringSink sink, Indent indent) {
+    if (generatorOptions.namespace != null) {
+      indent.writeln('}  // namespace ${generatorOptions.namespace}');
+    }
   }
 }
 

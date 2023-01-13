@@ -51,7 +51,7 @@ class SwiftOptions {
 /// Class that manages all Swift code generation.
 class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
   /// Instantiates a Swift Generator.
-  SwiftGenerator();
+  const SwiftGenerator();
 
   @override
   void writeFilePrologue(SwiftOptions generatorOptions, Root root,

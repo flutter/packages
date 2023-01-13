@@ -26,7 +26,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -50,7 +50,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum Foobar: Int'));
@@ -79,7 +79,7 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum Foo: Int'));
@@ -123,7 +123,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('protocol Api'));
@@ -187,7 +187,7 @@ void main() {
 
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('var aBool: Bool? = nil'));
@@ -237,7 +237,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
@@ -273,7 +273,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('.*doSomething(.*) ->')));
@@ -308,7 +308,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('completion: @escaping () -> Void'));
@@ -337,7 +337,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func doSomething() -> Output'));
@@ -367,7 +367,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code,
@@ -388,7 +388,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -408,7 +408,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -445,7 +445,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Outer'));
@@ -494,7 +494,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('protocol Api'));
@@ -540,7 +540,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
@@ -573,7 +573,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum Enum1: Int'));
@@ -591,7 +591,7 @@ void main() {
     final SwiftOptions swiftOptions = SwiftOptions(
       copyrightHeader: makeIterable('hello world'),
     );
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
@@ -618,7 +618,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -647,7 +647,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -678,7 +678,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func doit(arg: [Int32?]'));
@@ -708,7 +708,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func doit(arg argArg: [Int32?]'));
@@ -734,7 +734,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func doit() -> [Int32?]'));
@@ -762,7 +762,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(
@@ -792,7 +792,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func add(x: Int32, y: Int32) -> Int32'));
@@ -824,7 +824,7 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('let channel = FlutterBasicMessageChannel'));
@@ -855,7 +855,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func doit() -> Int32?'));
@@ -880,7 +880,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func doit(completion: @escaping (Int32?) -> Void'));
@@ -908,7 +908,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('let fooArg = args[0] as? Int32'));
@@ -936,7 +936,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(
@@ -973,7 +973,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('var input: String\n'));
@@ -1055,7 +1055,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
@@ -1092,7 +1092,7 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains(': FlutterStandardReader ')));
@@ -1136,7 +1136,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    final SwiftGenerator generator = SwiftGenerator();
+    const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains(': FlutterStandardReader '));

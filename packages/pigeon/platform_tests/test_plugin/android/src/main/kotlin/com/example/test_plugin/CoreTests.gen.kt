@@ -15,6 +15,18 @@ import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
+private fun wrapResult(result: Any?): List<Any?> {
+  return listOf(result)
+}
+
+private fun wrapError(exception: Throwable): List<Any> {
+  return listOf<Any>(
+    exception.javaClass.simpleName,
+    exception.toString(),
+    "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
+  )
+}
+
 enum class AnEnum(val raw: Int) {
   ONE(0),
   TWO(1),
@@ -807,16 +819,4 @@ interface HostTrivialApi {
       }
     }
   }
-}
-
-private fun wrapResult(result: Any?): List<Any?> {
-  return listOf(result)
-}
-
-private fun wrapError(exception: Throwable): List<Any> {
-  return listOf<Any>(
-    exception.javaClass.simpleName,
-    exception.toString(),
-    "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-  )
 }

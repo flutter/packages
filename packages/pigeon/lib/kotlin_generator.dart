@@ -68,7 +68,7 @@ class KotlinOptions {
 /// Class that manages all Kotlin code generation.
 class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   /// Instantiates a Kotlin Generator.
-  KotlinGenerator();
+  const KotlinGenerator();
 
   @override
   void writeFilePrologue(KotlinOptions generatorOptions, Root root,
