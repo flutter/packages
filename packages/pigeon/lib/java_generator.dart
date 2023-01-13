@@ -86,94 +86,433 @@ class JavaOptions {
 }
 
 /// Class that manages all Java code generation.
-class JavaGenerator extends Generator<JavaOptions> {
+class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Instantiates a Java Generator.
-  JavaGenerator();
+  const JavaGenerator();
 
-  /// Generates Java files with specified [JavaOptions]
   @override
-  void generate(JavaOptions languageOptions, Root root, StringSink sink,
-      {FileType fileType = FileType.na}) {
-    assert(fileType == FileType.na);
-    generateJava(languageOptions, root, sink);
+  void writeFilePrologue(
+      JavaOptions generatorOptions, Root root, Indent indent) {
+    if (generatorOptions.copyrightHeader != null) {
+      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
+    indent.addln('');
   }
-}
 
-/// Calculates the name of the codec that will be generated for [api].
-String _getCodecName(Api api) => '${api.name}Codec';
+  @override
+  void writeFileImports(
+      JavaOptions generatorOptions, Root root, Indent indent) {
+    if (generatorOptions.package != null) {
+      indent.writeln('package ${generatorOptions.package};');
+    }
+    indent.writeln('import android.util.Log;');
+    indent.writeln('import androidx.annotation.NonNull;');
+    indent.writeln('import androidx.annotation.Nullable;');
+    indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
+    indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
+    indent.writeln('import io.flutter.plugin.common.MessageCodec;');
+    indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
+    indent.writeln('import java.io.ByteArrayOutputStream;');
+    indent.writeln('import java.nio.ByteBuffer;');
+    indent.writeln('import java.util.Arrays;');
+    indent.writeln('import java.util.ArrayList;');
+    indent.writeln('import java.util.Collections;');
+    indent.writeln('import java.util.List;');
+    indent.writeln('import java.util.Map;');
+    indent.writeln('import java.util.HashMap;');
+    indent.addln('');
+  }
 
-/// Converts an expression that evaluates to an nullable int to an expression
-/// that evaluates to a nullable enum.
-String _intToEnum(String expression, String enumName) =>
-    '$expression == null ? null : $enumName.values()[(int)$expression]';
+  @override
+  void writeOpenNamespace(
+      JavaOptions generatorOptions, Root root, Indent indent) {
+    indent.writeln(
+        '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
+    indent.writeln(
+        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+    if (generatorOptions.useGeneratedAnnotation ?? false) {
+      indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+    }
+    indent.writeln('public class ${generatorOptions.className!} {');
+    indent.inc();
+  }
 
-/// Writes the codec class that will be used by [api].
-/// Example:
-/// private static class FooCodec extends StandardMessageCodec {...}
-void _writeCodec(Indent indent, Api api, Root root) {
-  assert(getCodecClasses(api, root).isNotEmpty);
-  final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
-  final String codecName = _getCodecName(api);
-  indent
-      .write('private static class $codecName extends $_standardMessageCodec ');
-  indent.scoped('{', '}', () {
-    indent
-        .writeln('public static final $codecName INSTANCE = new $codecName();');
-    indent.writeln('private $codecName() {}');
-    indent.writeln('@Override');
-    indent.write(
-        'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) ');
+  @override
+  void writeEnum(
+      JavaOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
+    String camelToSnake(String camelCase) {
+      final RegExp regex = RegExp('([a-z])([A-Z]+)');
+      return camelCase
+          .replaceAllMapped(regex, (Match m) => '${m[1]}_${m[2]}')
+          .toUpperCase();
+    }
+
+    indent.writeln('');
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+
+    indent.write('public enum ${anEnum.name} ');
     indent.scoped('{', '}', () {
-      indent.write('switch (type) ');
+      enumerate(anEnum.members, (int index, final EnumMember member) {
+        addDocumentationComments(
+            indent, member.documentationComments, _docCommentSpec);
+        indent.writeln(
+            '${camelToSnake(member.name)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
+      });
+      indent.writeln('');
+      indent.writeln('private final int index;');
+      indent.write('private ${anEnum.name}(final int index) ');
       indent.scoped('{', '}', () {
-        for (final EnumeratedClass customClass in codecClasses) {
-          indent.write('case (byte)${customClass.enumeration}: ');
-          indent.writeScoped('', '', () {
-            indent.writeln(
-                'return ${customClass.name}.fromList((ArrayList<Object>) readValue(buffer));');
-          });
-        }
-        indent.write('default:');
-        indent.writeScoped('', '', () {
-          indent.writeln('return super.readValueOfType(type, buffer);');
-        });
+        indent.writeln('this.index = index;');
       });
     });
-    indent.writeln('@Override');
-    indent.write(
-        'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) ');
-    indent.writeScoped('{', '}', () {
-      for (final EnumeratedClass customClass in codecClasses) {
-        indent.write('if (value instanceof ${customClass.name}) ');
-        indent.scoped('{', '} else ', () {
-          indent.writeln('stream.write(${customClass.enumeration});');
+  }
+
+  @override
+  void writeDataClass(
+      JavaOptions generatorOptions, Root root, Indent indent, Class klass) {
+    final Set<String> customClassNames =
+        root.classes.map((Class x) => x.name).toSet();
+    final Set<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toSet();
+
+    const List<String> generatedMessages = <String>[
+      ' Generated class from Pigeon that represents data sent in messages.'
+    ];
+    indent.addln('');
+    addDocumentationComments(
+        indent, klass.documentationComments, _docCommentSpec,
+        generatorComments: generatedMessages);
+
+    indent.write('public static class ${klass.name} ');
+    indent.scoped('{', '}', () {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        _writeClassField(generatorOptions, root, indent, field);
+        indent.addln('');
+      }
+
+      if (getFieldsInSerializationOrder(klass)
+          .map((NamedType e) => !e.type.isNullable)
+          .any((bool e) => e)) {
+        indent.writeln(
+            '${_docCommentPrefix}Constructor is private to enforce null safety; use Builder.$_docCommentSuffix');
+        indent.writeln('private ${klass.name}() {}');
+      }
+
+      _writeClassBuilder(generatorOptions, root, indent, klass);
+      writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
+      writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
+          customEnumNames);
+    });
+  }
+
+  void _writeClassField(
+      JavaOptions generatorOptions, Root root, Indent indent, NamedType field) {
+    final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
+        root.enums, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+    final String nullability = field.type.isNullable ? '@Nullable' : '@NonNull';
+    addDocumentationComments(
+        indent, field.documentationComments, _docCommentSpec);
+
+    indent.writeln(
+        'private $nullability ${hostDatatype.datatype} ${field.name};');
+    indent.writeln(
+        'public $nullability ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
+    indent.writeScoped(
+        'public void ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
+        '}', () {
+      if (!field.type.isNullable) {
+        indent.writeScoped('if (setterArg == null) {', '}', () {
           indent.writeln(
-              'writeValue(stream, ((${customClass.name}) value).toList());');
+              'throw new IllegalStateException("Nonnull field \\"${field.name}\\" is null.");');
         });
       }
+      indent.writeln('this.${field.name} = setterArg;');
+    });
+  }
+
+  void _writeClassBuilder(
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass,
+  ) {
+    indent.write('public static final class Builder ');
+    indent.scoped('{', '}', () {
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        final HostDatatype hostDatatype = getFieldHostDatatype(
+            field,
+            root.classes,
+            root.enums,
+            (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+        final String nullability =
+            field.type.isNullable ? '@Nullable' : '@NonNull';
+        indent.writeln(
+            'private @Nullable ${hostDatatype.datatype} ${field.name};');
+        indent.writeScoped(
+            'public @NonNull Builder ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
+            '}', () {
+          indent.writeln('this.${field.name} = setterArg;');
+          indent.writeln('return this;');
+        });
+      }
+      indent.write('public @NonNull ${klass.name} build() ');
       indent.scoped('{', '}', () {
-        indent.writeln('super.writeValue(stream, value);');
+        const String returnVal = 'pigeonReturn';
+        indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
+        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          indent.writeln('$returnVal.${_makeSetter(field)}(${field.name});');
+        }
+        indent.writeln('return $returnVal;');
       });
     });
-  });
-}
+  }
 
-/// Write the java code that represents a host [Api], [api].
-/// Example:
-/// public interface Foo {
-///   int add(int x, int y);
-///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
-/// }
-void _writeHostApi(Indent indent, Api api, Root root) {
-  assert(api.location == ApiLocation.host);
+  @override
+  void writeClassEncode(
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    indent.write('@NonNull ArrayList<Object> toList() ');
+    indent.scoped('{', '}', () {
+      indent.writeln(
+          'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
+      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        final HostDatatype hostDatatype = getFieldHostDatatype(
+            field,
+            root.classes,
+            root.enums,
+            (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+        String toWriteValue = '';
+        final String fieldName = field.name;
+        if (!hostDatatype.isBuiltin &&
+            customClassNames.contains(field.type.baseName)) {
+          toWriteValue = '($fieldName == null) ? null : $fieldName.toList()';
+        } else if (!hostDatatype.isBuiltin &&
+            customEnumNames.contains(field.type.baseName)) {
+          toWriteValue = '$fieldName == null ? null : $fieldName.index';
+        } else {
+          toWriteValue = field.name;
+        }
+        indent.writeln('toListResult.add($toWriteValue);');
+      }
+      indent.writeln('return toListResult;');
+    });
+  }
 
-  bool isEnum(TypeDeclaration type) =>
-      root.enums.map((Enum e) => e.name).contains(type.baseName);
+  @override
+  void writeClassDecode(
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass,
+    Set<String> customClassNames,
+    Set<String> customEnumNames,
+  ) {
+    indent.write(
+        'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
+    indent.scoped('{', '}', () {
+      const String result = 'pigeonResult';
+      indent.writeln('${klass.name} $result = new ${klass.name}();');
+      enumerate(getFieldsInSerializationOrder(klass),
+          (int index, final NamedType field) {
+        final String fieldVariable = field.name;
+        final String setter = _makeSetter(field);
+        indent.writeln('Object $fieldVariable = list.get($index);');
+        if (customEnumNames.contains(field.type.baseName)) {
+          indent.writeln(
+              '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName)});');
+        } else {
+          indent.writeln(
+              '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
+        }
+      });
+      indent.writeln('return $result;');
+    });
+  }
+
+  /// Writes the code for a flutter [Api], [api].
+  /// Example:
+  /// public static class Foo {
+  ///   public Foo(BinaryMessenger argBinaryMessenger) {...}
+  ///   public interface Reply<T> {
+  ///     void reply(T reply);
+  ///   }
+  ///   public int add(int x, int y, Reply<int> callback) {...}
+  /// }
+  @override
+  void writeFlutterApi(
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Api api,
+  ) {
+    assert(api.location == ApiLocation.flutter);
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(indent, api, root);
+    }
+    const List<String> generatedMessages = <String>[
+      ' Generated class from Pigeon that represents Flutter messages that can be called from Java.'
+    ];
+    addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+        generatorComments: generatedMessages);
+
+    indent.write('public static class ${api.name} ');
+    indent.scoped('{', '}', () {
+      indent.writeln('private final BinaryMessenger binaryMessenger;');
+      indent.write('public ${api.name}(BinaryMessenger argBinaryMessenger)');
+      indent.scoped('{', '}', () {
+        indent.writeln('this.binaryMessenger = argBinaryMessenger;');
+      });
+      indent.write('public interface Reply<T> ');
+      indent.scoped('{', '}', () {
+        indent.writeln('void reply(T reply);');
+      });
+      final String codecName = _getCodecName(api);
+      indent.writeln('/** The codec used by ${api.name}. */');
+      indent.write('static MessageCodec<Object> getCodec() ');
+      indent.scoped('{', '}', () {
+        indent.write('return ');
+        if (getCodecClasses(api, root).isNotEmpty) {
+          indent.writeln('$codecName.INSTANCE;');
+        } else {
+          indent.writeln('new $_standardMessageCodec();');
+        }
+      });
+
+      for (final Method func in api.methods) {
+        final String channelName = makeChannelName(api, func);
+        final String returnType = func.returnType.isVoid
+            ? 'Void'
+            : _javaTypeForDartType(func.returnType);
+        String sendArgument;
+        addDocumentationComments(
+            indent, func.documentationComments, _docCommentSpec);
+        if (func.arguments.isEmpty) {
+          indent
+              .write('public void ${func.name}(Reply<$returnType> callback) ');
+          sendArgument = 'null';
+        } else {
+          final Iterable<String> argTypes = func.arguments
+              .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
+          final Iterable<String> argNames =
+              indexMap(func.arguments, _getSafeArgumentName);
+          if (func.arguments.length == 1) {
+            sendArgument =
+                'new ArrayList<Object>(Collections.singletonList(${argNames.first}))';
+          } else {
+            sendArgument =
+                'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
+          }
+          final String argsSignature =
+              map2(argTypes, argNames, (String x, String y) => '$x $y')
+                  .join(', ');
+          indent.write(
+              'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
+        }
+        indent.scoped('{', '}', () {
+          const String channel = 'channel';
+          indent.writeln('BasicMessageChannel<Object> $channel =');
+          indent.inc();
+          indent.inc();
+          indent.writeln(
+              'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
+          indent.dec();
+          indent.dec();
+          indent.write('$channel.send($sendArgument, channelReply -> ');
+          indent.scoped('{', '});', () {
+            if (func.returnType.isVoid) {
+              indent.writeln('callback.reply(null);');
+            } else {
+              const String output = 'output';
+              indent.writeln('@SuppressWarnings("ConstantConditions")');
+              if (func.returnType.baseName == 'int') {
+                indent.writeln(
+                    '$returnType $output = channelReply == null ? null : ((Number)channelReply).longValue();');
+              } else {
+                indent.writeln(
+                    '$returnType $output = ($returnType)channelReply;');
+              }
+              indent.writeln('callback.reply($output);');
+            }
+          });
+        });
+      }
+    });
+  }
+
+  @override
+  void writeApis(JavaOptions generatorOptions, Root root, Indent indent) {
+    if (root.apis.any((Api api) =>
+        api.location == ApiLocation.host &&
+        api.methods.any((Method it) => it.isAsynchronous))) {
+      indent.addln('');
+      _writeResultInterface(indent);
+    }
+    super.writeApis(generatorOptions, root, indent);
+  }
+
+  /// Write the java code that represents a host [Api], [api].
+  /// Example:
+  /// public interface Foo {
+  ///   int add(int x, int y);
+  ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
+  /// }
+  @override
+  void writeHostApi(
+      JavaOptions generatorOptions, Root root, Indent indent, Api api) {
+    assert(api.location == ApiLocation.host);
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(indent, api, root);
+    }
+    const List<String> generatedMessages = <String>[
+      ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
+    ];
+    addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+        generatorComments: generatedMessages);
+
+    indent.write('public interface ${api.name} ');
+    indent.scoped('{', '}', () {
+      for (final Method method in api.methods) {
+        _writeInterfaceMethod(generatorOptions, root, indent, api, method);
+      }
+      indent.addln('');
+      final String codecName = _getCodecName(api);
+      indent.writeln('/** The codec used by ${api.name}. */');
+      indent.write('static MessageCodec<Object> getCodec() ');
+      indent.scoped('{', '}', () {
+        indent.write('return ');
+        if (getCodecClasses(api, root).isNotEmpty) {
+          indent.write('$codecName.INSTANCE;');
+        } else {
+          indent.write('new $_standardMessageCodec();');
+        }
+      });
+
+      indent.writeln(
+          '${_docCommentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`.$_docCommentSuffix');
+      indent.write(
+          'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
+      indent.scoped('{', '}', () {
+        for (final Method method in api.methods) {
+          _writeMethodSetup(generatorOptions, root, indent, api, method);
+        }
+      });
+    });
+  }
 
   /// Write a method in the interface.
   /// Example:
   ///   int add(int x, int y);
-  void writeInterfaceMethod(final Method method) {
+  void _writeInterfaceMethod(JavaOptions generatorOptions, Root root,
+      Indent indent, Api api, final Method method) {
     final String returnType = method.isAsynchronous
         ? 'void'
         : _nullsafeJavaTypeForDartType(method.returnType);
@@ -203,7 +542,8 @@ void _writeHostApi(Indent indent, Api api, Root root) {
   /// Write a static setup function in the interface.
   /// Example:
   ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
-  void writeMethodSetup(final Method method) {
+  void _writeMethodSetup(JavaOptions generatorOptions, Root root, Indent indent,
+      Api api, final Method method) {
     final String channelName = makeChannelName(api, method);
     indent.write('');
     indent.scoped('{', '}', () {
@@ -252,7 +592,7 @@ void _writeHostApi(Indent indent, Api api, Root root) {
                     ? '($argName == null) ? null : $argName.longValue()'
                     : argName;
                 String accessor = 'args.get($index)';
-                if (isEnum(arg.type)) {
+                if (isEnum(root, arg.type)) {
                   accessor = _intToEnum(accessor, arg.type.baseName);
                 } else if (argType != 'Object') {
                   accessor = '($argType)$accessor';
@@ -319,37 +659,98 @@ Result<$returnType> $resultName = new Result<$returnType>() {
     });
   }
 
-  const List<String> generatedMessages = <String>[
-    ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
-  ];
-  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
-      generatorComments: generatedMessages);
-
-  indent.write('public interface ${api.name} ');
-  indent.scoped('{', '}', () {
-    api.methods.forEach(writeInterfaceMethod);
-    indent.addln('');
+  /// Writes the codec class that will be used by [api].
+  /// Example:
+  /// private static class FooCodec extends StandardMessageCodec {...}
+  void _writeCodec(Indent indent, Api api, Root root) {
+    assert(getCodecClasses(api, root).isNotEmpty);
+    final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
     final String codecName = _getCodecName(api);
-    indent.writeln('/** The codec used by ${api.name}. */');
-    indent.write('static MessageCodec<Object> getCodec() ');
-    indent.scoped('{', '}', () {
-      indent.write('return ');
-      if (getCodecClasses(api, root).isNotEmpty) {
-        indent.write('$codecName.INSTANCE;');
-      } else {
-        indent.write('new $_standardMessageCodec();');
-      }
-    });
-
-    indent.writeln(
-        '${_docCommentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`.$_docCommentSuffix');
     indent.write(
-        'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
+        'private static class $codecName extends $_standardMessageCodec ');
     indent.scoped('{', '}', () {
-      api.methods.forEach(writeMethodSetup);
+      indent.writeln(
+          'public static final $codecName INSTANCE = new $codecName();');
+      indent.writeln('private $codecName() {}');
+      indent.writeln('@Override');
+      indent.write(
+          'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) ');
+      indent.scoped('{', '}', () {
+        indent.write('switch (type) ');
+        indent.scoped('{', '}', () {
+          for (final EnumeratedClass customClass in codecClasses) {
+            indent.write('case (byte)${customClass.enumeration}: ');
+            indent.writeScoped('', '', () {
+              indent.writeln(
+                  'return ${customClass.name}.fromList((ArrayList<Object>) readValue(buffer));');
+            });
+          }
+          indent.write('default:');
+          indent.writeScoped('', '', () {
+            indent.writeln('return super.readValueOfType(type, buffer);');
+          });
+        });
+      });
+      indent.writeln('@Override');
+      indent.write(
+          'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) ');
+      indent.writeScoped('{', '}', () {
+        for (final EnumeratedClass customClass in codecClasses) {
+          indent.write('if (value instanceof ${customClass.name}) ');
+          indent.scoped('{', '} else ', () {
+            indent.writeln('stream.write(${customClass.enumeration});');
+            indent.writeln(
+                'writeValue(stream, ((${customClass.name}) value).toList());');
+          });
+        }
+        indent.scoped('{', '}', () {
+          indent.writeln('super.writeValue(stream, value);');
+        });
+      });
     });
-  });
+    indent.addln('');
+  }
+
+  void _writeResultInterface(Indent indent) {
+    indent.write('public interface Result<T> ');
+    indent.scoped('{', '}', () {
+      indent.writeln('void success(T result);');
+      indent.writeln('void error(Throwable error);');
+    });
+  }
+
+  void _writeWrapError(Indent indent) {
+    indent.format('''
+@NonNull private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
+\tArrayList<Object> errorList = new ArrayList<>(3);
+\terrorList.add(exception.toString());
+\terrorList.add(exception.getClass().getSimpleName());
+\terrorList.add("Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\treturn errorList;
+}''');
+  }
+
+  @override
+  void writeGeneralUtilities(
+      JavaOptions generatorOptions, Root root, Indent indent) {
+    _writeWrapError(indent);
+  }
+
+  @override
+  void writeCloseNamespace(
+      JavaOptions generatorOptions, Root root, Indent indent) {
+    indent.dec();
+    indent.addln('}');
+  }
 }
+
+/// Calculates the name of the codec that will be generated for [api].
+String _getCodecName(Api api) => '${api.name}Codec';
+
+/// Converts an expression that evaluates to an nullable int to an expression
+/// that evaluates to a nullable enum.
+String _intToEnum(String expression, String enumName) =>
+    '$expression == null ? null : $enumName.values()[(int)$expression]';
 
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;
@@ -357,106 +758,6 @@ String _getArgumentName(int count, NamedType argument) =>
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType argument) =>
     '${_getArgumentName(count, argument)}Arg';
-
-/// Writes the code for a flutter [Api], [api].
-/// Example:
-/// public static class Foo {
-///   public Foo(BinaryMessenger argBinaryMessenger) {...}
-///   public interface Reply<T> {
-///     void reply(T reply);
-///   }
-///   public int add(int x, int y, Reply<int> callback) {...}
-/// }
-void _writeFlutterApi(Indent indent, Api api, Root root) {
-  assert(api.location == ApiLocation.flutter);
-  const List<String> generatedMessages = <String>[
-    ' Generated class from Pigeon that represents Flutter messages that can be called from Java.'
-  ];
-  addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
-      generatorComments: generatedMessages);
-
-  indent.write('public static class ${api.name} ');
-  indent.scoped('{', '}', () {
-    indent.writeln('private final BinaryMessenger binaryMessenger;');
-    indent.write('public ${api.name}(BinaryMessenger argBinaryMessenger)');
-    indent.scoped('{', '}', () {
-      indent.writeln('this.binaryMessenger = argBinaryMessenger;');
-    });
-    indent.write('public interface Reply<T> ');
-    indent.scoped('{', '}', () {
-      indent.writeln('void reply(T reply);');
-    });
-    final String codecName = _getCodecName(api);
-    indent.writeln('/** The codec used by ${api.name}. */');
-    indent.write('static MessageCodec<Object> getCodec() ');
-    indent.scoped('{', '}', () {
-      indent.write('return ');
-      if (getCodecClasses(api, root).isNotEmpty) {
-        indent.writeln('$codecName.INSTANCE;');
-      } else {
-        indent.writeln('new $_standardMessageCodec();');
-      }
-    });
-
-    for (final Method func in api.methods) {
-      final String channelName = makeChannelName(api, func);
-      final String returnType = func.returnType.isVoid
-          ? 'Void'
-          : _javaTypeForDartType(func.returnType);
-      String sendArgument;
-      addDocumentationComments(
-          indent, func.documentationComments, _docCommentSpec);
-      if (func.arguments.isEmpty) {
-        indent.write('public void ${func.name}(Reply<$returnType> callback) ');
-        sendArgument = 'null';
-      } else {
-        final Iterable<String> argTypes = func.arguments
-            .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
-        final Iterable<String> argNames =
-            indexMap(func.arguments, _getSafeArgumentName);
-        if (func.arguments.length == 1) {
-          sendArgument =
-              'new ArrayList<Object>(Collections.singletonList(${argNames.first}))';
-        } else {
-          sendArgument =
-              'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
-        }
-        final String argsSignature =
-            map2(argTypes, argNames, (String x, String y) => '$x $y')
-                .join(', ');
-        indent.write(
-            'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
-      }
-      indent.scoped('{', '}', () {
-        const String channel = 'channel';
-        indent.writeln('BasicMessageChannel<Object> $channel =');
-        indent.inc();
-        indent.inc();
-        indent.writeln(
-            'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
-        indent.dec();
-        indent.dec();
-        indent.write('$channel.send($sendArgument, channelReply -> ');
-        indent.scoped('{', '});', () {
-          if (func.returnType.isVoid) {
-            indent.writeln('callback.reply(null);');
-          } else {
-            const String output = 'output';
-            indent.writeln('@SuppressWarnings("ConstantConditions")');
-            if (func.returnType.baseName == 'int') {
-              indent.writeln(
-                  '$returnType $output = channelReply == null ? null : ((Number)channelReply).longValue();');
-            } else {
-              indent
-                  .writeln('$returnType $output = ($returnType)channelReply;');
-            }
-            indent.writeln('callback.reply($output);');
-          }
-        });
-      });
-    }
-  });
-}
 
 String _makeGetter(NamedType field) {
   final String uppercased =
@@ -534,280 +835,4 @@ String _castObject(
   } else {
     return '(${hostDatatype.datatype})$varName';
   }
-}
-
-/// Generates the ".java" file for the AST represented by [root] to [sink] with the
-/// provided [options].
-void generateJava(JavaOptions options, Root root, StringSink sink) {
-  final Set<String> rootClassNameSet =
-      root.classes.map((Class x) => x.name).toSet();
-  final Set<String> rootEnumNameSet =
-      root.enums.map((Enum x) => x.name).toSet();
-  final Indent indent = Indent(sink);
-
-  void writeHeader() {
-    if (options.copyrightHeader != null) {
-      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// $generatedCodeWarning');
-    indent.writeln('// $seeAlsoWarning');
-  }
-
-  void writeImports() {
-    indent.writeln('import android.util.Log;');
-    indent.writeln('import androidx.annotation.NonNull;');
-    indent.writeln('import androidx.annotation.Nullable;');
-    indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
-    indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
-    indent.writeln('import io.flutter.plugin.common.MessageCodec;');
-    indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
-    indent.writeln('import java.io.ByteArrayOutputStream;');
-    indent.writeln('import java.nio.ByteBuffer;');
-    indent.writeln('import java.util.Arrays;');
-    indent.writeln('import java.util.ArrayList;');
-    indent.writeln('import java.util.Collections;');
-    indent.writeln('import java.util.List;');
-    indent.writeln('import java.util.Map;');
-    indent.writeln('import java.util.HashMap;');
-  }
-
-  String camelToSnake(String camelCase) {
-    final RegExp regex = RegExp('([a-z])([A-Z]+)');
-    return camelCase
-        .replaceAllMapped(regex, (Match m) => '${m[1]}_${m[2]}')
-        .toUpperCase();
-  }
-
-  void writeEnum(Enum anEnum) {
-    addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentSpec);
-
-    indent.write('public enum ${anEnum.name} ');
-    indent.scoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
-        addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
-        indent.writeln(
-            '${camelToSnake(member.name)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
-      });
-      indent.writeln('');
-      indent.writeln('private final int index;');
-      indent.write('private ${anEnum.name}(final int index) ');
-      indent.scoped('{', '}', () {
-        indent.writeln('this.index = index;');
-      });
-    });
-  }
-
-  void writeDataClass(Class klass) {
-    void writeField(NamedType field) {
-      final HostDatatype hostDatatype = getFieldHostDatatype(
-          field,
-          root.classes,
-          root.enums,
-          (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
-      final String nullability =
-          field.type.isNullable ? '@Nullable' : '@NonNull';
-      addDocumentationComments(
-          indent, field.documentationComments, _docCommentSpec);
-
-      indent.writeln(
-          'private $nullability ${hostDatatype.datatype} ${field.name};');
-      indent.writeln(
-          'public $nullability ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
-      indent.writeScoped(
-          'public void ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
-          '}', () {
-        if (!field.type.isNullable) {
-          indent.writeScoped('if (setterArg == null) {', '}', () {
-            indent.writeln(
-                'throw new IllegalStateException("Nonnull field \\"${field.name}\\" is null.");');
-          });
-        }
-        indent.writeln('this.${field.name} = setterArg;');
-      });
-    }
-
-    void writeToList() {
-      indent.write('@NonNull ArrayList<Object> toList() ');
-      indent.scoped('{', '}', () {
-        indent.writeln(
-            'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          final HostDatatype hostDatatype = getFieldHostDatatype(
-              field,
-              root.classes,
-              root.enums,
-              (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
-          String toWriteValue = '';
-          final String fieldName = field.name;
-          if (!hostDatatype.isBuiltin &&
-              rootClassNameSet.contains(field.type.baseName)) {
-            toWriteValue = '($fieldName == null) ? null : $fieldName.toList()';
-          } else if (!hostDatatype.isBuiltin &&
-              rootEnumNameSet.contains(field.type.baseName)) {
-            toWriteValue = '$fieldName == null ? null : $fieldName.index';
-          } else {
-            toWriteValue = field.name;
-          }
-          indent.writeln('toListResult.add($toWriteValue);');
-        }
-        indent.writeln('return toListResult;');
-      });
-    }
-
-    void writeFromList() {
-      indent.write(
-          'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
-      indent.scoped('{', '}', () {
-        const String result = 'pigeonResult';
-        indent.writeln('${klass.name} $result = new ${klass.name}();');
-        enumerate(getFieldsInSerializationOrder(klass),
-            (int index, final NamedType field) {
-          final String fieldVariable = field.name;
-          final String setter = _makeSetter(field);
-          indent.writeln('Object $fieldVariable = list.get($index);');
-          if (rootEnumNameSet.contains(field.type.baseName)) {
-            indent.writeln(
-                '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName)});');
-          } else {
-            indent.writeln(
-                '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
-          }
-        });
-        indent.writeln('return $result;');
-      });
-    }
-
-    void writeBuilder() {
-      indent.write('public static final class Builder ');
-      indent.scoped('{', '}', () {
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          final HostDatatype hostDatatype = getFieldHostDatatype(
-              field,
-              root.classes,
-              root.enums,
-              (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
-          final String nullability =
-              field.type.isNullable ? '@Nullable' : '@NonNull';
-          indent.writeln(
-              'private @Nullable ${hostDatatype.datatype} ${field.name};');
-          indent.writeScoped(
-              'public @NonNull Builder ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
-              '}', () {
-            indent.writeln('this.${field.name} = setterArg;');
-            indent.writeln('return this;');
-          });
-        }
-        indent.write('public @NonNull ${klass.name} build() ');
-        indent.scoped('{', '}', () {
-          const String returnVal = 'pigeonReturn';
-          indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
-          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-            indent.writeln('$returnVal.${_makeSetter(field)}(${field.name});');
-          }
-          indent.writeln('return $returnVal;');
-        });
-      });
-    }
-
-    const List<String> generatedMessages = <String>[
-      ' Generated class from Pigeon that represents data sent in messages.'
-    ];
-    addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec,
-        generatorComments: generatedMessages);
-
-    indent.write('public static class ${klass.name} ');
-    indent.scoped('{', '}', () {
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        writeField(field);
-        indent.addln('');
-      }
-
-      if (getFieldsInSerializationOrder(klass)
-          .map((NamedType e) => !e.type.isNullable)
-          .any((bool e) => e)) {
-        indent.writeln(
-            '${_docCommentPrefix}Constructor is private to enforce null safety; use Builder.$_docCommentSuffix');
-        indent.writeln('private ${klass.name}() {}');
-      }
-
-      writeBuilder();
-      writeToList();
-      writeFromList();
-    });
-  }
-
-  void writeResultInterface() {
-    indent.write('public interface Result<T> ');
-    indent.scoped('{', '}', () {
-      indent.writeln('void success(T result);');
-      indent.writeln('void error(Throwable error);');
-    });
-  }
-
-  void writeApi(Api api) {
-    if (api.location == ApiLocation.host) {
-      _writeHostApi(indent, api, root);
-    } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(indent, api, root);
-    }
-  }
-
-  void writeWrapError() {
-    indent.format('''
-@NonNull private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-\tArrayList<Object> errorList = new ArrayList<>(3);
-\terrorList.add(exception.toString());
-\terrorList.add(exception.getClass().getSimpleName());
-\terrorList.add("Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
-\treturn errorList;
-}''');
-  }
-
-  writeHeader();
-  indent.addln('');
-  if (options.package != null) {
-    indent.writeln('package ${options.package};');
-  }
-  indent.addln('');
-  writeImports();
-  indent.addln('');
-  indent.writeln(
-      '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
-  indent.writeln(
-      '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
-  if (options.useGeneratedAnnotation ?? false) {
-    indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
-  }
-  indent.write('public class ${options.className!} ');
-  indent.scoped('{', '}', () {
-    for (final Enum anEnum in root.enums) {
-      indent.writeln('');
-      writeEnum(anEnum);
-    }
-
-    for (final Class klass in root.classes) {
-      indent.addln('');
-      writeDataClass(klass);
-    }
-
-    if (root.apis.any((Api api) =>
-        api.location == ApiLocation.host &&
-        api.methods.any((Method it) => it.isAsynchronous))) {
-      indent.addln('');
-      writeResultInterface();
-    }
-
-    for (final Api api in root.apis) {
-      if (getCodecClasses(api, root).isNotEmpty) {
-        _writeCodec(indent, api, root);
-        indent.addln('');
-      }
-      writeApi(api);
-    }
-
-    writeWrapError();
-  });
 }
