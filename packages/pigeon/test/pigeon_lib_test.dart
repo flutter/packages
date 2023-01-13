@@ -938,10 +938,10 @@ abstract class Api {
       dartTestOut: 'stdout',
       dartOut: 'stdout',
     );
-    final DartTestGeneratorAdapter dartGeneratorAdapter =
+    final DartTestGeneratorAdapter dartTestGeneratorAdapter =
         DartTestGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    dartGeneratorAdapter.generate(buffer, options, root, FileType.source);
+    dartTestGeneratorAdapter.generate(buffer, options, root, FileType.source);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 

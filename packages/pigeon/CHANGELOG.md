@@ -1,3 +1,7 @@
+## 6.0.0
+
+* Creates StructuredGenerator class and implements it on all platforms.
+
 ## 5.0.1
 
 * [c++] Fixes undefined behavior in `@async` methods.
