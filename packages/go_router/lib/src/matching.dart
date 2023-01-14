@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
+import 'delegate.dart';
 import 'match.dart';
 import 'path_utils.dart';
 
@@ -48,7 +49,7 @@ class RouteMatcher {
 /// The list of [RouteMatch] objects.
 class RouteMatchList {
   /// RouteMatchList constructor.
-  RouteMatchList(List<RouteMatch> matches, this.uri, this.pathParameters)
+  RouteMatchList(List<RouteMatch> matches, this._uri, this.pathParameters)
       : _matches = matches,
         fullpath = _generateFullPath(matches);
 
@@ -56,7 +57,7 @@ class RouteMatchList {
   static RouteMatchList empty =
       RouteMatchList(<RouteMatch>[], Uri.parse(''), const <String, String>{});
 
-  static String _generateFullPath(List<RouteMatch> matches) {
+  static String _generateFullPath(Iterable<RouteMatch> matches) {
     final StringBuffer buffer = StringBuffer();
     bool addsSlash = false;
     for (final RouteMatch match in matches) {
@@ -82,7 +83,8 @@ class RouteMatchList {
   final Map<String, String> pathParameters;
 
   /// The uri of the current match.
-  final Uri uri;
+  Uri get uri => _uri;
+  Uri _uri;
 
   /// Returns true if there are no matches.
   bool get isEmpty => _matches.isEmpty;
@@ -95,14 +97,27 @@ class RouteMatchList {
     _matches.add(match);
   }
 
-  /// Removes the last match.
-  void pop() {
-    _matches.removeLast();
+  /// Removes the match from the list.
+  void remove(RouteMatch match) {
+    final int index = _matches.indexOf(match);
+    assert(index != -1);
+    _matches.removeRange(index, _matches.length);
 
     // Also pop ShellRoutes when there are no subsequent route matches
     while (_matches.isNotEmpty && _matches.last.route is ShellRoute) {
       _matches.removeLast();
     }
+
+    final String fullPath = _generateFullPath(
+        _matches.where((RouteMatch match) => match is! ImperativeRouteMatch));
+    // Need to remove path parameters that are no longer in the fullPath.
+    final List<String> newParameters = <String>[];
+    patternToRegExp(fullPath, newParameters);
+    final Set<String> validParameters = newParameters.toSet();
+    pathParameters.removeWhere(
+        (String key, String value) => !validParameters.contains(key));
+
+    _uri = _uri.replace(path: patternToPath(fullPath, pathParameters));
   }
 
   /// An optional object provided by the app during navigation.

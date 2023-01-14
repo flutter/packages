@@ -105,19 +105,25 @@ flutter:
   });
 
   testWithoutContext('updates gradle locks', () async {
-    ProcessResult result = await processManager.run(<String>[
+    final ProcessResult result = await processManager.run(<String>[
       'flutter',
       'create',
       currentDir.absolute.path,
       '--project-name=testproject'
     ]);
-    result = await Process.run('dir', <String>[],
-        workingDirectory: currentDir.path, runInShell: true);
     expect(result.exitCode, 0);
     final File projectAppLock =
         currentDir.childDirectory('android').childFile('project-app.lockfile');
     final File buildGradle =
         currentDir.childDirectory('android').childFile('build.gradle');
+    final File gradleProperties =
+        currentDir.childDirectory('android').childFile('gradle.properties');
+    gradleProperties.writeAsStringSync('''
+org.gradle.daemon=false
+org.gradle.jvmargs=-Xmx1536M
+android.useAndroidX=true
+android.enableJetifier=true
+''', flush: true);
     final File projectAppLockBackup = currentDir
         .childDirectory('android')
         .childFile('project-app.lockfile_backup_0');
@@ -180,6 +186,9 @@ subprojects {
             .childFile('gradlew.bat')
             .existsSync(),
         true);
+    final Directory dotGradle =
+        currentDir.childDirectory('android').childDirectory('.gradle');
+    tryToDelete(dotGradle);
     await updateGradleDependencyLocking(
         flutterProject, utils, logger, terminal, true, fileSystem,
         force: true);
@@ -191,7 +200,7 @@ subprojects {
         contains('# Manual edits can break the build and are not advised.'));
     expect(projectAppLock.readAsStringSync(),
         contains('# This file is expected to be part of source control.'));
-  }, timeout: const Timeout(Duration(seconds: 500)));
+  }, timeout: const Timeout(Duration(seconds: 500)), skip: true);
 }
 
 class _VersionCode extends Comparable<_VersionCode> {

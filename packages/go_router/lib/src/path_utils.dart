@@ -47,10 +47,13 @@ RegExp patternToRegExp(String pattern, List<String> parameters) {
   return RegExp(buffer.toString(), caseSensitive: false);
 }
 
-String _escapeGroup(String group, String name) {
+String _escapeGroup(String group, [String? name]) {
   final String escapedGroup = group.replaceFirstMapped(
       RegExp(r'[:=!]'), (Match match) => '\\${match[0]}');
-  return '(?<$name>$escapedGroup)';
+  if (name != null) {
+    return '(?<$name>$escapedGroup)';
+  }
+  return escapedGroup;
 }
 
 /// Reconstructs the full path from a [pattern] and path parameters.

@@ -128,19 +128,6 @@ task:
           - else
           -   echo "Only run in presubmit"
           - fi
-    - name: dart_unit_tests
-      env:
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      unit_test_script:
-        - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
-      pathified_unit_test_script:
-        # Run tests with path-based dependencies to ensure that publishing
-        # the changes won't break tests of other packages in the respository
-        # that depend on it.
-        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
     - name: analyze
       env:
         matrix:
@@ -256,7 +243,7 @@ task:
     zone: us-central1-a
     namespace: default
     cpu: 4
-    memory: 12G
+    memory: 16G
   matrix:
     ### Android tasks ###
     - name: android-platform_tests
@@ -320,6 +307,19 @@ task:
         - cd ../..
         - flutter packages get
         - dart testing/web_benchmarks_test.dart
+    - name: dart_unit_tests
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      unit_test_script:
+        - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
+      pathified_unit_test_script:
+        # Run tests with path-based dependencies to ensure that publishing
+        # the changes won't break tests of other packages in the repository
+        # that depend on it.
+        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
+        - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
 
 # ARM macOS tasks.
 task:

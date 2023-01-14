@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:path/path.dart' as p;
-
-import 'process_utils.dart';
+import 'package:pigeon/pigeon.dart';
 
 enum GeneratorLanguages {
   cpp,
@@ -52,11 +51,10 @@ Future<int> generatePigeons({required String baseDir}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const List<String> inputs = <String>[
-    'all_datatypes',
-    'all_void',
     'android_unittests',
     'async_handlers',
     'background_platform_channels',
+    'core_tests',
     'enum_args',
     'enum',
     'host2flutter',
@@ -79,10 +77,6 @@ Future<int> generatePigeons({required String baseDir}) async {
       p.join(baseDir, 'platform_tests', 'alternate_language_test_plugin');
   final String sharedDartOutputBase =
       p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
-  // TODO(stuartmorgan): Eliminate this and use alternateOutputBase.
-  // See https://github.com/flutter/packages/pull/2816.
-  final String iosObjCBase =
-      p.join(baseDir, 'platform_tests', 'ios_unit_tests');
 
   for (final String input in inputs) {
     final String pascalCaseName = _snakeToPascalCase(input);
@@ -142,10 +136,10 @@ Future<int> generatePigeons({required String baseDir}) async {
       // iOS
       objcHeaderOut: skipLanguages.contains(GeneratorLanguages.objc)
           ? null
-          : '$iosObjCBase/ios/Runner/$pascalCaseName.gen.h',
+          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.h',
       objcSourceOut: skipLanguages.contains(GeneratorLanguages.objc)
           ? null
-          : '$iosObjCBase/ios/Runner/$pascalCaseName.gen.m',
+          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -168,65 +162,24 @@ Future<int> runPigeon({
   String? javaPackage,
   String? objcHeaderOut,
   String? objcSourceOut,
-  bool streamOutput = true,
 }) async {
-  const bool hasDart = false;
-  final List<String> args = <String>[
-    'run',
-    'pigeon',
-    '--input',
-    input,
-    '--copyright_header',
-    './copyright_header.txt',
-  ];
-  if (kotlinOut != null) {
-    args.addAll(<String>['--experimental_kotlin_out', kotlinOut]);
-  }
-  if (kotlinPackage != null) {
-    args.addAll(<String>['--experimental_kotlin_package', kotlinPackage]);
-  }
-  if (swiftOut != null) {
-    args.addAll(<String>['--experimental_swift_out', swiftOut]);
-  }
-  if (cppHeaderOut != null) {
-    args.addAll(<String>[
-      '--experimental_cpp_header_out',
-      cppHeaderOut,
-    ]);
-  }
-  if (cppSourceOut != null) {
-    args.addAll(<String>[
-      '--experimental_cpp_source_out',
-      cppSourceOut,
-    ]);
-  }
-  if (cppNamespace != null) {
-    args.addAll(<String>[
-      '--cpp_namespace',
-      cppNamespace,
-    ]);
-  }
-  if (dartOut != null) {
-    args.addAll(<String>['--dart_out', dartOut]);
-  }
-  if (dartTestOut != null) {
-    args.addAll(<String>['--dart_test_out', dartTestOut]);
-  }
-  if (!hasDart) {
-    args.add('--one_language');
-  }
-  if (javaOut != null) {
-    args.addAll(<String>['--java_out', javaOut]);
-  }
-  if (javaPackage != null) {
-    args.addAll(<String>['--java_package', javaPackage]);
-  }
-  if (objcHeaderOut != null) {
-    args.addAll(<String>['--objc_header_out', objcHeaderOut]);
-  }
-  if (objcSourceOut != null) {
-    args.addAll(<String>['--objc_source_out', objcSourceOut]);
-  }
-  return runProcess('dart', args,
-      streamOutput: streamOutput, logFailure: !streamOutput);
+  return Pigeon.runWithOptions(PigeonOptions(
+    input: input,
+    copyrightHeader: './copyright_header.txt',
+    dartOut: dartOut,
+    dartTestOut: dartTestOut,
+    dartOptions: DartOptions(),
+    cppHeaderOut: cppHeaderOut,
+    cppSourceOut: cppSourceOut,
+    cppOptions: CppOptions(namespace: cppNamespace),
+    javaOut: javaOut,
+    javaOptions: JavaOptions(package: javaPackage),
+    kotlinOut: kotlinOut,
+    kotlinOptions: KotlinOptions(package: kotlinPackage),
+    objcHeaderOut: objcHeaderOut,
+    objcSourceOut: objcSourceOut,
+    objcOptions: const ObjcOptions(),
+    swiftOut: swiftOut,
+    swiftOptions: const SwiftOptions(),
+  ));
 }
