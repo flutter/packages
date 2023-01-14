@@ -1228,7 +1228,13 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // Nullable arguments should all be pointers. This will make them somewhat
       // awkward for some uses (literals, values that could be inlined) but
@@ -1256,7 +1262,13 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // All types pass nulls values when the pointer is null.
       // Standard types are wrapped an EncodableValues.
@@ -1362,7 +1374,13 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -1384,7 +1402,13 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // Standard types are wrapped an EncodableValues.
       expect(code, contains('flutter::EncodableValue(a_bool_arg)'));
