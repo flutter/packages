@@ -66,7 +66,6 @@ targets:
       channel: stable
 
   - name: Mac_arm64 custom_package_tests master
-    bringup: true # New configuration
     recipe: packages/packages
     timeout: 30
     properties:
@@ -76,7 +75,6 @@ targets:
       channel: master
 
   - name: Mac_arm64 custom_package_tests stable
-    bringup: true # New configuration
     recipe: packages/packages
     timeout: 30
     properties:
@@ -139,7 +137,6 @@ targets:
         ]
 
   - name: Windows windows-build_all_packages master
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
@@ -153,7 +150,6 @@ targets:
         ]
 
   - name: Windows windows-build_all_packages stable
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
