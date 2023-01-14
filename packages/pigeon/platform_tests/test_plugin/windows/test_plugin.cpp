@@ -179,15 +179,17 @@ void TestPlugin::EchoAsyncString(
 
 void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
-  flutter_api_->noop([result]() { result(std::nullopt); });
+  flutter_api_->Noop([result]() { result(std::nullopt); },
+                     [result](const FlutterError& error) { result(error); });
 }
 
 void TestPlugin::CallFlutterEchoString(
     const std::string& a_string,
     std::function<void(ErrorOr<std::string> reply)> result) {
-  flutter_api_->echoString(
+  flutter_api_->EchoString(
       a_string,
-      [result](const std::string& flutter_string) { result(flutter_string); });
+      [result](const std::string& flutter_string) { result(flutter_string); },
+      [result](const FlutterError& error) { result(error); });
 }
 
 }  // namespace test_plugin

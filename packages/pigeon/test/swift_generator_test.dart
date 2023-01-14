@@ -834,7 +834,8 @@ void main() {
         code,
         contains(
             'func add(x xArg: Int32, y yArg: Int32, completion: @escaping (Int32) -> Void)'));
-    expect(code, contains('channel.sendMessage([xArg, yArg]) { response in'));
+    expect(code,
+        contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'));
   });
 
   test('return nullable host', () {

@@ -527,10 +527,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String echoObject = await api.callFlutterEchoString(sentObject);
       expect(echoObject, sentObject);
     });
-  },
-      // TODO(stuartmorgan): Enable when FlutterApi generation is fixed for
-      // C++. See https://github.com/flutter/flutter/issues/108682.
-      skip: targetGenerator == TargetGenerator.cpp);
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
@@ -545,10 +542,56 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   }
 
   @override
-  String echoString(String aString) {
-    return aString;
+  void noop() {}
+
+  @override
+  AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString) {
+    return AllNullableTypes(
+        aNullableBool: aNullableBool,
+        aNullableInt: aNullableInt,
+        aNullableString: aNullableString);
   }
 
   @override
-  void noop() {}
+  bool echoBool(bool aBool) => aBool;
+
+  @override
+  double echoDouble(double aDouble) => aDouble;
+
+  @override
+  int echoInt(int anInt) => anInt;
+
+  @override
+  String echoString(String aString) => aString;
+
+  @override
+  Uint8List echoUint8List(Uint8List aList) => aList;
+
+  @override
+  List<Object?> echoList(List<Object?> aList) => aList;
+
+  @override
+  Map<String?, Object?> echoMap(Map<String?, Object?> aMap) => aMap;
+
+  @override
+  bool? echoNullableBool(bool? aBool) => aBool;
+
+  @override
+  double? echoNullableDouble(double? aDouble) => aDouble;
+
+  @override
+  int? echoNullableInt(int? anInt) => anInt;
+
+  @override
+  List<Object?>? echoNullableList(List<Object?>? aList) => aList;
+
+  @override
+  Map<String?, Object?> echoNullableMap(Map<String?, Object?> aMap) => aMap;
+
+  @override
+  String? echoNullableString(String? aString) => aString;
+
+  @override
+  Uint8List? echoNullableUint8List(Uint8List? aList) => aList;
 }
