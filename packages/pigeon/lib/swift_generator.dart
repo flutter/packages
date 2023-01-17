@@ -271,6 +271,7 @@ import FlutterMacOS
     if (isCustomCodec) {
       _writeCodec(indent, api, root);
     }
+    api.methods = api.methods.map(_swiftMethod).toList();
     const List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from Swift.'
     ];
@@ -369,7 +370,7 @@ import FlutterMacOS
     if (isCustomCodec) {
       _writeCodec(indent, api, root);
     }
-
+    api.methods = api.methods.map(_swiftMethod).toList();
     const List<String> generatedComments = <String>[
       ' Generated protocol from Pigeon that represents a handler of messages from Flutter.'
     ];
@@ -693,4 +694,43 @@ String _swiftTypeForDartType(TypeDeclaration type) {
 String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
   return '${_swiftTypeForDartType(type)}$nullSafe';
+}
+
+/// Returns a new [Method] using the swift function signature from [func],
+/// i.e., the name of function and the strings between the semicolons.
+///
+/// Example:
+///   _swiftMethod('@SwiftFunction('add(_:with:)') void add(int x, int y)')
+///   will return 'void add(int _ x, int with y)'
+///   which represents 'func add(_ x: Int32, with y: Int32) -> Void' in Swift.
+Method _swiftMethod(Method func) {
+  if (func.swiftFunction.isEmpty) {
+    return func;
+  } else {
+    final String argsCapturator =
+        repeat(r'(\w+):', func.arguments.length).join();
+    final RegExp signatureRegex = RegExp(r'(\w+) *\(' + argsCapturator + r'\)');
+    final RegExpMatch match = signatureRegex.firstMatch(func.swiftFunction)!;
+
+    final Iterable<String> customComponents = match
+        .groups(
+            List<int>.generate(func.arguments.length, (int index) => index + 2))
+        .whereType();
+
+    return Method(
+      name: match.group(1)!,
+      returnType: func.returnType,
+      arguments:
+          map2(func.arguments, customComponents, (NamedType t, String u) {
+        if (u == t.name) {
+          return t;
+        }
+
+        return NamedType(name: '$u ${t.name}', type: t.type);
+      }).toList(),
+      isAsynchronous: func.isAsynchronous,
+      offset: func.offset,
+      taskQueueType: func.taskQueueType,
+    );
+  }
 }

@@ -1,3 +1,7 @@
+## 6.0.2
+
+* Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
 ## 6.0.1
 
 * [c++] Fixes most non-class arguments and return values in Flutter APIs. The

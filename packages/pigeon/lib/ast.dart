@@ -32,6 +32,7 @@ class Method extends Node {
     this.isAsynchronous = false,
     this.offset,
     this.objcSelector = '',
+    this.swiftFunction = '',
     this.taskQueueType = TaskQueueType.serial,
     this.documentationComments = const <String>[],
   });
@@ -54,6 +55,9 @@ class Method extends Node {
   /// An override for the generated objc selector (ex. "divideNumber:by:").
   String objcSelector;
 
+  /// An override for the generated swift function signature (ex. "divideNumber(_:by:)").
+  String swiftFunction;
+
   /// Specifies how handlers are dispatched with respect to threading.
   TaskQueueType taskQueueType;
 
@@ -68,7 +72,9 @@ class Method extends Node {
   String toString() {
     final String objcSelectorStr =
         objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
-    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr documentationComments:$documentationComments)';
+    final String swiftFunctionStr =
+        swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
+    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
 
