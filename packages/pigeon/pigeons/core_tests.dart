@@ -191,10 +191,12 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('callFlutterEchoString:')
   String callFlutterEchoString(String aString);
 
-  // TODO(stuartmorgan): Add callFlutterEchoString and the associated test once
-  // either https://github.com/flutter/flutter/issues/116117 is fixed, or the
-  // problematic type is moved out of AllTypes and into its own test, since
+  // TODO(stuartmorgan): Add callFlutterEchoAllTypes and the associated test
+  // once either https://github.com/flutter/flutter/issues/116117 is fixed, or
+  // the problematic type is moved out of AllTypes and into its own test, since
   // the type mismatch breaks the second `encode` round.
+
+  // TODO(stuartmorgan): Fill in the rest of the callFlutterEcho* tests.
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -213,9 +215,72 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoAllNullableTypes:')
   AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
 
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
+  AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  // ========== Non-nullable argument/return type tests ==========
+
+  /// Returns the passed boolean, to test serialization and deserialization.
+  @ObjCSelector('echoBool:')
+  bool echoBool(bool aBool);
+
+  /// Returns the passed int, to test serialization and deserialization.
+  @ObjCSelector('echoInt:')
+  int echoInt(int anInt);
+
+  /// Returns the passed double, to test serialization and deserialization.
+  @ObjCSelector('echoDouble:')
+  double echoDouble(double aDouble);
+
   /// Returns the passed string, to test serialization and deserialization.
   @ObjCSelector('echoString:')
   String echoString(String aString);
+
+  /// Returns the passed byte list, to test serialization and deserialization.
+  @ObjCSelector('echoUint8List:')
+  Uint8List echoUint8List(Uint8List aList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoList:')
+  List<Object?> echoList(List<Object?> aList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoMap:')
+  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+
+  // ========== Nullable argument/return type tests ==========
+
+  /// Returns the passed boolean, to test serialization and deserialization.
+  @ObjCSelector('echoNullableBool:')
+  bool? echoNullableBool(bool? aBool);
+
+  /// Returns the passed int, to test serialization and deserialization.
+  @ObjCSelector('echoNullableInt:')
+  int? echoNullableInt(int? anInt);
+
+  /// Returns the passed double, to test serialization and deserialization.
+  @ObjCSelector('echoNullableDouble:')
+  double? echoNullableDouble(double? aDouble);
+
+  /// Returns the passed string, to test serialization and deserialization.
+  @ObjCSelector('echoNullableString:')
+  String? echoNullableString(String? aString);
+
+  /// Returns the passed byte list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableUint8List:')
+  Uint8List? echoNullableUint8List(Uint8List? aList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableList:')
+  List<Object?>? echoNullableList(List<Object?>? aList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableMap:')
+  Map<String?, Object?> echoNullableMap(Map<String?, Object?> aMap);
 }
 
 /// An API that can be implemented for minimal, compile-only tests.

@@ -27,7 +27,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
@@ -50,7 +51,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum class Foobar(val raw: Int) {'));
     expect(code, contains('ONE(0)'));
@@ -93,7 +95,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum class Foo(val raw: Int) {'));
     expect(code, contains('data class Bar ('));
@@ -126,7 +129,8 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum class Foo(val raw: Int) {'));
     expect(code, contains('val fooArg = Foo.ofRaw(args[0] as Int)'));
@@ -172,7 +176,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('interface Api'));
     expect(code, contains('fun doSomething(input: Input): Output'));
@@ -261,7 +266,8 @@ void main() {
     final StringBuffer sink = StringBuffer();
 
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('val aBool: Boolean? = null'));
     expect(code, contains('val aInt: Long? = null'));
@@ -313,7 +319,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code,
         contains('class Api(private val binaryMessenger: BinaryMessenger)'));
@@ -350,7 +357,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('.*doSomething(.*) ->')));
     expect(code, matches('doSomething(.*)'));
@@ -386,7 +394,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('callback: () -> Unit'));
     expect(code, contains('callback()'));
@@ -415,7 +424,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
     expect(code, contains('wrapped = listOf<Any?>(api.doSomething())'));
@@ -446,7 +456,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doSomething(callback: (Output) -> Unit)'));
     expect(code, contains('channel.send(null)'));
@@ -466,7 +477,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Foobar'));
     expect(code, contains('val field1: List<Any?>? = null'));
@@ -486,7 +498,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Foobar'));
     expect(code, contains('val field1: Map<Any, Any?>? = null'));
@@ -524,7 +537,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Outer'));
     expect(code, contains('data class Nested'));
@@ -577,7 +591,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('interface Api'));
     expect(code, contains('api.doSomething(argArg) {'));
@@ -625,7 +640,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('fun doSomething.*Input.*callback.*Output.*Unit'));
@@ -658,7 +674,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum class Enum1(val raw: Int)'));
     expect(code, contains('ONE(0)'));
@@ -675,7 +692,8 @@ void main() {
     final KotlinOptions kotlinOptions = KotlinOptions(
       copyrightHeader: makeIterable('hello world'),
     );
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -702,7 +720,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Foobar'));
     expect(code, contains('val field1: List<Long?>'));
@@ -731,7 +750,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('data class Foobar'));
     expect(code, contains('val field1: Map<String?, String?>'));
@@ -762,7 +782,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(arg: List<Long?>'));
   });
@@ -792,7 +813,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(argArg: List<Long?>'));
   });
@@ -817,7 +839,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
     expect(code, contains('wrapped = listOf<Any?>(api.doit())'));
@@ -844,7 +867,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(callback: (List<Long?>) -> Unit'));
     expect(code, contains('val result = it as List<Long?>'));
@@ -872,7 +896,8 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun add(x: Long, y: Long): Long'));
     expect(code, contains('val args = message as List<Any?>'));
@@ -909,7 +934,8 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('val channel = BasicMessageChannel'));
     expect(code, contains('val result = it as Long'));
@@ -937,7 +963,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(): Long?'));
   });
@@ -961,7 +988,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(callback: (Long?) -> Unit'));
   });
@@ -988,7 +1016,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1018,7 +1047,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('fun doit(fooArg: Long?, callback: () -> Unit'));
   });
@@ -1053,7 +1083,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('val input: String\n'));
   });
@@ -1134,7 +1165,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     for (final String comment in comments) {
       // This regex finds the comment only between the open and close comment block
@@ -1174,7 +1206,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains(' : StandardMessageCodec() ')));
     expect(code, contains('StandardMessageCodec'));
@@ -1218,7 +1251,8 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains(' : StandardMessageCodec() '));
   });
