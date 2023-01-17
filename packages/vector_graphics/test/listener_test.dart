@@ -93,6 +93,22 @@ void main() {
       const ui.Rect.fromLTRB(10, 10, 40, 40),
     );
   });
+
+  test('Pattern start clips the new canvas', () async {
+    final TestPictureFactory factory = TestPictureFactory();
+    final FlutterVectorGraphicsListener listener =
+        FlutterVectorGraphicsListener(
+      pictureFactory: factory,
+    );
+    listener.onPatternStart(0, 0, 0, 100, 100, Matrix4.identity().storage);
+    final Invocation clipRect = factory.fakeCanvases.last.invocations.single;
+    expect(clipRect.isMethod, true);
+    expect(clipRect.memberName, #clipRect);
+    expect(
+      clipRect.positionalArguments.single,
+      const ui.Rect.fromLTRB(0, 0, 100, 100),
+    );
+  });
 }
 
 class TestPictureFactory implements PictureFactory {

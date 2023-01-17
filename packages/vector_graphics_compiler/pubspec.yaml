@@ -1,6 +1,6 @@
 name: vector_graphics_compiler
 description: A compiler for `package:vector_graphics`.
-version: 1.0.0
+version: 1.0.0+1
 homepage: https://github.com/dnfield/vector_graphics
 
 executables:
@@ -14,7 +14,7 @@ dependencies:
   meta: ^1.7.0
   path_parsing: ^1.0.1
   xml: ^6.0.1
-  vector_graphics_codec: 1.0.0
+  vector_graphics_codec: 1.0.0+1
 
 dev_dependencies:
   flutter_lints: ^1.0.0
@@ -24,7 +24,7 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  vector_graphics: 1.0.0
+  vector_graphics: 1.0.0+1
 
 # Comment out before publishing
 dependency_overrides:

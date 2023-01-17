@@ -441,11 +441,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       double height, Float64List transform) {
     assert(_currentPattern == null);
     _currentPattern = _PatternConfig(patternId, width, height, transform);
-    _patterns[patternId]!.recorder = _pictureFactory.createPictureRecorder();
-    final Canvas newCanvas =
-        _pictureFactory.createCanvas(_patterns[patternId]!.recorder!);
+    final PictureRecorder recorder = _pictureFactory.createPictureRecorder();
+    final Canvas newCanvas = _pictureFactory.createCanvas(recorder);
     newCanvas.clipRect(Offset(x, y) & Size(width, height));
-    _patterns[patternId]!.canvas = newCanvas;
+    _patterns[patternId] = _PatternState()
+      ..recorder = recorder
+      ..canvas = newCanvas;
   }
 
   /// Creates ImageShader for active pattern.

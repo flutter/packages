@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.0+1
+
+- Fix issue in pattern decoding.
+
 ## 1.0.0
 
 * Initial stable release.
