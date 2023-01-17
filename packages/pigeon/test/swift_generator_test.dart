@@ -1156,7 +1156,6 @@ void main() {
                   isNullable: false,
                 ),
                 name: 'value',
-                offset: null,
               ),
               NamedType(
                 type: const TypeDeclaration(
@@ -1164,12 +1163,10 @@ void main() {
                   isNullable: false,
                 ),
                 name: 'key',
-                offset: null,
               ),
             ],
             swiftFunction: 'setValue(_:for:)',
             returnType: const TypeDeclaration.voidDeclaration(),
-            isAsynchronous: false,
           )
         ])
       ],
@@ -1197,12 +1194,10 @@ void main() {
                   isNullable: false,
                 ),
                 name: 'key',
-                offset: null,
               ),
             ],
             swiftFunction: 'removeValue(key:)',
             returnType: const TypeDeclaration.voidDeclaration(),
-            isAsynchronous: false,
           )
         ])
       ],
@@ -1226,7 +1221,6 @@ void main() {
             arguments: <NamedType>[],
             swiftFunction: 'removeAll()',
             returnType: const TypeDeclaration.voidDeclaration(),
-            isAsynchronous: false,
           )
         ])
       ],
