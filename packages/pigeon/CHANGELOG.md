@@ -1,3 +1,7 @@
+## 7.0.0
+
+* [java] Makes classes final and other lint issues.
+
 ## 6.0.0
 
 * Creates StructuredGenerator class and implements it on all platforms.
