@@ -2,6 +2,12 @@
 
 * [java] Makes classes final and other lint issues.
 
+## 6.0.1
+
+* [c++] Fixes most non-class arguments and return values in Flutter APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
+
 ## 6.0.0
 
 * Creates StructuredGenerator class and implements it on all platforms.
