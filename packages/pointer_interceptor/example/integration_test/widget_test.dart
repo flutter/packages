@@ -83,8 +83,10 @@ void main() {
         return;
       }
 
-      final html.Element element =
-          _getHtmlElementAtCenter(clickableButtonFinder, tester);
+      final html.Element element = _getHtmlElementAtCenter(
+        clickableButtonFinder,
+        tester,
+      );
 
       expect(element.tagName.toLowerCase(), 'flt-semantics');
       expect(element.getAttribute('aria-label'), 'Works As Expected');
