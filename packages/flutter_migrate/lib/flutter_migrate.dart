@@ -4,8 +4,8 @@
 
 library flutter_migrate;
 
-export 'src/base_dependencies.dart';
 export 'src/base/command.dart';
+export 'src/base_dependencies.dart';
 export 'src/commands/abandon.dart';
 export 'src/commands/apply.dart';
 export 'src/commands/start.dart';
