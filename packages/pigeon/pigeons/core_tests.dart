@@ -188,15 +188,75 @@ abstract class HostIntegrationCoreApi {
   void callFlutterNoop();
 
   @async
+  @ObjCSelector('callFlutterEchoAllTypes:')
+  AllTypes callFlutterEchoAllTypes(AllTypes everything);
+
+  // TODO(stuartmorgan): Add callFlutterEchoAllNullableTypes and the associated
+  // test once either https://github.com/flutter/flutter/issues/116117 is fixed,
+  // or the problematic type is moved out of AllNullableTypes and into its own
+  // test, since the type mismatch breaks the second `encode` round.
+
+  @async
+  @ObjCSelector('callFlutterSendMultipleNullableTypesABool:anInt:aString:')
+  AllNullableTypes callFlutterSendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  @async
+  @ObjCSelector('callFlutterEchoBool:')
+  bool callFlutterEchoBool(bool aBool);
+
+  @async
+  @ObjCSelector('callFlutterEchoInt:')
+  int callFlutterEchoInt(int anInt);
+
+  @async
+  @ObjCSelector('callFlutterEchoDouble:')
+  double callFlutterEchoDouble(double aDouble);
+
+  @async
   @ObjCSelector('callFlutterEchoString:')
   String callFlutterEchoString(String aString);
 
-  // TODO(stuartmorgan): Add callFlutterEchoAllTypes and the associated test
-  // once either https://github.com/flutter/flutter/issues/116117 is fixed, or
-  // the problematic type is moved out of AllTypes and into its own test, since
-  // the type mismatch breaks the second `encode` round.
+  @async
+  @ObjCSelector('callFlutterEchoUint8List:')
+  Uint8List callFlutterEchoUint8List(Uint8List aList);
 
-  // TODO(stuartmorgan): Fill in the rest of the callFlutterEcho* tests.
+  @async
+  @ObjCSelector('callFlutterEchoList:')
+  List<Object?> callFlutterEchoList(List<Object?> aList);
+
+  @async
+  @ObjCSelector('callFlutterEchoMap:')
+  Map<String?, Object?> callFlutterEchoMap(Map<String?, Object?> aMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableBool:')
+  bool? callFlutterEchoNullableBool(bool? aBool);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableInt:')
+  int? callFlutterEchoNullableInt(int? anInt);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableDouble:')
+  double? callFlutterEchoNullableDouble(double? aDouble);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableString:')
+  String? callFlutterEchoNullableString(String? aString);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableUint8List:')
+  Uint8List? callFlutterEchoNullableUint8List(Uint8List? aList);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableList:')
+  List<Object?>? callFlutterEchoNullableList(List<Object?>? aList);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableMap:')
+  Map<String?, Object?>? callFlutterEchoNullableMap(
+      Map<String?, Object?>? aMap);
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -280,7 +340,7 @@ abstract class FlutterIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableMap:')
-  Map<String?, Object?> echoNullableMap(Map<String?, Object?> aMap);
+  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
 }
 
 /// An API that can be implemented for minimal, compile-only tests.
