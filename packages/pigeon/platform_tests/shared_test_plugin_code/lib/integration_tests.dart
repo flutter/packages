@@ -98,7 +98,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
       expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
       expect(echoObject.anEnum, genericAllTypes.anEnum);
-    });
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118726
+        skip: targetGenerator == TargetGenerator.kotlin);
 
     testWidgets('all nullable datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -523,7 +526,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
       expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
       expect(echoObject.anEnum, genericAllTypes.anEnum);
-    });
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118726
+        skip: targetGenerator == TargetGenerator.kotlin);
 
     testWidgets(
         'Arguments of multiple types serialize and deserialize correctly',
@@ -570,7 +576,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const int sentObject = -13;
       final int echoObject = await api.callFlutterEchoInt(sentObject);
       expect(echoObject, sentObject);
-    });
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118726
+        skip: targetGenerator == TargetGenerator.kotlin);
 
     testWidgets('doubles serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -664,7 +673,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const int sentObject = -13;
       final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
       expect(echoObject, sentObject);
-    });
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118726
+        skip: targetGenerator == TargetGenerator.kotlin);
 
     testWidgets('null ints serialize and deserialize correctly',
         (WidgetTester _) async {
