@@ -253,7 +253,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   'val ${field.name} = $fieldType.fromList($listValue as List<Any?>)');
             } else if (!hostDatatype.isBuiltin &&
                 customEnumNames.contains(field.type.baseName)) {
-              indent.write(
+              indent.writeln(
                   'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
             } else {
               indent.writeln('val ${field.name} = $listValue as $fieldType');
@@ -261,7 +261,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           }
         });
 
-        indent.writeln('');
         indent.write('return $className(');
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final String comma =

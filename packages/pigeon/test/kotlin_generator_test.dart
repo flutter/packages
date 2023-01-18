@@ -59,6 +59,55 @@ void main() {
     expect(code, contains('TWO(1)'));
   });
 
+  test('gen class with enum', () {
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Bar',
+          fields: <NamedType>[
+            NamedType(
+              name: 'field1',
+              type: const TypeDeclaration(
+                baseName: 'Foo',
+                isNullable: false,
+              ),
+            ),
+            NamedType(
+              name: 'field2',
+              type: const TypeDeclaration(
+                baseName: 'String',
+                isNullable: false,
+              ),
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'Foo',
+          members: <EnumMember>[
+            EnumMember(name: 'one'),
+            EnumMember(name: 'two'),
+          ],
+        ),
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('enum class Foo(val raw: Int) {'));
+    expect(code, contains('data class Bar ('));
+    expect(code, contains('val field1: Foo,'));
+    expect(code, contains('val field2: String'));
+    expect(code, contains('fun fromList(list: List<Any?>): Bar'));
+    expect(code, contains('val field1 = Foo.ofRaw(list[0] as Int)!!\n'));
+    expect(code, contains('val field2 = list[1] as String\n'));
+    expect(code, contains('fun toList(): List<Any?>'));
+  });
+
   test('primitive enum host', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
