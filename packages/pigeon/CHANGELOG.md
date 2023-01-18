@@ -2,6 +2,10 @@
 
 * [java] Makes classes final and other lint issues.
 
+## 6.0.2
+
+* [kotlin] Fixes a bug with a missed line break between generated statements in the `fromList` function of the companion object.
+
 ## 6.0.1
 
 * [c++] Fixes most non-class arguments and return values in Flutter APIs. The
