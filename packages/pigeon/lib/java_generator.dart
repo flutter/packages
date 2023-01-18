@@ -106,6 +106,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       JavaOptions generatorOptions, Root root, Indent indent) {
     if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package};');
+      indent.writeln('');
     }
     indent.writeln('import android.util.Log;');
     indent.writeln('import androidx.annotation.NonNull;');
@@ -116,12 +117,12 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
     indent.writeln('import java.io.ByteArrayOutputStream;');
     indent.writeln('import java.nio.ByteBuffer;');
-    indent.writeln('import java.util.Arrays;');
     indent.writeln('import java.util.ArrayList;');
+    indent.writeln('import java.util.Arrays;');
     indent.writeln('import java.util.Collections;');
+    indent.writeln('import java.util.HashMap;');
     indent.writeln('import java.util.List;');
     indent.writeln('import java.util.Map;');
-    indent.writeln('import java.util.HashMap;');
     indent.addln('');
   }
 

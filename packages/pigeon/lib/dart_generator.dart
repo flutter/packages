@@ -382,8 +382,9 @@ $resultAt != null
                           '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
                     }
                     if (!arg.type.isNullable) {
+                      indent.writeln('assert($argName != null,');
                       indent.writeln(
-                          "assert($argName != null, 'Argument for $channelName was null, expected non-null $argType.');");
+                          "    'Argument for $channelName was null, expected non-null $argType.');");
                     }
                   });
                   final Iterable<String> argNames =
@@ -642,6 +643,7 @@ String _getCodecName(Api api) => '_${api.name}Codec';
 void _writeCodec(Indent indent, String codecName, Api api, Root root) {
   assert(getCodecClasses(api, root).isNotEmpty);
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
+  indent.writeln('');
   indent.write('class $codecName extends $_standardMessageCodec');
   indent.scoped(' {', '}', () {
     indent.writeln('const $codecName();');
@@ -676,10 +678,10 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
                 'return ${customClass.name}.decode(readValue(buffer)!);');
           });
         }
-        indent.writeln('default:');
+        indent.write('default:');
         indent.scoped('', '', () {
           indent.writeln('return super.readValueOfType(type, buffer);');
-        });
+        }, addTrailingNewline: false);
       });
     });
   });
