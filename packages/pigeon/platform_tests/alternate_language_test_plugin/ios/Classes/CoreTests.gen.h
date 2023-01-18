@@ -182,8 +182,50 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)callFlutterEchoAllTypes:(AllTypes *)everything
+                     completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterSendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
+                                            anInt:(nullable NSNumber *)aNullableInt
+                                          aString:(nullable NSString *)aNullableString
+                                       completion:(void (^)(AllNullableTypes *_Nullable,
+                                                            FlutterError *_Nullable))completion;
+- (void)callFlutterEchoBool:(NSNumber *)aBool
+                 completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoInt:(NSNumber *)anInt
+                completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoDouble:(NSNumber *)aDouble
+                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterEchoString:(NSString *)aString
                    completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoUint8List:(FlutterStandardTypedData *)aList
+                      completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                           FlutterError *_Nullable))completion;
+- (void)callFlutterEchoList:(NSArray<id> *)aList
+                 completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoMap:(NSDictionary<NSString *, id> *)aMap
+                completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                                     FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
+                         completion:
+                             (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableInt:(nullable NSNumber *)anInt
+                        completion:
+                            (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableDouble:(nullable NSNumber *)aDouble
+                           completion:
+                               (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableString:(nullable NSString *)aString
+                           completion:
+                               (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableUint8List:(nullable FlutterStandardTypedData *)aList
+                              completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                                   FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableList:(nullable NSArray<id> *)aList
+                         completion:
+                             (void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
+                        completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                                             FlutterError *_Nullable))completion;
 @end
 
 extern void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
@@ -254,7 +296,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoNullableList:(nullable NSArray<id> *)aList
               completion:(void (^)(NSArray<id> *_Nullable, NSError *_Nullable))completion;
 /// Returns the passed map, to test serialization and deserialization.
-- (void)echoNullableMap:(NSDictionary<NSString *, id> *)aMap
+- (void)echoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
              completion:
                  (void (^)(NSDictionary<NSString *, id> *_Nullable, NSError *_Nullable))completion;
 @end

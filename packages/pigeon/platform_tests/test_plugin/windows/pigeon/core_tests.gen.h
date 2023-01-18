@@ -327,9 +327,56 @@ class HostIntegrationCoreApi {
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void CallFlutterEchoAllTypes(
+      const AllTypes& everything,
+      std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
+  virtual void CallFlutterSendMultipleNullableTypes(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string,
+      std::function<void(ErrorOr<AllNullableTypes> reply)> result) = 0;
+  virtual void CallFlutterEchoBool(
+      bool a_bool, std::function<void(ErrorOr<bool> reply)> result) = 0;
+  virtual void CallFlutterEchoInt(
+      int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) = 0;
+  virtual void CallFlutterEchoDouble(
+      double a_double, std::function<void(ErrorOr<double> reply)> result) = 0;
   virtual void CallFlutterEchoString(
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  virtual void CallFlutterEchoUint8List(
+      const std::vector<uint8_t>& a_list,
+      std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
+  virtual void CallFlutterEchoList(
+      const flutter::EncodableList& a_list,
+      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+  virtual void CallFlutterEchoMap(
+      const flutter::EncodableMap& a_map,
+      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  virtual void CallFlutterEchoNullableBool(
+      const bool* a_bool,
+      std::function<void(ErrorOr<std::optional<bool>> reply)> result) = 0;
+  virtual void CallFlutterEchoNullableInt(
+      const int64_t* an_int,
+      std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) = 0;
+  virtual void CallFlutterEchoNullableDouble(
+      const double* a_double,
+      std::function<void(ErrorOr<std::optional<double>> reply)> result) = 0;
+  virtual void CallFlutterEchoNullableString(
+      const std::string* a_string,
+      std::function<void(ErrorOr<std::optional<std::string>> reply)>
+          result) = 0;
+  virtual void CallFlutterEchoNullableUint8List(
+      const std::vector<uint8_t>* a_list,
+      std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)>
+          result) = 0;
+  virtual void CallFlutterEchoNullableList(
+      const flutter::EncodableList* a_list,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
+          result) = 0;
+  virtual void CallFlutterEchoNullableMap(
+      const flutter::EncodableMap* a_map,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
+          result) = 0;
 
   // The codec used by HostIntegrationCoreApi.
   static const flutter::StandardMessageCodec& GetCodec();
@@ -449,8 +496,8 @@ class FlutterIntegrationCoreApi {
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableMap(
-      const flutter::EncodableMap& a_map,
-      std::function<void(const flutter::EncodableMap&)>&& on_success,
+      const flutter::EncodableMap* a_map,
+      std::function<void(const flutter::EncodableMap*)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
 };
 

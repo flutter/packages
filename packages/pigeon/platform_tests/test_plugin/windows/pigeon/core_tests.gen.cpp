@@ -1314,6 +1314,201 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
         binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_everything_arg = args.at(0);
+              if (encodable_everything_arg.IsNull()) {
+                reply(WrapError("everything_arg unexpectedly null."));
+                return;
+              }
+              const auto& everything_arg = std::any_cast<const AllTypes&>(
+                  std::get<flutter::CustomEncodableValue>(
+                      encodable_everything_arg));
+              api->CallFlutterEchoAllTypes(
+                  everything_arg, [reply](ErrorOr<AllTypes>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    wrapped.push_back(flutter::CustomEncodableValue(
+                        std::move(output).TakeValue()));
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi."
+        "callFlutterSendMultipleNullableTypes",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_nullable_bool_arg = args.at(0);
+              const auto* a_nullable_bool_arg =
+                  std::get_if<bool>(&encodable_a_nullable_bool_arg);
+              const auto& encodable_a_nullable_int_arg = args.at(1);
+              const int64_t a_nullable_int_arg_value =
+                  encodable_a_nullable_int_arg.IsNull()
+                      ? 0
+                      : encodable_a_nullable_int_arg.LongValue();
+              const auto* a_nullable_int_arg =
+                  encodable_a_nullable_int_arg.IsNull()
+                      ? nullptr
+                      : &a_nullable_int_arg_value;
+              const auto& encodable_a_nullable_string_arg = args.at(2);
+              const auto* a_nullable_string_arg =
+                  std::get_if<std::string>(&encodable_a_nullable_string_arg);
+              api->CallFlutterSendMultipleNullableTypes(
+                  a_nullable_bool_arg, a_nullable_int_arg,
+                  a_nullable_string_arg,
+                  [reply](ErrorOr<AllNullableTypes>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    wrapped.push_back(flutter::CustomEncodableValue(
+                        std::move(output).TakeValue()));
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoBool",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_bool_arg = args.at(0);
+              if (encodable_a_bool_arg.IsNull()) {
+                reply(WrapError("a_bool_arg unexpectedly null."));
+                return;
+              }
+              const auto& a_bool_arg = std::get<bool>(encodable_a_bool_arg);
+              api->CallFlutterEchoBool(
+                  a_bool_arg, [reply](ErrorOr<bool>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    wrapped.push_back(
+                        flutter::EncodableValue(std::move(output).TakeValue()));
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoInt",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_an_int_arg = args.at(0);
+              if (encodable_an_int_arg.IsNull()) {
+                reply(WrapError("an_int_arg unexpectedly null."));
+                return;
+              }
+              const int64_t an_int_arg = encodable_an_int_arg.LongValue();
+              api->CallFlutterEchoInt(
+                  an_int_arg, [reply](ErrorOr<int64_t>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    wrapped.push_back(
+                        flutter::EncodableValue(std::move(output).TakeValue()));
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoDouble",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_double_arg = args.at(0);
+              if (encodable_a_double_arg.IsNull()) {
+                reply(WrapError("a_double_arg unexpectedly null."));
+                return;
+              }
+              const auto& a_double_arg =
+                  std::get<double>(encodable_a_double_arg);
+              api->CallFlutterEchoDouble(
+                  a_double_arg, [reply](ErrorOr<double>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    wrapped.push_back(
+                        flutter::EncodableValue(std::move(output).TakeValue()));
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
         "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoString",
         &GetCodec());
     if (api != nullptr) {
@@ -1338,6 +1533,399 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     flutter::EncodableList wrapped;
                     wrapped.push_back(
                         flutter::EncodableValue(std::move(output).TakeValue()));
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoUint8List",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_list_arg = args.at(0);
+              if (encodable_a_list_arg.IsNull()) {
+                reply(WrapError("a_list_arg unexpectedly null."));
+                return;
+              }
+              const auto& a_list_arg =
+                  std::get<std::vector<uint8_t>>(encodable_a_list_arg);
+              api->CallFlutterEchoUint8List(
+                  a_list_arg, [reply](ErrorOr<std::vector<uint8_t>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    wrapped.push_back(
+                        flutter::EncodableValue(std::move(output).TakeValue()));
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoList",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_list_arg = args.at(0);
+              if (encodable_a_list_arg.IsNull()) {
+                reply(WrapError("a_list_arg unexpectedly null."));
+                return;
+              }
+              const auto& a_list_arg =
+                  std::get<flutter::EncodableList>(encodable_a_list_arg);
+              api->CallFlutterEchoList(
+                  a_list_arg,
+                  [reply](ErrorOr<flutter::EncodableList>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    wrapped.push_back(
+                        flutter::EncodableValue(std::move(output).TakeValue()));
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoMap",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_map_arg = args.at(0);
+              if (encodable_a_map_arg.IsNull()) {
+                reply(WrapError("a_map_arg unexpectedly null."));
+                return;
+              }
+              const auto& a_map_arg =
+                  std::get<flutter::EncodableMap>(encodable_a_map_arg);
+              api->CallFlutterEchoMap(
+                  a_map_arg, [reply](ErrorOr<flutter::EncodableMap>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    wrapped.push_back(
+                        flutter::EncodableValue(std::move(output).TakeValue()));
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableBool",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_bool_arg = args.at(0);
+              const auto* a_bool_arg = std::get_if<bool>(&encodable_a_bool_arg);
+              api->CallFlutterEchoNullableBool(
+                  a_bool_arg, [reply](ErrorOr<std::optional<bool>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(flutter::EncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(flutter::EncodableValue());
+                    }
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableInt",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_an_int_arg = args.at(0);
+              const int64_t an_int_arg_value =
+                  encodable_an_int_arg.IsNull()
+                      ? 0
+                      : encodable_an_int_arg.LongValue();
+              const auto* an_int_arg =
+                  encodable_an_int_arg.IsNull() ? nullptr : &an_int_arg_value;
+              api->CallFlutterEchoNullableInt(
+                  an_int_arg,
+                  [reply](ErrorOr<std::optional<int64_t>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(flutter::EncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(flutter::EncodableValue());
+                    }
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi."
+        "callFlutterEchoNullableDouble",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_double_arg = args.at(0);
+              const auto* a_double_arg =
+                  std::get_if<double>(&encodable_a_double_arg);
+              api->CallFlutterEchoNullableDouble(
+                  a_double_arg,
+                  [reply](ErrorOr<std::optional<double>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(flutter::EncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(flutter::EncodableValue());
+                    }
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi."
+        "callFlutterEchoNullableString",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_string_arg = args.at(0);
+              const auto* a_string_arg =
+                  std::get_if<std::string>(&encodable_a_string_arg);
+              api->CallFlutterEchoNullableString(
+                  a_string_arg,
+                  [reply](ErrorOr<std::optional<std::string>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(flutter::EncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(flutter::EncodableValue());
+                    }
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi."
+        "callFlutterEchoNullableUint8List",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_list_arg = args.at(0);
+              const auto* a_list_arg =
+                  std::get_if<std::vector<uint8_t>>(&encodable_a_list_arg);
+              api->CallFlutterEchoNullableUint8List(
+                  a_list_arg,
+                  [reply](
+                      ErrorOr<std::optional<std::vector<uint8_t>>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(flutter::EncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(flutter::EncodableValue());
+                    }
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableList",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_list_arg = args.at(0);
+              const auto* a_list_arg =
+                  std::get_if<flutter::EncodableList>(&encodable_a_list_arg);
+              api->CallFlutterEchoNullableList(
+                  a_list_arg,
+                  [reply](
+                      ErrorOr<std::optional<flutter::EncodableList>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(flutter::EncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(flutter::EncodableValue());
+                    }
+                    reply(flutter::EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableMap",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const flutter::EncodableValue& message,
+                const flutter::MessageReply<flutter::EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<flutter::EncodableList>(message);
+              const auto& encodable_a_map_arg = args.at(0);
+              const auto* a_map_arg =
+                  std::get_if<flutter::EncodableMap>(&encodable_a_map_arg);
+              api->CallFlutterEchoNullableMap(
+                  a_map_arg,
+                  [reply](
+                      ErrorOr<std::optional<flutter::EncodableMap>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    flutter::EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(flutter::EncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(flutter::EncodableValue());
+                    }
                     reply(flutter::EncodableValue(std::move(wrapped)));
                   });
             } catch (const std::exception& exception) {
@@ -1826,8 +2414,8 @@ void FlutterIntegrationCoreApi::EchoNullableList(
       });
 }
 void FlutterIntegrationCoreApi::EchoNullableMap(
-    const flutter::EncodableMap& a_map_arg,
-    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    const flutter::EncodableMap* a_map_arg,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
       binary_messenger_,
@@ -1835,7 +2423,8 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
       &GetCodec());
   flutter::EncodableValue encoded_api_arguments =
       flutter::EncodableValue(flutter::EncodableList{
-          flutter::EncodableValue(a_map_arg),
+          a_map_arg ? flutter::EncodableValue(*a_map_arg)
+                    : flutter::EncodableValue(),
       });
   channel->Send(
       encoded_api_arguments,
@@ -1844,8 +2433,8 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
-        const auto& return_value =
-            std::get<flutter::EncodableMap>(encodable_return_value);
+        const auto* return_value =
+            std::get_if<flutter::EncodableMap>(&encodable_return_value);
         on_success(return_value);
       });
 }
