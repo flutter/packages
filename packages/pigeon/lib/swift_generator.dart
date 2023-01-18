@@ -717,9 +717,9 @@ class _SwiftFunctionArgument {
   });
 
   final String name;
-  final String? label;
   final TypeDeclaration type;
   final NamedType namedType;
+  final String? label;
 }
 
 class _SwiftFunctionComponents {
