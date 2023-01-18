@@ -1,4 +1,4 @@
-## 6.0.4
+## 7.0.0
 
 * Adds `@SwiftFunction` annotation for specifying custom swift function signature.
 
