@@ -314,12 +314,8 @@ import FlutterMacOS
               .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
           final Iterable<String> argLabels = indexMap(components.arguments,
               (int index, _SwiftFunctionArgument argument) {
-            final String? label = argument.label;
-            if (label == null) {
-              return _getArgumentName(index, argument.namedType);
-            } else {
-              return label;
-            }
+            return argument.label ??
+                _getArgumentName(index, argument.namedType);
           });
           final Iterable<String> argNames =
               indexMap(func.arguments, _getSafeArgumentName);
@@ -395,11 +391,7 @@ import FlutterMacOS
           final String? label = argument.label;
           final String name = argument.name;
           final String type = _nullsafeSwiftTypeForDartType(argument.type);
-          if (label != null) {
-            return '$label $name: $type';
-          } else {
-            return '$name: $type';
-          }
+          return '${label == null ? '' : '$label '}$name: $type';
         }).toList();
 
         final String returnType = method.returnType.isVoid
@@ -714,9 +706,9 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
 class _SwiftFunctionArgument {
   _SwiftFunctionArgument({
     required this.name,
-    this.label,
     required this.type,
     required this.namedType,
+    this.label,
   });
 
   final String name;
@@ -739,43 +731,41 @@ class _SwiftFunctionComponents {
         name: method.name,
         returnType: method.returnType,
         arguments: method.arguments
-            .map((NamedType e) => _SwiftFunctionArgument(
-                  name: e.name,
-                  type: e.type,
-                  namedType: e,
+            .map((NamedType field) => _SwiftFunctionArgument(
+                  name: field.name,
+                  type: field.type,
+                  namedType: field,
                 ))
             .toList(),
         method: method,
       );
-    } else {
-      final String argsCapturator =
-          repeat(r'(\w+):', method.arguments.length).join();
-      final RegExp signatureRegex =
-          RegExp(r'(\w+) *\(' + argsCapturator + r'\)');
-      final RegExpMatch match =
-          signatureRegex.firstMatch(method.swiftFunction)!;
-
-      final Iterable<String> customComponents = match
-          .groups(List<int>.generate(
-              method.arguments.length, (int index) => index + 2))
-          .whereType();
-
-      return _SwiftFunctionComponents._(
-        name: match.group(1)!,
-        returnType: method.returnType,
-        arguments: map2(
-          method.arguments,
-          customComponents,
-          (NamedType t, String u) => _SwiftFunctionArgument(
-            name: t.name,
-            label: u == t.name ? null : u,
-            type: t.type,
-            namedType: t,
-          ),
-        ).toList(),
-        method: method,
-      );
     }
+
+    final String argsExtractor =
+        repeat(r'(\w+):', method.arguments.length).join();
+    final RegExp signatureRegex = RegExp(r'(\w+) *\(' + argsExtractor + r'\)');
+    final RegExpMatch match = signatureRegex.firstMatch(method.swiftFunction)!;
+
+    final Iterable<String> labels = match
+        .groups(List<int>.generate(
+            method.arguments.length, (int index) => index + 2))
+        .whereType();
+
+    return _SwiftFunctionComponents._(
+      name: match.group(1)!,
+      returnType: method.returnType,
+      arguments: map2(
+        method.arguments,
+        labels,
+        (NamedType field, String label) => _SwiftFunctionArgument(
+          name: field.name,
+          label: label == field.name ? null : label,
+          type: field.type,
+          namedType: field,
+        ),
+      ).toList(),
+      method: method,
+    );
   }
 
   final String name;
