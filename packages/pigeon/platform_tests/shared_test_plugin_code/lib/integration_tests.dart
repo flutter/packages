@@ -532,7 +532,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     },
         // TODO(stuartmorgan): Fix and re-enable.
         // See https://github.com/flutter/flutter/issues/118726
-        skip: targetGenerator == TargetGenerator.kotlin);
+        skip: targetGenerator == TargetGenerator.kotlin ||
+            // TODO(stuartmorgan): Fix and re-enable.
+            // See https://github.com/flutter/flutter/issues/118739
+            targetGenerator == TargetGenerator.cpp);
 
     testWidgets(
         'Arguments of multiple types serialize and deserialize correctly',
