@@ -457,7 +457,12 @@ import FlutterMacOS
                   final String argIndex = 'args[$index]';
                   indent.writeln(
                       'let $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
-                  methodArgument.add('${arg.label ?? arg.name}: $argName');
+
+                  if (arg.label == '_') {
+                    methodArgument.add(argName);
+                  } else {
+                    methodArgument.add('${arg.label ?? arg.name}: $argName');
+                  }
                 });
               }
               final String call =

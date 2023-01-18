@@ -938,7 +938,7 @@ abstract class FlutterIntegrationCoreApi {
   List<Object?>? echoNullableList(List<Object?>? aList);
 
   /// Returns the passed map, to test serialization and deserialization.
-  Map<String?, Object?> echoNullableMap(Map<String?, Object?> aMap);
+  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
 
   static void setup(FlutterIntegrationCoreApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1274,9 +1274,7 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final Map<String?, Object?>? arg_aMap =
               (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
-          assert(arg_aMap != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap was null, expected non-null Map<String?, Object?>.');
-          final Map<String?, Object?> output = api.echoNullableMap(arg_aMap!);
+          final Map<String?, Object?>? output = api.echoNullableMap(arg_aMap);
           return output;
         });
       }

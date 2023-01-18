@@ -587,7 +587,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   List<Object?>? echoNullableList(List<Object?>? aList) => aList;
 
   @override
-  Map<String?, Object?> echoNullableMap(Map<String?, Object?> aMap) => aMap;
+  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap) => aMap;
 
   @override
   String? echoNullableString(String? aString) => aString;

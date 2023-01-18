@@ -1826,8 +1826,8 @@ void FlutterIntegrationCoreApi::EchoNullableList(
       });
 }
 void FlutterIntegrationCoreApi::EchoNullableMap(
-    const flutter::EncodableMap& a_map_arg,
-    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    const flutter::EncodableMap* a_map_arg,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<flutter::BasicMessageChannel<>>(
       binary_messenger_,
@@ -1835,7 +1835,8 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
       &GetCodec());
   flutter::EncodableValue encoded_api_arguments =
       flutter::EncodableValue(flutter::EncodableList{
-          flutter::EncodableValue(a_map_arg),
+          a_map_arg ? flutter::EncodableValue(*a_map_arg)
+                    : flutter::EncodableValue(),
       });
   channel->Send(
       encoded_api_arguments,
@@ -1844,8 +1845,8 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
         std::unique_ptr<flutter::EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
-        const auto& return_value =
-            std::get<flutter::EncodableMap>(encodable_return_value);
+        const auto* return_value =
+            std::get_if<flutter::EncodableMap>(&encodable_return_value);
         on_success(return_value);
       });
 }

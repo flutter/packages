@@ -899,10 +899,10 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableMap(aMapArg: Map<String?, Any?>, callback: (Map<String?, Any?>) -> Unit) {
+  fun echoNullableMap(aMapArg: Map<String?, Any?>?, callback: (Map<String?, Any?>?) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap", codec)
     channel.send(listOf(aMapArg)) {
-      val result = it as Map<String?, Any?>
+      val result = it as? Map<String?, Any?>?
       callback(result)
     }
   }

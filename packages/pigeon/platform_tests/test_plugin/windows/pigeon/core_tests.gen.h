@@ -449,8 +449,8 @@ class FlutterIntegrationCoreApi {
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableMap(
-      const flutter::EncodableMap& a_map,
-      std::function<void(const flutter::EncodableMap&)>&& on_success,
+      const flutter::EncodableMap* a_map,
+      std::function<void(const flutter::EncodableMap*)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
 };
 

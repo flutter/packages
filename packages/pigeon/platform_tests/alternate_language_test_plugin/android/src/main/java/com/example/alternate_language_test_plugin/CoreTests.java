@@ -1823,7 +1823,7 @@ public class CoreTests {
     }
     /** Returns the passed map, to test serialization and deserialization. */
     public void echoNullableMap(
-        @NonNull Map<String, Object> aMapArg, Reply<Map<String, Object>> callback) {
+        @Nullable Map<String, Object> aMapArg, Reply<Map<String, Object>> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,

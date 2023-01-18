@@ -26,11 +26,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func noop() {
   }
 
-  func echo(allTypes everything: AllTypes) -> AllTypes {
+  func echo(_ everything: AllTypes) -> AllTypes {
     return everything
   }
 
-  func echo(allNullableTypes everything: AllNullableTypes?) -> AllNullableTypes? {
+  func echo(_ everything: AllNullableTypes?) -> AllNullableTypes? {
     return everything
   }
 
@@ -39,27 +39,27 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     // https://github.com/flutter/flutter/issues/112483
   }
 
-  func echo(int anInt: Int32) -> Int32 {
+  func echo(_ anInt: Int32) -> Int32 {
     return anInt
   }
 
-  func echo(double aDouble: Double) -> Double {
+  func echo(_ aDouble: Double) -> Double {
     return aDouble
   }
 
-  func echo(bool aBool: Bool) -> Bool {
+  func echo(_ aBool: Bool) -> Bool {
     return aBool
   }
 
-  func echo(string aString: String) -> String {
+  func echo(_ aString: String) -> String {
     return aString
   }
 
-  func echo(uint8List aUint8List: FlutterStandardTypedData) -> FlutterStandardTypedData {
+  func echo(_ aUint8List: FlutterStandardTypedData) -> FlutterStandardTypedData {
     return aUint8List
   }
 
-  func echo(object anObject: Any) -> Any {
+  func echo(_ anObject: Any) -> Any {
     return anObject
   }
 
@@ -76,27 +76,27 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return someThings
   }
 
-  func echo(nullableInt aNullableInt: Int32?) -> Int32? {
+  func echo(_ aNullableInt: Int32?) -> Int32? {
     return aNullableInt
   }
 
-  func echo(nullableDouble aNullableDouble: Double?) -> Double? {
+  func echo(_ aNullableDouble: Double?) -> Double? {
     return aNullableDouble
   }
 
-  func echo(nullableBool aNullableBool: Bool?) -> Bool? {
+  func echo(_ aNullableBool: Bool?) -> Bool? {
     return aNullableBool
   }
 
-  func echo(nullableString aNullableString: String?) -> String? {
+  func echo(_ aNullableString: String?) -> String? {
     return aNullableString
   }
 
-  func echo(nullableUint8List aNullableUint8List: FlutterStandardTypedData?) -> FlutterStandardTypedData? {
+  func echo(_ aNullableUint8List: FlutterStandardTypedData?) -> FlutterStandardTypedData? {
     return aNullableUint8List
   }
 
-  func echo(nullableObject aNullableObject: Any?) -> Any? {
+  func echo(_ aNullableObject: Any?) -> Any? {
     return aNullableObject
   }
 
@@ -104,7 +104,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion()
   }
 
-  func echoAsync(string aString: String, completion: @escaping (String) -> Void) {
+  func echoAsync(_ aString: String, completion: @escaping (String) -> Void) {
     completion(aString)
   }
 
@@ -114,8 +114,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterEcho(string aString: String, completion: @escaping (String) -> Void) {
-    flutterAPI.echo(string: aString) { flutterString in
+  func callFlutterEcho(_ aString: String, completion: @escaping (String) -> Void) {
+    flutterAPI.echo(aString) { flutterString in
       completion(flutterString)
     }
   }

@@ -1067,7 +1067,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
                    completion(output, nil);
                  }];
 }
-- (void)echoNullableMap:(NSDictionary<NSString *, id> *)arg_aMap
+- (void)echoNullableMap:(nullable NSDictionary<NSString *, id> *)arg_aMap
              completion:
                  (void (^)(NSDictionary<NSString *, id> *_Nullable, NSError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel

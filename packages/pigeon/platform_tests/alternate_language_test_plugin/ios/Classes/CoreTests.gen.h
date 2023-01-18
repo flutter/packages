@@ -254,7 +254,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoNullableList:(nullable NSArray<id> *)aList
               completion:(void (^)(NSArray<id> *_Nullable, NSError *_Nullable))completion;
 /// Returns the passed map, to test serialization and deserialization.
-- (void)echoNullableMap:(NSDictionary<NSString *, id> *)aMap
+- (void)echoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
              completion:
                  (void (^)(NSDictionary<NSString *, id> *_Nullable, NSError *_Nullable))completion;
 @end
