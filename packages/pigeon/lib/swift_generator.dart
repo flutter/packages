@@ -739,7 +739,7 @@ class _SwiftFunctionComponents {
         name: method.name,
         returnType: method.returnType,
         arguments: method.arguments
-            .map((e) => _SwiftFunctionArgument(
+            .map((NamedType e) => _SwiftFunctionArgument(
                   name: e.name,
                   type: e.type,
                   namedType: e,
