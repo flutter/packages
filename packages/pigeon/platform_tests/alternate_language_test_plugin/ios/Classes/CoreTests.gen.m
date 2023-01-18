@@ -761,6 +761,123 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoAllTypes:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoAllTypes:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        AllTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoAllTypes:arg_everything
+                          completion:^(AllTypes *_Nullable output, FlutterError *_Nullable error) {
+                            callback(wrapResult(output, error));
+                          }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (callFlutterSendMultipleNullableTypesABool:anInt:aString:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterSendMultipleNullableTypesABool:anInt:aString:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_aNullableBool = GetNullableObjectAtIndex(args, 0);
+        NSNumber *arg_aNullableInt = GetNullableObjectAtIndex(args, 1);
+        NSString *arg_aNullableString = GetNullableObjectAtIndex(args, 2);
+        [api callFlutterSendMultipleNullableTypesABool:arg_aNullableBool
+                                                 anInt:arg_aNullableInt
+                                               aString:arg_aNullableString
+                                            completion:^(AllNullableTypes *_Nullable output,
+                                                         FlutterError *_Nullable error) {
+                                              callback(wrapResult(output, error));
+                                            }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoBool"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoBool:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoBool:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_aBool = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoBool:arg_aBool
+                      completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+                        callback(wrapResult(output, error));
+                      }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoInt"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoInt:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoInt:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_anInt = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoInt:arg_anInt
+                     completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+                       callback(wrapResult(output, error));
+                     }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoDouble"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoDouble:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoDouble:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_aDouble = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoDouble:arg_aDouble
+                        completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+                          callback(wrapResult(output, error));
+                        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoString"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
@@ -776,6 +893,236 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                         completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
                           callback(wrapResult(output, error));
                         }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoUint8List"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoUint8List:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoUint8List:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        FlutterStandardTypedData *arg_aList = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoUint8List:arg_aList
+                           completion:^(FlutterStandardTypedData *_Nullable output,
+                                        FlutterError *_Nullable error) {
+                             callback(wrapResult(output, error));
+                           }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoList"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoList:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoList:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSArray<id> *arg_aList = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoList:arg_aList
+                      completion:^(NSArray<id> *_Nullable output, FlutterError *_Nullable error) {
+                        callback(wrapResult(output, error));
+                      }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoMap"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoMap:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoMap:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSDictionary<NSString *, id> *arg_aMap = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoMap:arg_aMap
+                     completion:^(NSDictionary<NSString *, id> *_Nullable output,
+                                  FlutterError *_Nullable error) {
+                       callback(wrapResult(output, error));
+                     }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableBool"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableBool:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoNullableBool:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_aBool = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoNullableBool:arg_aBool
+                              completion:^(NSNumber *_Nullable output,
+                                           FlutterError *_Nullable error) {
+                                callback(wrapResult(output, error));
+                              }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableInt"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableInt:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoNullableInt:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_anInt = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoNullableInt:arg_anInt
+                             completion:^(NSNumber *_Nullable output,
+                                          FlutterError *_Nullable error) {
+                               callback(wrapResult(output, error));
+                             }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableDouble"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableDouble:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoNullableDouble:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_aDouble = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoNullableDouble:arg_aDouble
+                                completion:^(NSNumber *_Nullable output,
+                                             FlutterError *_Nullable error) {
+                                  callback(wrapResult(output, error));
+                                }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableString"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableString:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoNullableString:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoNullableString:arg_aString
+                                completion:^(NSString *_Nullable output,
+                                             FlutterError *_Nullable error) {
+                                  callback(wrapResult(output, error));
+                                }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableUint8List"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableUint8List:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoNullableUint8List:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        FlutterStandardTypedData *arg_aList = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoNullableUint8List:arg_aList
+                                   completion:^(FlutterStandardTypedData *_Nullable output,
+                                                FlutterError *_Nullable error) {
+                                     callback(wrapResult(output, error));
+                                   }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableList"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableList:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoNullableList:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSArray<id> *arg_aList = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoNullableList:arg_aList
+                              completion:^(NSArray<id> *_Nullable output,
+                                           FlutterError *_Nullable error) {
+                                callback(wrapResult(output, error));
+                              }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableMap"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableMap:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoNullableMap:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSDictionary<NSString *, id> *arg_aMap = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoNullableMap:arg_aMap
+                             completion:^(NSDictionary<NSString *, id> *_Nullable output,
+                                          FlutterError *_Nullable error) {
+                               callback(wrapResult(output, error));
+                             }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1067,7 +1414,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
                    completion(output, nil);
                  }];
 }
-- (void)echoNullableMap:(NSDictionary<NSString *, id> *)arg_aMap
+- (void)echoNullableMap:(nullable NSDictionary<NSString *, id> *)arg_aMap
              completion:
                  (void (^)(NSDictionary<NSString *, id> *_Nullable, NSError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel

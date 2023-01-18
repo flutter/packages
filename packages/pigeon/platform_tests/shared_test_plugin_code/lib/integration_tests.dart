@@ -97,21 +97,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject.aFloatArray, genericAllTypes.aFloatArray);
       expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
       expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
-      // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-      // https://github.com/flutter/flutter/issues/116117
-      // expect(echoObject.nestedList.length, genericAllTypes.nestedList.length);
-      //for (int i = 0; i < echoObject.nestedList!.length; i++) {
-      //  expect(listEquals(echoObject.nestedList![i], genericAllTypes.nestedList![i]),
-      //      true);
-      //}
-      // expect(
-      //     mapEquals(
-      //         echoObject.mapWithAnnotations, genericAllTypes.mapWithAnnotations),
-      //     true);
-      // expect(
-      //     mapEquals(echoObject.mapWithObject, genericAllTypes.mapWithObject), true);
       expect(echoObject.anEnum, genericAllTypes.anEnum);
-    });
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118726
+        skip: targetGenerator == TargetGenerator.kotlin);
 
     testWidgets('all nullable datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -160,7 +150,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject?.aNullableEnum, genericAllNullableTypes.aNullableEnum);
     });
 
-    testWidgets('all nulla datatypes serialize and deserialize correctly',
+    testWidgets('all null datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
@@ -233,7 +223,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       expect(echoNullFilledObject?.aNullableEnum, allTypesNull.aNullableEnum);
       expect(echoNullFilledObject?.aNullableEnum, null);
-    });
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118733
+        skip: targetGenerator == TargetGenerator.objc);
 
     testWidgets('errors are returned correctly', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -518,14 +511,293 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.callFlutterNoop(), completes);
     });
 
+    testWidgets('all datatypes serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllTypes echoObject =
+          await api.callFlutterEchoAllTypes(genericAllTypes);
+
+      expect(echoObject.aBool, genericAllTypes.aBool);
+      expect(echoObject.anInt, genericAllTypes.anInt);
+      expect(echoObject.aDouble, genericAllTypes.aDouble);
+      expect(echoObject.aString, genericAllTypes.aString);
+      expect(echoObject.aByteArray, genericAllTypes.aByteArray);
+      expect(echoObject.a4ByteArray, genericAllTypes.a4ByteArray);
+      expect(echoObject.a8ByteArray, genericAllTypes.a8ByteArray);
+      expect(echoObject.aFloatArray, genericAllTypes.aFloatArray);
+      expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
+      expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
+      expect(echoObject.anEnum, genericAllTypes.anEnum);
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118726
+        skip: targetGenerator == TargetGenerator.kotlin ||
+            // TODO(stuartmorgan): Fix and re-enable.
+            // See https://github.com/flutter/flutter/issues/118739
+            targetGenerator == TargetGenerator.cpp);
+
+    testWidgets(
+        'Arguments of multiple types serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String aNullableString = 'this is a String';
+      const bool aNullableBool = false;
+      const int aNullableInt = 42;
+
+      final AllNullableTypes compositeObject =
+          await api.callFlutterSendMultipleNullableTypes(
+              aNullableBool, aNullableInt, aNullableString);
+      expect(compositeObject.aNullableInt, aNullableInt);
+      expect(compositeObject.aNullableBool, aNullableBool);
+      expect(compositeObject.aNullableString, aNullableString);
+    });
+
+    testWidgets(
+        'Arguments of multiple null types serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllNullableTypes compositeObject =
+          await api.callFlutterSendMultipleNullableTypes(null, null, null);
+      expect(compositeObject.aNullableInt, null);
+      expect(compositeObject.aNullableBool, null);
+      expect(compositeObject.aNullableString, null);
+    });
+
+    testWidgets('booleans serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      for (final bool sentObject in <bool>[true, false]) {
+        final bool echoObject = await api.callFlutterEchoBool(sentObject);
+        expect(echoObject, sentObject);
+      }
+    });
+
+    testWidgets('ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentObject = -13;
+      final int echoObject = await api.callFlutterEchoInt(sentObject);
+      expect(echoObject, sentObject);
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118726
+        skip: targetGenerator == TargetGenerator.kotlin);
+
+    testWidgets('doubles serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentObject = 2.0694;
+      final double echoObject = await api.callFlutterEchoDouble(sentObject);
+      expect(echoObject, sentObject);
+    });
+
     testWidgets('strings serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const String sentObject = 'Hello Dart!';
-
       final String echoObject = await api.callFlutterEchoString(sentObject);
       expect(echoObject, sentObject);
+    });
+
+    testWidgets('Uint8Lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0
+      ];
+      final Uint8List sentObject = Uint8List.fromList(data);
+      final Uint8List echoObject =
+          await api.callFlutterEchoUint8List(sentObject);
+      expect(echoObject, sentObject);
+    });
+
+    testWidgets('lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const List<Object?> sentObject = <Object>[7, 'Hello Dart!'];
+      final List<Object?> echoObject =
+          await api.callFlutterEchoList(sentObject);
+      expect(listEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const Map<String?, Object?> sentObject = <String?, Object?>{
+        'a': 1,
+        'b': 2.3,
+        'c': 'four',
+      };
+      final Map<String?, Object?> echoObject =
+          await api.callFlutterEchoMap(sentObject);
+      expect(mapEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('nullable booleans serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      for (final bool? sentObject in <bool?>[true, false]) {
+        final bool? echoObject =
+            await api.callFlutterEchoNullableBool(sentObject);
+        expect(echoObject, sentObject);
+      }
+    });
+
+    testWidgets('null booleans serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const bool? sentObject = null;
+      final bool? echoObject =
+          await api.callFlutterEchoNullableBool(sentObject);
+      expect(echoObject, sentObject);
+    });
+
+    testWidgets('nullable ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentObject = -13;
+      final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
+      expect(echoObject, sentObject);
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118726
+        skip: targetGenerator == TargetGenerator.kotlin);
+
+    testWidgets('null ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final int? echoObject = await api.callFlutterEchoNullableInt(null);
+      expect(echoObject, null);
+    });
+
+    testWidgets('nullable doubles serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentObject = 2.0694;
+      final double? echoObject =
+          await api.callFlutterEchoNullableDouble(sentObject);
+      expect(echoObject, sentObject);
+    });
+
+    testWidgets('null doubles serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final double? echoObject = await api.callFlutterEchoNullableDouble(null);
+      expect(echoObject, null);
+    });
+
+    testWidgets('nullable strings serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const String sentObject = "I'm a computer";
+      final String? echoObject =
+          await api.callFlutterEchoNullableString(sentObject);
+      expect(echoObject, sentObject);
+    });
+
+    testWidgets('null strings serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final String? echoObject = await api.callFlutterEchoNullableString(null);
+      expect(echoObject, null);
+    });
+
+    testWidgets('nullable Uint8Lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0
+      ];
+      final Uint8List sentObject = Uint8List.fromList(data);
+      final Uint8List? echoObject =
+          await api.callFlutterEchoNullableUint8List(sentObject);
+      expect(echoObject, sentObject);
+    });
+
+    testWidgets('null Uint8Lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Uint8List? echoObject =
+          await api.callFlutterEchoNullableUint8List(null);
+      expect(echoObject, null);
+    });
+
+    testWidgets('nullable lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const List<Object?> sentObject = <Object>[7, 'Hello Dart!'];
+      final List<Object?>? echoObject =
+          await api.callFlutterEchoNullableList(sentObject);
+      expect(listEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('null lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<Object?>? echoObject =
+          await api.callFlutterEchoNullableList(null);
+      expect(listEquals(echoObject, null), true);
+    });
+
+    testWidgets('nullable maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const Map<String?, Object?> sentObject = <String?, Object?>{
+        'a': 1,
+        'b': 2.3,
+        'c': 'four',
+      };
+      final Map<String?, Object?>? echoObject =
+          await api.callFlutterEchoNullableMap(sentObject);
+      expect(mapEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('null maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Map<String?, Object?>? echoObject =
+          await api.callFlutterEchoNullableMap(null);
+      expect(mapEquals(echoObject, null), true);
     });
   });
 }
@@ -587,7 +859,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   List<Object?>? echoNullableList(List<Object?>? aList) => aList;
 
   @override
-  Map<String?, Object?> echoNullableMap(Map<String?, Object?> aMap) => aMap;
+  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap) => aMap;
 
   @override
   String? echoNullableString(String? aString) => aString;
