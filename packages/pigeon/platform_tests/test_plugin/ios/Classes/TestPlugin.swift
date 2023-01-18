@@ -26,11 +26,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func noop() {
   }
 
-  func echoAllTypes(everything: AllTypes) -> AllTypes {
+  func echo(allTypes everything: AllTypes) -> AllTypes {
     return everything
   }
 
-  func echoAllNullableTypes(everything: AllNullableTypes?) -> AllNullableTypes? {
+  func echo(allNullableTypes everything: AllNullableTypes?) -> AllNullableTypes? {
     return everything
   }
 
@@ -39,64 +39,64 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     // https://github.com/flutter/flutter/issues/112483
   }
 
-  func echoInt(anInt: Int32) -> Int32 {
+  func echo(int anInt: Int32) -> Int32 {
     return anInt
   }
 
-  func echoDouble(aDouble: Double) -> Double {
+  func echo(double aDouble: Double) -> Double {
     return aDouble
   }
 
-  func echoBool(aBool: Bool) -> Bool {
+  func echo(bool aBool: Bool) -> Bool {
     return aBool
   }
 
-  func echoString(aString: String) -> String {
+  func echo(string aString: String) -> String {
     return aString
   }
 
-  func echoUint8List(aUint8List: FlutterStandardTypedData) -> FlutterStandardTypedData {
+  func echo(uint8List aUint8List: FlutterStandardTypedData) -> FlutterStandardTypedData {
     return aUint8List
   }
 
-  func echoObject(anObject: Any) -> Any {
+  func echo(object anObject: Any) -> Any {
     return anObject
   }
 
-  func extractNestedNullableString(wrapper: AllNullableTypesWrapper) -> String? {
+  func extractNestedNullableString(from wrapper: AllNullableTypesWrapper) -> String? {
     return wrapper.values.aNullableString;
   }
 
-  func createNestedNullableString(nullableString: String?) -> AllNullableTypesWrapper {
+  func createNestedObject(with nullableString: String?) -> AllNullableTypesWrapper {
     return AllNullableTypesWrapper(values: AllNullableTypes(aNullableString: nullableString))
   }
 
-  func sendMultipleNullableTypes(aNullableBool: Bool?, aNullableInt: Int32?, aNullableString: String?) -> AllNullableTypes {
+  func sendMultipleNullableTypes(aBool aNullableBool: Bool?, anInt aNullableInt: Int32?, aString aNullableString: String?) -> AllNullableTypes {
     let someThings = AllNullableTypes(aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
     return someThings
   }
 
-  func echoNullableInt(aNullableInt: Int32?) -> Int32? {
+  func echo(nullableInt aNullableInt: Int32?) -> Int32? {
     return aNullableInt
   }
 
-  func echoNullableDouble(aNullableDouble: Double?) -> Double? {
+  func echo(nullableDouble aNullableDouble: Double?) -> Double? {
     return aNullableDouble
   }
 
-  func echoNullableBool(aNullableBool: Bool?) -> Bool? {
+  func echo(nullableBool aNullableBool: Bool?) -> Bool? {
     return aNullableBool
   }
 
-  func echoNullableString(aNullableString: String?) -> String? {
+  func echo(nullableString aNullableString: String?) -> String? {
     return aNullableString
   }
 
-  func echoNullableUint8List(aNullableUint8List: FlutterStandardTypedData?) -> FlutterStandardTypedData? {
+  func echo(nullableUint8List aNullableUint8List: FlutterStandardTypedData?) -> FlutterStandardTypedData? {
     return aNullableUint8List
   }
 
-  func echoNullableObject(aNullableObject: Any?) -> Any? {
+  func echo(nullableObject aNullableObject: Any?) -> Any? {
     return aNullableObject
   }
 
@@ -104,7 +104,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion()
   }
 
-  func echoAsyncString(aString: String, completion: @escaping (String) -> Void) {
+  func echoAsync(string aString: String, completion: @escaping (String) -> Void) {
     completion(aString)
   }
 
@@ -114,8 +114,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterEchoString(aString: String, completion: @escaping (String) -> Void) {
-    flutterAPI.echoString(aString: aString) { flutterString in
+  func callFlutterEcho(string aString: String, completion: @escaping (String) -> Void) {
+    flutterAPI.echo(string: aString) { flutterString in
       completion(flutterString)
     }
   }

@@ -15,7 +15,7 @@ class AllDatatypesTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echoAllNullableTypes(everything: everything) { result in
+    api.echo(allNullableTypes: everything) { result in
       XCTAssertNil(result.aNullableBool)
       XCTAssertNil(result.aNullableInt)
       XCTAssertNil(result.aNullableDouble)
@@ -57,7 +57,7 @@ class AllDatatypesTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echoAllNullableTypes(everything: everything) { result in
+    api.echo(allNullableTypes: everything) { result in
       XCTAssertEqual(result.aNullableBool, everything.aNullableBool)
       XCTAssertEqual(result.aNullableInt, everything.aNullableInt)
       XCTAssertEqual(result.aNullableDouble, everything.aNullableDouble)

@@ -931,7 +931,7 @@ abstract class Api {
     expect(results.root.apis[0].methods[0].objcSelector, equals('foobar'));
   });
 
-  test('custom swift invalid function signature', () {
+  test('custom swift valid function signature', () {
     const String code = '''
 @HostApi()
 abstract class Api {

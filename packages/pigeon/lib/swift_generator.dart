@@ -271,7 +271,6 @@ import FlutterMacOS
     if (isCustomCodec) {
       _writeCodec(indent, api, root);
     }
-    api.methods = api.methods.map(_swiftMethod).toList();
     const List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from Swift.'
     ];
@@ -295,6 +294,9 @@ import FlutterMacOS
         });
       }
       for (final Method func in api.methods) {
+        final _SwiftFunctionComponents components =
+            _SwiftFunctionComponents.fromMethod(func);
+
         final String channelName = makeChannelName(api, func);
         final String returnType = func.returnType.isVoid
             ? ''
@@ -310,8 +312,15 @@ import FlutterMacOS
         } else {
           final Iterable<String> argTypes = func.arguments
               .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
-          final Iterable<String> argLabels =
-              indexMap(func.arguments, _getArgumentName);
+          final Iterable<String> argLabels = indexMap(components.arguments,
+              (int index, _SwiftFunctionArgument argument) {
+            final String? label = argument.label;
+            if (label == null) {
+              return _getArgumentName(index, argument.namedType);
+            } else {
+              return label;
+            }
+          });
           final Iterable<String> argNames =
               indexMap(func.arguments, _getSafeArgumentName);
           sendArgument = '[${argNames.join(', ')}] as [Any?]';
@@ -323,10 +332,10 @@ import FlutterMacOS
                   '$label $name: $type').join(', ');
           if (func.returnType.isVoid) {
             indent.write(
-                'func ${func.name}($argsSignature, completion: @escaping () -> Void) ');
+                'func ${components.name}($argsSignature, completion: @escaping () -> Void) ');
           } else {
             indent.write(
-                'func ${func.name}($argsSignature, completion: @escaping ($returnType) -> Void) ');
+                'func ${components.name}($argsSignature, completion: @escaping ($returnType) -> Void) ');
           }
         }
         indent.scoped('{', '}', () {
@@ -370,7 +379,6 @@ import FlutterMacOS
     if (isCustomCodec) {
       _writeCodec(indent, api, root);
     }
-    api.methods = api.methods.map(_swiftMethod).toList();
     const List<String> generatedComments = <String>[
       ' Generated protocol from Pigeon that represents a handler of messages from Flutter.'
     ];
@@ -380,17 +388,19 @@ import FlutterMacOS
     indent.write('protocol $apiName ');
     indent.scoped('{', '}', () {
       for (final Method method in api.methods) {
-        final List<String> argSignature = <String>[];
-        if (method.arguments.isNotEmpty) {
-          final Iterable<String> argTypes = method.arguments
-              .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
-          final Iterable<String> argNames =
-              method.arguments.map((NamedType e) => e.name);
-          argSignature.addAll(
-              map2(argTypes, argNames, (String argType, String argName) {
-            return '$argName: $argType';
-          }));
-        }
+        final _SwiftFunctionComponents components =
+            _SwiftFunctionComponents.fromMethod(method);
+        final List<String> argSignature =
+            components.arguments.map((_SwiftFunctionArgument argument) {
+          final String? label = argument.label;
+          final String name = argument.name;
+          final String type = _nullsafeSwiftTypeForDartType(argument.type);
+          if (label != null) {
+            return '$label $name: $type';
+          } else {
+            return '$name: $type';
+          }
+        }).toList();
 
         final String returnType = method.returnType.isVoid
             ? ''
@@ -400,12 +410,12 @@ import FlutterMacOS
 
         if (method.isAsynchronous) {
           argSignature.add('completion: @escaping ($returnType) -> Void');
-          indent.writeln('func ${method.name}(${argSignature.join(', ')})');
+          indent.writeln('func ${components.name}(${argSignature.join(', ')})');
         } else if (method.returnType.isVoid) {
-          indent.writeln('func ${method.name}(${argSignature.join(', ')})');
+          indent.writeln('func ${components.name}(${argSignature.join(', ')})');
         } else {
           indent.writeln(
-              'func ${method.name}(${argSignature.join(', ')}) -> $returnType');
+              'func ${components.name}(${argSignature.join(', ')}) -> $returnType');
         }
       }
     });
@@ -429,6 +439,9 @@ import FlutterMacOS
           'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
       indent.scoped('{', '}', () {
         for (final Method method in api.methods) {
+          final _SwiftFunctionComponents components =
+              _SwiftFunctionComponents.fromMethod(method);
+
           final String channelName = makeChannelName(api, method);
           final String varChannelName = '${method.name}Channel';
           addDocumentationComments(
@@ -443,18 +456,20 @@ import FlutterMacOS
                 method.arguments.isNotEmpty ? 'message' : '_';
             indent.scoped('{ $messageVarName, reply in', '}', () {
               final List<String> methodArgument = <String>[];
-              if (method.arguments.isNotEmpty) {
+              if (components.arguments.isNotEmpty) {
                 indent.writeln('let args = message as! [Any?]');
-                enumerate(method.arguments, (int index, NamedType arg) {
-                  final String argName = _getSafeArgumentName(index, arg);
+                enumerate(components.arguments,
+                    (int index, _SwiftFunctionArgument arg) {
+                  final String argName =
+                      _getSafeArgumentName(index, arg.namedType);
                   final String argIndex = 'args[$index]';
                   indent.writeln(
                       'let $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
-                  methodArgument.add('${arg.name}: $argName');
+                  methodArgument.add('${arg.label ?? arg.name}: $argName');
                 });
               }
               final String call =
-                  'api.${method.name}(${methodArgument.join(', ')})';
+                  'api.${components.name}(${methodArgument.join(', ')})';
               if (method.isAsynchronous) {
                 indent.write('$call ');
                 if (method.returnType.isVoid) {
@@ -696,41 +711,75 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
 
-/// Returns a new [Method] using the swift function signature from [func],
-/// i.e., the name of function and the strings between the semicolons.
-///
-/// Example:
-///   _swiftMethod('@SwiftFunction('add(_:with:)') void add(int x, int y)')
-///   will return 'void add(int _ x, int with y)'
-///   which represents 'func add(_ x: Int32, with y: Int32) -> Void' in Swift.
-Method _swiftMethod(Method func) {
-  if (func.swiftFunction.isEmpty) {
-    return func;
-  } else {
-    final String argsCapturator =
-        repeat(r'(\w+):', func.arguments.length).join();
-    final RegExp signatureRegex = RegExp(r'(\w+) *\(' + argsCapturator + r'\)');
-    final RegExpMatch match = signatureRegex.firstMatch(func.swiftFunction)!;
+class _SwiftFunctionArgument {
+  _SwiftFunctionArgument({
+    required this.name,
+    this.label,
+    required this.type,
+    required this.namedType,
+  });
 
-    final Iterable<String> customComponents = match
-        .groups(
-            List<int>.generate(func.arguments.length, (int index) => index + 2))
-        .whereType();
+  final String name;
+  final String? label;
+  final TypeDeclaration type;
+  final NamedType namedType;
+}
 
-    return Method(
-      name: match.group(1)!,
-      returnType: func.returnType,
-      arguments:
-          map2(func.arguments, customComponents, (NamedType t, String u) {
-        if (u == t.name) {
-          return t;
-        }
+class _SwiftFunctionComponents {
+  _SwiftFunctionComponents._({
+    required this.name,
+    required this.arguments,
+    required this.returnType,
+    required this.method,
+  });
 
-        return NamedType(name: '$u ${t.name}', type: t.type);
-      }).toList(),
-      isAsynchronous: func.isAsynchronous,
-      offset: func.offset,
-      taskQueueType: func.taskQueueType,
-    );
+  factory _SwiftFunctionComponents.fromMethod(Method method) {
+    if (method.swiftFunction.isEmpty) {
+      return _SwiftFunctionComponents._(
+        name: method.name,
+        returnType: method.returnType,
+        arguments: method.arguments
+            .map((e) => _SwiftFunctionArgument(
+                  name: e.name,
+                  type: e.type,
+                  namedType: e,
+                ))
+            .toList(),
+        method: method,
+      );
+    } else {
+      final String argsCapturator =
+          repeat(r'(\w+):', method.arguments.length).join();
+      final RegExp signatureRegex =
+          RegExp(r'(\w+) *\(' + argsCapturator + r'\)');
+      final RegExpMatch match =
+          signatureRegex.firstMatch(method.swiftFunction)!;
+
+      final Iterable<String> customComponents = match
+          .groups(List<int>.generate(
+              method.arguments.length, (int index) => index + 2))
+          .whereType();
+
+      return _SwiftFunctionComponents._(
+        name: match.group(1)!,
+        returnType: method.returnType,
+        arguments: map2(
+          method.arguments,
+          customComponents,
+          (NamedType t, String u) => _SwiftFunctionArgument(
+            name: t.name,
+            label: u == t.name ? null : u,
+            type: t.type,
+            namedType: t,
+          ),
+        ).toList(),
+        method: method,
+      );
+    }
   }
+
+  final String name;
+  final List<_SwiftFunctionArgument> arguments;
+  final TypeDeclaration returnType;
+  final Method method;
 }
