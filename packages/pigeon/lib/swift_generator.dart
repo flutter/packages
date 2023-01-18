@@ -708,6 +708,11 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
 
+/// A class that represents a Swift function argument.
+/// The [name] is the name of the argument.
+/// The [type] is the type of the argument.
+/// The [namedType] is the [NamedType] that this argument is generated from.
+/// The [label] is the label of the argument.
 class _SwiftFunctionArgument {
   _SwiftFunctionArgument({
     required this.name,
@@ -722,6 +727,11 @@ class _SwiftFunctionArgument {
   final String? label;
 }
 
+/// A class that represents a Swift function signature.
+/// The [name] is the name of the function.
+/// The [arguments] are the arguments of the function.
+/// The [returnType] is the return type of the function.
+/// The [method] is the method that this function signature is generated from.
 class _SwiftFunctionComponents {
   _SwiftFunctionComponents._({
     required this.name,
@@ -730,6 +740,7 @@ class _SwiftFunctionComponents {
     required this.method,
   });
 
+  /// Constructor that generates a [_SwiftFunctionComponents] from a [Method].
   factory _SwiftFunctionComponents.fromMethod(Method method) {
     if (method.swiftFunction.isEmpty) {
       return _SwiftFunctionComponents._(
