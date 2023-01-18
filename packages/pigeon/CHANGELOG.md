@@ -1,6 +1,14 @@
-## 6.0.2
+## 6.0.4
 
 * Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
+## 6.0.3
+
+* [docs] Updates README.md.
+
+## 6.0.2
+
+* [kotlin] Fixes a bug with a missed line break between generated statements in the `fromList` function of the companion object.
 
 ## 6.0.1
 
