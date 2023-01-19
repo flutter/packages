@@ -146,8 +146,8 @@ class Indent {
   }
 
   /// Adds single newline.
-  void newln({int lines = 1}) {
-    for (; lines >= 0; lines--) {
+  void newln([int lines = 1]) {
+    for (; lines > 0; lines--) {
       _sink.write(newline);
     }
   }
