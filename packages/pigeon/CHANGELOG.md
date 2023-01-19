@@ -1,6 +1,7 @@
 ## 7.0.0
 
-* [java] Makes classes final and other lint issues.
+* [java] **BREAKING CHANGE**: Makes data classes final.
+  Updates generators for 1p linters.
 
 ## 6.0.3
 
