@@ -225,8 +225,7 @@ class PersonScreen extends StatelessWidget {
                 in person.details.entries)
               ListTile(
                 title: Text(
-                  // TODO(kevmoo): replace `split` with `name` when min SDK is 2.15
-                  '${entry.key.toString().split('.').last} - ${entry.value}',
+                  '${entry.key.name} - ${entry.value}',
                 ),
                 trailing: OutlinedButton(
                   onPressed: () => PersonDetailsRoute(
