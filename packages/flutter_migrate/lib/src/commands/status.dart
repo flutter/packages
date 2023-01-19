@@ -62,7 +62,6 @@ class MigrateStatusCommand extends MigrateCommand {
 
   final MigrateUtils migrateUtils;
 
-
   final bool standalone;
 
   @override

@@ -100,7 +100,7 @@ class MigrateUtils {
       return outputDirectory;
     }
 
-    final List<String> cmdArgs = <String>['$flutterBinPath/flutter', 'create'];
+    final List<String> cmdArgs = <String>['$flutterBinPath${_fileSystem.path.separator}flutter', 'create'];
     if (!legacyNameParameter) {
       cmdArgs.add('--project-name=$name');
     }
