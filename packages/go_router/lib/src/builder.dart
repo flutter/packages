@@ -52,17 +52,19 @@ class RouteBuilder {
 
   final GoRouterStateRegistry _registry = GoRouterStateRegistry();
 
-  final Map<Page<Object?>, RouteMatch> _routeMatchLookUp =
-      <Page<Object?>, RouteMatch>{};
+  final Expando<RouteMatch> _routeMatchLookUp = Expando<RouteMatch>(
+    'Page to RouteMatch',
+  );
 
-  /// Looks the the [RouteMatch] for a given [Page].
+  /// Looks for the [RouteMatch] for a given [Page].
   ///
-  /// The [Page] must be in the latest [Navigator.pages]; otherwise, this method
-  /// returns null.
+  /// The [Page] must have been previously built via this [RouteBuilder];
+  /// otherwise, this method returns null.
   RouteMatch? getRouteMatchForPage(Page<Object?> page) =>
       _routeMatchLookUp[page];
 
-  // final Map<>
+  void _setRouteMatchForPage(Page<Object?> page, RouteMatch match) =>
+      _routeMatchLookUp[page] = match;
 
   /// Builds the top-level Navigator for the given [RouteMatchList].
   Widget build(
@@ -71,7 +73,6 @@ class RouteBuilder {
     PopPageCallback onPopPage,
     bool routerNeglect,
   ) {
-    _routeMatchLookUp.clear();
     if (matchList.isEmpty) {
       // The build method can be called before async redirect finishes. Build a
       // empty box until then.
@@ -135,7 +136,6 @@ class RouteBuilder {
       GlobalKey<NavigatorState> navigatorKey,
       Map<Page<Object?>, GoRouterState> registry) {
     try {
-      assert(_routeMatchLookUp.isEmpty);
       final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
           <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
       _buildRecursive(context, matchList, startIndex, onPopPage, routerNeglect,
@@ -143,7 +143,7 @@ class RouteBuilder {
 
       // Every Page should have a corresponding RouteMatch.
       assert(keyToPage.values.flattened
-          .every((Page<Object?> page) => _routeMatchLookUp.containsKey(page)));
+          .every((Page<Object?> page) => getRouteMatchForPage(page) != null));
       return keyToPage[navigatorKey]!;
     } on _RouteBuilderError catch (e) {
       return <Page<Object?>>[
@@ -351,7 +351,7 @@ class RouteBuilder {
     page ??= buildPage(context, state, Builder(builder: (BuildContext context) {
       return _callRouteBuilder(context, state, match, childWidget: child);
     }));
-    _routeMatchLookUp[page] = match;
+    _setRouteMatchForPage(page, match);
 
     // Return the result of the route's builder() or pageBuilder()
     return page;
