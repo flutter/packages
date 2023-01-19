@@ -31,7 +31,7 @@ void main() {
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
-    expect(code, contains('public static class Foobar'));
+    expect(code, contains('public static final class Foobar'));
     expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
     expect(
@@ -257,7 +257,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public static class Api'));
+    expect(code, contains('public static final class Api'));
     expect(code, matches('doSomething.*Input.*Output'));
   });
 
@@ -405,7 +405,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public static class Foobar'));
+    expect(code, contains('public static final class Foobar'));
     expect(code, contains('private @Nullable List<Object> field1;'));
   });
 
@@ -425,7 +425,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public static class Foobar'));
+    expect(code, contains('public static final class Foobar'));
     expect(code, contains('private @Nullable Map<Object, Object> field1;'));
   });
 
@@ -463,8 +463,8 @@ void main() {
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
-    expect(code, contains('public static class Outer'));
-    expect(code, contains('public static class Nested'));
+    expect(code, contains('public static final class Outer'));
+    expect(code, contains('public static final class Nested'));
     expect(code, contains('private @Nullable Nested nested;'));
     expect(
         code,
@@ -566,7 +566,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public static class Api'));
+    expect(code, contains('public static final class Api'));
     expect(code, matches('doSomething.*Input.*Output'));
   });
 
