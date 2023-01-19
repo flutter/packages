@@ -105,8 +105,11 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     return _navigatorCache[branch.navigatorKey];
   }
 
-  void _setNavigatorForBranch(StatefulShellBranch branch, Navigator navigator) {
-    _navigatorCache[branch.navigatorKey] = navigator;
+  void _setNavigatorForBranch(
+      StatefulShellBranch branch, Navigator? navigator) {
+    navigator != null
+        ? _navigatorCache[branch.navigatorKey] = navigator
+        : _navigatorCache.remove(branch.navigatorKey);
   }
 
   int _findCurrentIndex() {
@@ -127,18 +130,17 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
           .then(
             (RouteMatchList matchList) =>
                 goRouter.routerDelegate.setNewRoutePath(matchList),
-            onError: (_) => goRouter.go(_defaultBranchLocation(branchState)),
+            onError: (_) =>
+                goRouter.go(_defaultBranchLocation(branchState.branch)),
           );
     } else {
-      goRouter.go(_defaultBranchLocation(branchState));
+      goRouter.go(_defaultBranchLocation(branchState.branch));
     }
   }
 
-  String _defaultBranchLocation(StatefulShellBranchState branchState) {
-    String? defaultLocation = branchState.branch.defaultLocation;
-    defaultLocation ??= widget.configuration
-        .findStatefulShellBranchDefaultLocation(branchState.branch);
-    return defaultLocation;
+  String _defaultBranchLocation(StatefulShellBranch branch) {
+    return branch.defaultLocation ??
+        widget.configuration.findStatefulShellBranchDefaultLocation(branch);
   }
 
   void _preloadBranches() {
@@ -163,8 +165,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
         GoRouter.of(context).routeInformationParser;
     final Future<RouteMatchList> routeMatchList =
         parser.parseRouteInformationWithDependencies(
-            RouteInformation(location: _defaultBranchLocation(branchState)),
-            context);
+      RouteInformation(location: _defaultBranchLocation(branchState.branch)),
+      context,
+    );
 
     StatefulShellBranchState createBranchNavigator(RouteMatchList matchList) {
       // Find the index of the branch root route in the match list
@@ -255,12 +258,24 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     _preloadBranches();
   }
 
-  void _resetState() {
-    final StatefulShellBranchState currentBranchState =
-        _routeState.currentBranchState;
-    _navigatorCache.clear();
-    _setupInitialStatefulShellRouteState();
-    GoRouter.of(context).go(_defaultBranchLocation(currentBranchState));
+  void _resetState(
+      StatefulShellBranchState? branchState, bool navigateToDefaultLocation) {
+    final StatefulShellBranch branch;
+    if (branchState != null) {
+      branch = branchState.branch;
+      _setNavigatorForBranch(branch, null);
+      _updateRouteBranchState(
+        _createStatefulShellBranchState(branch),
+      );
+    } else {
+      branch = _routeState.currentBranchState.branch;
+      // Reset the state for all branches (the whole stateful shell)
+      _navigatorCache.clear();
+      _setupInitialStatefulShellRouteState();
+    }
+    if (navigateToDefaultLocation) {
+      GoRouter.of(context).go(_defaultBranchLocation(branch));
+    }
   }
 
   StatefulShellBranchState _updateStatefulShellBranchState(

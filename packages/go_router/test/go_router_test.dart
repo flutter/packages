@@ -3559,6 +3559,72 @@ void main() {
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen A Detail'), findsNothing);
     });
+
+    testWidgets('Single branch of StatefulShellRoute is correctly reset',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      StatefulShellRouteState? routeState;
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute(
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            routeState = StatefulShellRouteState.of(context);
+            return child;
+          },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen A'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'detail',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen A Detail'),
+                  ),
+                ],
+              ),
+            ]),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen B'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'detail',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen B Detail'),
+                  ),
+                ],
+              ),
+            ]),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          initialLocation: '/a/detail', navigatorKey: rootNavigatorKey);
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen A Detail'), findsOneWidget);
+
+      router.go('/b/detail');
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B'), findsNothing);
+      expect(find.text('Screen B Detail'), findsOneWidget);
+
+      routeState!.resetBranch(index: 1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(find.text('Screen B Detail'), findsNothing);
+
+      routeState!.goBranch(index: 0);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen A Detail'), findsOneWidget);
+    });
   });
 
   group('Imperative navigation', () {

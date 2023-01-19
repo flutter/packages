@@ -27,7 +27,9 @@ class StatefulShellRouteState {
     required void Function(
             StatefulShellBranchState, UnmodifiableRouteMatchList?)
         switchActiveBranch,
-    required void Function() resetState,
+    required void Function(StatefulShellBranchState? branchState,
+            bool navigateToDefaultLocation)
+        resetState,
   })  : _switchActiveBranch = switchActiveBranch,
         _resetState = resetState;
 
@@ -67,7 +69,9 @@ class StatefulShellRouteState {
   final void Function(StatefulShellBranchState, UnmodifiableRouteMatchList?)
       _switchActiveBranch;
 
-  final void Function() _resetState;
+  final void Function(
+          StatefulShellBranchState? branchState, bool navigateToDefaultLocation)
+      _resetState;
 
   /// Gets the [Widget]s representing each of the shell branches.
   ///
@@ -80,19 +84,10 @@ class StatefulShellRouteState {
   List<Widget> get children =>
       branchStates.map((StatefulShellBranchState e) => e.child).toList();
 
-  /// Navigate to the current location of the shell navigator with the provided
-  /// Navigator key, name or index.
-  ///
-  /// This method will switch the currently active [Navigator] for the
-  /// [StatefulShellRoute] by replacing the current navigation stack with the
-  /// one of the route branch identified by the provided Navigator key, name or
-  /// index. If resetLocation is true, the branch will be reset to its default
-  /// location (see [StatefulShellBranch.defaultLocation]).
-  void goBranch({
+  StatefulShellBranchState _branchStateFor({
     GlobalKey<NavigatorState>? navigatorKey,
     String? name,
     int? index,
-    bool resetLocation = false,
   }) {
     assert(navigatorKey != null || name != null || index != null);
     assert(<dynamic>[navigatorKey, name, index].whereNotNull().length == 1);
@@ -113,7 +108,28 @@ class StatefulShellRouteState {
     } else {
       state = branchStates[index!];
     }
+    return state;
+  }
 
+  /// Navigate to the current location of the shell navigator with the provided
+  /// Navigator key, name or index.
+  ///
+  /// This method will switch the currently active [Navigator] for the
+  /// [StatefulShellRoute] by replacing the current navigation stack with the
+  /// one of the route branch identified by the provided Navigator key, name or
+  /// index. If resetLocation is true, the branch will be reset to its default
+  /// location (see [StatefulShellBranch.defaultLocation]).
+  void goBranch({
+    GlobalKey<NavigatorState>? navigatorKey,
+    String? name,
+    int? index,
+    bool resetLocation = false,
+  }) {
+    final StatefulShellBranchState state = _branchStateFor(
+      navigatorKey: navigatorKey,
+      name: name,
+      index: index,
+    );
     _switchActiveBranch(state, resetLocation ? null : state._matchList);
   }
 
@@ -124,9 +140,31 @@ class StatefulShellRouteState {
   }
 
   /// Resets this StatefulShellRouteState by clearing all navigation state of
-  /// the branches, and returning the current branch to its default location.
-  void reset() {
-    _resetState();
+  /// the branches
+  ///
+  /// After the state has been reset, the current branch will navigated to its
+  /// default location, if [navigateToDefaultLocation] is true.
+  void reset({bool navigateToDefaultLocation = true}) {
+    _resetState(null, navigateToDefaultLocation);
+  }
+
+  /// Resets the navigation state of the branch identified by the provided
+  /// Navigator key, name or index.
+  ///
+  /// After the state has been reset, the branch will navigated to its
+  /// default location, if [navigateToDefaultLocation] is true.
+  void resetBranch({
+    GlobalKey<NavigatorState>? navigatorKey,
+    String? name,
+    int? index,
+    bool navigateToDefaultLocation = true,
+  }) {
+    final StatefulShellBranchState state = _branchStateFor(
+      navigatorKey: navigatorKey,
+      name: name,
+      index: index,
+    );
+    _resetState(state, navigateToDefaultLocation);
   }
 
   @override
