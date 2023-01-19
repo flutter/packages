@@ -287,11 +287,11 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       if (func.isAsynchronous) {
         returnType = 'void';
         if (func.returnType.isVoid) {
-          lastArgType = 'void(^)(FlutterError *_Nullable)';
+          lastArgType = 'void (^)(FlutterError *_Nullable)';
           lastArgName = 'completion';
         } else {
           lastArgType =
-              'void(^)(${returnTypeName.ptr}_Nullable, FlutterError *_Nullable)';
+              'void (^)(${returnTypeName.ptr}_Nullable, FlutterError *_Nullable)';
           lastArgName = 'completion';
         }
       } else {
@@ -840,8 +840,8 @@ String _className(String? prefix, String className) {
 /// Calculates callback block signature for for async methods.
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
-      ? 'void(^)(NSError *_Nullable)'
-      : 'void(^)(${objcType.ptr.trim()}_Nullable, NSError *_Nullable)';
+      ? 'void (^)(NSError *_Nullable)'
+      : 'void (^)(${objcType.ptr.trim()}_Nullable, NSError *_Nullable)';
 }
 
 /// Represents an ObjC pointer (ex 'id', 'NSString *').
