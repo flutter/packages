@@ -1,3 +1,8 @@
+## 7.0.0
+
+* [java] **BREAKING CHANGE**: Makes data classes final.
+  Updates generators for 1p linters.
+
 ## 6.0.3
 
 * [docs] Updates README.md.
