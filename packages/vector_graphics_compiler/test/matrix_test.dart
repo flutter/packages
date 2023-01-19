@@ -4,12 +4,26 @@
 
 import 'dart:math' as math;
 
+import 'package:vector_graphics_compiler/src/svg/parsers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'package:test/test.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 void main() {
+  test('Parse rotate and scale', () {
+    // Regression test for https://github.com/dnfield/flutter_svg/issues/801
+    final AffineMatrix mat = parseTransform('rotate(-1 4 -12) scale(2)')!;
+    expect(
+      mat,
+      AffineMatrix.identity
+          .translated(4, -12)
+          .rotated(radians(-1))
+          .translated(-4, 12)
+          .scaled(2),
+    );
+  });
+
   test('Identity matrix', () {
     expect(AffineMatrix.identity.toMatrix4(), Matrix4.identity().storage);
   });
