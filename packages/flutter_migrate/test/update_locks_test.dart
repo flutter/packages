@@ -33,7 +33,6 @@ void main() {
     utils = MigrateUtils(
       logger: logger,
       fileSystem: fileSystem,
-      processManager: const LocalProcessManager(),
     );
     final FlutterProjectFactory flutterFactory = FlutterProjectFactory();
     flutterProject = flutterFactory.fromDirectory(currentDir);

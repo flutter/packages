@@ -39,7 +39,6 @@ void main() {
       logger: logger,
       fileSystem: fileSystem,
       terminal: terminal,
-      processManager: processManager,
     );
     final Directory stagingDir =
         appDir.childDirectory(kDefaultMigrateStagingDirectoryName);

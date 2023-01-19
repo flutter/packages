@@ -6,8 +6,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:process/process.dart';
-
 import 'base/common.dart';
 import 'base/file_system.dart';
 import 'base/logger.dart';
@@ -21,18 +19,15 @@ class MigrateUtils {
   MigrateUtils({
     required Logger logger,
     required FileSystem fileSystem,
-    required ProcessManager processManager,
-  })  : _processManager = processManager,
-        _logger = logger,
+  })  : _logger = logger,
         _fileSystem = fileSystem;
 
   final Logger _logger;
   final FileSystem _fileSystem;
-  final ProcessManager _processManager;
 
   Future<ProcessResult> _runCommand(List<String> command,
       {String? workingDirectory, bool runInShell = false}) {
-    return _processManager.run(command,
+    return Process.run(command[0], command.sublist(1),
         workingDirectory: workingDirectory, runInShell: runInShell);
   }
 

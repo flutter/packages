@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:process/process.dart';
-
 import '../base/command.dart';
 import '../base/file_system.dart';
 import '../base/logger.dart';
@@ -18,12 +16,10 @@ class MigrateAbandonCommand extends MigrateCommand {
     required this.logger,
     required this.fileSystem,
     required this.terminal,
-    required ProcessManager processManager,
     this.standalone = false,
   }) : migrateUtils = MigrateUtils(
           logger: logger,
           fileSystem: fileSystem,
-          processManager: processManager,
         ) {
     argParser.addOption(
       'staging-directory',

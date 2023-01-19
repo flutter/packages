@@ -26,7 +26,6 @@ class MigrateStartCommand extends MigrateCommand {
         migrateUtils = MigrateUtils(
           logger: logger,
           fileSystem: fileSystem,
-          processManager: processManager,
         ) {
     argParser.addOption(
       'staging-directory',

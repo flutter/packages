@@ -8,7 +8,6 @@ import 'package:flutter_migrate/src/base/io.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
 import 'package:flutter_migrate/src/base/signals.dart';
 import 'package:flutter_migrate/src/utils.dart';
-import 'package:process/process.dart';
 
 import 'src/common.dart';
 
@@ -18,16 +17,13 @@ void main() {
   late Directory projectRoot;
   late String projectRootPath;
   late MigrateUtils utils;
-  late ProcessManager processManager;
 
   setUpAll(() async {
     fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
     logger = BufferLogger.test();
-    processManager = const LocalProcessManager();
     utils = MigrateUtils(
       logger: logger,
       fileSystem: fileSystem,
-      processManager: processManager,
     );
   });
 

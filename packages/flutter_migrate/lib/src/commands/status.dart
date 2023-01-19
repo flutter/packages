@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:process/process.dart';
-
 import '../base/command.dart';
 import '../base/file_system.dart';
 import '../base/logger.dart';
@@ -19,13 +17,11 @@ class MigrateStatusCommand extends MigrateCommand {
     bool verbose = false,
     required this.logger,
     required this.fileSystem,
-    required ProcessManager processManager,
     this.standalone = false,
   })  : _verbose = verbose,
         migrateUtils = MigrateUtils(
           logger: logger,
           fileSystem: fileSystem,
-          processManager: processManager,
         ) {
     argParser.addOption(
       'staging-directory',
@@ -65,6 +61,7 @@ class MigrateStatusCommand extends MigrateCommand {
   final FileSystem fileSystem;
 
   final MigrateUtils migrateUtils;
+
 
   final bool standalone;
 

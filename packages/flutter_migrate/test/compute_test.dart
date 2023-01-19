@@ -14,7 +14,6 @@ import 'package:flutter_migrate/src/migrate_logger.dart';
 import 'package:flutter_migrate/src/result.dart';
 import 'package:flutter_migrate/src/utils.dart';
 import 'package:path/path.dart';
-import 'package:process/process.dart';
 
 import 'environment_test.dart';
 import 'src/common.dart';
@@ -32,7 +31,6 @@ void main() {
   late Directory newerTargetFlutterDirectory;
   late Directory currentDir;
   late FlutterToolsEnvironment environment;
-  late ProcessManager processManager;
   late FakeProcessManager envProcessManager;
   late String separator;
 
@@ -43,11 +41,9 @@ void main() {
     fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
     currentDir = createResolvedTempDirectorySync('current_app.');
     logger = BufferLogger.test();
-    processManager = const LocalProcessManager();
     utils = MigrateUtils(
       logger: logger,
       fileSystem: fileSystem,
-      processManager: processManager,
     );
     await MigrateProject.installProject('version:1.22.6_stable', currentDir);
     final FlutterProjectFactory flutterFactory = FlutterProjectFactory();
@@ -261,7 +257,6 @@ void main() {
       utils = MigrateUtils(
         logger: logger,
         fileSystem: fileSystem,
-        processManager: const LocalProcessManager(),
       );
       await MigrateProject.installProject('version:1.22.6_stable', currentDir);
       final FlutterProjectFactory flutterFactory = FlutterProjectFactory();

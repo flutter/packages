@@ -35,13 +35,12 @@ Future<void> main(List<String> args) async {
       verbose: verbose,
       logger: baseDependencies.logger,
       fileSystem: baseDependencies.fileSystem,
-      processManager: baseDependencies.processManager,
     ),
     MigrateAbandonCommand(
-        logger: baseDependencies.logger,
-        fileSystem: baseDependencies.fileSystem,
-        terminal: baseDependencies.terminal,
-        processManager: baseDependencies.processManager),
+      logger: baseDependencies.logger,
+      fileSystem: baseDependencies.fileSystem,
+      terminal: baseDependencies.terminal,
+    ),
     MigrateApplyCommand(
         verbose: verbose,
         logger: baseDependencies.logger,

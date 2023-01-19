@@ -94,9 +94,9 @@ String getMigrateMain() {
 
 Future<ProcessResult> runMigrateCommand(List<String> args,
     {String? workingDirectory}) {
-  final List<String> commandArgs = <String>['dart', 'run', getMigrateMain()];
+  final List<String> commandArgs = <String>['run', getMigrateMain()];
   commandArgs.addAll(args);
-  return processManager.run(commandArgs, workingDirectory: workingDirectory);
+  return Process.run('dart', commandArgs, workingDirectory: workingDirectory);
 }
 
 /// The tool overrides `test` to ensure that files created under the

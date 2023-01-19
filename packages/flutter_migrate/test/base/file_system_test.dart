@@ -210,8 +210,7 @@ void main() {
       );
 
       try {
-        localFileSystem.systemTempDirectory;
-        fail('expected tool exit');
+        expect(localFileSystem.systemTempDirectory, true);
       } on ToolExit catch (e) {
         expect(
             e.message,
