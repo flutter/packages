@@ -6,6 +6,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _tabANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'tabANav');
 
@@ -29,8 +31,15 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
   NestedTabNavigationExampleApp({Key? key}) : super(key: key);
 
   final GoRouter _router = GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: '/a',
     routes: <RouteBase>[
+      GoRoute(
+        path: '/modal',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) =>
+            const ModalScreen(),
+      ),
       StatefulShellRoute(
         branches: <StatefulShellBranch>[
           /// The route branch for the first tab of the bottom navigation bar.
@@ -276,6 +285,43 @@ class RootScreen extends StatelessWidget {
                 },
                 child: const Text('View more details'),
               ),
+            const Padding(padding: EdgeInsets.all(8)),
+            ElevatedButton(
+              onPressed: () {
+                GoRouter.of(context).push('/modal');
+              },
+              child: const Text('Show modal screen on root navigator'),
+            ),
+            const Padding(padding: EdgeInsets.all(4)),
+            ElevatedButton(
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    useRootNavigator: true,
+                    builder: _bottomSheet);
+              },
+              child: const Text('Show bottom sheet on root navigator'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _bottomSheet(BuildContext context) {
+    return Container(
+      height: 200,
+      color: Colors.amber,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Text('Modal BottomSheet'),
+            ElevatedButton(
+              child: const Text('Close BottomSheet'),
+              onPressed: () => Navigator.pop(context),
+            ),
           ],
         ),
       ),
@@ -366,6 +412,36 @@ class DetailsScreenState extends State<DetailsScreen> {
             ),
           ]
         ],
+      ),
+    );
+  }
+}
+
+/// Widget for a modal screen.
+class ModalScreen extends StatelessWidget {
+  /// Creates a ModalScreen
+  const ModalScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Modal'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text('Modal screen', style: Theme.of(context).textTheme.titleLarge),
+            const Padding(padding: EdgeInsets.all(8)),
+            ElevatedButton(
+              onPressed: () {
+                GoRouter.of(context).go('/a');
+              },
+              child: const Text('Go to initial section'),
+            ),
+          ],
+        ),
       ),
     );
   }
