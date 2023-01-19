@@ -196,6 +196,7 @@ public class CoreTests {
     private AllTypes() {}
 
     public static final class Builder {
+
       private @Nullable Boolean aBool;
 
       public @NonNull Builder setABool(@NonNull Boolean setterArg) {
@@ -479,6 +480,7 @@ public class CoreTests {
     }
 
     public static final class Builder {
+
       private @Nullable Boolean aNullableBool;
 
       public @NonNull Builder setANullableBool(@Nullable Boolean setterArg) {
@@ -675,6 +677,7 @@ public class CoreTests {
     private AllNullableTypesWrapper() {}
 
     public static final class Builder {
+
       private @Nullable AllNullableTypes values;
 
       public @NonNull Builder setValues(@NonNull AllNullableTypes setterArg) {
@@ -1844,6 +1847,7 @@ public class CoreTests {
    * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface HostTrivialApi {
+
     void noop();
 
     /** The codec used by HostTrivialApi. */

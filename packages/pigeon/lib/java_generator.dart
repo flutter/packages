@@ -164,6 +164,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       });
       indent.writeln('');
       indent.writeln('private final int index;');
+      indent.writeln('');
       indent.write('private ${anEnum.name}(final int index) ');
       indent.scoped('{', '}', () {
         indent.writeln('this.index = index;');
@@ -198,8 +199,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
-            '${_docCommentPrefix}Constructor is private to enforce null safety; use Builder.$_docCommentSuffix');
+            '$_docCommentPrefix Constructor is private to enforce null safety; use Builder.$_docCommentSuffix');
         indent.writeln('private ${klass.name}() {}');
+        indent.addln('');
       }
 
       _writeClassBuilder(generatorOptions, root, indent, klass);
@@ -220,8 +222,13 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
     indent.writeln(
         'private $nullability ${hostDatatype.datatype} ${field.name};');
-    indent.writeln(
-        'public $nullability ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
+    indent.addln('');
+    indent.write(
+        'public $nullability ${hostDatatype.datatype} ${_makeGetter(field)}() ');
+    indent.scoped('{', '}', () {
+      indent.writeln('return ${field.name};');
+    });
+    indent.addln('');
     indent.writeScoped(
         'public void ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
         '}', () {
@@ -251,8 +258,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
         final String nullability =
             field.type.isNullable ? '@Nullable' : '@NonNull';
+        indent.addln('');
         indent.writeln(
             'private @Nullable ${hostDatatype.datatype} ${field.name};');
+        indent.addln('');
         indent.writeScoped(
             'public @NonNull Builder ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
             '}', () {
@@ -260,6 +269,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           indent.writeln('return this;');
         });
       }
+      indent.writeln('');
       indent.write('public @NonNull ${klass.name} build() ');
       indent.scoped('{', '}', () {
         const String returnVal = 'pigeonReturn';
@@ -281,7 +291,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    indent.write('@NonNull ArrayList<Object> toList() ');
+    indent.writeln('');
+    indent.writeln('@NonNull');
+    indent.write('ArrayList<Object> toList() ');
     indent.scoped('{', '}', () {
       indent.writeln(
           'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
@@ -317,6 +329,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
+    indent.addln('');
     indent.write(
         'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
     indent.scoped('{', '}', () {
@@ -368,10 +381,12 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.write('public static class ${api.name} ');
     indent.scoped('{', '}', () {
       indent.writeln('private final BinaryMessenger binaryMessenger;');
-      indent.write('public ${api.name}(BinaryMessenger argBinaryMessenger)');
+      indent.writeln('');
+      indent.write('public ${api.name}(BinaryMessenger argBinaryMessenger) ');
       indent.scoped('{', '}', () {
         indent.writeln('this.binaryMessenger = argBinaryMessenger;');
       });
+      indent.writeln('');
       indent.write('public interface Reply<T> ');
       indent.scoped('{', '}', () {
         indent.writeln('void reply(T reply);');
@@ -382,9 +397,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.scoped('{', '}', () {
         indent.write('return ');
         if (getCodecClasses(api, root).isNotEmpty) {
-          indent.writeln('$codecName.INSTANCE;');
+          indent.addln('$codecName.INSTANCE;');
         } else {
-          indent.writeln('new $_standardMessageCodec();');
+          indent.addln('new $_standardMessageCodec();');
         }
       });
 
@@ -421,13 +436,16 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.scoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln('BasicMessageChannel<Object> $channel =');
-          indent.inc();
-          indent.inc();
-          indent.writeln(
-              'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
-          indent.dec();
-          indent.dec();
-          indent.write('$channel.send($sendArgument, channelReply -> ');
+          indent.inc(2);
+          indent.writeln('new BasicMessageChannel<>(');
+          indent.inc(2);
+          indent.writeln('binaryMessenger, "$channelName", getCodec());');
+          indent.dec(2);
+          indent.dec(2);
+          indent.writeln('$channel.send(');
+          indent.inc(2);
+          indent.writeln('$sendArgument,');
+          indent.write('channelReply -> ');
           indent.scoped('{', '});', () {
             if (func.returnType.isVoid) {
               indent.writeln('callback.reply(null);');
@@ -436,14 +454,15 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
               indent.writeln('@SuppressWarnings("ConstantConditions")');
               if (func.returnType.baseName == 'int') {
                 indent.writeln(
-                    '$returnType $output = channelReply == null ? null : ((Number)channelReply).longValue();');
+                    '$returnType $output = channelReply == null ? null : ((Number) channelReply).longValue();');
               } else {
                 indent.writeln(
-                    '$returnType $output = ($returnType)channelReply;');
+                    '$returnType $output = ($returnType) channelReply;');
               }
               indent.writeln('callback.reply($output);');
             }
           });
+          indent.dec(2);
         });
       }
     });
@@ -491,9 +510,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.scoped('{', '}', () {
         indent.write('return ');
         if (getCodecClasses(api, root).isNotEmpty) {
-          indent.write('$codecName.INSTANCE;');
+          indent.addln('$codecName.INSTANCE;');
         } else {
-          indent.write('new $_standardMessageCodec();');
+          indent.addln('new $_standardMessageCodec();');
         }
       });
 
@@ -514,9 +533,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   ///   int add(int x, int y);
   void _writeInterfaceMethod(JavaOptions generatorOptions, Root root,
       Indent indent, Api api, final Method method) {
+    final String nullableType =
+        method.isAsynchronous ? '' : _nullSafeString(method.returnType);
     final String returnType = method.isAsynchronous
         ? 'void'
-        : _nullsafeJavaTypeForDartType(method.returnType);
+        : _javaTypeForDartType(method.returnType);
     final List<String> argSignature = <String>[];
     if (method.arguments.isNotEmpty) {
       final Iterable<String> argTypes = method.arguments
@@ -534,9 +555,15 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           : _javaTypeForDartType(method.returnType);
       argSignature.add('Result<$resultType> result');
     }
-    addDocumentationComments(
-        indent, method.documentationComments, _docCommentSpec);
-
+    if (method.documentationComments.isNotEmpty) {
+      addDocumentationComments(
+          indent, method.documentationComments, _docCommentSpec);
+    } else {
+      indent.writeln('');
+    }
+    if (nullableType != '') {
+      indent.writeln(nullableType);
+    }
     indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
   }
 
@@ -555,20 +582,22 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
       }
       indent.writeln('BasicMessageChannel<Object> channel =');
-      indent.inc();
-      indent.inc();
-      indent.write(
-          'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec()');
+      indent.inc(2);
+      indent.writeln('new BasicMessageChannel<>(');
+      indent.inc(2);
+      indent.write('binaryMessenger, "$channelName", getCodec()');
       if (taskQueue != null) {
         indent.addln(', $taskQueue);');
       } else {
         indent.addln(');');
       }
-      indent.dec();
-      indent.dec();
+      indent.dec(2);
+      indent.dec(2);
       indent.write('if (api != null) ');
       indent.scoped('{', '} else {', () {
-        indent.write('channel.setMessageHandler((message, reply) -> ');
+        indent.writeln('channel.setMessageHandler(');
+        indent.inc(2);
+        indent.write('(message, reply) -> ');
         indent.scoped('{', '});', () {
           final String returnType = method.returnType.isVoid
               ? 'Void'
@@ -579,7 +608,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             final List<String> methodArgument = <String>[];
             if (method.arguments.isNotEmpty) {
               indent.writeln(
-                  'ArrayList<Object> args = (ArrayList<Object>)message;');
+                  'ArrayList<Object> args = (ArrayList<Object>) message;');
               indent.writeln('assert args != null;');
               enumerate(method.arguments, (int index, NamedType arg) {
                 // The StandardMessageCodec can give us [Integer, Long] for
@@ -596,7 +625,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                 if (isEnum(root, arg.type)) {
                   accessor = _intToEnum(accessor, arg.type.baseName);
                 } else if (argType != 'Object') {
-                  accessor = '($argType)$accessor';
+                  accessor = '($argType) $accessor';
                 }
                 indent.writeln('$argType $argName = $accessor;');
                 if (!arg.type.isNullable) {
@@ -614,16 +643,18 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                   method.returnType.isVoid ? 'null' : 'result';
               const String resultName = 'resultCallback';
               indent.format('''
-Result<$returnType> $resultName = new Result<$returnType>() {
-\tpublic void success($returnType result) {
-\t\twrapped.add(0, $resultValue);
-\t\treply.reply(wrapped);
-\t}
-\tpublic void error(Throwable error) {
-\t\tArrayList<Object> wrappedError = wrapError(error);
-\t\treply.reply(wrappedError);
-\t}
-};
+Result<$returnType> $resultName = 
+\t\tnew Result<$returnType>() {
+\t\t\tpublic void success($returnType result) {
+\t\t\t\twrapped.add(0, $resultValue);
+\t\t\t\treply.reply(wrapped);
+\t\t\t}
+
+\t\t\tpublic void error(Throwable error) {
+\t\t\t\tArrayList<Object> wrappedError = wrapError(error);
+\t\t\t\treply.reply(wrappedError);
+\t\t\t}
+\t\t};
 ''');
               methodArgument.add(resultName);
             }
@@ -638,8 +669,8 @@ Result<$returnType> $resultName = new Result<$returnType>() {
               indent.writeln('$returnType output = $call;');
               indent.writeln('wrapped.add(0, output);');
             }
-          });
-          indent.write('catch (Error | RuntimeException exception) ');
+          }, addTrailingNewline: false);
+          indent.add(' catch (Error | RuntimeException exception) ');
           indent.scoped('{', '}', () {
             indent.writeln(
                 'ArrayList<Object> wrappedError = wrapError(exception);');
@@ -653,6 +684,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
             indent.writeln('reply.reply(wrapped);');
           }
         });
+        indent.dec(2);
       });
       indent.scoped(null, '}', () {
         indent.writeln('channel.setMessageHandler(null);');
@@ -667,12 +699,15 @@ Result<$returnType> $resultName = new Result<$returnType>() {
     assert(getCodecClasses(api, root).isNotEmpty);
     final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
     final String codecName = _getCodecName(api);
+    indent.writeln('');
     indent.write(
         'private static class $codecName extends $_standardMessageCodec ');
     indent.scoped('{', '}', () {
       indent.writeln(
           'public static final $codecName INSTANCE = new $codecName();');
+      indent.writeln('');
       indent.writeln('private $codecName() {}');
+      indent.writeln('');
       indent.writeln('@Override');
       indent.write(
           'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) ');
@@ -680,29 +715,35 @@ Result<$returnType> $resultName = new Result<$returnType>() {
         indent.write('switch (type) ');
         indent.scoped('{', '}', () {
           for (final EnumeratedClass customClass in codecClasses) {
-            indent.write('case (byte)${customClass.enumeration}: ');
+            indent.write('case (byte) ${customClass.enumeration}: ');
             indent.writeScoped('', '', () {
               indent.writeln(
                   'return ${customClass.name}.fromList((ArrayList<Object>) readValue(buffer));');
             });
           }
           indent.write('default:');
-          indent.writeScoped('', '', () {
+          indent.scoped('', '', () {
             indent.writeln('return super.readValueOfType(type, buffer);');
-          });
+          }, addTrailingNewline: false);
         });
       });
+      indent.writeln('');
       indent.writeln('@Override');
       indent.write(
           'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) ');
-      indent.writeScoped('{', '}', () {
+      indent.scoped('{', '}', () {
+        bool firstClass = true;
         for (final EnumeratedClass customClass in codecClasses) {
-          indent.write('if (value instanceof ${customClass.name}) ');
+          if (firstClass) {
+            indent.write('');
+            firstClass = false;
+          }
+          indent.add('if (value instanceof ${customClass.name}) ');
           indent.scoped('{', '} else ', () {
             indent.writeln('stream.write(${customClass.enumeration});');
             indent.writeln(
                 'writeValue(stream, ((${customClass.name}) value).toList());');
-          });
+          }, addTrailingNewline: false);
         }
         indent.scoped('{', '}', () {
           indent.writeln('super.writeValue(stream, value);');
@@ -716,17 +757,20 @@ Result<$returnType> $resultName = new Result<$returnType>() {
     indent.write('public interface Result<T> ');
     indent.scoped('{', '}', () {
       indent.writeln('void success(T result);');
+      indent.writeln('');
       indent.writeln('void error(Throwable error);');
     });
   }
 
   void _writeWrapError(Indent indent) {
     indent.format('''
-@NonNull private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
+@NonNull
+private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 \tArrayList<Object> errorList = new ArrayList<>(3);
 \terrorList.add(exception.toString());
 \terrorList.add(exception.getClass().getSimpleName());
-\terrorList.add("Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\terrorList.add(
+\t\t"Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
 \treturn errorList;
 }''');
   }
@@ -751,7 +795,7 @@ String _getCodecName(Api api) => '${api.name}Codec';
 /// Converts an expression that evaluates to an nullable int to an expression
 /// that evaluates to a nullable enum.
 String _intToEnum(String expression, String enumName) =>
-    '$expression == null ? null : $enumName.values()[(int)$expression]';
+    '$expression == null ? null : $enumName.values()[(int) $expression]';
 
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;
@@ -815,9 +859,12 @@ String _javaTypeForDartType(TypeDeclaration type) {
   return _javaTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
+String _nullSafeString(TypeDeclaration type) {
+  return type.isVoid ? '' : (type.isNullable ? '@Nullable ' : '@NonNull ');
+}
+
 String _nullsafeJavaTypeForDartType(TypeDeclaration type) {
-  final String nullSafe =
-      type.isVoid ? '' : (type.isNullable ? '@Nullable ' : '@NonNull ');
+  final String nullSafe = _nullSafeString(type);
   return '$nullSafe${_javaTypeForDartType(type)}';
 }
 
@@ -829,11 +876,11 @@ String _castObject(
   final HostDatatype hostDatatype = getFieldHostDatatype(field, classes, enums,
       (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
   if (field.type.baseName == 'int') {
-    return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
+    return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer) $varName : (${hostDatatype.datatype}) $varName)';
   } else if (!hostDatatype.isBuiltin &&
       classes.map((Class x) => x.name).contains(field.type.baseName)) {
-    return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<Object>)$varName)';
+    return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<Object>) $varName)';
   } else {
-    return '(${hostDatatype.datatype})$varName';
+    return '(${hostDatatype.datatype}) $varName';
   }
 }
