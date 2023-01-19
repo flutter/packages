@@ -138,12 +138,146 @@
   }];
 }
 
+- (void)callFlutterEchoAllTypes:(AllTypes *)everything
+                     completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoAllTypes:everything
+                     completion:^(AllTypes *value, NSError *error) {
+                       completion(value, error);
+                     }];
+}
+
+- (void)callFlutterSendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
+                                            anInt:(nullable NSNumber *)aNullableInt
+                                          aString:(nullable NSString *)aNullableString
+                                       completion:(void (^)(AllNullableTypes *_Nullable,
+                                                            FlutterError *_Nullable))completion {
+  [self.flutterAPI sendMultipleNullableTypesABool:aNullableBool
+                                            anInt:aNullableInt
+                                          aString:aNullableString
+                                       completion:^(AllNullableTypes *value, NSError *error) {
+                                         completion(value, error);
+                                       }];
+}
+
+- (void)callFlutterEchoBool:(NSNumber *)aBool
+                 completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoBool:aBool
+                 completion:^(NSNumber *value, NSError *error) {
+                   completion(value, error);
+                 }];
+}
+
+- (void)callFlutterEchoInt:(NSNumber *)anInt
+                completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoInt:anInt
+                completion:^(NSNumber *value, NSError *error) {
+                  completion(value, error);
+                }];
+}
+
+- (void)callFlutterEchoDouble:(NSNumber *)aDouble
+                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoDouble:aDouble
+                   completion:^(NSNumber *value, NSError *error) {
+                     completion(value, error);
+                   }];
+}
+
 - (void)callFlutterEchoString:(NSString *)aString
                    completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   [self.flutterAPI echoString:aString
                    completion:^(NSString *value, NSError *error) {
                      completion(value, error);
                    }];
+}
+
+- (void)callFlutterEchoUint8List:(FlutterStandardTypedData *)aList
+                      completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                           FlutterError *_Nullable))completion {
+  [self.flutterAPI echoUint8List:aList
+                      completion:^(FlutterStandardTypedData *value, NSError *error) {
+                        completion(value, error);
+                      }];
+}
+
+- (void)callFlutterEchoList:(NSArray<id> *)aList
+                 completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoList:aList
+                 completion:^(NSArray<id> *value, NSError *error) {
+                   completion(value, error);
+                 }];
+}
+
+- (void)callFlutterEchoMap:(NSDictionary<NSString *, id> *)aMap
+                completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                                     FlutterError *_Nullable))completion {
+  [self.flutterAPI echoMap:aMap
+                completion:^(NSDictionary<NSString *, id> *value, NSError *error) {
+                  completion(value, error);
+                }];
+}
+
+- (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
+                         completion:
+                             (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableBool:aBool
+                         completion:^(NSNumber *value, NSError *error) {
+                           completion(value, error);
+                         }];
+}
+
+- (void)callFlutterEchoNullableInt:(nullable NSNumber *)anInt
+                        completion:
+                            (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableInt:anInt
+                        completion:^(NSNumber *value, NSError *error) {
+                          completion(value, error);
+                        }];
+}
+
+- (void)callFlutterEchoNullableDouble:(nullable NSNumber *)aDouble
+                           completion:
+                               (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableDouble:aDouble
+                           completion:^(NSNumber *value, NSError *error) {
+                             completion(value, error);
+                           }];
+}
+
+- (void)callFlutterEchoNullableString:(nullable NSString *)aString
+                           completion:
+                               (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableString:aString
+                           completion:^(NSString *value, NSError *error) {
+                             completion(value, error);
+                           }];
+}
+
+- (void)callFlutterEchoNullableUint8List:(nullable FlutterStandardTypedData *)aList
+                              completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                                   FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableUint8List:aList
+                              completion:^(FlutterStandardTypedData *value, NSError *error) {
+                                completion(value, error);
+                              }];
+}
+
+- (void)callFlutterEchoNullableList:(nullable NSArray<id> *)aList
+                         completion:
+                             (void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableList:aList
+                         completion:^(NSArray<id> *value, NSError *error) {
+                           completion(value, error);
+                         }];
+}
+
+- (void)callFlutterEchoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
+                        completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                                             FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableMap:aMap
+                        completion:^(NSDictionary<NSString *, id> *value, NSError *error) {
+                          completion(value, error);
+                        }];
 }
 
 @end
