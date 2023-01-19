@@ -362,7 +362,6 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   void writeDataClasses(
       ObjcOptions generatorOptions, Root root, Indent indent) {
     _writeObjcSourceHelperFunctions(indent);
-    indent.addln('');
 
     for (final Class klass in root.classes) {
       _writeObjcSourceDataClassExtension(generatorOptions, indent, klass);
@@ -442,8 +441,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       indent.writeln('return $resultName;');
     });
 
-    indent.writeln(
-        '+ (nullable $className *)nullableFromList:(NSArray *)list { return (list) ? [$className fromList:list] : nil; }');
+    indent.write('+ (nullable $className *)nullableFromList:(NSArray *)list ');
+    indent.scoped('{', '}', () {
+      indent.writeln('return (list) ? [$className fromList:list] : nil;');
+    });
   }
 
   void _writeCodecAndGetter(
@@ -515,8 +516,8 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
           indent.scoped('{', '}', () {
             _writeChannelApiBinding(
                 generatorOptions, root, indent, apiName, func, channelName);
-          });
-          indent.write('else ');
+          }, addTrailingNewline: false);
+          indent.add(' else ');
           indent.scoped('{', '}', () {
             indent.writeln('[$channelName setMessageHandler:nil];');
           });
@@ -646,32 +647,33 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.format('''
 static NSArray *wrapResult(id result, FlutterError *error) {
 \tif (error) {
-\t\treturn @[ error.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null] ];
+\t\treturn @[
+\t\t\terror.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
+\t\t];
 \t}
-\treturn @[ result ?: [NSNull null]  ];
+\treturn @[ result ?: [NSNull null] ];
 }''');
     indent.format('''
-static id GetNullableObject(NSDictionary* dict, id key) {
+static id GetNullableObject(NSDictionary *dict, id key) {
 \tid result = dict[key];
 \treturn (result == [NSNull null]) ? nil : result;
 }
-static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
+static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 \tid result = array[key];
 \treturn (result == [NSNull null]) ? nil : result;
-}
-''');
+}''');
   }
 
   void _writeObjcSourceDataClassExtension(
       ObjcOptions languageOptions, Indent indent, Class klass) {
     final String className = _className(languageOptions.prefix, klass.name);
+    indent.writeln('');
     indent.writeln('@interface $className ()');
     indent.writeln('+ ($className *)fromList:(NSArray *)list;');
     indent
         .writeln('+ (nullable $className *)nullableFromList:(NSArray *)list;');
     indent.writeln('- (NSArray *)toList;');
     indent.writeln('@end');
-    indent.writeln('');
   }
 
   void _writeObjcSourceClassInitializer(
@@ -715,7 +717,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     indent.writeln('@interface $readerName : FlutterStandardReader');
     indent.writeln('@end');
     indent.writeln('@implementation $readerName');
-    indent.writeln('- (nullable id)readValueOfType:(UInt8)type ');
+    indent.write('- (nullable id)readValueOfType:(UInt8)type ');
     indent.scoped('{', '}', () {
       indent.write('switch (type) ');
       indent.scoped('{', '}', () {
@@ -726,8 +728,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
                 'return [${_className(options.prefix, customClass.name)} fromList:[self readValue]];');
           });
         }
-        indent.write('default:');
-        indent.writeScoped('', '', () {
+        indent.writeln('default:');
+        indent.nest(1, () {
           indent.writeln('return [super readValueOfType:type];');
         });
       });
@@ -737,15 +739,20 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     indent.writeln('@interface $writerName : FlutterStandardWriter');
     indent.writeln('@end');
     indent.writeln('@implementation $writerName');
-    indent.writeln('- (void)writeValue:(id)value ');
+    indent.write('- (void)writeValue:(id)value ');
     indent.scoped('{', '}', () {
+      bool firstClass = true;
       for (final EnumeratedClass customClass in codecClasses) {
-        indent.write(
+        if (firstClass) {
+          indent.write('');
+          firstClass = false;
+        }
+        indent.add(
             'if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
         indent.scoped('{', '} else ', () {
           indent.writeln('[self writeByte:${customClass.enumeration}];');
           indent.writeln('[self writeValue:[value toList]];');
-        });
+        }, addTrailingNewline: false);
       }
       indent.scoped('{', '}', () {
         indent.writeln('[super writeValue:value];');
@@ -763,8 +770,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
 \treturn [[$readerName alloc] initWithData:data];
 }
-@end
-''');
+@end''');
   }
 
   void _writeCodecGetter(
@@ -1050,7 +1056,7 @@ String _getSafeArgName(int count, NamedType arg) =>
 void _writeExtension(Indent indent, String apiName) {
   indent.writeln('@interface $apiName ()');
   indent.writeln(
-      '@property (nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;');
+      '@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;');
   indent.writeln('@end');
 }
 
