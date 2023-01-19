@@ -96,20 +96,20 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
-    indent.addln('');
+    indent.newln();
   }
 
   @override
   void writeFileImports(
       ObjcOptions generatorOptions, Root root, Indent indent) {
     indent.writeln('#import <Foundation/Foundation.h>');
-    indent.addln('');
+    indent.newln();
 
     indent.writeln('@protocol FlutterBinaryMessenger;');
     indent.writeln('@protocol FlutterMessageCodec;');
     indent.writeln('@class FlutterError;');
     indent.writeln('@class FlutterStandardTypedData;');
-    indent.addln('');
+    indent.newln();
     indent.writeln('NS_ASSUME_NONNULL_BEGIN');
   }
 
@@ -117,7 +117,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   void writeEnum(
       ObjcOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
     final String enumName = _className(generatorOptions.prefix, anEnum.name);
-    indent.writeln('');
+    indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
@@ -136,12 +136,12 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
   @override
   void writeDataClasses(
       ObjcOptions generatorOptions, Root root, Indent indent) {
-    indent.writeln('');
+    indent.newln();
     for (final Class klass in root.classes) {
       indent.writeln(
           '@class ${_className(generatorOptions.prefix, klass.name)};');
     }
-    indent.writeln('');
+    indent.newln();
     super.writeDataClasses(generatorOptions, root, indent);
   }
 
@@ -192,7 +192,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
           '@property(nonatomic, $propertyType$nullability) ${hostDatatype.datatype} ${field.name};');
     }
     indent.writeln('@end');
-    indent.writeln('');
+    indent.newln();
   }
 
   @override
@@ -232,7 +232,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         '$_docCommentPrefix The codec used by ${_className(generatorOptions.prefix, api.name)}.');
     indent.writeln(
         'NSObject<FlutterMessageCodec> *${_getCodecGetterName(generatorOptions.prefix, api.name)}(void);');
-    indent.addln('');
+    indent.newln();
     final String apiName = _className(generatorOptions.prefix, api.name);
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
@@ -257,7 +257,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       )};');
     }
     indent.writeln('@end');
-    indent.writeln('');
+    indent.newln();
   }
 
   @override
@@ -271,7 +271,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         '$_docCommentPrefix The codec used by ${_className(generatorOptions.prefix, api.name)}.');
     indent.writeln(
         'NSObject<FlutterMessageCodec> *${_getCodecGetterName(generatorOptions.prefix, api.name)}(void);');
-    indent.addln('');
+    indent.newln();
     final String apiName = _className(generatorOptions.prefix, api.name);
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
@@ -322,10 +322,10 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       indent.writeln('$signature;');
     }
     indent.writeln('@end');
-    indent.writeln('');
+    indent.newln();
     indent.writeln(
         'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api);');
-    indent.writeln('');
+    indent.newln();
   }
 }
 
@@ -342,7 +342,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -350,12 +350,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       ObjcOptions generatorOptions, Root root, Indent indent) {
     indent.writeln('#import "${generatorOptions.headerIncludePath}"');
     indent.writeln('#import <Flutter/Flutter.h>');
-    indent.addln('');
+    indent.newln();
 
     indent.writeln('#if !__has_feature(objc_arc)');
     indent.writeln('#error File requires ARC to be enabled.');
     indent.writeln('#endif');
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -366,7 +366,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     for (final Class klass in root.classes) {
       _writeObjcSourceDataClassExtension(generatorOptions, indent, klass);
     }
-    indent.writeln('');
+    indent.newln();
     super.writeDataClasses(generatorOptions, root, indent);
   }
 
@@ -387,7 +387,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
         customEnumNames);
     indent.writeln('@end');
-    indent.writeln('');
+    indent.newln();
   }
 
   @override
@@ -452,10 +452,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     final String codecName = _getCodecName(generatorOptions.prefix, api.name);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, codecName, generatorOptions, api, root);
-      indent.addln('');
+      indent.newln();
     }
     _writeCodecGetter(indent, codecName, generatorOptions, api, root);
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -471,15 +471,15 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     _writeCodecAndGetter(generatorOptions, root, indent, api);
 
     _writeExtension(indent, apiName);
-    indent.addln('');
+    indent.newln();
     indent.writeln('@implementation $apiName');
-    indent.addln('');
+    indent.newln();
     _writeInitializer(indent);
     for (final Method func in api.methods) {
       _writeMethod(generatorOptions, root, indent, api, func);
     }
     indent.writeln('@end');
-    indent.writeln('');
+    indent.newln();
   }
 
   @override
@@ -499,11 +499,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
     indent.scoped('{', '}', () {
       for (final Method func in api.methods) {
-        indent.write('');
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
 
-        indent.scoped('{', '}', () {
+        indent.writeScoped('{', '}', () {
           String? taskQueue;
           if (func.taskQueueType != TaskQueueType.serial) {
             taskQueue = 'taskQueue';
@@ -634,7 +633,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.add('${_getCodecGetterName(generatorOptions.prefix, api.name)}()');
 
     if (taskQueue != null) {
-      indent.addln('');
+      indent.newln();
       indent.addln('taskQueue:$taskQueue];');
     } else {
       indent.addln('];');
@@ -667,7 +666,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   void _writeObjcSourceDataClassExtension(
       ObjcOptions languageOptions, Indent indent, Class klass) {
     final String className = _className(languageOptions.prefix, klass.name);
-    indent.writeln('');
+    indent.newln();
     indent.writeln('@interface $className ()');
     indent.writeln('+ ($className *)fromList:(NSArray *)list;');
     indent
@@ -735,7 +734,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
       });
     });
     indent.writeln('@end');
-    indent.addln('');
+    indent.newln();
     indent.writeln('@interface $writerName : FlutterStandardWriter');
     indent.writeln('@end');
     indent.writeln('@implementation $writerName');
@@ -759,7 +758,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
       });
     });
     indent.writeln('@end');
-    indent.addln('');
+    indent.newln();
     indent.format('''
 @interface $readerWriterName : FlutterStandardReaderWriter
 @end
@@ -815,7 +814,7 @@ void _writeObjcSourceClassInitializerDeclaration(Indent indent, Class klass,
       final void Function(String) printer = isFirst
           ? indent.add
           : (String x) {
-              indent.addln('');
+              indent.newln();
               indent.write(x);
             };
       isFirst = false;

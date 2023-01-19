@@ -104,7 +104,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     }
     indent.writeln('$_commentPrefix $generatedCodeWarning');
     indent.writeln('$_commentPrefix $seeAlsoWarning');
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -119,30 +119,30 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       'flutter/encodable_value.h',
       'flutter/standard_message_codec.h',
     ]);
-    indent.addln('');
+    indent.newln();
     _writeSystemHeaderIncludeBlock(indent, <String>[
       'map',
       'string',
       'optional',
     ]);
-    indent.addln('');
+    indent.newln();
     if (generatorOptions.namespace != null) {
       indent.writeln('namespace ${generatorOptions.namespace} {');
     }
-    indent.addln('');
+    indent.newln();
     if (generatorOptions.namespace?.endsWith('_pigeontest') ?? false) {
       final String testFixtureClass =
           '${_pascalCaseFromSnakeCase(generatorOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
       indent.writeln('class $testFixtureClass;');
     }
-    indent.addln('');
+    indent.newln();
     indent.writeln('$_commentPrefix Generated class from Pigeon.');
   }
 
   @override
   void writeEnum(
       CppOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
-    indent.writeln('');
+    indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
@@ -173,7 +173,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       testFixtureClass =
           '${_pascalCaseFromSnakeCase(generatorOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
     }
-    indent.addln('');
+    indent.newln();
 
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
@@ -204,7 +204,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             indent.writeln(
                 'void ${_makeSetterName(field)}(${_unownedArgumentType(nonNullType)} value_arg);');
           }
-          indent.addln('');
+          indent.newln();
         }
       });
 
@@ -236,7 +236,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         }
       });
     }, nestCount: 0);
-    indent.writeln('');
+    indent.newln();
   }
 
   @override
@@ -263,7 +263,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       indent.scoped(' public:', '', () {
         indent
             .write('${api.name}(flutter::BinaryMessenger* binary_messenger);');
-        indent.writeln('');
+        indent.newln();
         indent
             .writeln('static const flutter::StandardMessageCodec& GetCodec();');
         for (final Method func in api.methods) {
@@ -288,7 +288,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         }
       });
     }, nestCount: 0);
-    indent.writeln('');
+    indent.newln();
   }
 
   @override
@@ -347,7 +347,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
                 'virtual $returnTypeName ${_makeMethodName(method)}(${argSignature.join(', ')}) = 0;');
           }
         }
-        indent.addln('');
+        indent.newln();
         indent.writeln('$_commentPrefix The codec used by ${api.name}.');
         indent
             .writeln('static const flutter::StandardMessageCodec& GetCodec();');
@@ -374,7 +374,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         .write('class $codeSerializerName : public $_defaultCodecSerializer ');
     indent.scoped('{', '};', () {
       indent.scoped(' public:', '', () {
-        indent.writeln('');
+        indent.newln();
         indent.format('''
 inline static $codeSerializerName& GetInstance() {
 \tstatic $codeSerializerName sInstance;
@@ -392,7 +392,7 @@ inline static $codeSerializerName& GetInstance() {
             'flutter::EncodableValue ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const override;');
       });
     }, nestCount: 0);
-    indent.addln('');
+    indent.newln();
   }
 
   void _writeErrorOr(Indent indent,
@@ -468,28 +468,28 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     }
     indent.writeln('$_commentPrefix $generatedCodeWarning');
     indent.writeln('$_commentPrefix $seeAlsoWarning');
-    indent.addln('');
+    indent.newln();
     indent.addln('#undef _HAS_EXCEPTIONS');
-    indent.addln('');
+    indent.newln();
   }
 
   @override
   void writeFileImports(CppOptions generatorOptions, Root root, Indent indent) {
     indent.writeln('#include "${generatorOptions.headerIncludePath}"');
-    indent.addln('');
+    indent.newln();
     _writeSystemHeaderIncludeBlock(indent, <String>[
       'flutter/basic_message_channel.h',
       'flutter/binary_messenger.h',
       'flutter/encodable_value.h',
       'flutter/standard_message_codec.h',
     ]);
-    indent.addln('');
+    indent.newln();
     _writeSystemHeaderIncludeBlock(indent, <String>[
       'map',
       'string',
       'optional',
     ]);
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -508,9 +508,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     final Set<String> customEnumNames =
         root.enums.map((Enum x) => x.name).toSet();
 
-    indent.addln('');
+    indent.newln();
     indent.writeln('$_commentPrefix ${klass.name}');
-    indent.addln('');
+    indent.newln();
 
     // Getters and setters.
     for (final NamedType field in getFieldsInSerializationOrder(klass)) {
@@ -523,7 +523,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
     // Default constructor.
     indent.writeln('${klass.name}::${klass.name}() {}');
-    indent.addln('');
+    indent.newln();
 
     // Deserialization.
     writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
@@ -552,7 +552,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         }
       });
     });
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -607,7 +607,7 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
         }
       });
     });
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -628,7 +628,7 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
     indent.scoped('{', '}', () {
       indent.writeln('this->binary_messenger_ = binary_messenger;');
     });
-    indent.writeln('');
+    indent.newln();
     final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
         ? _getCodecSerializerName(api)
         : _defaultCodecSerializer;
@@ -657,7 +657,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       ];
       indent.write(
           'void ${api.name}::${_makeMethodName(func)}(${parameters.join(', ')}) ');
-      indent.scoped('{', '}', () {
+      indent.writeScoped('{', '}', () {
         const String channel = 'channel';
         indent.writeln(
             'auto channel = std::make_unique<flutter::BasicMessageChannel<>>(binary_messenger_, '
@@ -815,7 +815,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       }
     });
 
-    indent.addln('');
+    indent.newln();
     indent.format('''
 flutter::EncodableValue ${api.name}::WrapError(std::string_view error_message) {
 \treturn flutter::EncodableValue(flutter::EncodableList{
@@ -831,7 +831,7 @@ flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
 \t\terror.details()
 \t});
 }''');
-    indent.addln('');
+    indent.newln();
   }
 
   void _writeCodec(
@@ -862,7 +862,7 @@ flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
         }, addTrailingNewline: false);
       });
     });
-    indent.writeln('');
+    indent.newln();
     indent.write(
         'void $codeSerializerName::WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const ');
     indent.writeScoped('{', '}', () {
@@ -882,7 +882,7 @@ flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
       });
       indent.writeln('$_defaultCodecSerializer::WriteValue(value, stream);');
     });
-    indent.writeln('');
+    indent.newln();
   }
 
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
@@ -919,7 +919,7 @@ flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
       indent.writeln(makeSetter(nonNullType));
     }
 
-    indent.addln('');
+    indent.newln();
   }
 
   String _wrapResponse(Indent indent, Root root, TypeDeclaration returnType,

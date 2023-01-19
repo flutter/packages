@@ -61,7 +61,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -77,13 +77,13 @@ import FlutterMacOS
 #error("Unsupported platform.")
 #endif
 ''');
-    indent.writeln('');
+    indent.newln();
   }
 
   @override
   void writeEnum(
       SwiftOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
-    indent.writeln('');
+    indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
@@ -108,7 +108,7 @@ import FlutterMacOS
     const List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
-    indent.addln('');
+    indent.newln();
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
@@ -119,7 +119,7 @@ import FlutterMacOS
         _writeClassField(indent, field);
       });
 
-      indent.writeln('');
+      indent.newln();
       writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
           customEnumNames);
       writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
@@ -216,7 +216,7 @@ import FlutterMacOS
         }
       });
 
-      indent.writeln('');
+      indent.newln();
       indent.write('return ');
       indent.scoped('$className(', ')', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
@@ -247,7 +247,7 @@ import FlutterMacOS
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
-      indent.addln('');
+      indent.newln();
     }
     super.writeApis(generatorOptions, root, indent);
   }
@@ -409,7 +409,7 @@ import FlutterMacOS
       }
     });
 
-    indent.addln('');
+    indent.newln();
     indent.writeln(
         '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
     indent.write('class ${apiName}Setup ');
@@ -542,7 +542,7 @@ import FlutterMacOS
         });
       }
     });
-    indent.writeln('');
+    indent.newln();
 
     // Generate ReaderWriter
     indent
@@ -553,14 +553,14 @@ import FlutterMacOS
       indent.scoped('{', '}', () {
         indent.writeln('return $readerName(data: data)');
       });
-      indent.writeln('');
+      indent.newln();
       indent.write(
           'override func writer(with data: NSMutableData) -> FlutterStandardWriter ');
       indent.scoped('{', '}', () {
         indent.writeln('return $writerName(data: data)');
       });
     });
-    indent.writeln('');
+    indent.newln();
 
     // Generate Codec
     indent.write('class $codecName: FlutterStandardMessageCodec ');
@@ -568,11 +568,11 @@ import FlutterMacOS
       indent.writeln(
           'static let shared = $codecName(readerWriter: $readerWriterName())');
     });
-    indent.addln('');
+    indent.newln();
   }
 
   void _writeWrapResult(Indent indent) {
-    indent.addln('');
+    indent.newln();
     indent.write('private func wrapResult(_ result: Any?) -> [Any?] ');
     indent.scoped('{', '}', () {
       indent.writeln('return [result]');
@@ -580,7 +580,7 @@ import FlutterMacOS
   }
 
   void _writeWrapError(Indent indent) {
-    indent.addln('');
+    indent.newln();
     indent.write('private func wrapError(_ error: FlutterError) -> [Any?] ');
     indent.scoped('{', '}', () {
       indent.write('return ');

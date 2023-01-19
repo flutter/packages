@@ -86,7 +86,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.writeln(
       '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import',
     );
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -96,7 +96,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.writeln(
       "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
     );
-    indent.addln('');
+    indent.newln();
     indent.writeln(
         "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
     indent.writeln("import 'package:flutter/services.dart';");
@@ -105,7 +105,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   @override
   void writeEnum(
       DartOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
-    indent.writeln('');
+    indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum ${anEnum.name} ');
@@ -126,25 +126,25 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     final Set<String> customEnumNames =
         root.enums.map((Enum x) => x.name).toSet();
 
-    indent.writeln('');
+    indent.newln();
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec);
 
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       _writeConstructor(indent, klass);
-      indent.addln('');
+      indent.newln();
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         addDocumentationComments(
             indent, field.documentationComments, _docCommentSpec);
 
         final String datatype = _addGenericTypesNullable(field.type);
         indent.writeln('$datatype ${field.name};');
-        indent.writeln('');
+        indent.newln();
       }
       writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
           customEnumNames);
-      indent.writeln('');
+      indent.newln();
       writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
           customEnumNames);
     });
@@ -207,27 +207,25 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       if (customClassNames.contains(field.type.baseName)) {
         final String nonNullValue =
             '${field.type.baseName}.decode($resultAt! as List<Object?>)';
-        indent.format(
-            field.type.isNullable
-                ? '''
+        if (field.type.isNullable) {
+          indent.format('''
 $resultAt != null
 \t\t? $nonNullValue
-\t\t: null'''
-                : nonNullValue,
-            leadingSpace: false,
-            trailingNewline: false);
+\t\t: null''', leadingSpace: false, trailingNewline: false);
+        } else {
+          indent.add(nonNullValue);
+        }
       } else if (customEnumNames.contains(field.type.baseName)) {
         final String nonNullValue =
             '${field.type.baseName}.values[$resultAt! as int]';
-        indent.format(
-            field.type.isNullable
-                ? '''
+        if (field.type.isNullable) {
+          indent.format('''
 $resultAt != null
 \t\t? $nonNullValue
-\t\t: null'''
-                : nonNullValue,
-            leadingSpace: false,
-            trailingNewline: false);
+\t\t: null''', leadingSpace: false, trailingNewline: false);
+        } else {
+          indent.add(nonNullValue);
+        }
       } else if (field.type.typeArguments.isNotEmpty) {
         final String genericType = _makeGenericTypeArguments(field.type);
         final String castCall = _makeGenericCastCall(field.type);
@@ -292,7 +290,7 @@ $resultAt != null
       codecName = _getCodecName(api);
       _writeCodec(indent, codecName, api, root);
     }
-    indent.addln('');
+    indent.newln();
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
 
@@ -300,7 +298,7 @@ $resultAt != null
     indent.scoped('{', '}', () {
       indent
           .writeln('static const MessageCodec<Object?> codec = $codecName();');
-      indent.addln('');
+      indent.newln();
       for (final Method func in api.methods) {
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
@@ -314,7 +312,7 @@ $resultAt != null
           _getArgumentName,
         );
         indent.writeln('$returnType ${func.name}($argSignature);');
-        indent.writeln('');
+        indent.newln();
       }
       indent.write(
           'static void setup(${api.name}? api, {BinaryMessenger? binaryMessenger}) ');
@@ -447,7 +445,7 @@ $resultAt != null
       codecName = _getCodecName(api);
       _writeCodec(indent, codecName, api, root);
     }
-    indent.addln('');
+    indent.newln();
     bool first = true;
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
@@ -464,10 +462,10 @@ final BinaryMessenger? _binaryMessenger;
 
       indent
           .writeln('static const MessageCodec<Object?> codec = $codecName();');
-      indent.addln('');
+      indent.newln();
       for (final Method func in api.methods) {
         if (!first) {
-          indent.writeln('');
+          indent.newln();
         } else {
           first = false;
         }
@@ -586,7 +584,7 @@ if (replyList == null) {
           dartHostTestHandler: api.dartHostTestHandler,
           documentationComments: api.documentationComments,
         );
-        indent.writeln('');
+        indent.newln();
         writeFlutterApi(
           generatorOptions,
           root,
@@ -622,7 +620,7 @@ if (replyList == null) {
         "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
     indent.writeln("import 'package:flutter/services.dart';");
     indent.writeln("import 'package:flutter_test/flutter_test.dart';");
-    indent.writeln('');
+    indent.newln();
   }
 }
 
@@ -643,7 +641,7 @@ String _getCodecName(Api api) => '_${api.name}Codec';
 void _writeCodec(Indent indent, String codecName, Api api, Root root) {
   assert(getCodecClasses(api, root).isNotEmpty);
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
-  indent.writeln('');
+  indent.newln();
   indent.write('class $codecName extends $_standardMessageCodec');
   indent.scoped(' {', '}', () {
     indent.writeln('const $codecName();');
@@ -665,7 +663,7 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
         indent.writeln('super.writeValue(buffer, value);');
       });
     });
-    indent.writeln('');
+    indent.newln();
     indent.writeln('@override');
     indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
     indent.scoped('{', '}', () {

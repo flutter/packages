@@ -83,11 +83,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   @override
   void writeFileImports(
       KotlinOptions generatorOptions, Root root, Indent indent) {
-    indent.addln('');
+    indent.newln();
     if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package}');
     }
-    indent.addln('');
+    indent.newln();
     indent.writeln('import android.util.Log');
     indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
@@ -100,7 +100,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   @override
   void writeEnum(
       KotlinOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
-    indent.writeln('');
+    indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
@@ -116,7 +116,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         }
       });
 
-      indent.writeln('');
+      indent.newln();
       indent.write('companion object ');
       indent.scoped('{', '}', () {
         indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
@@ -138,7 +138,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
-    indent.addln('');
+    indent.newln();
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
@@ -150,7 +150,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         if (getFieldsInSerializationOrder(klass).last != element) {
           indent.addln(',');
         } else {
-          indent.addln('');
+          indent.newln();
         }
       }
     });
@@ -290,7 +290,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
-      indent.addln('');
+      indent.newln();
     }
     super.writeApis(generatorOptions, root, indent);
   }
@@ -450,7 +450,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         }
       }
 
-      indent.addln('');
+      indent.newln();
       indent.write('companion object ');
       indent.scoped('{', '}', () {
         indent.writeln('/** The codec used by $apiName. */');
@@ -592,11 +592,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         });
       });
     });
-    indent.addln('');
+    indent.newln();
   }
 
   void _writeWrapResult(Indent indent) {
-    indent.addln('');
+    indent.newln();
     indent.write('private fun wrapResult(result: Any?): List<Any?> ');
     indent.scoped('{', '}', () {
       indent.writeln('return listOf(result)');
@@ -604,7 +604,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 
   void _writeWrapError(Indent indent) {
-    indent.addln('');
+    indent.newln();
     indent.write('private fun wrapError(exception: Throwable): List<Any> ');
     indent.scoped('{', '}', () {
       indent.write('return ');

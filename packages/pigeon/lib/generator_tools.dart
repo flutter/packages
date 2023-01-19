@@ -144,6 +144,11 @@ class Indent {
   void add(String text) {
     _sink.write(text);
   }
+
+  /// Adds single newline.
+  void newln() {
+    _sink.write(newline);
+  }
 }
 
 /// Create the generated channel name for a [func] on a [api].
