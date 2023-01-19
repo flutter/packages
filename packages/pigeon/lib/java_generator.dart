@@ -186,7 +186,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
-    indent.write('public static class ${klass.name} ');
+    indent.write('public static final class ${klass.name} ');
     indent.scoped('{', '}', () {
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         _writeClassField(generatorOptions, root, indent, field);
@@ -340,7 +340,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   /// Writes the code for a flutter [Api], [api].
   /// Example:
-  /// public static class Foo {
+  /// public static final class Foo {
   ///   public Foo(BinaryMessenger argBinaryMessenger) {...}
   ///   public interface Reply<T> {
   ///     void reply(T reply);
@@ -364,13 +364,14 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
-    indent.write('public static class ${api.name} ');
+    indent.write('public static final class ${api.name} ');
     indent.scoped('{', '}', () {
       indent.writeln('private final BinaryMessenger binaryMessenger;');
       indent.write('public ${api.name}(BinaryMessenger argBinaryMessenger)');
       indent.scoped('{', '}', () {
         indent.writeln('this.binaryMessenger = argBinaryMessenger;');
       });
+      indent.write('/** Public interface for sending reply. */ ');
       indent.write('public interface Reply<T> ');
       indent.scoped('{', '}', () {
         indent.writeln('void reply(T reply);');
@@ -427,10 +428,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           indent.dec();
           indent.dec();
           indent.write('$channel.send($sendArgument, channelReply -> ');
-          indent.scoped('{', '});', () {
-            if (func.returnType.isVoid) {
-              indent.writeln('callback.reply(null);');
-            } else {
+          if (func.returnType.isVoid) {
+            indent.addln('callback.reply(null));');
+          } else {
+            indent.scoped('{', '});', () {
               const String output = 'output';
               indent.writeln('@SuppressWarnings("ConstantConditions")');
               if (func.returnType.baseName == 'int') {
@@ -441,8 +442,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     '$returnType $output = ($returnType)channelReply;');
               }
               indent.writeln('callback.reply($output);');
-            }
-          });
+            });
+          }
         });
       }
     });
