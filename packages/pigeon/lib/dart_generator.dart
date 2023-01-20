@@ -584,7 +584,6 @@ if (replyList == null) {
           dartHostTestHandler: api.dartHostTestHandler,
           documentationComments: api.documentationComments,
         );
-        indent.newln();
         writeFlutterApi(
           generatorOptions,
           root,

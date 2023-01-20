@@ -2180,6 +2180,7 @@ public class CoreTests {
     public FlutterIntegrationCoreApi(BinaryMessenger argBinaryMessenger) {
       this.binaryMessenger = argBinaryMessenger;
     }
+
     /** Public interface for sending reply. */
     public interface Reply<T> {
       void reply(T reply);

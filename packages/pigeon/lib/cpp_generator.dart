@@ -607,7 +607,6 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
         }
       });
     });
-    indent.newln();
   }
 
   @override
@@ -793,8 +792,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                   indent.writeln('$returnTypeName output = $call;');
                   indent.format(_wrapResponse(indent, root, method.returnType));
                 }
-              });
-              indent.write('catch (const std::exception& exception) ');
+              }, addTrailingNewline: false);
+              indent.add(' catch (const std::exception& exception) ');
               indent.scoped('{', '}', () {
                 // There is a potential here for `reply` to be called twice, which
                 // is a violation of the API contract, because there's no way of
@@ -842,6 +841,7 @@ flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
   ) {
     assert(getCodecClasses(api, root).isNotEmpty);
     final String codeSerializerName = _getCodecSerializerName(api);
+    indent.newln();
     indent.writeln('$codeSerializerName::$codeSerializerName() {}');
     indent.write(
         'flutter::EncodableValue $codeSerializerName::ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const ');

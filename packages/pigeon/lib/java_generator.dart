@@ -441,16 +441,15 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           indent.writeln('new BasicMessageChannel<>(');
           indent.inc(2);
           indent.writeln('binaryMessenger, "$channelName", getCodec());');
-          indent.dec(2);
-          indent.dec(2);
+          indent.dec(4);
           indent.writeln('$channel.send(');
           indent.inc(2);
           indent.writeln('$sendArgument,');
           indent.write('channelReply -> ');
-          indent.scoped('{', '});', () {
-            if (func.returnType.isVoid) {
-              indent.writeln('callback.reply(null);');
-            } else {
+          if (func.returnType.isVoid) {
+            indent.addln('callback.reply(null));');
+          } else {
+            indent.scoped('{', '});', () {
               const String output = 'output';
               indent.writeln('@SuppressWarnings("ConstantConditions")');
               if (func.returnType.baseName == 'int') {
@@ -461,8 +460,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     '$returnType $output = ($returnType) channelReply;');
               }
               indent.writeln('callback.reply($output);');
-            }
-          });
+            });
+          }
           indent.dec(2);
         });
       }
