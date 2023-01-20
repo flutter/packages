@@ -1,6 +1,6 @@
 # CHANGES
 
-## 2.0.0-dev.1
+## 2.0.0
 
 - Use parsing backend from `vector_graphics_compiler`.
   - Out of order defs now supported.
@@ -24,6 +24,8 @@
 - The `PicturePovider` class exists only for access to a no-op cache.
 - Several static members on `SvgPicture` and the `svg` utility class have gone
   away.
+- The `color` and `colorBlendMode` properties have been removed. Instead, use
+  the `colorFilter` property instead.
 
 ## 1.1.6
 
