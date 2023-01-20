@@ -195,19 +195,19 @@ Future<int> _runFlutterUnitTests() async {
   // shared_test_plugin_code instead of having multiple copies of generation.
   const String flutterUnitTestsPath =
       'platform_tests/flutter_null_safe_unit_tests';
+  // Files from the pigeons/ directory to generate output for.
+  const List<String> inputPigeons = <String>[
+    'flutter_unittests',
+    'core_tests',
+    'primitive',
+    'multiple_arity',
+    'non_null_fields',
+    'null_fields',
+    'nullable_returns',
+  ];
   final int generateCode = await _generateDart(<String, String>{
-    'pigeons/flutter_unittests.dart':
-        '$flutterUnitTestsPath/lib/flutter_unittests.gen.dart',
-    'pigeons/core_tests.dart': '$flutterUnitTestsPath/lib/core_tests.gen.dart',
-    'pigeons/primitive.dart': '$flutterUnitTestsPath/lib/primitive.gen.dart',
-    'pigeons/multiple_arity.dart':
-        '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',
-    'pigeons/non_null_fields.dart':
-        '$flutterUnitTestsPath/lib/non_null_fields.gen.dart',
-    'pigeons/null_fields.dart':
-        '$flutterUnitTestsPath/lib/null_fields.gen.dart',
-    'pigeons/nullable_returns.dart':
-        '$flutterUnitTestsPath/lib/nullable_returns.gen.dart',
+    for (final String name in inputPigeons)
+      'pigeons/$name.dart': '$flutterUnitTestsPath/lib/$name.gen.dart'
   });
   if (generateCode != 0) {
     return generateCode;
