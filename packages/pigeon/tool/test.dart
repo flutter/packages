@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// Script for executing the Pigeon tests
 ///
-/// usage: dart run tool/run_tests.dart
+/// usage: dart run tool/test.dart
 ////////////////////////////////////////////////////////////////////////////////
 import 'dart:io' show Platform, exit;
 import 'dart:math';
@@ -43,7 +43,7 @@ Future<void> main(List<String> args) async {
   } else if (argResults.wasParsed('help')) {
     print('''
 Pigeon run_tests
-usage: dart run tool/run_tests.dart [-l | -t <test name>]
+usage: dart run tool/test.dart [-l | -t <test name>]
 
 ${parser.usage}''');
     exit(0);
