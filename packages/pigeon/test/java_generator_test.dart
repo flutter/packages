@@ -36,8 +36,8 @@ void main() {
     expect(code, contains('private @Nullable Long field1;'));
     expect(
         code,
-        contains(
-            '@NonNull\n  private static ArrayList<Object> wrapError(@NonNull Throwable exception)'));
+        contains(RegExp(
+            r'@NonNull\s*private static ArrayList<Object> wrapError\(@NonNull Throwable exception\)')));
   });
 
   test('gen one enum', () {
@@ -386,7 +386,7 @@ void main() {
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('doSomething(Reply<Output>'));
-    expect(code, contains('channel.send(\n          null'));
+    expect(code, contains(RegExp(r'channel.send\(\s*null')));
   });
 
   test('gen list', () {
@@ -954,8 +954,8 @@ void main() {
             'public void add(@NonNull Long xArg, @NonNull Long yArg, Reply<Long> callback)'));
     expect(
         code,
-        contains(
-            'channel.send(\n          new ArrayList<Object>(Arrays.asList(xArg, yArg)),\n          channelReply ->'));
+        contains(RegExp(
+            r'channel.send\(\s*new ArrayList<Object>\(Arrays.asList\(xArg, yArg\)\),\s*channelReply ->')));
   });
 
   test('flutter single args', () {
@@ -980,8 +980,8 @@ void main() {
     final String code = sink.toString();
     expect(
         code,
-        contains(
-            'channel.send(\n          new ArrayList<Object>(Collections.singletonList(xArg)),\n          channelReply ->'));
+        contains(RegExp(
+            r'channel.send\(\s*new ArrayList<Object>\(Collections.singletonList\(xArg\)\),\s*channelReply ->')));
   });
 
   test('return nullable host', () {
@@ -1005,7 +1005,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('@Nullable \n    Long doit();'));
+    expect(code, contains(RegExp(r'@Nullable\s*Long doit\(\);')));
   });
 
   test('return nullable host async', () {
@@ -1125,8 +1125,8 @@ void main() {
             'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();'));
     expect(
         code,
-        contains(
-            'new BasicMessageChannel<>(\n                binaryMessenger, "dev.flutter.pigeon.Api.doit", getCodec(), taskQueue)'));
+        contains(RegExp(
+            r'new BasicMessageChannel<>\(\s*binaryMessenger, "dev.flutter.pigeon.Api.doit", getCodec\(\), taskQueue\)')));
   });
 
   test('generated annotation', () {
