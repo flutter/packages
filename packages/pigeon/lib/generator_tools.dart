@@ -145,7 +145,7 @@ class Indent {
     _sink.write(text);
   }
 
-  /// Adds single newline.
+  /// Adds [lines] number of newlines.
   void newln([int lines = 1]) {
     for (; lines > 0; lines--) {
       _sink.write(newline);
