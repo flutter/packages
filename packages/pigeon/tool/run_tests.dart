@@ -39,60 +39,76 @@ class _TestInfo {
   final String? description;
 }
 
+// Test suite names.
+const String androidJavaUnitTests = 'android_java_unittests';
+const String androidJavaIntegrationTests = 'android_java_integration_tests';
+const String androidKotlinUnitTests = 'android_kotlin_unittests';
+const String androidKotlinIntegrationTests = 'android_kotlin_integration_tests';
+const String iOSObjCUnitTests = 'ios_objc_unittests';
+const String iOSObjCUnitTestsLegacy = 'ios_objc_legacy_unittests';
+const String iOSObjCIntegrationTests = 'ios_objc_integration_tests';
+const String iOSSwiftUnitTests = 'ios_swift_unittests';
+const String iOSSwiftIntegrationTests = 'ios_swift_integration_tests';
+const String macOSSwiftUnitTests = 'macos_swift_unittests';
+const String macOSSwiftIntegrationTests = 'macos_swift_integration_tests';
+const String windowsUnitTests = 'windows_unittests';
+const String windowsIntegrationTests = 'windows_integration_tests';
+const String dartUnitTests = 'dart_unittests';
+const String flutterUnitTests = 'flutter_unittests';
+const String mockHandlerTests = 'mock_handler_tests';
+const String commandLineTests = 'command_line_tests';
+
 const Map<String, _TestInfo> _tests = <String, _TestInfo>{
-  'windows_unittests': _TestInfo(
+  windowsUnitTests: _TestInfo(
       function: _runWindowsUnitTests,
       description: 'Unit tests on generated Windows C++ code.'),
-  'windows_integration_tests': _TestInfo(
+  windowsIntegrationTests: _TestInfo(
       function: _runWindowsIntegrationTests,
       description: 'Integration tests on generated Windows C++ code.'),
-  'android_java_unittests': _TestInfo(
+  androidJavaUnitTests: _TestInfo(
       function: _runAndroidJavaUnitTests,
       description: 'Unit tests on generated Java code.'),
-  'android_java_integration_tests': _TestInfo(
+  androidJavaIntegrationTests: _TestInfo(
       function: _runAndroidJavaIntegrationTests,
       description: 'Integration tests on generated Java code.'),
-  'android_kotlin_unittests': _TestInfo(
+  androidKotlinUnitTests: _TestInfo(
       function: _runAndroidKotlinUnitTests,
       description: 'Unit tests on generated Kotlin code.'),
-  'android_kotlin_integration_tests': _TestInfo(
+  androidKotlinIntegrationTests: _TestInfo(
       function: _runAndroidKotlinIntegrationTests,
       description: 'Integration tests on generated Kotlin code.'),
-  'dart_compilation_tests': _TestInfo(
-      function: _runDartCompilationTests,
-      description: 'Compilation tests on generated Dart code.'),
-  'dart_unittests': _TestInfo(
+  dartUnitTests: _TestInfo(
       function: _runDartUnitTests,
       description: "Unit tests on and analysis on Pigeon's implementation."),
-  'flutter_unittests': _TestInfo(
+  flutterUnitTests: _TestInfo(
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
-  'ios_objc_unittests': _TestInfo(
+  iOSObjCUnitTests: _TestInfo(
       function: _runIOSObjCUnitTests,
       description: 'Unit tests on generated Objective-C code.'),
-  'ios_objc_legacy_unittests': _TestInfo(
+  iOSObjCUnitTestsLegacy: _TestInfo(
       function: _runIOSObjCLegacyUnitTests,
       description:
           'Unit tests on generated Objective-C code (legacy test harness).'),
-  'ios_objc_integration_tests': _TestInfo(
+  iOSObjCIntegrationTests: _TestInfo(
       function: _runIOSObjCIntegrationTests,
       description: 'Integration tests on generated Objective-C code.'),
-  'ios_swift_unittests': _TestInfo(
+  iOSSwiftUnitTests: _TestInfo(
       function: _runIOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code.'),
-  'ios_swift_integration_tests': _TestInfo(
+  iOSSwiftIntegrationTests: _TestInfo(
       function: _runIOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code.'),
-  'macos_swift_unittests': _TestInfo(
+  macOSSwiftUnitTests: _TestInfo(
       function: _runMacOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code on macOS.'),
-  'macos_swift_integration_tests': _TestInfo(
+  macOSSwiftIntegrationTests: _TestInfo(
       function: _runMacOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code on macOS.'),
-  'mock_handler_tests': _TestInfo(
+  mockHandlerTests: _TestInfo(
       function: _runMockHandlerTests,
       description: 'Unit tests on generated Dart mock handler code.'),
-  'command_line_tests': _TestInfo(
+  commandLineTests: _TestInfo(
       function: _runCommandLineTests,
       description: 'Tests running pigeon with various command-line options.'),
 };
@@ -143,10 +159,6 @@ Future<int> _runMobileIntegrationTests(
     'test',
     <String>[_integrationTestFileRelativePath, '-d', device],
   );
-}
-
-Future<int> _runDartCompilationTests() async {
-  throw UnimplementedError('See run_tests.sh.');
 }
 
 Future<int> _runDartUnitTests() async {
@@ -470,10 +482,51 @@ ${parser.usage}''');
   // If no tests are provided, run a default based on the host platform. This is
   // the mode used by CI.
   if (testsToRun.isEmpty) {
-    if (Platform.isWindows) {
-      testsToRun = <String>['windows_unittests', 'windows_integration_tests'];
+    const List<String> androidTests = <String>[
+      androidJavaUnitTests,
+      androidKotlinUnitTests,
+      // TODO(stuartmorgan): Include these once CI supports running simulator
+      // tests. Currently these tests aren't run in CI.
+      // See https://github.com/flutter/flutter/issues/111505.
+      // androidJavaIntegrationTests,
+      // androidKotlinIntegrationTests,
+    ];
+    const List<String> macOSTests = <String>[
+      macOSSwiftUnitTests,
+      macOSSwiftIntegrationTests
+    ];
+    const List<String> iOSTests = <String>[
+      // TODO(stuartmorgan): Replace this with iOSObjCUnitTests once the CI
+      // issues are resolved; see https://github.com/flutter/packages/pull/2816.
+      iOSObjCUnitTestsLegacy,
+      iOSObjCIntegrationTests,
+      iOSSwiftUnitTests,
+      iOSSwiftIntegrationTests,
+    ];
+    const List<String> windowsTests = <String>[
+      windowsUnitTests,
+      windowsIntegrationTests,
+    ];
+    const List<String> dartTests = <String>[
+      dartUnitTests,
+      flutterUnitTests,
+      mockHandlerTests,
+      commandLineTests,
+    ];
+
+    if (Platform.isMacOS) {
+      testsToRun = <String>[
+        ...dartTests,
+        ...androidTests,
+        ...iOSTests,
+        ...macOSTests,
+      ];
+    } else if (Platform.isWindows) {
+      testsToRun = windowsTests;
     } else {
-      // TODO(gaaclarke): migrate from run_tests.sh to this script.
+      // TODO(stuartmorgan): Make a new entrypoint for developers that runs
+      // all tests their host supports by default, and move some of the tests
+      // above here. See https://github.com/flutter/flutter/issues/115393
     }
   }
 
