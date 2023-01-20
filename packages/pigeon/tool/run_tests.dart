@@ -197,9 +197,9 @@ Future<int> _runFlutterUnitTests() async {
       'platform_tests/flutter_null_safe_unit_tests';
   final int generateCode = await _generateDart(<String, String>{
     'pigeons/flutter_unittests.dart':
-        '$flutterUnitTestsPath/lib/null_safe_pigeon.dart',
+        '$flutterUnitTestsPath/lib/flutter_unittests.gen.dart',
     'pigeons/core_tests.dart': '$flutterUnitTestsPath/lib/core_tests.gen.dart',
-    'pigeons/primitive.dart': '$flutterUnitTestsPath/lib/primitive.dart',
+    'pigeons/primitive.dart': '$flutterUnitTestsPath/lib/primitive.gen.dart',
     'pigeons/multiple_arity.dart':
         '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',
     'pigeons/non_null_fields.dart':
