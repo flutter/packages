@@ -9,7 +9,7 @@
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Platform, exit;
+import 'dart:io' show File, Directory, Platform, exit;
 import 'dart:math';
 
 import 'package:args/args.dart';
@@ -39,59 +39,82 @@ class _TestInfo {
   final String? description;
 }
 
+// Test suite names.
+const String androidJavaUnitTests = 'android_java_unittests';
+const String androidJavaIntegrationTests = 'android_java_integration_tests';
+const String androidKotlinUnitTests = 'android_kotlin_unittests';
+const String androidKotlinIntegrationTests = 'android_kotlin_integration_tests';
+const String iOSObjCUnitTests = 'ios_objc_unittests';
+const String iOSObjCUnitTestsLegacy = 'ios_objc_legacy_unittests';
+const String iOSObjCIntegrationTests = 'ios_objc_integration_tests';
+const String iOSSwiftUnitTests = 'ios_swift_unittests';
+const String iOSSwiftIntegrationTests = 'ios_swift_integration_tests';
+const String macOSSwiftUnitTests = 'macos_swift_unittests';
+const String macOSSwiftIntegrationTests = 'macos_swift_integration_tests';
+const String windowsUnitTests = 'windows_unittests';
+const String windowsIntegrationTests = 'windows_integration_tests';
+const String dartUnitTests = 'dart_unittests';
+const String flutterUnitTests = 'flutter_unittests';
+const String mockHandlerTests = 'mock_handler_tests';
+const String commandLineTests = 'command_line_tests';
+
 const Map<String, _TestInfo> _tests = <String, _TestInfo>{
-  'windows_unittests': _TestInfo(
+  windowsUnitTests: _TestInfo(
       function: _runWindowsUnitTests,
       description: 'Unit tests on generated Windows C++ code.'),
-  'windows_integration_tests': _TestInfo(
+  windowsIntegrationTests: _TestInfo(
       function: _runWindowsIntegrationTests,
       description: 'Integration tests on generated Windows C++ code.'),
-  'android_java_unittests': _TestInfo(
+  androidJavaUnitTests: _TestInfo(
       function: _runAndroidJavaUnitTests,
       description: 'Unit tests on generated Java code.'),
-  'android_java_integration_tests': _TestInfo(
+  androidJavaIntegrationTests: _TestInfo(
       function: _runAndroidJavaIntegrationTests,
       description: 'Integration tests on generated Java code.'),
-  'android_kotlin_unittests': _TestInfo(
+  androidKotlinUnitTests: _TestInfo(
       function: _runAndroidKotlinUnitTests,
       description: 'Unit tests on generated Kotlin code.'),
-  'android_kotlin_integration_tests': _TestInfo(
+  androidKotlinIntegrationTests: _TestInfo(
       function: _runAndroidKotlinIntegrationTests,
       description: 'Integration tests on generated Kotlin code.'),
-  'dart_compilation_tests': _TestInfo(
-      function: _runDartCompilationTests,
-      description: 'Compilation tests on generated Dart code.'),
-  'dart_unittests': _TestInfo(
+  dartUnitTests: _TestInfo(
       function: _runDartUnitTests,
       description: "Unit tests on and analysis on Pigeon's implementation."),
-  'flutter_unittests': _TestInfo(
+  flutterUnitTests: _TestInfo(
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
-  'ios_objc_unittests': _TestInfo(
+  iOSObjCUnitTests: _TestInfo(
       function: _runIOSObjCUnitTests,
       description: 'Unit tests on generated Objective-C code.'),
-  'ios_objc_integration_tests': _TestInfo(
+  iOSObjCUnitTestsLegacy: _TestInfo(
+      function: _runIOSObjCLegacyUnitTests,
+      description:
+          'Unit tests on generated Objective-C code (legacy test harness).'),
+  iOSObjCIntegrationTests: _TestInfo(
       function: _runIOSObjCIntegrationTests,
       description: 'Integration tests on generated Objective-C code.'),
-  'ios_swift_unittests': _TestInfo(
+  iOSSwiftUnitTests: _TestInfo(
       function: _runIOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code.'),
-  'ios_swift_integration_tests': _TestInfo(
+  iOSSwiftIntegrationTests: _TestInfo(
       function: _runIOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code.'),
-  'macos_swift_unittests': _TestInfo(
+  macOSSwiftUnitTests: _TestInfo(
       function: _runMacOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code on macOS.'),
-  'macos_swift_integration_tests': _TestInfo(
+  macOSSwiftIntegrationTests: _TestInfo(
       function: _runMacOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code on macOS.'),
-  'mock_handler_tests': _TestInfo(
+  mockHandlerTests: _TestInfo(
       function: _runMockHandlerTests,
       description: 'Unit tests on generated Dart mock handler code.'),
+  commandLineTests: _TestInfo(
+      function: _runCommandLineTests,
+      description: 'Tests running pigeon with various command-line options.'),
 };
 
 Future<int> _runAndroidJavaUnitTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  return _runAndroidUnitTests(_alternateLanguageTestPluginRelativePath);
 }
 
 Future<int> _runAndroidJavaIntegrationTests() async {
@@ -100,8 +123,12 @@ Future<int> _runAndroidJavaIntegrationTests() async {
 }
 
 Future<int> _runAndroidKotlinUnitTests() async {
-  const String examplePath = './$_testPluginRelativePath/example';
-  const String androidProjectPath = '$examplePath/android';
+  return _runAndroidUnitTests(_testPluginRelativePath);
+}
+
+Future<int> _runAndroidUnitTests(String testPluginPath) async {
+  final String examplePath = './$testPluginPath/example';
+  final String androidProjectPath = '$examplePath/android';
   final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
   if (!gradleFile.existsSync()) {
     final int compileCode = await runFlutterBuild(examplePath, 'apk');
@@ -132,10 +159,6 @@ Future<int> _runMobileIntegrationTests(
     'test',
     <String>[_integrationTestFileRelativePath, '-d', device],
   );
-}
-
-Future<int> _runDartCompilationTests() async {
-  throw UnimplementedError('See run_tests.sh.');
 }
 
 Future<int> _runDartUnitTests() async {
@@ -195,19 +218,31 @@ Future<int> _runFlutterUnitTests() async {
   // shared_test_plugin_code instead of having multiple copies of generation.
   const String flutterUnitTestsPath =
       'platform_tests/flutter_null_safe_unit_tests';
+  // Files from the pigeons/ directory to generate output for.
+  const List<String> inputPigeons = <String>[
+    'flutter_unittests',
+    'core_tests',
+    'primitive',
+    'multiple_arity',
+    'non_null_fields',
+    'null_fields',
+    'nullable_returns',
+    // TODO(stuartmorgan): Eliminate these files by ensuring that everything
+    // they are intended to cover is in core_tests.dart (or, if necessary in
+    // the short term due to limitations in non-Dart generators, a single other
+    // file). They aren't being unit tested, only analyzed.
+    'async_handlers',
+    'host2flutter',
+    'list',
+    'message',
+    'void_arg_flutter',
+    'void_arg_host',
+    'voidflutter',
+    'voidhost',
+  ];
   final int generateCode = await _generateDart(<String, String>{
-    'pigeons/flutter_unittests.dart':
-        '$flutterUnitTestsPath/lib/null_safe_pigeon.dart',
-    'pigeons/core_tests.dart': '$flutterUnitTestsPath/lib/core_tests.gen.dart',
-    'pigeons/primitive.dart': '$flutterUnitTestsPath/lib/primitive.dart',
-    'pigeons/multiple_arity.dart':
-        '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',
-    'pigeons/non_null_fields.dart':
-        '$flutterUnitTestsPath/lib/non_null_fields.gen.dart',
-    'pigeons/null_fields.dart':
-        '$flutterUnitTestsPath/lib/null_fields.gen.dart',
-    'pigeons/nullable_returns.dart':
-        '$flutterUnitTestsPath/lib/nullable_returns.gen.dart',
+    for (final String name in inputPigeons)
+      'pigeons/$name.dart': '$flutterUnitTestsPath/lib/$name.gen.dart'
   });
   if (generateCode != 0) {
     return generateCode;
@@ -227,7 +262,14 @@ Future<int> _runFlutterUnitTests() async {
 }
 
 Future<int> _runIOSObjCUnitTests() async {
-  return _runIOSUnitTests(_alternateLanguageTestPluginRelativePath);
+  return _runIOSPluginUnitTests(_alternateLanguageTestPluginRelativePath);
+}
+
+// TODO(stuartmorgan): Remove this, and the ios_unit_tests directory, once
+// _runIOSObjCUnitTests works in CI; see
+// https://github.com/flutter/packages/pull/2816.
+Future<int> _runIOSObjCLegacyUnitTests() async {
+  return _runIOSProjectUnitTests('platform_tests/ios_unit_tests');
 }
 
 Future<int> _runIOSObjCIntegrationTests() async {
@@ -270,13 +312,17 @@ Future<int> _runMacOSSwiftIntegrationTests() async {
 }
 
 Future<int> _runIOSSwiftUnitTests() async {
-  return _runIOSUnitTests(_testPluginRelativePath);
+  return _runIOSPluginUnitTests(_testPluginRelativePath);
 }
 
-Future<int> _runIOSUnitTests(String testPluginPath) async {
+Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
   final String examplePath = './$testPluginPath/example';
+  return _runIOSProjectUnitTests(examplePath);
+}
+
+Future<int> _runIOSProjectUnitTests(String testProjectPath) async {
   final int compileCode = await runFlutterBuild(
-    examplePath,
+    testProjectPath,
     'ios',
     flags: <String>['--simulator', '--no-codesign'],
   );
@@ -285,7 +331,7 @@ Future<int> _runIOSUnitTests(String testPluginPath) async {
   }
 
   return runXcodeBuild(
-    '$examplePath/ios',
+    '$testProjectPath/ios',
     sdk: 'iphonesimulator',
     destination: 'platform=iOS Simulator,name=iPhone 8',
     extraArguments: <String>['test'],
@@ -333,6 +379,61 @@ Future<int> _runWindowsIntegrationTests() async {
     'test',
     <String>[_integrationTestFileRelativePath, '-d', 'windows'],
   );
+}
+
+Future<int> _runCommandLineTests() async {
+  final Directory tempDir = Directory.systemTemp.createTempSync('pigeon');
+  final String tempOutput = p.join(tempDir.path, 'pigeon_output');
+  const String pigeonScript = 'bin/pigeon.dart';
+  final String snapshot = p.join(tempDir.path, 'pigeon.dart.dill');
+
+  // Precompile to make the repeated calls faster.
+  if (await runProcess('dart', <String>[
+        '--snapshot-kind=kernel',
+        '--snapshot=$snapshot',
+        pigeonScript
+      ]) !=
+      0) {
+    print('Unable to generate $snapshot from $pigeonScript');
+    return 1;
+  }
+
+  final List<List<String>> testArguments = <List<String>>[
+    // Test with no arguments.
+    <String>[],
+    // Test one_language flag. With this flag specified, java_out can be
+    // generated without dart_out.
+    <String>[
+      '--input',
+      'pigeons/message.dart',
+      '--one_language',
+      '--java_out',
+      tempOutput
+    ],
+    // Test dartOut in ConfigurePigeon overrides output.
+    <String>['--input', 'pigeons/configure_pigeon_dart_out.dart'],
+    // Make sure AST generation exits correctly.
+    <String>[
+      '--input',
+      'pigeons/message.dart',
+      '--one_language',
+      '--ast_out',
+      tempOutput
+    ],
+  ];
+
+  int exitCode = 0;
+  for (final List<String> arguments in testArguments) {
+    print('Testing dart $pigeonScript ${arguments.join(', ')}');
+    exitCode = await runProcess('dart', <String>[snapshot, ...arguments],
+        streamOutput: false, logFailure: true);
+    if (exitCode != 0) {
+      break;
+    }
+  }
+
+  tempDir.deleteSync(recursive: true);
+  return exitCode;
 }
 
 Future<void> main(List<String> args) async {
@@ -385,10 +486,57 @@ ${parser.usage}''');
   // If no tests are provided, run a default based on the host platform. This is
   // the mode used by CI.
   if (testsToRun.isEmpty) {
-    if (Platform.isWindows) {
-      testsToRun = <String>['windows_unittests', 'windows_integration_tests'];
+    const List<String> androidTests = <String>[
+      androidJavaUnitTests,
+      androidKotlinUnitTests,
+      // TODO(stuartmorgan): Include these once CI supports running simulator
+      // tests. Currently these tests aren't run in CI.
+      // See https://github.com/flutter/flutter/issues/111505.
+      // androidJavaIntegrationTests,
+      // androidKotlinIntegrationTests,
+    ];
+    const List<String> macOSTests = <String>[
+      macOSSwiftUnitTests,
+      macOSSwiftIntegrationTests
+    ];
+    const List<String> iOSTests = <String>[
+      // TODO(stuartmorgan): Replace this with iOSObjCUnitTests once the CI
+      // issues are resolved; see https://github.com/flutter/packages/pull/2816.
+      iOSObjCUnitTestsLegacy,
+      // TODO(stuartmorgan): Enable by default once CI issues are solved; see
+      // https://github.com/flutter/packages/pull/2816.
+      // iOSObjCIntegrationTests,
+      iOSSwiftUnitTests,
+      // Currently these are testing exactly the same thing as
+      // macos_swift_e2e_tests, so we don't need to run both by default. This
+      // should be enabled if any iOS-only tests are added (e.g., for a feature
+      // not supported by macOS).
+      // iOSSwiftIntegrationTests,
+    ];
+    const List<String> windowsTests = <String>[
+      windowsUnitTests,
+      windowsIntegrationTests,
+    ];
+    const List<String> dartTests = <String>[
+      dartUnitTests,
+      flutterUnitTests,
+      mockHandlerTests,
+      commandLineTests,
+    ];
+
+    if (Platform.isMacOS) {
+      testsToRun = <String>[
+        ...dartTests,
+        ...androidTests,
+        ...iOSTests,
+        ...macOSTests,
+      ];
+    } else if (Platform.isWindows) {
+      testsToRun = windowsTests;
     } else {
-      // TODO(gaaclarke): migrate from run_tests.sh to this script.
+      // TODO(stuartmorgan): Make a new entrypoint for developers that runs
+      // all tests their host supports by default, and move some of the tests
+      // above here. See https://github.com/flutter/flutter/issues/115393
     }
   }
 

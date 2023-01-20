@@ -1,6 +1,16 @@
-## 6.0.4
+## 7.0.2
 
 * [kotlin] Fixes a missed casting of not nullable Dart 'int' to Kotlin 64bit long.
+
+## 7.0.1
+
+* [generator_tools] adds `newln` method for adding empty lines and ending lines.
+* Updates generators to more closely match Flutter formatter tool output.
+
+## 7.0.0
+
+* [java] **BREAKING CHANGE**: Makes data classes final.
+  Updates generators for 1p linters.
 
 ## 6.0.3
 

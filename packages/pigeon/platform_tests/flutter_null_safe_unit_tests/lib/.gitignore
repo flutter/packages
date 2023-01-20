@@ -1,0 +1,9 @@
+# TODO(stuartmorgan) Remove this file when these are no longer generated;
+# see the TODO in _runFlutterUnitTests in run_tests.dart
+async_handlers.gen.dart
+host2flutter.gen.dart
+list.gen.dart
+void_arg_flutter.gen.dart
+void_arg_host.gen.dart
+voidflutter.gen.dart
+voidhost.gen.dart

@@ -34,7 +34,8 @@ generators with that AST.
 
 ## Testing Overview
 
-Pigeon has 3 types of tests, you'll find them all in [run_tests.sh](./run_tests.sh).
+Pigeon has 3 types of tests, you'll find them all in
+[run_tests.dart](./tool/run_tests.dart).
 
 * Unit tests - These are the fastest tests that are just typical unit tests,
   they may be generating code and checking it against a regular expression to
