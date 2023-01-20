@@ -153,14 +153,7 @@ run_ios_objc_e2e_tests() {
 }
 
 run_android_unittests() {
-  pushd $PWD
-  cd platform_tests/alternate_language_test_plugin/example
-  if [ ! -f "android/gradlew" ]; then
-    flutter build apk --debug
-  fi
-  cd android
-  ./gradlew test
-  popd
+  dart run tool/run_tests.dart -t android_java_unittests --skip-generation
 }
 
 run_android_java_e2e_tests() {

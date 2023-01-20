@@ -91,7 +91,7 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
 };
 
 Future<int> _runAndroidJavaUnitTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  return _runAndroidUnitTests(_alternateLanguageTestPluginRelativePath);
 }
 
 Future<int> _runAndroidJavaIntegrationTests() async {
@@ -100,8 +100,12 @@ Future<int> _runAndroidJavaIntegrationTests() async {
 }
 
 Future<int> _runAndroidKotlinUnitTests() async {
-  const String examplePath = './$_testPluginRelativePath/example';
-  const String androidProjectPath = '$examplePath/android';
+  return _runAndroidUnitTests(_testPluginRelativePath);
+}
+
+Future<int> _runAndroidUnitTests(String testPluginPath) async {
+  final String examplePath = './$testPluginPath/example';
+  final String androidProjectPath = '$examplePath/android';
   final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
   if (!gradleFile.existsSync()) {
     final int compileCode = await runFlutterBuild(examplePath, 'apk');
