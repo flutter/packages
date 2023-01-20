@@ -9,7 +9,7 @@
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Platform, exit;
+import 'dart:io' show File, Directory, Platform, exit;
 import 'dart:math';
 
 import 'package:args/args.dart';
@@ -92,6 +92,9 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'mock_handler_tests': _TestInfo(
       function: _runMockHandlerTests,
       description: 'Unit tests on generated Dart mock handler code.'),
+  'command_line_tests': _TestInfo(
+      function: _runCommandLineTests,
+      description: 'Tests running pigeon with various command-line options.'),
 };
 
 Future<int> _runAndroidJavaUnitTests() async {
@@ -360,6 +363,61 @@ Future<int> _runWindowsIntegrationTests() async {
     'test',
     <String>[_integrationTestFileRelativePath, '-d', 'windows'],
   );
+}
+
+Future<int> _runCommandLineTests() async {
+  final Directory tempDir = Directory.systemTemp.createTempSync('pigeon');
+  final String tempOutput = p.join(tempDir.path, 'pigeon_output');
+  const String pigeonScript = 'bin/pigeon.dart';
+  final String snapshot = p.join(tempDir.path, 'pigeon.dart.dill');
+
+  // Precompile to make the repeated calls faster.
+  if (await runProcess('dart', <String>[
+        '--snapshot-kind=kernel',
+        '--snapshot=$snapshot',
+        pigeonScript
+      ]) !=
+      0) {
+    print('Unable to generate $snapshot from $pigeonScript');
+    return 1;
+  }
+
+  final List<List<String>> testArguments = <List<String>>[
+    // Test with no arguments.
+    <String>[],
+    // Test one_language flag. With this flag specified, java_out can be
+    // generated without dart_out.
+    <String>[
+      '--input',
+      'pigeons/message.dart',
+      '--one_language',
+      '--java_out',
+      tempOutput
+    ],
+    // Test dartOut in ConfigurePigeon overrides output.
+    <String>['--input', 'pigeons/configure_pigeon_dart_out.dart'],
+    // Make sure AST generation exits correctly.
+    <String>[
+      '--input',
+      'pigeons/message.dart',
+      '--one_language',
+      '--ast_out',
+      tempOutput
+    ],
+  ];
+
+  int exitCode = 0;
+  for (final List<String> arguments in testArguments) {
+    print('Testing dart $pigeonScript ${arguments.join(', ')}');
+    exitCode = await runProcess('dart', <String>[snapshot, ...arguments],
+        streamOutput: false, logFailure: true);
+    if (exitCode != 0) {
+      break;
+    }
+  }
+
+  tempDir.deleteSync(recursive: true);
+  return exitCode;
 }
 
 Future<void> main(List<String> args) async {

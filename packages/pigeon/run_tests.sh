@@ -34,21 +34,7 @@ run_dart_unittests() {
 }
 
 test_command_line() {
-  dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
-  run_pigeon="dart bin/pigeon.dart.dill --copyright_header ./copyright_header.txt"
-  # Test with no arguments.
-  $run_pigeon 1>/dev/null
-  # Test one_language flag. With this flag specified, java_out can be generated
-  # without dart_out.
-  $run_pigeon \
-    --input pigeons/message.dart \
-    --one_language \
-    --java_out stdout \
-    | grep "public class Message">/dev/null
-  # Test dartOut in ConfigurePigeon overrides output.
-  $run_pigeon --input pigeons/configure_pigeon_dart_out.dart 1>/dev/null
-  # Make sure AST generation exits correctly.
-  $run_pigeon --input pigeons/message.dart --one_language --ast_out /dev/null
+  dart run tool/run_tests.dart -t command_line_tests --skip-generation
 }
 
 run_flutter_unittests() {
