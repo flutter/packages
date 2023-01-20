@@ -40,31 +40,6 @@ run_pigeon="dart bin/pigeon.dart.dill --copyright_header ./copyright_header.txt"
 # Helper Functions
 ###############################################################################
 
-# Create a temporary directory in a way that works on both Linux and macOS.
-#
-# The mktemp commands have slighly semantics on the BSD systems vs GNU systems.
-mktmpdir() {
-  mktemp -d flutter_pigeon.XXXXXX 2>/dev/null || mktemp -d -t flutter_pigeon.
-}
-
-# test_null_safe_dart(<path to pigeon file>)
-#
-# Compiles the pigeon file to a temp directory and attempts to run the dart
-# analyzer on it.
-# TODO(stuartmorgan): Remove this in favor of analyzing test_plugin.
-test_pigeon_dart() {
-  echo "test_pigeon_dart($1, $2)"
-  local flutter_project_dir=$2
-
-  $run_pigeon \
-    --input $1 \
-    --dart_out $flutter_project_dir/lib/pigeon.dart
-
-  dart analyze $flutter_project_dir/lib/pigeon.dart --fatal-infos --fatal-warnings
-
-  rm $flutter_project_dir/lib/pigeon.dart
-}
-
 print_usage() {
   echo "usage: ./run_tests.sh [-l] [-t test_name]
 
@@ -153,25 +128,6 @@ run_android_kotlin_e2e_tests() {
   dart run tool/run_tests.dart -t android_kotlin_integration_tests --skip-generation
 }
 
-run_dart_compilation_tests() {
-  local temp_dir=$(mktmpdir)
-  local flutter_project_dir=$temp_dir/project
-
-  flutter create --platforms="android" $flutter_project_dir 1> /dev/null
-
-  test_pigeon_dart ./pigeons/async_handlers.dart $flutter_project_dir
-  test_pigeon_dart ./pigeons/core_tests.dart $flutter_project_dir
-  test_pigeon_dart ./pigeons/host2flutter.dart $flutter_project_dir
-  test_pigeon_dart ./pigeons/list.dart $flutter_project_dir
-  test_pigeon_dart ./pigeons/message.dart $flutter_project_dir
-  test_pigeon_dart ./pigeons/void_arg_flutter.dart $flutter_project_dir
-  test_pigeon_dart ./pigeons/void_arg_host.dart $flutter_project_dir
-  test_pigeon_dart ./pigeons/voidflutter.dart $flutter_project_dir
-  test_pigeon_dart ./pigeons/voidhost.dart $flutter_project_dir
-
-  rm -rf $temp_dir
-}
-
 run_ios_objc_unittests() {
   dart run tool/run_tests.dart -t ios_objc_unittests --skip-generation
 }
@@ -215,7 +171,6 @@ run_android_java_e2e_tests() {
 # main
 ###############################################################################
 should_run_android_unittests=true
-should_run_dart_compilation_tests=true
 should_run_dart_unittests=true
 should_run_flutter_unittests=true
 # TODO(stuartmorgan): Enable by default once CI issues are solved; see
@@ -243,7 +198,6 @@ while getopts "t:l?h" opt; do
   case $opt in
   t)
     should_run_android_unittests=false
-    should_run_dart_compilation_tests=false
     should_run_dart_unittests=false
     should_run_flutter_unittests=false
     should_run_ios_objc_unittests=false
@@ -261,7 +215,6 @@ while getopts "t:l?h" opt; do
     # TODO(stuartmorgan): Rename to include "java".
     android_unittests) should_run_android_unittests=true ;;
     android_java_e2e_tests) should_run_android_java_e2e_tests=true ;;
-    dart_compilation_tests) should_run_dart_compilation_tests=true ;;
     dart_unittests) should_run_dart_unittests=true ;;
     flutter_unittests) should_run_flutter_unittests=true ;;
     ios_objc_e2e_tests) should_run_ios_objc_e2e_tests=true ;;
@@ -286,9 +239,8 @@ while getopts "t:l?h" opt; do
   android_java_e2e_tests   - Integration tests on generated Java code on Android.
   android_kotlin_unittests - Unit tests on generated Kotlin code on Android.
   android_kotlin_e2e_tests - Integration tests on generated Kotlin code on Android.
-  dart_compilation_tests   - Compilation tests on generated Dart code.
   dart_unittests           - Unit tests on and analysis on Pigeon's implementation.
-  flutter_unittests        - Unit tests on generated Dart code.
+  flutter_unittests        - Unit tests and analysis on generated Dart code.
   ios_objc_unittests       - Unit tests on generated Obj-C code.
   ios_unittests            - Legacy unit tests on generated Obj-C code. Use ios_objc_unittests instead.
   ios_objc_e2e_tests       - Integration tests on generated Obj-C code.
@@ -334,9 +286,6 @@ if [ "$should_run_flutter_unittests" = true ]; then
 fi
 if [ "$should_run_mock_handler_tests" = true ]; then
   run_mock_handler_tests
-fi
-if [ "$should_run_dart_compilation_tests" = true ]; then
-  run_dart_compilation_tests
 fi
 if [ "$should_run_ios_objc_unittests" = true ]; then
   run_ios_objc_unittests
