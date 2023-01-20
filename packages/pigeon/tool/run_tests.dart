@@ -11,9 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 import 'dart:io' show Platform, exit;
 
-import 'package:path/path.dart' as p;
-
-import 'shared/generation.dart';
+import 'shared/test_runner.dart';
 import 'shared/test_suites.dart';
 
 /// Exits with failure if any tests in [testSuites] are not included in any of
@@ -81,16 +79,6 @@ Future<void> main(List<String> args) async {
     ],
   ]);
 
-  // Pre-generate the necessary output files.
-  final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
-  print('# Generating platform_test/ output...');
-  final int generateExitCode = await generatePigeons(baseDir: baseDir);
-  if (generateExitCode == 0) {
-    print('Generation complete!');
-  } else {
-    print('Generation failed; see above for errors.');
-  }
-
   final List<String> testsToRun;
   if (Platform.isMacOS) {
     testsToRun = macOSHostTests;
@@ -103,20 +91,5 @@ Future<void> main(List<String> args) async {
     exit(2);
   }
 
-  for (final String test in testsToRun) {
-    final TestInfo? info = testSuites[test];
-    if (info != null) {
-      print('##############################');
-      print('# Running $test');
-      final int testCode = await info.function();
-      if (testCode != 0) {
-        exit(testCode);
-      }
-      print('');
-      print('');
-    } else {
-      print('Unknown test: $test');
-      exit(1);
-    }
-  }
+  await runTests(testsToRun);
 }
