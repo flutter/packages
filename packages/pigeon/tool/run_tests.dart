@@ -262,14 +262,14 @@ Future<int> _runFlutterUnitTests() async {
 }
 
 Future<int> _runIOSObjCUnitTests() async {
-  return _runIOSUnitTests(_alternateLanguageTestPluginRelativePath);
+  return _runIOSPluginUnitTests(_alternateLanguageTestPluginRelativePath);
 }
 
 // TODO(stuartmorgan): Remove this, and the ios_unit_tests directory, once
 // _runIOSObjCUnitTests works in CI; see
 // https://github.com/flutter/packages/pull/2816.
 Future<int> _runIOSObjCLegacyUnitTests() async {
-  return _runIOSUnitTests('platform_tests/ios_unit_tests');
+  return _runIOSProjectUnitTests('platform_tests/ios_unit_tests');
 }
 
 Future<int> _runIOSObjCIntegrationTests() async {
@@ -312,13 +312,17 @@ Future<int> _runMacOSSwiftIntegrationTests() async {
 }
 
 Future<int> _runIOSSwiftUnitTests() async {
-  return _runIOSUnitTests(_testPluginRelativePath);
+  return _runIOSPluginUnitTests(_testPluginRelativePath);
 }
 
-Future<int> _runIOSUnitTests(String testPluginPath) async {
+Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
   final String examplePath = './$testPluginPath/example';
+  return _runIOSProjectUnitTests(examplePath);
+}
+
+Future<int> _runIOSProjectUnitTests(String testProjectPath) async {
   final int compileCode = await runFlutterBuild(
-    examplePath,
+    testProjectPath,
     'ios',
     flags: <String>['--simulator', '--no-codesign'],
   );
@@ -327,7 +331,7 @@ Future<int> _runIOSUnitTests(String testPluginPath) async {
   }
 
   return runXcodeBuild(
-    '$examplePath/ios',
+    '$testProjectPath/ios',
     sdk: 'iphonesimulator',
     destination: 'platform=iOS Simulator,name=iPhone 8',
     extraArguments: <String>['test'],
