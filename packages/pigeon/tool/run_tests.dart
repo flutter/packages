@@ -503,9 +503,15 @@ ${parser.usage}''');
       // TODO(stuartmorgan): Replace this with iOSObjCUnitTests once the CI
       // issues are resolved; see https://github.com/flutter/packages/pull/2816.
       iOSObjCUnitTestsLegacy,
-      iOSObjCIntegrationTests,
+      // TODO(stuartmorgan): Enable by default once CI issues are solved; see
+      // https://github.com/flutter/packages/pull/2816.
+      // iOSObjCIntegrationTests,
       iOSSwiftUnitTests,
-      iOSSwiftIntegrationTests,
+      // Currently these are testing exactly the same thing as
+      // macos_swift_e2e_tests, so we don't need to run both by default. This
+      // should be enabled if any iOS-only tests are added (e.g., for a feature
+      // not supported by macOS).
+      // iOSSwiftIntegrationTests,
     ];
     const List<String> windowsTests = <String>[
       windowsUnitTests,
