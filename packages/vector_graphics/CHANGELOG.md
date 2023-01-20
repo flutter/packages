@@ -3,6 +3,7 @@
 ## 1.0.0+1
 
 - Fix issue in pattern decoding.
+- Fix issue in matrix parsing for some combinations of matrices.
 
 ## 1.0.0
 
