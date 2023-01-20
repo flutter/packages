@@ -624,22 +624,23 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   void _writeChannelAllocation(ObjcOptions generatorOptions, Indent indent,
       Api api, Method func, String varName, String? taskQueue) {
     indent.writeln('FlutterBasicMessageChannel *$varName =');
-    indent.inc();
-    indent.writeln('[[FlutterBasicMessageChannel alloc]');
-    indent.inc();
-    indent.writeln('initWithName:@"${makeChannelName(api, func)}"');
-    indent.writeln('binaryMessenger:binaryMessenger');
-    indent.write('codec:');
-    indent.add('${_getCodecGetterName(generatorOptions.prefix, api.name)}()');
+    indent.nest(1, () {
+      indent.writeln('[[FlutterBasicMessageChannel alloc]');
+      indent.nest(1, () {
+        indent.writeln('initWithName:@"${makeChannelName(api, func)}"');
+        indent.writeln('binaryMessenger:binaryMessenger');
+        indent.write('codec:');
+        indent
+            .add('${_getCodecGetterName(generatorOptions.prefix, api.name)}()');
 
-    if (taskQueue != null) {
-      indent.newln();
-      indent.addln('taskQueue:$taskQueue];');
-    } else {
-      indent.addln('];');
-    }
-    indent.dec();
-    indent.dec();
+        if (taskQueue != null) {
+          indent.newln();
+          indent.addln('taskQueue:$taskQueue];');
+        } else {
+          indent.addln('];');
+        }
+      });
+    });
   }
 
   void _writeObjcSourceHelperFunctions(Indent indent) {
@@ -1098,16 +1099,17 @@ void _writeMethod(ObjcOptions languageOptions, Root root, Indent indent,
   ));
   indent.scoped(' {', '}', () {
     indent.writeln('FlutterBasicMessageChannel *channel =');
-    indent.inc();
-    indent.writeln('[FlutterBasicMessageChannel');
-    indent.inc();
-    indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
-    indent.writeln('binaryMessenger:self.binaryMessenger');
-    indent.write(
-        'codec:${_getCodecGetterName(languageOptions.prefix, api.name)}()');
-    indent.addln('];');
-    indent.dec();
-    indent.dec();
+    indent.nest(1, () {
+      indent.writeln('[FlutterBasicMessageChannel');
+      indent.nest(1, () {
+        indent
+            .writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
+        indent.writeln('binaryMessenger:self.binaryMessenger');
+        indent.write(
+            'codec:${_getCodecGetterName(languageOptions.prefix, api.name)}()');
+        indent.addln('];');
+      });
+    });
     indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
     indent.scoped('{', '}];', () {
       if (func.returnType.isVoid) {

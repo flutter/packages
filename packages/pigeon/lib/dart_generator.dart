@@ -675,10 +675,10 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
                 'return ${customClass.name}.decode(readValue(buffer)!);');
           });
         }
-        indent.write('default:');
-        indent.scoped('', '', () {
+        indent.writeln('default:');
+        indent.nest(1, () {
           indent.writeln('return super.readValueOfType(type, buffer);');
-        }, addTrailingNewline: false);
+        });
       });
     });
   });

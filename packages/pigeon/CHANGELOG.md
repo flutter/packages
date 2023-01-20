@@ -1,7 +1,7 @@
 ## 7.0.1
 
 * [generator_tools] adds `newln` method for adding empty lines and ending lines.
-* Updates generators to more closely match flutter formatter tool output.
+* Updates generators to more closely match Flutter formatter tool output.
 
 ## 7.0.0
 

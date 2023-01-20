@@ -437,32 +437,33 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.scoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln('BasicMessageChannel<Object> $channel =');
-          indent.inc(2);
-          indent.writeln('new BasicMessageChannel<>(');
-          indent.inc(2);
-          indent.writeln('binaryMessenger, "$channelName", getCodec());');
-          indent.dec(4);
-          indent.writeln('$channel.send(');
-          indent.inc(2);
-          indent.writeln('$sendArgument,');
-          indent.write('channelReply -> ');
-          if (func.returnType.isVoid) {
-            indent.addln('callback.reply(null));');
-          } else {
-            indent.scoped('{', '});', () {
-              const String output = 'output';
-              indent.writeln('@SuppressWarnings("ConstantConditions")');
-              if (func.returnType.baseName == 'int') {
-                indent.writeln(
-                    '$returnType $output = channelReply == null ? null : ((Number) channelReply).longValue();');
-              } else {
-                indent.writeln(
-                    '$returnType $output = ($returnType) channelReply;');
-              }
-              indent.writeln('callback.reply($output);');
+          indent.nest(2, () {
+            indent.writeln('new BasicMessageChannel<>(');
+            indent.nest(2, () {
+              indent.writeln('binaryMessenger, "$channelName", getCodec());');
             });
-          }
-          indent.dec(2);
+          });
+          indent.writeln('$channel.send(');
+          indent.nest(2, () {
+            indent.writeln('$sendArgument,');
+            indent.write('channelReply -> ');
+            if (func.returnType.isVoid) {
+              indent.addln('callback.reply(null));');
+            } else {
+              indent.scoped('{', '});', () {
+                const String output = 'output';
+                indent.writeln('@SuppressWarnings("ConstantConditions")');
+                if (func.returnType.baseName == 'int') {
+                  indent.writeln(
+                      '$returnType $output = channelReply == null ? null : ((Number) channelReply).longValue();');
+                } else {
+                  indent.writeln(
+                      '$returnType $output = ($returnType) channelReply;');
+                }
+                indent.writeln('callback.reply($output);');
+              });
+            }
+          });
         });
       }
     });
@@ -533,8 +534,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   ///   int add(int x, int y);
   void _writeInterfaceMethod(JavaOptions generatorOptions, Root root,
       Indent indent, Api api, final Method method) {
-    final String nullableType =
-        method.isAsynchronous ? '' : _nullSafeString(method.returnType);
+    final String nullableType = method.isAsynchronous
+        ? ''
+        : _nullabilityAnnotationFromType(method.returnType);
     final String returnType = method.isAsynchronous
         ? 'void'
         : _javaTypeForDartType(method.returnType);
@@ -582,67 +584,67 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
       }
       indent.writeln('BasicMessageChannel<Object> channel =');
-      indent.inc(2);
-      indent.writeln('new BasicMessageChannel<>(');
-      indent.inc(2);
-      indent.write('binaryMessenger, "$channelName", getCodec()');
-      if (taskQueue != null) {
-        indent.addln(', $taskQueue);');
-      } else {
-        indent.addln(');');
-      }
-      indent.dec(2);
-      indent.dec(2);
+      indent.nest(2, () {
+        indent.writeln('new BasicMessageChannel<>(');
+        indent.nest(2, () {
+          indent.write('binaryMessenger, "$channelName", getCodec()');
+          if (taskQueue != null) {
+            indent.addln(', $taskQueue);');
+          } else {
+            indent.addln(');');
+          }
+        });
+      });
       indent.write('if (api != null) ');
       indent.scoped('{', '} else {', () {
         indent.writeln('channel.setMessageHandler(');
-        indent.inc(2);
-        indent.write('(message, reply) -> ');
-        indent.scoped('{', '});', () {
-          final String returnType = method.returnType.isVoid
-              ? 'Void'
-              : _javaTypeForDartType(method.returnType);
-          indent.writeln('ArrayList wrapped = new ArrayList<>();');
-          indent.write('try ');
-          indent.scoped('{', '}', () {
-            final List<String> methodArgument = <String>[];
-            if (method.arguments.isNotEmpty) {
-              indent.writeln(
-                  'ArrayList<Object> args = (ArrayList<Object>) message;');
-              indent.writeln('assert args != null;');
-              enumerate(method.arguments, (int index, NamedType arg) {
-                // The StandardMessageCodec can give us [Integer, Long] for
-                // a Dart 'int'.  To keep things simple we just use 64bit
-                // longs in Pigeon with Java.
-                final bool isInt = arg.type.baseName == 'int';
-                final String argType =
-                    isInt ? 'Number' : _javaTypeForDartType(arg.type);
-                final String argName = _getSafeArgumentName(index, arg);
-                final String argExpression = isInt
-                    ? '($argName == null) ? null : $argName.longValue()'
-                    : argName;
-                String accessor = 'args.get($index)';
-                if (isEnum(root, arg.type)) {
-                  accessor = _intToEnum(accessor, arg.type.baseName);
-                } else if (argType != 'Object') {
-                  accessor = '($argType) $accessor';
-                }
-                indent.writeln('$argType $argName = $accessor;');
-                if (!arg.type.isNullable) {
-                  indent.write('if ($argName == null) ');
-                  indent.scoped('{', '}', () {
-                    indent.writeln(
-                        'throw new NullPointerException("$argName unexpectedly null.");');
-                  });
-                }
-                methodArgument.add(argExpression);
-              });
-            }
-            if (method.isAsynchronous) {
-              final String resultValue =
-                  method.returnType.isVoid ? 'null' : 'result';
-              const String resultName = 'resultCallback';
-              indent.format('''
+        indent.nest(2, () {
+          indent.write('(message, reply) -> ');
+          indent.scoped('{', '});', () {
+            final String returnType = method.returnType.isVoid
+                ? 'Void'
+                : _javaTypeForDartType(method.returnType);
+            indent.writeln('ArrayList wrapped = new ArrayList<>();');
+            indent.write('try ');
+            indent.scoped('{', '}', () {
+              final List<String> methodArgument = <String>[];
+              if (method.arguments.isNotEmpty) {
+                indent.writeln(
+                    'ArrayList<Object> args = (ArrayList<Object>) message;');
+                indent.writeln('assert args != null;');
+                enumerate(method.arguments, (int index, NamedType arg) {
+                  // The StandardMessageCodec can give us [Integer, Long] for
+                  // a Dart 'int'.  To keep things simple we just use 64bit
+                  // longs in Pigeon with Java.
+                  final bool isInt = arg.type.baseName == 'int';
+                  final String argType =
+                      isInt ? 'Number' : _javaTypeForDartType(arg.type);
+                  final String argName = _getSafeArgumentName(index, arg);
+                  final String argExpression = isInt
+                      ? '($argName == null) ? null : $argName.longValue()'
+                      : argName;
+                  String accessor = 'args.get($index)';
+                  if (isEnum(root, arg.type)) {
+                    accessor = _intToEnum(accessor, arg.type.baseName);
+                  } else if (argType != 'Object') {
+                    accessor = '($argType) $accessor';
+                  }
+                  indent.writeln('$argType $argName = $accessor;');
+                  if (!arg.type.isNullable) {
+                    indent.write('if ($argName == null) ');
+                    indent.scoped('{', '}', () {
+                      indent.writeln(
+                          'throw new NullPointerException("$argName unexpectedly null.");');
+                    });
+                  }
+                  methodArgument.add(argExpression);
+                });
+              }
+              if (method.isAsynchronous) {
+                final String resultValue =
+                    method.returnType.isVoid ? 'null' : 'result';
+                const String resultName = 'resultCallback';
+                indent.format('''
 Result<$returnType> $resultName = 
 \t\tnew Result<$returnType>() {
 \t\t\tpublic void success($returnType result) {
@@ -656,35 +658,35 @@ Result<$returnType> $resultName =
 \t\t\t}
 \t\t};
 ''');
-              methodArgument.add(resultName);
-            }
-            final String call =
-                'api.${method.name}(${methodArgument.join(', ')})';
-            if (method.isAsynchronous) {
-              indent.writeln('$call;');
-            } else if (method.returnType.isVoid) {
-              indent.writeln('$call;');
-              indent.writeln('wrapped.add(0, null);');
-            } else {
-              indent.writeln('$returnType output = $call;');
-              indent.writeln('wrapped.add(0, output);');
-            }
-          }, addTrailingNewline: false);
-          indent.add(' catch (Error | RuntimeException exception) ');
-          indent.scoped('{', '}', () {
-            indent.writeln(
-                'ArrayList<Object> wrappedError = wrapError(exception);');
-            if (method.isAsynchronous) {
-              indent.writeln('reply.reply(wrappedError);');
-            } else {
-              indent.writeln('wrapped = wrappedError;');
+                methodArgument.add(resultName);
+              }
+              final String call =
+                  'api.${method.name}(${methodArgument.join(', ')})';
+              if (method.isAsynchronous) {
+                indent.writeln('$call;');
+              } else if (method.returnType.isVoid) {
+                indent.writeln('$call;');
+                indent.writeln('wrapped.add(0, null);');
+              } else {
+                indent.writeln('$returnType output = $call;');
+                indent.writeln('wrapped.add(0, output);');
+              }
+            }, addTrailingNewline: false);
+            indent.add(' catch (Error | RuntimeException exception) ');
+            indent.scoped('{', '}', () {
+              indent.writeln(
+                  'ArrayList<Object> wrappedError = wrapError(exception);');
+              if (method.isAsynchronous) {
+                indent.writeln('reply.reply(wrappedError);');
+              } else {
+                indent.writeln('wrapped = wrappedError;');
+              }
+            });
+            if (!method.isAsynchronous) {
+              indent.writeln('reply.reply(wrapped);');
             }
           });
-          if (!method.isAsynchronous) {
-            indent.writeln('reply.reply(wrapped);');
-          }
         });
-        indent.dec(2);
       });
       indent.scoped(null, '}', () {
         indent.writeln('channel.setMessageHandler(null);');
@@ -859,12 +861,12 @@ String _javaTypeForDartType(TypeDeclaration type) {
   return _javaTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
-String _nullSafeString(TypeDeclaration type) {
+String _nullabilityAnnotationFromType(TypeDeclaration type) {
   return type.isVoid ? '' : (type.isNullable ? '@Nullable ' : '@NonNull ');
 }
 
 String _nullsafeJavaTypeForDartType(TypeDeclaration type) {
-  final String nullSafe = _nullSafeString(type);
+  final String nullSafe = _nullabilityAnnotationFromType(type);
   return '$nullSafe${_javaTypeForDartType(type)}';
 }
 

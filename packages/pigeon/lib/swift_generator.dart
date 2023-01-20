@@ -506,14 +506,14 @@ import FlutterMacOS
           indent.scoped('{', '}', () {
             for (final EnumeratedClass customClass
                 in getCodecClasses(api, root)) {
-              indent.write('case ${customClass.enumeration}:');
-              indent.scoped('', '', () {
-                indent.write(
+              indent.writeln('case ${customClass.enumeration}:');
+              indent.nest(1, () {
+                indent.writeln(
                     'return ${customClass.name}.fromList(self.readValue() as! [Any])');
               });
             }
-            indent.write('default:');
-            indent.scoped('', '', () {
+            indent.writeln('default:');
+            indent.nest(1, () {
               indent.writeln('return super.readValue(ofType: type)');
             });
           });
@@ -522,6 +522,7 @@ import FlutterMacOS
     });
 
     // Generate Writer
+    indent.newln();
     indent.write('private class $writerName: FlutterStandardWriter ');
     indent.scoped('{', '}', () {
       if (getCodecClasses(api, root).isNotEmpty) {

@@ -187,17 +187,17 @@ private class HostIntegrationCoreApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return AllNullableTypes.fromList(self.readValue() as! [Any])      
+        return AllNullableTypes.fromList(self.readValue() as! [Any])
       case 129:
-        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any])      
+        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any])
       case 130:
-        return AllTypes.fromList(self.readValue() as! [Any])      
+        return AllTypes.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
-      
     }
   }
 }
+
 private class HostIntegrationCoreApiCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
     if let value = value as? AllNullableTypes {
@@ -769,17 +769,17 @@ private class FlutterIntegrationCoreApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return AllNullableTypes.fromList(self.readValue() as! [Any])      
+        return AllNullableTypes.fromList(self.readValue() as! [Any])
       case 129:
-        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any])      
+        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any])
       case 130:
-        return AllTypes.fromList(self.readValue() as! [Any])      
+        return AllTypes.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
-      
     }
   }
 }
+
 private class FlutterIntegrationCoreApiCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
     if let value = value as? AllNullableTypes {
