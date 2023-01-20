@@ -191,14 +191,12 @@ task:
           CHANNEL: "stable"
       << : *INSTALL_CHROME_LINUX
       local_tests_script:
-        # pigeon tests currently don't support Linux:
-        #   https://github.com/flutter/flutter/issues/100386
         # flutter_image
         #   https://github.com/flutter/flutter/issues/100387
         - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test --exclude=pigeon
+        -   ./script/tool_runner.sh custom-test
         - else
-        -   ./script/tool_runner.sh custom-test --exclude=pigeon,flutter_image
+        -   ./script/tool_runner.sh custom-test --exclude=flutter_image
         - fi
     ### Web tasks ###
     - name: web-build_all_packages
