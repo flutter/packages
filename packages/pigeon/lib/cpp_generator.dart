@@ -146,7 +146,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
-    indent.scoped('{', '};', () {
+    indent.addScoped('{', '};', () {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
@@ -184,8 +184,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         generatorComments: generatedMessages);
 
     indent.write('class ${klass.name} ');
-    indent.scoped('{', '};', () {
-      indent.scoped(' public:', '', () {
+    indent.addScoped('{', '};', () {
+      indent.addScoped(' public:', '', () {
         indent.writeln('${klass.name}();');
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           addDocumentationComments(
@@ -208,7 +208,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         }
       });
 
-      indent.scoped(' private:', '', () {
+      indent.addScoped(' private:', '', () {
         indent.writeln('${klass.name}(const flutter::EncodableList& list);');
         indent.writeln('flutter::EncodableList ToEncodableList() const;');
         for (final Class friend in root.classes) {
@@ -256,11 +256,11 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
     indent.write('class ${api.name} ');
-    indent.scoped('{', '};', () {
-      indent.scoped(' private:', '', () {
+    indent.addScoped('{', '};', () {
+      indent.addScoped(' private:', '', () {
         indent.writeln('flutter::BinaryMessenger* binary_messenger_;');
       });
-      indent.scoped(' public:', '', () {
+      indent.addScoped(' public:', '', () {
         indent
             .write('${api.name}(flutter::BinaryMessenger* binary_messenger);');
         indent.newln();
@@ -308,8 +308,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
     indent.write('class ${api.name} ');
-    indent.scoped('{', '};', () {
-      indent.scoped(' public:', '', () {
+    indent.addScoped('{', '};', () {
+      indent.addScoped(' public:', '', () {
         indent.writeln('${api.name}(const ${api.name}&) = delete;');
         indent.writeln('${api.name}& operator=(const ${api.name}&) = delete;');
         indent.writeln('virtual ~${api.name}() { };');
@@ -360,7 +360,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent.writeln(
             'static flutter::EncodableValue WrapError(const FlutterError& error);');
       });
-      indent.scoped(' protected:', '', () {
+      indent.addScoped(' protected:', '', () {
         indent.writeln('${api.name}() = default;');
       });
     }, nestCount: 0);
@@ -372,8 +372,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     final String codeSerializerName = _getCodecSerializerName(api);
     indent
         .write('class $codeSerializerName : public $_defaultCodecSerializer ');
-    indent.scoped('{', '};', () {
-      indent.scoped(' public:', '', () {
+    indent.addScoped('{', '};', () {
+      indent.addScoped(' public:', '', () {
         indent.newln();
         indent.format('''
 inline static $codeSerializerName& GetInstance() {
@@ -541,8 +541,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
   ) {
     indent.write(
         'flutter::EncodableList ${klass.name}::ToEncodableList() const ');
-    indent.scoped('{', '}', () {
-      indent.scoped('return flutter::EncodableList{', '};', () {
+    indent.addScoped('{', '}', () {
+      indent.addScoped('return flutter::EncodableList{', '};', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
               field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
@@ -566,7 +566,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
   ) {
     indent.write(
         '${klass.name}::${klass.name}(const flutter::EncodableList& list) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(klass),
           (int index, final NamedType field) {
         final String instanceVariableName = _makeInstanceVariableName(field);
@@ -593,14 +593,14 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
                   .contains(field.type.baseName)) {
             indent.write(
                 'if (const flutter::EncodableList* $pointerFieldName = std::get_if<flutter::EncodableList>(&$encodableFieldName)) ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln(
                   '$instanceVariableName = ${hostDatatype.datatype}(*$pointerFieldName);');
             });
           } else {
             indent.write(
                 'if (const ${hostDatatype.datatype}* $pointerFieldName = std::get_if<${hostDatatype.datatype}>(&$encodableFieldName)) ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln('$instanceVariableName = *$pointerFieldName;');
             });
           }
@@ -624,7 +624,7 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
         '$_commentPrefix Generated class from Pigeon that represents Flutter messages that can be called from C++.');
     indent.write(
         '${api.name}::${api.name}(flutter::BinaryMessenger* binary_messenger) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('this->binary_messenger_ = binary_messenger;');
     });
     indent.newln();
@@ -668,7 +668,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
         if (func.arguments.isEmpty) {
           indent.addln('flutter::EncodableValue();');
         } else {
-          indent.scoped(
+          indent.addScoped(
               'flutter::EncodableValue(flutter::EncodableList{', '});', () {
             for (final _HostNamedType param in hostParameters) {
               final String encodedArgument = _wrappedHostApiArgumentExpression(
@@ -682,7 +682,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
             // ignore: missing_whitespace_between_adjacent_strings
             '[on_success = std::move(on_success), on_error = std::move(on_error)]'
             '(const uint8_t* reply, size_t reply_size) ');
-        indent.scoped('{', '});', () {
+        indent.addScoped('{', '});', () {
           final String successCallbackArgument;
           if (func.returnType.isVoid) {
             successCallbackArgument = '';
@@ -724,21 +724,21 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
         '$_commentPrefix Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
     indent.write(
         'void ${api.name}::SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         final String channelName = makeChannelName(api, method);
         indent.write('');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           indent.writeln(
               'auto channel = std::make_unique<flutter::BasicMessageChannel<>>(binary_messenger, '
               '"$channelName", &GetCodec());');
           indent.write('if (api != nullptr) ');
-          indent.scoped('{', '} else {', () {
+          indent.addScoped('{', '} else {', () {
             indent.write(
                 'channel->SetMessageHandler([api](const flutter::EncodableValue& message, const flutter::MessageReply<flutter::EncodableValue>& reply) ');
-            indent.scoped('{', '});', () {
+            indent.addScoped('{', '});', () {
               indent.write('try ');
-              indent.scoped('{', '}', () {
+              indent.addScoped('{', '}', () {
                 final List<String> methodArgument = <String>[];
                 if (method.arguments.isNotEmpty) {
                   indent.writeln(
@@ -759,7 +759,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                         'const auto& $encodableArgName = args.at($index);');
                     if (!arg.type.isNullable) {
                       indent.write('if ($encodableArgName.IsNull()) ');
-                      indent.scoped('{', '}', () {
+                      indent.addScoped('{', '}', () {
                         indent.writeln(
                             'reply(WrapError("$argName unexpectedly null."));');
                         indent.writeln('return;');
@@ -794,7 +794,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 }
               }, addTrailingNewline: false);
               indent.add(' catch (const std::exception& exception) ');
-              indent.scoped('{', '}', () {
+              indent.addScoped('{', '}', () {
                 // There is a potential here for `reply` to be called twice, which
                 // is a violation of the API contract, because there's no way of
                 // knowing whether or not the plugin code called `reply` before
@@ -807,7 +807,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
               });
             });
           });
-          indent.scoped(null, '}', () {
+          indent.addScoped(null, '}', () {
             indent.writeln('channel->SetMessageHandler(nullptr);');
           });
         });
@@ -845,9 +845,9 @@ flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
     indent.writeln('$codeSerializerName::$codeSerializerName() {}');
     indent.write(
         'flutter::EncodableValue $codeSerializerName::ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('switch (type) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
           indent.write('case ${customClass.enumeration}:');
           indent.writeScoped('', '', () {
@@ -868,11 +868,11 @@ flutter::EncodableValue ${api.name}::WrapError(const FlutterError& error) {
     indent.writeScoped('{', '}', () {
       indent.write(
           'if (const flutter::CustomEncodableValue* custom_value = std::get_if<flutter::CustomEncodableValue>(&value)) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
           indent.write(
               'if (custom_value->type() == typeid(${customClass.name})) ');
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             indent.writeln('stream->WriteByte(${customClass.enumeration});');
             indent.writeln(
                 'WriteValue(flutter::EncodableValue(std::any_cast<${customClass.name}>(*custom_value).ToEncodableList()), stream);');

@@ -83,7 +83,7 @@ class Indent {
 
   /// Scoped increase of the ident level.  For the execution of [func] the
   /// indentation will be incremented.
-  void scoped(
+  void addScoped(
     String? begin,
     String? end,
     Function func, {
@@ -102,14 +102,14 @@ class Indent {
     }
   }
 
-  /// Like `scoped` but writes the current indentation level.
+  /// Like `addScoped` but writes the current indentation level.
   void writeScoped(
     String? begin,
     String end,
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    scoped(str() + (begin ?? ''), end, func,
+    addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
 

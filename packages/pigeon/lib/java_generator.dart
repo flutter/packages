@@ -155,7 +155,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent, anEnum.documentationComments, _docCommentSpec);
 
     indent.write('public enum ${anEnum.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
@@ -166,7 +166,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.writeln('private final int index;');
       indent.newln();
       indent.write('private ${anEnum.name}(final int index) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('this.index = index;');
       });
     });
@@ -189,7 +189,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         generatorComments: generatedMessages);
 
     indent.write('public static final class ${klass.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         _writeClassField(generatorOptions, root, indent, field);
         indent.newln();
@@ -225,7 +225,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.newln();
     indent.write(
         'public $nullability ${hostDatatype.datatype} ${_makeGetter(field)}() ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('return ${field.name};');
     });
     indent.newln();
@@ -249,7 +249,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Class klass,
   ) {
     indent.write('public static final class Builder ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         final HostDatatype hostDatatype = getFieldHostDatatype(
             field,
@@ -271,7 +271,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       }
       indent.newln();
       indent.write('public @NonNull ${klass.name} build() ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         const String returnVal = 'pigeonReturn';
         indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
@@ -294,7 +294,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.newln();
     indent.writeln('@NonNull');
     indent.write('ArrayList<Object> toList() ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln(
           'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
@@ -332,7 +332,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.newln();
     indent.write(
         'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       const String result = 'pigeonResult';
       indent.writeln('${klass.name} $result = new ${klass.name}();');
       enumerate(getFieldsInSerializationOrder(klass),
@@ -379,23 +379,23 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         generatorComments: generatedMessages);
 
     indent.write('public static final class ${api.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('private final BinaryMessenger binaryMessenger;');
       indent.newln();
       indent.write('public ${api.name}(BinaryMessenger argBinaryMessenger) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('this.binaryMessenger = argBinaryMessenger;');
       });
       indent.newln();
       indent.write('/** Public interface for sending reply. */ ');
       indent.write('public interface Reply<T> ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('void reply(T reply);');
       });
       final String codecName = _getCodecName(api);
       indent.writeln('/** The codec used by ${api.name}. */');
       indent.write('static MessageCodec<Object> getCodec() ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.write('return ');
         if (getCodecClasses(api, root).isNotEmpty) {
           indent.addln('$codecName.INSTANCE;');
@@ -434,7 +434,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           indent.write(
               'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
         }
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln('BasicMessageChannel<Object> $channel =');
           indent.nest(2, () {
@@ -450,7 +450,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             if (func.returnType.isVoid) {
               indent.addln('callback.reply(null));');
             } else {
-              indent.scoped('{', '});', () {
+              indent.addScoped('{', '});', () {
                 const String output = 'output';
                 indent.writeln('@SuppressWarnings("ConstantConditions")');
                 if (func.returnType.baseName == 'int') {
@@ -500,7 +500,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         generatorComments: generatedMessages);
 
     indent.write('public interface ${api.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         _writeInterfaceMethod(generatorOptions, root, indent, api, method);
       }
@@ -508,7 +508,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       final String codecName = _getCodecName(api);
       indent.writeln('/** The codec used by ${api.name}. */');
       indent.write('static MessageCodec<Object> getCodec() ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.write('return ');
         if (getCodecClasses(api, root).isNotEmpty) {
           indent.addln('$codecName.INSTANCE;');
@@ -521,7 +521,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           '${_docCommentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`.$_docCommentSuffix');
       indent.write(
           'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
           _writeMethodSetup(generatorOptions, root, indent, api, method);
         }
@@ -576,7 +576,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       Api api, final Method method) {
     final String channelName = makeChannelName(api, method);
     indent.write('');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       String? taskQueue;
       if (method.taskQueueType != TaskQueueType.serial) {
         taskQueue = 'taskQueue';
@@ -596,17 +596,17 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         });
       });
       indent.write('if (api != null) ');
-      indent.scoped('{', '} else {', () {
+      indent.addScoped('{', '} else {', () {
         indent.writeln('channel.setMessageHandler(');
         indent.nest(2, () {
           indent.write('(message, reply) -> ');
-          indent.scoped('{', '});', () {
+          indent.addScoped('{', '});', () {
             final String returnType = method.returnType.isVoid
                 ? 'Void'
                 : _javaTypeForDartType(method.returnType);
             indent.writeln('ArrayList wrapped = new ArrayList<>();');
             indent.write('try ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               final List<String> methodArgument = <String>[];
               if (method.arguments.isNotEmpty) {
                 indent.writeln(
@@ -632,7 +632,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                   indent.writeln('$argType $argName = $accessor;');
                   if (!arg.type.isNullable) {
                     indent.write('if ($argName == null) ');
-                    indent.scoped('{', '}', () {
+                    indent.addScoped('{', '}', () {
                       indent.writeln(
                           'throw new NullPointerException("$argName unexpectedly null.");');
                     });
@@ -673,7 +673,7 @@ Result<$returnType> $resultName =
               }
             }, addTrailingNewline: false);
             indent.add(' catch (Error | RuntimeException exception) ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln(
                   'ArrayList<Object> wrappedError = wrapError(exception);');
               if (method.isAsynchronous) {
@@ -688,7 +688,7 @@ Result<$returnType> $resultName =
           });
         });
       });
-      indent.scoped(null, '}', () {
+      indent.addScoped(null, '}', () {
         indent.writeln('channel.setMessageHandler(null);');
       });
     });
@@ -704,7 +704,7 @@ Result<$returnType> $resultName =
     indent.newln();
     indent.write(
         'private static class $codecName extends $_standardMessageCodec ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln(
           'public static final $codecName INSTANCE = new $codecName();');
       indent.newln();
@@ -713,9 +713,9 @@ Result<$returnType> $resultName =
       indent.writeln('@Override');
       indent.write(
           'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.write('switch (type) ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           for (final EnumeratedClass customClass in codecClasses) {
             indent.write('case (byte) ${customClass.enumeration}: ');
             indent.writeScoped('', '', () {
@@ -724,7 +724,7 @@ Result<$returnType> $resultName =
             });
           }
           indent.write('default:');
-          indent.scoped('', '', () {
+          indent.addScoped('', '', () {
             indent.writeln('return super.readValueOfType(type, buffer);');
           }, addTrailingNewline: false);
         });
@@ -733,7 +733,7 @@ Result<$returnType> $resultName =
       indent.writeln('@Override');
       indent.write(
           'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         bool firstClass = true;
         for (final EnumeratedClass customClass in codecClasses) {
           if (firstClass) {
@@ -741,13 +741,13 @@ Result<$returnType> $resultName =
             firstClass = false;
           }
           indent.add('if (value instanceof ${customClass.name}) ');
-          indent.scoped('{', '} else ', () {
+          indent.addScoped('{', '} else ', () {
             indent.writeln('stream.write(${customClass.enumeration});');
             indent.writeln(
                 'writeValue(stream, ((${customClass.name}) value).toList());');
           }, addTrailingNewline: false);
         }
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           indent.writeln('super.writeValue(stream, value);');
         });
       });
@@ -757,7 +757,7 @@ Result<$returnType> $resultName =
 
   void _writeResultInterface(Indent indent) {
     indent.write('public interface Result<T> ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('void success(T result);');
       indent.newln();
       indent.writeln('void error(Throwable error);');

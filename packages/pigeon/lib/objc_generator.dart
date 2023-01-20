@@ -122,7 +122,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         indent, anEnum.documentationComments, _docCommentSpec);
 
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
-    indent.scoped('{', '};', () {
+    indent.addScoped('{', '};', () {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
@@ -400,9 +400,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     Set<String> customEnumNames,
   ) {
     indent.write('- (NSArray *)toList ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('return');
-      indent.scoped(' @[', '];', () {
+      indent.addScoped(' @[', '];', () {
         for (final NamedType field in klass.fields) {
           indent.writeln(
               '${_arrayValue(customClassNames, customEnumNames, field)},');
@@ -422,7 +422,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   ) {
     final String className = _className(generatorOptions.prefix, klass.name);
     indent.write('+ ($className *)fromList:(NSArray *)list ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       const String resultName = 'pigeonResult';
       indent.writeln('$className *$resultName = [[$className alloc] init];');
       enumerate(getFieldsInSerializationOrder(klass),
@@ -442,7 +442,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     });
 
     indent.write('+ (nullable $className *)nullableFromList:(NSArray *)list ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('return (list) ? [$className fromList:list] : nil;');
     });
   }
@@ -497,7 +497,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     const String channelName = 'channel';
     indent.write(
         'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       for (final Method func in api.methods) {
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
@@ -512,12 +512,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
           _writeChannelAllocation(
               generatorOptions, indent, api, func, channelName, taskQueue);
           indent.write('if (api) ');
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             _writeChannelApiBinding(
                 generatorOptions, root, indent, apiName, func, channelName);
           }, addTrailingNewline: false);
           indent.add(' else ');
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             indent.writeln('[$channelName setMessageHandler:nil];');
           });
         });
@@ -595,7 +595,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api (%@) doesn\'t respond to @selector($selector)", api);');
     indent.write(
         '[$channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
-    indent.scoped('{', '}];', () {
+    indent.addScoped('{', '}];', () {
       final _ObjcPtr returnType =
           _objcTypeForDartType(generatorOptions.prefix, func.returnType);
       final Iterable<String> selectorComponents =
@@ -718,9 +718,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     indent.writeln('@end');
     indent.writeln('@implementation $readerName');
     indent.write('- (nullable id)readValueOfType:(UInt8)type ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('switch (type) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         for (final EnumeratedClass customClass in codecClasses) {
           indent.write('case ${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
@@ -740,7 +740,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     indent.writeln('@end');
     indent.writeln('@implementation $writerName');
     indent.write('- (void)writeValue:(id)value ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       bool firstClass = true;
       for (final EnumeratedClass customClass in codecClasses) {
         if (firstClass) {
@@ -749,12 +749,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
         }
         indent.add(
             'if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
-        indent.scoped('{', '} else ', () {
+        indent.addScoped('{', '} else ', () {
           indent.writeln('[self writeByte:${customClass.enumeration}];');
           indent.writeln('[self writeValue:[value toList]];');
         }, addTrailingNewline: false);
       }
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('[super writeValue:value];');
       });
     });
@@ -779,13 +779,13 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
     indent.write(
         'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}() ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent
           .writeln('static FlutterStandardMessageCodec *sSharedObject = nil;');
       if (getCodecClasses(api, root).isNotEmpty) {
         indent.writeln('static dispatch_once_t sPred = 0;');
         indent.write('dispatch_once(&sPred, ^');
-        indent.scoped('{', '});', () {
+        indent.addScoped('{', '});', () {
           indent.writeln(
               '$readerWriterName *readerWriter = [[$readerWriterName alloc] init];');
           indent.writeln(
@@ -1063,10 +1063,10 @@ void _writeExtension(Indent indent, String apiName) {
 void _writeInitializer(Indent indent) {
   indent.write(
       '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger ');
-  indent.scoped('{', '}', () {
+  indent.addScoped('{', '}', () {
     indent.writeln('self = [super init];');
     indent.write('if (self) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('_binaryMessenger = binaryMessenger;');
     });
     indent.writeln('return self;');
@@ -1097,7 +1097,7 @@ void _writeMethod(ObjcOptions languageOptions, Root root, Indent indent,
     argNameFunc: argNameFunc,
     isEnum: (TypeDeclaration t) => isEnum(root, t),
   ));
-  indent.scoped(' {', '}', () {
+  indent.addScoped(' {', '}', () {
     indent.writeln('FlutterBasicMessageChannel *channel =');
     indent.nest(1, () {
       indent.writeln('[FlutterBasicMessageChannel');
@@ -1111,7 +1111,7 @@ void _writeMethod(ObjcOptions languageOptions, Root root, Indent indent,
       });
     });
     indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
-    indent.scoped('{', '}];', () {
+    indent.addScoped('{', '}];', () {
       if (func.returnType.isVoid) {
         indent.writeln('completion(nil);');
       } else {

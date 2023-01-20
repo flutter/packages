@@ -109,7 +109,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum ${anEnum.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       for (final EnumMember member in anEnum.members) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
@@ -131,7 +131,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         indent, klass.documentationComments, _docCommentSpec);
 
     indent.write('class ${klass.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       _writeConstructor(indent, klass);
       indent.newln();
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
@@ -152,7 +152,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   void _writeConstructor(Indent indent, Class klass) {
     indent.write(klass.name);
-    indent.scoped('({', '});', () {
+    indent.addScoped('({', '});', () {
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         final String required = field.type.isNullable ? '' : 'required ';
         indent.writeln('${required}this.${field.name},');
@@ -170,11 +170,11 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Set<String> customEnumNames,
   ) {
     indent.write('Object encode() ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write(
         'return <Object?>',
       );
-      indent.scoped('[', '];', () {
+      indent.addScoped('[', '];', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final String conditional = field.type.isNullable ? '?' : '';
           if (customClassNames.contains(field.type.baseName)) {
@@ -250,10 +250,10 @@ $resultAt != null
     indent.write(
       'static ${klass.name} decode(Object result) ',
     );
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('result as List<Object?>;');
       indent.write('return ${klass.name}');
-      indent.scoped('(', ');', () {
+      indent.addScoped('(', ');', () {
         enumerate(getFieldsInSerializationOrder(klass),
             (int index, final NamedType field) {
           indent.write('${field.name}: ');
@@ -295,7 +295,7 @@ $resultAt != null
         indent, api.documentationComments, _docCommentSpec);
 
     indent.write('abstract class ${api.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent
           .writeln('static const MessageCodec<Object?> codec = $codecName();');
       indent.newln();
@@ -316,10 +316,10 @@ $resultAt != null
       }
       indent.write(
           'static void setup(${api.name}? api, {BinaryMessenger? binaryMessenger}) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         for (final Method func in api.methods) {
           indent.write('');
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             indent.writeln(
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
             );
@@ -335,15 +335,15 @@ $resultAt != null
             final String messageHandlerSetter =
                 isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
             indent.write('if (api == null) ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln('channel.$messageHandlerSetter(null);');
             }, addTrailingNewline: false);
             indent.add(' else ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.write(
                 'channel.$messageHandlerSetter((Object? message) async ',
               );
-              indent.scoped('{', '});', () {
+              indent.addScoped('{', '});', () {
                 final String returnType =
                     _addGenericTypesNullable(func.returnType);
                 final bool isAsync = func.isAsynchronous;
@@ -450,7 +450,7 @@ $resultAt != null
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
     indent.write('class ${api.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.format('''
 /// Constructor for [${api.name}].  The [binaryMessenger] named argument is
 /// available for dependency injection.  If it is left null, the default
@@ -493,7 +493,7 @@ final BinaryMessenger? _binaryMessenger;
         indent.write(
           'Future<${_addGenericTypesNullable(func.returnType)}> ${func.name}($argSignature) async ',
         );
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           final String channelName = makeChannelName(api, func);
           indent.writeln(
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
@@ -642,32 +642,32 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
   final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
   indent.newln();
   indent.write('class $codecName extends $_standardMessageCodec');
-  indent.scoped(' {', '}', () {
+  indent.addScoped(' {', '}', () {
     indent.writeln('const $codecName();');
     indent.writeln('@override');
     indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       enumerate(codecClasses, (int index, final EnumeratedClass customClass) {
         final String ifValue = 'if (value is ${customClass.name}) ';
         if (index == 0) {
           indent.write('');
         }
         indent.add(ifValue);
-        indent.scoped('{', '} else ', () {
+        indent.addScoped('{', '} else ', () {
           indent.writeln('buffer.putUint8(${customClass.enumeration});');
           indent.writeln('writeValue(buffer, value.encode());');
         }, addTrailingNewline: false);
       });
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('super.writeValue(buffer, value);');
       });
     });
     indent.newln();
     indent.writeln('@override');
     indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('switch (type) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         for (final EnumeratedClass customClass in codecClasses) {
           indent.write('case ${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
