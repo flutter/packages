@@ -70,6 +70,10 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
   'ios_objc_unittests': _TestInfo(
       function: _runIOSObjCUnitTests,
       description: 'Unit tests on generated Objective-C code.'),
+  'ios_objc_legacy_unittests': _TestInfo(
+      function: _runIOSObjCLegacyUnitTests,
+      description:
+          'Unit tests on generated Objective-C code (legacy test harness).'),
   'ios_objc_integration_tests': _TestInfo(
       function: _runIOSObjCIntegrationTests,
       description: 'Integration tests on generated Objective-C code.'),
@@ -244,6 +248,13 @@ Future<int> _runFlutterUnitTests() async {
 
 Future<int> _runIOSObjCUnitTests() async {
   return _runIOSUnitTests(_alternateLanguageTestPluginRelativePath);
+}
+
+// TODO(stuartmorgan): Remove this, and the ios_unit_tests directory, once
+// _runIOSObjCUnitTests works in CI; see
+// https://github.com/flutter/packages/pull/2816.
+Future<int> _runIOSObjCLegacyUnitTests() async {
+  return _runIOSUnitTests('platform_tests/ios_unit_tests');
 }
 
 Future<int> _runIOSObjCIntegrationTests() async {

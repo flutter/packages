@@ -90,17 +90,7 @@ run_ios_objc_unittests() {
 # TODO(stuartmorgan): Remove once run_ios_objc_unittests works in CI; see
 # related TODOs below.
 run_ios_legacy_unittests() {
-  pushd $PWD
-  cd platform_tests/ios_unit_tests
-  flutter build ios --simulator
-  cd ios
-  xcodebuild \
-    -workspace Runner.xcworkspace \
-    -scheme RunnerTests \
-    -sdk iphonesimulator \
-    -destination 'platform=iOS Simulator,name=iPhone 8' \
-    test
-  popd
+  dart run tool/run_tests.dart -t ios_objc_legacy_unittests --skip-generation
 }
 
 run_ios_objc_e2e_tests() {
