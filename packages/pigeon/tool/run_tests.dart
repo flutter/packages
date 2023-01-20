@@ -74,8 +74,10 @@ Future<void> main(List<String> args) async {
       // See TODO in linuxHostTests:
       androidJavaIntegrationTests,
       androidKotlinIntegrationTests,
-      // See TODO in macOSHostTests:
+      // See TODOs in macOSHostTests:
       iOSObjCUnitTests,
+      iOSObjCIntegrationTests,
+      iOSSwiftIntegrationTests,
     ],
   ]);
 
