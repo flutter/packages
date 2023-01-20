@@ -5,139 +5,118 @@
 // ignore_for_file: avoid_print
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Script for executing the Pigeon tests
+/// CI entrypoint for running Pigeon tests.
 ///
-/// usage: dart run tool/run_tests.dart
+/// For any use other than CI, use test.dart instead.
 ////////////////////////////////////////////////////////////////////////////////
 import 'dart:io' show Platform, exit;
-import 'dart:math';
 
-import 'package:args/args.dart';
 import 'package:path/path.dart' as p;
 
 import 'shared/generation.dart';
 import 'shared/test_suites.dart';
 
-const String _testFlag = 'test';
-const String _listFlag = 'list';
-const String _skipGenerationFlag = 'skip-generation';
+/// Exits with failure if any tests in [testSuites] are not included in any of
+/// the given test [shards].
+void _validateTestCoverage(List<List<String>> shards) {
+  final Set<String> missing = testSuites.keys.toSet();
+  shards.forEach(missing.removeAll);
+
+  if (missing.isNotEmpty) {
+    print('The following test suites are not being run on any host:');
+    for (final String suite in missing) {
+      print('  $suite');
+    }
+    exit(1);
+  }
+}
 
 Future<void> main(List<String> args) async {
-  final ArgParser parser = ArgParser()
-    ..addMultiOption(_testFlag, abbr: 't', help: 'Only run specified tests.')
-    ..addFlag(_listFlag,
-        negatable: false, abbr: 'l', help: 'List available tests.')
-    // Temporarily provide a way for run_test.sh to bypass generation, since
-    // it generates before doing anything else.
-    // TODO(stuartmorgan): Remove this once run_test.sh is fully migrated to
-    // this script.
-    ..addFlag(_skipGenerationFlag, negatable: false, hide: true)
-    ..addFlag('help',
-        negatable: false, abbr: 'h', help: 'Print this reference.');
+  // Run most tests on Linux, since Linux tends to be the easiest and cheapest.
+  const List<String> linuxHostTests = <String>[
+    dartUnitTests,
+    flutterUnitTests,
+    mockHandlerTests,
+    commandLineTests,
+    androidJavaUnitTests,
+    androidKotlinUnitTests,
+    // TODO(stuartmorgan): Include these once CI supports running simulator
+    // tests. Currently these tests aren't run in CI.
+    // See https://github.com/flutter/flutter/issues/111505.
+    // androidJavaIntegrationTests,
+    // androidKotlinIntegrationTests,
+  ];
+  // Run macOS and iOS tests on macOS, since that's the only place they can run.
+  const List<String> macOSHostTests = <String>[
+    // TODO(stuartmorgan): Replace this with iOSObjCUnitTests once the CI
+    // issues are resolved; see https://github.com/flutter/packages/pull/2816.
+    iOSObjCUnitTestsLegacy,
+    // TODO(stuartmorgan): Enable by default once CI issues are solved; see
+    // https://github.com/flutter/packages/pull/2816.
+    // iOSObjCIntegrationTests,
+    iOSSwiftUnitTests,
+    // Currently these are testing exactly the same thing as
+    // macos_swift_e2e_tests, so we don't need to run both by default. This
+    // should be enabled if any iOS-only tests are added (e.g., for a feature
+    // not supported by macOS).
+    // iOSSwiftIntegrationTests,
+  ];
+  // Run Windows tests on Windows, since that's the only place they can run.
+  const List<String> windowsHostTests = <String>[
+    windowsUnitTests,
+    windowsIntegrationTests,
+  ];
 
-  final ArgResults argResults = parser.parse(args);
-  List<String> testsToRun = <String>[];
-  if (argResults.wasParsed(_listFlag)) {
-    print('available tests:');
+  _validateTestCoverage(<List<String>>[
+    linuxHostTests,
+    macOSHostTests,
+    windowsHostTests,
+    // Tests that are deliberately not included in CI:
+    <String>[
+      // See TODO in linuxHostTests:
+      androidJavaIntegrationTests,
+      androidKotlinIntegrationTests,
+      // See TODO in macOSHostTests:
+      iOSObjCUnitTests,
+    ],
+  ]);
 
-    final int columnWidth =
-        testSuites.keys.map((String key) => key.length).reduce(max) + 4;
-
-    for (final MapEntry<String, TestInfo> info in testSuites.entries) {
-      print('${info.key.padRight(columnWidth)}- ${info.value.description}');
-    }
-    exit(0);
-  } else if (argResults.wasParsed('help')) {
-    print('''
-Pigeon run_tests
-usage: dart run tool/run_tests.dart [-l | -t <test name>]
-
-${parser.usage}''');
-    exit(0);
-  } else if (argResults.wasParsed(_testFlag)) {
-    testsToRun = argResults[_testFlag];
+  // Pre-generate the necessary output files.
+  final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
+  print('# Generating platform_test/ output...');
+  final int generateExitCode = await generatePigeons(baseDir: baseDir);
+  if (generateExitCode == 0) {
+    print('Generation complete!');
+  } else {
+    print('Generation failed; see above for errors.');
   }
 
-  if (!argResults.wasParsed(_skipGenerationFlag)) {
-    final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
-    print('# Generating platform_test/ output...');
-    final int generateExitCode = await generatePigeons(baseDir: baseDir);
-    if (generateExitCode == 0) {
-      print('Generation complete!');
-    } else {
-      print('Generation failed; see above for errors.');
-    }
-  }
-
-  // If no tests are provided, run a default based on the host platform. This is
-  // the mode used by CI.
-  if (testsToRun.isEmpty) {
-    const List<String> androidTests = <String>[
-      androidJavaUnitTests,
-      androidKotlinUnitTests,
-      // TODO(stuartmorgan): Include these once CI supports running simulator
-      // tests. Currently these tests aren't run in CI.
-      // See https://github.com/flutter/flutter/issues/111505.
-      // androidJavaIntegrationTests,
-      // androidKotlinIntegrationTests,
-    ];
-    const List<String> macOSTests = <String>[
-      macOSSwiftUnitTests,
-      macOSSwiftIntegrationTests
-    ];
-    const List<String> iOSTests = <String>[
-      // TODO(stuartmorgan): Replace this with iOSObjCUnitTests once the CI
-      // issues are resolved; see https://github.com/flutter/packages/pull/2816.
-      iOSObjCUnitTestsLegacy,
-      // TODO(stuartmorgan): Enable by default once CI issues are solved; see
-      // https://github.com/flutter/packages/pull/2816.
-      // iOSObjCIntegrationTests,
-      iOSSwiftUnitTests,
-      // Currently these are testing exactly the same thing as
-      // macos_swift_e2e_tests, so we don't need to run both by default. This
-      // should be enabled if any iOS-only tests are added (e.g., for a feature
-      // not supported by macOS).
-      // iOSSwiftIntegrationTests,
-    ];
-    const List<String> windowsTests = <String>[
-      windowsUnitTests,
-      windowsIntegrationTests,
-    ];
-    const List<String> dartTests = <String>[
-      dartUnitTests,
-      flutterUnitTests,
-      mockHandlerTests,
-      commandLineTests,
-    ];
-
-    if (Platform.isMacOS) {
-      testsToRun = <String>[
-        ...dartTests,
-        ...androidTests,
-        ...iOSTests,
-        ...macOSTests,
-      ];
-    } else if (Platform.isWindows) {
-      testsToRun = windowsTests;
-    } else {
-      // TODO(stuartmorgan): Make a new entrypoint for developers that runs
-      // all tests their host supports by default, and move some of the tests
-      // above here. See https://github.com/flutter/flutter/issues/115393
-    }
+  final List<String> testsToRun;
+  if (Platform.isMacOS) {
+    testsToRun = macOSHostTests;
+  } else if (Platform.isWindows) {
+    testsToRun = windowsHostTests;
+  } else if (Platform.isLinux) {
+    testsToRun = linuxHostTests;
+  } else {
+    print('Unsupported host platform.');
+    exit(2);
   }
 
   for (final String test in testsToRun) {
     final TestInfo? info = testSuites[test];
     if (info != null) {
+      print('##############################');
       print('# Running $test');
       final int testCode = await info.function();
       if (testCode != 0) {
         exit(testCode);
       }
+      print('');
+      print('');
     } else {
-      print('unknown test: $test');
+      print('Unknown test: $test');
       exit(1);
     }
   }
-  exit(0);
 }
