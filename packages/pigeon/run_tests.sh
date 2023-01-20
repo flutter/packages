@@ -47,38 +47,6 @@ mktmpdir() {
   mktemp -d flutter_pigeon.XXXXXX 2>/dev/null || mktemp -d -t flutter_pigeon.
 }
 
-# test_pigeon_android(<path to pigeon file>)
-#
-# Compiles the pigeon file to a temp directory and attempts to compile the java
-# code.
-# TODO(stuartmorgan): Remove this in favor of unit testing all files, which
-# already includes compilation.
-test_pigeon_android() {
-  echo "test_pigeon_android($1)"
-  temp_dir=$(mktmpdir)
-
-  $run_pigeon \
-    --input $1 \
-    --dart_out $temp_dir/pigeon.dart \
-    --java_out $temp_dir/Pigeon.java \
-    --java_package foo
-
-  java -jar ci/$java_formatter --replace "$temp_dir/Pigeon.java"
-  java -jar ci/$java_linter -c "ci/$google_checks" "$temp_dir/Pigeon.java"
-  if ! javac \
-    $javac_bootclasspath \
-    -XDcompilePolicy=simple \
-    -processorpath "ci/$java_error_prone:ci/$dataflow_shaded:ci/$jformat_string" \
-    '-Xplugin:ErrorProne -Xep:CatchingUnchecked:ERROR' \
-    -classpath "$flutter_bin/cache/artifacts/engine/android-x64/flutter.jar" \
-    $temp_dir/Pigeon.java; then
-    echo "javac $temp_dir/Pigeon.java failed"
-    exit 1
-  fi
-
-  rm -rf $temp_dir
-}
-
 # test_null_safe_dart(<path to pigeon file>)
 #
 # Compiles the pigeon file to a temp directory and attempts to run the dart
