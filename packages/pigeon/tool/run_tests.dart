@@ -9,17 +9,14 @@
 ///
 /// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Directory, Platform, exit;
+import 'dart:io' show Platform, exit;
 import 'dart:math';
 
 import 'package:args/args.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
-import 'shared/flutter_utils.dart';
 import 'shared/generation.dart';
-import 'shared/native_project_runners.dart';
-import 'shared/process_utils.dart';
+import 'shared/test_suites.dart';
 
 const String _testFlag = 'test';
 const String _listFlag = 'list';
@@ -44,9 +41,9 @@ Future<void> main(List<String> args) async {
     print('available tests:');
 
     final int columnWidth =
-        _tests.keys.map((String key) => key.length).reduce(max) + 4;
+        testSuites.keys.map((String key) => key.length).reduce(max) + 4;
 
-    for (final MapEntry<String, _TestInfo> info in _tests.entries) {
+    for (final MapEntry<String, TestInfo> info in testSuites.entries) {
       print('${info.key.padRight(columnWidth)}- ${info.value.description}');
     }
     exit(0);
@@ -130,7 +127,7 @@ ${parser.usage}''');
   }
 
   for (final String test in testsToRun) {
-    final _TestInfo? info = _tests[test];
+    final TestInfo? info = testSuites[test];
     if (info != null) {
       print('# Running $test');
       final int testCode = await info.function();

@@ -4,22 +4,15 @@
 
 // ignore_for_file: avoid_print
 
-////////////////////////////////////////////////////////////////////////////////
-/// Script for executing the Pigeon tests
-///
-/// usage: dart run tool/run_tests.dart
-////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show File, Directory, Platform, exit;
-import 'dart:math';
+import 'dart:io' show File, Directory;
 
-import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
-import 'shared/flutter_utils.dart';
-import 'shared/generation.dart';
-import 'shared/native_project_runners.dart';
-import 'shared/process_utils.dart';
+import 'flutter_utils.dart';
+import 'generation.dart';
+import 'native_project_runners.dart';
+import 'process_utils.dart';
 
 const int _noDeviceAvailableExitCode = 100;
 
@@ -28,10 +21,15 @@ const String _alternateLanguageTestPluginRelativePath =
     'platform_tests/alternate_language_test_plugin';
 const String _integrationTestFileRelativePath = 'integration_test/test.dart';
 
+/// Information about a test suite.
 @immutable
-class _TestInfo {
-  const _TestInfo({required this.function, this.description});
+class TestInfo {
+  const TestInfo({required this.function, this.description});
+
+  /// The function to run the test suite.
   final Future<int> Function() function;
+
+  /// A user-facing description of the test suite.
   final String? description;
 }
 
@@ -54,57 +52,57 @@ const String flutterUnitTests = 'flutter_unittests';
 const String mockHandlerTests = 'mock_handler_tests';
 const String commandLineTests = 'command_line_tests';
 
-const Map<String, _TestInfo> _tests = <String, _TestInfo>{
-  windowsUnitTests: _TestInfo(
+const Map<String, TestInfo> testSuites = <String, TestInfo>{
+  windowsUnitTests: TestInfo(
       function: _runWindowsUnitTests,
       description: 'Unit tests on generated Windows C++ code.'),
-  windowsIntegrationTests: _TestInfo(
+  windowsIntegrationTests: TestInfo(
       function: _runWindowsIntegrationTests,
       description: 'Integration tests on generated Windows C++ code.'),
-  androidJavaUnitTests: _TestInfo(
+  androidJavaUnitTests: TestInfo(
       function: _runAndroidJavaUnitTests,
       description: 'Unit tests on generated Java code.'),
-  androidJavaIntegrationTests: _TestInfo(
+  androidJavaIntegrationTests: TestInfo(
       function: _runAndroidJavaIntegrationTests,
       description: 'Integration tests on generated Java code.'),
-  androidKotlinUnitTests: _TestInfo(
+  androidKotlinUnitTests: TestInfo(
       function: _runAndroidKotlinUnitTests,
       description: 'Unit tests on generated Kotlin code.'),
-  androidKotlinIntegrationTests: _TestInfo(
+  androidKotlinIntegrationTests: TestInfo(
       function: _runAndroidKotlinIntegrationTests,
       description: 'Integration tests on generated Kotlin code.'),
-  dartUnitTests: _TestInfo(
+  dartUnitTests: TestInfo(
       function: _runDartUnitTests,
       description: "Unit tests on and analysis on Pigeon's implementation."),
-  flutterUnitTests: _TestInfo(
+  flutterUnitTests: TestInfo(
       function: _runFlutterUnitTests,
       description: 'Unit tests on generated Dart code.'),
-  iOSObjCUnitTests: _TestInfo(
+  iOSObjCUnitTests: TestInfo(
       function: _runIOSObjCUnitTests,
       description: 'Unit tests on generated Objective-C code.'),
-  iOSObjCUnitTestsLegacy: _TestInfo(
+  iOSObjCUnitTestsLegacy: TestInfo(
       function: _runIOSObjCLegacyUnitTests,
       description:
           'Unit tests on generated Objective-C code (legacy test harness).'),
-  iOSObjCIntegrationTests: _TestInfo(
+  iOSObjCIntegrationTests: TestInfo(
       function: _runIOSObjCIntegrationTests,
       description: 'Integration tests on generated Objective-C code.'),
-  iOSSwiftUnitTests: _TestInfo(
+  iOSSwiftUnitTests: TestInfo(
       function: _runIOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code.'),
-  iOSSwiftIntegrationTests: _TestInfo(
+  iOSSwiftIntegrationTests: TestInfo(
       function: _runIOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code.'),
-  macOSSwiftUnitTests: _TestInfo(
+  macOSSwiftUnitTests: TestInfo(
       function: _runMacOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code on macOS.'),
-  macOSSwiftIntegrationTests: _TestInfo(
+  macOSSwiftIntegrationTests: TestInfo(
       function: _runMacOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code on macOS.'),
-  mockHandlerTests: _TestInfo(
+  mockHandlerTests: TestInfo(
       function: _runMockHandlerTests,
       description: 'Unit tests on generated Dart mock handler code.'),
-  commandLineTests: _TestInfo(
+  commandLineTests: TestInfo(
       function: _runCommandLineTests,
       description: 'Tests running pigeon with various command-line options.'),
 };
