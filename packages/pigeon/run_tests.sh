@@ -14,29 +14,6 @@
 set -e
 
 ###############################################################################
-# Variables
-###############################################################################
-flutter=$(which flutter)
-flutter_bin=$(dirname $flutter)
-framework_path="$flutter_bin/cache/artifacts/engine/ios/"
-
-java_linter=checkstyle-8.41-all.jar
-java_formatter=google-java-format-1.3-all-deps.jar
-google_checks=google_checks.xml
-google_checks_version=7190c47ca5515ad8cb827bc4065ae7664d2766c1
-java_error_prone=error_prone_core-2.5.1-with-dependencies.jar
-dataflow_shaded=dataflow-shaded-3.7.1.jar
-jformat_string=jFormatString-3.0.0.jar
-java_version=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)
-javac_jar=javac-9+181-r4173-1.jar
-if [ $java_version == "8" ]; then
-  javac_bootclasspath="-J-Xbootclasspath/p:ci/$javac_jar"
-else
-  javac_bootclasspath=
-fi
-run_pigeon="dart bin/pigeon.dart.dill --copyright_header ./copyright_header.txt"
-
-###############################################################################
 # Helper Functions
 ###############################################################################
 
@@ -52,35 +29,13 @@ flags:
 ###############################################################################
 # Stages
 ###############################################################################
-get_java_linter_formatter() {
-  if [ ! -f "ci/$java_linter" ]; then
-    curl -L https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.41/$java_linter >"ci/$java_linter"
-  fi
-  if [ ! -f "ci/$java_formatter" ]; then
-    curl -L https://github.com/google/google-java-format/releases/download/google-java-format-1.3/$java_formatter >"ci/$java_formatter"
-  fi
-  if [ ! -f "ci/$google_checks" ]; then
-    curl -L https://raw.githubusercontent.com/checkstyle/checkstyle/$google_checks_version/src/main/resources/$google_checks >"ci/$google_checks"
-  fi
-  if [ ! -f "ci/$java_error_prone" ]; then
-    curl https://repo1.maven.org/maven2/com/google/errorprone/error_prone_core/2.5.1/$java_error_prone >"ci/$java_error_prone"
-  fi
-  if [ ! -f "ci/$dataflow_shaded" ]; then
-    curl https://repo1.maven.org/maven2/org/checkerframework/dataflow-shaded/3.7.1/$dataflow_shaded >"ci/$dataflow_shaded"
-  fi
-  if [ ! -f "ci/$jformat_string" ]; then
-    curl https://repo1.maven.org/maven2/com/google/code/findbugs/jFormatString/3.0.0/$jformat_string >"ci/$jformat_string"
-  fi
-  if [ ! -f "ci/$javac_jar" ]; then
-    curl https://repo1.maven.org/maven2/com/google/errorprone/javac/9+181-r4173-1/$javac_jar >"ci/$javac_jar"
-  fi
-}
-
 run_dart_unittests() {
   dart run tool/run_tests.dart -t dart_unittests --skip-generation
 }
 
 test_command_line() {
+  dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
+  run_pigeon="dart bin/pigeon.dart.dill --copyright_header ./copyright_header.txt"
   # Test with no arguments.
   $run_pigeon 1>/dev/null
   # Test one_language flag. With this flag specified, java_out can be generated
@@ -262,14 +217,10 @@ done
 
 ##############################################################################
 dart pub get
-dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
 
 # Pre-generate platform_test output files, which most tests rely on existing.
 dart run tool/generate.dart
 
-if [ "$should_run_android_unittests" = true ]; then
-  get_java_linter_formatter
-fi
 test_command_line
 if [ "$should_run_dart_unittests" = true ]; then
   run_dart_unittests
