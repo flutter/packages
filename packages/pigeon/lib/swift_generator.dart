@@ -61,7 +61,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -77,18 +77,18 @@ import FlutterMacOS
 #error("Unsupported platform.")
 #endif
 ''');
-    indent.writeln('');
+    indent.newln();
   }
 
   @override
   void writeEnum(
       SwiftOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
-    indent.writeln('');
+    indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
     indent.write('enum ${anEnum.name}: Int ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
@@ -108,18 +108,18 @@ import FlutterMacOS
     const List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
-    indent.addln('');
+    indent.newln();
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
     indent.write('struct ${klass.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       getFieldsInSerializationOrder(klass).forEach((NamedType field) {
         _writeClassField(indent, field);
       });
 
-      indent.writeln('');
+      indent.newln();
       writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
           customEnumNames);
       writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
@@ -137,9 +137,9 @@ import FlutterMacOS
     Set<String> customEnumNames,
   ) {
     indent.write('func toList() -> [Any?] ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('return ');
-      indent.scoped('[', ']', () {
+      indent.addScoped('[', ']', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final HostDatatype hostDatatype = _getHostDatatype(root, field);
           String toWriteValue = '';
@@ -173,7 +173,7 @@ import FlutterMacOS
     final String className = klass.name;
     indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(klass),
           (int index, final NamedType field) {
         final HostDatatype hostDatatype = _getHostDatatype(root, field);
@@ -186,7 +186,7 @@ import FlutterMacOS
               customClassNames.contains(field.type.baseName)) {
             indent.writeln('var ${field.name}: $fieldType? = nil');
             indent.write('if let ${field.name}List = $listValue as? [Any?] ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln(
                   '${field.name} = $fieldType.fromList(${field.name}List)');
             });
@@ -194,7 +194,7 @@ import FlutterMacOS
               customEnumNames.contains(field.type.baseName)) {
             indent.writeln('var ${field.name}: $fieldType? = nil');
             indent.write('if let ${field.name}RawValue = $listValue as? Int ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln(
                   '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
             });
@@ -216,9 +216,9 @@ import FlutterMacOS
         }
       });
 
-      indent.writeln('');
+      indent.newln();
       indent.write('return ');
-      indent.scoped('$className(', ')', () {
+      indent.addScoped('$className(', ')', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final String comma =
               getFieldsInSerializationOrder(klass).last == field ? '' : ',';
@@ -247,7 +247,7 @@ import FlutterMacOS
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
-      indent.addln('');
+      indent.newln();
     }
     super.writeApis(generatorOptions, root, indent);
   }
@@ -278,10 +278,10 @@ import FlutterMacOS
         generatorComments: generatedComments);
 
     indent.write('class ${api.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
       indent.write('init(binaryMessenger: FlutterBinaryMessenger)');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('self.binaryMessenger = binaryMessenger');
       });
       final String codecName = _getCodecName(api);
@@ -289,7 +289,7 @@ import FlutterMacOS
       if (getCodecClasses(api, root).isNotEmpty) {
         codecArgumentString = ', codec: codec';
         indent.write('var codec: FlutterStandardMessageCodec ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           indent.writeln('return $codecName.shared');
         });
       }
@@ -328,17 +328,17 @@ import FlutterMacOS
                 'func ${func.name}($argsSignature, completion: @escaping ($returnType) -> Void) ');
           }
         }
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln(
               'let $channel = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
           indent.write('$channel.sendMessage($sendArgument) ');
           if (func.returnType.isVoid) {
-            indent.scoped('{ _ in', '}', () {
+            indent.addScoped('{ _ in', '}', () {
               indent.writeln('completion()');
             });
           } else {
-            indent.scoped('{ response in', '}', () {
+            indent.addScoped('{ response in', '}', () {
               indent.writeln(
                   'let result = ${_castForceUnwrap("response", func.returnType, root)}');
               indent.writeln('completion(result)');
@@ -377,7 +377,7 @@ import FlutterMacOS
         generatorComments: generatedComments);
 
     indent.write('protocol $apiName ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         final List<String> argSignature = <String>[];
         if (method.arguments.isNotEmpty) {
@@ -409,11 +409,11 @@ import FlutterMacOS
       }
     });
 
-    indent.addln('');
+    indent.newln();
     indent.writeln(
         '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
     indent.write('class ${apiName}Setup ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       final String codecName = _getCodecName(api);
       indent.writeln('$_docCommentPrefix The codec used by $apiName.');
       String codecArgumentString = '';
@@ -426,7 +426,7 @@ import FlutterMacOS
           '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
       indent.write(
           'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
           final String channelName = makeChannelName(api, method);
           final String varChannelName = '${method.name}Channel';
@@ -436,11 +436,11 @@ import FlutterMacOS
           indent.writeln(
               'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
           indent.write('if let api = api ');
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             indent.write('$varChannelName.setMessageHandler ');
             final String messageVarName =
                 method.arguments.isNotEmpty ? 'message' : '_';
-            indent.scoped('{ $messageVarName, reply in', '}', () {
+            indent.addScoped('{ $messageVarName, reply in', '}', () {
               final List<String> methodArgument = <String>[];
               if (method.arguments.isNotEmpty) {
                 indent.writeln('let args = message as! [Any?]');
@@ -457,11 +457,11 @@ import FlutterMacOS
               if (method.isAsynchronous) {
                 indent.write('$call ');
                 if (method.returnType.isVoid) {
-                  indent.scoped('{', '}', () {
+                  indent.addScoped('{', '}', () {
                     indent.writeln('reply(wrapResult(nil))');
                   });
                 } else {
-                  indent.scoped('{ result in', '}', () {
+                  indent.addScoped('{ result in', '}', () {
                     indent.writeln('reply(wrapResult(result))');
                   });
                 }
@@ -476,7 +476,7 @@ import FlutterMacOS
               }
             });
           }, addTrailingNewline: false);
-          indent.scoped(' else {', '}', () {
+          indent.addScoped(' else {', '}', () {
             indent.writeln('$varChannelName.setMessageHandler(nil)');
           });
         }
@@ -498,22 +498,22 @@ import FlutterMacOS
 
     // Generate Reader
     indent.write('private class $readerName: FlutterStandardReader ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       if (getCodecClasses(api, root).isNotEmpty) {
         indent.write('override func readValue(ofType type: UInt8) -> Any? ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           indent.write('switch type ');
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             for (final EnumeratedClass customClass
                 in getCodecClasses(api, root)) {
-              indent.write('case ${customClass.enumeration}:');
-              indent.scoped('', '', () {
-                indent.write(
+              indent.writeln('case ${customClass.enumeration}:');
+              indent.nest(1, () {
+                indent.writeln(
                     'return ${customClass.name}.fromList(self.readValue() as! [Any])');
               });
             }
-            indent.write('default:');
-            indent.scoped('', '', () {
+            indent.writeln('default:');
+            indent.nest(1, () {
               indent.writeln('return super.readValue(ofType: type)');
             });
           });
@@ -522,69 +522,70 @@ import FlutterMacOS
     });
 
     // Generate Writer
+    indent.newln();
     indent.write('private class $writerName: FlutterStandardWriter ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       if (getCodecClasses(api, root).isNotEmpty) {
         indent.write('override func writeValue(_ value: Any) ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           indent.write('');
           for (final EnumeratedClass customClass
               in getCodecClasses(api, root)) {
             indent.add('if let value = value as? ${customClass.name} ');
-            indent.scoped('{', '} else ', () {
+            indent.addScoped('{', '} else ', () {
               indent.writeln('super.writeByte(${customClass.enumeration})');
               indent.writeln('super.writeValue(value.toList())');
             }, addTrailingNewline: false);
           }
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             indent.writeln('super.writeValue(value)');
           });
         });
       }
     });
-    indent.writeln('');
+    indent.newln();
 
     // Generate ReaderWriter
     indent
         .write('private class $readerWriterName: FlutterStandardReaderWriter ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write(
           'override func reader(with data: Data) -> FlutterStandardReader ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('return $readerName(data: data)');
       });
-      indent.writeln('');
+      indent.newln();
       indent.write(
           'override func writer(with data: NSMutableData) -> FlutterStandardWriter ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('return $writerName(data: data)');
       });
     });
-    indent.writeln('');
+    indent.newln();
 
     // Generate Codec
     indent.write('class $codecName: FlutterStandardMessageCodec ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln(
           'static let shared = $codecName(readerWriter: $readerWriterName())');
     });
-    indent.addln('');
+    indent.newln();
   }
 
   void _writeWrapResult(Indent indent) {
-    indent.addln('');
+    indent.newln();
     indent.write('private func wrapResult(_ result: Any?) -> [Any?] ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('return [result]');
     });
   }
 
   void _writeWrapError(Indent indent) {
-    indent.addln('');
+    indent.newln();
     indent.write('private func wrapError(_ error: FlutterError) -> [Any?] ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('return ');
-      indent.scoped('[', ']', () {
+      indent.addScoped('[', ']', () {
         indent.writeln('error.code,');
         indent.writeln('error.message,');
         indent.writeln('error.details');

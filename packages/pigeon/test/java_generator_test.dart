@@ -36,8 +36,8 @@ void main() {
     expect(code, contains('private @Nullable Long field1;'));
     expect(
         code,
-        contains(
-            '@NonNull private static ArrayList<Object> wrapError(@NonNull Throwable exception)'));
+        contains(RegExp(
+            r'@NonNull\s*private static ArrayList<Object> wrapError\(@NonNull Throwable exception\)')));
   });
 
   test('gen one enum', () {
@@ -386,7 +386,7 @@ void main() {
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('doSomething(Reply<Output>'));
-    expect(code, contains('channel.send(null'));
+    expect(code, contains(RegExp(r'channel.send\(\s*null')));
   });
 
   test('gen list', () {
@@ -469,7 +469,7 @@ void main() {
     expect(
         code,
         contains(
-            '(nested == null) ? null : Nested.fromList((ArrayList<Object>)nested)'));
+            '(nested == null) ? null : Nested.fromList((ArrayList<Object>) nested)'));
     expect(code, contains('add((nested == null) ? null : nested.toList());'));
   });
 
@@ -613,7 +613,7 @@ void main() {
     expect(
         code,
         contains(
-            'pigeonResult.setEnum1(enum1 == null ? null : Enum1.values()[(int)enum1])'));
+            'pigeonResult.setEnum1(enum1 == null ? null : Enum1.values()[(int) enum1])'));
   });
 
   test('primitive enum host', () {
@@ -644,7 +644,7 @@ void main() {
     expect(
         code,
         contains(
-            'Foo fooArg = args.get(0) == null ? null : Foo.values()[(int)args.get(0)];'));
+            'Foo fooArg = args.get(0) == null ? null : Foo.values()[(int) args.get(0)];'));
   });
 
   Iterable<String> makeIterable(String string) sync* {
@@ -859,7 +859,7 @@ void main() {
     expect(
         code,
         contains(
-            'Long output = channelReply == null ? null : ((Number)channelReply).longValue();'));
+            'Long output = channelReply == null ? null : ((Number) channelReply).longValue();'));
   });
 
   test('host multiple args', () {
@@ -888,10 +888,10 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('class Messages'));
     expect(code, contains('Long add(@NonNull Long x, @NonNull Long y)'));
-    expect(
-        code, contains('ArrayList<Object> args = (ArrayList<Object>)message;'));
-    expect(code, contains('Number xArg = (Number)args.get(0)'));
-    expect(code, contains('Number yArg = (Number)args.get(1)'));
+    expect(code,
+        contains('ArrayList<Object> args = (ArrayList<Object>) message;'));
+    expect(code, contains('Number xArg = (Number) args.get(0)'));
+    expect(code, contains('Number yArg = (Number) args.get(1)'));
     expect(
         code,
         contains(
@@ -954,8 +954,8 @@ void main() {
             'public void add(@NonNull Long xArg, @NonNull Long yArg, Reply<Long> callback)'));
     expect(
         code,
-        contains(
-            'channel.send(new ArrayList<Object>(Arrays.asList(xArg, yArg)), channelReply ->'));
+        contains(RegExp(
+            r'channel.send\(\s*new ArrayList<Object>\(Arrays.asList\(xArg, yArg\)\),\s*channelReply ->')));
   });
 
   test('flutter single args', () {
@@ -980,8 +980,8 @@ void main() {
     final String code = sink.toString();
     expect(
         code,
-        contains(
-            'channel.send(new ArrayList<Object>(Collections.singletonList(xArg)), channelReply ->'));
+        contains(RegExp(
+            r'channel.send\(\s*new ArrayList<Object>\(Collections.singletonList\(xArg\)\),\s*channelReply ->')));
   });
 
   test('return nullable host', () {
@@ -1005,7 +1005,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('@Nullable Long doit();'));
+    expect(code, contains(RegExp(r'@Nullable\s*Long doit\(\);')));
   });
 
   test('return nullable host async', () {
@@ -1125,8 +1125,8 @@ void main() {
             'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();'));
     expect(
         code,
-        contains(
-            'new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.Api.doit", getCodec(), taskQueue)'));
+        contains(RegExp(
+            r'new BasicMessageChannel<>\(\s*binaryMessenger, "dev.flutter.pigeon.Api.doit", getCodec\(\), taskQueue\)')));
   });
 
   test('generated annotation', () {

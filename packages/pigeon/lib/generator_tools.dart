@@ -9,7 +9,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '7.0.0';
+const String pigeonVersion = '7.0.1';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -83,7 +83,7 @@ class Indent {
 
   /// Scoped increase of the ident level.  For the execution of [func] the
   /// indentation will be incremented.
-  void scoped(
+  void addScoped(
     String? begin,
     String? end,
     Function func, {
@@ -102,14 +102,14 @@ class Indent {
     }
   }
 
-  /// Like `scoped` but writes the current indentation level.
+  /// Like `addScoped` but writes the current indentation level.
   void writeScoped(
     String? begin,
     String end,
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    scoped(str() + (begin ?? ''), end, func,
+    addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
 
@@ -143,6 +143,13 @@ class Indent {
   /// Just adds [text].
   void add(String text) {
     _sink.write(text);
+  }
+
+  /// Adds [lines] number of newlines.
+  void newln([int lines = 1]) {
+    for (; lines > 0; lines--) {
+      _sink.write(newline);
+    }
   }
 }
 
