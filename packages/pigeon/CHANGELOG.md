@@ -1,3 +1,7 @@
+## 7.0.2
+
+* [kotlin] Fixes a missed casting of not nullable Dart 'int' to Kotlin 64bit long.
+
 ## 7.0.1
 
 * [generator_tools] adds `newln` method for adding empty lines and ending lines.
