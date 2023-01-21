@@ -183,15 +183,6 @@ task:
       env:
         CIRRUS_CLONE_SUBMODULES: true
       script: ./script/tool_runner.sh update-excerpts --fail-on-change
-    - name: linux-custom_package_tests
-      env:
-        PATH: $PATH:/usr/local/bin
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      << : *INSTALL_CHROME_LINUX
-      local_tests_script:
-        - ./script/tool_runner.sh custom-test
     ### Web tasks ###
     - name: web-build_all_packages
       env:
@@ -237,6 +228,16 @@ task:
     cpu: 4
     memory: 16G
   matrix:
+    ### Platform-agnostic tasks ###
+    - name: linux-custom_package_tests
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      << : *INSTALL_CHROME_LINUX
+      local_tests_script:
+        - ./script/tool_runner.sh custom-test
     ### Android tasks ###
     - name: android-platform_tests
       # Don't run full platform tests on both channels in pre-submit.
