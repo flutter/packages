@@ -255,6 +255,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 customEnumNames.contains(field.type.baseName)) {
               indent.writeln(
                   'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
+            } else if (isInt) {
+              indent.write('val ${field.name} = $listValue');
+              indent
+                  .addln('.let { if (it is Int) it.toLong() else it as Long }');
             } else {
               indent.writeln('val ${field.name} = $listValue as $fieldType');
             }

@@ -98,10 +98,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
       expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
       expect(echoObject.anEnum, genericAllTypes.anEnum);
-    },
-        // TODO(stuartmorgan): Fix and re-enable.
-        // See https://github.com/flutter/flutter/issues/118726
-        skip: targetGenerator == TargetGenerator.kotlin);
+    });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -531,11 +528,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject.anEnum, genericAllTypes.anEnum);
     },
         // TODO(stuartmorgan): Fix and re-enable.
-        // See https://github.com/flutter/flutter/issues/118726
-        skip: targetGenerator == TargetGenerator.kotlin ||
-            // TODO(stuartmorgan): Fix and re-enable.
-            // See https://github.com/flutter/flutter/issues/118739
-            targetGenerator == TargetGenerator.cpp);
+        // See https://github.com/flutter/flutter/issues/118739
+        skip: targetGenerator == TargetGenerator.cpp);
 
     testWidgets(
         'Arguments of multiple types serialize and deserialize correctly',
