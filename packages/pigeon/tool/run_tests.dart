@@ -54,10 +54,12 @@ Future<void> main(List<String> args) async {
     // iOSObjCIntegrationTests,
     iOSSwiftUnitTests,
     // Currently these are testing exactly the same thing as
-    // macos_swift_e2e_tests, so we don't need to run both by default. This
+    // macOSSwiftIntegrationTests, so we don't need to run both by default. This
     // should be enabled if any iOS-only tests are added (e.g., for a feature
     // not supported by macOS).
     // iOSSwiftIntegrationTests,
+    macOSSwiftUnitTests,
+    macOSSwiftIntegrationTests,
   ];
   // Run Windows tests on Windows, since that's the only place they can run.
   const List<String> windowsHostTests = <String>[
@@ -71,10 +73,10 @@ Future<void> main(List<String> args) async {
     windowsHostTests,
     // Tests that are deliberately not included in CI:
     <String>[
-      // See TODO in linuxHostTests:
+      // See comment in linuxHostTests:
       androidJavaIntegrationTests,
       androidKotlinIntegrationTests,
-      // See TODOs in macOSHostTests:
+      // See comments in macOSHostTests:
       iOSObjCUnitTests,
       iOSObjCIntegrationTests,
       iOSSwiftIntegrationTests,
