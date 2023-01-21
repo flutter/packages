@@ -191,13 +191,7 @@ task:
           CHANNEL: "stable"
       << : *INSTALL_CHROME_LINUX
       local_tests_script:
-        # flutter_image
-        #   https://github.com/flutter/flutter/issues/100387
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test
-        - else
-        -   ./script/tool_runner.sh custom-test --exclude=flutter_image
-        - fi
+        - ./script/tool_runner.sh custom-test
     ### Web tasks ###
     - name: web-build_all_packages
       env:
@@ -331,15 +325,9 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       local_tests_script:
-        # flutter_image
-        #   https://github.com/flutter/flutter/issues/100387
         # script/configs/linux_only_custom_test.yaml
         #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test --exclude=script/configs/linux_only_custom_test.yaml
-        - else
-        -   ./script/tool_runner.sh custom-test --exclude=flutter_image,script/configs/linux_only_custom_test.yaml
-        - fi
+        - ./script/tool_runner.sh custom-test --exclude=script/configs/linux_only_custom_test.yaml
     ### iOS tasks ###
     - name: ios-platform_tests
       # Don't run full platform tests on both channels in pre-submit.
