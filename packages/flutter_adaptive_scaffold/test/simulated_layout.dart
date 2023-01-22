@@ -86,6 +86,9 @@ class TestScaffoldState extends State<TestScaffold> {
       smallSecondaryBody: (_) => Container(color: Colors.red),
       secondaryBody: (_) => Container(color: Colors.green),
       largeSecondaryBody: (_) => Container(color: Colors.blue),
+      leadingExtendedNavRail: const Text('leading_extended'),
+      leadingUnextendedNavRail: const Text('leading_unextended'),
+      trailingNavRail: const Text('trailing'),
     );
   }
 }
