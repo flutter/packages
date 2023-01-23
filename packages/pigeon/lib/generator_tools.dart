@@ -83,7 +83,7 @@ class Indent {
     }
   }
 
-  /// Scoped increase of the ident level.
+  /// Scoped increase of the indent level.
   ///
   /// For the execution of [func] the indentation will be incremented.
   void addScoped(
@@ -93,7 +93,8 @@ class Indent {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
-    assert(begin != '' || end != '');
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
     if (begin != null) {
       _sink.write(begin + newline);
     }
@@ -113,12 +114,13 @@ class Indent {
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    assert(begin != '' || end != '');
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
     addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
 
-  /// Scoped increase of the ident level.
+  /// Scoped increase of the indent level.
   ///
   /// For the execution of [func] the indentation will be incremented by the given amount.
   void nest(int count, Function func) {
