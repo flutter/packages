@@ -989,6 +989,89 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
       indent.writeln('}  // namespace ${generatorOptions.namespace}');
     }
   }
+
+  /// Returns the expression to create an EncodableValue from a host API argument
+  /// with the given [variableName] and types.
+  String _wrappedHostApiArgumentExpression(Root root, String variableName,
+      TypeDeclaration dartType, HostDatatype hostType) {
+    final String encodableValue;
+    if (!hostType.isBuiltin &&
+        root.classes.any((Class c) => c.name == dartType.baseName)) {
+      final String operator = hostType.isNullable ? '->' : '.';
+      encodableValue =
+          'EncodableValue($variableName${operator}ToEncodableList())';
+    } else if (!hostType.isBuiltin &&
+        root.enums.any((Enum e) => e.name == dartType.baseName)) {
+      final String nonNullValue =
+          hostType.isNullable ? '(*$variableName)' : variableName;
+      encodableValue = 'EncodableValue((int)$nonNullValue)';
+    } else {
+      final String operator = hostType.isNullable ? '*' : '';
+      encodableValue = 'EncodableValue($operator$variableName)';
+    }
+
+    if (hostType.isNullable) {
+      return '$variableName ? $encodableValue : EncodableValue()';
+    }
+    return encodableValue;
+  }
+
+  // Writes the code to declare and populate a variable of type [hostType]
+  // called [argName] to use as a parameter to an API method call, from an
+  // existing EncodableValue variable called [encodableArgName].
+  void _writeEncodableValueArgumentUnwrapping(
+    Indent indent,
+    HostDatatype hostType, {
+    required String argName,
+    required String encodableArgName,
+  }) {
+    if (hostType.isNullable) {
+      // Nullable arguments are always pointers, with nullptr corresponding to
+      // null.
+      if (hostType.datatype == 'int64_t') {
+        // The EncodableValue will either be an int32_t or an int64_t depending
+        // on the value, but the generated API requires an int64_t so that it can
+        // handle any case. Create a local variable for the 64-bit value...
+        final String valueVarName = '${argName}_value';
+        indent.writeln(
+            'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
+        // ... then declare the arg as a reference to that local.
+        indent.writeln(
+            'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &$valueVarName;');
+      } else if (hostType.datatype == 'EncodableValue') {
+        // Generic objects just pass the EncodableValue through directly.
+        indent.writeln('const auto* $argName = &$encodableArgName;');
+      } else if (hostType.isBuiltin) {
+        indent.writeln(
+            'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
+      } else {
+        indent.writeln(
+            'const auto* $argName = &(std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName)));');
+      }
+    } else {
+      // Non-nullable arguments are either passed by value or reference, but the
+      // extraction doesn't need to distinguish since those are the same at the
+      // call site.
+      if (hostType.datatype == 'int64_t') {
+        // The EncodableValue will either be an int32_t or an int64_t depending
+        // on the value, but the generated API requires an int64_t so that it can
+        // handle any case.
+        indent
+            .writeln('const int64_t $argName = $encodableArgName.LongValue();');
+      } else if (hostType.datatype == 'EncodableValue') {
+        // Generic objects just pass the EncodableValue through directly. This
+        // creates an alias just to avoid having to special-case the
+        // argName/encodableArgName distinction at a higher level.
+        indent.writeln('const auto& $argName = $encodableArgName;');
+      } else if (hostType.isBuiltin) {
+        indent.writeln(
+            'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
+      } else {
+        indent.writeln(
+            'const auto& $argName = std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName));');
+      }
+    }
+  }
 }
 
 /// Contains information about a host function argument.
@@ -1194,88 +1277,6 @@ void _writeSystemHeaderIncludeBlock(Indent indent, List<String> headers) {
   headers.sort();
   for (final String header in headers) {
     indent.writeln('#include <$header>');
-  }
-}
-
-/// Returns the expression to create an EncodableValue from a host API argument
-/// with the given [variableName] and types.
-String _wrappedHostApiArgumentExpression(Root root, String variableName,
-    TypeDeclaration dartType, HostDatatype hostType) {
-  final String encodableValue;
-  if (!hostType.isBuiltin &&
-      root.classes.any((Class c) => c.name == dartType.baseName)) {
-    final String operator = hostType.isNullable ? '->' : '.';
-    encodableValue =
-        'EncodableValue($variableName${operator}ToEncodableList())';
-  } else if (!hostType.isBuiltin &&
-      root.enums.any((Enum e) => e.name == dartType.baseName)) {
-    final String nonNullValue =
-        hostType.isNullable ? '(*$variableName)' : variableName;
-    encodableValue = 'EncodableValue((int)$nonNullValue)';
-  } else {
-    final String operator = hostType.isNullable ? '*' : '';
-    encodableValue = 'EncodableValue($operator$variableName)';
-  }
-
-  if (hostType.isNullable) {
-    return '$variableName ? $encodableValue : EncodableValue()';
-  }
-  return encodableValue;
-}
-
-// Writes the code to declare and populate a variable of type [hostType] called
-// [argName] to use as a parameter to an API method call, from an existing
-// EncodableValue variable called [encodableArgName].
-void _writeEncodableValueArgumentUnwrapping(
-  Indent indent,
-  HostDatatype hostType, {
-  required String argName,
-  required String encodableArgName,
-}) {
-  if (hostType.isNullable) {
-    // Nullable arguments are always pointers, with nullptr corresponding to
-    // null.
-    if (hostType.datatype == 'int64_t') {
-      // The EncodableValue will either be an int32_t or an int64_t depending
-      // on the value, but the generated API requires an int64_t so that it can
-      // handle any case. Create a local variable for the 64-bit value...
-      final String valueVarName = '${argName}_value';
-      indent.writeln(
-          'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
-      // ... then declare the arg as a reference to that local.
-      indent.writeln(
-          'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &$valueVarName;');
-    } else if (hostType.datatype == 'flutter::EncodableValue') {
-      // Generic objects just pass the EncodableValue through directly.
-      indent.writeln('const auto* $argName = &$encodableArgName;');
-    } else if (hostType.isBuiltin) {
-      indent.writeln(
-          'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
-    } else {
-      indent.writeln(
-          'const auto* $argName = &(std::any_cast<const ${hostType.datatype}&>(std::get<flutter::CustomEncodableValue>($encodableArgName)));');
-    }
-  } else {
-    // Non-nullable arguments are either passed by value or reference, but the
-    // extraction doesn't need to distinguish since those are the same at the
-    // call site.
-    if (hostType.datatype == 'int64_t') {
-      // The EncodableValue will either be an int32_t or an int64_t depending
-      // on the value, but the generated API requires an int64_t so that it can
-      // handle any case.
-      indent.writeln('const int64_t $argName = $encodableArgName.LongValue();');
-    } else if (hostType.datatype == 'flutter::EncodableValue') {
-      // Generic objects just pass the EncodableValue through directly. This
-      // creates an alias just to avoid having to special-case the
-      // argName/encodableArgName distinction at a higher level.
-      indent.writeln('const auto& $argName = $encodableArgName;');
-    } else if (hostType.isBuiltin) {
-      indent.writeln(
-          'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
-    } else {
-      indent.writeln(
-          'const auto& $argName = std::any_cast<const ${hostType.datatype}&>(std::get<flutter::CustomEncodableValue>($encodableArgName));');
-    }
   }
 }
 
