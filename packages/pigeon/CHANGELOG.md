@@ -1,3 +1,7 @@
+## 7.0.3
+
+* [c++] Fixes minor output formatting issues.
+
 ## 7.0.2
 
 * [kotlin] Fixes a missed casting of not nullable Dart 'int' to Kotlin 64bit long.
