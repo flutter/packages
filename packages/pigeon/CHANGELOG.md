@@ -1,7 +1,3 @@
-## 7.0.4
-
-* Updates scoped methods to prevent symbol-less use.
-
 ## 7.0.3
 
 * Updates scoped methods to prevent symbol-less use.
