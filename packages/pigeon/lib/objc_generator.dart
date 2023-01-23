@@ -722,8 +722,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
       indent.write('switch (type) ');
       indent.addScoped('{', '}', () {
         for (final EnumeratedClass customClass in codecClasses) {
-          indent.write('case ${customClass.enumeration}: ');
-          indent.writeScoped('', '', () {
+          indent.writeln('case ${customClass.enumeration}: ');
+          indent.nest(1, () {
             indent.writeln(
                 'return [${_className(options.prefix, customClass.name)} fromList:[self readValue]];');
           });
