@@ -504,8 +504,10 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
   void writeGeneralUtilities(
       CppOptions generatorOptions, Root root, Indent indent) {
     final List<String> usingDirectives = <String>[
+      'flutter::BasicMessageChannel',
       'flutter::CustomEncodableValue',
       'flutter::EncodableList',
+      'flutter::EncodableMap',
       'flutter::EncodableValue',
     ];
     usingDirectives.sort();
@@ -558,8 +560,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       indent.writeln('EncodableList list;');
       indent.writeln('list.reserve(${klass.fields.length});');
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        final HostDatatype hostDatatype = getFieldHostDatatype(
-            field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+        final HostDatatype hostDatatype = getFieldHostDatatype(field,
+            root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
         final String encodableValue = _wrappedHostApiArgumentExpression(
             root, _makeInstanceVariableName(field), field.type, hostDatatype);
         indent.writeln('list.push_back($encodableValue);');
@@ -592,8 +594,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           indent.writeln(
               'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t$instanceVariableName = (${field.type.baseName})*$pointerFieldName;');
         } else {
-          final HostDatatype hostDatatype = getFieldHostDatatype(
-              field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+          final HostDatatype hostDatatype = getFieldHostDatatype(field,
+              root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
           if (field.type.baseName == 'int') {
             indent.format('''
 if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))
@@ -652,14 +654,14 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
       final HostDatatype returnType = getHostDatatype(func.returnType,
-          root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+          root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
 
       // Determine the input paramater list, saved in a structured form for later
       // use as platform channel call arguments.
       final Iterable<_HostNamedType> hostParameters =
           indexMap(func.arguments, (int i, NamedType arg) {
         final HostDatatype hostType = getFieldHostDatatype(
-            arg, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+            arg, root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
         return _HostNamedType(_getSafeArgumentName(i, arg), hostType, arg.type);
       });
       final List<String> parameters = <String>[
@@ -672,7 +674,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       indent.writeScoped('{', '}', () {
         const String channel = 'channel';
         indent.writeln(
-            'auto channel = std::make_unique<flutter::BasicMessageChannel<>>(binary_messenger_, '
+            'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger_, '
             '"$channelName", &GetCodec());');
 
         // Convert arguments to EncodableValue versions.
@@ -742,12 +744,12 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
         indent.write('');
         indent.addScoped('{', '}', () {
           indent.writeln(
-              'auto channel = std::make_unique<flutter::BasicMessageChannel<>>(binary_messenger, '
+              'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, '
               '"$channelName", &GetCodec());');
           indent.write('if (api != nullptr) ');
           indent.addScoped('{', '} else {', () {
             indent.write(
-                'channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<flutter::EncodableValue>& reply) ');
+                'channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ');
             indent.addScoped('{', '});', () {
               indent.write('try ');
               indent.addScoped('{', '}', () {
@@ -762,7 +764,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                         root.classes,
                         root.enums,
                         (TypeDeclaration x) =>
-                            _baseCppTypeForBuiltinDartType(x));
+                            _shortBaseCppTypeForBuiltinDartType(x));
                     final String argName = _getSafeArgumentName(index, arg);
 
                     final String encodableArgName =
@@ -787,7 +789,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     method.returnType,
                     root.classes,
                     root.enums,
-                    _baseCppTypeForBuiltinDartType);
+                    _shortBaseCppTypeForBuiltinDartType);
                 final String returnTypeName = _hostApiReturnType(returnType);
                 if (method.isAsynchronous) {
                   methodArgument.add(
@@ -900,7 +902,7 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
       Indent indent, Class klass, NamedType field) {
     final HostDatatype hostDatatype = getFieldHostDatatype(
-        field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+        field, root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
     final String instanceVariableName = _makeInstanceVariableName(field);
     final String qualifiedGetterName =
         '${klass.name}::${_makeGetterName(field)}';
@@ -946,8 +948,8 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
       errorCondition = 'output.has_value()';
       errorGetter = 'value';
     } else {
-      final HostDatatype hostType = getHostDatatype(
-          returnType, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+      final HostDatatype hostType = getHostDatatype(returnType, root.classes,
+          root.enums, _shortBaseCppTypeForBuiltinDartType);
       const String extractedValue = 'std::move(output).TakeValue()';
       final String wrapperType =
           hostType.isBuiltin ? 'EncodableValue' : 'CustomEncodableValue';
@@ -1072,6 +1074,13 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
       }
     }
   }
+
+  /// A wrapper for [_baseCppTypeForBuiltinDartType] that generated Flutter
+  /// types without the namespace, since the implementation file uses `using`
+  /// directives.
+  String? _shortBaseCppTypeForBuiltinDartType(TypeDeclaration type) {
+    return _baseCppTypeForBuiltinDartType(type, includeFlutterNamespace: false);
+  }
 }
 
 /// Contains information about a host function argument.
@@ -1159,8 +1168,12 @@ bool _isPodType(HostDatatype type) {
   return !_isReferenceType(type.datatype);
 }
 
-String? _baseCppTypeForBuiltinDartType(TypeDeclaration type) {
-  const Map<String, String> cppTypeForDartTypeMap = <String, String>{
+String? _baseCppTypeForBuiltinDartType(
+  TypeDeclaration type, {
+  bool includeFlutterNamespace = true,
+}) {
+  final String flutterNamespace = includeFlutterNamespace ? 'flutter::' : '';
+  final Map<String, String> cppTypeForDartTypeMap = <String, String>{
     'void': 'void',
     'bool': 'bool',
     'int': 'int64_t',
@@ -1170,9 +1183,9 @@ String? _baseCppTypeForBuiltinDartType(TypeDeclaration type) {
     'Int32List': 'std::vector<int32_t>',
     'Int64List': 'std::vector<int64_t>',
     'Float64List': 'std::vector<double>',
-    'Map': 'flutter::EncodableMap',
-    'List': 'flutter::EncodableList',
-    'Object': 'flutter::EncodableValue',
+    'Map': '${flutterNamespace}EncodableMap',
+    'List': '${flutterNamespace}EncodableList',
+    'Object': '${flutterNamespace}EncodableValue',
   };
   if (cppTypeForDartTypeMap.containsKey(type.baseName)) {
     return cppTypeForDartTypeMap[type.baseName];
