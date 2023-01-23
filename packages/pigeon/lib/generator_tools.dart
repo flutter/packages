@@ -8,8 +8,10 @@ import 'dart:mirrors';
 
 import 'ast.dart';
 
-/// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '7.0.2';
+/// The current version of pigeon.
+///
+/// This must match the version in pubspec.yaml.
+const String pigeonVersion = '7.0.3';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -81,8 +83,9 @@ class Indent {
     }
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented.
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented.
   void addScoped(
     String? begin,
     String? end,
@@ -90,6 +93,8 @@ class Indent {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
     if (begin != null) {
       _sink.write(begin + newline);
     }
@@ -109,12 +114,15 @@ class Indent {
     Function func, {
     bool addTrailingNewline = true,
   }) {
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
     addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented by the given amount.
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented by the given amount.
   void nest(int count, Function func) {
     inc(count);
     func(); // ignore: avoid_dynamic_calls
@@ -270,9 +278,10 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   }
 }
 
-/// Recursively merges [modification] into [base].  In other words, whenever
-/// there is a conflict over the value of a key path, [modification]'s value for
-/// that key path is selected.
+/// Recursively merges [modification] into [base].
+///
+/// In other words, whenever there is a conflict over the value of a key path,
+/// [modification]'s value for that key path is selected.
 Map<String, Object> mergeMaps(
   Map<String, Object> base,
   Map<String, Object> modification,
