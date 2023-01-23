@@ -554,6 +554,15 @@ void main() {
           contains(
               'nullable_nested_ ? flutter::EncodableValue(nullable_nested_->ToEncodableList()) '
               ': flutter::EncodableValue()'));
+
+      // Serialization should use push_back, not initializer lists, to avoid
+      // copies.
+      expect(code, contains('list.reserve(4)'));
+      expect(
+          code,
+          contains('list.push_back(nullable_bool_ ? '
+              'flutter::EncodableValue(*nullable_bool_) : '
+              'flutter::EncodableValue())'));
     }
   });
 
@@ -663,6 +672,14 @@ void main() {
       // Serialization uses the value directly.
       expect(code, contains('flutter::EncodableValue(non_nullable_bool_)'));
       expect(code, contains('non_nullable_nested_.ToEncodableList()'));
+
+      // Serialization should use push_back, not initializer lists, to avoid
+      // copies.
+      expect(code, contains('list.reserve(4)'));
+      expect(
+          code,
+          contains(
+              'list.push_back(flutter::EncodableValue(non_nullable_bool_))'));
     }
   });
 
