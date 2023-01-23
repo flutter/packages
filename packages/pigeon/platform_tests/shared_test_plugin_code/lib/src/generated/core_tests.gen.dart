@@ -222,13 +222,10 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return AllNullableTypes.decode(readValue(buffer)!);
-
       case 129:
         return AllNullableTypesWrapper.decode(readValue(buffer)!);
-
       case 130:
         return AllTypes.decode(readValue(buffer)!);
-
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1253,13 +1250,10 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return AllNullableTypes.decode(readValue(buffer)!);
-
       case 129:
         return AllNullableTypesWrapper.decode(readValue(buffer)!);
-
       case 130:
         return AllTypes.decode(readValue(buffer)!);
-
       default:
         return super.readValueOfType(type, buffer);
     }

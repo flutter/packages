@@ -724,13 +724,10 @@ public class CoreTests {
       switch (type) {
         case (byte) 128:
           return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
-
         case (byte) 129:
           return AllNullableTypesWrapper.fromList((ArrayList<Object>) readValue(buffer));
-
         case (byte) 130:
           return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
-
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -2139,13 +2136,10 @@ public class CoreTests {
       switch (type) {
         case (byte) 128:
           return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
-
         case (byte) 129:
           return AllNullableTypesWrapper.fromList((ArrayList<Object>) readValue(buffer));
-
         case (byte) 130:
           return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
-
         default:
           return super.readValueOfType(type, buffer);
       }

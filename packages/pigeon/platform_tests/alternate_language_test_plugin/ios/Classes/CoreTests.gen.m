@@ -221,13 +221,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   switch (type) {
     case 128:
       return [AllNullableTypes fromList:[self readValue]];
-
     case 129:
       return [AllNullableTypesWrapper fromList:[self readValue]];
-
     case 130:
       return [AllTypes fromList:[self readValue]];
-
     default:
       return [super readValueOfType:type];
   }
@@ -1136,13 +1133,10 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   switch (type) {
     case 128:
       return [AllNullableTypes fromList:[self readValue]];
-
     case 129:
       return [AllNullableTypesWrapper fromList:[self readValue]];
-
     case 130:
       return [AllTypes fromList:[self readValue]];
-
     default:
       return [super readValueOfType:type];
   }

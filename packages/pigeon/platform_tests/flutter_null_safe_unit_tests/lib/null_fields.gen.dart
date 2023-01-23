@@ -108,10 +108,8 @@ class _NullFieldsHostApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return NullFieldsSearchReply.decode(readValue(buffer)!);
-
       case 129:
         return NullFieldsSearchRequest.decode(readValue(buffer)!);
-
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -177,10 +175,8 @@ class _NullFieldsFlutterApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return NullFieldsSearchReply.decode(readValue(buffer)!);
-
       case 129:
         return NullFieldsSearchRequest.decode(readValue(buffer)!);
-
       default:
         return super.readValueOfType(type, buffer);
     }

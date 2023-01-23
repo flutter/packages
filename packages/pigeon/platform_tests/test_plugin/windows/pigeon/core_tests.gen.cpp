@@ -488,15 +488,12 @@ flutter::EncodableValue HostIntegrationCoreApiCodecSerializer::ReadValueOfType(
     case 128:
       return flutter::CustomEncodableValue(AllNullableTypes(
           std::get<flutter::EncodableList>(ReadValue(stream))));
-
     case 129:
       return flutter::CustomEncodableValue(AllNullableTypesWrapper(
           std::get<flutter::EncodableList>(ReadValue(stream))));
-
     case 130:
       return flutter::CustomEncodableValue(
           AllTypes(std::get<flutter::EncodableList>(ReadValue(stream))));
-
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
@@ -1960,15 +1957,12 @@ FlutterIntegrationCoreApiCodecSerializer::ReadValueOfType(
     case 128:
       return flutter::CustomEncodableValue(AllNullableTypes(
           std::get<flutter::EncodableList>(ReadValue(stream))));
-
     case 129:
       return flutter::CustomEncodableValue(AllNullableTypesWrapper(
           std::get<flutter::EncodableList>(ReadValue(stream))));
-
     case 130:
       return flutter::CustomEncodableValue(
           AllTypes(std::get<flutter::EncodableList>(ReadValue(stream))));
-
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
