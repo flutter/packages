@@ -441,6 +441,8 @@ import FlutterMacOS
             final String messageVarName =
                 method.arguments.isNotEmpty ? 'message' : '_';
             indent.addScoped('{ $messageVarName, reply in', '}', () {
+              // indent.write('do ');
+              // indent.addScoped('{', '}', () {
               final List<String> methodArgument = <String>[];
               if (method.arguments.isNotEmpty) {
                 indent.writeln('let args = message as! [Any?]');
@@ -474,6 +476,10 @@ import FlutterMacOS
                   indent.writeln('reply(wrapResult(result))');
                 }
               }
+              // }, addTrailingNewline: false);
+              //   indent.addScoped(' catch (let error) {', '}', () {
+              //     indent.writeln('reply(wrapError(error))');
+              //   });
             });
           }, addTrailingNewline: false);
           indent.addScoped(' else {', '}', () {
@@ -584,6 +590,8 @@ import FlutterMacOS
     indent.newln();
     indent.write('private func wrapError(_ error: FlutterError) -> [Any?] ');
     indent.addScoped('{', '}', () {
+      // indent.writeln('print(error)');
+
       indent.write('return ');
       indent.addScoped('[', ']', () {
         indent.writeln('error.code,');
