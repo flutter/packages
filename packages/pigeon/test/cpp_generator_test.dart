@@ -57,6 +57,7 @@ void main() {
       expect(code, contains('class Input'));
       expect(code, contains('class Output'));
       expect(code, contains('class Api'));
+      expect(code, contains('virtual ~Api() {}'));
     }
     {
       final StringBuffer sink = StringBuffer();

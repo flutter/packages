@@ -262,7 +262,7 @@ class HostIntegrationCoreApi {
  public:
   HostIntegrationCoreApi(const HostIntegrationCoreApi&) = delete;
   HostIntegrationCoreApi& operator=(const HostIntegrationCoreApi&) = delete;
-  virtual ~HostIntegrationCoreApi(){};
+  virtual ~HostIntegrationCoreApi() {}
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic calling.
   virtual std::optional<FlutterError> Noop() = 0;
@@ -509,7 +509,7 @@ class HostTrivialApi {
  public:
   HostTrivialApi(const HostTrivialApi&) = delete;
   HostTrivialApi& operator=(const HostTrivialApi&) = delete;
-  virtual ~HostTrivialApi(){};
+  virtual ~HostTrivialApi() {}
   virtual std::optional<FlutterError> Noop() = 0;
 
   // The codec used by HostTrivialApi.

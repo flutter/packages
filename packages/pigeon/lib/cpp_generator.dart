@@ -312,7 +312,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       indent.addScoped(' public:', '', () {
         indent.writeln('${api.name}(const ${api.name}&) = delete;');
         indent.writeln('${api.name}& operator=(const ${api.name}&) = delete;');
-        indent.writeln('virtual ~${api.name}() { };');
+        indent.writeln('virtual ~${api.name}() {}');
         for (final Method method in api.methods) {
           final HostDatatype returnType = getHostDatatype(method.returnType,
               root.classes, root.enums, _baseCppTypeForBuiltinDartType);
@@ -542,14 +542,19 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     indent.write(
         'flutter::EncodableList ${klass.name}::ToEncodableList() const ');
     indent.addScoped('{', '}', () {
-      indent.addScoped('return flutter::EncodableList{', '};', () {
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          final HostDatatype hostDatatype = getFieldHostDatatype(
-              field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
-          final String encodableValue = _wrappedHostApiArgumentExpression(
-              root, _makeInstanceVariableName(field), field.type, hostDatatype);
-          indent.writeln('$encodableValue,');
-        }
+      indent.writeScoped('return flutter::EncodableList{', '};', () {
+        indent.nest(1, () {
+          for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+            final HostDatatype hostDatatype = getFieldHostDatatype(field,
+                root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+            final String encodableValue = _wrappedHostApiArgumentExpression(
+                root,
+                _makeInstanceVariableName(field),
+                field.type,
+                hostDatatype);
+            indent.writeln('$encodableValue,');
+          }
+        });
       });
     });
     indent.newln();
