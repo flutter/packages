@@ -1,3 +1,7 @@
+## 7.0.4
+
+* [c++] Fixes minor output formatting issues.
+
 ## 7.0.3
 
 * Updates scoped methods to prevent symbol-less use.
