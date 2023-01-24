@@ -34,9 +34,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  func throwError() {
-    // TODO(stuartmorgan): Implement this. See
-    // https://github.com/flutter/flutter/issues/112483
+  func throwError() throws {
+    throw(errType.thrownErrow)
   }
 
   func echoInt(anInt: Int32) -> Int32 {
@@ -188,4 +187,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func callFlutterEchoNullableMap(aMap: [String? : Any?]?, completion: @escaping ([String? : Any?]?) -> Void) {
     flutterAPI.echoNullableMap(aMap: aMap) { completion($0) }
   }
+}
+
+enum errType: Error {
+  case thrownErrow
 }
