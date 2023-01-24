@@ -480,6 +480,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             ? Drawer(
                 child: NavigationRail(
                   extended: true,
+                  leading: widget.leadingExtendedNavRail,
+                  trailing: widget.trailingNavRail,
                   selectedIndex: widget.selectedIndex,
                   destinations: widget.destinations
                       .map((_) => AdaptiveScaffold.toRailDestination(_))
@@ -498,6 +500,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 key: const Key('primaryNavigation'),
                 builder: (_) => AdaptiveScaffold.standardNavigationRail(
                   width: widget.navigationRailWidth,
+                  leading: widget.leadingUnextendedNavRail,
+                  trailing: widget.trailingNavRail,
                   selectedIndex: widget.selectedIndex,
                   destinations: widget.destinations
                       .map((_) => AdaptiveScaffold.toRailDestination(_))
@@ -510,6 +514,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 builder: (_) => AdaptiveScaffold.standardNavigationRail(
                   width: widget.extendedNavigationRailWidth,
                   extended: true,
+                  leading: widget.leadingExtendedNavRail,
+                  trailing: widget.trailingNavRail,
                   selectedIndex: widget.selectedIndex,
                   destinations: widget.destinations
                       .map((_) => AdaptiveScaffold.toRailDestination(_))
