@@ -669,8 +669,8 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
       indent.write('switch (type) ');
       indent.addScoped('{', '}', () {
         for (final EnumeratedClass customClass in codecClasses) {
-          indent.write('case ${customClass.enumeration}: ');
-          indent.writeScoped('', '', () {
+          indent.writeln('case ${customClass.enumeration}: ');
+          indent.nest(1, () {
             indent.writeln(
                 'return ${customClass.name}.decode(readValue(buffer)!);');
           });
