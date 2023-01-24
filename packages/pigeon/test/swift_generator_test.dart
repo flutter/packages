@@ -340,8 +340,8 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doSomething() -> Output'));
-    expect(code, contains('let result = api.doSomething()'));
+    expect(code, contains('func doSomething() throws -> Output'));
+    expect(code, contains('let result = try api.doSomething()'));
     expect(code, contains('reply(wrapResult(result))'));
   });
 
@@ -737,8 +737,8 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit() -> [Int32?]'));
-    expect(code, contains('let result = api.doit()'));
+    expect(code, contains('func doit() throws -> [Int32?]'));
+    expect(code, contains('let result = try api.doit()'));
     expect(code, contains('reply(wrapResult(result))'));
   });
 
@@ -795,11 +795,11 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func add(x: Int32, y: Int32) -> Int32'));
+    expect(code, contains('func add(x: Int32, y: Int32) throws -> Int32'));
     expect(code, contains('let args = message as! [Any?]'));
     expect(code, contains('let xArg = args[0] as! Int32'));
     expect(code, contains('let yArg = args[1] as! Int32'));
-    expect(code, contains('let result = api.add(x: xArg, y: yArg)'));
+    expect(code, contains('let result = try api.add(x: xArg, y: yArg)'));
     expect(code, contains('reply(wrapResult(result))'));
   });
 
@@ -859,7 +859,7 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit() -> Int32?'));
+    expect(code, contains('func doit() throws -> Int32?'));
   });
 
   test('return nullable host async', () {

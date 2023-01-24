@@ -20,11 +20,11 @@ private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
 
-private func wrapError(_ error: FlutterError) -> [Any?] {
+private func wrapError(_ error: Error) -> [Any?] {
   return [
-    error.code,
-    error.message,
-    error.details
+    type(of: error),
+    error,
+    Thread.callStackSymbols
   ]
 }
 
@@ -236,67 +236,67 @@ class HostIntegrationCoreApiCodec: FlutterStandardMessageCodec {
 protocol HostIntegrationCoreApi {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop()
+  func noop() throws
   /// Returns the passed object, to test serialization and deserialization.
-  func echoAllTypes(everything: AllTypes) -> AllTypes
+  func echoAllTypes(everything: AllTypes) throws -> AllTypes
   /// Returns the passed object, to test serialization and deserialization.
-  func echoAllNullableTypes(everything: AllNullableTypes?) -> AllNullableTypes?
+  func echoAllNullableTypes(everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns an error, to test error handling.
-  func throwError()
+  func throwError() throws
   /// Returns passed in int.
-  func echoInt(anInt: Int32) -> Int32
+  func echoInt(anInt: Int32) throws -> Int32
   /// Returns passed in double.
-  func echoDouble(aDouble: Double) -> Double
+  func echoDouble(aDouble: Double) throws -> Double
   /// Returns the passed in boolean.
-  func echoBool(aBool: Bool) -> Bool
+  func echoBool(aBool: Bool) throws -> Bool
   /// Returns the passed in string.
-  func echoString(aString: String) -> String
+  func echoString(aString: String) throws -> String
   /// Returns the passed in Uint8List.
-  func echoUint8List(aUint8List: FlutterStandardTypedData) -> FlutterStandardTypedData
+  func echoUint8List(aUint8List: FlutterStandardTypedData) throws -> FlutterStandardTypedData
   /// Returns the passed in generic Object.
-  func echoObject(anObject: Any) -> Any
+  func echoObject(anObject: Any) throws -> Any
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
-  func extractNestedNullableString(wrapper: AllNullableTypesWrapper) -> String?
+  func extractNestedNullableString(wrapper: AllNullableTypesWrapper) throws -> String?
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
-  func createNestedNullableString(nullableString: String?) -> AllNullableTypesWrapper
+  func createNestedNullableString(nullableString: String?) throws -> AllNullableTypesWrapper
   /// Returns passed in arguments of multiple types.
-  func sendMultipleNullableTypes(aNullableBool: Bool?, aNullableInt: Int32?, aNullableString: String?) -> AllNullableTypes
+  func sendMultipleNullableTypes(aNullableBool: Bool?, aNullableInt: Int32?, aNullableString: String?) throws -> AllNullableTypes
   /// Returns passed in int.
-  func echoNullableInt(aNullableInt: Int32?) -> Int32?
+  func echoNullableInt(aNullableInt: Int32?) throws -> Int32?
   /// Returns passed in double.
-  func echoNullableDouble(aNullableDouble: Double?) -> Double?
+  func echoNullableDouble(aNullableDouble: Double?) throws -> Double?
   /// Returns the passed in boolean.
-  func echoNullableBool(aNullableBool: Bool?) -> Bool?
+  func echoNullableBool(aNullableBool: Bool?) throws -> Bool?
   /// Returns the passed in string.
-  func echoNullableString(aNullableString: String?) -> String?
+  func echoNullableString(aNullableString: String?) throws -> String?
   /// Returns the passed in Uint8List.
-  func echoNullableUint8List(aNullableUint8List: FlutterStandardTypedData?) -> FlutterStandardTypedData?
+  func echoNullableUint8List(aNullableUint8List: FlutterStandardTypedData?) throws -> FlutterStandardTypedData?
   /// Returns the passed in generic Object.
-  func echoNullableObject(aNullableObject: Any?) -> Any?
+  func echoNullableObject(aNullableObject: Any?) throws -> Any?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func noopAsync(completion: @escaping () -> Void)
+  func noopAsync(completion: @escaping () -> Void) throws
   /// Returns the passed string asynchronously.
-  func echoAsyncString(aString: String, completion: @escaping (String) -> Void)
-  func callFlutterNoop(completion: @escaping () -> Void)
-  func callFlutterEchoAllTypes(everything: AllTypes, completion: @escaping (AllTypes) -> Void)
-  func callFlutterSendMultipleNullableTypes(aNullableBool: Bool?, aNullableInt: Int32?, aNullableString: String?, completion: @escaping (AllNullableTypes) -> Void)
-  func callFlutterEchoBool(aBool: Bool, completion: @escaping (Bool) -> Void)
-  func callFlutterEchoInt(anInt: Int32, completion: @escaping (Int32) -> Void)
-  func callFlutterEchoDouble(aDouble: Double, completion: @escaping (Double) -> Void)
-  func callFlutterEchoString(aString: String, completion: @escaping (String) -> Void)
-  func callFlutterEchoUint8List(aList: FlutterStandardTypedData, completion: @escaping (FlutterStandardTypedData) -> Void)
-  func callFlutterEchoList(aList: [Any?], completion: @escaping ([Any?]) -> Void)
-  func callFlutterEchoMap(aMap: [String?: Any?], completion: @escaping ([String?: Any?]) -> Void)
-  func callFlutterEchoNullableBool(aBool: Bool?, completion: @escaping (Bool?) -> Void)
-  func callFlutterEchoNullableInt(anInt: Int32?, completion: @escaping (Int32?) -> Void)
-  func callFlutterEchoNullableDouble(aDouble: Double?, completion: @escaping (Double?) -> Void)
-  func callFlutterEchoNullableString(aString: String?, completion: @escaping (String?) -> Void)
-  func callFlutterEchoNullableUint8List(aList: FlutterStandardTypedData?, completion: @escaping (FlutterStandardTypedData?) -> Void)
-  func callFlutterEchoNullableList(aList: [Any?]?, completion: @escaping ([Any?]?) -> Void)
-  func callFlutterEchoNullableMap(aMap: [String?: Any?]?, completion: @escaping ([String?: Any?]?) -> Void)
+  func echoAsyncString(aString: String, completion: @escaping (String) -> Void) throws
+  func callFlutterNoop(completion: @escaping () -> Void) throws
+  func callFlutterEchoAllTypes(everything: AllTypes, completion: @escaping (AllTypes) -> Void) throws
+  func callFlutterSendMultipleNullableTypes(aNullableBool: Bool?, aNullableInt: Int32?, aNullableString: String?, completion: @escaping (AllNullableTypes) -> Void) throws
+  func callFlutterEchoBool(aBool: Bool, completion: @escaping (Bool) -> Void) throws
+  func callFlutterEchoInt(anInt: Int32, completion: @escaping (Int32) -> Void) throws
+  func callFlutterEchoDouble(aDouble: Double, completion: @escaping (Double) -> Void) throws
+  func callFlutterEchoString(aString: String, completion: @escaping (String) -> Void) throws
+  func callFlutterEchoUint8List(aList: FlutterStandardTypedData, completion: @escaping (FlutterStandardTypedData) -> Void) throws
+  func callFlutterEchoList(aList: [Any?], completion: @escaping ([Any?]) -> Void) throws
+  func callFlutterEchoMap(aMap: [String?: Any?], completion: @escaping ([String?: Any?]) -> Void) throws
+  func callFlutterEchoNullableBool(aBool: Bool?, completion: @escaping (Bool?) -> Void) throws
+  func callFlutterEchoNullableInt(anInt: Int32?, completion: @escaping (Int32?) -> Void) throws
+  func callFlutterEchoNullableDouble(aDouble: Double?, completion: @escaping (Double?) -> Void) throws
+  func callFlutterEchoNullableString(aString: String?, completion: @escaping (String?) -> Void) throws
+  func callFlutterEchoNullableUint8List(aList: FlutterStandardTypedData?, completion: @escaping (FlutterStandardTypedData?) -> Void) throws
+  func callFlutterEchoNullableList(aList: [Any?]?, completion: @escaping ([Any?]?) -> Void) throws
+  func callFlutterEchoNullableMap(aMap: [String?: Any?]?, completion: @escaping ([String?: Any?]?) -> Void) throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -310,8 +310,12 @@ class HostIntegrationCoreApiSetup {
     let noopChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.noop", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       noopChannel.setMessageHandler { _, reply in
-        api.noop()
-        reply(wrapResult(nil))
+        do {
+          try api.noop()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       noopChannel.setMessageHandler(nil)
@@ -320,10 +324,14 @@ class HostIntegrationCoreApiSetup {
     let echoAllTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAllTypesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let everythingArg = args[0] as! AllTypes
-        let result = api.echoAllTypes(everything: everythingArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let everythingArg = args[0] as! AllTypes
+          let result = try api.echoAllTypes(everything: everythingArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoAllTypesChannel.setMessageHandler(nil)
@@ -332,10 +340,14 @@ class HostIntegrationCoreApiSetup {
     let echoAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAllNullableTypesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let everythingArg = args[0] as? AllNullableTypes
-        let result = api.echoAllNullableTypes(everything: everythingArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let everythingArg = args[0] as? AllNullableTypes
+          let result = try api.echoAllNullableTypes(everything: everythingArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoAllNullableTypesChannel.setMessageHandler(nil)
@@ -344,8 +356,12 @@ class HostIntegrationCoreApiSetup {
     let throwErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.throwError", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwErrorChannel.setMessageHandler { _, reply in
-        api.throwError()
-        reply(wrapResult(nil))
+        do {
+          try api.throwError()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       throwErrorChannel.setMessageHandler(nil)
@@ -354,10 +370,14 @@ class HostIntegrationCoreApiSetup {
     let echoIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoInt", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let anIntArg = args[0] as! Int32
-        let result = api.echoInt(anInt: anIntArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let anIntArg = args[0] as! Int32
+          let result = try api.echoInt(anInt: anIntArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoIntChannel.setMessageHandler(nil)
@@ -366,10 +386,14 @@ class HostIntegrationCoreApiSetup {
     let echoDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoDouble", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aDoubleArg = args[0] as! Double
-        let result = api.echoDouble(aDouble: aDoubleArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aDoubleArg = args[0] as! Double
+          let result = try api.echoDouble(aDouble: aDoubleArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoDoubleChannel.setMessageHandler(nil)
@@ -378,10 +402,14 @@ class HostIntegrationCoreApiSetup {
     let echoBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoBool", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aBoolArg = args[0] as! Bool
-        let result = api.echoBool(aBool: aBoolArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aBoolArg = args[0] as! Bool
+          let result = try api.echoBool(aBool: aBoolArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoBoolChannel.setMessageHandler(nil)
@@ -390,10 +418,14 @@ class HostIntegrationCoreApiSetup {
     let echoStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoString", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aStringArg = args[0] as! String
-        let result = api.echoString(aString: aStringArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aStringArg = args[0] as! String
+          let result = try api.echoString(aString: aStringArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoStringChannel.setMessageHandler(nil)
@@ -402,10 +434,14 @@ class HostIntegrationCoreApiSetup {
     let echoUint8ListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoUint8List", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aUint8ListArg = args[0] as! FlutterStandardTypedData
-        let result = api.echoUint8List(aUint8List: aUint8ListArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aUint8ListArg = args[0] as! FlutterStandardTypedData
+          let result = try api.echoUint8List(aUint8List: aUint8ListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoUint8ListChannel.setMessageHandler(nil)
@@ -414,10 +450,14 @@ class HostIntegrationCoreApiSetup {
     let echoObjectChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoObject", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoObjectChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let anObjectArg = args[0]!
-        let result = api.echoObject(anObject: anObjectArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let anObjectArg = args[0]!
+          let result = try api.echoObject(anObject: anObjectArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoObjectChannel.setMessageHandler(nil)
@@ -427,10 +467,14 @@ class HostIntegrationCoreApiSetup {
     let extractNestedNullableStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedNullableString", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       extractNestedNullableStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let wrapperArg = args[0] as! AllNullableTypesWrapper
-        let result = api.extractNestedNullableString(wrapper: wrapperArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let wrapperArg = args[0] as! AllNullableTypesWrapper
+          let result = try api.extractNestedNullableString(wrapper: wrapperArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       extractNestedNullableStringChannel.setMessageHandler(nil)
@@ -440,10 +484,14 @@ class HostIntegrationCoreApiSetup {
     let createNestedNullableStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.createNestedNullableString", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       createNestedNullableStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let nullableStringArg = args[0] as? String
-        let result = api.createNestedNullableString(nullableString: nullableStringArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let nullableStringArg = args[0] as? String
+          let result = try api.createNestedNullableString(nullableString: nullableStringArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       createNestedNullableStringChannel.setMessageHandler(nil)
@@ -452,12 +500,16 @@ class HostIntegrationCoreApiSetup {
     let sendMultipleNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.sendMultipleNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMultipleNullableTypesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aNullableBoolArg = args[0] as? Bool
-        let aNullableIntArg = args[1] as? Int32
-        let aNullableStringArg = args[2] as? String
-        let result = api.sendMultipleNullableTypes(aNullableBool: aNullableBoolArg, aNullableInt: aNullableIntArg, aNullableString: aNullableStringArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aNullableBoolArg = args[0] as? Bool
+          let aNullableIntArg = args[1] as? Int32
+          let aNullableStringArg = args[2] as? String
+          let result = try api.sendMultipleNullableTypes(aNullableBool: aNullableBoolArg, aNullableInt: aNullableIntArg, aNullableString: aNullableStringArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       sendMultipleNullableTypesChannel.setMessageHandler(nil)
@@ -466,10 +518,14 @@ class HostIntegrationCoreApiSetup {
     let echoNullableIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableInt", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aNullableIntArg = args[0] as? Int32
-        let result = api.echoNullableInt(aNullableInt: aNullableIntArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aNullableIntArg = args[0] as? Int32
+          let result = try api.echoNullableInt(aNullableInt: aNullableIntArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoNullableIntChannel.setMessageHandler(nil)
@@ -478,10 +534,14 @@ class HostIntegrationCoreApiSetup {
     let echoNullableDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableDouble", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aNullableDoubleArg = args[0] as? Double
-        let result = api.echoNullableDouble(aNullableDouble: aNullableDoubleArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aNullableDoubleArg = args[0] as? Double
+          let result = try api.echoNullableDouble(aNullableDouble: aNullableDoubleArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoNullableDoubleChannel.setMessageHandler(nil)
@@ -490,10 +550,14 @@ class HostIntegrationCoreApiSetup {
     let echoNullableBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableBool", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aNullableBoolArg = args[0] as? Bool
-        let result = api.echoNullableBool(aNullableBool: aNullableBoolArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aNullableBoolArg = args[0] as? Bool
+          let result = try api.echoNullableBool(aNullableBool: aNullableBoolArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoNullableBoolChannel.setMessageHandler(nil)
@@ -502,10 +566,14 @@ class HostIntegrationCoreApiSetup {
     let echoNullableStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableString", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aNullableStringArg = args[0] as? String
-        let result = api.echoNullableString(aNullableString: aNullableStringArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aNullableStringArg = args[0] as? String
+          let result = try api.echoNullableString(aNullableString: aNullableStringArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoNullableStringChannel.setMessageHandler(nil)
@@ -514,10 +582,14 @@ class HostIntegrationCoreApiSetup {
     let echoNullableUint8ListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableUint8List", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aNullableUint8ListArg = args[0] as? FlutterStandardTypedData
-        let result = api.echoNullableUint8List(aNullableUint8List: aNullableUint8ListArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aNullableUint8ListArg = args[0] as? FlutterStandardTypedData
+          let result = try api.echoNullableUint8List(aNullableUint8List: aNullableUint8ListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoNullableUint8ListChannel.setMessageHandler(nil)
@@ -526,10 +598,14 @@ class HostIntegrationCoreApiSetup {
     let echoNullableObjectChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableObject", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableObjectChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aNullableObjectArg = args[0]
-        let result = api.echoNullableObject(aNullableObject: aNullableObjectArg)
-        reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aNullableObjectArg = args[0]
+          let result = try api.echoNullableObject(aNullableObject: aNullableObjectArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       echoNullableObjectChannel.setMessageHandler(nil)
@@ -539,8 +615,12 @@ class HostIntegrationCoreApiSetup {
     let noopAsyncChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.noopAsync", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       noopAsyncChannel.setMessageHandler { _, reply in
-        api.noopAsync() {
-          reply(wrapResult(nil))
+        do {
+          try api.noopAsync() {
+            reply(wrapResult(nil))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -550,10 +630,14 @@ class HostIntegrationCoreApiSetup {
     let echoAsyncStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncString", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aStringArg = args[0] as! String
-        api.echoAsyncString(aString: aStringArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aStringArg = args[0] as! String
+          try api.echoAsyncString(aString: aStringArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -562,8 +646,12 @@ class HostIntegrationCoreApiSetup {
     let callFlutterNoopChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterNoop", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterNoopChannel.setMessageHandler { _, reply in
-        api.callFlutterNoop() {
-          reply(wrapResult(nil))
+        do {
+          try api.callFlutterNoop() {
+            reply(wrapResult(nil))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -572,10 +660,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoAllTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoAllTypesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let everythingArg = args[0] as! AllTypes
-        api.callFlutterEchoAllTypes(everything: everythingArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let everythingArg = args[0] as! AllTypes
+          try api.callFlutterEchoAllTypes(everything: everythingArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -584,12 +676,16 @@ class HostIntegrationCoreApiSetup {
     let callFlutterSendMultipleNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterSendMultipleNullableTypesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aNullableBoolArg = args[0] as? Bool
-        let aNullableIntArg = args[1] as? Int32
-        let aNullableStringArg = args[2] as? String
-        api.callFlutterSendMultipleNullableTypes(aNullableBool: aNullableBoolArg, aNullableInt: aNullableIntArg, aNullableString: aNullableStringArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aNullableBoolArg = args[0] as? Bool
+          let aNullableIntArg = args[1] as? Int32
+          let aNullableStringArg = args[2] as? String
+          try api.callFlutterSendMultipleNullableTypes(aNullableBool: aNullableBoolArg, aNullableInt: aNullableIntArg, aNullableString: aNullableStringArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -598,10 +694,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoBool", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aBoolArg = args[0] as! Bool
-        api.callFlutterEchoBool(aBool: aBoolArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aBoolArg = args[0] as! Bool
+          try api.callFlutterEchoBool(aBool: aBoolArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -610,10 +710,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoInt", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let anIntArg = args[0] as! Int32
-        api.callFlutterEchoInt(anInt: anIntArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let anIntArg = args[0] as! Int32
+          try api.callFlutterEchoInt(anInt: anIntArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -622,10 +726,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoDouble", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aDoubleArg = args[0] as! Double
-        api.callFlutterEchoDouble(aDouble: aDoubleArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aDoubleArg = args[0] as! Double
+          try api.callFlutterEchoDouble(aDouble: aDoubleArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -634,10 +742,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoString", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aStringArg = args[0] as! String
-        api.callFlutterEchoString(aString: aStringArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aStringArg = args[0] as! String
+          try api.callFlutterEchoString(aString: aStringArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -646,10 +758,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoUint8ListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoUint8List", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aListArg = args[0] as! FlutterStandardTypedData
-        api.callFlutterEchoUint8List(aList: aListArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aListArg = args[0] as! FlutterStandardTypedData
+          try api.callFlutterEchoUint8List(aList: aListArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -658,10 +774,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoList", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aListArg = args[0] as! [Any?]
-        api.callFlutterEchoList(aList: aListArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aListArg = args[0] as! [Any?]
+          try api.callFlutterEchoList(aList: aListArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -670,10 +790,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoMapChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoMap", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aMapArg = args[0] as! [String?: Any?]
-        api.callFlutterEchoMap(aMap: aMapArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aMapArg = args[0] as! [String?: Any?]
+          try api.callFlutterEchoMap(aMap: aMapArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -682,10 +806,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoNullableBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableBool", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aBoolArg = args[0] as? Bool
-        api.callFlutterEchoNullableBool(aBool: aBoolArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aBoolArg = args[0] as? Bool
+          try api.callFlutterEchoNullableBool(aBool: aBoolArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -694,10 +822,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoNullableIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableInt", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let anIntArg = args[0] as? Int32
-        api.callFlutterEchoNullableInt(anInt: anIntArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let anIntArg = args[0] as? Int32
+          try api.callFlutterEchoNullableInt(anInt: anIntArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -706,10 +838,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoNullableDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableDouble", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aDoubleArg = args[0] as? Double
-        api.callFlutterEchoNullableDouble(aDouble: aDoubleArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aDoubleArg = args[0] as? Double
+          try api.callFlutterEchoNullableDouble(aDouble: aDoubleArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -718,10 +854,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoNullableStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableString", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aStringArg = args[0] as? String
-        api.callFlutterEchoNullableString(aString: aStringArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aStringArg = args[0] as? String
+          try api.callFlutterEchoNullableString(aString: aStringArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -730,10 +870,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoNullableUint8ListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableUint8List", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aListArg = args[0] as? FlutterStandardTypedData
-        api.callFlutterEchoNullableUint8List(aList: aListArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aListArg = args[0] as? FlutterStandardTypedData
+          try api.callFlutterEchoNullableUint8List(aList: aListArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -742,10 +886,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoNullableListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableList", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aListArg = args[0] as? [Any?]
-        api.callFlutterEchoNullableList(aList: aListArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aListArg = args[0] as? [Any?]
+          try api.callFlutterEchoNullableList(aList: aListArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -754,10 +902,14 @@ class HostIntegrationCoreApiSetup {
     let callFlutterEchoNullableMapChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableMap", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let aMapArg = args[0] as? [String?: Any?]
-        api.callFlutterEchoNullableMap(aMap: aMapArg) { result in
-          reply(wrapResult(result))
+        do {
+          let args = message as! [Any?]
+          let aMapArg = args[0] as? [String?: Any?]
+          try api.callFlutterEchoNullableMap(aMap: aMapArg) { result in
+            reply(wrapResult(result))
+          }
+        } catch {
+          reply(wrapError(error))
         }
       }
     } else {
@@ -974,7 +1126,7 @@ class FlutterIntegrationCoreApi {
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol HostTrivialApi {
-  func noop()
+  func noop() throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -985,8 +1137,12 @@ class HostTrivialApiSetup {
     let noopChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostTrivialApi.noop", binaryMessenger: binaryMessenger)
     if let api = api {
       noopChannel.setMessageHandler { _, reply in
-        api.noop()
-        reply(wrapResult(nil))
+        do {
+          try api.noop()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       noopChannel.setMessageHandler(nil)

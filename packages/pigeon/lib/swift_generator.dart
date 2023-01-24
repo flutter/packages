@@ -399,12 +399,14 @@ import FlutterMacOS
 
         if (method.isAsynchronous) {
           argSignature.add('completion: @escaping ($returnType) -> Void');
-          indent.writeln('func ${method.name}(${argSignature.join(', ')})');
+          indent.writeln(
+              'func ${method.name}(${argSignature.join(', ')}) throws');
         } else if (method.returnType.isVoid) {
-          indent.writeln('func ${method.name}(${argSignature.join(', ')})');
+          indent.writeln(
+              'func ${method.name}(${argSignature.join(', ')}) throws');
         } else {
           indent.writeln(
-              'func ${method.name}(${argSignature.join(', ')}) -> $returnType');
+              'func ${method.name}(${argSignature.join(', ')}) throws -> $returnType');
         }
       }
     });
@@ -441,45 +443,45 @@ import FlutterMacOS
             final String messageVarName =
                 method.arguments.isNotEmpty ? 'message' : '_';
             indent.addScoped('{ $messageVarName, reply in', '}', () {
-              // indent.write('do ');
-              // indent.addScoped('{', '}', () {
-              final List<String> methodArgument = <String>[];
-              if (method.arguments.isNotEmpty) {
-                indent.writeln('let args = message as! [Any?]');
-                enumerate(method.arguments, (int index, NamedType arg) {
-                  final String argName = _getSafeArgumentName(index, arg);
-                  final String argIndex = 'args[$index]';
-                  indent.writeln(
-                      'let $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
-                  methodArgument.add('${arg.name}: $argName');
-                });
-              }
-              final String call =
-                  'api.${method.name}(${methodArgument.join(', ')})';
-              if (method.isAsynchronous) {
-                indent.write('$call ');
-                if (method.returnType.isVoid) {
-                  indent.addScoped('{', '}', () {
+              indent.write('do ');
+              indent.addScoped('{', '}', () {
+                final List<String> methodArgument = <String>[];
+                if (method.arguments.isNotEmpty) {
+                  indent.writeln('let args = message as! [Any?]');
+                  enumerate(method.arguments, (int index, NamedType arg) {
+                    final String argName = _getSafeArgumentName(index, arg);
+                    final String argIndex = 'args[$index]';
+                    indent.writeln(
+                        'let $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
+                    methodArgument.add('${arg.name}: $argName');
+                  });
+                }
+                final String call =
+                    'try api.${method.name}(${methodArgument.join(', ')})';
+                if (method.isAsynchronous) {
+                  indent.write('$call ');
+                  if (method.returnType.isVoid) {
+                    indent.addScoped('{', '}', () {
+                      indent.writeln('reply(wrapResult(nil))');
+                    });
+                  } else {
+                    indent.addScoped('{ result in', '}', () {
+                      indent.writeln('reply(wrapResult(result))');
+                    });
+                  }
+                } else {
+                  if (method.returnType.isVoid) {
+                    indent.writeln(call);
                     indent.writeln('reply(wrapResult(nil))');
-                  });
-                } else {
-                  indent.addScoped('{ result in', '}', () {
+                  } else {
+                    indent.writeln('let result = $call');
                     indent.writeln('reply(wrapResult(result))');
-                  });
+                  }
                 }
-              } else {
-                if (method.returnType.isVoid) {
-                  indent.writeln(call);
-                  indent.writeln('reply(wrapResult(nil))');
-                } else {
-                  indent.writeln('let result = $call');
-                  indent.writeln('reply(wrapResult(result))');
-                }
-              }
-              // }, addTrailingNewline: false);
-              //   indent.addScoped(' catch (let error) {', '}', () {
-              //     indent.writeln('reply(wrapError(error))');
-              //   });
+              }, addTrailingNewline: false);
+              indent.addScoped(' catch {', '}', () {
+                indent.writeln('reply(wrapError(error))');
+              });
             });
           }, addTrailingNewline: false);
           indent.addScoped(' else {', '}', () {
@@ -588,15 +590,13 @@ import FlutterMacOS
 
   void _writeWrapError(Indent indent) {
     indent.newln();
-    indent.write('private func wrapError(_ error: FlutterError) -> [Any?] ');
+    indent.write('private func wrapError(_ error: Error) -> [Any?] ');
     indent.addScoped('{', '}', () {
-      // indent.writeln('print(error)');
-
       indent.write('return ');
       indent.addScoped('[', ']', () {
-        indent.writeln('error.code,');
-        indent.writeln('error.message,');
-        indent.writeln('error.details');
+        indent.writeln('type(of: error),');
+        indent.writeln('error,');
+        indent.writeln('Thread.callStackSymbols');
       });
     });
   }
