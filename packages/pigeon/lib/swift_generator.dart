@@ -710,6 +710,7 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
 }
 
 /// A class that represents a Swift function argument.
+/// 
 /// The [name] is the name of the argument.
 /// The [type] is the type of the argument.
 /// The [namedType] is the [NamedType] that this argument is generated from.
@@ -729,6 +730,7 @@ class _SwiftFunctionArgument {
 }
 
 /// A class that represents a Swift function signature.
+/// 
 /// The [name] is the name of the function.
 /// The [arguments] are the arguments of the function.
 /// The [returnType] is the return type of the function.
