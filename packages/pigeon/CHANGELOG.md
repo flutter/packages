@@ -1,3 +1,7 @@
+## 7.0.5
+
+* [swift] Adds error handling to sync host api methods.
+
 ## 7.0.4
 
 * [c++] Fixes minor output formatting issues.
