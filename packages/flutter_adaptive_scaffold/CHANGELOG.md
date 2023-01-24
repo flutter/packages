@@ -1,3 +1,7 @@
+## 0.0.9
+
+* Fix passthrough of `leadingExtendedNavRail`, `leadingUnextendedNavRail` and `trailingNavRail`
+
 ## 0.0.8
 
 Make fuchsia a mobile platform.

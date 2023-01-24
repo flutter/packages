@@ -801,7 +801,7 @@ void main() {
     );
     generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
+    expect(code, contains('completion:(void (^)(NSError *_Nullable))'));
   });
 
   test('gen flutter void return source', () {
@@ -836,7 +836,7 @@ void main() {
     );
     generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
+    expect(code, contains('completion:(void (^)(NSError *_Nullable))'));
     expect(code, contains('completion(nil)'));
   });
 
@@ -927,7 +927,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void (^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
   });
 
   test('gen flutter void arg source', () {
@@ -959,7 +959,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void (^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
     expect(code, contains('channel sendMessage:nil'));
   });
 
@@ -1066,7 +1066,7 @@ void main() {
     expect(code, contains('(NSDictionary<NSString *, id> *)foo'));
   });
 
-  test('async void(input) HostApi header', () {
+  test('async void (input) HostApi header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
@@ -1107,7 +1107,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingInput:(ABCInput *)input completion:(void(^)(FlutterError *_Nullable))completion'));
+            '(void)doSomethingInput:(ABCInput *)input completion:(void (^)(FlutterError *_Nullable))completion'));
   });
 
   test('async output(input) HostApi header', () {
@@ -1152,7 +1152,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingInput:(ABCInput *)input completion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
+            '(void)doSomethingInput:(ABCInput *)input completion:(void (^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
   });
 
   test('async output(void) HostApi header', () {
@@ -1185,10 +1185,10 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void (^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
   });
 
-  test('async void(void) HostApi header', () {
+  test('async void (void) HostApi header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
@@ -1211,7 +1211,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void(^)(FlutterError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void (^)(FlutterError *_Nullable))completion'));
   });
 
   test('async output(input) HostApi source', () {
@@ -1259,7 +1259,7 @@ void main() {
             '[api doSomething:arg0 completion:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
   });
 
-  test('async void(input) HostApi source', () {
+  test('async void (input) HostApi source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
@@ -1303,7 +1303,7 @@ void main() {
             '[api doSomethingFoo:arg_foo completion:^(FlutterError *_Nullable error) {'));
   });
 
-  test('async void(void) HostApi source', () {
+  test('async void (void) HostApi source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
@@ -1655,7 +1655,7 @@ void main() {
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
-          code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
+          code, contains('doitWithCompletion:(void (^)(NSArray<NSNumber *> *'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1669,7 +1669,7 @@ void main() {
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
-          code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
+          code, contains('doitWithCompletion:(void (^)(NSArray<NSNumber *> *'));
     }
   });
 
@@ -1763,7 +1763,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
+              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1818,7 +1818,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber *_Nullable, NSError *_Nullable))completion;'));
+              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1834,7 +1834,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber *_Nullable, NSError *_Nullable))completion {'));
+              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion {'));
       expect(
           code,
           contains(

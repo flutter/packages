@@ -193,6 +193,35 @@ void main() {
       expect(find.byType(PreferredSizeWidgetImpl), findsOneWidget);
     },
   );
+
+  // Verify that the leading navigation rail widget is displayed
+  // based on the screen size
+  testWidgets(
+    'adaptive scaffold displays leading widget in navigation rail',
+    (WidgetTester tester) async {
+      await Future.forEach(SimulatedLayout.values,
+          (SimulatedLayout region) async {
+        final MaterialApp app = region.app();
+        await tester.binding.setSurfaceSize(region.size);
+        await tester.pumpWidget(app);
+        await tester.pumpAndSettle();
+
+        if (region.size == SimulatedLayout.large.size) {
+          expect(find.text('leading_extended'), findsOneWidget);
+          expect(find.text('leading_unextended'), findsNothing);
+          expect(find.text('trailing'), findsOneWidget);
+        } else if (region.size == SimulatedLayout.medium.size) {
+          expect(find.text('leading_extended'), findsNothing);
+          expect(find.text('leading_unextended'), findsOneWidget);
+          expect(find.text('trailing'), findsOneWidget);
+        } else if (region.size == SimulatedLayout.small.size) {
+          expect(find.text('leading_extended'), findsNothing);
+          expect(find.text('leading_unextended'), findsNothing);
+          expect(find.text('trailing'), findsNothing);
+        }
+      });
+    },
+  );
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that

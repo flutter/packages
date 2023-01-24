@@ -57,6 +57,7 @@ void main() {
       expect(code, contains('class Input'));
       expect(code, contains('class Output'));
       expect(code, contains('class Api'));
+      expect(code, contains('virtual ~Api() {}\n'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -546,13 +547,22 @@ void main() {
       // Serialization handles optionals.
       expect(
           code,
-          contains('nullable_bool_ ? flutter::EncodableValue(*nullable_bool_) '
-              ': flutter::EncodableValue()'));
+          contains('nullable_bool_ ? EncodableValue(*nullable_bool_) '
+              ': EncodableValue()'));
       expect(
           code,
           contains(
-              'nullable_nested_ ? flutter::EncodableValue(nullable_nested_->ToEncodableList()) '
-              ': flutter::EncodableValue()'));
+              'nullable_nested_ ? EncodableValue(nullable_nested_->ToEncodableList()) '
+              ': EncodableValue()'));
+
+      // Serialization should use push_back, not initializer lists, to avoid
+      // copies.
+      expect(code, contains('list.reserve(4)'));
+      expect(
+          code,
+          contains('list.push_back(nullable_bool_ ? '
+              'EncodableValue(*nullable_bool_) : '
+              'EncodableValue())'));
     }
   });
 
@@ -660,8 +670,14 @@ void main() {
       expect(code, contains('non_nullable_string_ = value_arg;'));
       expect(code, contains('non_nullable_nested_ = value_arg;'));
       // Serialization uses the value directly.
-      expect(code, contains('flutter::EncodableValue(non_nullable_bool_)'));
+      expect(code, contains('EncodableValue(non_nullable_bool_)'));
       expect(code, contains('non_nullable_nested_.ToEncodableList()'));
+
+      // Serialization should use push_back, not initializer lists, to avoid
+      // copies.
+      expect(code, contains('list.reserve(4)'));
+      expect(
+          code, contains('list.push_back(EncodableValue(non_nullable_bool_))'));
     }
   });
 
@@ -987,11 +1003,11 @@ void main() {
       expect(
           code,
           contains(
-              'const auto* a_list_arg = std::get_if<flutter::EncodableList>(&encodable_a_list_arg);'));
+              'const auto* a_list_arg = std::get_if<EncodableList>(&encodable_a_list_arg);'));
       expect(
           code,
           contains(
-              'const auto* a_map_arg = std::get_if<flutter::EncodableMap>(&encodable_a_map_arg);'));
+              'const auto* a_map_arg = std::get_if<EncodableMap>(&encodable_a_map_arg);'));
       // Ints are complicated since there are two possible pointer types, but
       // the paramter always needs an int64_t*.
       expect(
@@ -1006,7 +1022,7 @@ void main() {
       expect(
           code,
           contains(
-              'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<flutter::CustomEncodableValue>(encodable_an_object_arg)));'));
+              'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
       // "Object" requires no extraction at all since it has to use
       // EncodableValue directly.
       expect(
@@ -1128,11 +1144,11 @@ void main() {
       expect(
           code,
           contains(
-              'const auto& a_list_arg = std::get<flutter::EncodableList>(encodable_a_list_arg);'));
+              'const auto& a_list_arg = std::get<EncodableList>(encodable_a_list_arg);'));
       expect(
           code,
           contains(
-              'const auto& a_map_arg = std::get<flutter::EncodableMap>(encodable_a_map_arg);'));
+              'const auto& a_map_arg = std::get<EncodableMap>(encodable_a_map_arg);'));
       // Ints use a copy since there are two possible reference types, but
       // the paramter always needs an int64_t.
       expect(
@@ -1144,7 +1160,7 @@ void main() {
       expect(
           code,
           contains(
-              'const auto& an_object_arg = std::any_cast<const ParameterObject&>(std::get<flutter::CustomEncodableValue>(encodable_an_object_arg));'));
+              'const auto& an_object_arg = std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg));'));
       // "Object" requires no extraction at all since it has to use
       // EncodableValue directly.
       expect(
@@ -1275,28 +1291,28 @@ void main() {
       expect(
           code,
           contains(
-              'a_bool_arg ? flutter::EncodableValue(*a_bool_arg) : flutter::EncodableValue()'));
+              'a_bool_arg ? EncodableValue(*a_bool_arg) : EncodableValue()'));
       expect(
           code,
           contains(
-              'an_int_arg ? flutter::EncodableValue(*an_int_arg) : flutter::EncodableValue()'));
+              'an_int_arg ? EncodableValue(*an_int_arg) : EncodableValue()'));
       expect(
           code,
           contains(
-              'a_string_arg ? flutter::EncodableValue(*a_string_arg) : flutter::EncodableValue()'));
+              'a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue()'));
       expect(
           code,
           contains(
-              'a_list_arg ? flutter::EncodableValue(*a_list_arg) : flutter::EncodableValue()'));
+              'a_list_arg ? EncodableValue(*a_list_arg) : EncodableValue()'));
       expect(
           code,
           contains(
-              'a_map_arg ? flutter::EncodableValue(*a_map_arg) : flutter::EncodableValue()'));
+              'a_map_arg ? EncodableValue(*a_map_arg) : EncodableValue()'));
       // Class types use ToEncodableList.
       expect(
           code,
           contains(
-              'an_object_arg ? flutter::EncodableValue(an_object_arg->ToEncodableList()) : flutter::EncodableValue()'));
+              'an_object_arg ? EncodableValue(an_object_arg->ToEncodableList()) : EncodableValue()'));
     }
   });
 
@@ -1411,14 +1427,13 @@ void main() {
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // Standard types are wrapped an EncodableValues.
-      expect(code, contains('flutter::EncodableValue(a_bool_arg)'));
-      expect(code, contains('flutter::EncodableValue(an_int_arg)'));
-      expect(code, contains('flutter::EncodableValue(a_string_arg)'));
-      expect(code, contains('flutter::EncodableValue(a_list_arg)'));
-      expect(code, contains('flutter::EncodableValue(a_map_arg)'));
+      expect(code, contains('EncodableValue(a_bool_arg)'));
+      expect(code, contains('EncodableValue(an_int_arg)'));
+      expect(code, contains('EncodableValue(a_string_arg)'));
+      expect(code, contains('EncodableValue(a_list_arg)'));
+      expect(code, contains('EncodableValue(a_map_arg)'));
       // Class types use ToEncodableList.
-      expect(code,
-          contains('flutter::EncodableValue(an_object_arg.ToEncodableList())'));
+      expect(code, contains('EncodableValue(an_object_arg.ToEncodableList())'));
     }
   });
 
@@ -1452,9 +1467,7 @@ void main() {
     // A bare 'auto' here would create a copy, not a reference, which is
     // ineffecient.
     expect(
-        code,
-        contains(
-            'const auto& args = std::get<flutter::EncodableList>(message);'));
+        code, contains('const auto& args = std::get<EncodableList>(message);'));
     expect(code, contains('const auto& encodable_an_arg_arg = args.at(0);'));
   });
 
@@ -1732,7 +1745,7 @@ void main() {
     generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(contains('reply(wrap')));
-    expect(code, contains('reply(flutter::EncodableValue('));
+    expect(code, contains('reply(EncodableValue('));
   });
 
   test('does not keep unowned references in async handlers', () {

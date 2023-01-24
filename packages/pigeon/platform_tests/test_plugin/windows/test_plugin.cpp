@@ -23,6 +23,9 @@ using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::FlutterIntegrationCoreApi;
 using core_tests_pigeontest::HostIntegrationCoreApi;
+using flutter::EncodableList;
+using flutter::EncodableMap;
+using flutter::EncodableValue;
 
 // static
 void TestPlugin::RegisterWithRegistrar(
@@ -73,8 +76,8 @@ ErrorOr<std::vector<uint8_t>> TestPlugin::EchoUint8List(
   return a_uint8_list;
 }
 
-ErrorOr<flutter::EncodableValue> TestPlugin::EchoObject(
-    const flutter::EncodableValue& an_object) {
+ErrorOr<EncodableValue> TestPlugin::EchoObject(
+    const EncodableValue& an_object) {
   return an_object;
 }
 
@@ -158,8 +161,8 @@ ErrorOr<std::optional<std::vector<uint8_t>>> TestPlugin::EchoNullableUint8List(
   return *a_nullable_uint8_list;
 };
 
-ErrorOr<std::optional<flutter::EncodableValue>> TestPlugin::EchoNullableObject(
-    const flutter::EncodableValue* a_nullable_object) {
+ErrorOr<std::optional<EncodableValue>> TestPlugin::EchoNullableObject(
+    const EncodableValue* a_nullable_object) {
   if (!a_nullable_object) {
     return std::nullopt;
   }
@@ -183,12 +186,153 @@ void TestPlugin::CallFlutterNoop(
                      [result](const FlutterError& error) { result(error); });
 }
 
+void TestPlugin::CallFlutterEchoAllTypes(
+    const AllTypes& everything,
+    std::function<void(ErrorOr<AllTypes> reply)> result) {
+  flutter_api_->EchoAllTypes(
+      everything, [result](const AllTypes& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterSendMultipleNullableTypes(
+    const bool* a_nullable_bool, const int64_t* a_nullable_int,
+    const std::string* a_nullable_string,
+    std::function<void(ErrorOr<AllNullableTypes> reply)> result) {
+  flutter_api_->SendMultipleNullableTypes(
+      a_nullable_bool, a_nullable_int, a_nullable_string,
+      [result](const AllNullableTypes& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoBool(
+    bool a_bool, std::function<void(ErrorOr<bool> reply)> result) {
+  flutter_api_->EchoBool(
+      a_bool, [result](bool echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoInt(
+    int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) {
+  flutter_api_->EchoInt(
+      an_int, [result](int64_t echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoDouble(
+    double a_double, std::function<void(ErrorOr<double> reply)> result) {
+  flutter_api_->EchoDouble(
+      a_double, [result](double echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
 void TestPlugin::CallFlutterEchoString(
     const std::string& a_string,
     std::function<void(ErrorOr<std::string> reply)> result) {
   flutter_api_->EchoString(
+      a_string, [result](const std::string& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoUint8List(
+    const std::vector<uint8_t>& a_list,
+    std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) {
+  flutter_api_->EchoUint8List(
+      a_list, [result](const std::vector<uint8_t>& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoList(
+    const EncodableList& a_list,
+    std::function<void(ErrorOr<EncodableList> reply)> result) {
+  flutter_api_->EchoList(
+      a_list, [result](const EncodableList& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoMap(
+    const EncodableMap& a_map,
+    std::function<void(ErrorOr<EncodableMap> reply)> result) {
+  flutter_api_->EchoMap(
+      a_map, [result](const EncodableMap& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableBool(
+    const bool* a_bool,
+    std::function<void(ErrorOr<std::optional<bool>> reply)> result) {
+  flutter_api_->EchoNullableBool(
+      a_bool,
+      [result](const bool* echo) {
+        result(echo ? std::optional<bool>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableInt(
+    const int64_t* an_int,
+    std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) {
+  flutter_api_->EchoNullableInt(
+      an_int,
+      [result](const int64_t* echo) {
+        result(echo ? std::optional<int64_t>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableDouble(
+    const double* a_double,
+    std::function<void(ErrorOr<std::optional<double>> reply)> result) {
+  flutter_api_->EchoNullableDouble(
+      a_double,
+      [result](const double* echo) {
+        result(echo ? std::optional<double>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableString(
+    const std::string* a_string,
+    std::function<void(ErrorOr<std::optional<std::string>> reply)> result) {
+  flutter_api_->EchoNullableString(
       a_string,
-      [result](const std::string& flutter_string) { result(flutter_string); },
+      [result](const std::string* echo) {
+        result(echo ? std::optional<std::string>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableUint8List(
+    const std::vector<uint8_t>* a_list,
+    std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)>
+        result) {
+  flutter_api_->EchoNullableUint8List(
+      a_list,
+      [result](const std::vector<uint8_t>* echo) {
+        result(echo ? std::optional<std::vector<uint8_t>>(*echo)
+                    : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableList(
+    const EncodableList* a_list,
+    std::function<void(ErrorOr<std::optional<EncodableList>> reply)> result) {
+  flutter_api_->EchoNullableList(
+      a_list,
+      [result](const EncodableList* echo) {
+        result(echo ? std::optional<EncodableList>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableMap(
+    const EncodableMap* a_map,
+    std::function<void(ErrorOr<std::optional<EncodableMap>> reply)> result) {
+  flutter_api_->EchoNullableMap(
+      a_map,
+      [result](const EncodableMap* echo) {
+        result(echo ? std::optional<EncodableMap>(*echo) : std::nullopt);
+      },
       [result](const FlutterError& error) { result(error); });
 }
 

@@ -139,7 +139,6 @@ targets:
         ]
 
   - name: Windows windows-build_all_packages master
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
@@ -153,7 +152,6 @@ targets:
         ]
 
   - name: Windows windows-build_all_packages stable
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
