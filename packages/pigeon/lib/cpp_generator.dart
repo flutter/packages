@@ -863,17 +863,17 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
       indent.write('switch (type) ');
       indent.addScoped('{', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('case ${customClass.enumeration}:');
-          indent.writeScoped('', '', () {
+          indent.writeln('case ${customClass.enumeration}:');
+          indent.nest(1, () {
             indent.writeln(
                 'return CustomEncodableValue(${customClass.name}(std::get<EncodableList>(ReadValue(stream))));');
           });
         }
-        indent.write('default:');
-        indent.writeScoped('', '', () {
+        indent.writeln('default:');
+        indent.nest(1, () {
           indent.writeln(
               'return $_defaultCodecSerializer::ReadValueOfType(type, stream);');
-        }, addTrailingNewline: false);
+        });
       });
     });
     indent.newln();

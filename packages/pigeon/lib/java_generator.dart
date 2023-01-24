@@ -717,16 +717,16 @@ Result<$returnType> $resultName =
         indent.write('switch (type) ');
         indent.addScoped('{', '}', () {
           for (final EnumeratedClass customClass in codecClasses) {
-            indent.write('case (byte) ${customClass.enumeration}: ');
-            indent.writeScoped('', '', () {
+            indent.writeln('case (byte) ${customClass.enumeration}:');
+            indent.nest(1, () {
               indent.writeln(
                   'return ${customClass.name}.fromList((ArrayList<Object>) readValue(buffer));');
             });
           }
-          indent.write('default:');
-          indent.addScoped('', '', () {
+          indent.writeln('default:');
+          indent.nest(1, () {
             indent.writeln('return super.readValueOfType(type, buffer);');
-          }, addTrailingNewline: false);
+          });
         });
       });
       indent.newln();

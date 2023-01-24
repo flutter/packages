@@ -146,10 +146,8 @@ class _MessageApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return MessageSearchReply.decode(readValue(buffer)!);
-
       case 129:
         return MessageSearchRequest.decode(readValue(buffer)!);
-
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -245,13 +243,10 @@ class _MessageNestedApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return MessageNested.decode(readValue(buffer)!);
-
       case 129:
         return MessageSearchReply.decode(readValue(buffer)!);
-
       case 130:
         return MessageSearchRequest.decode(readValue(buffer)!);
-
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -320,10 +315,8 @@ class _MessageFlutterSearchApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return MessageSearchReply.decode(readValue(buffer)!);
-
       case 129:
         return MessageSearchRequest.decode(readValue(buffer)!);
-
       default:
         return super.readValueOfType(type, buffer);
     }

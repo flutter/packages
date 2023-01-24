@@ -127,16 +127,12 @@ class _ApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return FlutterSearchReplies.decode(readValue(buffer)!);
-
       case 129:
         return FlutterSearchReply.decode(readValue(buffer)!);
-
       case 130:
         return FlutterSearchRequest.decode(readValue(buffer)!);
-
       case 131:
         return FlutterSearchRequests.decode(readValue(buffer)!);
-
       default:
         return super.readValueOfType(type, buffer);
     }
