@@ -231,10 +231,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.throwError();
       }, throwsA(isA<PlatformException>()));
-    },
-        // Currently unimplementable for Swift:
-        // https://github.com/flutter/flutter/issues/112483
-        skip: targetGenerator == TargetGenerator.swift);
+    });
 
     testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();

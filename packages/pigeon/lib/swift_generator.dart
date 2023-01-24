@@ -594,9 +594,9 @@ import FlutterMacOS
     indent.addScoped('{', '}', () {
       indent.write('return ');
       indent.addScoped('[', ']', () {
-        indent.writeln('type(of: error),');
-        indent.writeln('error,');
-        indent.writeln('Thread.callStackSymbols');
+        indent.writeln(r'"\(type(of: error))",');
+        indent.writeln(r'"\(error)",');
+        indent.writeln(r'"\(Thread.callStackSymbols)"');
       });
     });
   }
