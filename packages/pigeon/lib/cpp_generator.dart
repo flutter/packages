@@ -1018,9 +1018,9 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
     return encodableValue;
   }
 
-  // Writes the code to declare and populate a variable of type [hostType]
-  // called [argName] to use as a parameter to an API method call, from an
-  // existing EncodableValue variable called [encodableArgName].
+  /// Writes the code to declare and populate a variable of type [hostType]
+  /// called [argName] to use as a parameter to an API method call, from an
+  /// existing EncodableValue variable called [encodableArgName].
   void _writeEncodableValueArgumentUnwrapping(
     Indent indent,
     HostDatatype hostType, {
