@@ -22,9 +22,9 @@ private func wrapResult(_ result: Any?) -> [Any?] {
 
 private func wrapError(_ error: Error) -> [Any?] {
   return [
-    "\(type(of: error))",
     "\(error)",
-    "\(Thread.callStackSymbols)"
+    "\(type(of: error))",
+    "Stacktrace: \(Thread.callStackSymbols)"
   ]
 }
 

@@ -36,7 +36,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func throwError() throws {
-    throw(errType.thrownErrow)
+    throw errType.thrownErrow
   }
 
   func echoInt(anInt: Int32) -> Int32 {
