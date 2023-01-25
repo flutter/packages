@@ -399,8 +399,7 @@ import FlutterMacOS
 
         if (method.isAsynchronous) {
           argSignature.add('completion: @escaping ($returnType) -> Void');
-          indent.writeln(
-              'func ${method.name}(${argSignature.join(', ')}) throws');
+          indent.writeln('func ${method.name}(${argSignature.join(', ')})');
         } else if (method.returnType.isVoid) {
           indent.writeln(
               'func ${method.name}(${argSignature.join(', ')}) throws');
@@ -443,33 +442,34 @@ import FlutterMacOS
             final String messageVarName =
                 method.arguments.isNotEmpty ? 'message' : '_';
             indent.addScoped('{ $messageVarName, reply in', '}', () {
-              indent.write('do ');
-              indent.addScoped('{', '}', () {
-                final List<String> methodArgument = <String>[];
-                if (method.arguments.isNotEmpty) {
-                  indent.writeln('let args = message as! [Any?]');
-                  enumerate(method.arguments, (int index, NamedType arg) {
-                    final String argName = _getSafeArgumentName(index, arg);
-                    final String argIndex = 'args[$index]';
-                    indent.writeln(
-                        'let $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
-                    methodArgument.add('${arg.name}: $argName');
+              final List<String> methodArgument = <String>[];
+              if (method.arguments.isNotEmpty) {
+                indent.writeln('let args = message as! [Any?]');
+                enumerate(method.arguments, (int index, NamedType arg) {
+                  final String argName = _getSafeArgumentName(index, arg);
+                  final String argIndex = 'args[$index]';
+                  indent.writeln(
+                      'let $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
+                  methodArgument.add('${arg.name}: $argName');
+                });
+              }
+              final String tryStatement = method.isAsynchronous ? '' : 'try ';
+              final String call =
+                  '${tryStatement}api.${method.name}(${methodArgument.join(', ')})';
+              if (method.isAsynchronous) {
+                indent.write('$call ');
+                if (method.returnType.isVoid) {
+                  indent.addScoped('{', '}', () {
+                    indent.writeln('reply(wrapResult(nil))');
+                  });
+                } else {
+                  indent.addScoped('{ result in', '}', () {
+                    indent.writeln('reply(wrapResult(result))');
                   });
                 }
-                final String call =
-                    'try api.${method.name}(${methodArgument.join(', ')})';
-                if (method.isAsynchronous) {
-                  indent.write('$call ');
-                  if (method.returnType.isVoid) {
-                    indent.addScoped('{', '}', () {
-                      indent.writeln('reply(wrapResult(nil))');
-                    });
-                  } else {
-                    indent.addScoped('{ result in', '}', () {
-                      indent.writeln('reply(wrapResult(result))');
-                    });
-                  }
-                } else {
+              } else {
+                indent.write('do ');
+                indent.addScoped('{', '}', () {
                   if (method.returnType.isVoid) {
                     indent.writeln(call);
                     indent.writeln('reply(wrapResult(nil))');
@@ -477,11 +477,11 @@ import FlutterMacOS
                     indent.writeln('let result = $call');
                     indent.writeln('reply(wrapResult(result))');
                   }
-                }
-              }, addTrailingNewline: false);
-              indent.addScoped(' catch {', '}', () {
-                indent.writeln('reply(wrapError(error))');
-              });
+                }, addTrailingNewline: false);
+                indent.addScoped(' catch {', '}', () {
+                  indent.writeln('reply(wrapError(error))');
+                });
+              }
             });
           }, addTrailingNewline: false);
           indent.addScoped(' else {', '}', () {
