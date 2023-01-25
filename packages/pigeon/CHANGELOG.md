@@ -1,3 +1,7 @@
+## 7.0.5
+
+* Requires analyzer 5.0.0 and replaces use of deprecated APIs.
+
 ## 7.0.4
 
 * [c++] Fixes minor output formatting issues.
