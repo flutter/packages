@@ -251,7 +251,7 @@ class AdaptiveScaffold extends StatefulWidget {
   static Builder standardNavigationRail({
     required List<NavigationRailDestination> destinations,
     double width = 72,
-    int selectedIndex = 0,
+    int? selectedIndex,
     bool extended = false,
     Color backgroundColor = Colors.transparent,
     EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
