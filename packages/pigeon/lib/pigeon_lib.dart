@@ -927,7 +927,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
         _currentApi = Api(
-          name: node.name2.lexeme,
+          name: node.name.lexeme,
           location: ApiLocation.host,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
@@ -936,7 +936,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
         _currentApi = Api(
-          name: node.name2.lexeme,
+          name: node.name.lexeme,
           location: ApiLocation.flutter,
           methods: <Method>[],
           documentationComments:
@@ -945,7 +945,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     } else {
       _currentClass = Class(
-        name: node.name2.lexeme,
+        name: node.name.lexeme,
         fields: <NamedType>[],
         documentationComments:
             _documentationCommentsParser(node.documentationComment?.tokens),
@@ -1045,7 +1045,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
       _currentApi!.methods.add(
         Method(
-          name: node.name2.lexeme,
+          name: node.name.lexeme,
           returnType: TypeDeclaration(
               baseName: returnTypeIdentifier.name,
               typeArguments: typeAnnotationsToTypeArguments(
@@ -1063,7 +1063,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else if (_currentClass != null) {
       _errors.add(Error(
           message:
-              'Methods aren\'t supported in Pigeon data classes ("${node.name2.lexeme}").',
+              'Methods aren\'t supported in Pigeon data classes ("${node.name.lexeme}").',
           lineNumber: _calculateLineNumber(source, node.offset)));
     }
     node.visitChildren(this);
@@ -1073,10 +1073,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
     _enums.add(Enum(
-      name: node.name2.lexeme,
+      name: node.name.lexeme,
       members: node.constants
           .map((dart_ast.EnumConstantDeclaration e) => EnumMember(
-                name: e.name2.lexeme,
+                name: e.name.lexeme,
                 documentationComments: _documentationCommentsParser(
                     e.documentationComment?.tokens),
               ))
@@ -1129,7 +1129,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               isNullable: type.question != null,
               typeArguments: typeAnnotationsToTypeArguments(typeArguments),
             ),
-            name: node.fields.variables[0].name2.lexeme,
+            name: node.fields.variables[0].name.lexeme,
             offset: node.offset,
             documentationComments:
                 _documentationCommentsParser(node.documentationComment?.tokens),
