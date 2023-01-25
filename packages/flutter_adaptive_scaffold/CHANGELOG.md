@@ -1,6 +1,7 @@
 ## 0.1.0
 
 * Change `selectedIndex` on `standardNavigationRail` to allow null value.
+* A null `selectIndex` applied to `standardBottomNavigationBar` will be set to -1.
 
 
 ## 0.0.9
