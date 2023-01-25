@@ -6,25 +6,25 @@ import XCTest
 @testable import test_plugin
 
 class RunnerTests: XCTestCase {
-
-  func testToMapAndBack() throws {
+  
+  func testToListAndBack() throws {
     let reply = MessageSearchReply(result: "foobar")
-    let dict = reply.toMap()
-    let copy = MessageSearchReply.fromMap(dict)
+    let dict = reply.toList()
+    let copy = MessageSearchReply.fromList(dict)
     XCTAssertEqual(reply.result, copy?.result)
   }
 
   func testHandlesNull() throws {
     let reply = MessageSearchReply()
-    let dict = reply.toMap()
-    let copy = MessageSearchReply.fromMap(dict)
+    let dict = reply.toList()
+    let copy = MessageSearchReply.fromList(dict)
     XCTAssertNil(copy?.result)
   }
 
   func testHandlesNullFirst() throws {
     let reply = MessageSearchReply(error: "foobar")
-    let dict = reply.toMap()
-    let copy = MessageSearchReply.fromMap(dict)
+    let dict = reply.toList()
+    let copy = MessageSearchReply.fromList(dict)
     XCTAssertEqual(reply.error, copy?.error)
   }
 }

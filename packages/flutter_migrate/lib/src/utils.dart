@@ -220,6 +220,7 @@ class MigrateUtils {
       '--deleted',
       '--modified',
       '--others',
+      '--exclude-standard',
       '--exclude=${migrateStagingDir ?? kDefaultMigrateStagingDirectoryName}'
     ];
     final ProcessResult result =
@@ -332,7 +333,7 @@ Future<bool> gitRepoExists(
   }
   logger.printStatus(
       'Project is not a git repo. Please initialize a git repo and try again.');
-  printCommandText('git init', logger);
+  printCommand('git init', logger);
   return false;
 }
 
@@ -341,25 +342,32 @@ Future<bool> hasUncommittedChanges(
   if (await migrateUtils.hasUncommittedChanges(projectDirectory)) {
     logger.printStatus(
         'There are uncommitted changes in your project. Please git commit, abandon, or stash your changes before trying again.');
-    logger.printStatus(
-        'You may commit your changes using \'git add .\' and \'git commit -m "<message"\'');
+    logger.printStatus('You may commit your changes using');
+    printCommand('git add .', logger, newlineAfter: false);
+    printCommand('git commit -m "<message>"', logger);
     return true;
   }
   return false;
 }
 
-/// Prints a command to logger with appropriate formatting.
-void printCommandText(String command, Logger logger,
-    {bool? standalone = true}) {
-  final String prefix = standalone == null
-      ? ''
-      : (standalone ? './bin/flutter_migrate ' : 'flutter migrate ');
+void printCommand(String command, Logger logger, {bool newlineAfter = true}) {
   logger.printStatus(
-    '\n\$ $prefix$command\n',
+    '\n\$ $command${newlineAfter ? '\n' : ''}',
     color: TerminalColor.grey,
     indent: 4,
     newline: false,
   );
+}
+
+/// Prints a command to logger with appropriate formatting.
+void printCommandText(String command, Logger logger,
+    {bool? standalone = true, bool newlineAfter = true}) {
+  final String prefix = standalone == null
+      ? ''
+      : (standalone
+          ? 'dart run <flutter_migrate_dir>${Platform.pathSeparator}bin${Platform.pathSeparator}flutter_migrate.dart '
+          : 'flutter migrate ');
+  printCommand('$prefix$command', logger, newlineAfter: newlineAfter);
 }
 
 /// Defines the classification of difference between files.

@@ -40,9 +40,6 @@
 'p: google_identity_services':
   - packages/google_indentity_services_web/**
 
-'p: imitation_game':
-  - packages/imitation_game/**/*
-
 'p: metrics_center':
   - packages/metrics_center/**/*
 

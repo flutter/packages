@@ -25,7 +25,7 @@ class TestHostApi : public MultipleArityHostApi {
 };
 
 const EncodableValue& GetResult(const EncodableValue& pigeon_response) {
-  return std::get<EncodableMap>(pigeon_response).at(EncodableValue("result"));
+  return std::get<EncodableList>(pigeon_response)[0];
 }
 }  // namespace
 

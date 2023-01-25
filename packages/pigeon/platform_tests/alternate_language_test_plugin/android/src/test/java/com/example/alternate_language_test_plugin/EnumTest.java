@@ -6,7 +6,7 @@ package com.example.alternate_language_test_plugin;
 
 import static org.junit.Assert.*;
 
-import java.util.Map;
+import java.util.ArrayList;
 import org.junit.Test;
 
 public class EnumTest {
@@ -14,8 +14,8 @@ public class EnumTest {
   public void nullValue() {
     Enum.DataWithEnum value = new Enum.DataWithEnum();
     value.setState(null);
-    Map<String, Object> map = value.toMap();
-    Enum.DataWithEnum readValue = Enum.DataWithEnum.fromMap(map);
+    ArrayList<Object> list = value.toList();
+    Enum.DataWithEnum readValue = Enum.DataWithEnum.fromList(list);
     assertEquals(value.getState(), readValue.getState());
   }
 }

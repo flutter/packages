@@ -128,19 +128,6 @@ task:
           - else
           -   echo "Only run in presubmit"
           - fi
-    - name: dart_unit_tests
-      env:
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      unit_test_script:
-        - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
-      pathified_unit_test_script:
-        # Run tests with path-based dependencies to ensure that publishing
-        # the changes won't break tests of other packages in the respository
-        # that depend on it.
-        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
     - name: analyze
       env:
         matrix:
@@ -174,8 +161,8 @@ task:
           CHANNEL: "3.0.5"
           DART_VERSION: "2.17.6"
         env:
-          CHANNEL: "2.10.5"
-          DART_VERSION: "2.16.2"
+          CHANNEL: "3.3.10"
+          DART_VERSION: "2.18.6"
       package_prep_script:
         # Allow analyzing packages that use a dev dependency with a higher
         # minimum Flutter/Dart version than the package itself.
@@ -196,23 +183,6 @@ task:
       env:
         CIRRUS_CLONE_SUBMODULES: true
       script: ./script/tool_runner.sh update-excerpts --fail-on-change
-    - name: linux-custom_package_tests
-      env:
-        PATH: $PATH:/usr/local/bin
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      << : *INSTALL_CHROME_LINUX
-      local_tests_script:
-        # pigeon tests currently don't support Linux:
-        #   https://github.com/flutter/flutter/issues/100386
-        # flutter_image
-        #   https://github.com/flutter/flutter/issues/100387
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test --exclude=pigeon
-        - else
-        -   ./script/tool_runner.sh custom-test --exclude=pigeon,flutter_image
-        - fi
     ### Web tasks ###
     - name: web-build_all_packages
       env:
@@ -256,8 +226,18 @@ task:
     zone: us-central1-a
     namespace: default
     cpu: 4
-    memory: 12G
+    memory: 16G
   matrix:
+    ### Platform-agnostic tasks ###
+    - name: linux-custom_package_tests
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      << : *INSTALL_CHROME_LINUX
+      local_tests_script:
+        - ./script/tool_runner.sh custom-test
     ### Android tasks ###
     - name: android-platform_tests
       # Don't run full platform tests on both channels in pre-submit.
@@ -320,6 +300,19 @@ task:
         - cd ../..
         - flutter packages get
         - dart testing/web_benchmarks_test.dart
+    - name: dart_unit_tests
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      unit_test_script:
+        - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
+      pathified_unit_test_script:
+        # Run tests with path-based dependencies to ensure that publishing
+        # the changes won't break tests of other packages in the repository
+        # that depend on it.
+        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
+        - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
 
 # ARM macOS tasks.
 task:
@@ -333,15 +326,9 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       local_tests_script:
-        # flutter_image
-        #   https://github.com/flutter/flutter/issues/100387
         # script/configs/linux_only_custom_test.yaml
         #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test --exclude=script/configs/linux_only_custom_test.yaml
-        - else
-        -   ./script/tool_runner.sh custom-test --exclude=flutter_image,script/configs/linux_only_custom_test.yaml
-        - fi
+        - ./script/tool_runner.sh custom-test --exclude=script/configs/linux_only_custom_test.yaml
     ### iOS tasks ###
     - name: ios-platform_tests
       # Don't run full platform tests on both channels in pre-submit.

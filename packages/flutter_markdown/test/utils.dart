@@ -18,6 +18,17 @@ final TextTheme textTheme = Typography.material2018()
     .black
     .merge(const TextTheme(bodyMedium: TextStyle(fontSize: 12.0)));
 
+Iterable<Widget> selfAndDescendantWidgetsOf(Finder start, WidgetTester tester) {
+  final Element startElement = tester.element(start);
+  final Iterable<Widget> descendants =
+      collectAllElementsFrom(startElement, skipOffstage: false)
+          .map((Element e) => e.widget);
+  return <Widget>[
+    startElement.widget,
+    ...descendants,
+  ];
+}
+
 void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
   final List<Type> actual = widgets.map((Widget w) => w.runtimeType).toList();
   expect(actual, expected);

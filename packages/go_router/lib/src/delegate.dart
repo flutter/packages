@@ -16,7 +16,7 @@ import 'typedefs.dart';
 
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
-    with PopNavigatorRouterDelegateMixin<RouteMatchList>, ChangeNotifier {
+    with ChangeNotifier {
   /// Constructor for GoRouter's implementation of the RouterDelegate base
   /// class.
   GoRouterDelegate({
@@ -132,7 +132,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (!route.didPop(result)) {
       return false;
     }
-    _matchList.pop();
+    final Page<Object?> page = route.settings as Page<Object?>;
+    final RouteMatch? match = builder.getRouteMatchForPage(page);
+    if (match == null) {
+      return true;
+    }
+    _matchList.remove(match);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
@@ -145,8 +150,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
-  void replace(RouteMatchList matches) {
-    _matchList.pop();
+  void pushReplacement(RouteMatchList matches) {
+    _matchList.remove(_matchList.last);
     push(matches); // [push] will notify the listeners.
   }
 
@@ -155,7 +160,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   RouteMatchList get matches => _matchList;
 
   /// For use by the Router architecture as part of the RouterDelegate.
-  @override
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;
 
   /// For use by the Router architecture as part of the RouterDelegate.

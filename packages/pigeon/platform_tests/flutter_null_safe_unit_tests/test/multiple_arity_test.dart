@@ -21,8 +21,7 @@ void main() {
       final List<Object?> args = input as List<Object?>;
       final int x = (args[0] as int?)!;
       final int y = (args[1] as int?)!;
-      return MultipleArityHostApi.codec
-          .encodeMessage(<String, Object>{'result': x - y});
+      return MultipleArityHostApi.codec.encodeMessage(<Object>[x - y]);
     });
 
     final MultipleArityHostApi api =

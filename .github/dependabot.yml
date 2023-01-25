@@ -84,16 +84,6 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
   - package-ecosystem: "gradle"
-    directory: "/packages/imitation_game/imitation_tests/smiley/flutter/smiley/android/app"
-    commit-message:
-      prefix: "[imitation]"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
-  - package-ecosystem: "gradle"
     directory: "/packages/palette_generator/example/android/app"
     commit-message:
       prefix: "[palette_gen]"

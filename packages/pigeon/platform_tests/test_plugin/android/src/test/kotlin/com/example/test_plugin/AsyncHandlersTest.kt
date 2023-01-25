@@ -70,10 +70,10 @@ internal class AsyncHandlersTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as MutableList<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(output, wrapped["result"])
+                assertEquals(output, wrapped.first())
             }
         }
 
@@ -104,7 +104,7 @@ internal class AsyncHandlersTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as MutableList<Any>?
             assertNull(wrapped)
         }
 

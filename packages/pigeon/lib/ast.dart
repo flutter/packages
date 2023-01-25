@@ -242,7 +242,7 @@ class Enum extends Node {
   String name;
 
   /// All of the members of the enum.
-  List<String> members;
+  List<EnumMember> members;
 
   /// List of documentation comments, seperated by line.
   ///
@@ -254,6 +254,30 @@ class Enum extends Node {
   @override
   String toString() {
     return '(Enum name:$name members:$members documentationComments:$documentationComments)';
+  }
+}
+
+/// Represents a Enum member.
+class EnumMember extends Node {
+  /// Parametric constructor for [EnumMember].
+  EnumMember({
+    required this.name,
+    this.documentationComments = const <String>[],
+  });
+
+  /// The name of the enum member.
+  final String name;
+
+  /// List of documentation comments, seperated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  final List<String> documentationComments;
+
+  @override
+  String toString() {
+    return '(EnumMember name:$name documentationComments:$documentationComments)';
   }
 }
 

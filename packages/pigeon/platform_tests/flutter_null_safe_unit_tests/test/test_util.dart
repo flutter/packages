@@ -15,6 +15,6 @@ void echoOneArgument(
     final Object input =
         codec.decodeMessage(realInvocation.positionalArguments[1])!;
     final List<Object?> args = input as List<Object?>;
-    return codec.encodeMessage(<String, Object>{'result': args[0]!});
+    return codec.encodeMessage(<Object>[args[0]!]);
   });
 }

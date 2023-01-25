@@ -30,12 +30,12 @@ class EnumTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "echo")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
+      let outputMap = binaryMessenger.codec.decode(data) as? [Any]
       XCTAssertNotNil(outputMap)
-
-      let output = outputMap?["result"] as? DataWithEnum
+      
+      let output = outputMap?.first as? DataWithEnum
       XCTAssertEqual(output, input)
-      XCTAssertNil(outputMap?["error"])
+      XCTAssertTrue(outputMap?.count == 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)

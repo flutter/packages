@@ -1,3 +1,77 @@
+## 7.0.4
+
+* [c++] Fixes minor output formatting issues.
+
+## 7.0.3
+
+* Updates scoped methods to prevent symbol-less use.
+
+## 7.0.2
+
+* [kotlin] Fixes a missed casting of not nullable Dart 'int' to Kotlin 64bit long.
+
+## 7.0.1
+
+* [generator_tools] adds `newln` method for adding empty lines and ending lines.
+* Updates generators to more closely match Flutter formatter tool output.
+
+## 7.0.0
+
+* [java] **BREAKING CHANGE**: Makes data classes final.
+  Updates generators for 1p linters.
+
+## 6.0.3
+
+* [docs] Updates README.md.
+
+## 6.0.2
+
+* [kotlin] Fixes a bug with a missed line break between generated statements in the `fromList` function of the companion object.
+
+## 6.0.1
+
+* [c++] Fixes most non-class arguments and return values in Flutter APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
+
+## 6.0.0
+
+* Creates StructuredGenerator class and implements it on all platforms.
+
+## 5.0.1
+
+* [c++] Fixes undefined behavior in `@async` methods.
+
+## 5.0.0
+
+* Creates new Generator classes for each language.
+
+## 4.2.16
+
+* [swift] Fixes warnings with `Object` parameters.
+* [dart] Fixes warnings with `Object` return values.
+* [c++] Generation of APIs that use `Object` no longer fails.
+
+## 4.2.15
+
+* Relocates generator classes. (Reverted)
+
+## 4.2.14
+
+* [c++] Fixes reply sending non EncodableValue wrapped lists.
+
+## 4.2.13
+
+* Add documentation comment support for Enum members.
+
+## 4.2.12
+
+* Updates serialization to use lists instead of maps to improve performance.
+
+## 4.2.11
+
+* [swift] Fixes compressed list data types.
+
 ## 4.2.10
 
 * Changes generated Java enum field to be final.

@@ -2,3 +2,4 @@
 # changes on generated files. This will need a way to avoid unnecessary churn,
 # such as a flag to suppress version stamp generation.
 *.gen.swift
+!CoreTests.gen.swift

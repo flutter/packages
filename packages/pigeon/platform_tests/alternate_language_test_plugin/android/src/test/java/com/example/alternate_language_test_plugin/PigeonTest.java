@@ -12,31 +12,30 @@ import io.flutter.plugin.common.MessageCodec;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class PigeonTest {
   @Test
-  public void toMapAndBack() {
+  public void toListAndBack() {
     Pigeon.AndroidSetRequest request = new Pigeon.AndroidSetRequest();
     request.setValue(1234l);
     request.setState(Pigeon.AndroidLoadingState.COMPLETE);
-    Map<String, Object> map = request.toMap();
-    Pigeon.AndroidSetRequest readRequest = Pigeon.AndroidSetRequest.fromMap(map);
+    ArrayList<Object> list = request.toList();
+    Pigeon.AndroidSetRequest readRequest = Pigeon.AndroidSetRequest.fromList(list);
     assertEquals(request.getValue(), readRequest.getValue());
     assertEquals(request.getState(), readRequest.getState());
   }
 
   @Test
-  public void toMapAndBackNested() {
+  public void toListAndBackNested() {
     Pigeon.AndroidNestedRequest nested = new Pigeon.AndroidNestedRequest();
     Pigeon.AndroidSetRequest request = new Pigeon.AndroidSetRequest();
     request.setValue(1234l);
     request.setState(Pigeon.AndroidLoadingState.COMPLETE);
     nested.setRequest(request);
-    Map<String, Object> map = nested.toMap();
-    Pigeon.AndroidNestedRequest readNested = Pigeon.AndroidNestedRequest.fromMap(map);
+    ArrayList<Object> list = nested.toList();
+    Pigeon.AndroidNestedRequest readNested = Pigeon.AndroidNestedRequest.fromList(list);
     assertEquals(nested.getRequest().getValue(), readNested.getRequest().getValue());
     assertEquals(nested.getRequest().getState(), readNested.getRequest().getState());
   }
@@ -70,11 +69,10 @@ public class PigeonTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
-              assertTrue(wrapped.containsKey("error"));
-              Map<Object, Object> error = (Map<Object, Object>) wrapped.get("error");
-              assertTrue(error.containsKey("details"));
-              String details = (String) error.get("details");
+              ArrayList error = (ArrayList) codec.decodeMessage(bytes);
+              assertNotNull(error.get(0));
+              assertNotNull(error.get(1));
+              String details = (String) error.get(2);
               assertTrue(details.contains("Cause:"));
               assertTrue(details.contains("Stacktrace:"));
             });
@@ -101,9 +99,9 @@ public class PigeonTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
-              assertTrue(wrapped.containsKey("result"));
-              assertNull(wrapped.get("result"));
+              ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
+              assertTrue(wrapped.size() == 1);
+              assertNull(wrapped.get(0));
             });
     ArgumentCaptor<Pigeon.AndroidSetRequest> receivedRequest =
         ArgumentCaptor.forClass(Pigeon.AndroidSetRequest.class);

@@ -3,3 +3,4 @@
 # such as a flag to suppress version stamp generation.
 *.kt
 !TestPlugin.kt
+!CoreTests.gen.kt

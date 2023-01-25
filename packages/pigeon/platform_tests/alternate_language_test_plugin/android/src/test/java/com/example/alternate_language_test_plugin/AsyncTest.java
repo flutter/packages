@@ -11,7 +11,7 @@ import com.example.alternate_language_test_plugin.AsyncHandlers.*;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import java.nio.ByteBuffer;
-import java.util.Map;
+import java.util.ArrayList;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -60,8 +60,8 @@ public class AsyncTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
-              assertTrue(wrapped.containsKey("result"));
+              ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
+              assertTrue(wrapped.size() == 1);
               didCall[0] = true;
             });
     assertTrue(didCall[0]);
@@ -87,10 +87,9 @@ public class AsyncTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
-              assertTrue(wrapped.containsKey("error"));
-              assertEquals(
-                  "java.lang.Exception: error", ((Map) wrapped.get("error")).get("message"));
+              ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
+              assertTrue(wrapped.size() > 1);
+              assertEquals("java.lang.Exception: error", (String) wrapped.get(0));
               didCall[0] = true;
             });
     assertTrue(didCall[0]);

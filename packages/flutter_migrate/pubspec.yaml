@@ -16,8 +16,6 @@ dependencies:
   meta: 1.8.0
   path: ^1.8.0
   process: 4.2.4
-  test_api: 0.4.13
-  test_core: 0.4.17
   vm_service: 9.3.0
   xml: ^6.1.0
   yaml: 3.1.1
@@ -27,3 +25,4 @@ dev_dependencies:
   file_testing: ^3.0.0
   lints: ^2.0.0
   test: ^1.16.0
+  test_api: ^0.4.13

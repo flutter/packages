@@ -1,7 +1,6 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
 import XCTest
 @testable import test_plugin
 
@@ -43,9 +42,8 @@ class AsyncHandlersTest: XCTestCase {
 
     let expectation = XCTestExpectation(description: "voidvoid callback")
     binaryMessenger.handlers[channelName]?(nil) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertEqual(outputMap?["result"] as! NSNull, NSNull())
-      XCTAssertNil(outputMap?["error"])
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        XCTAssertEqual(outputList?.first as! NSNull, NSNull())
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -64,8 +62,8 @@ class AsyncHandlersTest: XCTestCase {
 
     let expectation = XCTestExpectation(description: "calculate callback")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      let output = outputMap?["result"] as? Value
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        let output = outputList?.first as? Value
       XCTAssertEqual(output?.number, 2)
       expectation.fulfill()
     }

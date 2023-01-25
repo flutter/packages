@@ -11,7 +11,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Map;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -40,8 +39,8 @@ public class NullableReturnsTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
-              assertTrue(wrapped.containsKey("result"));
+              ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
+              assertTrue(wrapped.size() == 1);
             });
   }
 
@@ -53,8 +52,8 @@ public class NullableReturnsTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList<Object> args =
-                  (ArrayList<Object>)
+              ArrayList args =
+                  (ArrayList)
                       NullableReturns.NullableArgFlutterApi.getCodec().decodeMessage(message);
               assertNull(args.get(0));
               ByteBuffer replyData =

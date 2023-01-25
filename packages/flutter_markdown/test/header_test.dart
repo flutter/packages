@@ -17,9 +17,11 @@ void defineTests() {
         const String data = '# Header';
         await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<Widget> widgets = selfAndDescendantWidgetsOf(
+          find.byType(MarkdownBody),
+          tester,
+        );
         expectWidgetTypes(widgets, <Type>[
-          Directionality,
           MarkdownBody,
           Column,
           Wrap,

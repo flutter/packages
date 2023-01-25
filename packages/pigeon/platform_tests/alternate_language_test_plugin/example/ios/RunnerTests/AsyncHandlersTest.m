@@ -15,8 +15,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface Value ()
-+ (Value *)fromMap:(NSDictionary *)dict;
-- (NSDictionary *)toMap;
++ (Value *)fromList:(NSArray *)list;
+- (NSArray *)toList;
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -79,9 +79,8 @@
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"voidvoid callback"];
   binaryMessenger.handlers[channelName](nil, ^(NSData *data) {
-    NSDictionary *outputMap = [binaryMessenger.codec decode:data];
-    XCTAssertEqualObjects(outputMap[@"result"], [NSNull null]);
-    XCTAssertEqualObjects(outputMap[@"error"], [NSNull null]);
+    NSArray *outputList = [binaryMessenger.codec decode:data];
+    XCTAssertEqualObjects(outputList[0], [NSNull null]);
     [expectation fulfill];
   });
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
@@ -98,9 +97,9 @@
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"voidvoid callback"];
   binaryMessenger.handlers[channelName](nil, ^(NSData *data) {
-    NSDictionary *outputMap = [binaryMessenger.codec decode:data];
-    XCTAssertNotNil(outputMap[@"error"]);
-    XCTAssertEqualObjects(outputMap[@"error"][@"code"], mockApi2Host.voidVoidError.code);
+    NSArray *outputList = [binaryMessenger.codec decode:data];
+    XCTAssertNotNil(outputList);
+    XCTAssertEqualObjects(outputList[0], mockApi2Host.voidVoidError.code);
     [expectation fulfill];
   });
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
@@ -120,8 +119,8 @@
   NSData *inputEncoded = [binaryMessenger.codec encode:@[ input ]];
   XCTestExpectation *expectation = [self expectationWithDescription:@"calculate callback"];
   binaryMessenger.handlers[channelName](inputEncoded, ^(NSData *data) {
-    NSDictionary *outputMap = [binaryMessenger.codec decode:data];
-    Value *output = outputMap[@"result"];
+    NSArray *outputList = [binaryMessenger.codec decode:data];
+    Value *output = outputList[0];
     XCTAssertEqual(output.number.intValue, 2);
     [expectation fulfill];
   });
@@ -138,11 +137,13 @@
 
   Value *input = [[Value alloc] init];
   input.number = @(1);
-  NSData *inputEncoded = [binaryMessenger.codec encode:@[ [input toMap] ]];
+  NSData *inputEncoded = [binaryMessenger.codec encode:@[ [input toList] ]];
   XCTestExpectation *expectation = [self expectationWithDescription:@"calculate callback"];
   binaryMessenger.handlers[channelName](inputEncoded, ^(NSData *data) {
-    NSDictionary *outputMap = [binaryMessenger.codec decode:data];
-    XCTAssertNotNil(outputMap[@"error"]);
+    NSArray *outputList = [binaryMessenger.codec decode:data];
+    XCTAssertNotNil(outputList);
+    XCTAssertEqualObjects(outputList[0], @"hey");
+    XCTAssertEqualObjects(outputList[1], @"ho");
     [expectation fulfill];
   });
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
