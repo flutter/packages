@@ -1,7 +1,7 @@
 ## 0.1.0
 
 * Change the `selectedIndex` parameter on `standardNavigationRail` to allow null values to indicate "no destination".
-* A null `selectIndex` applied to `standardBottomNavigationBar` will be set to -1.
+* An explicitly null `currentIndex` parameter passed to `standardBottomNavigationBar` will also default to 0, just like implicitly null missing parameters.
 
 
 ## 0.0.9
