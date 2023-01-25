@@ -1,6 +1,6 @@
 ## 0.1.0
 
-* Change `selectedIndex` on `standardNavigatioRail` to allow null value.
+* Change `selectedIndex` on `standardNavigationRail` to allow null value.
 
 
 ## 0.0.9
