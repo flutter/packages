@@ -1,3 +1,7 @@
+## 1.0.0
+
+* Update version to 1.0 to reflect the level of API stability.
+
 ## 0.2.0+3
 
 * Returns null instead of throwing exception from getUserDirectory when xdg-user-dir executable is missing.
