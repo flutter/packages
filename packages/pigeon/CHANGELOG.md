@@ -1,3 +1,7 @@
+## 7.1.0
+
+* Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
 ## 7.0.5
 
 * Requires analyzer 5.0.0 and replaces use of deprecated APIs.
