@@ -1142,4 +1142,96 @@ void main() {
     final String code = sink.toString();
     expect(code, contains(': FlutterStandardReader '));
   });
+
+  test('swift function signature', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+            name: 'set',
+            arguments: <NamedType>[
+              NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
+                name: 'value',
+              ),
+              NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                ),
+                name: 'key',
+              ),
+            ],
+            swiftFunction: 'setValue(_:for:)',
+            returnType: const TypeDeclaration.voidDeclaration(),
+          )
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('func setValue(_ value: Int32, for key: String)'));
+  });
+
+  test('swift function signature with same name argument', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+            name: 'set',
+            arguments: <NamedType>[
+              NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                ),
+                name: 'key',
+              ),
+            ],
+            swiftFunction: 'removeValue(key:)',
+            returnType: const TypeDeclaration.voidDeclaration(),
+          )
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('func removeValue(key: String)'));
+  });
+
+  test('swift function signature with no arguments', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+            name: 'clear',
+            arguments: <NamedType>[],
+            swiftFunction: 'removeAll()',
+            returnType: const TypeDeclaration.voidDeclaration(),
+          )
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('func removeAll()'));
+  });
 }

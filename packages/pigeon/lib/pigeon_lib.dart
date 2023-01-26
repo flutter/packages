@@ -100,6 +100,20 @@ class ObjCSelector {
   final String value;
 }
 
+/// Metadata to annotate methods to control the signature used for Swift output.
+///
+/// The number of components in the provided signature must match the number of
+/// arguments in the annotated method.
+/// For example:
+///   @SwiftFunction('divide(_:by:)') double divide(int x, String y);
+class SwiftFunction {
+  /// Constructor.
+  const SwiftFunction(this.value);
+
+  /// The string representation of the function signature.
+  final String value;
+}
+
 /// Type of TaskQueue which determines how handlers are dispatched for
 /// HostApi's.
 enum TaskQueueType {
@@ -724,6 +738,17 @@ List<Error> _validateAst(Root root, String source) {
           ));
         }
       }
+      if (method.swiftFunction.isNotEmpty) {
+        final RegExp signatureRegex =
+            RegExp('\\w+ *\\((\\w+:){${method.arguments.length}}\\)');
+        if (!signatureRegex.hasMatch(method.swiftFunction)) {
+          result.add(Error(
+            message:
+                'Invalid function signature, expected ${method.arguments.length} arguments.',
+            lineNumber: _calculateLineNumberNullable(source, method.offset),
+          ));
+        }
+      }
       if (method.taskQueueType != TaskQueueType.serial &&
           api.location != ApiLocation.host) {
         result.add(Error(
@@ -1026,6 +1051,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             .asNullable<dart_ast.SimpleStringLiteral>()
             ?.value ??
         '';
+    final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
+            ?.arguments
+            ?.arguments
+            .first
+            .asNullable<dart_ast.SimpleStringLiteral>()
+            ?.value ??
+        '';
     final dart_ast.ArgumentList? taskQueueArguments =
         _findMetadata(node.metadata, 'TaskQueue')?.arguments;
     final String? taskQueueTypeName = taskQueueArguments == null
@@ -1054,6 +1086,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           arguments: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
+          swiftFunction: swiftFunction,
           offset: node.offset,
           taskQueueType: taskQueueType,
           documentationComments:
