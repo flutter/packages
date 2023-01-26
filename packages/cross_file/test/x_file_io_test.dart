@@ -109,7 +109,7 @@ void main() {
 
 /// An XFile subclass that tracks reads, for testing purposes.
 class TestXFile extends XFile {
-  TestXFile(String path) : super(path);
+  TestXFile(super.path);
 
   bool hasBeenRead = false;
 
