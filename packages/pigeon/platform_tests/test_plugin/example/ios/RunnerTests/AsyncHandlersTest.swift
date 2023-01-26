@@ -7,8 +7,10 @@ import XCTest
 class MockApi2Host: Api2Host {
   var output: Int32?
 
-  func calculate(value: Value, completion: @escaping (Value) -> Void) {
-    completion(Value(number: output))
+  func calculate(value: Value, completion: @escaping (Result<Value, Error>) -> Void) {
+      let result: Result<Value, Error>
+      result = .success(Value(number: output))
+      completion(result)
   }
 
   func voidVoid(completion: @escaping () -> Void) {

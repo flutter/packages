@@ -394,11 +394,15 @@ import FlutterMacOS
         final String returnType = method.returnType.isVoid
             ? ''
             : _nullsafeSwiftTypeForDartType(method.returnType);
+
+        final String escapeType =
+            method.returnType.isVoid ? '' : 'Result<$returnType, Error>';
+
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
 
         if (method.isAsynchronous) {
-          argSignature.add('completion: @escaping ($returnType) -> Void');
+          argSignature.add('completion: @escaping ($escapeType) -> Void');
           indent.writeln('func ${method.name}(${argSignature.join(', ')})');
         } else if (method.returnType.isVoid) {
           indent.writeln(
@@ -464,7 +468,17 @@ import FlutterMacOS
                   });
                 } else {
                   indent.addScoped('{ result in', '}', () {
-                    indent.writeln('reply(wrapResult(result))');
+                    indent.write('switch result ');
+                    indent.addScoped('{', '}', () {
+                      indent.writeln('case .success(let res):');
+                      indent.nest(1, () {
+                        indent.writeln('reply(wrapResult(res))');
+                      });
+                      indent.writeln('case .failure(let error):');
+                      indent.nest(1, () {
+                        indent.writeln('reply(wrapError(error))');
+                      });
+                    });
                   });
                 }
               } else {
@@ -590,8 +604,17 @@ import FlutterMacOS
 
   void _writeWrapError(Indent indent) {
     indent.newln();
-    indent.write('private func wrapError(_ error: Error) -> [Any?] ');
+    indent.write('private func wrapError(_ error: Any) -> [Any?] ');
     indent.addScoped('{', '}', () {
+      indent.write('if let flutterError = error as? FlutterError ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        indent.addScoped('[', ']', () {
+          indent.writeln('flutterError.code,');
+          indent.writeln('flutterError.message,');
+          indent.writeln('flutterError.details');
+        });
+      });
       indent.write('return ');
       indent.addScoped('[', ']', () {
         indent.writeln(r'"\(error)",');

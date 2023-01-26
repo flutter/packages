@@ -499,7 +499,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('protocol Api'));
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
-    expect(code, contains('reply(wrapResult(result))'));
+    expect(code, contains('reply(wrapResult(res))'));
   });
 
   test('gen one async Flutter Api', () {
@@ -884,7 +884,10 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit(completion: @escaping (Int32?) -> Void'));
+    expect(
+        code,
+        contains(
+            'func doit(completion: @escaping (Result<Int32?, Error>) -> Void'));
   });
 
   test('nullable argument host', () {
