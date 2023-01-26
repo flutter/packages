@@ -105,7 +105,7 @@ class ObjCSelector {
 /// The number of components in the provided signature must match the number of
 /// arguments in the annotated method.
 /// For example:
-///   @SwiftFunction('setValue(_:for:)') double divide(int value, String key);
+///   @SwiftFunction('divide(_:by:)') double divide(int x, String y);
 class SwiftFunction {
   /// Constructor.
   const SwiftFunction(this.value);
