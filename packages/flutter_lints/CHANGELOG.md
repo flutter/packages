@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 2.0.1
 
 * Updated readme to document suggestion process for new lints
