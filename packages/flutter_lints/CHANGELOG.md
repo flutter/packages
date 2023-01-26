@@ -1,4 +1,4 @@
-## 2.0.2
+## NEXT
 
 * Updates minimum SDK version to Flutter 3.0.
 
