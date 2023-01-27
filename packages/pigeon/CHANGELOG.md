@@ -1,3 +1,7 @@
+## 7.1.1
+
+* [c++] Fixes handling of the `cpp*` options in `@ConfigurePigeon` annotations.
+
 ## 7.1.0
 
 * Adds `@SwiftFunction` annotation for specifying custom swift function signature.
