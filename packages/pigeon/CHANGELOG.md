@@ -1,7 +1,5 @@
-## 8.0.0
+## 7.0.5
 
-* [swift] **BREAKING CHANGE**: Changes async method completion types.
-* [swift] Adds error handling to async methods.
 * [swift] Adds error handling to sync host api methods.
 
 ## 7.0.4

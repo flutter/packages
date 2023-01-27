@@ -182,10 +182,6 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoAsyncString:')
   String echoAsyncString(String aString);
 
-  /// Returns List of error info asynchromously.
-  @async
-  Object? throwAsyncError();
-
   // ========== Flutter API test wrappers ==========
 
   @async

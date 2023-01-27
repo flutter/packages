@@ -394,15 +394,11 @@ import FlutterMacOS
         final String returnType = method.returnType.isVoid
             ? ''
             : _nullsafeSwiftTypeForDartType(method.returnType);
-
-        final String escapeType =
-            method.returnType.isVoid ? '' : 'Result<$returnType, Error>';
-
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
 
         if (method.isAsynchronous) {
-          argSignature.add('completion: @escaping ($escapeType) -> Void');
+          argSignature.add('completion: @escaping ($returnType) -> Void');
           indent.writeln('func ${method.name}(${argSignature.join(', ')})');
         } else if (method.returnType.isVoid) {
           indent.writeln(
@@ -468,17 +464,7 @@ import FlutterMacOS
                   });
                 } else {
                   indent.addScoped('{ result in', '}', () {
-                    indent.write('switch result ');
-                    indent.addScoped('{', '}', () {
-                      indent.writeln('case .success(let res):');
-                      indent.nest(1, () {
-                        indent.writeln('reply(wrapResult(res))');
-                      });
-                      indent.writeln('case .failure(let error):');
-                      indent.nest(1, () {
-                        indent.writeln('reply(wrapError(error))');
-                      });
-                    });
+                    indent.writeln('reply(wrapResult(result))');
                   });
                 }
               } else {

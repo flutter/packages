@@ -488,14 +488,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String echoObject = await api.echoAsyncString(sentObject);
       expect(echoObject, sentObject);
     });
-
-    testWidgets('async errors are returned correctly', (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-
-      expect(() async {
-        await api.throwAsyncError();
-      }, throwsA(isA<PlatformException>()));
-    }, skip: targetGenerator == TargetGenerator.kotlin);
   });
 
   // These tests rely on the ansync Dart->host calls to work correctly, since

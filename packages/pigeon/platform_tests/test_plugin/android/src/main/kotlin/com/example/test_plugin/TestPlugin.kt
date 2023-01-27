@@ -112,10 +112,6 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     callback(aString)
   }
 
-  override fun throwAsyncError(callback: (Any?) -> Unit) {
-    // callback(FlutterError(code: "500", details: "details", message: "message"))
-  }
-
   override fun callFlutterNoop(callback: () -> Unit) {
     flutterApi!!.noop() { callback() }
   }
