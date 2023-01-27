@@ -1,6 +1,18 @@
-## 7.0.5
+## 7.1.2
 
 * [swift] Adds error handling to sync host api methods.
+
+## 7.1.1
+
+* [c++] Fixes handling of the `cpp*` options in `@ConfigurePigeon` annotations.
+
+## 7.1.0
+
+* Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
+## 7.0.5
+
+* Requires analyzer 5.0.0 and replaces use of deprecated APIs.
 
 ## 7.0.4
 
