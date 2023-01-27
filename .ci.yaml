@@ -44,6 +44,27 @@ platform_properties:
       xcode: 14a5294e # xcode 14.0 beta 5
 
 targets:
+  ### iOS tasks ###
+  - name: Mac_arm64 ios_build_all_plugins master
+    bringup: true
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: ios_build_all_packages.yaml
+      channel: master
+
+  - name: Mac_arm64 ios_build_all_plugins stable
+    bringup: true
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: ios_build_all_packages.yaml
+      channel: stable
+
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
   # on Intel to give us build coverage of both host types.
@@ -85,6 +106,7 @@ targets:
       target_file: mac_custom_package_tests.yaml
       channel: stable
 
+  ### Windows desktop tasks ###
   - name: Windows custom_package_tests master - packages
     recipe: packages/packages
     timeout: 30
@@ -143,7 +165,7 @@ targets:
     timeout: 30
     properties:
       add_recipes_cq: "true"
-      target_file: build_all_packages.yaml
+      target_file: windows_build_all_packages.yaml
       channel: master
       version_file: flutter_master.version
       dependencies: >
@@ -156,7 +178,7 @@ targets:
     timeout: 30
     properties:
       add_recipes_cq: "true"
-      target_file: build_all_packages.yaml
+      target_file: windows_build_all_packages.yaml
       channel: stable
       version_file: flutter_stable.version
       dependencies: >
