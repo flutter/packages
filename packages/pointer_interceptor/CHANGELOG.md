@@ -1,6 +1,6 @@
-## 0.9.3+4
-
+##  0.9.3+4
 * Removes const keyword from PointerInterceptor's constructor.
+* Updates minimum Flutter version to 3.0.
 
 ## 0.9.3+3
 

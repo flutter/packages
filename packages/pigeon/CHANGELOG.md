@@ -1,3 +1,27 @@
+## 7.1.1
+
+* [c++] Fixes handling of the `cpp*` options in `@ConfigurePigeon` annotations.
+
+## 7.1.0
+
+* Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
+## 7.0.5
+
+* Requires analyzer 5.0.0 and replaces use of deprecated APIs.
+
+## 7.0.4
+
+* [c++] Fixes minor output formatting issues.
+
+## 7.0.3
+
+* Updates scoped methods to prevent symbol-less use.
+
+## 7.0.2
+
+* [kotlin] Fixes a missed casting of not nullable Dart 'int' to Kotlin 64bit long.
+
 ## 7.0.1
 
 * [generator_tools] adds `newln` method for adding empty lines and ending lines.
