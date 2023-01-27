@@ -36,7 +36,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func throwError() throws {
-    throw errType.thrownErrow
+    throw ErrType.thrownErrow
   }
 
   func echoInt(anInt: Int32) -> Int32 {
@@ -107,6 +107,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func echoAsyncString(aString: String, completion: @escaping (Result<String, Error>) -> Void) {
     let result: Result<String, Error>
     result = .success(aString)
+    completion(result)
+  }
+
+  func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void) {
+    let result: Result<Any?, Error>
+    result = .failure(ErrType.thrownErrow)
     completion(result)
   }
 
@@ -254,6 +260,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 }
 
-enum errType: Error {
+enum ErrType: Error {
   case thrownErrow
 }

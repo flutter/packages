@@ -78,6 +78,9 @@ class TestPlugin : public flutter::Plugin,
       const std::string& a_string,
       std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
           result) override;
+  void ThrowAsyncError(
+      std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
+          result) override;
   void CallFlutterNoop(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>

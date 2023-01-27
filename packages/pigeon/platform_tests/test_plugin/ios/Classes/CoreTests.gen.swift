@@ -287,6 +287,8 @@ protocol HostIntegrationCoreApi {
   func noopAsync(completion: @escaping () -> Void)
   /// Returns the passed string asynchronously.
   func echoAsyncString(aString: String, completion: @escaping (Result<String, Error>) -> Void)
+  /// Returns List of error info asynchromously.
+  func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void)
   func callFlutterNoop(completion: @escaping () -> Void)
   func callFlutterEchoAllTypes(everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void)
   func callFlutterSendMultipleNullableTypes(aNullableBool: Bool?, aNullableInt: Int32?, aNullableString: String?, completion: @escaping (Result<AllNullableTypes, Error>) -> Void)
@@ -646,6 +648,22 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoAsyncStringChannel.setMessageHandler(nil)
+    }
+    /// Returns List of error info asynchromously.
+    let throwAsyncErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      throwAsyncErrorChannel.setMessageHandler { _, reply in
+        api.throwAsyncError() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      throwAsyncErrorChannel.setMessageHandler(nil)
     }
     let callFlutterNoopChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterNoop", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

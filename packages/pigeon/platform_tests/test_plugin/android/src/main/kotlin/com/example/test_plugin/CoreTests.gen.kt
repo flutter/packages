@@ -269,6 +269,8 @@ interface HostIntegrationCoreApi {
   fun noopAsync(callback: () -> Unit)
   /** Returns the passed string asynchronously. */
   fun echoAsyncString(aString: String, callback: (String) -> Unit)
+  /** Returns List of error info asynchromously. */
+  fun throwAsyncError(callback: (Any?) -> Unit)
   fun callFlutterNoop(callback: () -> Unit)
   fun callFlutterEchoAllTypes(everything: AllTypes, callback: (AllTypes) -> Unit)
   fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?, callback: (AllNullableTypes) -> Unit)
@@ -664,6 +666,24 @@ interface HostIntegrationCoreApi {
               val args = message as List<Any?>
               val aStringArg = args[0] as String
               api.echoAsyncString(aStringArg) {
+                reply.reply(wrapResult(it))
+              }
+            } catch (exception: Error) {
+              wrapped = wrapError(exception)
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            try {
+              api.throwAsyncError() {
                 reply.reply(wrapResult(it))
               }
             } catch (exception: Error) {

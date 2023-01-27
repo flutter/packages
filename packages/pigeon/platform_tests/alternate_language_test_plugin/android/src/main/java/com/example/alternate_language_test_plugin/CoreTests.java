@@ -828,6 +828,8 @@ public class CoreTests {
     void noopAsync(Result<Void> result);
     /** Returns the passed string asynchronously. */
     void echoAsyncString(@NonNull String aString, Result<String> result);
+    /** Returns List of error info asynchromously. */
+    void throwAsyncError(Result<Object> result);
 
     void callFlutterNoop(Result<Void> result);
 
@@ -1455,6 +1457,40 @@ public class CoreTests {
                       };
 
                   api.echoAsyncString(aStringArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList wrapped = new ArrayList<>();
+                try {
+                  Result<Object> resultCallback =
+                      new Result<Object>() {
+                        public void success(Object result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.throwAsyncError(resultCallback);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   reply.reply(wrappedError);
