@@ -604,7 +604,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             final String returnType = method.returnType.isVoid
                 ? 'Void'
                 : _javaTypeForDartType(method.returnType);
-            indent.writeln('ArrayList wrapped = new ArrayList<>();');
+            indent.writeln(
+                'ArrayList<Object> wrapped = new ArrayList<Object>();');
             indent.write('try ');
             indent.addScoped('{', '}', () {
               final List<String> methodArgument = <String>[];
@@ -768,7 +769,7 @@ Result<$returnType> $resultName =
     indent.format('''
 @NonNull
 private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-\tArrayList<Object> errorList = new ArrayList<>(3);
+\tArrayList<Object> errorList = new ArrayList<Object>(3);
 \terrorList.add(exception.toString());
 \terrorList.add(exception.getClass().getSimpleName());
 \terrorList.add(

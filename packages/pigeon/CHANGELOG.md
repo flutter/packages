@@ -1,3 +1,7 @@
+## 7.1.2
+
+* [java] Fixes raw types lint issues.
+
 ## 7.1.1
 
 * [c++] Fixes handling of the `cpp*` options in `@ConfigurePigeon` annotations.
