@@ -1,3 +1,7 @@
+## 7.1.2
+
+* Removes unnused  function.
+
 ## 7.1.1
 
 * [c++] Fixes handling of the `cpp*` options in `@ConfigurePigeon` annotations.
