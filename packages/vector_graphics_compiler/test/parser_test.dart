@@ -4,6 +4,41 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Use preserves fill from shape', () async {
+    final VectorInstructions instructions = parseWithoutOptimizers(
+      useColor,
+    );
+
+    expect(
+      instructions.paths,
+      <Path>[
+        Path(
+          commands: const <PathCommand>[
+            MoveToCommand(60.0, 10.0),
+            LineToCommand(72.5, 27.5),
+            LineToCommand(47.5, 27.5),
+            CloseCommand()
+          ],
+        ),
+        Path(
+          commands: const <PathCommand>[
+            MoveToCommand(120.0, 10.0),
+            LineToCommand(132.5, 27.5),
+            LineToCommand(107.5, 27.5),
+            CloseCommand()
+          ],
+        )
+      ],
+    );
+    expect(
+      instructions.paints.single,
+      const Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xffff0000)),
+      ),
+    );
+  });
+
   test('Image in defs', () {
     final VectorInstructions instructions = parseWithoutOptimizers(
       imageInDefs,

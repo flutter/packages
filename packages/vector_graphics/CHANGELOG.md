@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.1
+
+- Fix handling of fill colors on use/group elements.
+
 ## 1.0.0+1
 
 - Fix issue in pattern decoding.

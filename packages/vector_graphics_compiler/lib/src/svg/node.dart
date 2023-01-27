@@ -213,7 +213,7 @@ class ParentNode extends AttributedNode {
     if (needsLayer) {
       return Paint(
         blendMode: attributes.blendMode,
-        fill: attributes.fill!.toFill(Rect.largest, transform) ??
+        fill: attributes.fill?.toFill(Rect.largest, transform) ??
             Fill(
               color: Color.opaqueBlack.withOpacity(attributes.opacity ?? 1.0),
             ),
