@@ -20,7 +20,14 @@ private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
 
-private func wrapError(_ error: Error) -> [Any?] {
+private func wrapError(_ error: Any) -> [Any?] {
+  if let flutterError = error as? FlutterError {
+    return [
+      flutterError.code,
+      flutterError.message,
+      flutterError.details
+    ]
+  }
   return [
     "\(error)",
     "\(type(of: error))",
