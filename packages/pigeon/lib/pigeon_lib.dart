@@ -274,11 +274,10 @@ class PigeonOptions {
       kotlinOptions: map.containsKey('kotlinOptions')
           ? KotlinOptions.fromMap(map['kotlinOptions']! as Map<String, Object>)
           : null,
-      cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
-      cppSourceOut: map['experimental_cppSourceOut'] as String?,
-      cppOptions: map.containsKey('experimental_cppOptions')
-          ? CppOptions.fromMap(
-              map['experimental_cppOptions']! as Map<String, Object>)
+      cppHeaderOut: map['cppHeaderOut'] as String?,
+      cppSourceOut: map['cppSourceOut'] as String?,
+      cppOptions: map.containsKey('cppOptions')
+          ? CppOptions.fromMap(map['cppOptions']! as Map<String, Object>)
           : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
@@ -306,9 +305,9 @@ class PigeonOptions {
       if (swiftOptions != null) 'swiftOptions': swiftOptions!.toMap(),
       if (kotlinOut != null) 'kotlinOut': kotlinOut!,
       if (kotlinOptions != null) 'kotlinOptions': kotlinOptions!.toMap(),
-      if (cppHeaderOut != null) 'experimental_cppHeaderOut': cppHeaderOut!,
-      if (cppSourceOut != null) 'experimental_cppSourceOut': cppSourceOut!,
-      if (cppOptions != null) 'experimental_cppOptions': cppOptions!.toMap(),
+      if (cppHeaderOut != null) 'cppHeaderOut': cppHeaderOut!,
+      if (cppSourceOut != null) 'cppSourceOut': cppSourceOut!,
+      if (cppOptions != null) 'cppOptions': cppOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
