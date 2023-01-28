@@ -1,8 +1,16 @@
-## 7.1.3
+## 7.1.5
 
 * [swift] **BREAKING CHANGE**: Changes async method completion types.
 * [swift] Adds error handling to async methods.
 * Adds async error handling integration tests for all platforms.
+
+## 7.1.4
+
+* [java] Fixes raw types lint issues.
+
+## 7.1.3
+
+* [objc] Removes unused function.
 
 ## 7.1.2
 
