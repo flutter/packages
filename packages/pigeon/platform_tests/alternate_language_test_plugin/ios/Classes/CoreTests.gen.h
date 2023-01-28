@@ -181,7 +181,7 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed string asynchronously.
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-/// Returns List of error info asynchromously.
+/// Returns List of error info asynchronously.
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterEchoAllTypes:(AllTypes *)everything

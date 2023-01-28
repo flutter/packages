@@ -287,7 +287,7 @@ protocol HostIntegrationCoreApi {
   func noopAsync(completion: @escaping () -> Void)
   /// Returns the passed string asynchronously.
   func echoAsync(_ aString: String, completion: @escaping (Result<String, Error>) -> Void)
-  /// Returns List of error info asynchromously.
+  /// Returns List of error info asynchronously.
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void)
   func callFlutterNoop(completion: @escaping () -> Void)
   func callFlutterEcho(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void)
@@ -649,7 +649,7 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAsyncStringChannel.setMessageHandler(nil)
     }
-    /// Returns List of error info asynchromously.
+    /// Returns List of error info asynchronously.
     let throwAsyncErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncErrorChannel.setMessageHandler { _, reply in

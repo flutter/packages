@@ -788,7 +788,7 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns List of error info asynchromously.
+  /// Returns List of error info asynchronously.
   Future<Object?> throwAsyncError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError', codec,

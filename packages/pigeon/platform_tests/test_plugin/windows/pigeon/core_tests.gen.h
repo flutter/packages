@@ -325,7 +325,7 @@ class HostIntegrationCoreApi {
   virtual void EchoAsyncString(
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
-  // Returns List of error info asynchromously.
+  // Returns List of error info asynchronously.
   virtual void ThrowAsyncError(
       std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
           result) = 0;

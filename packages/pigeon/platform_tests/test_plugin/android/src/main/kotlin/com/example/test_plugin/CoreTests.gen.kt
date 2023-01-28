@@ -269,7 +269,7 @@ interface HostIntegrationCoreApi {
   fun noopAsync(callback: () -> Unit)
   /** Returns the passed string asynchronously. */
   fun echoAsyncString(aString: String, callback: (String) -> Unit)
-  /** Returns List of error info asynchromously. */
+  /** Returns List of error info asynchronously. */
   fun throwAsyncError(callback: (Any?) -> Unit)
   fun callFlutterNoop(callback: () -> Unit)
   fun callFlutterEchoAllTypes(everything: AllTypes, callback: (AllTypes) -> Unit)

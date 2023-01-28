@@ -737,7 +737,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns List of error info asynchromously.
+  /// Returns List of error info asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError"

@@ -200,7 +200,7 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsync(_:)')
   String echoAsyncString(String aString);
 
-  /// Returns List of error info asynchromously.
+  /// Returns List of error info asynchronously.
   @async
   Object? throwAsyncError();
 

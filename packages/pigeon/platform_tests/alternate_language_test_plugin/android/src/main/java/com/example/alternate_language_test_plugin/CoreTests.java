@@ -828,7 +828,7 @@ public class CoreTests {
     void noopAsync(Result<Void> result);
     /** Returns the passed string asynchronously. */
     void echoAsyncString(@NonNull String aString, Result<String> result);
-    /** Returns List of error info asynchromously. */
+    /** Returns List of error info asynchronously. */
     void throwAsyncError(Result<Object> result);
 
     void callFlutterNoop(Result<Void> result);
