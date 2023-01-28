@@ -1,6 +1,14 @@
-## 7.1.2
+## 7.1.4
 
 * [java] Fixes raw types lint issues.
+
+## 7.1.3
+
+* [objc] Removes unused function.
+
+## 7.1.2
+
+* [swift] Adds error handling to sync host api methods.
 
 ## 7.1.1
 

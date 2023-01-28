@@ -654,10 +654,6 @@ static NSArray *wrapResult(id result, FlutterError *error) {
 \treturn @[ result ?: [NSNull null] ];
 }''');
     indent.format('''
-static id GetNullableObject(NSDictionary *dict, id key) {
-\tid result = dict[key];
-\treturn (result == [NSNull null]) ? nil : result;
-}
 static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 \tid result = array[key];
 \treturn (result == [NSNull null]) ? nil : result;
