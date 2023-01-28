@@ -399,7 +399,7 @@ import FlutterMacOS
             : _nullsafeSwiftTypeForDartType(method.returnType);
 
         final String escapeType =
-            method.returnType.isVoid ? '' : 'Result<$returnType, Error>';
+            method.returnType.isVoid ? '' : 'FlutterResult';
 
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
