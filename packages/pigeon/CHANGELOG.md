@@ -1,6 +1,6 @@
 ## 7.1.2
 
-* Removes unnused  function.
+* [objc] Removes unused function.
 
 ## 7.1.1
 
