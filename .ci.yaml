@@ -45,7 +45,7 @@ platform_properties:
 
 targets:
   ### iOS tasks ###
-  - name: Mac_arm64 ios_build_all_plugins master
+  - name: Mac_arm64 ios_build_all_packages master
     bringup: true
     recipe: packages/packages
     timeout: 30
@@ -55,7 +55,7 @@ targets:
       target_file: ios_build_all_packages.yaml
       channel: master
 
-  - name: Mac_arm64 ios_build_all_plugins stable
+  - name: Mac_arm64 ios_build_all_packages stable
     bringup: true
     recipe: packages/packages
     timeout: 30
