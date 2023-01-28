@@ -1,3 +1,7 @@
+## 7.1.3
+
+* [objc] Removes unused function.
+
 ## 7.1.2
 
 * [swift] Adds error handling to sync host api methods.
