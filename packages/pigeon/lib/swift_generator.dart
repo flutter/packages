@@ -404,10 +404,11 @@ import FlutterMacOS
           argSignature.add('completion: @escaping ($returnType) -> Void');
           indent.writeln('func ${components.name}(${argSignature.join(', ')})');
         } else if (method.returnType.isVoid) {
-          indent.writeln('func ${components.name}(${argSignature.join(', ')})');
+          indent.writeln(
+              'func ${components.name}(${argSignature.join(', ')}) throws');
         } else {
           indent.writeln(
-              'func ${components.name}(${argSignature.join(', ')}) -> $returnType');
+              'func ${components.name}(${argSignature.join(', ')}) throws -> $returnType');
         }
       }
     });
@@ -465,8 +466,9 @@ import FlutterMacOS
                   }
                 });
               }
+              final String tryStatement = method.isAsynchronous ? '' : 'try ';
               final String call =
-                  'api.${components.name}(${methodArgument.join(', ')})';
+                  '${tryStatement}api.${components.name}(${methodArgument.join(', ')})';
               if (method.isAsynchronous) {
                 indent.write('$call ');
                 if (method.returnType.isVoid) {
@@ -479,13 +481,19 @@ import FlutterMacOS
                   });
                 }
               } else {
-                if (method.returnType.isVoid) {
-                  indent.writeln(call);
-                  indent.writeln('reply(wrapResult(nil))');
-                } else {
-                  indent.writeln('let result = $call');
-                  indent.writeln('reply(wrapResult(result))');
-                }
+                indent.write('do ');
+                indent.addScoped('{', '}', () {
+                  if (method.returnType.isVoid) {
+                    indent.writeln(call);
+                    indent.writeln('reply(wrapResult(nil))');
+                  } else {
+                    indent.writeln('let result = $call');
+                    indent.writeln('reply(wrapResult(result))');
+                  }
+                }, addTrailingNewline: false);
+                indent.addScoped(' catch {', '}', () {
+                  indent.writeln('reply(wrapError(error))');
+                });
               }
             });
           }, addTrailingNewline: false);
@@ -595,13 +603,22 @@ import FlutterMacOS
 
   void _writeWrapError(Indent indent) {
     indent.newln();
-    indent.write('private func wrapError(_ error: FlutterError) -> [Any?] ');
+    indent.write('private func wrapError(_ error: Any) -> [Any?] ');
     indent.addScoped('{', '}', () {
+      indent.write('if let flutterError = error as? FlutterError ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        indent.addScoped('[', ']', () {
+          indent.writeln('flutterError.code,');
+          indent.writeln('flutterError.message,');
+          indent.writeln('flutterError.details');
+        });
+      });
       indent.write('return ');
       indent.addScoped('[', ']', () {
-        indent.writeln('error.code,');
-        indent.writeln('error.message,');
-        indent.writeln('error.details');
+        indent.writeln(r'"\(error)",');
+        indent.writeln(r'"\(type(of: error))",');
+        indent.writeln(r'"Stacktrace: \(Thread.callStackSymbols)"');
       });
     });
   }
