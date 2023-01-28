@@ -257,6 +257,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       result = .success($0)
       completion(result)
     }
+  }
 }
 
 enum ErrType: Error {
