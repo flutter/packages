@@ -1,8 +1,24 @@
-## 8.0.0
+## 7.1.3
 
 * [swift] **BREAKING CHANGE**: Changes async method completion types.
 * [swift] Adds error handling to async methods.
+* Adds async error handling integration tests for all platforms.
+
+## 7.1.2
+
 * [swift] Adds error handling to sync host api methods.
+
+## 7.1.1
+
+* [c++] Fixes handling of the `cpp*` options in `@ConfigurePigeon` annotations.
+
+## 7.1.0
+
+* Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
+## 7.0.5
+
+* Requires analyzer 5.0.0 and replaces use of deprecated APIs.
 
 ## 7.0.4
 
