@@ -1,3 +1,7 @@
+## 7.1.2
+
+* [swift] Adds error handling to sync host api methods.
+
 ## 7.1.1
 
 * [c++] Fixes handling of the `cpp*` options in `@ConfigurePigeon` annotations.
