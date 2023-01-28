@@ -1,3 +1,7 @@
+## 7.1.4
+
+* [java] Fixes raw types lint issues.
+
 ## 7.1.3
 
 * [objc] Removes unused function.

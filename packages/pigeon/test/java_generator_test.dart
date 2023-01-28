@@ -38,6 +38,8 @@ void main() {
         code,
         contains(RegExp(
             r'@NonNull\s*private static ArrayList<Object> wrapError\(@NonNull Throwable exception\)')));
+    expect(code, isNot(contains('ArrayList ')));
+    expect(code, isNot(contains('ArrayList<>')));
   });
 
   test('gen one enum', () {
