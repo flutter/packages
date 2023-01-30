@@ -70,7 +70,6 @@ targets:
   # flutter/plugins is merged into this repo and turned down; it's here only
   # because names must be unique across all flutter repositories.
   - name: Mac_arm64 ios_platform_tests_1_of_4 master - packages
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -80,7 +79,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 4"
 
   - name: Mac_arm64 ios_platform_tests_2_of_4 master - packages
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -90,7 +88,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 4"
 
   - name: Mac_arm64 ios_platform_tests_3_of_4 master - packages
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -100,7 +97,6 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 4"
 
   - name: Mac_arm64 ios_platform_tests_4_of_4 master - packages
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -111,7 +107,6 @@ targets:
 
   # Don't run full platform tests on both channels in pre-submit.
   - name: Mac_arm64 ios_platform_tests_1_of_4 stable - packages
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -123,7 +118,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 4"
 
   - name: Mac_arm64 ios_platform_tests_2_of_4 stable - packages
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -135,7 +129,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 4"
 
   - name: Mac_arm64 ios_platform_tests_3_of_4 stable - packages
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -147,7 +140,6 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 4"
 
   - name: Mac_arm64 ios_platform_tests_4_of_4 stable - packages
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -180,7 +172,6 @@ targets:
       channel: stable
 
   - name: Mac_arm64 macos_platform_tests master - packages
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -190,7 +181,6 @@ targets:
       target_file: macos_platform_tests.yaml
 
   - name: Mac_arm64 macos_platform_tests stable - packages
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
