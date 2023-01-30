@@ -89,7 +89,7 @@ targets:
   - name: Mac_arm64 custom_package_tests master
     bringup: true # New configuration
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
@@ -99,7 +99,7 @@ targets:
   - name: Mac_arm64 custom_package_tests stable
     bringup: true # New configuration
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
@@ -109,7 +109,7 @@ targets:
   ### Windows desktop tasks ###
   - name: Windows custom_package_tests master - packages
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       target_file: windows_custom_package_tests.yaml
@@ -122,7 +122,7 @@ targets:
 
   - name: Windows dart_unit_tests master - packages
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       target_file: windows_dart_unit_tests.yaml
@@ -136,7 +136,7 @@ targets:
 
   - name: Windows win32-platform_tests master - packages
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
@@ -149,7 +149,7 @@ targets:
 
   - name: Windows win32-platform_tests stable - packages
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
