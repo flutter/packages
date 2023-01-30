@@ -358,14 +358,6 @@ task:
       xcode_analyze_deprecation_script:
         # Ensure we don't accidentally introduce deprecated code.
         - ./script/tool_runner.sh xcode-analyze --ios --ios-min-version=13.0
-    ### iOS tasks ###
-    - name: ios-build_all_packages
-      env:
-        BUILD_ALL_ARGS: "ios --no-codesign"
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
     ### macOS desktop tasks ###
     - name: macos-platform_tests
       # Don't run full platform tests on both channels in pre-submit.

@@ -45,8 +45,10 @@ platform_properties:
 
 targets:
   ### iOS tasks ###
+  # TODO(stuartmorgan): Switch ios_build_all_packages to Intel once the
+  # iOS platform tests are brough up on ARM, to give build coverage on
+  # both host architectures.
   - name: Mac_arm64 ios_build_all_packages master
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
@@ -56,7 +58,6 @@ targets:
       channel: master
 
   - name: Mac_arm64 ios_build_all_packages stable
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
