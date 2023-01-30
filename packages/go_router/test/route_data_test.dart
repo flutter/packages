@@ -121,7 +121,6 @@ void main() {
         ));
         expect(find.byKey(const Key('build')), findsOneWidget);
         expect(find.byKey(const Key('buildPage')), findsNothing);
-        expect(find.byKey(const Key('buildPageWithState')), findsNothing);
       },
     );
 
@@ -139,25 +138,6 @@ void main() {
         ));
         expect(find.byKey(const Key('build')), findsNothing);
         expect(find.byKey(const Key('buildPage')), findsOneWidget);
-        expect(find.byKey(const Key('buildPageWithState')), findsNothing);
-      },
-    );
-
-    testWidgets(
-      'buildPageWithState',
-      (WidgetTester tester) async {
-        final GoRouter goRouter = GoRouter(
-          initialLocation: '/build-page-with-state',
-          routes: _routes,
-        );
-        await tester.pumpWidget(MaterialApp.router(
-          routeInformationProvider: goRouter.routeInformationProvider,
-          routeInformationParser: goRouter.routeInformationParser,
-          routerDelegate: goRouter.routerDelegate,
-        ));
-        expect(find.byKey(const Key('build')), findsNothing);
-        expect(find.byKey(const Key('buildPage')), findsNothing);
-        expect(find.byKey(const Key('buildPageWithState')), findsOneWidget);
       },
     );
   });
@@ -235,22 +215,6 @@ void main() {
     },
   );
 
-  testWidgets(
-    'It should build the page from the overridden buildPage method',
-    (WidgetTester tester) async {
-      final GoRouter goRouter = GoRouter(
-        initialLocation: '/build-page-with-state',
-        routes: _routes,
-      );
-      await tester.pumpWidget(MaterialApp.router(
-        routeInformationProvider: goRouter.routeInformationProvider,
-        routeInformationParser: goRouter.routeInformationParser,
-        routerDelegate: goRouter.routerDelegate,
-      ));
-      expect(find.byKey(const Key('build')), findsNothing);
-      expect(find.byKey(const Key('buildPage')), findsNothing);
-    },
-  );
   testWidgets(
     'It should redirect using the overridden redirect method',
     (WidgetTester tester) async {
