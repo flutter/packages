@@ -26,14 +26,6 @@ macos_template: &MACOS_TEMPLATE
   # Only one macOS task can run in parallel without credits, so use them for
   # PRs on macOS.
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-
-macos_intel_template: &MACOS_INTEL_TEMPLATE
-  << : *MACOS_TEMPLATE
-  osx_instance:
-    image: big-sur-xcode-13
-
-macos_arm_template: &MACOS_ARM_TEMPLATE
-  << : *MACOS_TEMPLATE
   macos_instance:
     image: ghcr.io/cirruslabs/macos-ventura-xcode:14
 
@@ -317,10 +309,10 @@ task:
         - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
         - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
 
-# ARM macOS tasks.
+# macOS tasks.
 task:
   << : *FLUTTER_UPGRADE_TEMPLATE
-  << : *MACOS_ARM_TEMPLATE
+  << : *MACOS_TEMPLATE
   matrix:
     - name: macos-custom_package_tests
       env:
