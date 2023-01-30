@@ -11,11 +11,13 @@ import 'package:go_router/src/router.dart';
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('RouteMatchList toString prints the fullPath', (WidgetTester tester) async {
+  testWidgets('RouteMatchList toString prints the fullPath',
+      (WidgetTester tester) async {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
           path: '/page-0',
-          builder: (BuildContext context, GoRouterState state) => const Placeholder()),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder()),
     ];
 
     final GoRouter router = await createRouter(routes, tester);
