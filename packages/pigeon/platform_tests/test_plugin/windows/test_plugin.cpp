@@ -186,6 +186,11 @@ void TestPlugin::ThrowAsyncError(
   result(FlutterError("code", "message", EncodableValue("details")));
 }
 
+void TestPlugin::ThrowAsyncErrorFromVoid(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  result(FlutterError("code", "message", EncodableValue("details")));
+}
+
 void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
   flutter_api_->Noop([result]() { result(std::nullopt); },

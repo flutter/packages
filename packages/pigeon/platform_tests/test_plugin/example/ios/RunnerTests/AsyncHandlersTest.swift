@@ -13,8 +13,8 @@ class MockApi2Host: Api2Host {
       completion(result)
   }
 
-  func voidVoid(completion: @escaping () -> Void) {
-    completion()
+  func voidVoid(completion: @escaping (Result<Void, Error>) -> Void) {
+    completion(.success(Void()))
   }
 }
 

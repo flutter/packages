@@ -204,6 +204,10 @@ abstract class HostIntegrationCoreApi {
   @async
   Object? throwAsyncError();
 
+  /// Returns List of error info asynchronously.
+  @async
+  void throwAsyncErrorFromVoid();
+
   // ========== Flutter API test wrappers ==========
 
   @async

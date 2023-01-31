@@ -103,8 +103,8 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aNullableObject
   }
 
-  override fun noopAsync(callback: () -> Unit) {
-    callback()
+  override fun noopAsync(callback: (Result<Unit>) -> Unit) {
+    callback(Result.success(Unit))
   }
 
   override fun echoAsyncString(aString: String, callback: (Result<String>) -> Unit) {
@@ -119,8 +119,16 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  override fun callFlutterNoop(callback: () -> Unit) {
-    flutterApi!!.noop() { callback() }
+  override fun throwAsyncErrorFromVoid(callback: (Result<Unit>) -> Unit) {
+    try {
+      throw Exception("except")
+    } catch (e: Exception) {
+      callback(Result.failure(e))
+    }
+  }
+
+  override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
+    flutterApi!!.noop() { callback(Result.success(Unit)) }
   }
 
   override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {

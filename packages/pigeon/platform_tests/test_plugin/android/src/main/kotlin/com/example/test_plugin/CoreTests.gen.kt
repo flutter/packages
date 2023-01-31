@@ -266,12 +266,14 @@ interface HostIntegrationCoreApi {
    * A no-op function taking no arguments and returning no value, to sanity
    * test basic asynchronous calling.
    */
-  fun noopAsync(callback: () -> Unit)
+  fun noopAsync(callback: (Result<Unit>) -> Unit)
   /** Returns the passed string asynchronously. */
   fun echoAsyncString(aString: String, callback: (Result<String>) -> Unit)
   /** Returns List of error info asynchronously. */
   fun throwAsyncError(callback: (Result<Any?>) -> Unit)
-  fun callFlutterNoop(callback: () -> Unit)
+  /** Returns List of error info asynchronously. */
+  fun throwAsyncErrorFromVoid(callback: (Result<Unit>) -> Unit)
+  fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
   fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
   fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?, callback: (Result<AllNullableTypes>) -> Unit)
   fun callFlutterEchoBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit)
@@ -644,7 +646,7 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
-            api.noopAsync() { 
+            api.noopAsync() { result: Result<Unit> ->
               reply.reply(wrapResult(null))
             }
           }
@@ -693,11 +695,24 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncErrorFromVoid", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.throwAsyncErrorFromVoid() { result: Result<Unit> ->
+              reply.reply(wrapResult(null))
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterNoop", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
-            api.callFlutterNoop() { 
+            api.callFlutterNoop() { result: Result<Unit> ->
               reply.reply(wrapResult(null))
             }
           }

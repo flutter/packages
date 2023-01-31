@@ -441,12 +441,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             : _nullsafeKotlinTypeForDartType(method.returnType);
 
         final String resultType =
-            method.returnType.isVoid ? '' : 'Result<$returnType>';
+            method.returnType.isVoid ? 'Unit' : returnType;
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
 
         if (method.isAsynchronous) {
-          argSignature.add('callback: ($resultType) -> Unit');
+          argSignature.add('callback: (Result<$resultType>) -> Unit');
           indent.writeln('fun ${method.name}(${argSignature.join(', ')})');
         } else if (method.returnType.isVoid) {
           indent.writeln('fun ${method.name}(${argSignature.join(', ')})');
@@ -520,9 +520,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   if (method.isAsynchronous) {
                     indent.write('$call ');
                     final String resultType = method.returnType.isVoid
-                        ? ''
-                        : 'result: Result<${_nullsafeKotlinTypeForDartType(method.returnType)}> ->';
-                    indent.addScoped('{ $resultType', '}', () {
+                        ? 'Unit'
+                        : _nullsafeKotlinTypeForDartType(method.returnType);
+                    indent.addScoped('{ result: Result<$resultType> ->', '}',
+                        () {
                       if (method.returnType.isVoid) {
                         indent.writeln('reply.reply(wrapResult(null))');
                       } else {

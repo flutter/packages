@@ -495,6 +495,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.throwAsyncError();
       }, throwsA(isA<PlatformException>()));
+
+      expect(() async {
+        await api.throwAsyncErrorFromVoid();
+      }, throwsA(isA<PlatformException>()));
     });
   });
 
