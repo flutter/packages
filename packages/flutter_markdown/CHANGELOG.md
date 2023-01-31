@@ -1,6 +1,6 @@
-## NEXT
+## 0.6.13+1
 
-* Updates the example to specify the import for `DropdownMenu`.
+* Adjusts code to account for nullability change in Flutter SDK.
 
 ## 0.6.13
 
