@@ -214,8 +214,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
       FlutterError.onError!(FlutterErrorDetails(
         exception: lastFailure!,
         library: 'package:flutter_image',
-        context:
-            ErrorDescription('$runtimeType failed to load ${instructions.uri}'),
+        context: ErrorDescription(
+            '${objectRuntimeType(this, 'NetworkImageWithRetry')} failed to load ${instructions.uri}'),
       ));
     }
 
@@ -236,7 +236,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   int get hashCode => Object.hash(url, scale);
 
   @override
-  String toString() => '$runtimeType("$url", scale: $scale)';
+  String toString() =>
+      '${objectRuntimeType(this, 'NetworkImageWithRetry')}("$url", scale: $scale)';
 }
 
 /// This function is called to get [FetchInstructions] to fetch an image.
@@ -295,7 +296,7 @@ class FetchInstructions {
 
   @override
   String toString() {
-    return '$runtimeType(\n'
+    return '${objectRuntimeType(this, 'FetchInstructions')}(\n'
         '  shouldGiveUp: $shouldGiveUp\n'
         '  timeout: $timeout\n'
         '  uri: $uri\n'
@@ -332,7 +333,7 @@ class FetchFailure implements Exception {
 
   @override
   String toString() {
-    return '$runtimeType(\n'
+    return '${objectRuntimeType(this, 'FetchFailure')}(\n'
         '  attemptCount: $attemptCount\n'
         '  httpStatusCode: $httpStatusCode\n'
         '  totalDuration: $totalDuration\n'

@@ -265,7 +265,7 @@ class FakeStopwatch implements Stopwatch {
   }
 
   @override
-  String toString() => '$runtimeType $elapsed $isRunning';
+  String toString() => 'FakeStopwatch $elapsed $isRunning';
 }
 
 class FakeStopwatchFactory implements StopwatchFactory {
