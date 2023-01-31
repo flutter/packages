@@ -79,8 +79,8 @@ flutter:
 ''', flush: true);
     await updatePubspecDependencies(flutterProject, utils, logger, terminal,
         force: true);
-    final YamlMap pubspecYaml = loadYaml(pubspec.readAsStringSync());
-    final YamlMap dependenciesMap = pubspecYaml['dependencies'];
+    final YamlMap pubspecYaml = loadYaml(pubspec.readAsStringSync()) as YamlMap;
+    final YamlMap dependenciesMap = pubspecYaml['dependencies'] as YamlMap;
     expect(
         _VersionCode.fromString(dependenciesMap['characters'] as String) >
             _VersionCode.fromString('1.2.0'),

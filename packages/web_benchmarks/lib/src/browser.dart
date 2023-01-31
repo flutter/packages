@@ -168,8 +168,8 @@ class Chrome {
               '"Tracing.dataCollected" returned malformed data. '
               'Expected a List but got: ${value.runtimeType}');
         }
-        _tracingData
-            ?.addAll(event.params!['value'].cast<Map<String, dynamic>>());
+        _tracingData?.addAll((event.params!['value'] as List<dynamic>)
+            .cast<Map<String, dynamic>>());
       }
     });
     await _debugConnection?.sendCommand('Tracing.start', <String, dynamic>{
@@ -233,7 +233,7 @@ String _findSystemChromeExecutable() {
       throw Exception('Failed to locate system Chrome installation.');
     }
 
-    final String output = which.stdout;
+    final String output = which.stdout as String;
     return output.trim();
   } else if (io.Platform.isMacOS) {
     return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -306,7 +306,7 @@ Future<Uri> _getRemoteDebuggerUrl(Uri base) async {
   if (jsonObject == null || jsonObject.isEmpty) {
     return base;
   }
-  return base.resolve(jsonObject.first['webSocketDebuggerUrl']);
+  return base.resolve(jsonObject.first['webSocketDebuggerUrl'] as String);
 }
 
 /// Summarizes a Blink trace down to a few interesting values.
@@ -613,7 +613,7 @@ class BlinkTraceEvent {
 ///
 /// Returns null if the value is null.
 int? _readInt(Map<String, dynamic> json, String key) {
-  final num? jsonValue = json[key];
+  final num? jsonValue = json[key] as num?;
 
   if (jsonValue == null) {
     return null; // ignore: avoid_returning_null

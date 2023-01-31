@@ -7,7 +7,7 @@
 
 analyzer:
   language:
-    strict-casts: false # DIFFERENT FROM FLUTTER/FLUTTER, too many violations, TODO(goderbauer): Clean this up.
+    strict-casts: true
     strict-raw-types: true
   errors:
     # allow self-reference to deprecated members (we do this because otherwise we have
