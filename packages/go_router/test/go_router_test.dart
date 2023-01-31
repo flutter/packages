@@ -2681,6 +2681,21 @@ void main() {
       );
       key.currentContext!.pop();
       expect(router.popped, true);
+      expect(router.poppedResult, null);
+    });
+
+    testWidgets('calls [pop] on closest GoRouter with result',
+        (WidgetTester tester) async {
+      final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.pop('result');
+      expect(router.popped, true);
+      expect(router.poppedResult, 'result');
     });
   });
 
