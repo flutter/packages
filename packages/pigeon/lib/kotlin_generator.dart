@@ -83,11 +83,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   @override
   void writeFileImports(
       KotlinOptions generatorOptions, Root root, Indent indent) {
-    indent.addln('');
+    indent.newln();
     if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package}');
     }
-    indent.addln('');
+    indent.newln();
     indent.writeln('import android.util.Log');
     indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
@@ -100,11 +100,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   @override
   void writeEnum(
       KotlinOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
-    indent.writeln('');
+    indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
@@ -116,11 +116,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         }
       });
 
-      indent.writeln('');
+      indent.newln();
       indent.write('companion object ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           indent.writeln('return values().firstOrNull { it.raw == raw }');
         });
       });
@@ -138,24 +138,24 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
-    indent.addln('');
+    indent.newln();
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
     indent.write('data class ${klass.name} ');
-    indent.scoped('(', '', () {
+    indent.addScoped('(', '', () {
       for (final NamedType element in getFieldsInSerializationOrder(klass)) {
         _writeClassField(indent, element);
         if (getFieldsInSerializationOrder(klass).last != element) {
           indent.addln(',');
         } else {
-          indent.addln('');
+          indent.newln();
         }
       }
     });
 
-    indent.scoped(') {', '}', () {
+    indent.addScoped(') {', '}', () {
       writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
           customEnumNames);
       writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
@@ -173,9 +173,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Set<String> customEnumNames,
   ) {
     indent.write('fun toList(): List<Any?> ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('return listOf<Any?>');
-      indent.scoped('(', ')', () {
+      indent.addScoped('(', ')', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final HostDatatype hostDatatype = _getHostDatatype(root, field);
           String toWriteValue = '';
@@ -207,11 +207,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     final String className = klass.name;
 
     indent.write('companion object ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('@Suppress("UNCHECKED_CAST")');
       indent.write('fun fromList(list: List<Any?>): $className ');
 
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         enumerate(getFieldsInSerializationOrder(klass),
             (int index, final NamedType field) {
           final HostDatatype hostDatatype = _getHostDatatype(root, field);
@@ -229,14 +229,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 customClassNames.contains(field.type.baseName)) {
               indent.write('val ${field.name}: $fieldType? = ');
               indent.add('($listValue as? List<Any?>)?.let ');
-              indent.scoped('{', '}', () {
+              indent.addScoped('{', '}', () {
                 indent.writeln('$fieldType.fromList(it)');
               });
             } else if (!hostDatatype.isBuiltin &&
                 customEnumNames.contains(field.type.baseName)) {
               indent.write('val ${field.name}: $fieldType? = ');
               indent.add('($listValue as? Int)?.let ');
-              indent.scoped('{', '}', () {
+              indent.addScoped('{', '}', () {
                 indent.writeln('$fieldType.ofRaw(it)');
               });
             } else if (isInt) {
@@ -253,15 +253,18 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   'val ${field.name} = $fieldType.fromList($listValue as List<Any?>)');
             } else if (!hostDatatype.isBuiltin &&
                 customEnumNames.contains(field.type.baseName)) {
-              indent.write(
+              indent.writeln(
                   'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
+            } else if (isInt) {
+              indent.write('val ${field.name} = $listValue');
+              indent
+                  .addln('.let { if (it is Int) it.toLong() else it as Long }');
             } else {
               indent.writeln('val ${field.name} = $listValue as $fieldType');
             }
           }
         });
 
-        indent.writeln('');
         indent.write('return $className(');
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final String comma =
@@ -291,7 +294,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
-      indent.addln('');
+      indent.newln();
     }
     super.writeApis(generatorOptions, root, indent);
   }
@@ -324,12 +327,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln('@Suppress("UNCHECKED_CAST")');
     indent
         .write('class $apiName(private val binaryMessenger: BinaryMessenger) ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('companion object ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('/** The codec used by $apiName. */');
         indent.write('val codec: MessageCodec<Any?> by lazy ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           if (isCustomCodec) {
             indent.writeln(_getCodecName(api));
           } else {
@@ -367,18 +370,18 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 'fun ${func.name}($argsSignature, callback: ($returnType) -> Unit) ');
           }
         }
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln(
               'val $channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec)');
           indent.write('$channel.send($sendArgument) ');
           if (func.returnType.isVoid) {
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln('callback()');
             });
           } else {
             final String forceUnwrap = func.returnType.isNullable ? '?' : '';
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln('val result = it as$forceUnwrap $returnType');
               indent.writeln('callback(result)');
             });
@@ -419,7 +422,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         generatorComments: generatedMessages);
 
     indent.write('interface $apiName ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         final List<String> argSignature = <String>[];
         if (method.arguments.isNotEmpty) {
@@ -451,12 +454,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         }
       }
 
-      indent.addln('');
+      indent.newln();
       indent.write('companion object ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('/** The codec used by $apiName. */');
         indent.write('val codec: MessageCodec<Any?> by lazy ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           if (isCustomCodec) {
             indent.writeln(_getCodecName(api));
           } else {
@@ -468,10 +471,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln('@Suppress("UNCHECKED_CAST")');
         indent.write(
             'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?) ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           for (final Method method in api.methods) {
             indent.write('run ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               String? taskQueue;
               if (method.taskQueueType != TaskQueueType.serial) {
                 taskQueue = 'taskQueue';
@@ -491,15 +494,15 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               }
 
               indent.write('if (api != null) ');
-              indent.scoped('{', '}', () {
+              indent.addScoped('{', '}', () {
                 final String messageVarName =
                     method.arguments.isNotEmpty ? 'message' : '_';
 
                 indent.write('channel.setMessageHandler ');
-                indent.scoped('{ $messageVarName, reply ->', '}', () {
+                indent.addScoped('{ $messageVarName, reply ->', '}', () {
                   indent.writeln('var wrapped = listOf<Any?>()');
                   indent.write('try ');
-                  indent.scoped('{', '}', () {
+                  indent.addScoped('{', '}', () {
                     final List<String> methodArgument = <String>[];
                     if (method.arguments.isNotEmpty) {
                       indent.writeln('val args = message as List<Any?>');
@@ -517,7 +520,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                       indent.write('$call ');
                       final String resultValue =
                           method.returnType.isVoid ? 'null' : 'it';
-                      indent.scoped('{', '}', () {
+                      indent.addScoped('{', '}', () {
                         indent.writeln('reply.reply(wrapResult($resultValue))');
                       });
                     } else if (method.returnType.isVoid) {
@@ -528,7 +531,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                     }
                   }, addTrailingNewline: false);
                   indent.add(' catch (exception: Error) ');
-                  indent.scoped('{', '}', () {
+                  indent.addScoped('{', '}', () {
                     indent.writeln('wrapped = wrapError(exception)');
                     if (method.isAsynchronous) {
                       indent.writeln('reply.reply(wrapped)');
@@ -539,7 +542,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   }
                 });
               }, addTrailingNewline: false);
-              indent.scoped(' else {', '}', () {
+              indent.addScoped(' else {', '}', () {
                 indent.writeln('channel.setMessageHandler(null)');
               });
             });
@@ -558,17 +561,17 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     final String codecName = _getCodecName(api);
     indent.writeln('@Suppress("UNCHECKED_CAST")');
     indent.write('private object $codecName : StandardMessageCodec() ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write(
           'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.write('return when (type) ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           for (final EnumeratedClass customClass in codecClasses) {
             indent.write('${customClass.enumeration}.toByte() -> ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.write('return (readValue(buffer) as? List<Any?>)?.let ');
-              indent.scoped('{', '}', () {
+              indent.addScoped('{', '}', () {
                 indent.writeln('${customClass.name}.fromList(it)');
               });
             });
@@ -581,10 +584,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) ');
       indent.writeScoped('{', '}', () {
         indent.write('when (value) ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           for (final EnumeratedClass customClass in codecClasses) {
             indent.write('is ${customClass.name} -> ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln('stream.write(${customClass.enumeration})');
               indent.writeln('writeValue(stream, value.toList())');
             });
@@ -593,23 +596,23 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         });
       });
     });
-    indent.addln('');
+    indent.newln();
   }
 
   void _writeWrapResult(Indent indent) {
-    indent.addln('');
+    indent.newln();
     indent.write('private fun wrapResult(result: Any?): List<Any?> ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('return listOf(result)');
     });
   }
 
   void _writeWrapError(Indent indent) {
-    indent.addln('');
+    indent.newln();
     indent.write('private fun wrapError(exception: Throwable): List<Any> ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('return ');
-      indent.scoped('listOf<Any>(', ')', () {
+      indent.addScoped('listOf<Any>(', ')', () {
         indent.writeln('exception.javaClass.simpleName,');
         indent.writeln('exception.toString(),');
         indent.writeln(

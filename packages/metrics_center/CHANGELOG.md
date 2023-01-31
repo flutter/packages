@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 1.0.6
 
 - Fixes lint warnings.

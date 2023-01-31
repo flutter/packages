@@ -59,6 +59,55 @@ void main() {
     expect(code, contains('TWO(1)'));
   });
 
+  test('gen class with enum', () {
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Bar',
+          fields: <NamedType>[
+            NamedType(
+              name: 'field1',
+              type: const TypeDeclaration(
+                baseName: 'Foo',
+                isNullable: false,
+              ),
+            ),
+            NamedType(
+              name: 'field2',
+              type: const TypeDeclaration(
+                baseName: 'String',
+                isNullable: false,
+              ),
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'Foo',
+          members: <EnumMember>[
+            EnumMember(name: 'one'),
+            EnumMember(name: 'two'),
+          ],
+        ),
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('enum class Foo(val raw: Int) {'));
+    expect(code, contains('data class Bar ('));
+    expect(code, contains('val field1: Foo,'));
+    expect(code, contains('val field2: String'));
+    expect(code, contains('fun fromList(list: List<Any?>): Bar'));
+    expect(code, contains('val field1 = Foo.ofRaw(list[0] as Int)!!\n'));
+    expect(code, contains('val field2 = list[1] as String\n'));
+    expect(code, contains('fun toList(): List<Any?>'));
+  });
+
   test('primitive enum host', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
@@ -158,28 +207,28 @@ void main() {
         NamedType(
           type: const TypeDeclaration(
             baseName: 'bool',
-            isNullable: true,
+            isNullable: false,
           ),
           name: 'aBool',
         ),
         NamedType(
           type: const TypeDeclaration(
             baseName: 'int',
-            isNullable: true,
+            isNullable: false,
           ),
           name: 'aInt',
         ),
         NamedType(
           type: const TypeDeclaration(
             baseName: 'double',
-            isNullable: true,
+            isNullable: false,
           ),
           name: 'aDouble',
         ),
         NamedType(
           type: const TypeDeclaration(
             baseName: 'String',
-            isNullable: true,
+            isNullable: false,
           ),
           name: 'aString',
         ),
@@ -193,23 +242,79 @@ void main() {
         NamedType(
           type: const TypeDeclaration(
             baseName: 'Int32List',
-            isNullable: true,
+            isNullable: false,
           ),
           name: 'aInt32List',
         ),
         NamedType(
           type: const TypeDeclaration(
             baseName: 'Int64List',
-            isNullable: true,
+            isNullable: false,
           ),
           name: 'aInt64List',
         ),
         NamedType(
           type: const TypeDeclaration(
             baseName: 'Float64List',
-            isNullable: true,
+            isNullable: false,
           ),
           name: 'aFloat64List',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: true,
+          ),
+          name: 'aNullableBool',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'int',
+            isNullable: true,
+          ),
+          name: 'aNullableInt',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'double',
+            isNullable: true,
+          ),
+          name: 'aNullableDouble',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: true,
+          ),
+          name: 'aNullableString',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'Uint8List',
+            isNullable: true,
+          ),
+          name: 'aNullableUint8List',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'Int32List',
+            isNullable: true,
+          ),
+          name: 'aNullableInt32List',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'Int64List',
+            isNullable: true,
+          ),
+          name: 'aNullableInt64List',
+        ),
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'Float64List',
+            isNullable: true,
+          ),
+          name: 'aNullableFloat64List',
         ),
       ]),
     ], enums: <Enum>[]);
@@ -220,14 +325,30 @@ void main() {
     const KotlinGenerator generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('val aBool: Boolean? = null'));
-    expect(code, contains('val aInt: Long? = null'));
-    expect(code, contains('val aDouble: Double? = null'));
-    expect(code, contains('val aString: String? = null'));
-    expect(code, contains('val aUint8List: ByteArray? = null'));
-    expect(code, contains('val aInt32List: IntArray? = null'));
-    expect(code, contains('val aInt64List: LongArray? = null'));
-    expect(code, contains('val aFloat64List: DoubleArray? = null'));
+    expect(code, contains('val aBool: Boolean'));
+    expect(code, contains('val aInt: Long'));
+    expect(code, contains('val aDouble: Double'));
+    expect(code, contains('val aString: String'));
+    expect(code, contains('val aUint8List: ByteArray'));
+    expect(code, contains('val aInt32List: IntArray'));
+    expect(code, contains('val aInt64List: LongArray'));
+    expect(code, contains('val aFloat64List: DoubleArray'));
+    expect(
+        code,
+        contains(
+            'val aInt = list[1].let { if (it is Int) it.toLong() else it as Long }'));
+    expect(code, contains('val aNullableBool: Boolean? = null'));
+    expect(code, contains('val aNullableInt: Long? = null'));
+    expect(code, contains('val aNullableDouble: Double? = null'));
+    expect(code, contains('val aNullableString: String? = null'));
+    expect(code, contains('val aNullableUint8List: ByteArray? = null'));
+    expect(code, contains('val aNullableInt32List: IntArray? = null'));
+    expect(code, contains('val aNullableInt64List: LongArray? = null'));
+    expect(code, contains('val aNullableFloat64List: DoubleArray? = null'));
+    expect(
+        code,
+        contains(
+            'val aNullableInt = list[9].let { if (it is Int) it.toLong() else it as? Long }'));
   });
 
   test('gen one flutter api', () {
