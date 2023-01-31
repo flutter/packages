@@ -26,14 +26,6 @@ macos_template: &MACOS_TEMPLATE
   # Only one macOS task can run in parallel without credits, so use them for
   # PRs on macOS.
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-
-macos_intel_template: &MACOS_INTEL_TEMPLATE
-  << : *MACOS_TEMPLATE
-  osx_instance:
-    image: big-sur-xcode-13
-
-macos_arm_template: &MACOS_ARM_TEMPLATE
-  << : *MACOS_TEMPLATE
   macos_instance:
     image: ghcr.io/cirruslabs/macos-ventura-xcode:14
 
@@ -317,10 +309,10 @@ task:
         - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
         - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
 
-# ARM macOS tasks.
+# macOS tasks.
 task:
   << : *FLUTTER_UPGRADE_TEMPLATE
-  << : *MACOS_ARM_TEMPLATE
+  << : *MACOS_TEMPLATE
   matrix:
     - name: macos-custom_package_tests
       env:
@@ -332,49 +324,3 @@ task:
         # script/configs/linux_only_custom_test.yaml
         #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)
         - ./script/tool_runner.sh custom-test --exclude=script/configs/linux_only_custom_test.yaml
-    ### iOS tasks ###
-    - name: ios-platform_tests
-      # Don't run full platform tests on both channels in pre-submit.
-      skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
-      env:
-        PATH: $PATH:/usr/local/bin
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      create_simulator_script:
-        - xcrun simctl list
-        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-0 | xargs xcrun simctl boot
-      build_script:
-        - ./script/tool_runner.sh build-examples --ios
-      native_test_script:
-        - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 13,OS=latest"
-      drive_script:
-        # `drive-examples` contains integration tests, which changes the UI of the application.
-        # This UI change sometimes affects `xctest`.
-        # So we run `drive-examples` after `native-test`; changing the order will result ci failure.
-        - ./script/tool_runner.sh drive-examples --ios
-      xcode_analyze_script:
-        - ./script/tool_runner.sh xcode-analyze --ios
-      xcode_analyze_deprecation_script:
-        # Ensure we don't accidentally introduce deprecated code.
-        - ./script/tool_runner.sh xcode-analyze --ios --ios-min-version=13.0
-    ### macOS desktop tasks ###
-    - name: macos-platform_tests
-      # Don't run full platform tests on both channels in pre-submit.
-      skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
-      env:
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-        PATH: $PATH:/usr/local/bin
-      build_script:
-        - ./script/tool_runner.sh build-examples --macos
-      xcode_analyze_script:
-        - ./script/tool_runner.sh xcode-analyze --macos
-      xcode_analyze_deprecation_script:
-        # Ensure we don't accidentally introduce deprecated code.
-        - ./script/tool_runner.sh xcode-analyze --macos --macos-min-version=12.3
-      native_test_script:
-        - ./script/tool_runner.sh native-test --macos
-      drive_script:
-        - ./script/tool_runner.sh drive-examples --macos
