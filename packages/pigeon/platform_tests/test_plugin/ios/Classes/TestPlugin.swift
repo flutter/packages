@@ -5,6 +5,8 @@
 import Flutter
 import UIKit
 
+extension FlutterError: Error {}
+
 /**
  * This plugin handles the native side of the integration tests in
  * example/integration_test/.
@@ -36,7 +38,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func throwError() throws {
-    throw ErrType.thrownErrow
+    throw FlutterError(code: "code", message: "message", details: "details")
   }
 
   func echo(_ anInt: Int32) -> Int32 {
@@ -112,7 +114,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void) {
     let result: Result<Any?, Error>
-    result = .failure(ErrType.thrownErrow)
+    result = .failure(FlutterError(code: "code", message: "message", details: "details"))
     completion(result)
   }
 
@@ -258,8 +260,4 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       completion(result)
     }
   }
-}
-
-enum ErrType: Error {
-  case thrownErrow
 }

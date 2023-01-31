@@ -440,11 +440,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             ? ''
             : _nullsafeKotlinTypeForDartType(method.returnType);
 
+        final String resultType =
+            method.returnType.isVoid ? '' : 'Result<$returnType>';
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
 
         if (method.isAsynchronous) {
-          argSignature.add('callback: ($returnType) -> Unit');
+          argSignature.add('callback: ($resultType) -> Unit');
           indent.writeln('fun ${method.name}(${argSignature.join(', ')})');
         } else if (method.returnType.isVoid) {
           indent.writeln('fun ${method.name}(${argSignature.join(', ')})');
@@ -501,43 +503,53 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 indent.write('channel.setMessageHandler ');
                 indent.addScoped('{ $messageVarName, reply ->', '}', () {
                   indent.writeln('var wrapped = listOf<Any?>()');
-                  indent.write('try ');
-                  indent.addScoped('{', '}', () {
-                    final List<String> methodArgument = <String>[];
-                    if (method.arguments.isNotEmpty) {
-                      indent.writeln('val args = message as List<Any?>');
-                      enumerate(method.arguments, (int index, NamedType arg) {
-                        final String argName = _getSafeArgumentName(index, arg);
-                        final String argIndex = 'args[$index]';
-                        indent.writeln(
-                            'val $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
-                        methodArgument.add(argName);
-                      });
-                    }
-                    final String call =
-                        'api.${method.name}(${methodArgument.join(', ')})';
-                    if (method.isAsynchronous) {
-                      indent.write('$call ');
-                      final String resultValue =
-                          method.returnType.isVoid ? 'null' : 'it';
-                      indent.addScoped('{', '}', () {
-                        indent.writeln('reply.reply(wrapResult($resultValue))');
-                      });
-                    } else if (method.returnType.isVoid) {
-                      indent.writeln(call);
-                      indent.writeln('wrapped = listOf<Any?>(null)');
-                    } else {
-                      indent.writeln('wrapped = listOf<Any?>($call)');
-                    }
-                  }, addTrailingNewline: false);
-                  indent.add(' catch (exception: Error) ');
-                  indent.addScoped('{', '}', () {
-                    indent.writeln('wrapped = wrapError(exception)');
-                    if (method.isAsynchronous) {
-                      indent.writeln('reply.reply(wrapped)');
-                    }
-                  });
-                  if (!method.isAsynchronous) {
+                  final List<String> methodArgument = <String>[];
+                  if (method.arguments.isNotEmpty) {
+                    indent.writeln('val args = message as List<Any?>');
+                    enumerate(method.arguments, (int index, NamedType arg) {
+                      final String argName = _getSafeArgumentName(index, arg);
+                      final String argIndex = 'args[$index]';
+                      indent.writeln(
+                          'val $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
+                      methodArgument.add(argName);
+                    });
+                  }
+                  final String call =
+                      'api.${method.name}(${methodArgument.join(', ')})';
+
+                  if (method.isAsynchronous) {
+                    indent.write('$call ');
+                    final String resultType = method.returnType.isVoid
+                        ? ''
+                        : 'result: Result<${_nullsafeKotlinTypeForDartType(method.returnType)}> ->';
+                    indent.addScoped('{ $resultType', '}', () {
+                      if (method.returnType.isVoid) {
+                        indent.writeln('reply.reply(wrapResult(null))');
+                      } else {
+                        indent.writeln('val error = result.exceptionOrNull()');
+                        indent.writeScoped('if (error != null) {', '}', () {
+                          indent.writeln('reply.reply(wrapResult(error))');
+                        }, addTrailingNewline: false);
+                        indent.addScoped(' else {', '}', () {
+                          indent.writeln('val data = result.getOrNull()');
+                          indent.writeln('reply.reply(wrapResult(data))');
+                        });
+                      }
+                    });
+                  } else {
+                    indent.write('try ');
+                    indent.addScoped('{', '}', () {
+                      if (method.returnType.isVoid) {
+                        indent.writeln(call);
+                        indent.writeln('wrapped = listOf<Any?>(null)');
+                      } else {
+                        indent.writeln('wrapped = listOf<Any?>($call)');
+                      }
+                    }, addTrailingNewline: false);
+                    indent.add(' catch (exception: Error) ');
+                    indent.addScoped('{', '}', () {
+                      indent.writeln('wrapped = wrapError(exception)');
+                    });
                     indent.writeln('reply.reply(wrapped)');
                   }
                 });

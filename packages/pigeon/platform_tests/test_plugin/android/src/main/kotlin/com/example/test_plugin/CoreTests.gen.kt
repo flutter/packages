@@ -268,26 +268,26 @@ interface HostIntegrationCoreApi {
    */
   fun noopAsync(callback: () -> Unit)
   /** Returns the passed string asynchronously. */
-  fun echoAsyncString(aString: String, callback: (String) -> Unit)
+  fun echoAsyncString(aString: String, callback: (Result<String>) -> Unit)
   /** Returns List of error info asynchronously. */
-  fun throwAsyncError(callback: (Any?) -> Unit)
+  fun throwAsyncError(callback: (Result<Any?>) -> Unit)
   fun callFlutterNoop(callback: () -> Unit)
-  fun callFlutterEchoAllTypes(everything: AllTypes, callback: (AllTypes) -> Unit)
-  fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?, callback: (AllNullableTypes) -> Unit)
-  fun callFlutterEchoBool(aBool: Boolean, callback: (Boolean) -> Unit)
-  fun callFlutterEchoInt(anInt: Long, callback: (Long) -> Unit)
-  fun callFlutterEchoDouble(aDouble: Double, callback: (Double) -> Unit)
-  fun callFlutterEchoString(aString: String, callback: (String) -> Unit)
-  fun callFlutterEchoUint8List(aList: ByteArray, callback: (ByteArray) -> Unit)
-  fun callFlutterEchoList(aList: List<Any?>, callback: (List<Any?>) -> Unit)
-  fun callFlutterEchoMap(aMap: Map<String?, Any?>, callback: (Map<String?, Any?>) -> Unit)
-  fun callFlutterEchoNullableBool(aBool: Boolean?, callback: (Boolean?) -> Unit)
-  fun callFlutterEchoNullableInt(anInt: Long?, callback: (Long?) -> Unit)
-  fun callFlutterEchoNullableDouble(aDouble: Double?, callback: (Double?) -> Unit)
-  fun callFlutterEchoNullableString(aString: String?, callback: (String?) -> Unit)
-  fun callFlutterEchoNullableUint8List(aList: ByteArray?, callback: (ByteArray?) -> Unit)
-  fun callFlutterEchoNullableList(aList: List<Any?>?, callback: (List<Any?>?) -> Unit)
-  fun callFlutterEchoNullableMap(aMap: Map<String?, Any?>?, callback: (Map<String?, Any?>?) -> Unit)
+  fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
+  fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?, callback: (Result<AllNullableTypes>) -> Unit)
+  fun callFlutterEchoBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit)
+  fun callFlutterEchoInt(anInt: Long, callback: (Result<Long>) -> Unit)
+  fun callFlutterEchoDouble(aDouble: Double, callback: (Result<Double>) -> Unit)
+  fun callFlutterEchoString(aString: String, callback: (Result<String>) -> Unit)
+  fun callFlutterEchoUint8List(aList: ByteArray, callback: (Result<ByteArray>) -> Unit)
+  fun callFlutterEchoList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
+  fun callFlutterEchoMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit)
+  fun callFlutterEchoNullableBool(aBool: Boolean?, callback: (Result<Boolean?>) -> Unit)
+  fun callFlutterEchoNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit)
+  fun callFlutterEchoNullableDouble(aDouble: Double?, callback: (Result<Double?>) -> Unit)
+  fun callFlutterEchoNullableString(aString: String?, callback: (Result<String?>) -> Unit)
+  fun callFlutterEchoNullableUint8List(aList: ByteArray?, callback: (Result<ByteArray?>) -> Unit)
+  fun callFlutterEchoNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
+  fun callFlutterEchoNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit)
 
   companion object {
     /** The codec used by HostIntegrationCoreApi. */
@@ -319,9 +319,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllTypes
             try {
-              val args = message as List<Any?>
-              val everythingArg = args[0] as AllTypes
               wrapped = listOf<Any?>(api.echoAllTypes(everythingArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -337,9 +337,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val everythingArg = args[0] as? AllNullableTypes
             try {
-              val args = message as List<Any?>
-              val everythingArg = args[0] as? AllNullableTypes
               wrapped = listOf<Any?>(api.echoAllNullableTypes(everythingArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -372,9 +372,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val anIntArg = args[0].let { if (it is Int) it.toLong() else it as Long }
             try {
-              val args = message as List<Any?>
-              val anIntArg = args[0].let { if (it is Int) it.toLong() else it as Long }
               wrapped = listOf<Any?>(api.echoInt(anIntArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -390,9 +390,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aDoubleArg = args[0] as Double
             try {
-              val args = message as List<Any?>
-              val aDoubleArg = args[0] as Double
               wrapped = listOf<Any?>(api.echoDouble(aDoubleArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -408,9 +408,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aBoolArg = args[0] as Boolean
             try {
-              val args = message as List<Any?>
-              val aBoolArg = args[0] as Boolean
               wrapped = listOf<Any?>(api.echoBool(aBoolArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -426,9 +426,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aStringArg = args[0] as String
             try {
-              val args = message as List<Any?>
-              val aStringArg = args[0] as String
               wrapped = listOf<Any?>(api.echoString(aStringArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -444,9 +444,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aUint8ListArg = args[0] as ByteArray
             try {
-              val args = message as List<Any?>
-              val aUint8ListArg = args[0] as ByteArray
               wrapped = listOf<Any?>(api.echoUint8List(aUint8ListArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -462,9 +462,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val anObjectArg = args[0] as Any
             try {
-              val args = message as List<Any?>
-              val anObjectArg = args[0] as Any
               wrapped = listOf<Any?>(api.echoObject(anObjectArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -480,9 +480,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val wrapperArg = args[0] as AllNullableTypesWrapper
             try {
-              val args = message as List<Any?>
-              val wrapperArg = args[0] as AllNullableTypesWrapper
               wrapped = listOf<Any?>(api.extractNestedNullableString(wrapperArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -498,9 +498,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val nullableStringArg = args[0] as? String
             try {
-              val args = message as List<Any?>
-              val nullableStringArg = args[0] as? String
               wrapped = listOf<Any?>(api.createNestedNullableString(nullableStringArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -516,11 +516,11 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aNullableBoolArg = args[0] as? Boolean
+            val aNullableIntArg = args[1].let { if (it is Int) it.toLong() else it as? Long }
+            val aNullableStringArg = args[2] as? String
             try {
-              val args = message as List<Any?>
-              val aNullableBoolArg = args[0] as? Boolean
-              val aNullableIntArg = args[1].let { if (it is Int) it.toLong() else it as? Long }
-              val aNullableStringArg = args[2] as? String
               wrapped = listOf<Any?>(api.sendMultipleNullableTypes(aNullableBoolArg, aNullableIntArg, aNullableStringArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -536,9 +536,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aNullableIntArg = args[0].let { if (it is Int) it.toLong() else it as? Long }
             try {
-              val args = message as List<Any?>
-              val aNullableIntArg = args[0].let { if (it is Int) it.toLong() else it as? Long }
               wrapped = listOf<Any?>(api.echoNullableInt(aNullableIntArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -554,9 +554,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aNullableDoubleArg = args[0] as? Double
             try {
-              val args = message as List<Any?>
-              val aNullableDoubleArg = args[0] as? Double
               wrapped = listOf<Any?>(api.echoNullableDouble(aNullableDoubleArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -572,9 +572,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aNullableBoolArg = args[0] as? Boolean
             try {
-              val args = message as List<Any?>
-              val aNullableBoolArg = args[0] as? Boolean
               wrapped = listOf<Any?>(api.echoNullableBool(aNullableBoolArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -590,9 +590,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aNullableStringArg = args[0] as? String
             try {
-              val args = message as List<Any?>
-              val aNullableStringArg = args[0] as? String
               wrapped = listOf<Any?>(api.echoNullableString(aNullableStringArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -608,9 +608,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aNullableUint8ListArg = args[0] as? ByteArray
             try {
-              val args = message as List<Any?>
-              val aNullableUint8ListArg = args[0] as? ByteArray
               wrapped = listOf<Any?>(api.echoNullableUint8List(aNullableUint8ListArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -626,9 +626,9 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aNullableObjectArg = args[0] as? Any
             try {
-              val args = message as List<Any?>
-              val aNullableObjectArg = args[0] as? Any
               wrapped = listOf<Any?>(api.echoNullableObject(aNullableObjectArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -644,13 +644,8 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              api.noopAsync() {
-                reply.reply(wrapResult(null))
-              }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
+            api.noopAsync() { 
+              reply.reply(wrapResult(null))
             }
           }
         } else {
@@ -662,15 +657,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aStringArg = args[0] as String
-              api.echoAsyncString(aStringArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aStringArg = args[0] as String
+            api.echoAsyncString(aStringArg) { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -682,13 +678,14 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              api.throwAsyncError() {
-                reply.reply(wrapResult(it))
+            api.throwAsyncError() { result: Result<Any?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -700,13 +697,8 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              api.callFlutterNoop() {
-                reply.reply(wrapResult(null))
-              }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
+            api.callFlutterNoop() { 
+              reply.reply(wrapResult(null))
             }
           }
         } else {
@@ -718,15 +710,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val everythingArg = args[0] as AllTypes
-              api.callFlutterEchoAllTypes(everythingArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllTypes
+            api.callFlutterEchoAllTypes(everythingArg) { result: Result<AllTypes> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -738,17 +731,18 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aNullableBoolArg = args[0] as? Boolean
-              val aNullableIntArg = args[1].let { if (it is Int) it.toLong() else it as? Long }
-              val aNullableStringArg = args[2] as? String
-              api.callFlutterSendMultipleNullableTypes(aNullableBoolArg, aNullableIntArg, aNullableStringArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aNullableBoolArg = args[0] as? Boolean
+            val aNullableIntArg = args[1].let { if (it is Int) it.toLong() else it as? Long }
+            val aNullableStringArg = args[2] as? String
+            api.callFlutterSendMultipleNullableTypes(aNullableBoolArg, aNullableIntArg, aNullableStringArg) { result: Result<AllNullableTypes> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -760,15 +754,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aBoolArg = args[0] as Boolean
-              api.callFlutterEchoBool(aBoolArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aBoolArg = args[0] as Boolean
+            api.callFlutterEchoBool(aBoolArg) { result: Result<Boolean> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -780,15 +775,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val anIntArg = args[0].let { if (it is Int) it.toLong() else it as Long }
-              api.callFlutterEchoInt(anIntArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val anIntArg = args[0].let { if (it is Int) it.toLong() else it as Long }
+            api.callFlutterEchoInt(anIntArg) { result: Result<Long> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -800,15 +796,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aDoubleArg = args[0] as Double
-              api.callFlutterEchoDouble(aDoubleArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aDoubleArg = args[0] as Double
+            api.callFlutterEchoDouble(aDoubleArg) { result: Result<Double> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -820,15 +817,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aStringArg = args[0] as String
-              api.callFlutterEchoString(aStringArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aStringArg = args[0] as String
+            api.callFlutterEchoString(aStringArg) { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -840,15 +838,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aListArg = args[0] as ByteArray
-              api.callFlutterEchoUint8List(aListArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aListArg = args[0] as ByteArray
+            api.callFlutterEchoUint8List(aListArg) { result: Result<ByteArray> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -860,15 +859,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aListArg = args[0] as List<Any?>
-              api.callFlutterEchoList(aListArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aListArg = args[0] as List<Any?>
+            api.callFlutterEchoList(aListArg) { result: Result<List<Any?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -880,15 +880,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aMapArg = args[0] as Map<String?, Any?>
-              api.callFlutterEchoMap(aMapArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aMapArg = args[0] as Map<String?, Any?>
+            api.callFlutterEchoMap(aMapArg) { result: Result<Map<String?, Any?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -900,15 +901,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aBoolArg = args[0] as? Boolean
-              api.callFlutterEchoNullableBool(aBoolArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aBoolArg = args[0] as? Boolean
+            api.callFlutterEchoNullableBool(aBoolArg) { result: Result<Boolean?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -920,15 +922,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val anIntArg = args[0].let { if (it is Int) it.toLong() else it as? Long }
-              api.callFlutterEchoNullableInt(anIntArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val anIntArg = args[0].let { if (it is Int) it.toLong() else it as? Long }
+            api.callFlutterEchoNullableInt(anIntArg) { result: Result<Long?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -940,15 +943,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aDoubleArg = args[0] as? Double
-              api.callFlutterEchoNullableDouble(aDoubleArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aDoubleArg = args[0] as? Double
+            api.callFlutterEchoNullableDouble(aDoubleArg) { result: Result<Double?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -960,15 +964,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aStringArg = args[0] as? String
-              api.callFlutterEchoNullableString(aStringArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aStringArg = args[0] as? String
+            api.callFlutterEchoNullableString(aStringArg) { result: Result<String?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -980,15 +985,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aListArg = args[0] as? ByteArray
-              api.callFlutterEchoNullableUint8List(aListArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aListArg = args[0] as? ByteArray
+            api.callFlutterEchoNullableUint8List(aListArg) { result: Result<ByteArray?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -1000,15 +1006,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aListArg = args[0] as? List<Any?>
-              api.callFlutterEchoNullableList(aListArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aListArg = args[0] as? List<Any?>
+            api.callFlutterEchoNullableList(aListArg) { result: Result<List<Any?>?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
@@ -1020,15 +1027,16 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            try {
-              val args = message as List<Any?>
-              val aMapArg = args[0] as? Map<String?, Any?>
-              api.callFlutterEchoNullableMap(aMapArg) {
-                reply.reply(wrapResult(it))
+            val args = message as List<Any?>
+            val aMapArg = args[0] as? Map<String?, Any?>
+            api.callFlutterEchoNullableMap(aMapArg) { result: Result<Map<String?, Any?>?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapResult(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-              reply.reply(wrapped)
             }
           }
         } else {
