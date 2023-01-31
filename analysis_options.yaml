@@ -17,6 +17,7 @@ analyzer:
     unnecessary_null_comparison: ignore
   exclude: # DIFFERENT FROM FLUTTER/FLUTTER
     # Ignore generated files
+    - '**/*.g.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
 
 linter:
