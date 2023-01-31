@@ -1,5 +1,6 @@
-## NEXT
+## 0.3.3+3
 
+* Updates code to fix strict-cast violations.
 * Updates minimum SDK version to Flutter 3.0.
 
 ## 0.3.3+2
