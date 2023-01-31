@@ -142,7 +142,7 @@ class XFile extends XFileBase {
       rethrow;
     }
 
-    _browserBlob = request.response;
+    _browserBlob = request.response as Blob?;
 
     assert(_browserBlob != null, 'The Blob backing this XFile cannot be null!');
 
