@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/src/adaptive_scaffold.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'simulated_layout.dart';
 import 'test_breakpoints.dart';
 
@@ -219,6 +220,22 @@ void main() {
           expect(find.text('leading_unextended'), findsNothing);
           expect(find.text('trailing'), findsNothing);
         }
+      });
+    },
+  );
+
+  /// Verify that selectedIndex of [AdaptiveScaffold.standardNavigationRail]
+  /// and [AdaptiveScaffold] can be set to null
+  testWidgets(
+    'adaptive scaffold selectedIndex can be set to null',
+    (WidgetTester tester) async {
+      await Future.forEach(SimulatedLayout.values,
+          (SimulatedLayout region) async {
+        int? selectedIndex;
+        final MaterialApp app = region.app(initialIndex: selectedIndex);
+        await tester.binding.setSurfaceSize(region.size);
+        await tester.pumpWidget(app);
+        await tester.pumpAndSettle();
       });
     },
   );

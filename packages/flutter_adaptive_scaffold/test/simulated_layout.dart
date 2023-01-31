@@ -36,7 +36,7 @@ class TestScaffold extends StatefulWidget {
     this.isAnimated = true,
   });
 
-  final int initialIndex;
+  final int? initialIndex;
   final bool isAnimated;
 
   static const List<NavigationDestination> destinations =
@@ -63,7 +63,7 @@ class TestScaffold extends StatefulWidget {
 }
 
 class TestScaffoldState extends State<TestScaffold> {
-  late int index = widget.initialIndex;
+  late int? index = widget.initialIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +110,7 @@ enum SimulatedLayout {
   Size get size => Size(_width, _height);
 
   MaterialApp app({
-    int initialIndex = 0,
+    int? initialIndex,
     bool animations = true,
   }) {
     return MaterialApp(

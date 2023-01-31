@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 0.3.3+2
 
 * Fixes lint warnings in tests.

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 4.2.0
 
 * Adds iOS template app icons, updated to square icons with no transparency.

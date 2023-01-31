@@ -1,6 +1,8 @@
-## 6.0.2
-
+## 6.0.3
 - Adds helpers for go_router_builder for ShellRoute support
+
+## 6.0.2
+- Fixes missing result on pop in go_router extension.
 
 ## 6.0.1
 
@@ -16,7 +18,6 @@
   - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`. 
   - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`. 
   - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
->>>>>>> c72e3f27edf9ded675f3762758b9999473bfa54f
 
 ## 5.2.4
 
