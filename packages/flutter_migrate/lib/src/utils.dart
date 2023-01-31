@@ -59,7 +59,7 @@ class MigrateUtils {
         commandDescription: 'git ${cmdArgs.join(' ')}');
     return DiffResult(
         diffType: DiffType.command,
-        diff: result.stdout,
+        diff: result.stdout as String,
         exitCode: result.exitCode);
   }
 
@@ -129,7 +129,7 @@ class MigrateUtils {
     }
     final ProcessResult result =
         await _runCommand(cmdArgs, workingDirectory: outputDirectory);
-    final String error = result.stderr;
+    final String error = result.stderr as String;
 
     // Catch errors due to parameters not existing.
 
@@ -305,9 +305,9 @@ class MigrateUtils {
         _logger.printError(commandDescription, indent: 2);
       }
       _logger.printError('Stdout:');
-      _logger.printError(result.stdout, indent: 2);
+      _logger.printError(result.stdout as String, indent: 2);
       _logger.printError('Stderr:');
-      _logger.printError(result.stderr, indent: 2);
+      _logger.printError(result.stderr as String, indent: 2);
     }
     if (exit) {
       throwToolExit(
@@ -428,7 +428,7 @@ abstract class MergeResult {
 class StringMergeResult extends MergeResult {
   /// Initializes a BinaryMergeResult based off of a ProcessResult.
   StringMergeResult(super.result, super.localPath)
-      : mergedString = result.stdout;
+      : mergedString = result.stdout as String;
 
   /// Manually initializes a StringMergeResult with explicit values.
   StringMergeResult.explicit({

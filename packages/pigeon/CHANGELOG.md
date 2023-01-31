@@ -1,3 +1,7 @@
+## 7.1.5
+
+* Updates code to fix strict-cast violations.
+
 ## 7.1.4
 
 * [java] Fixes raw types lint issues.

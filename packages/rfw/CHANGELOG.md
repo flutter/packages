@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates code to fix strict-cast violations.
+
 ## 1.0.7
 
 * Update README.

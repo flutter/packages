@@ -402,7 +402,7 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
 
   @override
   void _onError(dynamic error, StackTrace? stackTrace) {
-    _runCompleter.completeError(error, stackTrace);
+    _runCompleter.completeError(error as Object, stackTrace);
   }
 
   @override
@@ -522,7 +522,7 @@ abstract class WidgetBuildRecorder extends Recorder implements FrameRecorder {
 
   @override
   void _onError(dynamic error, StackTrace? stackTrace) {
-    _runCompleter!.completeError(error, stackTrace);
+    _runCompleter!.completeError(error as Object, stackTrace);
   }
 
   @override

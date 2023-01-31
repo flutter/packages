@@ -17,7 +17,7 @@ void main() {
             'dev.flutter.pigeon.MultipleArityHostApi.subtract', any))
         .thenAnswer((Invocation realInvocation) async {
       final Object input = MultipleArityHostApi.codec
-          .decodeMessage(realInvocation.positionalArguments[1])!;
+          .decodeMessage(realInvocation.positionalArguments[1] as ByteData?)!;
       final List<Object?> args = input as List<Object?>;
       final int x = (args[0] as int?)!;
       final int y = (args[1] as int?)!;
