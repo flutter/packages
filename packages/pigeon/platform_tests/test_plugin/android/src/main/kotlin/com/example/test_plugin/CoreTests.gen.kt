@@ -662,7 +662,7 @@ interface HostIntegrationCoreApi {
             api.echoAsyncString(aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -681,7 +681,7 @@ interface HostIntegrationCoreApi {
             api.throwAsyncError() { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -715,7 +715,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoAllTypes(everythingArg) { result: Result<AllTypes> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -738,7 +738,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterSendMultipleNullableTypes(aNullableBoolArg, aNullableIntArg, aNullableStringArg) { result: Result<AllNullableTypes> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -759,7 +759,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoBool(aBoolArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -780,7 +780,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoInt(anIntArg) { result: Result<Long> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -801,7 +801,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoDouble(aDoubleArg) { result: Result<Double> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -822,7 +822,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoString(aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -843,7 +843,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoUint8List(aListArg) { result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -864,7 +864,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoList(aListArg) { result: Result<List<Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -885,7 +885,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoMap(aMapArg) { result: Result<Map<String?, Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -906,7 +906,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableBool(aBoolArg) { result: Result<Boolean?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -927,7 +927,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableInt(anIntArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -948,7 +948,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableDouble(aDoubleArg) { result: Result<Double?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -969,7 +969,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableString(aStringArg) { result: Result<String?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -990,7 +990,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableUint8List(aListArg) { result: Result<ByteArray?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -1011,7 +1011,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableList(aListArg) { result: Result<List<Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
@@ -1032,7 +1032,7 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableMap(aMapArg) { result: Result<Map<String?, Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapResult(error))
+                reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))

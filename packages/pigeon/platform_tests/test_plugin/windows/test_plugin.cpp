@@ -183,8 +183,11 @@ void TestPlugin::EchoAsyncString(
 void TestPlugin::ThrowAsyncError(
     std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
         result) {
-  const FlutterError& error;
-  result(error)
+  try {
+    throw FlutterError(code : "code", message : "message", details : "details");
+  } catch (const FlutterError& error) {
+    result(error)
+  }
 }
 
 void TestPlugin::CallFlutterNoop(

@@ -528,7 +528,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                       } else {
                         indent.writeln('val error = result.exceptionOrNull()');
                         indent.writeScoped('if (error != null) {', '}', () {
-                          indent.writeln('reply.reply(wrapResult(error))');
+                          indent.writeln('reply.reply(wrapError(error))');
                         }, addTrailingNewline: false);
                         indent.addScoped(' else {', '}', () {
                           indent.writeln('val data = result.getOrNull()');
