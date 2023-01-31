@@ -99,7 +99,9 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: $PLUGIN_TOOL_COMMAND license-check
-        pubspec_script: ./script/tool_runner.sh pubspec-check
+        # The major and minor versions here should match the lowest version
+        # analyzed in legacy_version_analyze.
+        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0 --min-min-dart-version=2.17.0
         readme_script:
           - ./script/tool_runner.sh readme-check
           # Re-run with --require-excerpts, skipping packages that still need
@@ -157,12 +159,13 @@ task:
     - name: legacy_version_analyze
       depends_on: analyze
       matrix:
+        # Change the arguments to pubspec-check when changing these values.
         env:
           CHANNEL: "3.0.5"
           DART_VERSION: "2.17.6"
         env:
-          CHANNEL: "2.10.5"
-          DART_VERSION: "2.16.2"
+          CHANNEL: "3.3.10"
+          DART_VERSION: "2.18.6"
       package_prep_script:
         # Allow analyzing packages that use a dev dependency with a higher
         # minimum Flutter/Dart version than the package itself.
@@ -183,23 +186,6 @@ task:
       env:
         CIRRUS_CLONE_SUBMODULES: true
       script: ./script/tool_runner.sh update-excerpts --fail-on-change
-    - name: linux-custom_package_tests
-      env:
-        PATH: $PATH:/usr/local/bin
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      << : *INSTALL_CHROME_LINUX
-      local_tests_script:
-        # pigeon tests currently don't support Linux:
-        #   https://github.com/flutter/flutter/issues/100386
-        # flutter_image
-        #   https://github.com/flutter/flutter/issues/100387
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test --exclude=pigeon
-        - else
-        -   ./script/tool_runner.sh custom-test --exclude=pigeon,flutter_image
-        - fi
     ### Web tasks ###
     - name: web-build_all_packages
       env:
@@ -245,6 +231,16 @@ task:
     cpu: 4
     memory: 16G
   matrix:
+    ### Platform-agnostic tasks ###
+    - name: linux-custom_package_tests
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      << : *INSTALL_CHROME_LINUX
+      local_tests_script:
+        - ./script/tool_runner.sh custom-test
     ### Android tasks ###
     - name: android-platform_tests
       # Don't run full platform tests on both channels in pre-submit.
@@ -333,15 +329,9 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       local_tests_script:
-        # flutter_image
-        #   https://github.com/flutter/flutter/issues/100387
         # script/configs/linux_only_custom_test.yaml
         #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test --exclude=script/configs/linux_only_custom_test.yaml
-        - else
-        -   ./script/tool_runner.sh custom-test --exclude=flutter_image,script/configs/linux_only_custom_test.yaml
-        - fi
+        - ./script/tool_runner.sh custom-test --exclude=script/configs/linux_only_custom_test.yaml
     ### iOS tasks ###
     - name: ios-platform_tests
       # Don't run full platform tests on both channels in pre-submit.
@@ -368,14 +358,6 @@ task:
       xcode_analyze_deprecation_script:
         # Ensure we don't accidentally introduce deprecated code.
         - ./script/tool_runner.sh xcode-analyze --ios --ios-min-version=13.0
-    ### iOS tasks ###
-    - name: ios-build_all_packages
-      env:
-        BUILD_ALL_ARGS: "ios --no-codesign"
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
     ### macOS desktop tasks ###
     - name: macos-platform_tests
       # Don't run full platform tests on both channels in pre-submit.

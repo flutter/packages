@@ -65,9 +65,29 @@ behind a [conditional import/export](https://dart.dev/guides/libraries/create-li
 
 Once the SDK has been loaded, it can be used by importing the correct library:
 
-* `import 'package:google_identity_services/id.dart' as id;` for Authentication
-* `import 'package:google_identity_services/oauth2.dart' as oauth2;` for
-  Authorization.
+* `import 'package:google_identity_services/id.dart';` for Authentication.
+  * This will expose an `id` JSObject that binds to `google.accounts.id`.
+* `import 'package:google_identity_services/oauth2.dart';` for Authorization.
+  * This will expose an `oauth2` JSObject that binds to `google.accounts.oauth2`.
+
+### Troubleshooting
+
+Watch the browser's development tools JS console while using this package.
+Information about errors during initialization and use of the library will be
+displayed there.
+
+Some common issues identified so far:
+
+#### The given origin is not allowed for the given client ID
+
+> When you perform local tests or development, **you must add both**
+> `http://localhost` and `http://localhost:<port_number>` to the
+> **Authorized JavaScript origins** box.
+> The [Referrer-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy)
+> response header must also be set to `no-referrer-when-downgrade` when using
+> http and localhost.
+
+* Read more: [Sign In with Google for Web - Setup - Get your Google API client ID](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#get_your_google_api_client_id).
 
 ## Browser compatibility
 
