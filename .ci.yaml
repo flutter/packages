@@ -67,7 +67,6 @@ targets:
       channel: stable
 
   - name: Mac_arm64 ios_platform_tests_shard_1 master
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -77,7 +76,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 5"
 
   - name: Mac_arm64 ios_platform_tests_shard_2 master
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -87,7 +85,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 5"
 
   - name: Mac_arm64 ios_platform_tests_shard_3 master
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -97,7 +94,6 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 5"
 
   - name: Mac_arm64 ios_platform_tests_shard_4 master
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -107,7 +103,6 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 5"
 
   - name: Mac_arm64 ios_platform_tests_shard_5 master
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -118,7 +113,6 @@ targets:
 
   # Don't run full platform tests on both channels in pre-submit.
   - name: Mac_arm64 ios_platform_tests_shard_1 stable
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -130,7 +124,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 5"
 
   - name: Mac_arm64 ios_platform_tests_shard_2 stable
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -142,7 +135,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 5"
 
   - name: Mac_arm64 ios_platform_tests_shard_3 stable
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -154,7 +146,6 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 5"
 
   - name: Mac_arm64 ios_platform_tests_shard_4 stable
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -166,7 +157,6 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 5"
 
   - name: Mac_arm64 ios_platform_tests_shard_5 stable
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -186,7 +176,7 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: mac_build_all_packages.yaml
+      target_file: macos_build_all_packages.yaml
       channel: master
 
   - name: Mac_x64 build_all_packages stable
@@ -195,14 +185,13 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
-      target_file: mac_build_all_packages.yaml
+      target_file: macos_build_all_packages.yaml
       channel: stable
 
   # TODO(stuartmorgan): Remove "- packages" from all task names once
   # flutter/plugins is merged into this repo and turned down; it's here only
   # because names must be unique across all flutter repositories.
   - name: Mac_arm64 macos_platform_tests master - packages
-    bringup: true # New task
     recipe: packages/packages
     timeout: 60
     properties:
@@ -212,7 +201,6 @@ targets:
       target_file: macos_platform_tests.yaml
 
   - name: Mac_arm64 macos_platform_tests stable - packages
-    bringup: true # New task
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -229,7 +217,7 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: mac_custom_package_tests.yaml
+      target_file: macos_custom_package_tests.yaml
       channel: master
 
   - name: Mac_arm64 custom_package_tests stable
@@ -239,7 +227,7 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
-      target_file: mac_custom_package_tests.yaml
+      target_file: macos_custom_package_tests.yaml
       channel: stable
 
   ### Windows desktop tasks ###
