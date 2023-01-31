@@ -12,8 +12,8 @@ void echoOneArgument(
 ) {
   when(mockMessenger.send(channel, any))
       .thenAnswer((Invocation realInvocation) async {
-    final Object input =
-        codec.decodeMessage(realInvocation.positionalArguments[1])!;
+    final Object input = codec
+        .decodeMessage(realInvocation.positionalArguments[1] as ByteData?)!;
     final List<Object?> args = input as List<Object?>;
     return codec.encodeMessage(<Object>[args[0]!]);
   });

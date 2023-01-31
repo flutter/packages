@@ -60,7 +60,7 @@ class _ExampleState extends State<Example> {
     }
     _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(await interfaceFile.readAsBytes()));
     _logic = WasmModule(await logicFile.readAsBytes()).builder().build();
-    _dataFetcher = _logic.lookupFunction('value');
+    _dataFetcher = _logic.lookupFunction('value') as WasmFunction;
     _updateData();
     setState(() { RendererBinding.instance.allowFirstFrame(); });
   }
@@ -87,7 +87,7 @@ class _ExampleState extends State<Example> {
       data: _data,
       widget: const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
       onEvent: (String name, DynamicMap arguments) {
-        final WasmFunction function = _logic.lookupFunction(name);
+        final WasmFunction function = _logic.lookupFunction(name) as WasmFunction;
         function.apply(_asList(arguments['arguments']));
         _updateData();
       },
