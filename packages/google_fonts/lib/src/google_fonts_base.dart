@@ -186,7 +186,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
         'following exception occurred:\n$e');
     if (file_io.isTest) {
       print('\nThere is likely something wrong with your test. Please see '
-          'https://github.com/material-foundation/google-fonts-flutter/blob/main/example/test '
+          'https://github.com/material-foundation/flutter-packages/blob/main/packages/google_fonts/example/test '
           'for examples of how to test with google_fonts.');
     } else if (file_io.isMacOS || file_io.isAndroid) {
       print(
@@ -194,7 +194,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
       );
     }
     print('If troubleshooting doesn\'t solve the problem, please file an issue '
-        'at https://github.com/material-foundation/google-fonts-flutter/issues/new.\n');
+        'at https://github.com/material-foundation/flutter-packages/issues/new.\n');
     rethrow;
   }
 }

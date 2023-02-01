@@ -147,11 +147,11 @@ you want to use:
 
 2. Move those fonts to some asset folder (e.g. `google_fonts`). You can name this folder whatever you like and use subdirectories.
 
-![](https://raw.githubusercontent.com/material-foundation/google-fonts-flutter/main/readme_images/google_fonts_folder.png)
+![](https://user-images.githubusercontent.com/19559602/216036655-d737c267-85d8-4654-886a-fc53a48d31c1.png)
 
 3. Ensure that you have listed the asset folder (e.g. `google_fonts/`) in your `pubspec.yaml`, under `assets`.
 
-![](https://raw.githubusercontent.com/material-foundation/google-fonts-flutter/main/readme_images/google_fonts_pubspec_assets.png)
+![](https://user-images.githubusercontent.com/19559602/216036666-0aa1ae8e-7f7b-4a6a-bb84-7f6204cf14db.png)
 
 Note: Since these files are listed as assets, there is no need to list them in the `fonts` section
 of the `pubspec.yaml`. This can be done because the files are consistently named from the Google Fonts API
@@ -182,4 +182,4 @@ void main() {
 
 ## Testing
 
-See [example/test](https://github.com/material-foundation/google-fonts-flutter/blob/main/example/test) for testing examples.
+See [example/test](https://github.com/material-foundation/flutter-packages/blob/main/packages/google_fonts/packages/google_fonts/example/test) for testing examples.
