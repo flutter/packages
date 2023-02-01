@@ -45,6 +45,8 @@ class MyHomePage extends StatelessWidget {
       children: <Widget>[
         const Divider(color: Colors.black),
         const SizedBox(height: 10),
+        // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+        // ignore: prefer_const_constructors
         Row(
           children: const <Widget>[
             SizedBox(
@@ -150,6 +152,8 @@ class MyHomePage extends StatelessWidget {
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               extended: true,
+              // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+              // ignore: prefer_const_constructors
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const <Widget>[
