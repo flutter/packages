@@ -1,6 +1,3 @@
-# Contributing to the google_fonts package.
-
-
 ## Updating the fonts
 
 If you notice fonts that are on [fonts.google.com](https://fonts.google.com) that do not appear in
@@ -10,4 +7,4 @@ regenerate the dart code.
 
 The generator is run multiple times a month by a GitHub [workflow](https://github.com/material-foundation/flutter-packages/blob/main/.github/workflows/google_fonts_update.yml).
 
-To run it manually, navigate to the root of the project, and run `dart generator/generator.dart`.
+To run it manually, run `dart generator/generator.dart`.
