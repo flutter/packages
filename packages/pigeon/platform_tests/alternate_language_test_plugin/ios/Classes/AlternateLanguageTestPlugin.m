@@ -133,13 +133,11 @@
 }
 
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
-  FlutterError *_Nullable error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
-  completion(nil, error);
+  completion(nil, [FlutterError errorWithCode:@"An error" message:nil details:nil]);
 }
 
 - (void)throwAsyncErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterError *_Nullable error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
-  completion(error);
+  completion([FlutterError errorWithCode:@"An error" message:nil details:nil]);
 }
 
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {

@@ -135,9 +135,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterSendMultipleNullableTypes(
-    aBool aNullableBool: Bool?, 
-    anInt aNullableInt: Int32?, 
-    aString aNullableString: String?, 
+    aBool aNullableBool: Bool?,
+    anInt aNullableInt: Int32?,
+    aString aNullableString: String?,
     completion: @escaping (Result<AllNullableTypes, Error>) -> Void
   ) {
     flutterAPI.sendMultipleNullableTypes(
@@ -167,7 +167,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterEcho(_ aDouble: Double,  completion: @escaping (Result<Double, Error>) -> Void) {
+  func callFlutterEcho(_ aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void) {
     flutterAPI.echo(aDouble) { 
       let result: Result<Double, Error>
       result = .success($0)
@@ -240,7 +240,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
   
   func callFlutterEchoNullable(_ aList: FlutterStandardTypedData?, completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void) {
-    flutterAPI.echoNullable(aList) { 
+    flutterAPI.echoNullable(aList) {
       let result: Result<FlutterStandardTypedData?, Error>
       result = .success($0)
       completion(result)
@@ -248,7 +248,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEchoNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void) {
-    flutterAPI.echoNullable(aList) { 
+    flutterAPI.echoNullable(aList) {
       let result: Result<[Any?]?, Error>
       result = .success($0)
       completion(result)
@@ -256,7 +256,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEchoNullable(_ aMap: [String? : Any?]?, completion: @escaping (Result<[String? : Any?]?, Error>) -> Void) {
-    flutterAPI.echoNullable(aMap) { 
+    flutterAPI.echoNullable(aMap) {
       let result: Result<[String? : Any?]?, Error>
       result = .success($0)
       completion(result)

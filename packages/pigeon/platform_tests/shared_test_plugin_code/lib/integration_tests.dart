@@ -489,12 +489,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject, sentObject);
     });
 
-    testWidgets('async errors are returned correctly', (WidgetTester _) async {
+    testWidgets('async errors are returned from non void methods correctly',
+        (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       expect(() async {
         await api.throwAsyncError();
       }, throwsA(isA<PlatformException>()));
+    });
+
+    testWidgets('async errors are returned from void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       expect(() async {
         await api.throwAsyncErrorFromVoid();

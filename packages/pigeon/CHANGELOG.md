@@ -1,4 +1,4 @@
-## 7.1.6
+## 7.2.0
 
 * [swift] Changes async method completion types. 
   May require code updates to existing code.

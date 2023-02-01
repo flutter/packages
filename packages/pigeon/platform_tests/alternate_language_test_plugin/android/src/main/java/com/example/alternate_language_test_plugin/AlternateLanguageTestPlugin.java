@@ -148,20 +148,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void throwAsyncError(Result<Object> result) {
-    try {
-      throw new RuntimeException("An error");
-    } catch (Exception e) {
-      result.error(e);
-    }
+    result.error(new RuntimeException("An error"));
   }
 
   @Override
   public void throwAsyncErrorFromVoid(Result<Void> result) {
-    try {
-      throw new RuntimeException("An error");
-    } catch (Exception e) {
-      result.error(e);
-    }
+    result.error(new RuntimeException("An error"));
   }
 
   @Override

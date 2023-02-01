@@ -503,7 +503,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 indent.write('channel.setMessageHandler ');
                 indent.addScoped('{ $messageVarName, reply ->', '}', () {
                   indent.writeln('var wrapped = listOf<Any?>()');
-                  final List<String> methodArgument = <String>[];
+                  final List<String> methodArguments = <String>[];
                   if (method.arguments.isNotEmpty) {
                     indent.writeln('val args = message as List<Any?>');
                     enumerate(method.arguments, (int index, NamedType arg) {
@@ -511,11 +511,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                       final String argIndex = 'args[$index]';
                       indent.writeln(
                           'val $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
-                      methodArgument.add(argName);
+                      methodArguments.add(argName);
                     });
                   }
                   final String call =
-                      'api.${method.name}(${methodArgument.join(', ')})';
+                      'api.${method.name}(${methodArguments.join(', ')})';
 
                   if (method.isAsynchronous) {
                     indent.write('$call ');
