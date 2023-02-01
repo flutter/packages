@@ -1,3 +1,7 @@
+## 0.0.1+2
+
+* Removes use of `runtimeType.toString()`.
+
 ## 0.0.1+1
 
 * Updates code to fix strict-cast violations.
