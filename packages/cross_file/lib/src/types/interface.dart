@@ -21,17 +21,15 @@ class XFile extends XFileBase {
   /// `name` may be passed from the outside, for those cases where the effective
   /// `path` of the file doesn't match what the user sees when selecting it
   /// (like in web)
-  // This is a false positive; super.path is a String?, not a String.
-  // ignore: use_super_parameters
   XFile(
-    String path, {
+    String super.path, {
     String? mimeType,
     String? name,
     int? length,
     Uint8List? bytes,
     DateTime? lastModified,
     @visibleForTesting CrossFileTestOverrides? overrides,
-  }) : super(path) {
+  }) {
     throw UnimplementedError(
         'CrossFile is not available in your current platform.');
   }
