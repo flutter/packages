@@ -16,7 +16,6 @@ class AllTypes {
     this.aBool = false,
     this.anInt = 0,
     this.aDouble = 0,
-    this.aString = '',
     required this.aByteArray,
     required this.a4ByteArray,
     required this.a8ByteArray,
@@ -24,12 +23,12 @@ class AllTypes {
     this.aList = const <Object?>[],
     this.aMap = const <String?, Object?>{},
     this.anEnum = AnEnum.one,
+    this.aString = '',
   });
 
   bool aBool;
   int anInt;
   double aDouble;
-  String aString;
   Uint8List aByteArray;
   Int32List a4ByteArray;
   Int64List a8ByteArray;
@@ -39,6 +38,7 @@ class AllTypes {
   // ignore: always_specify_types, strict_raw_type
   Map aMap;
   AnEnum anEnum;
+  String aString;
 }
 
 // A class containing all supported nullable types.
@@ -47,7 +47,6 @@ class AllNullableTypes {
     this.aNullableBool,
     this.aNullableInt,
     this.aNullableDouble,
-    this.aNullableString,
     this.aNullableByteArray,
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
@@ -58,12 +57,12 @@ class AllNullableTypes {
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
+    this.aNullableString,
   );
 
   bool? aNullableBool;
   int? aNullableInt;
   double? aNullableDouble;
-  String? aNullableString;
   Uint8List? aNullableByteArray;
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
@@ -76,6 +75,7 @@ class AllNullableTypes {
   Map<String?, String?>? nullableMapWithAnnotations;
   Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
+  String? aNullableString;
 }
 
 // A class for testing nested object handling.
@@ -96,10 +96,12 @@ abstract class HostIntegrationCoreApi {
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllTypes:')
+  @SwiftFunction('echo(_:)')
   AllTypes echoAllTypes(AllTypes everything);
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypes:')
+  @SwiftFunction('echo(_:)')
   AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
 
   /// Returns an error, to test error handling.
@@ -107,26 +109,32 @@ abstract class HostIntegrationCoreApi {
 
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
+  @SwiftFunction('echo(_:)')
   int echoInt(int anInt);
 
   /// Returns passed in double.
   @ObjCSelector('echoDouble:')
+  @SwiftFunction('echo(_:)')
   double echoDouble(double aDouble);
 
   /// Returns the passed in boolean.
   @ObjCSelector('echoBool:')
+  @SwiftFunction('echo(_:)')
   bool echoBool(bool aBool);
 
   /// Returns the passed in string.
   @ObjCSelector('echoString:')
+  @SwiftFunction('echo(_:)')
   String echoString(String aString);
 
   /// Returns the passed in Uint8List.
   @ObjCSelector('echoUint8List:')
+  @SwiftFunction('echo(_:)')
   Uint8List echoUint8List(Uint8List aUint8List);
 
   /// Returns the passed in generic Object.
   @ObjCSelector('echoObject:')
+  @SwiftFunction('echo(_:)')
   Object echoObject(Object anObject);
 
   // ========== Syncronous nullable method tests ==========
@@ -134,40 +142,49 @@ abstract class HostIntegrationCoreApi {
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   @ObjCSelector('extractNestedNullableStringFrom:')
+  @SwiftFunction('extractNestedNullableString(from:)')
   String? extractNestedNullableString(AllNullableTypesWrapper wrapper);
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   @ObjCSelector('createNestedObjectWithNullableString:')
+  @SwiftFunction('createNestedObject(with:)')
   AllNullableTypesWrapper createNestedNullableString(String? nullableString);
 
   /// Returns passed in arguments of multiple types.
   @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
+  @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
   AllNullableTypes sendMultipleNullableTypes(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   /// Returns passed in int.
   @ObjCSelector('echoNullableInt:')
+  @SwiftFunction('echo(_:)')
   int? echoNullableInt(int? aNullableInt);
 
   /// Returns passed in double.
   @ObjCSelector('echoNullableDouble:')
+  @SwiftFunction('echo(_:)')
   double? echoNullableDouble(double? aNullableDouble);
 
   /// Returns the passed in boolean.
   @ObjCSelector('echoNullableBool:')
+  @SwiftFunction('echo(_:)')
   bool? echoNullableBool(bool? aNullableBool);
 
   /// Returns the passed in string.
   @ObjCSelector('echoNullableString:')
+  @SwiftFunction('echo(_:)')
   String? echoNullableString(String? aNullableString);
 
   /// Returns the passed in Uint8List.
   @ObjCSelector('echoNullableUint8List:')
+  @SwiftFunction('echo(_:)')
   Uint8List? echoNullableUint8List(Uint8List? aNullableUint8List);
 
   /// Returns the passed in generic Object.
   @ObjCSelector('echoNullableObject:')
+  @SwiftFunction('echo(_:)')
   Object? echoNullableObject(Object? aNullableObject);
 
   // ========== Asyncronous method tests ==========
@@ -180,6 +197,7 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed string asynchronously.
   @async
   @ObjCSelector('echoAsyncString:')
+  @SwiftFunction('echoAsync(_:)')
   String echoAsyncString(String aString);
 
   // ========== Flutter API test wrappers ==========
@@ -188,13 +206,91 @@ abstract class HostIntegrationCoreApi {
   void callFlutterNoop();
 
   @async
+  @ObjCSelector('callFlutterEchoAllTypes:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  AllTypes callFlutterEchoAllTypes(AllTypes everything);
+
+  // TODO(stuartmorgan): Add callFlutterEchoAllNullableTypes and the associated
+  // test once either https://github.com/flutter/flutter/issues/116117 is fixed,
+  // or the problematic type is moved out of AllNullableTypes and into its own
+  // test, since the type mismatch breaks the second `encode` round.
+
+  @async
+  @ObjCSelector('callFlutterSendMultipleNullableTypesABool:anInt:aString:')
+  @SwiftFunction('callFlutterSendMultipleNullableTypes(aBool:anInt:aString:)')
+  AllNullableTypes callFlutterSendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  @async
+  @ObjCSelector('callFlutterEchoBool:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  bool callFlutterEchoBool(bool aBool);
+
+  @async
+  @ObjCSelector('callFlutterEchoInt:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  int callFlutterEchoInt(int anInt);
+
+  @async
+  @ObjCSelector('callFlutterEchoDouble:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  double callFlutterEchoDouble(double aDouble);
+
+  @async
   @ObjCSelector('callFlutterEchoString:')
+  @SwiftFunction('callFlutterEcho(_:)')
   String callFlutterEchoString(String aString);
 
-  // TODO(stuartmorgan): Add callFlutterEchoString and the associated test once
-  // either https://github.com/flutter/flutter/issues/116117 is fixed, or the
-  // problematic type is moved out of AllTypes and into its own test, since
-  // the type mismatch breaks the second `encode` round.
+  @async
+  @ObjCSelector('callFlutterEchoUint8List:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  Uint8List callFlutterEchoUint8List(Uint8List aList);
+
+  @async
+  @ObjCSelector('callFlutterEchoList:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  List<Object?> callFlutterEchoList(List<Object?> aList);
+
+  @async
+  @ObjCSelector('callFlutterEchoMap:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  Map<String?, Object?> callFlutterEchoMap(Map<String?, Object?> aMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableBool:')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
+  bool? callFlutterEchoNullableBool(bool? aBool);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableInt:')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
+  int? callFlutterEchoNullableInt(int? anInt);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableDouble:')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
+  double? callFlutterEchoNullableDouble(double? aDouble);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableString:')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
+  String? callFlutterEchoNullableString(String? aString);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableUint8List:')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
+  Uint8List? callFlutterEchoNullableUint8List(Uint8List? aList);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableList:')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
+  List<Object?>? callFlutterEchoNullableList(List<Object?>? aList);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableMap:')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
+  Map<String?, Object?>? callFlutterEchoNullableMap(
+      Map<String?, Object?>? aMap);
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -207,15 +303,95 @@ abstract class FlutterIntegrationCoreApi {
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllTypes:')
+  @SwiftFunction('echo(_:)')
   AllTypes echoAllTypes(AllTypes everything);
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypes:')
+  @SwiftFunction('echoNullable(_:)')
   AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
+
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
+  @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
+  AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  // ========== Non-nullable argument/return type tests ==========
+
+  /// Returns the passed boolean, to test serialization and deserialization.
+  @ObjCSelector('echoBool:')
+  @SwiftFunction('echo(_:)')
+  bool echoBool(bool aBool);
+
+  /// Returns the passed int, to test serialization and deserialization.
+  @ObjCSelector('echoInt:')
+  @SwiftFunction('echo(_:)')
+  int echoInt(int anInt);
+
+  /// Returns the passed double, to test serialization and deserialization.
+  @ObjCSelector('echoDouble:')
+  @SwiftFunction('echo(_:)')
+  double echoDouble(double aDouble);
 
   /// Returns the passed string, to test serialization and deserialization.
   @ObjCSelector('echoString:')
+  @SwiftFunction('echo(_:)')
   String echoString(String aString);
+
+  /// Returns the passed byte list, to test serialization and deserialization.
+  @ObjCSelector('echoUint8List:')
+  @SwiftFunction('echo(_:)')
+  Uint8List echoUint8List(Uint8List aList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoList:')
+  @SwiftFunction('echo(_:)')
+  List<Object?> echoList(List<Object?> aList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoMap:')
+  @SwiftFunction('echo(_:)')
+  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+
+  // ========== Nullable argument/return type tests ==========
+
+  /// Returns the passed boolean, to test serialization and deserialization.
+  @ObjCSelector('echoNullableBool:')
+  @SwiftFunction('echoNullable(_:)')
+  bool? echoNullableBool(bool? aBool);
+
+  /// Returns the passed int, to test serialization and deserialization.
+  @ObjCSelector('echoNullableInt:')
+  @SwiftFunction('echoNullable(_:)')
+  int? echoNullableInt(int? anInt);
+
+  /// Returns the passed double, to test serialization and deserialization.
+  @ObjCSelector('echoNullableDouble:')
+  @SwiftFunction('echoNullable(_:)')
+  double? echoNullableDouble(double? aDouble);
+
+  /// Returns the passed string, to test serialization and deserialization.
+  @ObjCSelector('echoNullableString:')
+  @SwiftFunction('echoNullable(_:)')
+  String? echoNullableString(String? aString);
+
+  /// Returns the passed byte list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableUint8List:')
+  @SwiftFunction('echoNullable(_:)')
+  Uint8List? echoNullableUint8List(Uint8List? aList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableList:')
+  @SwiftFunction('echoNullable(_:)')
+  List<Object?>? echoNullableList(List<Object?>? aList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableMap:')
+  @SwiftFunction('echoNullable(_:)')
+  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
 }
 
 /// An API that can be implemented for minimal, compile-only tests.
