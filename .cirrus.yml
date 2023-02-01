@@ -261,9 +261,7 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       build_script:
-        # extension_google_sign_in_as_googleapis_auth is currently not building, see
-        # https://github.com/flutter/flutter/issues/89301
-        - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
+        - ./script/tool_runner.sh build-examples --apk
       lint_script:
         - ./script/tool_runner.sh lint-android # must come after build-examples
       native_unit_test_script:
