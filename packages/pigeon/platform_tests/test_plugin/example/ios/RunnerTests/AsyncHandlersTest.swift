@@ -8,13 +8,11 @@ class MockApi2Host: Api2Host {
   var output: Int32?
 
   func calculate(value: Value, completion: @escaping (Result<Value, Error>) -> Void) {
-      let result: Result<Value, Error>
-      result = .success(Value(number: output))
-      completion(result)
+      completion(.success(Value(number: output)))
   }
 
   func voidVoid(completion: @escaping (Result<Void, Error>) -> Void) {
-    completion(.success(Void()))
+    completion(.success(()))
   }
 }
 
