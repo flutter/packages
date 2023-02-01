@@ -524,18 +524,18 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                         : _nullsafeKotlinTypeForDartType(method.returnType);
                     indent.addScoped('{ result: Result<$resultType> ->', '}',
                         () {
-                      if (method.returnType.isVoid) {
-                        indent.writeln('reply.reply(wrapResult(null))');
-                      } else {
-                        indent.writeln('val error = result.exceptionOrNull()');
-                        indent.writeScoped('if (error != null) {', '}', () {
-                          indent.writeln('reply.reply(wrapError(error))');
-                        }, addTrailingNewline: false);
-                        indent.addScoped(' else {', '}', () {
+                      indent.writeln('val error = result.exceptionOrNull()');
+                      indent.writeScoped('if (error != null) {', '}', () {
+                        indent.writeln('reply.reply(wrapError(error))');
+                      }, addTrailingNewline: false);
+                      indent.addScoped(' else {', '}', () {
+                        if (method.returnType.isVoid) {
+                          indent.writeln('reply.reply(wrapResult(null))');
+                        } else {
                           indent.writeln('val data = result.getOrNull()');
                           indent.writeln('reply.reply(wrapResult(data))');
-                        });
-                      }
+                        }
+                      });
                     });
                   } else {
                     indent.write('try ');

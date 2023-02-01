@@ -647,7 +647,12 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
             api.noopAsync() { result: Result<Unit> ->
-              reply.reply(wrapResult(null))
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
             }
           }
         } else {
@@ -700,7 +705,12 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
             api.throwAsyncErrorFromVoid() { result: Result<Unit> ->
-              reply.reply(wrapResult(null))
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
             }
           }
         } else {
@@ -713,7 +723,12 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
             api.callFlutterNoop() { result: Result<Unit> ->
-              reply.reply(wrapResult(null))
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
             }
           }
         } else {
