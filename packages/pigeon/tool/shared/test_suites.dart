@@ -292,7 +292,11 @@ Future<int> _runMacOSSwiftUnitTests() async {
 
   return runXcodeBuild(
     '$examplePath/macos',
-    extraArguments: <String>['test'],
+    extraArguments: <String>[
+      '-configuration',
+      'Debug',
+      'test',
+    ],
   );
 }
 
