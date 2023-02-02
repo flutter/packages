@@ -25,7 +25,7 @@
 - Several static members on `SvgPicture` and the `svg` utility class have gone
   away.
 - The `color` and `colorBlendMode` properties have been removed. Instead, use
-  the `colorFilter` property instead.
+  the `colorFilter` property.
 
 ## 1.1.6
 

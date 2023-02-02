@@ -16,7 +16,7 @@ dev_dependencies:
     sdk: flutter
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=2.19.0-0 <3.0.0'
   flutter: ">=3.7.0"
 
 # dependency_overrides:
