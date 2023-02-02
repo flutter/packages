@@ -1,3 +1,7 @@
+## 7.2.1
+
+* [kotlin] Fixes Flutter api int errors with updated casting.
+
 ## 7.2.0
 
 * [swift] Changes async method completion types. 
