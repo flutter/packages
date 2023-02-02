@@ -1,4 +1,4 @@
-## 7.2.0
+## 7.2.1
 
 * [kotlin] Fixes Flutter api int errors with updated casting.
 
