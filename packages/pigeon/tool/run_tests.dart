@@ -58,7 +58,7 @@ Future<void> main(List<String> args) async {
     // should be enabled if any iOS-only tests are added (e.g., for a feature
     // not supported by macOS).
     // iOSSwiftIntegrationTests,
-    //macOSSwiftUnitTests,
+    macOSSwiftUnitTests,
     //macOSSwiftIntegrationTests,
   ];
   // Run Windows tests on Windows, since that's the only place they can run.
