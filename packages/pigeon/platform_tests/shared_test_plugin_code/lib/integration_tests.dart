@@ -488,9 +488,27 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String echoObject = await api.echoAsyncString(sentObject);
       expect(echoObject, sentObject);
     });
+
+    testWidgets('async errors are returned from non void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.throwAsyncError();
+      }, throwsA(isA<PlatformException>()));
+    });
+
+    testWidgets('async errors are returned from void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.throwAsyncErrorFromVoid();
+      }, throwsA(isA<PlatformException>()));
+    });
   });
 
-  // These tests rely on the ansync Dart->host calls to work correctly, since
+  // These tests rely on the async Dart->host calls to work correctly, since
   // the host->Dart call is wrapped in a driving Dart->host call, so any test
   // added to this group should have coverage of the relevant arguments and
   // return value in the "Host async API tests" group.

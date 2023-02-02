@@ -1,3 +1,13 @@
+## 7.2.0
+
+* [swift] Changes async method completion types. 
+  May require code updates to existing code.
+* [swift] Adds error handling to async methods.
+* [kotlin] Changes async method completion types. 
+  May require code updates to existing code.
+* [kotlin] Adds error handling to async methods.
+* Adds async error handling integration tests for all platforms.
+
 ## 7.1.5
 
 * Updates code to fix strict-cast violations.

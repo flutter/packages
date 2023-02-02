@@ -58,8 +58,8 @@ internal class AsyncHandlersTest: TestCase() {
         every { binaryMessenger.setMessageHandler("dev.flutter.pigeon.Api2Host.voidVoid", any()) } returns Unit
         every { binaryMessenger.setMessageHandler(channelName, capture(handlerSlot)) } returns Unit
         every { api.calculate(any(), any()) } answers {
-            val callback = arg<(Value) -> Unit>(1)
-            callback(output)
+            val callback = arg<(Result<Value>) -> Unit>(1)
+            callback(Result.success(output))
         }
 
         Api2Host.setUp(binaryMessenger, api)
@@ -68,6 +68,7 @@ internal class AsyncHandlersTest: TestCase() {
         val message = codec.encodeMessage(listOf(input))
         message?.rewind()
         handlerSlot.captured.onMessage(message) {
+            assertNotNull(it)
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
             val wrapped = codec.decodeMessage(it) as MutableList<Any>?

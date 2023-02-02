@@ -132,6 +132,14 @@
   completion(aString, nil);
 }
 
+- (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
+  completion(nil, [FlutterError errorWithCode:@"An error" message:nil details:nil]);
+}
+
+- (void)throwAsyncErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  completion([FlutterError errorWithCode:@"An error" message:nil details:nil]);
+}
+
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   [self.flutterAPI noopWithCompletion:^(NSError *error) {
     completion(error);

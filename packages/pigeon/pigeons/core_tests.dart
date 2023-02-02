@@ -200,6 +200,14 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsync(_:)')
   String echoAsyncString(String aString);
 
+  /// Responds with an error from an async function returning a value.
+  @async
+  Object? throwAsyncError();
+
+  /// Responds with an error from an async void function.
+  @async
+  void throwAsyncErrorFromVoid();
+
   // ========== Flutter API test wrappers ==========
 
   @async
