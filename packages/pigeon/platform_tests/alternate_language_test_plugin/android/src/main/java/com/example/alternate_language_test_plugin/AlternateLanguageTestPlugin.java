@@ -142,11 +142,6 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void echoAsyncString(@NonNull String aString, Result<String> result) {
-    result.success(aString);
-  }
-
-  @Override
   public void throwAsyncError(Result<Object> result) {
     result.error(new RuntimeException("An error"));
   }
@@ -165,6 +160,41 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public void echoAsyncAllNullableTypes(
       @Nullable AllNullableTypes everything, Result<AllNullableTypes> result) {
     result.success(everything);
+  }
+
+  @Override
+  public void echoAsyncInt(@NonNull Long anInt, Result<Long> result) {
+
+    result.success(anInt);
+  }
+
+  @Override
+  public void echoAsyncDouble(@NonNull Double aDouble, Result<Double> result) {
+
+    result.success(aDouble);
+  }
+
+  @Override
+  public void echoAsyncBool(@NonNull Boolean aBool, Result<Boolean> result) {
+
+    result.success(aBool);
+  }
+
+  @Override
+  public void echoAsyncString(@NonNull String aString, Result<String> result) {
+    result.success(aString);
+  }
+
+  @Override
+  public void echoAsyncUint8List(@NonNull byte[] aUint8List, Result<byte[]> result) {
+
+    result.success(aUint8List);
+  }
+
+  @Override
+  public void echoAsyncObject(@NonNull Object anObject, Result<Object> result) {
+
+    result.success(anObject);
   }
 
   @Override

@@ -246,8 +246,6 @@ protocol HostIntegrationCoreApi {
   func noop() throws
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everything: AllTypes) throws -> AllTypes
-  /// Returns the passed object, to test serialization and deserialization.
-  func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns an error, to test error handling.
   func throwError() throws
   /// Returns passed in int.
@@ -262,6 +260,8 @@ protocol HostIntegrationCoreApi {
   func echo(_ aUint8List: FlutterStandardTypedData) throws -> FlutterStandardTypedData
   /// Returns the passed in generic Object.
   func echo(_ anObject: Any) throws -> Any
+  /// Returns the passed object, to test serialization and deserialization.
+  func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   func extractNestedNullableString(from wrapper: AllNullableTypesWrapper) throws -> String?
@@ -285,8 +285,18 @@ protocol HostIntegrationCoreApi {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   func noopAsync(completion: @escaping (Result<Void, Error>) -> Void)
+  /// Returns passed in int.
+  func echoAsync(_ anInt: Int32, completion: @escaping (Result<Int32, Error>) -> Void)
+  /// Returns passed in double.
+  func echoAsync(_ aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void)
+  /// Returns the passed in boolean.
+  func echoAsync(_ aBool: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
   /// Returns the passed string asynchronously.
   func echoAsync(_ aString: String, completion: @escaping (Result<String, Error>) -> Void)
+  /// Returns the passed in Uint8List.
+  func echoAsync(_ aUint8List: FlutterStandardTypedData, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
+  /// Returns the passed in generic Object.
+  func echoAsync(_ anObject: Any, completion: @escaping (Result<Any, Error>) -> Void)
   /// Responds with an error from an async function returning a value.
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void)
   /// Responds with an error from an async void function.
@@ -350,22 +360,6 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoAllTypesChannel.setMessageHandler(nil)
-    }
-    /// Returns the passed object, to test serialization and deserialization.
-    let echoAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      echoAllNullableTypesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let everythingArg = args[0] as? AllNullableTypes
-        do {
-          let result = try api.echo(everythingArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      echoAllNullableTypesChannel.setMessageHandler(nil)
     }
     /// Returns an error, to test error handling.
     let throwErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.throwError", binaryMessenger: binaryMessenger, codec: codec)
@@ -476,6 +470,22 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoObjectChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed object, to test serialization and deserialization.
+    let echoAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAllNullableTypesChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let everythingArg = args[0] as? AllNullableTypes
+        do {
+          let result = try api.echo(everythingArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoAllNullableTypesChannel.setMessageHandler(nil)
     }
     /// Returns the inner `aString` value from the wrapped object, to test
     /// sending of nested objects.
@@ -642,6 +652,60 @@ class HostIntegrationCoreApiSetup {
     } else {
       noopAsyncChannel.setMessageHandler(nil)
     }
+    /// Returns passed in int.
+    let echoAsyncIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncInt", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncIntChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anIntArg = args[0] as! Int32
+        api.echoAsync(anIntArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncIntChannel.setMessageHandler(nil)
+    }
+    /// Returns passed in double.
+    let echoAsyncDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncDouble", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncDoubleChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aDoubleArg = args[0] as! Double
+        api.echoAsync(aDoubleArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncDoubleChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed in boolean.
+    let echoAsyncBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncBool", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncBoolChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aBoolArg = args[0] as! Bool
+        api.echoAsync(aBoolArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncBoolChannel.setMessageHandler(nil)
+    }
     /// Returns the passed string asynchronously.
     let echoAsyncStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncString", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -659,6 +723,42 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoAsyncStringChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed in Uint8List.
+    let echoAsyncUint8ListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncUint8List", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncUint8ListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aUint8ListArg = args[0] as! FlutterStandardTypedData
+        api.echoAsync(aUint8ListArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncUint8ListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed in generic Object.
+    let echoAsyncObjectChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncObject", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncObjectChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anObjectArg = args[0]!
+        api.echoAsync(anObjectArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncObjectChannel.setMessageHandler(nil)
     }
     /// Responds with an error from an async function returning a value.
     let throwAsyncErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError", binaryMessenger: binaryMessenger, codec: codec)

@@ -1,6 +1,6 @@
 ## 7.2.2
 
-* Adds async map and list echo tests.
+* Adds many async integration tests.
 
 ## 7.2.1
 

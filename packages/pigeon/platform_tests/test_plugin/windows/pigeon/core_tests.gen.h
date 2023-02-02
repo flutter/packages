@@ -268,9 +268,6 @@ class HostIntegrationCoreApi {
   virtual std::optional<FlutterError> Noop() = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<AllTypes> EchoAllTypes(const AllTypes& everything) = 0;
-  // Returns the passed object, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
-      const AllNullableTypes* everything) = 0;
   // Returns an error, to test error handling.
   virtual std::optional<FlutterError> ThrowError() = 0;
   // Returns passed in int.
@@ -287,6 +284,9 @@ class HostIntegrationCoreApi {
   // Returns the passed in generic Object.
   virtual ErrorOr<flutter::EncodableValue> EchoObject(
       const flutter::EncodableValue& an_object) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
+      const AllNullableTypes* everything) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
   virtual ErrorOr<std::optional<std::string>> ExtractNestedNullableString(
@@ -321,10 +321,27 @@ class HostIntegrationCoreApi {
   // test basic asynchronous calling.
   virtual void NoopAsync(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  // Returns passed in int.
+  virtual void EchoAsyncInt(
+      int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) = 0;
+  // Returns passed in double.
+  virtual void EchoAsyncDouble(
+      double a_double, std::function<void(ErrorOr<double> reply)> result) = 0;
+  // Returns the passed in boolean.
+  virtual void EchoAsyncBool(
+      bool a_bool, std::function<void(ErrorOr<bool> reply)> result) = 0;
   // Returns the passed string asynchronously.
   virtual void EchoAsyncString(
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  // Returns the passed in Uint8List.
+  virtual void EchoAsyncUint8List(
+      const std::vector<uint8_t>& a_uint8_list,
+      std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
+  // Returns the passed in generic Object.
+  virtual void EchoAsyncObject(
+      const flutter::EncodableValue& an_object,
+      std::function<void(ErrorOr<flutter::EncodableValue> reply)> result) = 0;
   // Responds with an error from an async function returning a value.
   virtual void ThrowAsyncError(
       std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>

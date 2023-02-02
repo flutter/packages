@@ -127,11 +127,6 @@
   completion(nil);
 }
 
-- (void)echoAsyncString:(NSString *)aString
-             completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
-  completion(aString, nil);
-}
-
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
   completion(nil, [FlutterError errorWithCode:@"An error" message:nil details:nil]);
 }
@@ -149,6 +144,37 @@
                        completion:(void (^)(AllNullableTypes *_Nullable,
                                             FlutterError *_Nullable))completion {
   completion(everything, nil);
+}
+
+- (void)echoAsyncInt:(NSNumber *)anInt
+          completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  completion(anInt, nil);
+}
+
+- (void)echoAsyncDouble:(NSNumber *)aDouble
+             completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  completion(aDouble, nil);
+}
+
+- (void)echoAsyncBool:(NSNumber *)aBool
+           completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  completion(aBool, nil);
+}
+
+- (void)echoAsyncString:(NSString *)aString
+             completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  completion(aString, nil);
+}
+
+- (void)echoAsyncUint8List:(FlutterStandardTypedData *)aUint8List
+                completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                     FlutterError *_Nullable))completion {
+  completion(aUint8List, nil);
+}
+
+- (void)echoAsyncObject:(id)anObject
+             completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
+  completion(anObject, nil);
 }
 
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {

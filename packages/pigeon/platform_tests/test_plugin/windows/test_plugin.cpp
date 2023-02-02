@@ -174,12 +174,6 @@ void TestPlugin::NoopAsync(
   result(std::nullopt);
 }
 
-void TestPlugin::EchoAsyncString(
-    const std::string& a_string,
-    std::function<void(ErrorOr<std::string> reply)> result) {
-  result(a_string);
-}
-
 void TestPlugin::ThrowAsyncError(
     std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
         result) {
@@ -202,6 +196,37 @@ void TestPlugin::EchoAsyncAllNullableTypes(
     std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
         result) {
   result(everything);
+}
+void TestPlugin::EchoAsyncInt(
+    int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) {
+  result(an_int);
+}
+
+void TestPlugin::EchoAsyncDouble(
+    double a_double, std::function<void(ErrorOr<double> reply)> result) {
+  result(a_double);
+}
+
+void TestPlugin::EchoAsyncBool(
+    bool a_bool, std::function<void(ErrorOr<bool> reply)> result) {
+  result(a_bool);
+}
+
+void TestPlugin::EchoAsyncString(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  result(a_string);
+}
+void TestPlugin::EchoAsyncUint8List(
+    const std::vector<uint8_t>& a_uint8_list,
+    std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) {
+  result(a_uint8_list);
+}
+
+void TestPlugin::EchoAsyncObject(
+    const flutter::EncodableValue& an_object,
+    std::function<void(ErrorOr<flutter::EncodableValue> reply)> result) {
+  result(an_object);
 }
 
 void TestPlugin::CallFlutterNoop(

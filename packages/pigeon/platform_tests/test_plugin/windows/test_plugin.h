@@ -74,10 +74,6 @@ class TestPlugin : public flutter::Plugin,
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;
-  void EchoAsyncString(
-      const std::string& a_string,
-      std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
-          result) override;
   void ThrowAsyncError(
       std::function<void(
           core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
@@ -96,6 +92,32 @@ class TestPlugin : public flutter::Plugin,
       std::function<
           void(core_tests_pigeontest::ErrorOr<std::optional<AllNullableTypes>>
                    reply)>
+          result) override;
+  void EchoAsyncInt(
+      int64_t an_int,
+      std::function<void(core_tests_pigeontest::ErrorOr<int64_t> reply)> result)
+      override;
+  void EchoAsyncDouble(
+      double a_double,
+      std::function<void(core_tests_pigeontest::ErrorOr<double> reply)> result)
+      override;
+  void EchoAsyncBool(
+      bool a_bool,
+      std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result)
+      override;
+  void EchoAsyncString(
+      const std::string& a_string,
+      std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+          result) override;
+  void EchoAsyncUint8List(
+      const std::vector<uint8_t>& a_uint8_list,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::vector<uint8_t>> reply)>
+          result) override;
+  void EchoAsyncObject(
+      const flutter::EncodableValue& an_object,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<flutter::EncodableValue> reply)>
           result) override;
   void CallFlutterNoop(
       std::function<

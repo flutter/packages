@@ -479,16 +479,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.noopAsync(), completes);
     });
 
-    testWidgets('strings async serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-
-      const String sentObject = 'Hello, asyncronously!';
-
-      final String echoObject = await api.echoAsyncString(sentObject);
-      expect(echoObject, sentObject);
-    });
-
     testWidgets('async errors are returned from non void methods correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -651,6 +641,78 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         // TODO(stuartmorgan): Fix and re-enable.
         // See https://github.com/flutter/flutter/issues/118733
         skip: targetGenerator == TargetGenerator.objc);
+
+    testWidgets('Ints async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = -13;
+      final int receivedInt = await api.echoAsyncInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Doubles async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentDouble = 2.0694;
+      final double receivedDouble = await api.echoAsyncDouble(sentDouble);
+      expect(receivedDouble, sentDouble);
+    });
+
+    testWidgets('booleans async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      for (final bool sentBool in <bool>[true, false]) {
+        final bool receivedBool = await api.echoAsyncBool(sentBool);
+        expect(receivedBool, sentBool);
+      }
+    });
+
+    testWidgets('strings async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const String sentObject = 'Hello, asyncronously!';
+
+      final String echoObject = await api.echoAsyncString(sentObject);
+      expect(echoObject, sentObject);
+    });
+
+    testWidgets('Uint8List async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0
+      ];
+      final Uint8List sentUint8List = Uint8List.fromList(data);
+      final Uint8List receivedUint8List =
+          await api.echoAsyncUint8List(sentUint8List);
+      expect(receivedUint8List, sentUint8List);
+    });
+
+    testWidgets('generic Objects async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const Object sentString = "I'm a computer";
+      final Object receivedString = await api.echoAsyncObject(sentString);
+      expect(receivedString, sentString);
+
+      // Echo a second type as well to ensure the handling is generic.
+      const Object sentInt = 42;
+      final Object receivedInt = await api.echoAsyncObject(sentInt);
+      expect(receivedInt, sentInt);
+    });
   });
 
   // These tests rely on the async Dart->host calls to work correctly, since

@@ -222,8 +222,6 @@ interface HostIntegrationCoreApi {
   fun noop()
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllTypes(everything: AllTypes): AllTypes
-  /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes?
   /** Returns an error, to test error handling. */
   fun throwError()
   /** Returns passed in int. */
@@ -238,6 +236,8 @@ interface HostIntegrationCoreApi {
   fun echoUint8List(aUint8List: ByteArray): ByteArray
   /** Returns the passed in generic Object. */
   fun echoObject(anObject: Any): Any
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes?
   /**
    * Returns the inner `aString` value from the wrapped object, to test
    * sending of nested objects.
@@ -267,8 +267,18 @@ interface HostIntegrationCoreApi {
    * test basic asynchronous calling.
    */
   fun noopAsync(callback: (Result<Unit>) -> Unit)
+  /** Returns passed in int. */
+  fun echoAsyncInt(anInt: Long, callback: (Result<Long>) -> Unit)
+  /** Returns passed in double. */
+  fun echoAsyncDouble(aDouble: Double, callback: (Result<Double>) -> Unit)
+  /** Returns the passed in boolean. */
+  fun echoAsyncBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit)
   /** Returns the passed string asynchronously. */
   fun echoAsyncString(aString: String, callback: (Result<String>) -> Unit)
+  /** Returns the passed in Uint8List. */
+  fun echoAsyncUint8List(aUint8List: ByteArray, callback: (Result<ByteArray>) -> Unit)
+  /** Returns the passed in generic Object. */
+  fun echoAsyncObject(anObject: Any, callback: (Result<Any>) -> Unit)
   /** Responds with an error from an async function returning a value. */
   fun throwAsyncError(callback: (Result<Any?>) -> Unit)
   /** Responds with an error from an async void function. */
@@ -329,24 +339,6 @@ interface HostIntegrationCoreApi {
             val everythingArg = args[0] as AllTypes
             try {
               wrapped = listOf<Any?>(api.echoAllTypes(everythingArg))
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            var wrapped = listOf<Any?>()
-            val args = message as List<Any?>
-            val everythingArg = args[0] as? AllNullableTypes
-            try {
-              wrapped = listOf<Any?>(api.echoAllNullableTypes(everythingArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
             }
@@ -472,6 +464,24 @@ interface HostIntegrationCoreApi {
             val anObjectArg = args[0] as Any
             try {
               wrapped = listOf<Any?>(api.echoObject(anObjectArg))
+            } catch (exception: Error) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val everythingArg = args[0] as? AllNullableTypes
+            try {
+              wrapped = listOf<Any?>(api.echoAllNullableTypes(everythingArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
             }
@@ -664,6 +674,69 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncInt", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val anIntArg = args[0].let { if (it is Int) it.toLong() else it as Long }
+            api.echoAsyncInt(anIntArg) { result: Result<Long> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncDouble", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aDoubleArg = args[0] as Double
+            api.echoAsyncDouble(aDoubleArg) { result: Result<Double> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncBool", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aBoolArg = args[0] as Boolean
+            api.echoAsyncBool(aBoolArg) { result: Result<Boolean> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncString", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -671,6 +744,48 @@ interface HostIntegrationCoreApi {
             val args = message as List<Any?>
             val aStringArg = args[0] as String
             api.echoAsyncString(aStringArg) { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncUint8List", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aUint8ListArg = args[0] as ByteArray
+            api.echoAsyncUint8List(aUint8ListArg) { result: Result<ByteArray> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncObject", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val anObjectArg = args[0] as Any
+            api.echoAsyncObject(anObjectArg) { result: Result<Any> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

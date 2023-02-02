@@ -764,9 +764,6 @@ public class CoreTests {
     /** Returns the passed object, to test serialization and deserialization. */
     @NonNull
     AllTypes echoAllTypes(@NonNull AllTypes everything);
-    /** Returns the passed object, to test serialization and deserialization. */
-    @Nullable
-    AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything);
     /** Returns an error, to test error handling. */
     void throwError();
     /** Returns passed in int. */
@@ -787,6 +784,9 @@ public class CoreTests {
     /** Returns the passed in generic Object. */
     @NonNull
     Object echoObject(@NonNull Object anObject);
+    /** Returns the passed object, to test serialization and deserialization. */
+    @Nullable
+    AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything);
     /**
      * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
      */
@@ -826,8 +826,18 @@ public class CoreTests {
      * asynchronous calling.
      */
     void noopAsync(Result<Void> result);
+    /** Returns passed in int. */
+    void echoAsyncInt(@NonNull Long anInt, Result<Long> result);
+    /** Returns passed in double. */
+    void echoAsyncDouble(@NonNull Double aDouble, Result<Double> result);
+    /** Returns the passed in boolean. */
+    void echoAsyncBool(@NonNull Boolean aBool, Result<Boolean> result);
     /** Returns the passed string asynchronously. */
     void echoAsyncString(@NonNull String aString, Result<String> result);
+    /** Returns the passed in Uint8List. */
+    void echoAsyncUint8List(@NonNull byte[] aUint8List, Result<byte[]> result);
+    /** Returns the passed in generic Object. */
+    void echoAsyncObject(@NonNull Object anObject, Result<Object> result);
     /** Responds with an error from an async function returning a value. */
     void throwAsyncError(Result<Object> result);
     /** Responds with an error from an async void function. */
@@ -925,32 +935,6 @@ public class CoreTests {
                     throw new NullPointerException("everythingArg unexpectedly null.");
                   }
                   AllTypes output = api.echoAllTypes(everythingArg);
-                  wrapped.add(0, output);
-                } catch (Error | RuntimeException exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes",
-                getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                try {
-                  ArrayList<Object> args = (ArrayList<Object>) message;
-                  assert args != null;
-                  AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
-                  AllNullableTypes output = api.echoAllNullableTypes(everythingArg);
                   wrapped.add(0, output);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -1144,6 +1128,32 @@ public class CoreTests {
                     throw new NullPointerException("anObjectArg unexpectedly null.");
                   }
                   Object output = api.echoObject(anObjectArg);
+                  wrapped.add(0, output);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
+                  AllNullableTypes output = api.echoAllNullableTypes(everythingArg);
                   wrapped.add(0, output);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -1437,6 +1447,127 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncInt",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Number anIntArg = (Number) args.get(0);
+                  if (anIntArg == null) {
+                    throw new NullPointerException("anIntArg unexpectedly null.");
+                  }
+                  Result<Long> resultCallback =
+                      new Result<Long>() {
+                        public void success(Long result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echoAsyncInt(
+                      (anIntArg == null) ? null : anIntArg.longValue(), resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncDouble",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Double aDoubleArg = (Double) args.get(0);
+                  if (aDoubleArg == null) {
+                    throw new NullPointerException("aDoubleArg unexpectedly null.");
+                  }
+                  Result<Double> resultCallback =
+                      new Result<Double>() {
+                        public void success(Double result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echoAsyncDouble(aDoubleArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncBool",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Boolean aBoolArg = (Boolean) args.get(0);
+                  if (aBoolArg == null) {
+                    throw new NullPointerException("aBoolArg unexpectedly null.");
+                  }
+                  Result<Boolean> resultCallback =
+                      new Result<Boolean>() {
+                        public void success(Boolean result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echoAsyncBool(aBoolArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncString",
                 getCodec());
         if (api != null) {
@@ -1464,6 +1595,86 @@ public class CoreTests {
                       };
 
                   api.echoAsyncString(aStringArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncUint8List",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  byte[] aUint8ListArg = (byte[]) args.get(0);
+                  if (aUint8ListArg == null) {
+                    throw new NullPointerException("aUint8ListArg unexpectedly null.");
+                  }
+                  Result<byte[]> resultCallback =
+                      new Result<byte[]>() {
+                        public void success(byte[] result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echoAsyncUint8List(aUint8ListArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncObject",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Object anObjectArg = args.get(0);
+                  if (anObjectArg == null) {
+                    throw new NullPointerException("anObjectArg unexpectedly null.");
+                  }
+                  Result<Object> resultCallback =
+                      new Result<Object>() {
+                        public void success(Object result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echoAsyncObject(anObjectArg, resultCallback);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   reply.reply(wrappedError);

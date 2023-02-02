@@ -99,11 +99,6 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AllTypes echoAllTypes(AllTypes everything);
 
-  /// Returns the passed object, to test serialization and deserialization.
-  @ObjCSelector('echoAllNullableTypes:')
-  @SwiftFunction('echo(_:)')
-  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
-
   /// Returns an error, to test error handling.
   void throwError();
 
@@ -138,6 +133,11 @@ abstract class HostIntegrationCoreApi {
   Object echoObject(Object anObject);
 
   // ========== Syncronous nullable method tests ==========
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllNullableTypes:')
+  @SwiftFunction('echo(_:)')
+  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
@@ -194,11 +194,41 @@ abstract class HostIntegrationCoreApi {
   @async
   void noopAsync();
 
+  /// Returns passed in int.
+  @async
+  @ObjCSelector('echoAsyncInt:')
+  @SwiftFunction('echoAsync(_:)')
+  int echoAsyncInt(int anInt);
+
+  /// Returns passed in double.
+  @async
+  @ObjCSelector('echoAsyncDouble:')
+  @SwiftFunction('echoAsync(_:)')
+  double echoAsyncDouble(double aDouble);
+
+  /// Returns the passed in boolean.
+  @async
+  @ObjCSelector('echoAsyncBool:')
+  @SwiftFunction('echoAsync(_:)')
+  bool echoAsyncBool(bool aBool);
+
   /// Returns the passed string asynchronously.
   @async
   @ObjCSelector('echoAsyncString:')
   @SwiftFunction('echoAsync(_:)')
   String echoAsyncString(String aString);
+
+  /// Returns the passed in Uint8List.
+  @async
+  @ObjCSelector('echoAsyncUint8List:')
+  @SwiftFunction('echoAsync(_:)')
+  Uint8List echoAsyncUint8List(Uint8List aUint8List);
+
+  /// Returns the passed in generic Object.
+  @async
+  @ObjCSelector('echoAsyncObject:')
+  @SwiftFunction('echoAsync(_:)')
+  Object echoAsyncObject(Object anObject);
 
   /// Responds with an error from an async function returning a value.
   @async

@@ -107,10 +107,6 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(Unit))
   }
 
-  override fun echoAsyncString(aString: String, callback: (Result<String>) -> Unit) {
-    callback(Result.success(aString))
-  }
-
   override fun throwAsyncError(callback: (Result<Any?>) -> Unit) {
     try {
       throw Exception("except")
@@ -133,6 +129,30 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoAsyncAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit) {
     callback(Result.success(everything))
+  }
+
+  override fun echoAsyncInt(anInt: Long, callback: (Result<Long>) -> Unit) {
+    callback(Result.success(anInt))
+  }
+
+  override fun echoAsyncDouble(aDouble: Double, callback: (Result<Double>) -> Unit) {
+    callback(Result.success(aDouble))
+  }
+
+  override fun echoAsyncBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit) {
+    callback(Result.success(aBool))
+  }
+
+  override fun echoAsyncString(aString: String, callback: (Result<String>) -> Unit) {
+    callback(Result.success(aString))
+  }
+
+  override fun echoAsyncUint8List(aUint8List: ByteArray, callback: (Result<ByteArray>) -> Unit) {
+    callback(Result.success(aUint8List))
+  }
+
+  override fun echoAsyncObject(anObject: Any, callback: (Result<Any>) -> Unit) {
+    callback(Result.success(anObject))
   }
 
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {

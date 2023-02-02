@@ -105,9 +105,6 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable AllTypes *)echoAllTypes:(AllTypes *)everything
                               error:(FlutterError *_Nullable *_Nonnull)error;
-/// Returns the passed object, to test serialization and deserialization.
-- (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
-                                              error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns an error, to test error handling.
 - (void)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in int.
@@ -137,6 +134,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 ///
 /// @return `nil` only when `error != nil`.
 - (nullable id)echoObject:(id)anObject error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed object, to test serialization and deserialization.
+- (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
+                                              error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the inner `aString` value from the wrapped object, to test
 /// sending of nested objects.
 - (nullable NSString *)extractNestedNullableStringFrom:(AllNullableTypesWrapper *)wrapper
@@ -178,9 +178,25 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Returns passed in int.
+- (void)echoAsyncInt:(NSNumber *)anInt
+          completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns passed in double.
+- (void)echoAsyncDouble:(NSNumber *)aDouble
+             completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed in boolean.
+- (void)echoAsyncBool:(NSNumber *)aBool
+           completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed string asynchronously.
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed in Uint8List.
+- (void)echoAsyncUint8List:(FlutterStandardTypedData *)aUint8List
+                completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                     FlutterError *_Nullable))completion;
+/// Returns the passed in generic Object.
+- (void)echoAsyncObject:(id)anObject
+             completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async function returning a value.
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async void function.

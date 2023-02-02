@@ -105,10 +105,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(Void()))
   }
 
-  func echoAsync(_ aString: String, completion: @escaping (Result<String, Error>) -> Void) {
-    completion(.success(aString))
-  }
-
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void) {
     completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
   }
@@ -123,6 +119,30 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echoAsync(_ everything: AllNullableTypes?, completion: @escaping (Result<AllNullableTypes?, Error>) -> Void) {
     completion(.success(everything))
+  }
+
+  func echoAsync(_ anInt: Int32, completion: @escaping (Result<Int32, Error>) -> Void) {
+    completion(.success(anInt))
+  }
+
+  func echoAsync(_ aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void) {
+    completion(.success(aDouble))
+  }
+
+  func echoAsync(_ aBool: Bool, completion: @escaping (Result<Bool, Error>) -> Void) {
+    completion(.success(aBool))
+  }
+
+  func echoAsync(_ aString: String, completion: @escaping (Result<String, Error>) -> Void) {
+    completion(.success(aString))
+  }
+
+  func echoAsync(_ aUint8List: FlutterStandardTypedData, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void) {
+    completion(.success(aUint8List))
+  }
+
+  func echoAsync(_ anObject: Any, completion: @escaping (Result<Any, Error>) -> Void) {
+    completion(.success(anObject))
   }
 
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void) {
