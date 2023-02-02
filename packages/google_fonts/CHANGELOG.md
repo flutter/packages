@@ -1,8 +1,12 @@
-## 4.0.1
+## Unreleased
+### Changed
+- Update pubspec `repository`
+
+## 4.0.1 - 2023-01-27
 ### Changed
 - Hide AssetManifest from flutter services imports
 
-## 4.0.0
+## 4.0.0 - 2023-01-27
 ### Added
 - `Aboreto`
 - `Abyssinica SIL`
