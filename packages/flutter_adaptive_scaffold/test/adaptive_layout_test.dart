@@ -14,6 +14,9 @@ void main() {
       (WidgetTester tester) async {
     MediaQuery slot(double width) {
       return MediaQuery(
+        // TODO(stuartmorgan): Replace with .fromView once this package requires
+        // Flutter 3.8+.
+        // ignore: deprecated_member_use
         data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
             .copyWith(size: Size(width, 800)),
         child: Directionality(
@@ -425,6 +428,9 @@ AnimatedWidget leftInOut(Widget child, Animation<double> animation) {
 
 MediaQuery slot(double width) {
   return MediaQuery(
+    // TODO(stuartmorgan): Replace with .fromView once this package requires
+    // Flutter 3.8+.
+    // ignore: deprecated_member_use
     data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
         .copyWith(size: Size(width, 800)),
     child: Directionality(
