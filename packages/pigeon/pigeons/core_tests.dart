@@ -208,6 +208,18 @@ abstract class HostIntegrationCoreApi {
   @async
   void throwAsyncErrorFromVoid();
 
+  /// Returns the passed object, to test async serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncAllTypes:')
+  @SwiftFunction('echoAsync(_:)')
+  AllTypes echoAsyncAllTypes(AllTypes everything);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncAllNullableTypes:')
+  @SwiftFunction('echoAsync(_:)')
+  AllNullableTypes? echoAsyncAllNullableTypes(AllNullableTypes? everything);
+
   // ========== Flutter API test wrappers ==========
 
   @async

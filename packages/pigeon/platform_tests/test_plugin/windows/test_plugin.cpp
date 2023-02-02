@@ -191,6 +191,19 @@ void TestPlugin::ThrowAsyncErrorFromVoid(
   result(FlutterError("code", "message", EncodableValue("details")));
 }
 
+void TestPlugin::EchoAsyncAllTypes(
+    const AllTypes& everything,
+    std::function<void(ErrorOr<AllTypes> reply)> result) {
+  result(everything);
+}
+
+void TestPlugin::EchoAsyncAllNullableTypes(
+    const AllNullableTypes* everything,
+    std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
+        result) {
+  result(everything);
+}
+
 void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
   flutter_api_->Noop([result]() { result(std::nullopt); },

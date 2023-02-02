@@ -479,7 +479,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.noopAsync(), completes);
     });
 
-    testWidgets('strings serialize and deserialize correctly',
+    testWidgets('strings async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
@@ -506,6 +506,151 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         await api.throwAsyncErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
     });
+
+    testWidgets('all datatypes async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllTypes echoObject = await api.echoAsyncAllTypes(genericAllTypes);
+
+      expect(echoObject.aBool, genericAllTypes.aBool);
+      expect(echoObject.anInt, genericAllTypes.anInt);
+      expect(echoObject.aDouble, genericAllTypes.aDouble);
+      expect(echoObject.aString, genericAllTypes.aString);
+      expect(echoObject.aByteArray, genericAllTypes.aByteArray);
+      expect(echoObject.a4ByteArray, genericAllTypes.a4ByteArray);
+      expect(echoObject.a8ByteArray, genericAllTypes.a8ByteArray);
+      expect(echoObject.aFloatArray, genericAllTypes.aFloatArray);
+      expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
+      expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
+      expect(echoObject.anEnum, genericAllTypes.anEnum);
+    });
+
+    testWidgets(
+        'all nullable async datatypes serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllNullableTypes? echoObject =
+          await api.echoAsyncAllNullableTypes(genericAllNullableTypes);
+      expect(echoObject?.aNullableBool, genericAllNullableTypes.aNullableBool);
+      expect(echoObject?.aNullableInt, genericAllNullableTypes.aNullableInt);
+      expect(
+          echoObject?.aNullableDouble, genericAllNullableTypes.aNullableDouble);
+      expect(
+          echoObject?.aNullableString, genericAllNullableTypes.aNullableString);
+      expect(echoObject?.aNullableByteArray,
+          genericAllNullableTypes.aNullableByteArray);
+      expect(echoObject?.aNullable4ByteArray,
+          genericAllNullableTypes.aNullable4ByteArray);
+      expect(echoObject?.aNullable8ByteArray,
+          genericAllNullableTypes.aNullable8ByteArray);
+      expect(echoObject?.aNullableFloatArray,
+          genericAllNullableTypes.aNullableFloatArray);
+      expect(
+          listEquals(
+              echoObject?.aNullableList, genericAllNullableTypes.aNullableList),
+          true);
+      expect(
+          mapEquals(
+              echoObject?.aNullableMap, genericAllNullableTypes.aNullableMap),
+          true);
+      expect(echoObject?.nullableNestedList?.length,
+          genericAllNullableTypes.nullableNestedList?.length);
+      // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
+      // https://github.com/flutter/flutter/issues/116117
+      //for (int i = 0; i < echoObject?.nullableNestedList!.length; i++) {
+      //  expect(listEquals(echoObject?.nullableNestedList![i], genericAllNullableTypes.nullableNestedList![i]),
+      //      true);
+      //}
+      expect(
+          mapEquals(echoObject?.nullableMapWithAnnotations,
+              genericAllNullableTypes.nullableMapWithAnnotations),
+          true);
+      expect(
+          mapEquals(echoObject?.nullableMapWithObject,
+              genericAllNullableTypes.nullableMapWithObject),
+          true);
+      expect(echoObject?.aNullableEnum, genericAllNullableTypes.aNullableEnum);
+    });
+
+    testWidgets('all null datatypes async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllNullableTypes allTypesNull = AllNullableTypes();
+
+      final AllNullableTypes? echoNullFilledObject =
+          await api.echoAsyncAllNullableTypes(allTypesNull);
+
+      expect(echoNullFilledObject?.aNullableBool, allTypesNull.aNullableBool);
+      expect(echoNullFilledObject?.aNullableBool, null);
+
+      expect(echoNullFilledObject?.aNullableInt, allTypesNull.aNullableInt);
+      expect(echoNullFilledObject?.aNullableInt, null);
+
+      expect(
+          echoNullFilledObject?.aNullableDouble, allTypesNull.aNullableDouble);
+      expect(echoNullFilledObject?.aNullableDouble, null);
+
+      expect(
+          echoNullFilledObject?.aNullableString, allTypesNull.aNullableString);
+      expect(echoNullFilledObject?.aNullableString, null);
+
+      expect(echoNullFilledObject?.aNullableByteArray,
+          allTypesNull.aNullableByteArray);
+      expect(echoNullFilledObject?.aNullableByteArray, null);
+
+      expect(echoNullFilledObject?.aNullable4ByteArray,
+          allTypesNull.aNullable4ByteArray);
+      expect(echoNullFilledObject?.aNullable4ByteArray, null);
+
+      expect(echoNullFilledObject?.aNullable8ByteArray,
+          allTypesNull.aNullable8ByteArray);
+      expect(echoNullFilledObject?.aNullable8ByteArray, null);
+
+      expect(echoNullFilledObject?.aNullableFloatArray,
+          allTypesNull.aNullableFloatArray);
+      expect(echoNullFilledObject?.aNullableFloatArray, null);
+
+      expect(
+          listEquals(
+              echoNullFilledObject?.aNullableList, allTypesNull.aNullableList),
+          true);
+      expect(echoNullFilledObject?.aNullableList, null);
+
+      expect(
+          mapEquals(
+              echoNullFilledObject?.aNullableMap, allTypesNull.aNullableMap),
+          true);
+      expect(echoNullFilledObject?.aNullableMap, null);
+
+      // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
+      // https://github.com/flutter/flutter/issues/116117
+      //for (int i = 0; i < echoNullFilledObject?.nullableNestedList!.length; i++) {
+      //  expect(listEquals(echoNullFilledObject?.nullableNestedList![i], allTypesNull.nullableNestedList![i]),
+      //      true);
+      //}
+      expect(echoNullFilledObject?.nullableNestedList, null);
+
+      expect(
+          mapEquals(echoNullFilledObject?.nullableMapWithAnnotations,
+              allTypesNull.nullableMapWithAnnotations),
+          true);
+      expect(echoNullFilledObject?.nullableMapWithAnnotations, null);
+
+      expect(
+          mapEquals(echoNullFilledObject?.nullableMapWithObject,
+              allTypesNull.nullableMapWithObject),
+          true);
+      expect(echoNullFilledObject?.nullableMapWithObject, null);
+
+      expect(echoNullFilledObject?.aNullableEnum, allTypesNull.aNullableEnum);
+      expect(echoNullFilledObject?.aNullableEnum, null);
+    },
+        // TODO(stuartmorgan): Fix and re-enable.
+        // See https://github.com/flutter/flutter/issues/118733
+        skip: targetGenerator == TargetGenerator.objc);
   });
 
   // These tests rely on the async Dart->host calls to work correctly, since

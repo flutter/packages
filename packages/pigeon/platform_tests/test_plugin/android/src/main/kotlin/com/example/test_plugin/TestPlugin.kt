@@ -127,6 +127,14 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
+  override fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
+    callback(Result.success(everything))
+  }
+
+  override fun echoAsyncAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit) {
+    callback(Result.success(everything))
+  }
+
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
     flutterApi!!.noop() { callback(Result.success(Unit)) }
   }

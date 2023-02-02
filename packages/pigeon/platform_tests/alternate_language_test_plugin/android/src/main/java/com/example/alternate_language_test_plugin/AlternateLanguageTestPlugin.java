@@ -157,6 +157,17 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void echoAsyncAllTypes(@NonNull AllTypes everything, Result<AllTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
+  public void echoAsyncAllNullableTypes(
+      @Nullable AllNullableTypes everything, Result<AllNullableTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
   public void callFlutterNoop(Result<Void> result) {
     flutterApi.noop(
         new FlutterIntegrationCoreApi.Reply<Void>() {

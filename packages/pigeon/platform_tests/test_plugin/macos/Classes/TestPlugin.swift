@@ -106,9 +106,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func echoAsync(_ aString: String, completion: @escaping (Result<String, Error>) -> Void) {
-    let result: Result<String, Error>
-    result = .success(aString)
-    completion(result)
+    completion(.success(aString))
   }
 
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void) {
@@ -117,6 +115,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func throwAsyncErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void) {
     completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+  }
+
+  func echoAsync(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void) {
+    completion(.success(everything))
+  }
+
+  func echoAsync(_ everything: AllNullableTypes?, completion: @escaping (Result<AllNullableTypes?, Error>) -> Void) {
+    completion(.success(everything))
   }
 
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void) {

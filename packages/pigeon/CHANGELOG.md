@@ -1,3 +1,7 @@
+## 7.2.2
+
+* Adds async map and list echo tests.
+
 ## 7.2.1
 
 * [kotlin] Fixes Flutter api int errors with updated casting.

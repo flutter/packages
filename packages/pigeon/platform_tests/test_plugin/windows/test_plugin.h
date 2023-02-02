@@ -87,6 +87,16 @@ class TestPlugin : public flutter::Plugin,
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
           result) override;
+  void EchoAsyncAllTypes(
+      const AllTypes& everything,
+      std::function<void(core_tests_pigeontest::ErrorOr<AllTypes> reply)>
+          result) override;
+  void EchoAsyncAllNullableTypes(
+      const AllNullableTypes* everything,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::optional<AllNullableTypes>>
+                   reply)>
+          result) override;
   void CallFlutterNoop(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
