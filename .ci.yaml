@@ -176,7 +176,7 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: macos_build_all_packages.yaml
+      target_file: macos_custom_package_tests.yaml
       channel: master
 
   - name: Mac_x64 build_all_packages stable
@@ -185,7 +185,7 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
-      target_file: macos_build_all_packages.yaml
+      target_file: macos_custom_package_tests.yaml
       channel: stable
 
   # TODO(stuartmorgan): Remove "- packages" from all task names once
