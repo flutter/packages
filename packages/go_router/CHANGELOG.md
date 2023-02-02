@@ -1,3 +1,7 @@
+## 6.0.5
+
+- Fixes [unnecessary_null_comparison](https://dart-lang.github.io/linter/lints/unnecessary_null_checks.html) lint warnings.
+
 ## 6.0.4
 
 - Fixes redirection info log.
