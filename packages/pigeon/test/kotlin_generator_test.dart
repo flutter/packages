@@ -1010,7 +1010,8 @@ void main() {
     generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('val channel = BasicMessageChannel'));
-    expect(code, contains('val result = it as Long'));
+    expect(code,
+        contains('val result = if (it is Int) it.toLong() else it as Long'));
     expect(code, contains('callback(result)'));
     expect(code,
         contains('fun add(xArg: Long, yArg: Long, callback: (Long) -> Unit)'));

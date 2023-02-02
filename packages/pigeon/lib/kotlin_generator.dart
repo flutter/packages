@@ -382,7 +382,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           } else {
             final String forceUnwrap = func.returnType.isNullable ? '?' : '';
             indent.addScoped('{', '}', () {
-              indent.writeln('val result = it as$forceUnwrap $returnType');
+              if (func.returnType.baseName == 'int') {
+                indent.writeln(
+                    'val result = if (it is Int) it.toLong() else it as$forceUnwrap Long');
+              } else {
+                indent.writeln('val result = it as$forceUnwrap $returnType');
+              }
               indent.writeln('callback(result)');
             });
           }
