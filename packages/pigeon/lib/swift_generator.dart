@@ -395,13 +395,18 @@ import FlutterMacOS
         }).toList();
 
         final String returnType = method.returnType.isVoid
-            ? ''
+            ? 'Void'
             : _nullsafeSwiftTypeForDartType(method.returnType);
+
+        final String escapeType =
+            method.returnType.isVoid ? 'Void' : returnType;
+
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
 
         if (method.isAsynchronous) {
-          argSignature.add('completion: @escaping ($returnType) -> Void');
+          argSignature.add(
+              'completion: @escaping (Result<$escapeType, Error>) -> Void');
           indent.writeln('func ${components.name}(${argSignature.join(', ')})');
         } else if (method.returnType.isVoid) {
           indent.writeln(
@@ -470,16 +475,25 @@ import FlutterMacOS
               final String call =
                   '${tryStatement}api.${components.name}(${methodArgument.join(', ')})';
               if (method.isAsynchronous) {
+                final String resultName =
+                    method.returnType.isVoid ? 'nil' : 'res';
+                final String successVariableInit =
+                    method.returnType.isVoid ? '' : '(let res)';
                 indent.write('$call ');
-                if (method.returnType.isVoid) {
+
+                indent.addScoped('{ result in', '}', () {
+                  indent.write('switch result ');
                   indent.addScoped('{', '}', () {
-                    indent.writeln('reply(wrapResult(nil))');
+                    indent.writeln('case .success$successVariableInit:');
+                    indent.nest(1, () {
+                      indent.writeln('reply(wrapResult($resultName))');
+                    });
+                    indent.writeln('case .failure(let error):');
+                    indent.nest(1, () {
+                      indent.writeln('reply(wrapError(error))');
+                    });
                   });
-                } else {
-                  indent.addScoped('{ result in', '}', () {
-                    indent.writeln('reply(wrapResult(result))');
-                  });
-                }
+                });
               } else {
                 indent.write('do ');
                 indent.addScoped('{', '}', () {

@@ -180,6 +180,17 @@ void TestPlugin::EchoAsyncString(
   result(a_string);
 }
 
+void TestPlugin::ThrowAsyncError(
+    std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
+        result) {
+  result(FlutterError("code", "message", EncodableValue("details")));
+}
+
+void TestPlugin::ThrowAsyncErrorFromVoid(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  result(FlutterError("code", "message", EncodableValue("details")));
+}
+
 void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
   flutter_api_->Noop([result]() { result(std::nullopt); },
