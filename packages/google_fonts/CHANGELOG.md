@@ -1,4 +1,4 @@
-## Unreleased
+## 4.0.2 - 2023-02-03
 ### Changed
 - Update pubspec `repository`
 
