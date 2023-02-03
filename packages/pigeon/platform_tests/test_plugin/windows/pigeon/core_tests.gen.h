@@ -268,9 +268,6 @@ class HostIntegrationCoreApi {
   virtual std::optional<FlutterError> Noop() = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<AllTypes> EchoAllTypes(const AllTypes& everything) = 0;
-  // Returns the passed object, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
-      const AllNullableTypes* everything) = 0;
   // Returns an error, to test error handling.
   virtual std::optional<FlutterError> ThrowError() = 0;
   // Returns passed in int.
@@ -287,6 +284,15 @@ class HostIntegrationCoreApi {
   // Returns the passed in generic Object.
   virtual ErrorOr<flutter::EncodableValue> EchoObject(
       const flutter::EncodableValue& an_object) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<flutter::EncodableList> EchoList(
+      const flutter::EncodableList& a_list) = 0;
+  // Returns the passed map, to test serialization and deserialization.
+  virtual ErrorOr<flutter::EncodableMap> EchoMap(
+      const flutter::EncodableMap& a_map) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
+      const AllNullableTypes* everything) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
   virtual ErrorOr<std::optional<std::string>> ExtractNestedNullableString(
@@ -317,14 +323,47 @@ class HostIntegrationCoreApi {
   // Returns the passed in generic Object.
   virtual ErrorOr<std::optional<flutter::EncodableValue>> EchoNullableObject(
       const flutter::EncodableValue* a_nullable_object) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<std::optional<flutter::EncodableList>> EchoNullableList(
+      const flutter::EncodableList* a_nullable_list) = 0;
+  // Returns the passed map, to test serialization and deserialization.
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableMap(
+      const flutter::EncodableMap* a_nullable_map) = 0;
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic asynchronous calling.
   virtual void NoopAsync(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  // Returns passed in int asynchronously.
+  virtual void EchoAsyncInt(
+      int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) = 0;
+  // Returns passed in double asynchronously.
+  virtual void EchoAsyncDouble(
+      double a_double, std::function<void(ErrorOr<double> reply)> result) = 0;
+  // Returns the passed in boolean asynchronously.
+  virtual void EchoAsyncBool(
+      bool a_bool, std::function<void(ErrorOr<bool> reply)> result) = 0;
   // Returns the passed string asynchronously.
   virtual void EchoAsyncString(
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  // Returns the passed in Uint8List asynchronously.
+  virtual void EchoAsyncUint8List(
+      const std::vector<uint8_t>& a_uint8_list,
+      std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
+  // Returns the passed in generic Object asynchronously.
+  virtual void EchoAsyncObject(
+      const flutter::EncodableValue& an_object,
+      std::function<void(ErrorOr<flutter::EncodableValue> reply)> result) = 0;
+  // Returns the passed list, to test serialization and deserialization
+  // asynchronously.
+  virtual void EchoAsyncList(
+      const flutter::EncodableList& a_list,
+      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+  // Returns the passed map, to test serialization and deserialization
+  // asynchronously.
+  virtual void EchoAsyncMap(
+      const flutter::EncodableMap& a_map,
+      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   // Responds with an error from an async function returning a value.
   virtual void ThrowAsyncError(
       std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
@@ -332,6 +371,54 @@ class HostIntegrationCoreApi {
   // Responds with an error from an async void function.
   virtual void ThrowAsyncErrorFromVoid(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  // Returns the passed object, to test async serialization and deserialization.
+  virtual void EchoAsyncAllTypes(
+      const AllTypes& everything,
+      std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual void EchoAsyncNullableAllNullableTypes(
+      const AllNullableTypes* everything,
+      std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
+          result) = 0;
+  // Returns passed in int asynchronously.
+  virtual void EchoAsyncNullableInt(
+      const int64_t* an_int,
+      std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) = 0;
+  // Returns passed in double asynchronously.
+  virtual void EchoAsyncNullableDouble(
+      const double* a_double,
+      std::function<void(ErrorOr<std::optional<double>> reply)> result) = 0;
+  // Returns the passed in boolean asynchronously.
+  virtual void EchoAsyncNullableBool(
+      const bool* a_bool,
+      std::function<void(ErrorOr<std::optional<bool>> reply)> result) = 0;
+  // Returns the passed string asynchronously.
+  virtual void EchoAsyncNullableString(
+      const std::string* a_string,
+      std::function<void(ErrorOr<std::optional<std::string>> reply)>
+          result) = 0;
+  // Returns the passed in Uint8List asynchronously.
+  virtual void EchoAsyncNullableUint8List(
+      const std::vector<uint8_t>* a_uint8_list,
+      std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)>
+          result) = 0;
+  // Returns the passed in generic Object asynchronously.
+  virtual void EchoAsyncNullableObject(
+      const flutter::EncodableValue* an_object,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
+          result) = 0;
+  // Returns the passed list, to test serialization and deserialization
+  // asynchronously.
+  virtual void EchoAsyncNullableList(
+      const flutter::EncodableList* a_list,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
+          result) = 0;
+  // Returns the passed map, to test serialization and deserialization
+  // asynchronously.
+  virtual void EchoAsyncNullableMap(
+      const flutter::EncodableMap* a_map,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
+          result) = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterEchoAllTypes(

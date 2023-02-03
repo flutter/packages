@@ -80,6 +80,16 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public List<Object> echoList(@NonNull List<Object> aList) {
+    return aList;
+  }
+
+  @Override
+  public Map<String, Object> echoMap(@NonNull Map<String, Object> aMap) {
+    return aMap;
+  }
+
+  @Override
   public @Nullable String extractNestedNullableString(@NonNull AllNullableTypesWrapper wrapper) {
     return wrapper.getValues().getANullableString();
   }
@@ -137,13 +147,18 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void noopAsync(Result<Void> result) {
-    result.success(null);
+  public List<Object> echoNullableList(@Nullable List<Object> aNullableList) {
+    return aNullableList;
   }
 
   @Override
-  public void echoAsyncString(@NonNull String aString, Result<String> result) {
-    result.success(aString);
+  public Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap) {
+    return aNullableMap;
+  }
+
+  @Override
+  public void noopAsync(Result<Void> result) {
+    result.success(null);
   }
 
   @Override
@@ -154,6 +169,98 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public void throwAsyncErrorFromVoid(Result<Void> result) {
     result.error(new RuntimeException("An error"));
+  }
+
+  @Override
+  public void echoAsyncAllTypes(@NonNull AllTypes everything, Result<AllTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
+  public void echoAsyncNullableAllNullableTypes(
+      @Nullable AllNullableTypes everything, Result<AllNullableTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
+  public void echoAsyncInt(@NonNull Long anInt, Result<Long> result) {
+    result.success(anInt);
+  }
+
+  @Override
+  public void echoAsyncDouble(@NonNull Double aDouble, Result<Double> result) {
+    result.success(aDouble);
+  }
+
+  @Override
+  public void echoAsyncBool(@NonNull Boolean aBool, Result<Boolean> result) {
+    result.success(aBool);
+  }
+
+  @Override
+  public void echoAsyncString(@NonNull String aString, Result<String> result) {
+    result.success(aString);
+  }
+
+  @Override
+  public void echoAsyncUint8List(@NonNull byte[] aUint8List, Result<byte[]> result) {
+    result.success(aUint8List);
+  }
+
+  @Override
+  public void echoAsyncObject(@NonNull Object anObject, Result<Object> result) {
+    result.success(anObject);
+  }
+
+  @Override
+  public void echoAsyncList(@NonNull List<Object> aList, Result<List<Object>> result) {
+    result.success(aList);
+  }
+
+  @Override
+  public void echoAsyncMap(@NonNull Map<String, Object> aMap, Result<Map<String, Object>> result) {
+    result.success(aMap);
+  }
+
+  @Override
+  public void echoAsyncNullableInt(@Nullable Long anInt, Result<Long> result) {
+    result.success(anInt);
+  }
+
+  @Override
+  public void echoAsyncNullableDouble(@Nullable Double aDouble, Result<Double> result) {
+    result.success(aDouble);
+  }
+
+  @Override
+  public void echoAsyncNullableBool(@Nullable Boolean aBool, Result<Boolean> result) {
+    result.success(aBool);
+  }
+
+  @Override
+  public void echoAsyncNullableString(@Nullable String aString, Result<String> result) {
+    result.success(aString);
+  }
+
+  @Override
+  public void echoAsyncNullableUint8List(@Nullable byte[] aUint8List, Result<byte[]> result) {
+    result.success(aUint8List);
+  }
+
+  @Override
+  public void echoAsyncNullableObject(@Nullable Object anObject, Result<Object> result) {
+    result.success(anObject);
+  }
+
+  @Override
+  public void echoAsyncNullableList(@Nullable List<Object> aList, Result<List<Object>> result) {
+    result.success(aList);
+  }
+
+  @Override
+  public void echoAsyncNullableMap(
+      @Nullable Map<String, Object> aMap, Result<Map<String, Object>> result) {
+    result.success(aMap);
   }
 
   @Override
