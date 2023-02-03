@@ -236,6 +236,10 @@ interface HostIntegrationCoreApi {
   fun echoUint8List(aUint8List: ByteArray): ByteArray
   /** Returns the passed in generic Object. */
   fun echoObject(anObject: Any): Any
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoList(aList: List<Any?>): List<Any?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoMap(aMap: Map<String?, Any?>): Map<String?, Any?>
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes?
   /**
@@ -262,6 +266,10 @@ interface HostIntegrationCoreApi {
   fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray?
   /** Returns the passed in generic Object. */
   fun echoNullableObject(aNullableObject: Any?): Any?
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableMap(aNullableMap: Map<String?, Any?>?): Map<String?, Any?>?
   /**
    * A no-op function taking no arguments and returning no value, to sanity
    * test basic asynchronous calling.
@@ -279,6 +287,10 @@ interface HostIntegrationCoreApi {
   fun echoAsyncUint8List(aUint8List: ByteArray, callback: (Result<ByteArray>) -> Unit)
   /** Returns the passed in generic Object asynchronously. */
   fun echoAsyncObject(anObject: Any, callback: (Result<Any>) -> Unit)
+  /** Returns the passed list, to test serialization and deserialization asynchronously. */
+  fun echoAsyncList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
+  /** Returns the passed map, to test serialization and deserialization asynchronously. */
+  fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit)
   /** Responds with an error from an async function returning a value. */
   fun throwAsyncError(callback: (Result<Any?>) -> Unit)
   /** Responds with an error from an async void function. */
@@ -299,6 +311,10 @@ interface HostIntegrationCoreApi {
   fun echoAsyncNullableUint8List(aUint8List: ByteArray?, callback: (Result<ByteArray?>) -> Unit)
   /** Returns the passed in generic Object asynchronously. */
   fun echoAsyncNullableObject(anObject: Any?, callback: (Result<Any?>) -> Unit)
+  /** Returns the passed list, to test serialization and deserialization asynchronously. */
+  fun echoAsyncNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
+  /** Returns the passed map, to test serialization and deserialization asynchronously. */
+  fun echoAsyncNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit)
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
   fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
   fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?, callback: (Result<AllNullableTypes>) -> Unit)
@@ -476,6 +492,42 @@ interface HostIntegrationCoreApi {
             val anObjectArg = args[0] as Any
             try {
               wrapped = listOf<Any?>(api.echoObject(anObjectArg))
+            } catch (exception: Error) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoList", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aListArg = args[0] as List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoList(aListArg))
+            } catch (exception: Error) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoMap", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aMapArg = args[0] as Map<String?, Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoMap(aMapArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
             }
@@ -668,6 +720,42 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableList", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aNullableListArg = args[0] as? List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableList(aNullableListArg))
+            } catch (exception: Error) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableMap", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aNullableMapArg = args[0] as? Map<String?, Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableMap(aNullableMapArg))
+            } catch (exception: Error) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.noopAsync", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -798,6 +886,48 @@ interface HostIntegrationCoreApi {
             val args = message as List<Any?>
             val anObjectArg = args[0] as Any
             api.echoAsyncObject(anObjectArg) { result: Result<Any> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncList", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aListArg = args[0] as List<Any?>
+            api.echoAsyncList(aListArg) { result: Result<List<Any?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncMap", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aMapArg = args[0] as Map<String?, Any?>
+            api.echoAsyncMap(aMapArg) { result: Result<Map<String?, Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1003,6 +1133,48 @@ interface HostIntegrationCoreApi {
             val args = message as List<Any?>
             val anObjectArg = args[0] as? Any
             api.echoAsyncNullableObject(anObjectArg) { result: Result<Any?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableList", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aListArg = args[0] as? List<Any?>
+            api.echoAsyncNullableList(aListArg) { result: Result<List<Any?>?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableMap", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aMapArg = args[0] as? Map<String?, Any?>
+            api.echoAsyncNullableMap(aMapArg) { result: Result<Map<String?, Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

@@ -67,6 +67,14 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return anObject
   }
 
+  override fun echoList(aList: List<Any?>): List<Any?> {
+    return aList
+  }
+
+  override fun echoMap(aMap: Map<String?, Any?>): Map<String?, Any?> {
+    return aMap
+  }
+
   override fun extractNestedNullableString(wrapper: AllNullableTypesWrapper): String? {
     return wrapper.values.aNullableString
   }
@@ -103,6 +111,13 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aNullableObject
   }
 
+  override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
+    return aNullableList
+  }
+
+  override fun echoNullableMap(aNullableMap: Map<String?, Any?>?): Map<String?, Any?>? {
+    return aNullableMap
+  }
   override fun noopAsync(callback: (Result<Unit>) -> Unit) {
     callback(Result.success(Unit))
   }
@@ -154,6 +169,14 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun echoAsyncObject(anObject: Any, callback: (Result<Any>) -> Unit) {
     callback(Result.success(anObject))
   }
+
+  override fun echoAsyncList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+    callback(Result.success(aList))
+  }
+
+  override fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit) {
+    callback(Result.success(aMap))
+  }
   
   override fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit) {
     callback(Result.success(anInt))
@@ -177,6 +200,14 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoAsyncNullableObject(anObject: Any?, callback: (Result<Any?>) -> Unit) {
     callback(Result.success(anObject))
+  }
+
+  override fun echoAsyncNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
+    callback(Result.success(aList))
+  }
+
+  override fun echoAsyncNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit) {
+    callback(Result.success(aMap))
   }
 
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {

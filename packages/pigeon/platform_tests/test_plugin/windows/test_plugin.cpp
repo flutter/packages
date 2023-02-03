@@ -16,13 +16,13 @@
 
 namespace test_plugin {
 
-using core_tests_pigeontest::AllNullableTypes;
-using core_tests_pigeontest::AllNullableTypesWrapper;
-using core_tests_pigeontest::AllTypes;
-using core_tests_pigeontest::ErrorOr;
-using core_tests_pigeontest::FlutterError;
-using core_tests_pigeontest::FlutterIntegrationCoreApi;
-using core_tests_pigeontest::HostIntegrationCoreApi;
+using AllNullableTypes;
+using AllNullableTypesWrapper;
+using AllTypes;
+using ErrorOr;
+using FlutterError;
+using FlutterIntegrationCoreApi;
+using HostIntegrationCoreApi;
 using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
@@ -79,6 +79,16 @@ ErrorOr<std::vector<uint8_t>> TestPlugin::EchoUint8List(
 ErrorOr<EncodableValue> TestPlugin::EchoObject(
     const EncodableValue& an_object) {
   return an_object;
+}
+
+ErrorOr<flutter::EncodableList> TestPlugin::EchoList(
+    const flutter::EncodableList& a_list) {
+  return a_list;
+}
+
+ErrorOr<flutter::EncodableMap> TestPlugin::EchoMap(
+    const flutter::EncodableMap& a_map) {
+  return a_map;
 }
 
 ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
@@ -169,6 +179,22 @@ ErrorOr<std::optional<EncodableValue>> TestPlugin::EchoNullableObject(
   return *a_nullable_object;
 };
 
+ErrorOr<std::optional<flutter::EncodableList>> TestPlugin::EchoNullableList(
+    const flutter::EncodableList* a_nullable_list) {
+  if (!a_nullable_list) {
+    return std::nullopt;
+  }
+  return *a_nullable_list;
+};
+
+ErrorOr<std::optional<flutter::EncodableMap>> TestPlugin::EchoNullableMap(
+    const flutter::EncodableMap* a_nullable_map) {
+  if (!a_nullable_map) {
+    return std::nullopt;
+  }
+  return *a_nullable_map;
+};
+
 void TestPlugin::NoopAsync(
     std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);
@@ -229,54 +255,68 @@ void TestPlugin::EchoAsyncObject(
   result(an_object);
 }
 
+void TestPlugin::EchoAsyncList(
+    const flutter::EncodableList& a_list,
+    std::function<void(ErrorOr<flutter::EncodableList> reply)> result) {
+  result(a_list);
+}
+
+void TestPlugin::EchoAsyncMap(
+    const flutter::EncodableMap& a_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) {
+  result(a_map);
+}
+
 void TestPlugin::EchoAsyncNullableInt(
     const int64_t* an_int,
-    std::function<
-        void(core_tests_pigeontest::ErrorOr<std::optional<int64_t>> reply)>
-        result) {
+    std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) {
   result(an_int);
 }
 
 void TestPlugin::EchoAsyncNullableDouble(
     const double* a_double,
-    std::function<
-        void(core_tests_pigeontest::ErrorOr<std::optional<double>> reply)>
-        result) {
+    std::function<void(ErrorOr<std::optional<double>> reply)> result) {
   result(a_double);
 }
 
 void TestPlugin::EchoAsyncNullableBool(
     const bool* a_bool,
-    std::function<
-        void(core_tests_pigeontest::ErrorOr<std::optional<bool>> reply)>
-        result) {
+    std::function<void(ErrorOr<std::optional<bool>> reply)> result) {
   result(a_bool);
 }
 
 void TestPlugin::EchoAsyncNullableString(
     const std::string* a_string,
-    std::function<
-        void(core_tests_pigeontest::ErrorOr<std::optional<std::string>> reply)>
-        result) {
+    std::function<void(ErrorOr<std::optional<std::string>> reply)> result) {
   result(a_string);
 }
 
 void TestPlugin::EchoAsyncNullableUint8List(
     const std::vector<uint8_t>* a_uint8_list,
-    std::function<
-        void(core_tests_pigeontest::ErrorOr<std::optional<std::vector<uint8_t>>>
-                 reply)>
+    std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)>
         result) {
   result(a_uint8_list);
 }
 
 void TestPlugin::EchoAsyncNullableObject(
     const flutter::EncodableValue* an_object,
-    std::function<void(
-        core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
-            reply)>
+    std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
         result) {
   result(an_object);
+}
+
+void TestPlugin::EchoAsyncNullableList(
+    const flutter::EncodableList* a_list,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
+        result) {
+  result(a_list);
+}
+
+void TestPlugin::EchoAsyncNullableMap(
+    const flutter::EncodableMap* a_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
+        result) {
+  result(a_map);
 }
 
 void TestPlugin::CallFlutterNoop(

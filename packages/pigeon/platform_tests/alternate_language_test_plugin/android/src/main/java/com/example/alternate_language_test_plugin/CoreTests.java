@@ -784,6 +784,12 @@ public class CoreTests {
     /** Returns the passed in generic Object. */
     @NonNull
     Object echoObject(@NonNull Object anObject);
+    /** Returns the passed list, to test serialization and deserialization. */
+    @NonNull
+    List<Object> echoList(@NonNull List<Object> aList);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @NonNull
+    Map<String, Object> echoMap(@NonNull Map<String, Object> aMap);
     /** Returns the passed object, to test serialization and deserialization. */
     @Nullable
     AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything);
@@ -821,6 +827,12 @@ public class CoreTests {
     /** Returns the passed in generic Object. */
     @Nullable
     Object echoNullableObject(@Nullable Object aNullableObject);
+    /** Returns the passed list, to test serialization and deserialization. */
+    @Nullable
+    List<Object> echoNullableList(@Nullable List<Object> aNullableList);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @Nullable
+    Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap);
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
@@ -838,6 +850,10 @@ public class CoreTests {
     void echoAsyncUint8List(@NonNull byte[] aUint8List, Result<byte[]> result);
     /** Returns the passed in generic Object asynchronously. */
     void echoAsyncObject(@NonNull Object anObject, Result<Object> result);
+    /** Returns the passed list, to test serialization and deserialization asynchronously. */
+    void echoAsyncList(@NonNull List<Object> aList, Result<List<Object>> result);
+    /** Returns the passed map, to test serialization and deserialization asynchronously. */
+    void echoAsyncMap(@NonNull Map<String, Object> aMap, Result<Map<String, Object>> result);
     /** Responds with an error from an async function returning a value. */
     void throwAsyncError(Result<Object> result);
     /** Responds with an error from an async void function. */
@@ -859,6 +875,11 @@ public class CoreTests {
     void echoAsyncNullableUint8List(@Nullable byte[] aUint8List, Result<byte[]> result);
     /** Returns the passed in generic Object asynchronously. */
     void echoAsyncNullableObject(@Nullable Object anObject, Result<Object> result);
+    /** Returns the passed list, to test serialization and deserialization asynchronously. */
+    void echoAsyncNullableList(@Nullable List<Object> aList, Result<List<Object>> result);
+    /** Returns the passed map, to test serialization and deserialization asynchronously. */
+    void echoAsyncNullableMap(
+        @Nullable Map<String, Object> aMap, Result<Map<String, Object>> result);
 
     void callFlutterNoop(Result<Void> result);
 
@@ -1154,6 +1175,60 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoList", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  List<Object> aListArg = (List<Object>) args.get(0);
+                  if (aListArg == null) {
+                    throw new NullPointerException("aListArg unexpectedly null.");
+                  }
+                  List<Object> output = api.echoList(aListArg);
+                  wrapped.add(0, output);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoMap", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
+                  if (aMapArg == null) {
+                    throw new NullPointerException("aMapArg unexpectedly null.");
+                  }
+                  Map<String, Object> output = api.echoMap(aMapArg);
+                  wrapped.add(0, output);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
                 binaryMessenger,
                 "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes",
                 getCodec());
@@ -1412,6 +1487,58 @@ public class CoreTests {
                   assert args != null;
                   Object aNullableObjectArg = args.get(0);
                   Object output = api.echoNullableObject(aNullableObjectArg);
+                  wrapped.add(0, output);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableList",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  List<Object> aNullableListArg = (List<Object>) args.get(0);
+                  List<Object> output = api.echoNullableList(aNullableListArg);
+                  wrapped.add(0, output);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableMap",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Map<String, Object> aNullableMapArg = (Map<String, Object>) args.get(0);
+                  Map<String, Object> output = api.echoNullableMap(aNullableMapArg);
                   wrapped.add(0, output);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -1687,6 +1814,86 @@ public class CoreTests {
                       };
 
                   api.echoAsyncObject(anObjectArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncList",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  List<Object> aListArg = (List<Object>) args.get(0);
+                  if (aListArg == null) {
+                    throw new NullPointerException("aListArg unexpectedly null.");
+                  }
+                  Result<List<Object>> resultCallback =
+                      new Result<List<Object>>() {
+                        public void success(List<Object> result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echoAsyncList(aListArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncMap",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
+                  if (aMapArg == null) {
+                    throw new NullPointerException("aMapArg unexpectedly null.");
+                  }
+                  Result<Map<String, Object>> resultCallback =
+                      new Result<Map<String, Object>>() {
+                        public void success(Map<String, Object> result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echoAsyncMap(aMapArg, resultCallback);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   reply.reply(wrappedError);
@@ -2055,6 +2262,80 @@ public class CoreTests {
                       };
 
                   api.echoAsyncNullableObject(anObjectArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableList",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  List<Object> aListArg = (List<Object>) args.get(0);
+                  Result<List<Object>> resultCallback =
+                      new Result<List<Object>>() {
+                        public void success(List<Object> result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echoAsyncNullableList(aListArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableMap",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
+                  Result<Map<String, Object>> resultCallback =
+                      new Result<Map<String, Object>>() {
+                        public void success(Map<String, Object> result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echoAsyncNullableMap(aMapArg, resultCallback);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   reply.reply(wrappedError);

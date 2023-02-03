@@ -351,6 +351,28 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedInt, sentInt);
     });
 
+    testWidgets('lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const List<Object?> sentObject = <Object>[7, 'Hello Dart!'];
+      final List<Object?> echoObject = await api.echoList(sentObject);
+      expect(listEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const Map<String?, Object?> sentObject = <String?, Object?>{
+        'a': 1,
+        'b': 2.3,
+        'c': 'four',
+      };
+      final Map<String?, Object?> echoObject = await api.echoMap(sentObject);
+      expect(mapEquals(echoObject, sentObject), true);
+    });
+
     testWidgets('Nullable Ints serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -469,6 +491,45 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final Object? receivedNullObject = await api.echoNullableObject(null);
       expect(receivedNullObject, null);
+    });
+
+    testWidgets('nullable lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const List<Object?> sentObject = <Object>[7, 'Hello Dart!'];
+      final List<Object?>? echoObject = await api.echoNullableList(sentObject);
+      expect(listEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('nullable maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const Map<String?, Object?> sentObject = <String?, Object?>{
+        'a': 1,
+        'b': 2.3,
+        'c': 'four',
+      };
+      final Map<String?, Object?>? echoObject =
+          await api.echoNullableMap(sentObject);
+      expect(mapEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('null lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<Object?>? echoObject = await api.echoNullableList(null);
+      expect(listEquals(echoObject, null), true);
+    });
+
+    testWidgets('null maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Map<String?, Object?>? echoObject = await api.echoNullableMap(null);
+      expect(mapEquals(echoObject, null), true);
     });
   });
 
@@ -714,6 +775,29 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedInt, sentInt);
     });
 
+    testWidgets('lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const List<Object?> sentObject = <Object>[7, 'Hello Dart!'];
+      final List<Object?> echoObject = await api.echoAsyncList(sentObject);
+      expect(listEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const Map<String?, Object?> sentObject = <String?, Object?>{
+        'a': 1,
+        'b': 2.3,
+        'c': 'four',
+      };
+      final Map<String?, Object?> echoObject =
+          await api.echoAsyncMap(sentObject);
+      expect(mapEquals(echoObject, sentObject), true);
+    });
+
     testWidgets('nullable Ints async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -789,6 +873,30 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedInt, sentInt);
     });
 
+    testWidgets('nullable lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const List<Object?> sentObject = <Object>[7, 'Hello Dart!'];
+      final List<Object?>? echoObject =
+          await api.echoAsyncNullableList(sentObject);
+      expect(listEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('nullable maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const Map<String?, Object?> sentObject = <String?, Object?>{
+        'a': 1,
+        'b': 2.3,
+        'c': 'four',
+      };
+      final Map<String?, Object?>? echoObject =
+          await api.echoAsyncNullableMap(sentObject);
+      expect(mapEquals(echoObject, sentObject), true);
+    });
+
     testWidgets('null Ints async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -836,6 +944,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
       final Object? receivedString = await api.echoAsyncNullableObject(null);
       expect(receivedString, null);
+    });
+
+    testWidgets('null lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<Object?>? echoObject = await api.echoAsyncNullableList(null);
+      expect(listEquals(echoObject, null), true);
+    });
+
+    testWidgets('null maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Map<String?, Object?>? echoObject =
+          await api.echoAsyncNullableMap(null);
+      expect(mapEquals(echoObject, null), true);
     });
   });
 

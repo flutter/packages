@@ -64,6 +64,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anObject
   }
 
+  func echo(_ aList: [Any?]) throws -> [Any?] {
+    return aList
+  }
+
+  func echo(_ aMap: [String?: Any?]) throws -> [String?: Any?] {
+    return aMap
+  }
+
   func extractNestedNullableString(from wrapper: AllNullableTypesWrapper) -> String? {
     return wrapper.values.aNullableString;
   }
@@ -99,6 +107,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echo(_ aNullableObject: Any?) -> Any? {
     return aNullableObject
+  }
+
+  func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]? {
+    return aNullableList
+  }
+
+  func echoNullable(_ aNullableMap: [String?: Any?]?) throws -> [String?: Any?]? {
+    return aNullableMap
   }
 
   func noopAsync(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -145,6 +161,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(anObject))
   }
 
+  func echoAsync(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
+    completion(.success(aList))
+  }
+
+  func echoAsync(_ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void) {
+    completion(.success(aMap))
+  }
+
   func echoAsyncNullable(_ anInt: Int32?, completion: @escaping (Result<Int32?, Error>) -> Void) {
     completion(.success(anInt))
   }
@@ -167,6 +191,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echoAsyncNullable(_ anObject: Any?, completion: @escaping (Result<Any?, Error>) -> Void) {
     completion(.success(anObject))
+  }
+
+  func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void) {
+    completion(.success(aList))
+  }
+
+  func echAsyncoNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void) {
+    completion(.success(aMap))
   }
 
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void) {

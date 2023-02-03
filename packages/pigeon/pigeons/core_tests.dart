@@ -132,6 +132,16 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   Object echoObject(Object anObject);
 
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoList:')
+  @SwiftFunction('echo(_:)')
+  List<Object?> echoList(List<Object?> aList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoMap:')
+  @SwiftFunction('echo(_:)')
+  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+
   // ========== Syncronous nullable method tests ==========
 
   /// Returns the passed object, to test serialization and deserialization.
@@ -187,6 +197,16 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   Object? echoNullableObject(Object? aNullableObject);
 
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableList:')
+  @SwiftFunction('echoNullable(_:)')
+  List<Object?>? echoNullableList(List<Object?>? aNullableList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableMap:')
+  @SwiftFunction('echoNullable(_:)')
+  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aNullableMap);
+
   // ========== Asyncronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -229,6 +249,18 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoAsyncObject:')
   @SwiftFunction('echoAsync(_:)')
   Object echoAsyncObject(Object anObject);
+
+  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  @async
+  @ObjCSelector('echoAsyncList:')
+  @SwiftFunction('echoAsync(_:)')
+  List<Object?> echoAsyncList(List<Object?> aList);
+
+  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  @async
+  @ObjCSelector('echoAsyncMap:')
+  @SwiftFunction('echoAsync(_:)')
+  Map<String?, Object?> echoAsyncMap(Map<String?, Object?> aMap);
 
   /// Responds with an error from an async function returning a value.
   @async
@@ -285,6 +317,18 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoAsyncNullableObject:')
   @SwiftFunction('echoAsyncNullable(_:)')
   Object? echoAsyncNullableObject(Object? anObject);
+
+  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableList:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  List<Object?>? echoAsyncNullableList(List<Object?>? aList);
+
+  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableMap:')
+  @SwiftFunction('echAsyncoNullable(_:)')
+  Map<String?, Object?>? echoAsyncNullableMap(Map<String?, Object?>? aMap);
 
   // ========== Flutter API test wrappers ==========
 

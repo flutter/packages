@@ -260,6 +260,10 @@ protocol HostIntegrationCoreApi {
   func echo(_ aUint8List: FlutterStandardTypedData) throws -> FlutterStandardTypedData
   /// Returns the passed in generic Object.
   func echo(_ anObject: Any) throws -> Any
+  /// Returns the passed list, to test serialization and deserialization.
+  func echo(_ aList: [Any?]) throws -> [Any?]
+  /// Returns the passed map, to test serialization and deserialization.
+  func echo(_ aMap: [String?: Any?]) throws -> [String?: Any?]
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns the inner `aString` value from the wrapped object, to test
@@ -282,6 +286,10 @@ protocol HostIntegrationCoreApi {
   func echo(_ aNullableUint8List: FlutterStandardTypedData?) throws -> FlutterStandardTypedData?
   /// Returns the passed in generic Object.
   func echo(_ aNullableObject: Any?) throws -> Any?
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]?
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullable(_ aNullableMap: [String?: Any?]?) throws -> [String?: Any?]?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   func noopAsync(completion: @escaping (Result<Void, Error>) -> Void)
@@ -297,6 +305,10 @@ protocol HostIntegrationCoreApi {
   func echoAsync(_ aUint8List: FlutterStandardTypedData, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsync(_ anObject: Any, completion: @escaping (Result<Any, Error>) -> Void)
+  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  func echoAsync(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  func echoAsync(_ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void)
   /// Responds with an error from an async function returning a value.
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void)
   /// Responds with an error from an async void function.
@@ -317,6 +329,10 @@ protocol HostIntegrationCoreApi {
   func echoAsyncNullable(_ aUint8List: FlutterStandardTypedData?, completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncNullable(_ anObject: Any?, completion: @escaping (Result<Any?, Error>) -> Void)
+  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  func echAsyncoNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterEcho(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void)
   func callFlutterSendMultipleNullableTypes(aBool aNullableBool: Bool?, anInt aNullableInt: Int32?, aString aNullableString: String?, completion: @escaping (Result<AllNullableTypes, Error>) -> Void)
@@ -483,6 +499,38 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoObjectChannel.setMessageHandler(nil)
     }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoList", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aListArg = args[0] as! [Any?]
+        do {
+          let result = try api.echo(aListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoMapChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoMap", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aMapArg = args[0] as! [String?: Any?]
+        do {
+          let result = try api.echo(aMapArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoMapChannel.setMessageHandler(nil)
+    }
     /// Returns the passed object, to test serialization and deserialization.
     let echoAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -647,6 +695,38 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoNullableObjectChannel.setMessageHandler(nil)
     }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoNullableListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableList", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNullableListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aNullableListArg = args[0] as? [Any?]
+        do {
+          let result = try api.echoNullable(aNullableListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNullableListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoNullableMapChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableMap", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNullableMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aNullableMapArg = args[0] as? [String?: Any?]
+        do {
+          let result = try api.echoNullable(aNullableMapArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNullableMapChannel.setMessageHandler(nil)
+    }
     /// A no-op function taking no arguments and returning no value, to sanity
     /// test basic asynchronous calling.
     let noopAsyncChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.noopAsync", binaryMessenger: binaryMessenger, codec: codec)
@@ -771,6 +851,42 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoAsyncObjectChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed list, to test serialization and deserialization asynchronously.
+    let echoAsyncListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncList", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aListArg = args[0] as! [Any?]
+        api.echoAsync(aListArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization asynchronously.
+    let echoAsyncMapChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncMap", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aMapArg = args[0] as! [String?: Any?]
+        api.echoAsync(aMapArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncMapChannel.setMessageHandler(nil)
     }
     /// Responds with an error from an async function returning a value.
     let throwAsyncErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError", binaryMessenger: binaryMessenger, codec: codec)
@@ -947,6 +1063,42 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoAsyncNullableObjectChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed list, to test serialization and deserialization asynchronously.
+    let echoAsyncNullableListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableList", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncNullableListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aListArg = args[0] as? [Any?]
+        api.echoAsyncNullable(aListArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncNullableListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization asynchronously.
+    let echoAsyncNullableMapChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableMap", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncNullableMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aMapArg = args[0] as? [String?: Any?]
+        api.echAsyncoNullable(aMapArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncNullableMapChannel.setMessageHandler(nil)
     }
     let callFlutterNoopChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterNoop", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

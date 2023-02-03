@@ -134,6 +134,16 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 ///
 /// @return `nil` only when `error != nil`.
 - (nullable id)echoObject:(id)anObject error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<id> *)echoList:(NSArray<id> *)aList
+                             error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSDictionary<NSString *, id> *)echoMap:(NSDictionary<NSString *, id> *)aMap
+                                             error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed object, to test serialization and deserialization.
 - (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
                                               error:(FlutterError *_Nullable *_Nonnull)error;
@@ -175,6 +185,13 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed in generic Object.
 - (nullable id)echoNullableObject:(nullable id)aNullableObject
                             error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+- (nullable NSArray<id> *)echoNullableList:(nullable NSArray<id> *)aNullableList
+                                     error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+- (nullable NSDictionary<NSString *, id> *)echoNullableMap:
+                                               (nullable NSDictionary<NSString *, id> *)aNullableMap
+                                                     error:(FlutterError *_Nullable *_Nonnull)error;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;
@@ -197,6 +214,13 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed in generic Object asynchronously.
 - (void)echoAsyncObject:(id)anObject
              completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization asynchronously.
+- (void)echoAsyncList:(NSArray<id> *)aList
+           completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization asynchronously.
+- (void)echoAsyncMap:(NSDictionary<NSString *, id> *)aMap
+          completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                               FlutterError *_Nullable))completion;
 /// Responds with an error from an async function returning a value.
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async void function.
@@ -227,6 +251,13 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed in generic Object asynchronously.
 - (void)echoAsyncNullableObject:(nullable id)anObject
                      completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization asynchronously.
+- (void)echoAsyncNullableList:(nullable NSArray<id> *)aList
+                   completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization asynchronously.
+- (void)echoAsyncNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
+                  completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                                       FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterEchoAllTypes:(AllTypes *)everything
                      completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;

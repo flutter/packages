@@ -42,6 +42,10 @@ class TestPlugin : public flutter::Plugin,
       const std::vector<uint8_t>& a_uint8_list) override;
   core_tests_pigeontest::ErrorOr<flutter::EncodableValue> EchoObject(
       const flutter::EncodableValue& an_object) override;
+  core_tests_pigeontest::ErrorOr<flutter::EncodableList> EchoList(
+      const flutter::EncodableList& a_list) override;
+  core_tests_pigeontest::ErrorOr<flutter::EncodableMap> EchoMap(
+      const flutter::EncodableMap& a_map) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>>
   ExtractNestedNullableString(
       const core_tests_pigeontest::AllNullableTypesWrapper& wrapper) override;
@@ -64,6 +68,10 @@ class TestPlugin : public flutter::Plugin,
       const std::vector<uint8_t>* a_nullable_uint8_list) override;
   core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
   EchoNullableObject(const flutter::EncodableValue* a_nullable_object) override;
+  core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableList>>
+  EchoNullableList(const flutter::EncodableList* a_nullable_list) override;
+  core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableMap>>
+  EchoNullableMap(const flutter::EncodableMap* a_nullable_map) override;
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;
@@ -112,6 +120,16 @@ class TestPlugin : public flutter::Plugin,
       std::function<
           void(core_tests_pigeontest::ErrorOr<flutter::EncodableValue> reply)>
           result) override;
+  void EchoAsyncList(
+      const flutter::EncodableList& a_list,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<flutter::EncodableList> reply)>
+          result) override;
+  void EchoAsyncMap(
+      const flutter::EncodableMap& a_map,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<flutter::EncodableMap> reply)>
+          result) override;
   void EchoAsyncNullableInt(
       const int64_t* an_int,
       std::function<
@@ -142,6 +160,18 @@ class TestPlugin : public flutter::Plugin,
       const flutter::EncodableValue* an_object,
       std::function<void(
           core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+              reply)>
+          result) override;
+  void EchoAsyncNullableList(
+      const flutter::EncodableList* a_list,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableList>>
+              reply)>
+          result) override;
+  void EchoAsyncNullableMap(
+      const flutter::EncodableMap* a_map,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableMap>>
               reply)>
           result) override;
   void CallFlutterNoop(

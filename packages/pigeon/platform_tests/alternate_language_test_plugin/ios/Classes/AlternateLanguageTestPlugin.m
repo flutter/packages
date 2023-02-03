@@ -67,6 +67,16 @@
   return anObject;
 }
 
+- (nullable NSArray<id> *)echoList:(NSArray<id> *)aList
+                             error:(FlutterError *_Nullable *_Nonnull)error {
+  return aList;
+}
+
+- (nullable NSDictionary<NSString *, id> *)echoMap:(NSDictionary<NSString *, id> *)aMap
+                                             error:(FlutterError *_Nullable *_Nonnull)error {
+  return aMap;
+}
+
 - (nullable NSString *)extractNestedNullableStringFrom:(AllNullableTypesWrapper *)wrapper
                                                  error:(FlutterError *_Nullable *_Nonnull)error {
   return wrapper.values.aNullableString;
@@ -123,6 +133,17 @@
   return aNullableObject;
 }
 
+- (nullable NSArray<id> *)echoNullableList:(nullable NSArray<id> *)aNullableList
+                                     error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableList;
+}
+
+- (nullable NSDictionary<NSString *, id> *)
+    echoNullableMap:(nullable NSDictionary<NSString *, id> *)aNullableMap
+              error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableMap;
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }
@@ -177,6 +198,17 @@
   completion(anObject, nil);
 }
 
+- (void)echoAsyncList:(NSArray<id> *)aList
+           completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
+  completion(aList, nil);
+}
+
+- (void)echoAsyncMap:(NSDictionary<NSString *, id> *)aMap
+          completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                               FlutterError *_Nullable))completion {
+  completion(aMap, nil);
+}
+
 - (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   completion(anInt, nil);
@@ -206,6 +238,18 @@
 - (void)echoAsyncNullableObject:(nullable id)anObject
                      completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
   completion(anObject, nil);
+}
+
+- (void)echoAsyncNullableList:(nullable NSArray<id> *)aList
+                   completion:
+                       (void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
+  completion(aList, nil);
+}
+
+- (void)echoAsyncNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
+                  completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                                       FlutterError *_Nullable))completion {
+  completion(aMap, nil);
 }
 
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
