@@ -298,7 +298,7 @@ interface HostIntegrationCoreApi {
   /** Returns the passed object, to test async serialization and deserialization. */
   fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAsyncAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit)
+  fun echoAsyncNullableAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit)
   /** Returns passed in int asynchronously. */
   fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit)
   /** Returns passed in double asynchronously. */
@@ -1000,13 +1000,13 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllNullableTypes", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
             val args = message as List<Any?>
             val everythingArg = args[0] as? AllNullableTypes
-            api.echoAsyncAllNullableTypes(everythingArg) { result: Result<AllNullableTypes?> ->
+            api.echoAsyncNullableAllNullableTypes(everythingArg) { result: Result<AllNullableTypes?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

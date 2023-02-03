@@ -1756,7 +1756,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     auto channel = std::make_unique<BasicMessageChannel<>>(
         binary_messenger,
-        "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllNullableTypes",
+        "dev.flutter.pigeon.HostIntegrationCoreApi."
+        "echoAsyncNullableAllNullableTypes",
         &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
@@ -1769,7 +1770,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                   &(std::any_cast<const AllNullableTypes&>(
                       std::get<CustomEncodableValue>(
                           encodable_everything_arg)));
-              api->EchoAsyncAllNullableTypes(
+              api->EchoAsyncNullableAllNullableTypes(
                   everything_arg,
                   [reply](ErrorOr<std::optional<AllNullableTypes>>&& output) {
                     if (output.has_error()) {

@@ -1163,10 +1163,10 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  Future<AllNullableTypes?> echoAsyncAllNullableTypes(
+  Future<AllNullableTypes?> echoAsyncNullableAllNullableTypes(
       AllNullableTypes? arg_everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllNullableTypes',
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =

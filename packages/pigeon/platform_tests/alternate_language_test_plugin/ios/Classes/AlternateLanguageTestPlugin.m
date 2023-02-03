@@ -161,9 +161,9 @@
   completion(everything, nil);
 }
 
-- (void)echoAsyncAllNullableTypes:(nullable AllNullableTypes *)everything
-                       completion:(void (^)(AllNullableTypes *_Nullable,
-                                            FlutterError *_Nullable))completion {
+- (void)echoAsyncNullableAllNullableTypes:(nullable AllNullableTypes *)everything
+                               completion:(void (^)(AllNullableTypes *_Nullable,
+                                                    FlutterError *_Nullable))completion {
   completion(everything, nil);
 }
 

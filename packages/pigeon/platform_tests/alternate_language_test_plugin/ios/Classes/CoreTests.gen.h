@@ -229,9 +229,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (void)echoAsyncAllTypes:(AllTypes *)everything
                completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed object, to test serialization and deserialization.
-- (void)echoAsyncAllNullableTypes:(nullable AllNullableTypes *)everything
-                       completion:(void (^)(AllNullableTypes *_Nullable,
-                                            FlutterError *_Nullable))completion;
+- (void)echoAsyncNullableAllNullableTypes:(nullable AllNullableTypes *)everything
+                               completion:(void (^)(AllNullableTypes *_Nullable,
+                                                    FlutterError *_Nullable))completion;
 /// Returns passed in int asynchronously.
 - (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;

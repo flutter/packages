@@ -1048,22 +1048,23 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed object, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllNullableTypes"
+           initWithName:
+               @"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(echoAsyncAllNullableTypes:completion:)],
+      NSCAssert([api respondsToSelector:@selector(echoAsyncNullableAllNullableTypes:completion:)],
                 @"HostIntegrationCoreApi api (%@) doesn't respond to "
-                @"@selector(echoAsyncAllNullableTypes:completion:)",
+                @"@selector(echoAsyncNullableAllNullableTypes:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         AllNullableTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
-        [api echoAsyncAllNullableTypes:arg_everything
-                            completion:^(AllNullableTypes *_Nullable output,
-                                         FlutterError *_Nullable error) {
-                              callback(wrapResult(output, error));
-                            }];
+        [api echoAsyncNullableAllNullableTypes:arg_everything
+                                    completion:^(AllNullableTypes *_Nullable output,
+                                                 FlutterError *_Nullable error) {
+                                      callback(wrapResult(output, error));
+                                    }];
       }];
     } else {
       [channel setMessageHandler:nil];

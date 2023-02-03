@@ -278,9 +278,10 @@ abstract class HostIntegrationCoreApi {
 
   /// Returns the passed object, to test serialization and deserialization.
   @async
-  @ObjCSelector('echoAsyncAllNullableTypes:')
+  @ObjCSelector('echoAsyncNullableAllNullableTypes:')
   @SwiftFunction('echoAsync(_:)')
-  AllNullableTypes? echoAsyncAllNullableTypes(AllNullableTypes? everything);
+  AllNullableTypes? echoAsyncNullableAllNullableTypes(
+      AllNullableTypes? everything);
 
   /// Returns passed in int asynchronously.
   @async

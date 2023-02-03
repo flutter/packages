@@ -177,7 +177,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void echoAsyncAllNullableTypes(
+  public void echoAsyncNullableAllNullableTypes(
       @Nullable AllNullableTypes everything, Result<AllNullableTypes> result) {
     result.success(everything);
   }

@@ -583,7 +583,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllNullableTypes? echoObject =
-          await api.echoAsyncAllNullableTypes(genericAllNullableTypes);
+          await api.echoAsyncNullableAllNullableTypes(genericAllNullableTypes);
       expect(echoObject?.aNullableBool, genericAllNullableTypes.aNullableBool);
       expect(echoObject?.aNullableInt, genericAllNullableTypes.aNullableInt);
       expect(
@@ -632,7 +632,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypes allTypesNull = AllNullableTypes();
 
       final AllNullableTypes? echoNullFilledObject =
-          await api.echoAsyncAllNullableTypes(allTypesNull);
+          await api.echoAsyncNullableAllNullableTypes(allTypesNull);
 
       expect(echoNullFilledObject?.aNullableBool, allTypesNull.aNullableBool);
       expect(echoNullFilledObject?.aNullableBool, null);

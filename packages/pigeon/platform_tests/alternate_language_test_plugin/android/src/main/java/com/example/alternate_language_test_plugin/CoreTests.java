@@ -861,7 +861,7 @@ public class CoreTests {
     /** Returns the passed object, to test async serialization and deserialization. */
     void echoAsyncAllTypes(@NonNull AllTypes everything, Result<AllTypes> result);
     /** Returns the passed object, to test serialization and deserialization. */
-    void echoAsyncAllNullableTypes(
+    void echoAsyncNullableAllNullableTypes(
         @Nullable AllNullableTypes everything, Result<AllNullableTypes> result);
     /** Returns passed in int asynchronously. */
     void echoAsyncNullableInt(@Nullable Long anInt, Result<Long> result);
@@ -2015,7 +2015,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllNullableTypes",
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2038,7 +2038,7 @@ public class CoreTests {
                         }
                       };
 
-                  api.echoAsyncAllNullableTypes(everythingArg, resultCallback);
+                  api.echoAsyncNullableAllNullableTypes(everythingArg, resultCallback);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   reply.reply(wrappedError);

@@ -142,7 +142,7 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(everything))
   }
 
-  override fun echoAsyncAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit) {
+  override fun echoAsyncNullableAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit) {
     callback(Result.success(everything))
   }
 

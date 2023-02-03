@@ -939,9 +939,9 @@ class HostIntegrationCoreApiSetup {
       echoAsyncAllTypesChannel.setMessageHandler(nil)
     }
     /// Returns the passed object, to test serialization and deserialization.
-    let echoAsyncAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
+    let echoAsyncNullableAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncAllNullableTypesChannel.setMessageHandler { message, reply in
+      echoAsyncNullableAllNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let everythingArg = args[0] as? AllNullableTypes
         api.echoAsync(everythingArg) { result in
@@ -954,7 +954,7 @@ class HostIntegrationCoreApiSetup {
         }
       }
     } else {
-      echoAsyncAllNullableTypesChannel.setMessageHandler(nil)
+      echoAsyncNullableAllNullableTypesChannel.setMessageHandler(nil)
     }
     /// Returns passed in int asynchronously.
     let echoAsyncNullableIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableInt", binaryMessenger: binaryMessenger, codec: codec)
