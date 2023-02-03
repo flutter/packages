@@ -193,6 +193,43 @@ void main() {
       expect(find.byType(PreferredSizeWidgetImpl), findsOneWidget);
     },
   );
+
+  testWidgets('adaptive scaffold scrolls',
+      (WidgetTester tester) async {
+        final List<NavigationDestination> destinations = TestScaffold.destinations.toList();
+        for (int i = 1; i > 4; i++) {
+          destinations.addAll(TestScaffold.destinations.map((dest) =>
+              NavigationDestination(
+                key: Key('${dest.label}_$i'),
+                icon: dest.icon,
+                label: '${dest.label}_$i',
+              )
+          ));
+        }
+
+        await tester.pumpWidget(MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(500, 800)),
+            child: AdaptiveScaffold(
+              destinations: destinations,
+              appBar: AppBar(
+                title: const Text('Test'),
+              ),
+              body: (_) => Container(color: Colors.green),
+            ),
+          ),
+        ));
+
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+
+        final Finder lastDestination = find.byKey(const Key('Chat_4'));
+
+        await tester.dragUntilVisible(lastDestination, find.byType(SingleChildScrollView), const Offset(-250,0));
+        await tester.pumpAndSettle();
+   });
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that
