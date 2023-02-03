@@ -92,14 +92,16 @@ class TestPlugin : public flutter::Plugin,
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
           result) override;
   void EchoAsyncAllTypes(
-      const AllTypes& everything,
-      std::function<void(core_tests_pigeontest::ErrorOr<AllTypes> reply)>
-          result) override;
-  void EchoAsyncAllNullableTypes(
-      const AllNullableTypes* everything,
+      const core_tests_pigeontest::AllTypes& everything,
       std::function<
-          void(core_tests_pigeontest::ErrorOr<std::optional<AllNullableTypes>>
+          void(core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
                    reply)>
+          result) override;
+  void EchoAsyncNullableAllNullableTypes(
+      const core_tests_pigeontest::AllNullableTypes* everything,
+      std::function<void(core_tests_pigeontest::ErrorOr<
+                         std::optional<core_tests_pigeontest::AllNullableTypes>>
+                             reply)>
           result) override;
   void EchoAsyncInt(
       int64_t an_int,
