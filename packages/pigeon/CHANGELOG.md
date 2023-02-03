@@ -1,7 +1,3 @@
-## 7.2.2
-
-* Adds many async integration tests.
-
 ## 7.2.1
 
 * [kotlin] Fixes Flutter api int errors with updated casting.
