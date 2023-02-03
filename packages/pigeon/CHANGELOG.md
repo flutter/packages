@@ -1,3 +1,7 @@
+## 7.2.2
+
+* Include the channel name in `channel-error`s.
+
 ## 7.2.1
 
 * [kotlin] Fixes Flutter api int errors with updated casting.

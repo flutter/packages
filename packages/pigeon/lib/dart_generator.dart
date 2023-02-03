@@ -519,7 +519,7 @@ final List<Object?>? replyList =
 if (replyList == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
-\t\tmessage: 'Unable to establish connection on channel.',
+\t\tmessage: "Unable to establish connection on channel '$channelName'.",
 \t);
 } else if (replyList.length > 1) {
 \tthrow PlatformException(
