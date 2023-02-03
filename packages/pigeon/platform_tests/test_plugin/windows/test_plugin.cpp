@@ -16,13 +16,13 @@
 
 namespace test_plugin {
 
-using AllNullableTypes;
-using AllNullableTypesWrapper;
-using AllTypes;
-using ErrorOr;
-using FlutterError;
-using FlutterIntegrationCoreApi;
-using HostIntegrationCoreApi;
+using core_tests_pigeontest::AllNullableTypes;
+using core_tests_pigeontest::AllNullableTypesWrapper;
+using core_tests_pigeontest::AllTypes;
+using core_tests_pigeontest::ErrorOr;
+using core_tests_pigeontest::FlutterError;
+using core_tests_pigeontest::FlutterIntegrationCoreApi;
+using core_tests_pigeontest::HostIntegrationCoreApi;
 using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
