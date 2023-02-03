@@ -194,19 +194,19 @@ abstract class HostIntegrationCoreApi {
   @async
   void noopAsync();
 
-  /// Returns passed in int.
+  /// Returns passed in int asynchronously.
   @async
   @ObjCSelector('echoAsyncInt:')
   @SwiftFunction('echoAsync(_:)')
   int echoAsyncInt(int anInt);
 
-  /// Returns passed in double.
+  /// Returns passed in double asynchronously.
   @async
   @ObjCSelector('echoAsyncDouble:')
   @SwiftFunction('echoAsync(_:)')
   double echoAsyncDouble(double aDouble);
 
-  /// Returns the passed in boolean.
+  /// Returns the passed in boolean asynchronously.
   @async
   @ObjCSelector('echoAsyncBool:')
   @SwiftFunction('echoAsync(_:)')
@@ -218,13 +218,13 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsync(_:)')
   String echoAsyncString(String aString);
 
-  /// Returns the passed in Uint8List.
+  /// Returns the passed in Uint8List asynchronously.
   @async
   @ObjCSelector('echoAsyncUint8List:')
   @SwiftFunction('echoAsync(_:)')
   Uint8List echoAsyncUint8List(Uint8List aUint8List);
 
-  /// Returns the passed in generic Object.
+  /// Returns the passed in generic Object asynchronously.
   @async
   @ObjCSelector('echoAsyncObject:')
   @SwiftFunction('echoAsync(_:)')
@@ -249,6 +249,42 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoAsyncAllNullableTypes:')
   @SwiftFunction('echoAsync(_:)')
   AllNullableTypes? echoAsyncAllNullableTypes(AllNullableTypes? everything);
+
+  /// Returns passed in int asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableInt:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  int? echoAsyncNullableInt(int? anInt);
+
+  /// Returns passed in double asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableDouble:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  double? echoAsyncNullableDouble(double? aDouble);
+
+  /// Returns the passed in boolean asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableBool:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  bool? echoAsyncNullableBool(bool? aBool);
+
+  /// Returns the passed string asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableString:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  String? echoAsyncNullableString(String? aString);
+
+  /// Returns the passed in Uint8List asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableUint8List:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  Uint8List? echoAsyncNullableUint8List(Uint8List? aUint8List);
+
+  /// Returns the passed in generic Object asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableObject:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  Object? echoAsyncNullableObject(Object? anObject);
 
   // ========== Flutter API test wrappers ==========
 

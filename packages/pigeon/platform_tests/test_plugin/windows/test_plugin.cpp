@@ -229,6 +229,56 @@ void TestPlugin::EchoAsyncObject(
   result(an_object);
 }
 
+void TestPlugin::EchoAsyncNullableInt(
+    const int64_t* an_int,
+    std::function<
+        void(core_tests_pigeontest::ErrorOr<std::optional<int64_t>> reply)>
+        result) {
+  result(an_int);
+}
+
+void TestPlugin::EchoAsyncNullableDouble(
+    const double* a_double,
+    std::function<
+        void(core_tests_pigeontest::ErrorOr<std::optional<double>> reply)>
+        result) {
+  result(a_double);
+}
+
+void TestPlugin::EchoAsyncNullableBool(
+    const bool* a_bool,
+    std::function<
+        void(core_tests_pigeontest::ErrorOr<std::optional<bool>> reply)>
+        result) {
+  result(a_bool);
+}
+
+void TestPlugin::EchoAsyncNullableString(
+    const std::string* a_string,
+    std::function<
+        void(core_tests_pigeontest::ErrorOr<std::optional<std::string>> reply)>
+        result) {
+  result(a_string);
+}
+
+void TestPlugin::EchoAsyncNullableUint8List(
+    const std::vector<uint8_t>* a_uint8_list,
+    std::function<
+        void(core_tests_pigeontest::ErrorOr<std::optional<std::vector<uint8_t>>>
+                 reply)>
+        result) {
+  result(a_uint8_list);
+}
+
+void TestPlugin::EchoAsyncNullableObject(
+    const flutter::EncodableValue* an_object,
+    std::function<void(
+        core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+            reply)>
+        result) {
+  result(an_object);
+}
+
 void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
   flutter_api_->Noop([result]() { result(std::nullopt); },

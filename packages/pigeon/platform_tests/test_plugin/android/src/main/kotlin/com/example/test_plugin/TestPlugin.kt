@@ -154,6 +154,30 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun echoAsyncObject(anObject: Any, callback: (Result<Any>) -> Unit) {
     callback(Result.success(anObject))
   }
+  
+  override fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit) {
+    callback(Result.success(anInt))
+  }
+
+  override fun echoAsyncNullableDouble(aDouble: Double?, callback: (Result<Double?>) -> Unit) {
+    callback(Result.success(aDouble))
+  }
+
+  override fun echoAsyncNullableBool(aBool: Boolean?, callback: (Result<Boolean?>) -> Unit) {
+    callback(Result.success(aBool))
+  }
+
+  override fun echoAsyncNullableString(aString: String?, callback: (Result<String?>) -> Unit) {
+    callback(Result.success(aString))
+  }
+
+  override fun echoAsyncNullableUint8List(aUint8List: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
+    callback(Result.success(aUint8List))
+  }
+
+  override fun echoAsyncNullableObject(anObject: Any?, callback: (Result<Any?>) -> Unit) {
+    callback(Result.success(anObject))
+  }
 
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
     flutterApi!!.noop() { callback(Result.success(Unit)) }

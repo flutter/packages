@@ -164,19 +164,16 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void echoAsyncInt(@NonNull Long anInt, Result<Long> result) {
-
     result.success(anInt);
   }
 
   @Override
   public void echoAsyncDouble(@NonNull Double aDouble, Result<Double> result) {
-
     result.success(aDouble);
   }
 
   @Override
   public void echoAsyncBool(@NonNull Boolean aBool, Result<Boolean> result) {
-
     result.success(aBool);
   }
 
@@ -187,13 +184,41 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void echoAsyncUint8List(@NonNull byte[] aUint8List, Result<byte[]> result) {
-
     result.success(aUint8List);
   }
 
   @Override
   public void echoAsyncObject(@NonNull Object anObject, Result<Object> result) {
+    result.success(anObject);
+  }
 
+  @Override
+  public void echoAsyncNullableInt(@Nullable Long anInt, Result<Long> result) {
+    result.success(anInt);
+  }
+
+  @Override
+  public void echoAsyncNullableDouble(@Nullable Double aDouble, Result<Double> result) {
+    result.success(aDouble);
+  }
+
+  @Override
+  public void echoAsyncNullableBool(@Nullable Boolean aBool, Result<Boolean> result) {
+    result.success(aBool);
+  }
+
+  @Override
+  public void echoAsyncNullableString(@Nullable String aString, Result<String> result) {
+    result.success(aString);
+  }
+
+  @Override
+  public void echoAsyncNullableUint8List(@Nullable byte[] aUint8List, Result<byte[]> result) {
+    result.success(aUint8List);
+  }
+
+  @Override
+  public void echoAsyncNullableObject(@Nullable Object anObject, Result<Object> result) {
     result.success(anObject);
   }
 

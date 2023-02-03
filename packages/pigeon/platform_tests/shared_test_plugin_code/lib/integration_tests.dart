@@ -713,6 +713,130 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Object receivedInt = await api.echoAsyncObject(sentInt);
       expect(receivedInt, sentInt);
     });
+
+    testWidgets('nullable Ints async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = -13;
+      final int? receivedInt = await api.echoAsyncNullableInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('nullable Doubles async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentDouble = 2.0694;
+      final double? receivedDouble =
+          await api.echoAsyncNullableDouble(sentDouble);
+      expect(receivedDouble, sentDouble);
+    });
+
+    testWidgets('nullable booleans async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      for (final bool sentBool in <bool>[true, false]) {
+        final bool? receivedBool = await api.echoAsyncNullableBool(sentBool);
+        expect(receivedBool, sentBool);
+      }
+    });
+
+    testWidgets('nullable strings async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const String sentObject = 'Hello, asyncronously!';
+
+      final String? echoObject = await api.echoAsyncNullableString(sentObject);
+      expect(echoObject, sentObject);
+    });
+
+    testWidgets('nullable Uint8List async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0
+      ];
+      final Uint8List sentUint8List = Uint8List.fromList(data);
+      final Uint8List? receivedUint8List =
+          await api.echoAsyncNullableUint8List(sentUint8List);
+      expect(receivedUint8List, sentUint8List);
+    });
+
+    testWidgets(
+        'nullable generic Objects async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const Object sentString = "I'm a computer";
+      final Object? receivedString =
+          await api.echoAsyncNullableObject(sentString);
+      expect(receivedString, sentString);
+
+      // Echo a second type as well to ensure the handling is generic.
+      const Object sentInt = 42;
+      final Object? receivedInt = await api.echoAsyncNullableObject(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('null Ints async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final int? receivedInt = await api.echoAsyncNullableInt(null);
+      expect(receivedInt, null);
+    });
+
+    testWidgets('null Doubles async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final double? receivedDouble = await api.echoAsyncNullableDouble(null);
+      expect(receivedDouble, null);
+    });
+
+    testWidgets('null booleans async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final bool? receivedBool = await api.echoAsyncNullableBool(null);
+      expect(receivedBool, null);
+    });
+
+    testWidgets('null strings async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final String? echoObject = await api.echoAsyncNullableString(null);
+      expect(echoObject, null);
+    });
+
+    testWidgets('null Uint8List async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Uint8List? receivedUint8List =
+          await api.echoAsyncNullableUint8List(null);
+      expect(receivedUint8List, null);
+    });
+
+    testWidgets(
+        'null generic Objects async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Object? receivedString = await api.echoAsyncNullableObject(null);
+      expect(receivedString, null);
+    });
   });
 
   // These tests rely on the async Dart->host calls to work correctly, since

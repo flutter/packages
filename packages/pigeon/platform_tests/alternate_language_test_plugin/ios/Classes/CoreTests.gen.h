@@ -178,23 +178,23 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;
-/// Returns passed in int.
+/// Returns passed in int asynchronously.
 - (void)echoAsyncInt:(NSNumber *)anInt
           completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-/// Returns passed in double.
+/// Returns passed in double asynchronously.
 - (void)echoAsyncDouble:(NSNumber *)aDouble
              completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-/// Returns the passed in boolean.
+/// Returns the passed in boolean asynchronously.
 - (void)echoAsyncBool:(NSNumber *)aBool
            completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed string asynchronously.
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-/// Returns the passed in Uint8List.
+/// Returns the passed in Uint8List asynchronously.
 - (void)echoAsyncUint8List:(FlutterStandardTypedData *)aUint8List
                 completion:(void (^)(FlutterStandardTypedData *_Nullable,
                                      FlutterError *_Nullable))completion;
-/// Returns the passed in generic Object.
+/// Returns the passed in generic Object asynchronously.
 - (void)echoAsyncObject:(id)anObject
              completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async function returning a value.
@@ -208,6 +208,25 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (void)echoAsyncAllNullableTypes:(nullable AllNullableTypes *)everything
                        completion:(void (^)(AllNullableTypes *_Nullable,
                                             FlutterError *_Nullable))completion;
+/// Returns passed in int asynchronously.
+- (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
+                  completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns passed in double asynchronously.
+- (void)echoAsyncNullableDouble:(nullable NSNumber *)aDouble
+                     completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed in boolean asynchronously.
+- (void)echoAsyncNullableBool:(nullable NSNumber *)aBool
+                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed string asynchronously.
+- (void)echoAsyncNullableString:(nullable NSString *)aString
+                     completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed in Uint8List asynchronously.
+- (void)echoAsyncNullableUint8List:(nullable FlutterStandardTypedData *)aUint8List
+                        completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                             FlutterError *_Nullable))completion;
+/// Returns the passed in generic Object asynchronously.
+- (void)echoAsyncNullableObject:(nullable id)anObject
+                     completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterEchoAllTypes:(AllTypes *)everything
                      completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;

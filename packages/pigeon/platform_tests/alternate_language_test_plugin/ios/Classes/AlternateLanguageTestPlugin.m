@@ -177,6 +177,37 @@
   completion(anObject, nil);
 }
 
+- (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
+                  completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  completion(anInt, nil);
+}
+
+- (void)echoAsyncNullableDouble:(nullable NSNumber *)aDouble
+                     completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  completion(aDouble, nil);
+}
+
+- (void)echoAsyncNullableBool:(nullable NSNumber *)aBool
+                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  completion(aBool, nil);
+}
+
+- (void)echoAsyncNullableString:(nullable NSString *)aString
+                     completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  completion(aString, nil);
+}
+
+- (void)echoAsyncNullableUint8List:(nullable FlutterStandardTypedData *)aUint8List
+                        completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                             FlutterError *_Nullable))completion {
+  completion(aUint8List, nil);
+}
+
+- (void)echoAsyncNullableObject:(nullable id)anObject
+                     completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
+  completion(anObject, nil);
+}
+
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   [self.flutterAPI noopWithCompletion:^(NSError *error) {
     completion(error);

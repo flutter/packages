@@ -321,24 +321,24 @@ class HostIntegrationCoreApi {
   // test basic asynchronous calling.
   virtual void NoopAsync(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
-  // Returns passed in int.
+  // Returns passed in int asynchronously.
   virtual void EchoAsyncInt(
       int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) = 0;
-  // Returns passed in double.
+  // Returns passed in double asynchronously.
   virtual void EchoAsyncDouble(
       double a_double, std::function<void(ErrorOr<double> reply)> result) = 0;
-  // Returns the passed in boolean.
+  // Returns the passed in boolean asynchronously.
   virtual void EchoAsyncBool(
       bool a_bool, std::function<void(ErrorOr<bool> reply)> result) = 0;
   // Returns the passed string asynchronously.
   virtual void EchoAsyncString(
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
-  // Returns the passed in Uint8List.
+  // Returns the passed in Uint8List asynchronously.
   virtual void EchoAsyncUint8List(
       const std::vector<uint8_t>& a_uint8_list,
       std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
-  // Returns the passed in generic Object.
+  // Returns the passed in generic Object asynchronously.
   virtual void EchoAsyncObject(
       const flutter::EncodableValue& an_object,
       std::function<void(ErrorOr<flutter::EncodableValue> reply)> result) = 0;
@@ -357,6 +357,33 @@ class HostIntegrationCoreApi {
   virtual void EchoAsyncAllNullableTypes(
       const AllNullableTypes* everything,
       std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
+          result) = 0;
+  // Returns passed in int asynchronously.
+  virtual void EchoAsyncNullableInt(
+      const int64_t* an_int,
+      std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) = 0;
+  // Returns passed in double asynchronously.
+  virtual void EchoAsyncNullableDouble(
+      const double* a_double,
+      std::function<void(ErrorOr<std::optional<double>> reply)> result) = 0;
+  // Returns the passed in boolean asynchronously.
+  virtual void EchoAsyncNullableBool(
+      const bool* a_bool,
+      std::function<void(ErrorOr<std::optional<bool>> reply)> result) = 0;
+  // Returns the passed string asynchronously.
+  virtual void EchoAsyncNullableString(
+      const std::string* a_string,
+      std::function<void(ErrorOr<std::optional<std::string>> reply)>
+          result) = 0;
+  // Returns the passed in Uint8List asynchronously.
+  virtual void EchoAsyncNullableUint8List(
+      const std::vector<uint8_t>* a_uint8_list,
+      std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)>
+          result) = 0;
+  // Returns the passed in generic Object asynchronously.
+  virtual void EchoAsyncNullableObject(
+      const flutter::EncodableValue* an_object,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
           result) = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
