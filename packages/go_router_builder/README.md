@@ -193,7 +193,7 @@ class MyRoute extends GoRouteData {
 }
 ```
 
-A query parameter equal to its default value is not included in the location.
+A query parameter that equals to its default value is not included in the location.
 
 
 ## Extra parameter
