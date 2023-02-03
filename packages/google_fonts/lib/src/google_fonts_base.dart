@@ -194,7 +194,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
       );
     }
     print('If troubleshooting doesn\'t solve the problem, please file an issue '
-        'at https://github.com/material-foundation/flutter-packages/issues/new.\n');
+        'at https://github.com/material-foundation/flutter-packages/issues/new/choose.\n');
     rethrow;
   }
 }
