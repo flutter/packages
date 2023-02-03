@@ -65,6 +65,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anObject
   }
 
+  func echo(_ aList: [Any?]) throws -> [Any?] {
+    return aList
+  }
+
+  func echo(_ aMap: [String?: Any?]) throws -> [String?: Any?] {
+    return aMap
+  }
+
   func extractNestedNullableString(from wrapper: AllNullableTypesWrapper) -> String? {
     return wrapper.values.aNullableString;
   }
@@ -102,14 +110,16 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aNullableObject
   }
 
-  func noopAsync(completion: @escaping (Result<Void, Error>) -> Void) {
-    completion(.success(Void()))
+  func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]? {
+    return aNullableList
   }
 
-  func echoAsync(_ aString: String, completion: @escaping (Result<String, Error>) -> Void) {
-    let result: Result<String, Error>
-    result = .success(aString)
-    completion(result)
+  func echoNullable(_ aNullableMap: [String?: Any?]?) throws -> [String?: Any?]? {
+    return aNullableMap
+  }
+
+  func noopAsync(completion: @escaping (Result<Void, Error>) -> Void) {
+    completion(.success(Void()))
   }
 
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void) {
@@ -120,6 +130,78 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
   }
 
+  func echoAsync(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void) {
+    completion(.success(everything))
+  }
+
+  func echoAsync(_ everything: AllNullableTypes?, completion: @escaping (Result<AllNullableTypes?, Error>) -> Void) {
+    completion(.success(everything))
+  }
+
+  func echoAsync(_ anInt: Int32, completion: @escaping (Result<Int32, Error>) -> Void) {
+    completion(.success(anInt))
+  }
+
+  func echoAsync(_ aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void) {
+    completion(.success(aDouble))
+  }
+
+  func echoAsync(_ aBool: Bool, completion: @escaping (Result<Bool, Error>) -> Void) {
+    completion(.success(aBool))
+  }
+
+  func echoAsync(_ aString: String, completion: @escaping (Result<String, Error>) -> Void) {
+    completion(.success(aString))
+  }
+
+  func echoAsync(_ aUint8List: FlutterStandardTypedData, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void) {
+    completion(.success(aUint8List))
+  }
+
+  func echoAsync(_ anObject: Any, completion: @escaping (Result<Any, Error>) -> Void) {
+    completion(.success(anObject))
+  }
+
+  func echoAsync(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
+    completion(.success(aList))
+  }
+
+  func echoAsync(_ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void) {
+    completion(.success(aMap))
+  }
+
+  func echoAsyncNullable(_ anInt: Int32?, completion: @escaping (Result<Int32?, Error>) -> Void) {
+    completion(.success(anInt))
+  }
+
+  func echoAsyncNullable(_ aDouble: Double?, completion: @escaping (Result<Double?, Error>) -> Void) {
+    completion(.success(aDouble))
+  }
+
+  func echoAsyncNullable(_ aBool: Bool?, completion: @escaping (Result<Bool?, Error>) -> Void) {
+    completion(.success(aBool))
+  }
+
+  func echoAsyncNullable(_ aString: String?, completion: @escaping (Result<String?, Error>) -> Void) {
+    completion(.success(aString))
+  }
+
+  func echoAsyncNullable(_ aUint8List: FlutterStandardTypedData?, completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void) {
+    completion(.success(aUint8List))
+  }
+
+  func echoAsyncNullable(_ anObject: Any?, completion: @escaping (Result<Any?, Error>) -> Void) {
+    completion(.success(anObject))
+  }
+
+  func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void) {
+    completion(.success(aList))
+  }
+
+  func echAsyncoNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void) {
+    completion(.success(aMap))
+  }
+
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void) {
     flutterAPI.noop() {
       completion(.success(Void()))
@@ -128,9 +210,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func callFlutterEcho(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void) {
     flutterAPI.echo(everything) { 
-      let result: Result<AllTypes, Error>
-      result = .success($0)
-      completion(result) 
+      completion(.success($0)) 
     }
   }
 
@@ -145,121 +225,91 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       anInt: aNullableInt,
       aString: aNullableString
     ) {
-      let result: Result<AllNullableTypes, Error>
-      result = .success($0)
-      completion(result)
+      completion(.success($0))
     }
   }
 
   func callFlutterEcho(_ aBool: Bool, completion: @escaping (Result<Bool, Error>) -> Void) {
-    flutterAPI.echo(aBool) { 
-      let result: Result<Bool, Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echo(aBool) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEcho(_ anInt: Int32, completion: @escaping (Result<Int32, Error>) -> Void) {
-    flutterAPI.echo(anInt) { 
-      let result: Result<Int32, Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echo(anInt) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEcho(_ aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void) {
-    flutterAPI.echo(aDouble) { 
-      let result: Result<Double, Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echo(aDouble) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEcho(_ aString: String, completion: @escaping (Result<String, Error>) -> Void) {
-    flutterAPI.echo(aString) { 
-      let result: Result<String, Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echo(aString) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEcho(_ aList: FlutterStandardTypedData, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void) {
-    flutterAPI.echo(aList) { 
-      let result: Result<FlutterStandardTypedData, Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echo(aList) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEcho(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
-    flutterAPI.echo(aList) { 
-      let result: Result<[Any?], Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echo(aList) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEcho(_ aMap: [String? : Any?], completion: @escaping (Result<[String? : Any?], Error>) -> Void) {
-    flutterAPI.echo(aMap) { 
-      let result: Result<[String? : Any?], Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echo(aMap) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEchoNullable(_ aBool: Bool?, completion: @escaping (Result<Bool?, Error>) -> Void) {
-    flutterAPI.echoNullable(aBool) { 
-      let result: Result<Bool?, Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echoNullable(aBool) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEchoNullable(_ anInt: Int32?, completion: @escaping (Result<Int32?, Error>) -> Void) {
-    flutterAPI.echoNullable(anInt) { 
-      let result: Result<Int32?, Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echoNullable(anInt) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEchoNullable(_ aDouble: Double?, completion: @escaping (Result<Double?, Error>) -> Void) {
-    flutterAPI.echoNullable(aDouble) { 
-      let result: Result<Double?, Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echoNullable(aDouble) {
+      completion(.success($0))
     }
   }
 
   func callFlutterEchoNullable(_ aString: String?, completion: @escaping (Result<String?, Error>) -> Void) {
-    flutterAPI.echoNullable(aString) { 
-      let result: Result<String?, Error>
-      result = .success($0)
-      completion(result)
+    flutterAPI.echoNullable(aString) {
+      completion(.success($0))
     }
   }
   
   func callFlutterEchoNullable(_ aList: FlutterStandardTypedData?, completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void) {
     flutterAPI.echoNullable(aList) {
-      let result: Result<FlutterStandardTypedData?, Error>
-      result = .success($0)
-      completion(result)
+      completion(.success($0))
     }
   }
 
   func callFlutterEchoNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void) {
     flutterAPI.echoNullable(aList) {
-      let result: Result<[Any?]?, Error>
-      result = .success($0)
-      completion(result)
+      completion(.success($0))
     }
   }
 
   func callFlutterEchoNullable(_ aMap: [String? : Any?]?, completion: @escaping (Result<[String? : Any?]?, Error>) -> Void) {
     flutterAPI.echoNullable(aMap) {
-      let result: Result<[String? : Any?]?, Error>
-      result = .success($0)
-      completion(result)
+      completion(.success($0))
     }
   }
 }

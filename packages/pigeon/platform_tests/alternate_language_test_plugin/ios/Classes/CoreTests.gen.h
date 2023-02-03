@@ -105,9 +105,6 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable AllTypes *)echoAllTypes:(AllTypes *)everything
                               error:(FlutterError *_Nullable *_Nonnull)error;
-/// Returns the passed object, to test serialization and deserialization.
-- (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
-                                              error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns an error, to test error handling.
 - (void)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in int.
@@ -137,6 +134,19 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 ///
 /// @return `nil` only when `error != nil`.
 - (nullable id)echoObject:(id)anObject error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<id> *)echoList:(NSArray<id> *)aList
+                             error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSDictionary<NSString *, id> *)echoMap:(NSDictionary<NSString *, id> *)aMap
+                                             error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed object, to test serialization and deserialization.
+- (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
+                                              error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the inner `aString` value from the wrapped object, to test
 /// sending of nested objects.
 - (nullable NSString *)extractNestedNullableStringFrom:(AllNullableTypesWrapper *)wrapper
@@ -175,16 +185,79 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed in generic Object.
 - (nullable id)echoNullableObject:(nullable id)aNullableObject
                             error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+- (nullable NSArray<id> *)echoNullableList:(nullable NSArray<id> *)aNullableList
+                                     error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+- (nullable NSDictionary<NSString *, id> *)echoNullableMap:
+                                               (nullable NSDictionary<NSString *, id> *)aNullableMap
+                                                     error:(FlutterError *_Nullable *_Nonnull)error;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Returns passed in int asynchronously.
+- (void)echoAsyncInt:(NSNumber *)anInt
+          completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns passed in double asynchronously.
+- (void)echoAsyncDouble:(NSNumber *)aDouble
+             completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed in boolean asynchronously.
+- (void)echoAsyncBool:(NSNumber *)aBool
+           completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed string asynchronously.
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed in Uint8List asynchronously.
+- (void)echoAsyncUint8List:(FlutterStandardTypedData *)aUint8List
+                completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                     FlutterError *_Nullable))completion;
+/// Returns the passed in generic Object asynchronously.
+- (void)echoAsyncObject:(id)anObject
+             completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization asynchronously.
+- (void)echoAsyncList:(NSArray<id> *)aList
+           completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization asynchronously.
+- (void)echoAsyncMap:(NSDictionary<NSString *, id> *)aMap
+          completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                               FlutterError *_Nullable))completion;
 /// Responds with an error from an async function returning a value.
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async void function.
 - (void)throwAsyncErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Returns the passed object, to test async serialization and deserialization.
+- (void)echoAsyncAllTypes:(AllTypes *)everything
+               completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed object, to test serialization and deserialization.
+- (void)echoAsyncNullableAllNullableTypes:(nullable AllNullableTypes *)everything
+                               completion:(void (^)(AllNullableTypes *_Nullable,
+                                                    FlutterError *_Nullable))completion;
+/// Returns passed in int asynchronously.
+- (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
+                  completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns passed in double asynchronously.
+- (void)echoAsyncNullableDouble:(nullable NSNumber *)aDouble
+                     completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed in boolean asynchronously.
+- (void)echoAsyncNullableBool:(nullable NSNumber *)aBool
+                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed string asynchronously.
+- (void)echoAsyncNullableString:(nullable NSString *)aString
+                     completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed in Uint8List asynchronously.
+- (void)echoAsyncNullableUint8List:(nullable FlutterStandardTypedData *)aUint8List
+                        completion:(void (^)(FlutterStandardTypedData *_Nullable,
+                                             FlutterError *_Nullable))completion;
+/// Returns the passed in generic Object asynchronously.
+- (void)echoAsyncNullableObject:(nullable id)anObject
+                     completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization asynchronously.
+- (void)echoAsyncNullableList:(nullable NSArray<id> *)aList
+                   completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization asynchronously.
+- (void)echoAsyncNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
+                  completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
+                                       FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterEchoAllTypes:(AllTypes *)everything
                      completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;
