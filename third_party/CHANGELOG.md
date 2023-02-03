@@ -1,5 +1,9 @@
 # CHANGES
 
+## 2.0.0+1
+
+- Fix bug in asset loading from packages.
+
 ## 2.0.0
 
 - Use parsing backend from `vector_graphics_compiler`.

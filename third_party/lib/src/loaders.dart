@@ -213,7 +213,9 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
 
   @override
   Future<ByteData?> prepareMessage(BuildContext? context) {
-    return _resolveBundle(context).load(assetName);
+    return _resolveBundle(context).load(
+      packageName == null ? assetName : 'packages/$packageName/$assetName',
+    );
   }
 
   @override
