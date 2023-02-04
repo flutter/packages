@@ -1,3 +1,7 @@
+## 6.0.4
+
+- Fixes redirection info log.
+
 ## 6.0.3
 
 - Makes `CustomTransitionPage.barrierDismissible` work
