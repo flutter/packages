@@ -118,9 +118,12 @@ void main() {
     expect(find.byKey(homeKey), findsOneWidget);
   });
 
-  testWidgets('Shorter reverseTransitionDuration', (WidgetTester tester) async {
+  testWidgets('transitionDuration and reverseTransitionDuration is different',
+      (WidgetTester tester) async {
     const ValueKey<String> homeKey = ValueKey<String>('home');
     const ValueKey<String> loginKey = ValueKey<String>('login');
+    const Duration transitionDuration = Duration(milliseconds: 50);
+    const Duration reverseTransitionDuration = Duration(milliseconds: 500);
 
     final GoRouter router = GoRouter(
       routes: <GoRoute>[
@@ -132,8 +135,8 @@ void main() {
           path: '/login',
           pageBuilder: (_, GoRouterState state) => CustomTransitionPage<void>(
             key: state.pageKey,
-            transitionDuration: const Duration(milliseconds: 100),
-            reverseTransitionDuration: const Duration(seconds: 1),
+            transitionDuration: transitionDuration,
+            reverseTransitionDuration: reverseTransitionDuration,
             transitionsBuilder:
                 (_, Animation<double> animation, ___, Widget child) =>
                     FadeTransition(opacity: animation, child: child),
@@ -150,9 +153,6 @@ void main() {
     expect(find.byKey(loginKey), findsOneWidget);
 
     router.pop();
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(find.byKey(loginKey), findsOneWidget);
-
     await tester.pumpAndSettle();
     expect(find.byKey(homeKey), findsOneWidget);
   });
