@@ -58,6 +58,29 @@ final GoRouter _router = GoRouter(
             );
           },
         ),
+        GoRoute(
+          path: 'custom-reverse-transition-duration',
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage<void>(
+              key: state.pageKey,
+              child: const HeroScreen(),
+              barrierDismissible: true,
+              barrierColor: Colors.black38,
+              opaque: false,
+              transitionDuration: const Duration(milliseconds: 500),
+              reverseTransitionDuration: const Duration(milliseconds: 200),
+              transitionsBuilder: (BuildContext context,
+                  Animation<double> animation,
+                  Animation<double> secondaryAnimation,
+                  Widget child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            );
+          },
+        ),
       ],
     ),
   ],
@@ -97,6 +120,23 @@ class HomeScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () => context.go('/dismissible-details'),
               child: const Text('Go to the Dismissible Details screen'),
+            ),
+            const SizedBox(height: 48),
+            ElevatedButton(
+              onPressed: () =>
+                  context.go('/custom-reverse-transition-duration'),
+              child: const Text(
+                'Go to the Custom Reverse Transition Duration Screen',
+              ),
+            ),
+            const SizedBox(height: 48),
+            Hero(
+              tag: const ValueKey<String>('coloredBox'),
+              child: Container(
+                width: 48,
+                height: 48,
+                color: Colors.red,
+              ),
             ),
           ],
         ),
@@ -139,6 +179,39 @@ class DismissibleDetails extends StatelessWidget {
     return const Padding(
       padding: EdgeInsets.all(48),
       child: ColoredBox(color: Colors.red),
+    );
+  }
+}
+
+/// A screen with a hero animation widget
+class HeroScreen extends StatelessWidget {
+  /// Constructs a [HeroScreen]
+  const HeroScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () => context.go('/'),
+              child: const Text('Go back to the Home screen'),
+            ),
+            const SizedBox(height: 48),
+            Hero(
+              tag: const ValueKey<String>('coloredBox'),
+              child: Container(
+                width: 200,
+                height: 200,
+                color: Colors.red,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

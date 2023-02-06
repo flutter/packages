@@ -1,3 +1,6 @@
+## 6.0.4
+- Adds `reverseTransitionDuration` to `CustomTransitionPage`
+
 ## 6.0.3
 
 - Makes `CustomTransitionPage.barrierDismissible` work
