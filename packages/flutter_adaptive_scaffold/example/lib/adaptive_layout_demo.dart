@@ -154,7 +154,7 @@ class MyHomePage extends StatelessWidget {
               extended: true,
               // #enddocregion Example
               // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-              // ignore: prefer_const_constructors
+              // ignore_for_file: prefer_const_constructors
               // #docregion Example
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
