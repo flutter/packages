@@ -149,12 +149,14 @@ void main() {
     expect(find.byKey(homeKey), findsOneWidget);
 
     router.push('/login');
-    await tester.pumpAndSettle();
+    final int pushingPumped = await tester.pumpAndSettle();
     expect(find.byKey(loginKey), findsOneWidget);
 
     router.pop();
-    await tester.pumpAndSettle();
+    final int poppingPumped = await tester.pumpAndSettle();
     expect(find.byKey(homeKey), findsOneWidget);
+
+    expect(pushingPumped != poppingPumped, true);
   });
 }
 
