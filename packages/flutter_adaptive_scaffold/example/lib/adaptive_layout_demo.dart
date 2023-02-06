@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(goderbauer): Remove this ignore when this package requires Flutter 3.8 or later.
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 
@@ -46,7 +49,6 @@ class MyHomePage extends StatelessWidget {
         const Divider(color: Colors.black),
         const SizedBox(height: 10),
         // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-        // ignore: prefer_const_constructors
         Row(
           children: const <Widget>[
             SizedBox(
@@ -154,7 +156,6 @@ class MyHomePage extends StatelessWidget {
               extended: true,
               // #enddocregion Example
               // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-              // ignore_for_file: prefer_const_constructors
               // #docregion Example
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
