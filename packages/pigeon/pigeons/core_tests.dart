@@ -337,6 +337,12 @@ abstract class HostIntegrationCoreApi {
   void callFlutterNoop();
 
   @async
+  Object? callFlutterThrowError();
+
+  @async
+  void callFlutterThrowErrorFromVoid();
+
+  @async
   @ObjCSelector('callFlutterEchoAllTypes:')
   @SwiftFunction('callFlutterEcho(_:)')
   AllTypes callFlutterEchoAllTypes(AllTypes everything);
@@ -431,6 +437,12 @@ abstract class FlutterIntegrationCoreApi {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   void noop();
+
+  /// Responds with an error from an async function returning a value.
+  Object? throwError();
+
+  /// Responds with an error from an async void function.
+  void throwErrorFromVoid();
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllTypes:')
