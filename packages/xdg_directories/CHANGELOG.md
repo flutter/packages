@@ -1,6 +1,6 @@
 ## 1.0.0
 
-* Update version to 1.0 to reflect the level of API stability.
+* Updates version to 1.0 to reflect the level of API stability.
 
 ## 0.2.0+3
 
