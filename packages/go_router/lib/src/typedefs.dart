@@ -34,10 +34,25 @@ typedef ShellRoutePageBuilder = Page<dynamic> Function(
   Widget child,
 );
 
-/// The branch builder for a [StatefulShellRoute].
-typedef StatefulShellBranchBuilder = List<StatefulShellBranch> Function(
-  BuildContext context,
-  GoRouterState state,
+/// The shell body widget builder for [StatefulShellRoute].
+typedef ShellBodyWidgetBuilder = Widget Function(
+    BuildContext context, GoRouterState state, Widget child);
+
+/// The factory for building the shell of a [StatefulShellRoute].
+abstract class StatefulShellFactory {
+  /// Builds the shell of a [StatefulShellRoute], using the provided builder to
+  /// build the body.
+  Widget buildShell(ShellBodyWidgetBuilder shellBodyWidgetBuilder);
+}
+
+/// The widget builder for [StatefulShellRoute].
+typedef StatefulShellRouteBuilder = Widget Function(
+  StatefulShellFactory statefulNavigation,
+);
+
+/// The page builder for [StatefulShellRoute].
+typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
+  StatefulShellFactory statefulNavigation,
 );
 
 /// The signature of the navigatorBuilder callback.

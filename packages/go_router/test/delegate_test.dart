@@ -9,6 +9,8 @@ import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/misc/error_screen.dart';
 
+import 'test_helpers.dart';
+
 Future<GoRouter> createGoRouter(
   WidgetTester tester, {
   Listenable? refreshListenable,
@@ -62,7 +64,7 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
                     builder: (_, __) => const DummyStatefulWidget()),
               ]),
         ]),
-      ], builder: (_, __, Widget child) => child),
+      ], builder: (StatefulShellFactory factory) => factory.dummy()),
     ],
   );
   await tester.pumpWidget(MaterialApp.router(

@@ -57,12 +57,14 @@ typedef BranchNavigatorPreloadBuilder = Navigator Function(
 /// However, implementors can choose to disregard this and use an alternate
 /// container around the branch navigators
 /// (see [StatefulShellRouteState.children]) instead.
-class StatefulNavigationShell extends StatefulWidget {
+class StatefulNavigationShell extends StatefulWidget
+    implements StatefulShellFactory {
   /// Constructs an [StatefulNavigationShell].
   const StatefulNavigationShell({
     required this.configuration,
     required this.shellRoute,
     required this.shellGoRouterState,
+    required this.shellBodyWidgetBuilder,
     required this.currentNavigator,
     required this.currentMatchList,
     required this.branchPreloadNavigatorBuilder,
@@ -78,6 +80,9 @@ class StatefulNavigationShell extends StatefulWidget {
   /// The [GoRouterState] for the navigation shell.
   final GoRouterState shellGoRouterState;
 
+  /// The shell body widget builder.
+  final ShellBodyWidgetBuilder shellBodyWidgetBuilder;
+
   /// The navigator for the currently active route branch
   final Navigator currentNavigator;
 
@@ -89,6 +94,20 @@ class StatefulNavigationShell extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => StatefulNavigationShellState();
+
+  @override
+  Widget buildShell(ShellBodyWidgetBuilder shellWidgetBuilder) {
+    return StatefulNavigationShell(
+      configuration: configuration,
+      shellRoute: shellRoute,
+      shellGoRouterState: shellGoRouterState,
+      shellBodyWidgetBuilder: shellWidgetBuilder,
+      currentNavigator: currentNavigator,
+      currentMatchList: currentMatchList,
+      branchPreloadNavigatorBuilder: branchPreloadNavigatorBuilder,
+      key: key,
+    );
+  }
 }
 
 /// State for StatefulNavigationShell.
@@ -371,8 +390,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
       child: Builder(builder: (BuildContext context) {
         // This Builder Widget is mainly used to make it possible to access the
         // StatefulShellRouteState via the BuildContext in the ShellRouteBuilder
-        final ShellRouteBuilder shellRouteBuilder = widget.shellRoute.builder!;
-        return shellRouteBuilder(
+        final ShellBodyWidgetBuilder shellWidgetBuilder =
+            widget.shellBodyWidgetBuilder;
+        return shellWidgetBuilder(
           context,
           widget.shellGoRouterState,
           _IndexedStackedRouteBranchContainer(routeState: _routeState),

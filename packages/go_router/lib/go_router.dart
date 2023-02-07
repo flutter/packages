@@ -26,6 +26,9 @@ export 'src/typedefs.dart'
         GoRouterPageBuilder,
         GoRouterRedirect,
         GoRouterWidgetBuilder,
+        StatefulShellFactory,
         ShellRouteBuilder,
         ShellRoutePageBuilder,
-        StatefulShellBranchBuilder;
+        ShellBodyWidgetBuilder,
+        StatefulShellRouteBuilder,
+        StatefulShellRoutePageBuilder;

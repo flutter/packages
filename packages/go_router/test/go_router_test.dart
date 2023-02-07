@@ -2403,9 +2403,12 @@ void main() {
       StatefulShellRouteState? routeState;
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, _, Widget child) {
-            routeState = StatefulShellRouteState.of(context);
-            return child;
+          builder: (StatefulShellFactory factory) {
+            return factory.buildShell(
+                (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRouteState.of(context);
+              return child;
+            });
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -2924,9 +2927,12 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRouteState.of(context);
-            return child;
+          builder: (StatefulShellFactory factory) {
+            return factory.buildShell(
+                (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRouteState.of(context);
+              return child;
+            });
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -3032,9 +3038,12 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRouteState.of(context);
-            return child;
+          builder: (StatefulShellFactory factory) {
+            return factory.buildShell(
+                (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRouteState.of(context);
+              return child;
+            });
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -3104,9 +3113,12 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRouteState.of(context);
-            return child;
+          builder: (StatefulShellFactory factory) {
+            return factory.buildShell(
+                (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRouteState.of(context);
+              return child;
+            });
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -3188,9 +3200,12 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, _, Widget child) {
-            routeState = StatefulShellRouteState.of(context);
-            return child;
+          builder: (StatefulShellFactory factory) {
+            return factory.buildShell(
+                (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRouteState.of(context);
+              return child;
+            });
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -3246,9 +3261,12 @@ void main() {
               Text('Common - ${state.extra}'),
         ),
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRouteState.of(context);
-            return child;
+          builder: (StatefulShellFactory factory) {
+            return factory.buildShell(
+                (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRouteState.of(context);
+              return child;
+            });
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -3312,8 +3330,7 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) =>
-              child,
+          builder: (StatefulShellFactory factory) => factory.dummy(),
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <RouteBase>[
               GoRoute(
@@ -3332,8 +3349,7 @@ void main() {
           ],
         ),
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) =>
-              Scaffold(body: child),
+          builder: (StatefulShellFactory factory) => factory.dummy(),
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               preload: true,
@@ -3408,9 +3424,12 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRouteState.of(context);
-            return child;
+          builder: (StatefulShellFactory factory) {
+            return factory.buildShell(
+                (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRouteState.of(context);
+              return child;
+            });
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -3502,9 +3521,12 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRouteState.of(context);
-            return child;
+          builder: (StatefulShellFactory factory) {
+            return factory.buildShell(
+                (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRouteState.of(context);
+              return child;
+            });
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -3568,9 +3590,12 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            routeState = StatefulShellRouteState.of(context);
-            return child;
+          builder: (StatefulShellFactory factory) {
+            return factory.buildShell(
+                (BuildContext context, GoRouterState state, Widget child) {
+              routeState = StatefulShellRouteState.of(context);
+              return child;
+            });
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -3754,12 +3779,8 @@ void main() {
             initialLocation: '/a',
             routes: <RouteBase>[
               StatefulShellRoute(
-                builder:
-                    (BuildContext context, GoRouterState state, Widget child) {
-                  return Scaffold(
-                    appBar: AppBar(title: const Text('Shell')),
-                    body: child,
-                  );
+                builder: (StatefulShellFactory factory) {
+                  return factory.dummy();
                 },
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(routes: <GoRoute>[

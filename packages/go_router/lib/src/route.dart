@@ -672,12 +672,17 @@ class StatefulShellRoute extends ShellRouteBase {
   /// in addition to the builder.
   StatefulShellRoute({
     required this.branches,
-    required super.builder,
-    super.pageBuilder,
+    StatefulShellRouteBuilder? builder,
+    StatefulShellRoutePageBuilder? pageBuilder,
   })  : assert(branches.isNotEmpty),
+        assert((pageBuilder != null) ^ (builder != null),
+            'builder or pageBuilder must be provided'),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
             'Navigator keys must be unique'),
-        super._(routes: _routes(branches)) {
+        super._(
+            builder: _builder(builder),
+            pageBuilder: _pageBuilder(pageBuilder),
+            routes: _routes(branches)) {
     for (int i = 0; i < routes.length; ++i) {
       final RouteBase route = routes[i];
       if (route is GoRoute) {
@@ -685,6 +690,27 @@ class StatefulShellRoute extends ShellRouteBase {
             route.parentNavigatorKey == branches[i].navigatorKey);
       }
     }
+  }
+
+  static ShellRouteBuilder? _builder(StatefulShellRouteBuilder? builder) {
+    if (builder == null) {
+      return null;
+    }
+    return (BuildContext context, GoRouterState state, Widget child) {
+      assert(child is StatefulShellFactory);
+      return builder(child as StatefulShellFactory);
+    };
+  }
+
+  static ShellRoutePageBuilder? _pageBuilder(
+      StatefulShellRoutePageBuilder? builder) {
+    if (builder == null) {
+      return null;
+    }
+    return (BuildContext context, GoRouterState state, Widget child) {
+      assert(child is StatefulShellFactory);
+      return builder(child as StatefulShellFactory);
+    };
   }
 
   /// Representations of the different stateful route branches that this

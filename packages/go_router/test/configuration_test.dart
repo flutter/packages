@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/configuration.dart';
+import 'package:go_router/src/typedefs.dart';
 
 void main() {
   group('RouteConfiguration', () {
@@ -114,7 +115,7 @@ void main() {
                         parentNavigatorKey: someNavigatorKey),
                   ],
                 ),
-              ], builder: _mockShellBuilder),
+              ], builder: _mockStatefulShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -144,7 +145,7 @@ void main() {
             routes: <RouteBase>[
               StatefulShellRoute(branches: <StatefulShellBranch>[
                 StatefulShellBranch(routes: shellRouteChildren)
-              ], builder: _mockShellBuilder),
+              ], builder: _mockStatefulShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -185,7 +186,7 @@ void main() {
                 StatefulShellBranch(
                     routes: <RouteBase>[routeB],
                     navigatorKey: sectionBNavigatorKey),
-              ], builder: _mockShellBuilder),
+              ], builder: _mockStatefulShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -231,7 +232,7 @@ void main() {
                     ),
                   ],
                 ),
-              ], builder: _mockShellBuilder),
+              ], builder: _mockStatefulShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -281,10 +282,10 @@ void main() {
                           ),
                         ],
                       ),
-                    ], builder: _mockShellBuilder),
+                    ], builder: _mockStatefulShellBuilder),
                   ],
                 ),
-              ], builder: _mockShellBuilder),
+              ], builder: _mockStatefulShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -364,7 +365,7 @@ void main() {
                           ]),
                     ],
                   ),
-                ], builder: _mockShellBuilder),
+                ], builder: _mockStatefulShellBuilder),
               ],
             ),
             StatefulShellBranch(routes: <RouteBase>[
@@ -383,7 +384,7 @@ void main() {
                 ],
               ),
             ]),
-          ], builder: _mockShellBuilder),
+          ], builder: _mockStatefulShellBuilder),
         ],
         redirectLimit: 10,
         topRedirect: (BuildContext context, GoRouterState state) {
@@ -403,7 +404,7 @@ void main() {
           navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'root'),
           routes: <RouteBase>[
             StatefulShellRoute(
-              builder: (_, __, Widget child) => child,
+              builder: _mockStatefulShellBuilder,
               branches: <StatefulShellBranch>[
                 branchA = StatefulShellBranch(routes: <RouteBase>[
                   GoRoute(
@@ -415,7 +416,7 @@ void main() {
                         builder: _mockScreenBuilder,
                         routes: <RouteBase>[
                           StatefulShellRoute(
-                              builder: (_, __, Widget child) => child,
+                              builder: _mockStatefulShellBuilder,
                               branches: <StatefulShellBranch>[
                                 branchY =
                                     StatefulShellBranch(routes: <RouteBase>[
@@ -912,3 +913,7 @@ Widget _mockScreenBuilder(BuildContext context, GoRouterState state) =>
 Widget _mockShellBuilder(
         BuildContext context, GoRouterState state, Widget child) =>
     child;
+
+Widget _mockStatefulShellBuilder(StatefulShellFactory factory) =>
+    factory.buildShell(
+        (BuildContext context, GoRouterState state, Widget child) => child);

@@ -9,6 +9,9 @@ import 'package:go_router/src/configuration.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/matching.dart';
 import 'package:go_router/src/router.dart';
+import 'package:go_router/src/typedefs.dart';
+
+import 'test_helpers.dart';
 
 void main() {
   group('RouteBuilder', () {
@@ -101,7 +104,7 @@ void main() {
       final RouteConfiguration config = RouteConfiguration(
         routes: <RouteBase>[
           StatefulShellRoute(
-            builder: (_, __, Widget child) => child,
+            builder: (StatefulShellFactory factory) => factory.dummy(),
             branches: <StatefulShellBranch>[
               StatefulShellBranch(navigatorKey: key, routes: <RouteBase>[
                 GoRoute(
@@ -153,7 +156,7 @@ void main() {
                 const Text('Root'),
             routes: <RouteBase>[
               shell = StatefulShellRoute(
-                builder: (_, __, Widget child) => child,
+                builder: (StatefulShellFactory factory) => factory.dummy(),
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(navigatorKey: key, routes: <RouteBase>[
                     nested = GoRoute(
@@ -577,8 +580,10 @@ void main() {
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           StatefulShellRoute(
-            builder: (BuildContext context, GoRouterState state, Widget child) {
-              return _HomeScreen(child: child);
+            builder: (StatefulShellFactory factory) {
+              return factory.buildShell(
+                  (BuildContext context, GoRouterState state, Widget child) =>
+                      _HomeScreen(child: child));
             },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(

@@ -267,6 +267,8 @@ class RouteBuilder {
       configuration: configuration,
       shellRoute: shellRoute,
       shellGoRouterState: shellRouterState,
+      shellBodyWidgetBuilder: (BuildContext _, GoRouterState __, Widget ___) =>
+          throw _RouteBuilderError('ShellWidgetBuilder not configured'),
       currentNavigator: navigator,
       currentMatchList: currentMatchList.unmodifiableRouteMatchList(),
       branchPreloadNavigatorBuilder: _preloadShellBranchNavigator,
@@ -381,19 +383,13 @@ class RouteBuilder {
             'Attempt to build ShellRoute without a child widget');
       }
 
-      if (route is StatefulShellRoute) {
-        // StatefulShellRoute builder will already have been called at this
-        // point, to create childWidget
-        return childWidget;
-      } else if (route is ShellRoute) {
-        final ShellRouteBuilder? builder = route.builder;
+      final ShellRouteBuilder? builder = route.builder;
 
-        if (builder == null) {
-          throw _RouteBuilderError('No builder provided to ShellRoute: $route');
-        }
-
-        return builder(context, state, childWidget);
+      if (builder == null) {
+        throw _RouteBuilderError('No builder provided to ShellRoute: $route');
       }
+
+      return builder(context, state, childWidget);
     }
 
     throw _RouteBuilderException('Unsupported route type $route');

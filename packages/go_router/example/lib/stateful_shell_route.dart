@@ -153,22 +153,25 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                     ),
                   ]),
                 ],
-                builder:
-                    (BuildContext context, GoRouterState state, Widget child) {
+                builder: (StatefulShellFactory shellFactory) {
                   /// For this nested StatefulShellRoute we are using a custom
                   /// container (TabBarView) for the branch navigators, and thus
                   /// ignoring the default navigator contained passed to the
                   /// builder. Custom implementation can access the branch
                   /// navigators via the StatefulShellRouteState
                   /// (see TabbedRootScreen for details).
-                  return const TabbedRootScreen();
+                  return shellFactory.buildShell((BuildContext context,
+                          GoRouterState state, Widget child) =>
+                      const TabbedRootScreen());
                 },
               ),
             ],
           ),
         ],
-        builder: (BuildContext context, GoRouterState state, Widget child) {
-          return ScaffoldWithNavBar(body: child);
+        builder: (StatefulShellFactory shellFactory) {
+          return shellFactory.buildShell(
+              (BuildContext context, GoRouterState state, Widget child) =>
+                  ScaffoldWithNavBar(body: child));
         },
 
         /// It's possible to customize the container for the branch navigators
@@ -179,16 +182,19 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
         /// tree. Instead, access the child widgets of each branch directly
         /// (see StatefulShellRouteState.children) to implement a custom layout
         /// and container for the navigators.
-        // builder: (BuildContext context, GoRouterState state, Widget child) {
-        //   return ScaffoldWithNavBar(
-        //     body: _AnimatedRouteBranchContainer(),
+        // builder: (StatefulShellFactory shellFactory) {
+        //   return shellFactory.buildShell((BuildContext context, GoRouterState state, Widget child) =>
+        //     ScaffoldWithNavBar(
+        //       body: _AnimatedRouteBranchContainer(),
+        //     ),
         //   );
         // },
 
         /// If it's necessary to customize the Page for StatefulShellRoute,
         /// provide a pageBuilder function in addition to the builder, for example:
-        // pageBuilder:
-        //     (BuildContext context, GoRouterState state, Widget statefulShell) {
+        // pageBuilder: (StatefulShellFactory shellFactory) {
+        //   final Widget statefulShell = shellFactory.buildShell((BuildContext context,
+        //       GoRouterState state, Widget child) => ScaffoldWithNavBar(body: child));
         //   return NoTransitionPage<dynamic>(child: statefulShell);
         // },
       ),
@@ -529,22 +535,29 @@ class _AnimatedRouteBranchContainer extends StatelessWidget {
     final StatefulShellRouteState shellRouteState =
         StatefulShellRouteState.of(context);
     final int currentIndex = shellRouteState.currentIndex;
-    return Stack(
-        children: shellRouteState.children.mapIndexed(
-      (int index, Widget? navigator) {
-        return AnimatedScale(
-          scale: index == currentIndex ? 1 : 1.5,
-          duration: const Duration(milliseconds: 400),
-          child: AnimatedOpacity(
-            opacity: index == currentIndex ? 1 : 0,
-            duration: const Duration(milliseconds: 400),
-            child: Offstage(
-              offstage: index != currentIndex,
-              child: navigator ?? const SizedBox.shrink(),
-            ),
-          ),
-        );
-      },
-    ).toList());
+
+    final PageController controller = PageController(initialPage: currentIndex);
+    return PageView(
+      controller: controller,
+      children: shellRouteState.children,
+    );
+
+    // // return Stack(
+    // //     children: shellRouteState.children.mapIndexed(
+    // //   (int index, Widget? navigator) {
+    // //     return AnimatedScale(
+    // //       scale: index == currentIndex ? 1 : 1.5,
+    // //       duration: const Duration(milliseconds: 400),
+    // //       child: AnimatedOpacity(
+    // //         opacity: index == currentIndex ? 1 : 0,
+    // //         duration: const Duration(milliseconds: 400),
+    // //         child: Offstage(
+    // //           offstage: index != currentIndex,
+    // //           child: navigator ?? const SizedBox.shrink(),
+    // //         ),
+    // //       ),
+    // //     );
+    // //   },
+    // ).toList());
   }
 }
