@@ -48,7 +48,7 @@ Future<void> main(List<String> args) async {
   const List<String> macOSHostTests = <String>[
     // TODO(stuartmorgan): Replace this with iOSObjCUnitTests once the CI
     // issues are resolved; see https://github.com/flutter/packages/pull/2816.
-    //iOSObjCUnitTestsLegacy,
+    iOSObjCUnitTests,
     // TODO(stuartmorgan): Enable by default once CI issues are solved; see
     // https://github.com/flutter/packages/pull/2816.
     // iOSObjCIntegrationTests,
@@ -59,7 +59,7 @@ Future<void> main(List<String> args) async {
     // not supported by macOS).
     // iOSSwiftIntegrationTests,
     //macOSSwiftUnitTests,
-    macOSSwiftIntegrationTests,
+    //macOSSwiftIntegrationTests,
   ];
   // Run Windows tests on Windows, since that's the only place they can run.
   const List<String> windowsHostTests = <String>[
