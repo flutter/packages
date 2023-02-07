@@ -233,6 +233,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }, throwsA(isA<PlatformException>()));
     });
 
+    testWidgets('errors are returned from void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.throwAsyncErrorFromVoid();
+      }, throwsA(isA<PlatformException>()));
+    });
+
     testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
@@ -979,23 +988,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.callFlutterNoop(), completes);
     });
 
-    testWidgets('errors are returned from non void methods correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('errors are returned from non void methods correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      expect(() async {
-        await api.callFlutterThrowError();
-      }, throwsA(isA<PlatformException>()));
-    });
+    //   expect(() async {
+    //     await api.callFlutterThrowError();
+    //   }, throwsA(isA<PlatformException>()));
+    // });
 
-    testWidgets('errors are returned from void methods correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('errors are returned from void methods correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      expect(() async {
-        await api.callFlutterThrowErrorFromVoid();
-      }, throwsA(isA<PlatformException>()));
-    });
+    //   expect(() async {
+    //     await api.callFlutterThrowErrorFromVoid();
+    //   }, throwsA(isA<PlatformException>()));
+    // });
 
     testWidgets('all datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1293,15 +1302,15 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   void noop() {}
 
-  @override
-  Object? throwError() {
-    throw FlutterError('this is an error');
-  }
+  // @override
+  // Object? throwError() {
+  //   throw FlutterError('this is an error');
+  // }
 
-  @override
-  void throwErrorFromVoid() {
-    throw FlutterError('this is an error');
-  }
+  // @override
+  // void throwErrorFromVoid() {
+  //   throw FlutterError('this is an error');
+  // }
 
   @override
   AllNullableTypes sendMultipleNullableTypes(

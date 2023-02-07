@@ -57,7 +57,11 @@ ErrorOr<std::optional<AllNullableTypes>> TestPlugin::EchoAllNullableTypes(
   return *everything;
 }
 
-std::optional<FlutterError> TestPlugin::ThrowError() {
+ErrorOr<std::optional<flutter::EncodableValue>> TestPlugin::ThrowError() {
+  return FlutterError("An error");
+}
+
+std::optional<FlutterError> TestPlugin::ThrowErrorFromVoid() {
   return FlutterError("An error");
 }
 

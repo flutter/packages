@@ -39,7 +39,10 @@ class TestPlugin : public flutter::Plugin,
       std::optional<core_tests_pigeontest::AllNullableTypes>>
   EchoAllNullableTypes(
       const core_tests_pigeontest::AllNullableTypes* everything) override;
-  std::optional<core_tests_pigeontest::FlutterError> ThrowError() override;
+  core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+  ThrowError() override;
+  std::optional<core_tests_pigeontest::FlutterError> ThrowErrorFromVoid()
+      override;
   core_tests_pigeontest::ErrorOr<int64_t> EchoInt(int64_t an_int) override;
   core_tests_pigeontest::ErrorOr<double> EchoDouble(double a_double) override;
   core_tests_pigeontest::ErrorOr<bool> EchoBool(bool a_bool) override;

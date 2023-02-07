@@ -106,7 +106,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (nullable AllTypes *)echoAllTypes:(AllTypes *)everything
                               error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns an error, to test error handling.
-- (void)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable id)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// Responds with an error from an async void function.
+- (void)throwErrorFromVoidWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in int.
 ///
 /// @return `nil` only when `error != nil`.

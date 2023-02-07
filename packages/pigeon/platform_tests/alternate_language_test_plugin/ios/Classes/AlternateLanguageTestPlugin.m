@@ -36,7 +36,13 @@
   return everything;
 }
 
-- (void)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable id)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
+  *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
+  id newObj = [[NSObject alloc] init];
+  return newObj;
+}
+
+- (void)throwErrorFromVoidWithError:(FlutterError *_Nullable *_Nonnull)error {
   *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
 }
 

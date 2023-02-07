@@ -601,7 +601,39 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
           [api](const EncodableValue& message,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
-              std::optional<FlutterError> output = api->ThrowError();
+              ErrorOr<std::optional<EncodableValue>> output = api->ThrowError();
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              auto output_optional = std::move(output).TakeValue();
+              if (output_optional) {
+                wrapped.push_back(
+                    EncodableValue(std::move(output_optional).value()));
+              } else {
+                wrapped.push_back(EncodableValue());
+              }
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              std::optional<FlutterError> output = api->ThrowErrorFromVoid();
               if (output.has_value()) {
                 reply(WrapError(output.value()));
                 return;

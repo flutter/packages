@@ -765,7 +765,10 @@ public class CoreTests {
     @NonNull
     AllTypes echoAllTypes(@NonNull AllTypes everything);
     /** Returns an error, to test error handling. */
-    void throwError();
+    @Nullable
+    Object throwError();
+    /** Responds with an error from an async void function. */
+    void throwErrorFromVoid();
     /** Returns passed in int. */
     @NonNull
     Long echoInt(@NonNull Long anInt);
@@ -990,7 +993,30 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
-                  api.throwError();
+                  Object output = api.throwError();
+                  wrapped.add(0, output);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  api.throwErrorFromVoid();
                   wrapped.add(0, null);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

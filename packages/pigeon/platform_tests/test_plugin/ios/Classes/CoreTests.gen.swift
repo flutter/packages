@@ -247,7 +247,9 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everything: AllTypes) throws -> AllTypes
   /// Returns an error, to test error handling.
-  func throwError() throws
+  func throwError() throws -> Any?
+  /// Responds with an error from an async void function.
+  func throwErrorFromVoid() throws
   /// Returns passed in int.
   func echo(_ anInt: Int32) throws -> Int32
   /// Returns passed in double.
@@ -394,14 +396,28 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       throwErrorChannel.setMessageHandler { _, reply in
         do {
-          try api.throwError()
-          reply(wrapResult(nil))
+          let result = try api.throwError()
+          reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
       }
     } else {
       throwErrorChannel.setMessageHandler(nil)
+    }
+    /// Responds with an error from an async void function.
+    let throwErrorFromVoidChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      throwErrorFromVoidChannel.setMessageHandler { _, reply in
+        do {
+          try api.throwErrorFromVoid()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      throwErrorFromVoidChannel.setMessageHandler(nil)
     }
     /// Returns passed in int.
     let echoIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoInt", binaryMessenger: binaryMessenger, codec: codec)

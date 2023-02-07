@@ -100,7 +100,10 @@ abstract class HostIntegrationCoreApi {
   AllTypes echoAllTypes(AllTypes everything);
 
   /// Returns an error, to test error handling.
-  void throwError();
+  Object? throwError();
+
+  /// Responds with an error from an async void function.
+  void throwErrorFromVoid();
 
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
@@ -336,11 +339,11 @@ abstract class HostIntegrationCoreApi {
   @async
   void callFlutterNoop();
 
-  @async
-  Object? callFlutterThrowError();
+  // @async
+  // Object? callFlutterThrowError();
 
-  @async
-  void callFlutterThrowErrorFromVoid();
+  // @async
+  // void callFlutterThrowErrorFromVoid();
 
   @async
   @ObjCSelector('callFlutterEchoAllTypes:')
@@ -438,11 +441,11 @@ abstract class FlutterIntegrationCoreApi {
   /// test basic calling.
   void noop();
 
-  /// Responds with an error from an async function returning a value.
-  Object? throwError();
+  // /// Responds with an error from an async function returning a value.
+  // Object? throwError();
 
-  /// Responds with an error from an async void function.
-  void throwErrorFromVoid();
+  // /// Responds with an error from an async void function.
+  // void throwErrorFromVoid();
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllTypes:')

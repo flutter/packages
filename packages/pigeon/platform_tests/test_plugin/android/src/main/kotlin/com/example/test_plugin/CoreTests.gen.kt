@@ -223,7 +223,9 @@ interface HostIntegrationCoreApi {
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllTypes(everything: AllTypes): AllTypes
   /** Returns an error, to test error handling. */
-  fun throwError()
+  fun throwError(): Any?
+  /** Responds with an error from an async void function. */
+  fun throwErrorFromVoid()
   /** Returns passed in int. */
   fun echoInt(anInt: Long): Long
   /** Returns passed in double. */
@@ -382,7 +384,23 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
             try {
-              api.throwError()
+              wrapped = listOf<Any?>(api.throwError())
+            } catch (exception: Error) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            try {
+              api.throwErrorFromVoid()
               wrapped = listOf<Any?>(null)
             } catch (exception: Error) {
               wrapped = wrapError(exception)

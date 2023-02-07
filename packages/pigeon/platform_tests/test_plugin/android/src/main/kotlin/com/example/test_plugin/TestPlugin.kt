@@ -39,7 +39,11 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  override fun throwError() {
+  override fun throwError(): Object? {
+    throw Exception("An error");
+  }
+
+  override fun throwErrorFromVoid() {
     throw Exception("An error");
   }
 
@@ -213,6 +217,14 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
     flutterApi!!.noop() { callback(Result.success(Unit)) }
   }
+
+  // override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
+  //   flutterApi!!.throwError() { callback(Result.success(Unit)) }
+  // }
+
+  // override fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
+  //   flutterApi!!.throwErrorFromVoid() { callback(Result.success(Unit)) }
+  // }
 
   override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
     flutterApi!!.echoAllTypes(everything) { echo -> callback(Result.success(echo)) }

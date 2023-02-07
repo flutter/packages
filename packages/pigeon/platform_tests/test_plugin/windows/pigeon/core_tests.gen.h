@@ -269,7 +269,9 @@ class HostIntegrationCoreApi {
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<AllTypes> EchoAllTypes(const AllTypes& everything) = 0;
   // Returns an error, to test error handling.
-  virtual std::optional<FlutterError> ThrowError() = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableValue>> ThrowError() = 0;
+  // Responds with an error from an async void function.
+  virtual std::optional<FlutterError> ThrowErrorFromVoid() = 0;
   // Returns passed in int.
   virtual ErrorOr<int64_t> EchoInt(int64_t an_int) = 0;
   // Returns passed in double.

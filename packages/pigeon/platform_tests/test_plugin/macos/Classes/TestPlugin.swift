@@ -36,7 +36,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  func throwError() throws {
+  func throwError() throws -> Any? {
+    throw FlutterError(code: "code", message: "message", details: "details")
+  }
+
+  func throwErrorFromVoid() throws {
     throw FlutterError(code: "code", message: "message", details: "details")
   }
 
