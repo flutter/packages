@@ -186,9 +186,9 @@ void main() {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val inputArg = args[0] as Input
             try {
-              val args = message as List<Any?>
-              val inputArg = args[0] as Input
               wrapped = listOf<Any?>(api.doSomething(inputArg))
             } catch (exception: Error) {
               wrapped = wrapError(exception)
@@ -668,7 +668,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('interface Api'));
     expect(code, contains('api.doSomething(argArg) {'));
-    expect(code, contains('reply.reply(wrapResult(it))'));
+    expect(code, contains('reply.reply(wrapResult(data))'));
   });
 
   test('gen one async Flutter Api', () {
@@ -1010,7 +1010,8 @@ void main() {
     generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('val channel = BasicMessageChannel'));
-    expect(code, contains('val result = it as Long'));
+    expect(code,
+        contains('val result = if (it is Int) it.toLong() else it as Long'));
     expect(code, contains('callback(result)'));
     expect(code,
         contains('fun add(xArg: Long, yArg: Long, callback: (Long) -> Unit)'));
@@ -1063,7 +1064,7 @@ void main() {
     const KotlinGenerator generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('fun doit(callback: (Long?) -> Unit'));
+    expect(code, contains('fun doit(callback: (Result<Long?>) -> Unit'));
   });
 
   test('nullable argument host', () {

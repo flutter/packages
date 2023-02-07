@@ -22,7 +22,7 @@ class XFile extends XFileBase {
   /// `path` of the file doesn't match what the user sees when selecting it
   /// (like in web)
   XFile(
-    super.path, {
+    String super.path, {
     String? mimeType,
     String? name,
     int? length,

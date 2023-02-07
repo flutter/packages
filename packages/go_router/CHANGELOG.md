@@ -1,3 +1,11 @@
+## 6.0.4
+
+- Fixes redirection info log.
+
+## 6.0.3
+
+- Makes `CustomTransitionPage.barrierDismissible` work
+
 ## 6.0.2
 
 - Fixes missing result on pop in go_router extension.

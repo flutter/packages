@@ -1338,33 +1338,34 @@ ${_argParser.usage}''';
     final ArgResults results = _argParser.parse(args);
 
     final PigeonOptions opts = PigeonOptions(
-      input: results['input'],
-      dartOut: results['dart_out'],
-      dartTestOut: results['dart_test_out'],
-      objcHeaderOut: results['objc_header_out'],
-      objcSourceOut: results['objc_source_out'],
+      input: results['input'] as String?,
+      dartOut: results['dart_out'] as String?,
+      dartTestOut: results['dart_test_out'] as String?,
+      objcHeaderOut: results['objc_header_out'] as String?,
+      objcSourceOut: results['objc_source_out'] as String?,
       objcOptions: ObjcOptions(
-        prefix: results['objc_prefix'],
+        prefix: results['objc_prefix'] as String?,
       ),
-      javaOut: results['java_out'],
+      javaOut: results['java_out'] as String?,
       javaOptions: JavaOptions(
-        package: results['java_package'],
-        useGeneratedAnnotation: results['java_use_generated_annotation'],
+        package: results['java_package'] as String?,
+        useGeneratedAnnotation:
+            results['java_use_generated_annotation'] as bool?,
       ),
-      swiftOut: results['experimental_swift_out'],
-      kotlinOut: results['experimental_kotlin_out'],
+      swiftOut: results['experimental_swift_out'] as String?,
+      kotlinOut: results['experimental_kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
-        package: results['experimental_kotlin_package'],
+        package: results['experimental_kotlin_package'] as String?,
       ),
-      cppHeaderOut: results['experimental_cpp_header_out'],
-      cppSourceOut: results['experimental_cpp_source_out'],
+      cppHeaderOut: results['experimental_cpp_header_out'] as String?,
+      cppSourceOut: results['experimental_cpp_source_out'] as String?,
       cppOptions: CppOptions(
-        namespace: results['cpp_namespace'],
+        namespace: results['cpp_namespace'] as String?,
       ),
-      copyrightHeader: results['copyright_header'],
-      oneLanguage: results['one_language'],
-      astOut: results['ast_out'],
-      debugGenerators: results['debug_generators'],
+      copyrightHeader: results['copyright_header'] as String?,
+      oneLanguage: results['one_language'] as bool?,
+      astOut: results['ast_out'] as String?,
+      debugGenerators: results['debug_generators'] as bool?,
     );
     return opts;
   }
