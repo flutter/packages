@@ -8,7 +8,7 @@ import 'dart:async';
 import 'dart:io' show Process, stderr, stdout;
 
 Future<Process> _streamOutput(Future<Process> processFuture) async {
-  print('Waiting for process');
+  //print('Waiting for process');
   final Process process = await processFuture;
   print('Waiting for streams');
   await Future.wait(<Future<Object?>>[
@@ -22,7 +22,7 @@ Future<int> runProcess(String command, List<String> arguments,
     {String? workingDirectory,
     bool streamOutput = true,
     bool logFailure = false}) async {
-  print('Starting process');
+  //print('Starting process');
   final Future<Process> future = Process.start(
     command,
     arguments,
@@ -31,7 +31,7 @@ Future<int> runProcess(String command, List<String> arguments,
   final Process process = await (streamOutput ? _streamOutput(future) : future);
   print('Waiting for exit');
   final int exitCode = await process.exitCode;
-  print('Done waiting');
+  //print('Done waiting');
   if (exitCode != 0 && logFailure) {
     print('$command $arguments failed:');
     process.stdout.pipe(stdout);
