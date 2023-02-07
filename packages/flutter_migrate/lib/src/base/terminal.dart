@@ -72,7 +72,7 @@ class OutputPreferences {
 
   @override
   String toString() {
-    return '$runtimeType[wrapText: $wrapText, wrapColumn: $wrapColumn, showColor: $showColor]';
+    return 'OutputPreferences[wrapText: $wrapText, wrapColumn: $wrapColumn, showColor: $showColor]';
   }
 }
 

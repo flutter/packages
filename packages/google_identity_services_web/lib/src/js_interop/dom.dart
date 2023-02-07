@@ -88,6 +88,29 @@ extension DomHtmlScriptElementExtension on DomHtmlScriptElement {
   external set defer(bool defer);
 }
 
+/// Error object
+@JS('Error')
+@staticInterop
+abstract class DomError {}
+
+/// Methods on the error object
+extension DomErrorExtension on DomError {
+  /// Error message.
+  external String? get message;
+
+  /// Stack trace.
+  external String? get stack;
+
+  /// Error name. This is determined by the constructor function.
+  external String get name;
+
+  /// Error cause indicating the reason why the current error is thrown.
+  ///
+  /// This is usually another caught error, or the value provided as the `cause`
+  /// property of the Error constructor's second argument.
+  external Object? get cause;
+}
+
 /*
 // Trusted Types API (TrustedTypePolicy, TrustedScript, TrustedScriptURL)
 // https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypesAPI

@@ -43,11 +43,14 @@ MockHttpClient createMockImageHttpClient(SecurityContext? _) {
   // Define an image stream that streams the mock test image for all
   // image tests that request an image.
   StreamSubscription<List<int>> imageStream(Invocation invocation) {
-    final void Function(List<int>)? onData = invocation.positionalArguments[0];
-    final void Function()? onDone = invocation.namedArguments[#onDone];
+    final void Function(List<int>)? onData =
+        invocation.positionalArguments[0] as Function(List<int>)?;
+    final void Function()? onDone =
+        invocation.namedArguments[#onDone] as Function()?;
     final void Function(Object, [StackTrace?])? onError =
-        invocation.namedArguments[#onError];
-    final bool? cancelOnError = invocation.namedArguments[#cancelOnError];
+        invocation.namedArguments[#onError] as Function(Object, [StackTrace?])?;
+    final bool? cancelOnError =
+        invocation.namedArguments[#cancelOnError] as bool?;
 
     return Stream<List<int>>.fromIterable(<List<int>>[transparentImage]).listen(
       onData,
@@ -345,16 +348,17 @@ class MockHttpClientResponse extends Mock implements HttpClientResponse {
   StreamSubscription<List<int>> listen(void Function(List<int> event)? onData,
           {Function? onError, void Function()? onDone, bool? cancelOnError}) =>
       super.noSuchMethod(
-          Invocation.method(
-            #listen,
-            <Object?>[onData],
-            <Symbol, Object?>{
-              #onError: onError,
-              #onDone: onDone,
-              #cancelOnError: cancelOnError
-            },
-          ),
-          returnValue: _FakeStreamSubscription<List<int>>());
+              Invocation.method(
+                #listen,
+                <Object?>[onData],
+                <Symbol, Object?>{
+                  #onError: onError,
+                  #onDone: onDone,
+                  #cancelOnError: cancelOnError
+                },
+              ),
+              returnValue: _FakeStreamSubscription<List<int>>())
+          as StreamSubscription<List<int>>;
 
   @override
   int get statusCode =>

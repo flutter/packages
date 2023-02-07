@@ -1,6 +1,12 @@
-## 1.0.16
+## 1.0.17
 
 * Update router_config to not passing `extra` unconditionally.
+
+
+## 1.0.16
+
+* Update the documentation to go_router v6.0.0.
+* Bumps go_router version in example folder to v6.0.0.
 
 ## 1.0.15
 
