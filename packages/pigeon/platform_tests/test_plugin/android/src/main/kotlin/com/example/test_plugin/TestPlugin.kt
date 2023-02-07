@@ -127,19 +127,11 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun throwAsyncError(callback: (Result<Any?>) -> Unit) {
-    try {
-      throw Exception("except")
-    } catch (e: Exception) {
-      callback(Result.failure(e))
-    }
+    callback(Result.failure(Exception("except")))
   }
 
   override fun throwAsyncErrorFromVoid(callback: (Result<Unit>) -> Unit) {
-    try {
-      throw Exception("except")
-    } catch (e: Exception) {
-      callback(Result.failure(e))
-    }
+    callback(Result.failure(Exception("except")))
   }
 
   override fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
@@ -217,12 +209,14 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
     flutterApi!!.noop() { callback(Result.success(Unit)) }
   }
-
+  
+  // TODO: (tarrinneal) Update error handling tests to properly recieve and handle errors.
+  // See issue https://github.com/flutter/flutter/issues/118243
   override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
-    flutterApi!!.throwError() { echo -> callback(Result.success(echo)) }
+    flutterApi!!.throwError() { echo -> callback(Result.failure(Exception("except"))) }
   }
   override fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
-    flutterApi!!.throwErrorFromVoid() { callback(Result.success(Unit)) }
+    flutterApi!!.throwErrorFromVoid() { callback(Result.failure(Exception("except"))) }
   }
 
   override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {

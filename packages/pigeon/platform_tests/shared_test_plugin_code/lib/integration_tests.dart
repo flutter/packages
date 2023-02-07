@@ -988,23 +988,25 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.callFlutterNoop(), completes);
     });
 
-    // testWidgets('errors are returned from non void methods correctly',
-    //     (WidgetTester _) async {
-    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // TODO: (tarrinneal) add flutter api error handling and enable these tests.
+    // See: https://github.com/flutter/flutter/issues/118243
+    testWidgets('errors are returned from non void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-    //   expect(() async {
-    //     await api.callFlutterThrowError();
-    //   }, throwsA(isA<PlatformException>()));
-    // });
+      expect(() async {
+        await api.callFlutterThrowError();
+      }, throwsA(isA<PlatformException>()));
+    }, skip: true);
 
-    // testWidgets('errors are returned from void methods correctly',
-    //     (WidgetTester _) async {
-    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    testWidgets('errors are returned from void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-    //   expect(() async {
-    //     await api.callFlutterThrowErrorFromVoid();
-    //   }, throwsA(isA<PlatformException>()));
-    // });
+      expect(() async {
+        await api.callFlutterThrowErrorFromVoid();
+      }, throwsA(isA<PlatformException>()));
+    }, skip: true);
 
     testWidgets('all datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1302,6 +1304,8 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   void noop() {}
 
+  // TODO: (tarrinneal) update these to send error to platform.
+  // See: https://github.com/flutter/flutter/issues/118243
   @override
   Object? throwError() {
     throw FlutterError('this is an error');

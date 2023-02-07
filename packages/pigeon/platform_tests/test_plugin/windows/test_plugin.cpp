@@ -329,14 +329,14 @@ void TestPlugin::CallFlutterNoop(
 void CallFlutterThrowError(
     std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
         result) {
-  flutter_api_->ThrowErrorFromVoid(
+  flutter_api_->ThrowError(
       [result](const Object& echo) { result(echo); },
       [result](const FlutterError& error) { result(error); });
 }
 
 void CallFlutterThrowErrorFromVoid(
     std::function<void(std::optional<FlutterError> reply)> result) {
-  flutter_api_->ThrowError(
+  flutter_api_->ThrowErrorFromVoid(
       [result]() { result(std::nullopt); },
       [result](const FlutterError& error) { result(error); });
 }
