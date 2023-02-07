@@ -843,7 +843,7 @@ String _className(String? prefix, String className) {
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
       ? 'void (^)(NSError *_Nullable)'
-      : 'void (^)(${objcType.ptr.trim()}_Nullable, NSError *_Nullable)';
+      : 'void (^)(${objcType.ptr}_Nullable, NSError *_Nullable)';
 }
 
 /// Represents an ObjC pointer (ex 'id', 'NSString *').

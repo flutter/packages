@@ -326,6 +326,21 @@ void TestPlugin::CallFlutterNoop(
                      [result](const FlutterError& error) { result(error); });
 }
 
+void CallFlutterThrowError(
+    std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
+        result) {
+  flutter_api_->ThrowErrorFromVoid(
+      [result](const Object& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void CallFlutterThrowErrorFromVoid(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  flutter_api_->ThrowError(
+      [result]() { result(std::nullopt); },
+      [result](const FlutterError& error) { result(error); });
+}
+
 void TestPlugin::CallFlutterEchoAllTypes(
     const AllTypes& everything,
     std::function<void(ErrorOr<AllTypes> reply)> result) {

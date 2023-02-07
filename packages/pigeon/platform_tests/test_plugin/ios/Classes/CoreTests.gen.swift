@@ -336,6 +336,8 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization asynchronously.
   func echAsyncoNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void)
+  func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void)
+  func callFlutterThrowErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterEcho(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void)
   func callFlutterSendMultipleNullableTypes(aBool aNullableBool: Bool?, anInt aNullableInt: Int32?, aString aNullableString: String?, completion: @escaping (Result<AllNullableTypes, Error>) -> Void)
   func callFlutterEcho(_ aBool: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
@@ -1131,6 +1133,36 @@ class HostIntegrationCoreApiSetup {
     } else {
       callFlutterNoopChannel.setMessageHandler(nil)
     }
+    let callFlutterThrowErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowError", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterThrowErrorChannel.setMessageHandler { _, reply in
+        api.callFlutterThrowError() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterThrowErrorChannel.setMessageHandler(nil)
+    }
+    let callFlutterThrowErrorFromVoidChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterThrowErrorFromVoidChannel.setMessageHandler { _, reply in
+        api.callFlutterThrowErrorFromVoid() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterThrowErrorFromVoidChannel.setMessageHandler(nil)
+    }
     let callFlutterEchoAllTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoAllTypesChannel.setMessageHandler { message, reply in
@@ -1469,6 +1501,21 @@ class FlutterIntegrationCoreApi {
   /// test basic calling.
   func noop(completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.noop", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Responds with an error from an async function returning a value.
+  func throwError(completion: @escaping (Any?) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwError", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { response in
+      let result = response
+      completion(result)
+    }
+  }
+  /// Responds with an error from an async void function.
+  func throwErrorFromVoid(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwErrorFromVoid", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
       completion()
     }

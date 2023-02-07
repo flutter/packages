@@ -1302,15 +1302,15 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   void noop() {}
 
-  // @override
-  // Object? throwError() {
-  //   throw FlutterError('this is an error');
-  // }
+  @override
+  Object? throwError() {
+    throw FlutterError('this is an error');
+  }
 
-  // @override
-  // void throwErrorFromVoid() {
-  //   throw FlutterError('this is an error');
-  // }
+  @override
+  void throwErrorFromVoid() {
+    throw FlutterError('this is an error');
+  }
 
   @override
   AllNullableTypes sendMultipleNullableTypes(

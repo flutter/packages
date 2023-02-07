@@ -278,25 +278,25 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
         });
   }
 
-  // @Override
-  // public void callFlutterThrowError(Result<Object> result) {
-  //   flutterApi.throwError(
-  //       new FlutterIntegrationCoreApi.Reply<Object>() {
-  //         public void reply(Object value) {
-  //           result.success(value);
-  //         }
-  //       });
-  // }
+  @Override
+  public void callFlutterThrowError(Result<Object> result) {
+    flutterApi.throwError(
+        new FlutterIntegrationCoreApi.Reply<Object>() {
+          public void reply(Object value) {
+            result.success(value);
+          }
+        });
+  }
 
-  // @Override
-  // public void callFlutterThrowErrorFromVoid(Result<Void> result) {
-  //   flutterApi.throwErrorFromVoid(
-  //       new FlutterIntegrationCoreApi.Reply<Void>() {
-  //         public void reply(Void value) {
-  //           result.success(value);
-  //         }
-  //       });
-  // }
+  @Override
+  public void callFlutterThrowErrorFromVoid(Result<Void> result) {
+    flutterApi.throwErrorFromVoid(
+        new FlutterIntegrationCoreApi.Reply<Void>() {
+          public void reply(Void value) {
+            result.success(value);
+          }
+        });
+  }
 
   @Override
   public void callFlutterEchoAllTypes(@NonNull AllTypes everything, Result<AllTypes> result) {

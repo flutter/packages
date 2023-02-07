@@ -211,6 +211,18 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
+  func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void) {
+    flutterAPI.throwError() { 
+      completion(.success($0)) 
+    }
+  }
+
+  func callFlutterThrowErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void) {
+    flutterAPI.throwErrorFromVoid() {
+      completion(.success(Void()))
+    }
+  }
+
   func callFlutterEcho(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void) {
     flutterAPI.echo(everything) { 
       completion(.success($0)) 

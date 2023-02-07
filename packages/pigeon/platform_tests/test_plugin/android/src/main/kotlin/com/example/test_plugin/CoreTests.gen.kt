@@ -318,6 +318,8 @@ interface HostIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization asynchronously. */
   fun echoAsyncNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit)
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
+  fun callFlutterThrowError(callback: (Result<Any?>) -> Unit)
+  fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit)
   fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
   fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?, callback: (Result<AllNullableTypes>) -> Unit)
   fun callFlutterEchoBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit)
@@ -1225,6 +1227,43 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowError", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.callFlutterThrowError() { result: Result<Any?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.callFlutterThrowErrorFromVoid() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1626,6 +1665,21 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
    */
   fun noop(callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.noop", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Responds with an error from an async function returning a value. */
+  fun throwError(callback: (Any?) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwError", codec)
+    channel.send(null) {
+      val result = it as? Any?
+      callback(result)
+    }
+  }
+  /** Responds with an error from an async void function. */
+  fun throwErrorFromVoid(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwErrorFromVoid", codec)
     channel.send(null) {
       callback()
     }

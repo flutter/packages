@@ -264,6 +264,19 @@
   }];
 }
 
+- (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
+                                                      FlutterError *_Nullable))completion {
+  [self.flutterAPI throwErrorWithCompletion:^(id value, NSError *error) {
+    completion(value, error);
+  }];
+}
+
+- (void)callFlutterThrowErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  [self.flutterAPI throwErrorFromVoidWithCompletion:^(NSError *error) {
+    completion(error);
+  }];
+}
+
 - (void)callFlutterEchoAllTypes:(AllTypes *)everything
                      completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion {
   [self.flutterAPI echoAllTypes:everything

@@ -886,6 +886,10 @@ public class CoreTests {
 
     void callFlutterNoop(Result<Void> result);
 
+    void callFlutterThrowError(Result<Object> result);
+
+    void callFlutterThrowErrorFromVoid(Result<Void> result);
+
     void callFlutterEchoAllTypes(@NonNull AllTypes everything, Result<AllTypes> result);
 
     void callFlutterSendMultipleNullableTypes(
@@ -2409,6 +2413,74 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowError",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Result<Object> resultCallback =
+                      new Result<Object>() {
+                        public void success(Object result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.callFlutterThrowError(resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Result<Void> resultCallback =
+                      new Result<Void>() {
+                        public void success(Void result) {
+                          wrapped.add(0, null);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.callFlutterThrowErrorFromVoid(resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes",
                 getCodec());
         if (api != null) {
@@ -3097,6 +3169,30 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.noop", getCodec());
+      channel.send(null, channelReply -> callback.reply(null));
+    }
+    /** Responds with an error from an async function returning a value. */
+    public void throwError(Reply<Object> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwError",
+              getCodec());
+      channel.send(
+          null,
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Object output = (Object) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Responds with an error from an async void function. */
+    public void throwErrorFromVoid(Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwErrorFromVoid",
+              getCodec());
       channel.send(null, channelReply -> callback.reply(null));
     }
     /** Returns the passed object, to test serialization and deserialization. */
