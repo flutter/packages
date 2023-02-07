@@ -85,7 +85,7 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => const HomeScreen();
+  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 ```
 
@@ -109,7 +109,7 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => HomeScreen(families: familyData);
+  Widget build(BuildContext context, GoRouterState state) => HomeScreen(families: familyData);
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
@@ -135,7 +135,7 @@ class ErrorRoute extends GoRouteData {
   final Exception error;
 
   @override
-  Widget build(BuildContext context) => ErrorScreen(error: error);
+  Widget build(BuildContext context, GoRouterState state) => ErrorScreen(error: error);
 }
 ```
 
@@ -175,7 +175,7 @@ class LoginRoute extends GoRouteData {
   final String? from;
 
   @override
-  Widget build(BuildContext context) => LoginScreen(from: from);
+  Widget build(BuildContext context, GoRouterState state) => LoginScreen(from: from);
 }
 ```
 
@@ -190,7 +190,7 @@ class PersonRouteWithExtra extends GoRouteData {
   final int? $extra;
 
   @override
-  Widget build(BuildContext context) => PersonScreen(personId: $extra);
+  Widget build(BuildContext context, GoRouterState state) => PersonScreen(personId: $extra);
 }
 ```
 
@@ -216,7 +216,7 @@ class HotdogRouteWithEverything extends GoRouteData {
   final Sauce $extra; // special $extra parameter
 
   @override
-  Widget build(BuildContext context) => HotdogScreen(ketchup, mustard, $extra);
+  Widget build(BuildContext context, GoRouterState state) => HotdogScreen(ketchup, mustard, $extra);
 }
 ```
 
@@ -245,7 +245,7 @@ Handle route-level redirects by implementing the `redirect` method on the route:
 class HomeRoute extends GoRouteData {
   // no need to implement [build] when this [redirect] is unconditional
   @override
-  String? redirect() => BooksRoute().location;
+  String? redirect(BuildContext context, GoRouterState state) => BooksRoute().location;
 }
 ```
 
@@ -262,7 +262,7 @@ class BooksRoute extends GoRouteData {
   final BookKind kind;
 
   @override
-  Widget build(BuildContext context) => BooksScreen(kind: kind);
+  Widget build(BuildContext context, GoRouterState state) => BooksScreen(kind: kind);
 }
 ```
 
@@ -279,14 +279,14 @@ of the page and the `restorationId` of the page.
 
 If you'd like to change how the page is created, e.g. to use a different page
 type, pass non-default parameters when creating the page (like a custom key) or
-access the `GoRouteState` object, you can override the `buildPageWithState`
+access the `GoRouteState` object, you can override the `buildPage`
 method of the base class instead of the `build` method:
 
 ```dart
 class MyMaterialRouteWithKey extends GoRouteData {
   static final _key = LocalKey('my-route-with-key');
   @override
-  MaterialPage<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) =>
     MaterialPage<void>(
       key: _key,
       child: MyPage(),
@@ -296,12 +296,12 @@ class MyMaterialRouteWithKey extends GoRouteData {
 
 ### Custom transitions
 
-Overriding the `buildPageWithState` method is also useful for custom transitions:
+Overriding the `buildPage` method is also useful for custom transitions:
 
 ```dart
 class FancyRoute extends GoRouteData {
   @override
-  MaterialPage<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) =>
     CustomTransitionPage<void>(
       key: state.pageKey,
       child: FancyPage(),

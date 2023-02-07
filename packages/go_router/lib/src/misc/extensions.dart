@@ -64,7 +64,7 @@ extension GoRouterHelper on BuildContext {
   /// See also:
   /// * [popUntil] which calls [pop] repeatedly until the predicate returns
   ///   `true`.
-  void pop() => GoRouter.of(this).pop();
+  void pop<T extends Object?>([T? result]) => GoRouter.of(this).pop(result);
 
   /// Calls [pop] repeatedly until the predicate returns true.
   ///

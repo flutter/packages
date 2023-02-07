@@ -15,17 +15,21 @@ void defineTests() {
       'Given a MarkdownBody with shrinkWrap=true '
       'Then it wraps its content',
       (WidgetTester tester) async {
-        await tester.pumpWidget(boilerplate(Stack(
-          children: const <Widget>[
-            Text('shrinkWrap=true'),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: MarkdownBody(
-                data: 'This is a [link](https://flutter.dev/)',
+        await tester.pumpWidget(boilerplate(
+          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+          // ignore: prefer_const_constructors
+          Stack(
+            children: const <Widget>[
+              Text('shrinkWrap=true'),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: MarkdownBody(
+                  data: 'This is a [link](https://flutter.dev/)',
+                ),
               ),
-            ),
-          ],
-        )));
+            ],
+          ),
+        ));
 
         final Rect stackRect = tester.getRect(find.byType(Stack));
         final Rect textRect = tester.getRect(find.byType(Text));
@@ -43,18 +47,22 @@ void defineTests() {
       'Given a MarkdownBody with shrinkWrap=false '
       'Then it expands to the maximum allowed height',
       (WidgetTester tester) async {
-        await tester.pumpWidget(boilerplate(Stack(
-          children: const <Widget>[
-            Text('shrinkWrap=false test'),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: MarkdownBody(
-                data: 'This is a [link](https://flutter.dev/)',
-                shrinkWrap: false,
+        await tester.pumpWidget(boilerplate(
+          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+          // ignore: prefer_const_constructors
+          Stack(
+            children: const <Widget>[
+              Text('shrinkWrap=false test'),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: MarkdownBody(
+                  data: 'This is a [link](https://flutter.dev/)',
+                  shrinkWrap: false,
+                ),
               ),
-            ),
-          ],
-        )));
+            ],
+          ),
+        ));
 
         final Rect stackRect = tester.getRect(find.byType(Stack));
         final Rect textRect = tester.getRect(find.byType(Text));

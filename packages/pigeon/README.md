@@ -91,9 +91,9 @@ Nested datatypes are supported, too.
 
 ### Asynchronous Handlers
 
-By default Pigeon will generate synchronous handlers for messages.  If you want
-to be able to respond to a message asynchronously you can use the `@async`
-annotation as of version 0.1.20.
+By default Pigeon will generate synchronous handlers for messages and
+asynchronous methods. If you want a handler to be able to respond to a message
+asynchronously you can use the @async annotation as of version 0.1.20.
 
 Example:
 

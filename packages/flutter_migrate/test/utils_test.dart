@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter_migrate/src/base/common.dart';
 import 'package:flutter_migrate/src/base/file_system.dart';
 import 'package:flutter_migrate/src/base/io.dart';
 import 'package:flutter_migrate/src/base/logger.dart';
@@ -238,7 +239,17 @@ void main() {
     logger.clear();
 
     printCommandText('fullstandalone', logger);
-    expect(logger.statusText, contains('./bin/flutter_migrate fullstandalone'));
+    if (isWindows) {
+      expect(
+          logger.statusText,
+          contains(
+              r'dart run <flutter_migrate_dir>\bin\flutter_migrate.dart fullstandalone'));
+    } else {
+      expect(
+          logger.statusText,
+          contains(
+              'dart run <flutter_migrate_dir>/bin/flutter_migrate.dart fullstandalone'));
+    }
     logger.clear();
   });
 
