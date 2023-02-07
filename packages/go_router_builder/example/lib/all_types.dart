@@ -330,7 +330,8 @@ class IterableRoute extends GoRouteData {
   final Set<SportDetails>? enumSetField;
 
   @override
-  Widget build(BuildContext context) => const BasePage<String>(
+  Widget build(BuildContext context, GoRouterState state) =>
+      const BasePage<String>(
         dataTitle: 'IterableRoute',
       );
 
