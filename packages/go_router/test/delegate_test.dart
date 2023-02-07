@@ -67,7 +67,7 @@ void main() {
       final RouteMatch last = goRouter.routerDelegate.matches.matches.last;
 
       int count = 0;
-      goRouter.popUntil((RouteMatch routeMatch) => count++ >= 2);
+      goRouter.popUntil((Route<dynamic> routeMatch) => count++ >= 2);
 
       expect(goRouter.routerDelegate.matches.matches.length, 1);
       expect(goRouter.routerDelegate.matches.matches.contains(second), false);

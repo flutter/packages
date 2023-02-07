@@ -4,7 +4,6 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../match.dart';
 import '../router.dart';
 
 /// Dart extension to add navigation function to a BuildContext object, e.g.
@@ -72,7 +71,7 @@ extension GoRouterHelper on BuildContext {
   ///
   /// * [pop] which pops the top page off the Navigator's page stack by calling
   ///   [Navigator.pop].
-  void popUntil(bool Function(RouteMatch) predicate) =>
+  void popUntil(RoutePredicate predicate) =>
       GoRouter.of(this).popUntil(predicate);
 
   /// Replaces the top-most page of the page stack with the given URL location
