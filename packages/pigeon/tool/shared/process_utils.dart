@@ -10,7 +10,7 @@ import 'dart:io' show Process, stderr, stdout;
 Future<Process> _streamOutput(Future<Process> processFuture) async {
   //print('Waiting for process');
   final Process process = await processFuture;
-  print('Waiting for streams');
+  //print('Waiting for streams');
   await Future.wait(<Future<Object?>>[
     stdout.addStream(process.stdout),
     stderr.addStream(process.stderr),
