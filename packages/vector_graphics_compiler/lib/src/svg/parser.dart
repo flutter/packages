@@ -1369,14 +1369,13 @@ class SvgParser {
         final String b = colorString[3];
         colorString = '#$r$r$g$g$b$b';
       }
-      int color = int.parse(colorString.substring(1), radix: 16);
 
-      if (colorString.length == 7) {
-        return Color(color |= 0xFF000000);
-      }
-
-      if (colorString.length == 9) {
-        return Color(color);
+      if (colorString.length == 7 || colorString.length == 9) {
+        final int color = int.parse(colorString.substring(1, 7), radix: 16);
+        final int alpha = colorString.length == 9
+            ? int.parse(colorString.substring(7, 9), radix: 16)
+            : 255;
+        return Color(color | alpha << 24);
       }
     }
 

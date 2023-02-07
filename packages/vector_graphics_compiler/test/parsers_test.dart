@@ -22,6 +22,11 @@ void main() {
     expect(parser.parseColor('null', attributeName: 'foo', id: null), null);
     expect(parser.parseColor('red', attributeName: 'foo', id: null),
         const Color.fromARGB(255, 255, 0, 0));
+    expect(parser.parseColor('#ABCDEF', attributeName: 'foo', id: null),
+        const Color.fromARGB(255, 0xAB, 0xCD, 0xEF));
+    // RGBA in svg/css, ARGB in this library.
+    expect(parser.parseColor('#ABCDEF88', attributeName: 'foo', id: null),
+        const Color.fromARGB(0x88, 0xAB, 0xCD, 0xEF));
   });
 
   test('Colors - mapped', () async {
