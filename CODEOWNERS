@@ -21,7 +21,7 @@ packages/google_identity_services_web/**  @ditman
 packages/metrics_center/**                @keyonghan
 packages/multicast_dns/**                 @dnfield
 packages/palette_generator/**             @gspencergoog
-packages/pigeon/**                        @tarrinneal @gaaclarke
+packages/pigeon/**                        @tarrinneal
 packages/pointer_interceptor/**           @ditman
 packages/rfw/**                           @Hixie
 packages/standard_message_codec/**        @jonahwilliams
