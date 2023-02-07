@@ -55,6 +55,7 @@ Future<int> runXcodeBuild(
       ...extraArguments,
     ],
     workingDirectory: nativeProjectDirectory,
+    streamOutput: false,
   );
 }
 
