@@ -988,7 +988,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.callFlutterNoop(), completes);
     });
 
-    // TODO: (tarrinneal) add flutter api error handling and enable these tests.
+    // TODO(tarrinneal): add flutter api error handling and enable these tests,
     // See: https://github.com/flutter/flutter/issues/118243
     testWidgets('errors are returned from non void methods correctly',
         (WidgetTester _) async {
@@ -1304,7 +1304,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   void noop() {}
 
-  // TODO: (tarrinneal) update these to send error to platform.
+  // TODO(tarrinneal): update these to send error to platform,
   // See: https://github.com/flutter/flutter/issues/118243
   @override
   Object? throwError() {
