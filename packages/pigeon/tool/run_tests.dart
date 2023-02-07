@@ -45,19 +45,19 @@ Future<void> main(List<String> args) async {
     // androidKotlinIntegrationTests,
   ];
   // Run macOS and iOS tests on macOS, since that's the only place they can run.
-  const List<String> macOSHostTests = <String>[
-    // TODO(stuartmorgan): Replace this with iOSObjCUnitTests once the CI
-    // issues are resolved; see https://github.com/flutter/packages/pull/2816.
-    iOSObjCUnitTestsLegacy,
-    // TODO(stuartmorgan): Enable by default once CI issues are solved; see
-    // https://github.com/flutter/packages/pull/2816.
-    //iOSObjCIntegrationTests,
+  // TODO(stuartmorgan): Move everything to LUCI, and eliminate the LUCI/Cirrus
+  // separation. See https://github.com/flutter/flutter/issues/120231.
+  const List<String> macOSHostLuciTests = <String>[
+    iOSObjCUnitTests,
     iOSSwiftUnitTests,
+    iOSObjCIntegrationTests,
     // Currently these are testing exactly the same thing as
     // macOSSwiftIntegrationTests, so we don't need to run both by default. This
     // should be enabled if any iOS-only tests are added (e.g., for a feature
     // not supported by macOS).
     // iOSSwiftIntegrationTests,
+  ];
+  const List<String> macOSHostCirrusTests = <String>[
     macOSSwiftUnitTests,
     macOSSwiftIntegrationTests,
   ];
@@ -67,9 +67,10 @@ Future<void> main(List<String> args) async {
     windowsIntegrationTests,
   ];
 
-  /*_validateTestCoverage(<List<String>>[
+  _validateTestCoverage(<List<String>>[
     linuxHostTests,
-    macOSHostTests,
+    macOSHostLuciTests,
+    macOSHostCirrusTests,
     windowsHostTests,
     // Tests that are deliberately not included in CI:
     <String>[
@@ -81,11 +82,15 @@ Future<void> main(List<String> args) async {
       iOSObjCIntegrationTests,
       iOSSwiftIntegrationTests,
     ],
-  ]);*/
+  ]);
 
   final List<String> testsToRun;
   if (Platform.isMacOS) {
-    testsToRun = macOSHostTests;
+    if (Platform.environment['LUCI_CI'] != null) {
+      testsToRun = macOSHostLuciTests;
+    } else {
+      testsToRun = macOSHostCirrusTests;
+    }
   } else if (Platform.isWindows) {
     testsToRun = windowsHostTests;
   } else if (Platform.isLinux) {
