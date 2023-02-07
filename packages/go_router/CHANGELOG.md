@@ -2,6 +2,18 @@
 
 - Adds `replace` method to that replaces the current route with a new one and keeps the same page key if the path is the same. This is useful for when you want to update the query params without changing the page key ([#115902]https://github.com/flutter/flutter/issues/115902).
 
+## 6.0.4
+
+- Fixes redirection info log.
+
+## 6.0.3
+
+- Makes `CustomTransitionPage.barrierDismissible` work
+
+## 6.0.2
+
+- Fixes missing result on pop in go_router extension.
+
 ## 6.0.1
 
 - Fixes crashes when popping navigators manually.

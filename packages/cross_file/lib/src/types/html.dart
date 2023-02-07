@@ -26,6 +26,7 @@ class XFile extends XFileBase {
   ///
   /// `name` needs to be passed from the outside, since it's only available
   /// while handling [html.File]s (when the ObjectUrl is created).
+  // ignore: use_super_parameters
   XFile(
     String path, {
     String? mimeType,
@@ -141,7 +142,7 @@ class XFile extends XFileBase {
       rethrow;
     }
 
-    _browserBlob = request.response;
+    _browserBlob = request.response as Blob?;
 
     assert(_browserBlob != null, 'The Blob backing this XFile cannot be null!');
 

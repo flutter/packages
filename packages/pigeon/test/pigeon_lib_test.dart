@@ -931,6 +931,52 @@ abstract class Api {
     expect(results.root.apis[0].methods[0].objcSelector, equals('foobar'));
   });
 
+  test('custom swift valid function signature', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @SwiftFunction('subtractValue(_:by:)')
+  void subtract(int x, int y);
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.apis.length, 1);
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].methods[0].swiftFunction,
+        equals('subtractValue(_:by:)'));
+  });
+
+  test('custom swift invalid function signature', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @SwiftFunction('subtractValue(_:by:error:)')
+  void subtract(int x, int y);
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message,
+        contains('Invalid function signature, expected 2 arguments'));
+  });
+
+  test('custom swift function signature no arguments', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @SwiftFunction('foobar()')
+  void initialize();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.apis.length, 1);
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].methods[0].swiftFunction, equals('foobar()'));
+  });
+
   test('dart test has copyright', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
@@ -938,10 +984,10 @@ abstract class Api {
       dartTestOut: 'stdout',
       dartOut: 'stdout',
     );
-    final DartTestGeneratorAdapter dartGeneratorAdapter =
+    final DartTestGeneratorAdapter dartTestGeneratorAdapter =
         DartTestGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    dartGeneratorAdapter.generate(buffer, options, root, FileType.source);
+    dartTestGeneratorAdapter.generate(buffer, options, root, FileType.source);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 

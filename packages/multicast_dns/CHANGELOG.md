@@ -1,3 +1,8 @@
+## 0.3.2+3
+
+* Removes use of `runtimeType.toString()`.
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 0.3.2+2
 
 * Fixes lints warnings.

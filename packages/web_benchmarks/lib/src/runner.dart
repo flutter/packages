@@ -143,8 +143,8 @@ class BenchmarkServer {
         chrome ??= await whenChromeIsReady;
         if (request.requestedUri.path.endsWith('/profile-data')) {
           final Map<String, dynamic> profile =
-              json.decode(await request.readAsString());
-          final String? benchmarkName = profile['name'];
+              json.decode(await request.readAsString()) as Map<String, dynamic>;
+          final String? benchmarkName = profile['name'] as String?;
           if (benchmarkName != benchmarkIterator.current) {
             profileData.completeError(Exception(
               'Browser returned benchmark results from a wrong benchmark.\n'
@@ -179,7 +179,7 @@ class BenchmarkServer {
           return Response.ok('Stopped performance tracing');
         } else if (request.requestedUri.path.endsWith('/on-error')) {
           final Map<String, dynamic> errorDetails =
-              json.decode(await request.readAsString());
+              json.decode(await request.readAsString()) as Map<String, dynamic>;
           server.close();
           // Keep the stack trace as a string. It's thrown in the browser, not this Dart VM.
           final String errorMessage =
@@ -271,12 +271,13 @@ class BenchmarkServer {
       final Map<String, List<BenchmarkScore>> results =
           <String, List<BenchmarkScore>>{};
       for (final Map<String, dynamic> profile in profiles) {
-        final String benchmarkName = profile['name'];
+        final String benchmarkName = profile['name'] as String;
         if (benchmarkName.isEmpty) {
           throw StateError('Benchmark name is empty');
         }
 
-        final List<String> scoreKeys = List<String>.from(profile['scoreKeys']);
+        final List<String> scoreKeys =
+            List<String>.from(profile['scoreKeys'] as Iterable<dynamic>);
         if (scoreKeys == null || scoreKeys.isEmpty) {
           throw StateError('No score keys in benchmark "$benchmarkName"');
         }
@@ -295,7 +296,7 @@ class BenchmarkServer {
           }
           scores.add(BenchmarkScore(
             metric: key,
-            value: profile[key],
+            value: profile[key] as num,
           ));
         }
         results[benchmarkName] = scores;
