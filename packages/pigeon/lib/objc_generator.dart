@@ -896,8 +896,8 @@ String _className(String? prefix, String className) {
 /// Calculates callback block signature for for async methods.
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
-      ? 'void (^)(NSError *_Nullable)'
-      : 'void (^)(${objcType.ptr.trim()}_Nullable, NSError *_Nullable)';
+      ? 'void (^)(FlutterError *_Nullable)'
+      : 'void (^)(${objcType.ptr.trim()}_Nullable, FlutterError *_Nullable)';
 }
 
 /// Represents an ObjC pointer (ex 'id', 'NSString *').
