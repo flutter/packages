@@ -81,7 +81,6 @@ Future<void> main(List<String> args) async {
       androidKotlinIntegrationTests,
       // See comments in macOSHostTests:
       iOSObjCIntegrationTests,
-      iOSObjCUnitTestsLegacy,
       iOSSwiftIntegrationTests,
     ],
   ]);
