@@ -1,6 +1,10 @@
-## 6.0.5
+## 6.0.6
 
 - Adds `reverseTransitionDuration` to `CustomTransitionPage`
+
+## 6.0.5
+
+- Fixes [unnecessary_null_comparison](https://dart-lang.github.io/linter/lints/unnecessary_null_checks.html) lint warnings.
 
 ## 6.0.4
 
