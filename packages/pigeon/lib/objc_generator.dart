@@ -361,7 +361,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   @override
   void writeDataClasses(
       ObjcOptions generatorOptions, Root root, Indent indent) {
-    _writeObjcSourceHelperFunctions(indent);
+    _writeObjcSourceHelperFunctions(indent,
+        hasHostApiMethods: root.apis.any((Api api) =>
+            api.location == ApiLocation.host && api.methods.isNotEmpty));
 
     for (final Class klass in root.classes) {
       _writeObjcSourceDataClassExtension(generatorOptions, indent, klass);
@@ -643,8 +645,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     });
   }
 
-  void _writeObjcSourceHelperFunctions(Indent indent) {
-    indent.format('''
+  void _writeObjcSourceHelperFunctions(Indent indent,
+      {required bool hasHostApiMethods}) {
+    if (hasHostApiMethods) {
+      indent.format('''
 static NSArray *wrapResult(id result, FlutterError *error) {
 \tif (error) {
 \t\treturn @[
@@ -653,6 +657,7 @@ static NSArray *wrapResult(id result, FlutterError *error) {
 \t}
 \treturn @[ result ?: [NSNull null] ];
 }''');
+    }
     indent.format('''
 static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 \tid result = array[key];
