@@ -1,5 +1,10 @@
-## 6.0.4
+## 6.0.5
+
 - Adds `reverseTransitionDuration` to `CustomTransitionPage`
+
+## 6.0.4
+
+- Fixes redirection info log.
 
 ## 6.0.3
 

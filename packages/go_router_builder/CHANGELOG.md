@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Supports default value for the route parameters.
+
 ## 1.0.16
 
 * Update the documentation to go_router v6.0.0.
