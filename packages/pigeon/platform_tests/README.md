@@ -29,10 +29,3 @@ supported plugin languages. It covers:
 Dart unit tests for null-safe mode. This is a legacy structure from before
 NNBD was the only mode Pigeon supported; these should be folded back into
 the main tests.
-
-## ios\_unit\_tests
-
-This is a legacy harness that is only necessary for CI, and will be
-removed in the future. See
-[this PR](https://github.com/flutter/packages/pull/2816) for more
-details.
