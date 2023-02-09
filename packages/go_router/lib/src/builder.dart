@@ -306,10 +306,6 @@ class RouteBuilder {
       {Widget? childWidget}) {
     final RouteBase route = match.route;
 
-    if (route == null) {
-      throw _RouteBuilderError('No route found for match: $match');
-    }
-
     if (route is GoRoute) {
       final GoRouterWidgetBuilder? builder = route.builder;
 
