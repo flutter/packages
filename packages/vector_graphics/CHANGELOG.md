@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.1+1
+
+- Fix bug in asset loading from packages.
+
 ## 1.0.1
 
 - Fix handling of fill colors on use/group elements.

@@ -78,7 +78,9 @@ class AssetBytesLoader extends BytesLoader {
 
   @override
   Future<ByteData> loadBytes(BuildContext? context) {
-    return _resolveBundle(context).load(assetName);
+    return _resolveBundle(context).load(
+      packageName == null ? assetName : 'packages/$packageName/$assetName',
+    );
   }
 
   @override

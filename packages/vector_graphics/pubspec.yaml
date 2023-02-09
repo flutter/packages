@@ -1,6 +1,6 @@
 name: vector_graphics
 description: A vector graphics rendering package for Flutter.
-version: 1.0.1
+version: 1.0.1+1
 homepage: https://github.com/dnfield/vector_graphics
 
 environment:

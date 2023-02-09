@@ -588,6 +588,30 @@ void main() {
       matchesGoldenFile('vg_with_image_blue.png'),
     );
   }, skip: kIsWeb);
+
+  test('AssetBytesLoader respects packages', () async {
+    final TestBundle bundle = TestBundle(<String, ByteData>{
+      'foo': Uint8List(0).buffer.asByteData(),
+      'packages/packageName/foo': Uint8List(1).buffer.asByteData(),
+    });
+    final AssetBytesLoader loader =
+        AssetBytesLoader('foo', assetBundle: bundle);
+    final AssetBytesLoader packageLoader = AssetBytesLoader('foo',
+        assetBundle: bundle, packageName: 'packageName');
+    expect((await loader.loadBytes(null)).lengthInBytes, 0);
+    expect((await packageLoader.loadBytes(null)).lengthInBytes, 1);
+  });
+}
+
+class TestBundle extends Fake implements AssetBundle {
+  TestBundle(this.map);
+
+  final Map<String, ByteData> map;
+
+  @override
+  Future<ByteData> load(String key) async {
+    return map[key]!;
+  }
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {
