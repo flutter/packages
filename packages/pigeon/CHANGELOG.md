@@ -1,3 +1,7 @@
+## 7.2.2
+
+* Updates `DartOptions` to be immutable and adds const to the constructor.
+
 ## 7.2.1
 
 * [kotlin] Fixes Flutter api int errors with updated casting.
