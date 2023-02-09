@@ -40,7 +40,7 @@
       [[NullableArgFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api doitX:nil
-      completion:^(NSNumber *_Nonnull result, NSError *_Nullable error) {
+      completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable error) {
         XCTAssertNil(result);
         [expectation fulfill];
       }];

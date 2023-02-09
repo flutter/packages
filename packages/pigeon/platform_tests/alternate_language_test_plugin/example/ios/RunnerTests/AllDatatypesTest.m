@@ -24,7 +24,7 @@
       [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoAllNullableTypes:everything
-                 completion:^(AllNullableTypes *_Nonnull result, NSError *_Nullable error) {
+                 completion:^(AllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
                    XCTAssertNil(result.aNullableBool);
                    XCTAssertNil(result.aNullableInt);
                    XCTAssertNil(result.aNullableDouble);
@@ -63,7 +63,7 @@
       [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoAllNullableTypes:everything
-                 completion:^(AllNullableTypes *_Nonnull result, NSError *_Nullable error) {
+                 completion:^(AllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
                    XCTAssertEqual(result.aNullableBool, everything.aNullableBool);
                    XCTAssertEqual(result.aNullableInt, everything.aNullableInt);
                    XCTAssertEqual(result.aNullableDouble, everything.aNullableDouble);

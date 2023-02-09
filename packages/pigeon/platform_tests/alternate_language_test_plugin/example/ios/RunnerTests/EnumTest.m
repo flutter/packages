@@ -24,7 +24,7 @@
   EnumApi2Flutter *api = [[EnumApi2Flutter alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoData:data
-      completion:^(DataWithEnum *_Nonnull result, NSError *_Nullable error) {
+      completion:^(DataWithEnum *_Nonnull result, FlutterError *_Nullable error) {
         XCTAssertEqual(data.state, result.state);
         [expectation fulfill];
       }];
