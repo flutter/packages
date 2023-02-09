@@ -2,7 +2,7 @@
 
 * [objc] **BREAKING CHANGE**: FlutterApi calls now return a `FlutterError`,
   rather than an `NSError`, on failure.
-* [objc] Fixes an usused function warning when only generating FlutterApi.
+* [objc] Fixes an unused function warning when only generating FlutterApi.
 
 ## 7.2.1
 
