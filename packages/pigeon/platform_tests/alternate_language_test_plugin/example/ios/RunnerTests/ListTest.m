@@ -26,7 +26,7 @@
   EchoApi *api = [[EchoApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoMsg:top
-      completion:^(TestMessage *_Nonnull result, NSError *_Nullable err) {
+      completion:^(TestMessage *_Nonnull result, FlutterError *_Nullable err) {
         XCTAssertEqual(1u, result.testList.count);
         XCTAssertTrue([result.testList[0] isKindOfClass:[TestMessage class]]);
         XCTAssertEqualObjects(inside.testList, [result.testList[0] testList]);

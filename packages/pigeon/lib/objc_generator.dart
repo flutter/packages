@@ -361,7 +361,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   @override
   void writeDataClasses(
       ObjcOptions generatorOptions, Root root, Indent indent) {
-    _writeObjcSourceHelperFunctions(indent);
+    _writeObjcSourceHelperFunctions(indent,
+        hasHostApiMethods: root.apis.any((Api api) =>
+            api.location == ApiLocation.host && api.methods.isNotEmpty));
 
     for (final Class klass in root.classes) {
       _writeObjcSourceDataClassExtension(generatorOptions, indent, klass);
@@ -643,8 +645,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     });
   }
 
-  void _writeObjcSourceHelperFunctions(Indent indent) {
-    indent.format('''
+  void _writeObjcSourceHelperFunctions(Indent indent,
+      {required bool hasHostApiMethods}) {
+    if (hasHostApiMethods) {
+      indent.format('''
 static NSArray *wrapResult(id result, FlutterError *error) {
 \tif (error) {
 \t\treturn @[
@@ -653,6 +657,7 @@ static NSArray *wrapResult(id result, FlutterError *error) {
 \t}
 \treturn @[ result ?: [NSNull null] ];
 }''');
+    }
     indent.format('''
 static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 \tid result = array[key];
@@ -795,6 +800,55 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
       indent.writeln('return sSharedObject;');
     });
   }
+
+  void _writeMethod(ObjcOptions languageOptions, Root root, Indent indent,
+      Api api, Method func) {
+    final _ObjcPtr returnType =
+        _objcTypeForDartType(languageOptions.prefix, func.returnType);
+    final String callbackType = _callbackForType(func.returnType, returnType);
+
+    String argNameFunc(int count, NamedType arg) => _getSafeArgName(count, arg);
+    final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
+    String sendArgument;
+    if (func.arguments.isEmpty) {
+      sendArgument = 'nil';
+    } else {
+      String makeVarOrNSNullExpression(String x) => '$x ?: [NSNull null]';
+      sendArgument = '@[${argNames.map(makeVarOrNSNullExpression).join(', ')}]';
+    }
+    indent.write(_makeObjcSignature(
+      func: func,
+      options: languageOptions,
+      returnType: 'void',
+      lastArgName: 'completion',
+      lastArgType: callbackType,
+      argNameFunc: argNameFunc,
+      isEnum: (TypeDeclaration t) => isEnum(root, t),
+    ));
+    indent.addScoped(' {', '}', () {
+      indent.writeln('FlutterBasicMessageChannel *channel =');
+      indent.nest(1, () {
+        indent.writeln('[FlutterBasicMessageChannel');
+        indent.nest(1, () {
+          indent.writeln(
+              'messageChannelWithName:@"${makeChannelName(api, func)}"');
+          indent.writeln('binaryMessenger:self.binaryMessenger');
+          indent.write(
+              'codec:${_getCodecGetterName(languageOptions.prefix, api.name)}()');
+          indent.addln('];');
+        });
+      });
+      indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
+      indent.addScoped('{', '}];', () {
+        if (func.returnType.isVoid) {
+          indent.writeln('completion(nil);');
+        } else {
+          indent.writeln('${returnType.ptr}output = reply;');
+          indent.writeln('completion(output, nil);');
+        }
+      });
+    });
+  }
 }
 
 /// Writes the method declaration for the initializer.
@@ -842,8 +896,8 @@ String _className(String? prefix, String className) {
 /// Calculates callback block signature for for async methods.
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
-      ? 'void (^)(NSError *_Nullable)'
-      : 'void (^)(${objcType.ptr.trim()}_Nullable, NSError *_Nullable)';
+      ? 'void (^)(FlutterError *_Nullable)'
+      : 'void (^)(${objcType.ptr.trim()}_Nullable, FlutterError *_Nullable)';
 }
 
 /// Represents an ObjC pointer (ex 'id', 'NSString *').
@@ -1066,55 +1120,6 @@ void _writeInitializer(Indent indent) {
       indent.writeln('_binaryMessenger = binaryMessenger;');
     });
     indent.writeln('return self;');
-  });
-}
-
-void _writeMethod(ObjcOptions languageOptions, Root root, Indent indent,
-    Api api, Method func) {
-  final _ObjcPtr returnType =
-      _objcTypeForDartType(languageOptions.prefix, func.returnType);
-  final String callbackType = _callbackForType(func.returnType, returnType);
-
-  String argNameFunc(int count, NamedType arg) => _getSafeArgName(count, arg);
-  final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
-  String sendArgument;
-  if (func.arguments.isEmpty) {
-    sendArgument = 'nil';
-  } else {
-    String makeVarOrNSNullExpression(String x) => '$x ?: [NSNull null]';
-    sendArgument = '@[${argNames.map(makeVarOrNSNullExpression).join(', ')}]';
-  }
-  indent.write(_makeObjcSignature(
-    func: func,
-    options: languageOptions,
-    returnType: 'void',
-    lastArgName: 'completion',
-    lastArgType: callbackType,
-    argNameFunc: argNameFunc,
-    isEnum: (TypeDeclaration t) => isEnum(root, t),
-  ));
-  indent.addScoped(' {', '}', () {
-    indent.writeln('FlutterBasicMessageChannel *channel =');
-    indent.nest(1, () {
-      indent.writeln('[FlutterBasicMessageChannel');
-      indent.nest(1, () {
-        indent
-            .writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
-        indent.writeln('binaryMessenger:self.binaryMessenger');
-        indent.write(
-            'codec:${_getCodecGetterName(languageOptions.prefix, api.name)}()');
-        indent.addln('];');
-      });
-    });
-    indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
-    indent.addScoped('{', '}];', () {
-      if (func.returnType.isVoid) {
-        indent.writeln('completion(nil);');
-      } else {
-        indent.writeln('${returnType.ptr}output = reply;');
-        indent.writeln('completion(output, nil);');
-      }
-    });
   });
 }
 
