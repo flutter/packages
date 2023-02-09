@@ -1,6 +1,6 @@
-## 7.2.2
+## 8.0.0
 
-* Updates `DartOptions` to be immutable and adds const to the constructor.
+* **Breaking Change** Updates `DartOptions` to be immutable and adds const to the constructor.
 
 ## 7.2.1
 
