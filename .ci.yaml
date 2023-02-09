@@ -211,7 +211,6 @@ targets:
       target_file: macos_platform_tests.yaml
 
   - name: Mac_arm64 custom_package_tests master
-    bringup: true # New configuration
     recipe: packages/packages
     timeout: 60
     properties:
@@ -221,7 +220,6 @@ targets:
       channel: master
 
   - name: Mac_arm64 custom_package_tests stable
-    bringup: true # New configuration
     recipe: packages/packages
     timeout: 60
     properties:
