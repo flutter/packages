@@ -25,7 +25,7 @@ const String _standardMessageCodec = 'StandardMessageCodec';
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
-  DartOptions({
+  const DartOptions({
     this.copyrightHeader,
     this.sourceOutPath,
     this.testOutPath,
@@ -35,10 +35,10 @@ class DartOptions {
   final Iterable<String>? copyrightHeader;
 
   /// Path to output generated Dart file.
-  String? sourceOutPath;
+  final String? sourceOutPath;
 
   /// Path to output generated Test file for tests.
-  String? testOutPath;
+  final String? testOutPath;
 
   /// Creates a [DartOptions] from a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
