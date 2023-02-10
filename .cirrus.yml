@@ -22,13 +22,6 @@ tool_setup_template: &TOOL_SETUP_TEMPLATE
   tool_setup_script:
     - .ci/scripts/prepare_tool.sh
 
-macos_template: &MACOS_TEMPLATE
-  # Only one macOS task can run in parallel without credits, so use them for
-  # PRs on macOS.
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-  macos_instance:
-    image: ghcr.io/cirruslabs/macos-ventura-xcode:14
-
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
     # Channels that are part of our normal test matrix use a pinned,
@@ -313,19 +306,3 @@ task:
         - cd ../..
         - flutter packages get
         - dart testing/web_benchmarks_test.dart
-
-# macOS tasks.
-task:
-  << : *FLUTTER_UPGRADE_TEMPLATE
-  << : *MACOS_TEMPLATE
-  matrix:
-    - name: macos-custom_package_tests
-      env:
-        PATH: $PATH:/usr/local/bin
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      local_tests_script:
-        # script/configs/linux_only_custom_test.yaml
-        #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)
-        - ./script/tool_runner.sh custom-test --exclude=script/configs/linux_only_custom_test.yaml
