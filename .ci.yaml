@@ -324,7 +324,7 @@ targets:
         ]
 
   - name: Windows repo_tools_tests
-    recipe: plugins/plugins
+    recipe: packages/packages
     timeout: 30
     properties:
       add_recipes_cq: "true"
