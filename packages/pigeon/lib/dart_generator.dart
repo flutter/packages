@@ -25,7 +25,7 @@ const String _standardMessageCodec = 'StandardMessageCodec';
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
-  DartOptions({
+  const DartOptions({
     this.copyrightHeader,
     this.sourceOutPath,
     this.testOutPath,
