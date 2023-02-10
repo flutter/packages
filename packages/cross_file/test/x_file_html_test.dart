@@ -63,7 +63,7 @@ void main() {
 
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
-      final Object response = await html.window.fetch(file.path);
+      final Object response = await html.window.fetch(file.path) as Object;
       // Call '.arrayBuffer()' on the fetch response object to look at its bytes.
       final ByteBuffer data = await js_util.promiseToFuture(
         js_util.callMethod(response, 'arrayBuffer', <Object?>[]),

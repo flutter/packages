@@ -81,7 +81,7 @@ class RouteConfiguration {
             ],
           );
         }
-      } else if (route is ShellRoute && route.navigatorKey != null) {
+      } else if (route is ShellRoute) {
         _debugCheckParentNavigatorKeys(
           route.routes,
           <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],

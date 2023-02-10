@@ -1,3 +1,23 @@
+## 6.0.6
+
+- Adds `reverseTransitionDuration` to `CustomTransitionPage`
+
+## 6.0.5
+
+- Fixes [unnecessary_null_comparison](https://dart-lang.github.io/linter/lints/unnecessary_null_checks.html) lint warnings.
+
+## 6.0.4
+
+- Fixes redirection info log.
+
+## 6.0.3
+
+- Makes `CustomTransitionPage.barrierDismissible` work
+
+## 6.0.2
+
+- Fixes missing result on pop in go_router extension.
+
 ## 6.0.1
 
 - Fixes crashes when popping navigators manually.

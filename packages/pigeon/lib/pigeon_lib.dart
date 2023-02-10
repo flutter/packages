@@ -100,6 +100,20 @@ class ObjCSelector {
   final String value;
 }
 
+/// Metadata to annotate methods to control the signature used for Swift output.
+///
+/// The number of components in the provided signature must match the number of
+/// arguments in the annotated method.
+/// For example:
+///   @SwiftFunction('divide(_:by:)') double divide(int x, String y);
+class SwiftFunction {
+  /// Constructor.
+  const SwiftFunction(this.value);
+
+  /// The string representation of the function signature.
+  final String value;
+}
+
 /// Type of TaskQueue which determines how handlers are dispatched for
 /// HostApi's.
 enum TaskQueueType {
@@ -260,11 +274,10 @@ class PigeonOptions {
       kotlinOptions: map.containsKey('kotlinOptions')
           ? KotlinOptions.fromMap(map['kotlinOptions']! as Map<String, Object>)
           : null,
-      cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
-      cppSourceOut: map['experimental_cppSourceOut'] as String?,
-      cppOptions: map.containsKey('experimental_cppOptions')
-          ? CppOptions.fromMap(
-              map['experimental_cppOptions']! as Map<String, Object>)
+      cppHeaderOut: map['cppHeaderOut'] as String?,
+      cppSourceOut: map['cppSourceOut'] as String?,
+      cppOptions: map.containsKey('cppOptions')
+          ? CppOptions.fromMap(map['cppOptions']! as Map<String, Object>)
           : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
@@ -292,9 +305,9 @@ class PigeonOptions {
       if (swiftOptions != null) 'swiftOptions': swiftOptions!.toMap(),
       if (kotlinOut != null) 'kotlinOut': kotlinOut!,
       if (kotlinOptions != null) 'kotlinOptions': kotlinOptions!.toMap(),
-      if (cppHeaderOut != null) 'experimental_cppHeaderOut': cppHeaderOut!,
-      if (cppSourceOut != null) 'experimental_cppSourceOut': cppSourceOut!,
-      if (cppOptions != null) 'experimental_cppOptions': cppOptions!.toMap(),
+      if (cppHeaderOut != null) 'cppHeaderOut': cppHeaderOut!,
+      if (cppSourceOut != null) 'cppSourceOut': cppSourceOut!,
+      if (cppOptions != null) 'cppOptions': cppOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
@@ -724,6 +737,17 @@ List<Error> _validateAst(Root root, String source) {
           ));
         }
       }
+      if (method.swiftFunction.isNotEmpty) {
+        final RegExp signatureRegex =
+            RegExp('\\w+ *\\((\\w+:){${method.arguments.length}}\\)');
+        if (!signatureRegex.hasMatch(method.swiftFunction)) {
+          result.add(Error(
+            message:
+                'Invalid function signature, expected ${method.arguments.length} arguments.',
+            lineNumber: _calculateLineNumberNullable(source, method.offset),
+          ));
+        }
+      }
       if (method.taskQueueType != TaskQueueType.serial &&
           api.location != ApiLocation.host) {
         result.add(Error(
@@ -1026,6 +1050,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             .asNullable<dart_ast.SimpleStringLiteral>()
             ?.value ??
         '';
+    final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
+            ?.arguments
+            ?.arguments
+            .first
+            .asNullable<dart_ast.SimpleStringLiteral>()
+            ?.value ??
+        '';
     final dart_ast.ArgumentList? taskQueueArguments =
         _findMetadata(node.metadata, 'TaskQueue')?.arguments;
     final String? taskQueueTypeName = taskQueueArguments == null
@@ -1054,6 +1085,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           arguments: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
+          swiftFunction: swiftFunction,
           offset: node.offset,
           taskQueueType: taskQueueType,
           documentationComments:
@@ -1306,33 +1338,34 @@ ${_argParser.usage}''';
     final ArgResults results = _argParser.parse(args);
 
     final PigeonOptions opts = PigeonOptions(
-      input: results['input'],
-      dartOut: results['dart_out'],
-      dartTestOut: results['dart_test_out'],
-      objcHeaderOut: results['objc_header_out'],
-      objcSourceOut: results['objc_source_out'],
+      input: results['input'] as String?,
+      dartOut: results['dart_out'] as String?,
+      dartTestOut: results['dart_test_out'] as String?,
+      objcHeaderOut: results['objc_header_out'] as String?,
+      objcSourceOut: results['objc_source_out'] as String?,
       objcOptions: ObjcOptions(
-        prefix: results['objc_prefix'],
+        prefix: results['objc_prefix'] as String?,
       ),
-      javaOut: results['java_out'],
+      javaOut: results['java_out'] as String?,
       javaOptions: JavaOptions(
-        package: results['java_package'],
-        useGeneratedAnnotation: results['java_use_generated_annotation'],
+        package: results['java_package'] as String?,
+        useGeneratedAnnotation:
+            results['java_use_generated_annotation'] as bool?,
       ),
-      swiftOut: results['experimental_swift_out'],
-      kotlinOut: results['experimental_kotlin_out'],
+      swiftOut: results['experimental_swift_out'] as String?,
+      kotlinOut: results['experimental_kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
-        package: results['experimental_kotlin_package'],
+        package: results['experimental_kotlin_package'] as String?,
       ),
-      cppHeaderOut: results['experimental_cpp_header_out'],
-      cppSourceOut: results['experimental_cpp_source_out'],
+      cppHeaderOut: results['experimental_cpp_header_out'] as String?,
+      cppSourceOut: results['experimental_cpp_source_out'] as String?,
       cppOptions: CppOptions(
-        namespace: results['cpp_namespace'],
+        namespace: results['cpp_namespace'] as String?,
       ),
-      copyrightHeader: results['copyright_header'],
-      oneLanguage: results['one_language'],
-      astOut: results['ast_out'],
-      debugGenerators: results['debug_generators'],
+      copyrightHeader: results['copyright_header'] as String?,
+      oneLanguage: results['one_language'] as bool?,
+      astOut: results['ast_out'] as String?,
+      debugGenerators: results['debug_generators'] as bool?,
     );
     return opts;
   }

@@ -59,7 +59,7 @@ extension GoRouterHelper on BuildContext {
 
   /// Pop the top page off the Navigator's page stack by calling
   /// [Navigator.pop].
-  void pop() => GoRouter.of(this).pop();
+  void pop<T extends Object?>([T? result]) => GoRouter.of(this).pop(result);
 
   /// Replaces the top-most page of the page stack with the given URL location
   /// w/ optional query parameters, e.g. `/family/f2/person/p1?color=blue`.

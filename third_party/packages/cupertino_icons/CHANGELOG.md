@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 1.0.5
 
 * Updates README to reference correct URL.

@@ -48,7 +48,7 @@ usage: dart run tool/test.dart [-l | -t <test name>]
 ${parser.usage}''');
     exit(0);
   } else if (argResults.wasParsed(_testFlag)) {
-    testsToRun = argResults[_testFlag];
+    testsToRun = argResults[_testFlag] as List<String>;
   }
 
   // If no tests are provided, run everything that is supported on the current

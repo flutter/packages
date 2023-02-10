@@ -167,7 +167,7 @@ class ResourceRecordQuery {
 
   @override
   String toString() =>
-      '$runtimeType{$fullyQualifiedName, type: ${ResourceRecordType.toDebugString(resourceRecordType)}, isMulticast: $isMulticast}';
+      'ResourceRecordQuery{$fullyQualifiedName, type: ${ResourceRecordType.toDebugString(resourceRecordType)}, isMulticast: $isMulticast}';
 }
 
 /// Base implementation of DNS resource records (RRs).

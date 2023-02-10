@@ -46,7 +46,8 @@ class FlutterToolsEnvironment {
     // minimally validate basic JSON format and trim away any accidental logging before.
     if (commandOutput.contains(RegExp(r'[\s\S]*{[\s\S]+}[\s\S]*'))) {
       commandOutput = commandOutput.substring(commandOutput.indexOf('{'));
-      mapping = jsonDecode(commandOutput.replaceAll(r'\', r'\\'));
+      mapping = jsonDecode(commandOutput.replaceAll(r'\', r'\\'))
+          as Map<String, Object?>;
     }
     return FlutterToolsEnvironment(mapping: mapping);
   }

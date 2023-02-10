@@ -32,6 +32,7 @@ void main() {
     expect(find.text('BoolRoute'), findsOneWidget);
     expect(find.text('Param: false'), findsOneWidget);
     expect(find.text('Query param: true'), findsOneWidget);
+    expect(find.text('Query param with default value: true'), findsOneWidget);
 
     final DateTime param = DateTime.now();
     final DateTime query = DateTime(2017, 9, 7, 17, 30);
@@ -52,6 +53,8 @@ void main() {
     expect(find.text('DoubleRoute'), findsOneWidget);
     expect(find.text('Param: 3.14'), findsOneWidget);
     expect(find.text('Query param: -3.14'), findsOneWidget);
+    expect(find.text('Query param: -3.14'), findsOneWidget);
+    expect(find.text('Query param with default value: 1.0'), findsOneWidget);
 
     IntRoute(
       requiredIntField: 65,
@@ -61,6 +64,7 @@ void main() {
     expect(find.text('IntRoute'), findsOneWidget);
     expect(find.text('Param: 65'), findsOneWidget);
     expect(find.text('Query param: -65'), findsOneWidget);
+    expect(find.text('Query param with default value: 1'), findsOneWidget);
 
     NumRoute(
       requiredNumField: 987.32,
@@ -70,6 +74,7 @@ void main() {
     expect(find.text('NumRoute'), findsOneWidget);
     expect(find.text('Param: 987.32'), findsOneWidget);
     expect(find.text('Query param: -987.32'), findsOneWidget);
+    expect(find.text('Query param with default value: 1'), findsOneWidget);
 
     StringRoute(
       requiredStringField: r'Tytire tu patulae recubans sub tegmine fagi.',
@@ -82,6 +87,8 @@ void main() {
     expect(
         find.text('Query param: Tytire tu patulae recubans sub tegmine fagi.'),
         findsOneWidget);
+    expect(find.text('Query param with default value: defaultValue'),
+        findsOneWidget);
 
     EnumRoute(
       requiredEnumField: PersonDetails.favoriteFood,
@@ -92,6 +99,10 @@ void main() {
     expect(find.text('Param: PersonDetails.favoriteFood'), findsOneWidget);
     expect(
         find.text('Query param: PersonDetails.favoriteSport'), findsOneWidget);
+    expect(
+      find.text('Query param with default value: PersonDetails.favoriteFood'),
+      findsOneWidget,
+    );
 
     EnhancedEnumRoute(
       requiredEnumField: SportDetails.football,
@@ -101,6 +112,10 @@ void main() {
     expect(find.text('EnhancedEnumRoute'), findsOneWidget);
     expect(find.text('Param: SportDetails.football'), findsOneWidget);
     expect(find.text('Query param: SportDetails.hockey'), findsOneWidget);
+    expect(
+      find.text('Query param with default value: SportDetails.football'),
+      findsOneWidget,
+    );
 
     UriRoute(
       requiredUriField: Uri.parse('https://dart.dev'),
