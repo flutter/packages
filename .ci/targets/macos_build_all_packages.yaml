@@ -6,6 +6,6 @@ tasks:
   - name: build all_packages for macOS debug
     script: .ci/scripts/build_all_packages_app.sh
     args: ["macos", "debug"]
-  - name: build all_plugins for macOS release
+  - name: build all_packages for macOS release
     script: .ci/scripts/build_all_packages_app.sh
     args: ["macos", "release"]

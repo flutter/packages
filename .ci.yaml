@@ -44,128 +44,19 @@ platform_properties:
       xcode: 14a5294e # xcode 14.0 beta 5
 
 targets:
-  ### iOS tasks ###
-  # TODO(stuartmorgan): Switch ios_build_all_packages to Intel once the
-  # iOS platform tests are brough up on ARM, to give build coverage on
-  # both host architectures.
-  - name: Mac_arm64 ios_build_all_packages master
+  ### iOS+macOS tasks ***
+  # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
+  # support. `pod lint` makes a synthetic target that doesn't respect the
+  # pod's arch exclusions, so fails to build.
+  # When moving it, rename the task and file to check_podspecs
+  - name: Mac_x64 check_podspecs
+    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: ios_build_all_packages.yaml
-      channel: master
-
-  - name: Mac_arm64 ios_build_all_packages stable
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_stable.version
-      target_file: ios_build_all_packages.yaml
-      channel: stable
-
-  - name: Mac_arm64 ios_platform_tests_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_master.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 0 --shardCount 5"
-
-  - name: Mac_arm64 ios_platform_tests_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_master.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 1 --shardCount 5"
-
-  - name: Mac_arm64 ios_platform_tests_shard_3 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_master.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 2 --shardCount 5"
-
-  - name: Mac_arm64 ios_platform_tests_shard_4 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_master.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 3 --shardCount 5"
-
-  - name: Mac_arm64 ios_platform_tests_shard_5 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_master.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 4 --shardCount 5"
-
-  # Don't run full platform tests on both channels in pre-submit.
-  - name: Mac_arm64 ios_platform_tests_shard_1 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      channel: stable
-      add_recipes_cq: "true"
-      version_file: flutter_stable.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 0 --shardCount 5"
-
-  - name: Mac_arm64 ios_platform_tests_shard_2 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      channel: stable
-      add_recipes_cq: "true"
-      version_file: flutter_stable.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 1 --shardCount 5"
-
-  - name: Mac_arm64 ios_platform_tests_shard_3 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      channel: stable
-      add_recipes_cq: "true"
-      version_file: flutter_stable.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 2 --shardCount 5"
-
-  - name: Mac_arm64 ios_platform_tests_shard_4 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      channel: stable
-      add_recipes_cq: "true"
-      version_file: flutter_stable.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 3 --shardCount 5"
-
-  - name: Mac_arm64 ios_platform_tests_shard_5 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      channel: stable
-      add_recipes_cq: "true"
-      version_file: flutter_stable.version
-      target_file: ios_platform_tests.yaml
-      package_sharding: "--shardIndex 4 --shardCount 5"
+      target_file: macos_check_podspecs.yaml
 
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
@@ -227,6 +118,153 @@ targets:
       version_file: flutter_stable.version
       target_file: macos_custom_package_tests.yaml
       channel: stable
+
+  ### iOS tasks ###
+  # TODO(stuartmorgan): Remove these when the versions below are brought out of
+  # bringup mode.
+  - name: Mac_arm64 ios_build_all_packages master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: ios_build_all_packages.yaml
+      channel: master
+
+  - name: Mac_arm64 ios_build_all_packages stable
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: ios_build_all_packages.yaml
+      channel: stable
+
+  # ios_platform_tests builds all the packages on ARM, so this build is run
+  # on Intel to give us build coverage of both host types.
+  - name: Mac_x64 ios_build_all_packages master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      channel: master
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: ios_build_all_packages.yaml
+
+  - name: Mac_x64 ios_build_all_packagess stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      channel: stable
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: ios_build_all_packages.yaml
+
+  # TODO(stuartmorgan): Change all of the ios_platform_tests_* task timeouts
+  # to 60 minutes once https://github.com/flutter/flutter/issues/119750 is
+  # fixed.
+  - name: Mac_arm64 ios_platform_tests_shard_1 master
+    recipe: packages/packages
+    timeout: 120
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 0 --shardCount 5"
+
+  - name: Mac_arm64 ios_platform_tests_shard_2 master
+    recipe: packages/packages
+    timeout: 120
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 1 --shardCount 5"
+
+  - name: Mac_arm64 ios_platform_tests_shard_3 master
+    recipe: packages/packages
+    timeout: 120
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 2 --shardCount 5"
+
+  - name: Mac_arm64 ios_platform_tests_shard_4 master
+    recipe: packages/packages
+    timeout: 120
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 3 --shardCount 5"
+
+  - name: Mac_arm64 ios_platform_tests_shard_5 master
+    recipe: packages/packages
+    timeout: 120
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 4 --shardCount 5"
+
+  # Don't run full platform tests on both channels in pre-submit.
+  - name: Mac_arm64 ios_platform_tests_shard_1 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 120
+    properties:
+      channel: stable
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 0 --shardCount 5"
+
+  - name: Mac_arm64 ios_platform_tests_shard_2 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 120
+    properties:
+      channel: stable
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 1 --shardCount 5"
+
+  - name: Mac_arm64 ios_platform_tests_shard_3 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 120
+    properties:
+      channel: stable
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 2 --shardCount 5"
+
+  - name: Mac_arm64 ios_platform_tests_shard_4 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 120
+    properties:
+      channel: stable
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 3 --shardCount 5"
+
+  - name: Mac_arm64 ios_platform_tests_shard_5 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 120
+    properties:
+      channel: stable
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: ios_platform_tests.yaml
+      package_sharding: "--shardIndex 4 --shardCount 5"
 
   ### Windows desktop tasks ###
   - name: Windows custom_package_tests master - packages
@@ -307,6 +345,16 @@ targets:
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
         ]
+
+  - name: Windows repo_tools_tests
+    bringup: true # New target
+    recipe: plugins/plugins
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: repo_tools_tests.yaml
+      channel: master
+      version_file: flutter_master.version
 
   - name: Linux ci_yaml packages roller
     recipe: infra/ci_yaml
