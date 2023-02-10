@@ -99,7 +99,12 @@ class _OpacityForwarder extends Visitor<Node, _ForwardResult>
 
   @override
   Node visitSaveLayerNode(SaveLayerNode layerNode, _ForwardResult data) {
-    throw UnsupportedError('Cannot forward opacity through a savelayer node');
+    final double opacity = (layerNode.paint.fill?.color.a ?? 255) / 255.0;
+    final _ForwardResult result =
+        _ForwardResult(data.opacity * opacity, data.blendMode);
+    return ParentNode(SvgAttributes.empty, children: <Node>[
+      for (Node child in layerNode.children) child.accept(this, result)
+    ]);
   }
 
   @override
