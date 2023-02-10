@@ -1,1 +1,11 @@
-[]
+# Manually exclude all non-plugin packages until
+# https://github.com/flutter/flutter/issues/120450
+# is fixed.
+- animations
+- dynamic_layouts
+- extension_google_sign_in_as_googleapis_auth
+- flutter_adaptive_scaffold
+- flutter_markdown
+- go_router
+- palette_generator
+- rfw
