@@ -1,13 +1,19 @@
+## 8.0.0
+
+* [objc] **BREAKING CHANGE**: FlutterApi calls now return a `FlutterError`,
+  rather than an `NSError`, on failure.
+* [objc] Fixes an unused function warning when only generating FlutterApi.
+
 ## 7.2.1
 
 * [kotlin] Fixes Flutter api int errors with updated casting.
 
 ## 7.2.0
 
-* [swift] Changes async method completion types. 
+* [swift] Changes async method completion types.
   May require code updates to existing code.
 * [swift] Adds error handling to async methods.
-* [kotlin] Changes async method completion types. 
+* [kotlin] Changes async method completion types.
   May require code updates to existing code.
 * [kotlin] Adds error handling to async methods.
 * Adds async error handling integration tests for all platforms.

@@ -210,13 +210,13 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.noop() { callback(Result.success(Unit)) }
   }
   
-  // TODO: (tarrinneal) Update error handling tests to properly recieve and handle errors.
-  // See issue https://github.com/flutter/flutter/issues/118243
   override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
-    flutterApi!!.throwError() { echo -> callback(Result.failure(Exception("except"))) }
+    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
   }
   override fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
-    flutterApi!!.throwErrorFromVoid() { callback(Result.failure(Exception("except"))) }
+    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
   }
 
   override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {

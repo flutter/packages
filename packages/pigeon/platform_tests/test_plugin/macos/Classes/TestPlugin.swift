@@ -211,18 +211,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  // TODO: (tarrinneal) Update error handling tests to properly recieve and handle errors.
-  // See issue https://github.com/flutter/flutter/issues/118243
   func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void) {
-    flutterAPI.throwError() { 
-      completion(.success($0)) 
-    }
+    // TODO: (tarrinneal) Once flutter api error handling is added, enable these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
   }
 
   func callFlutterThrowErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void) {
-    flutterAPI.throwErrorFromVoid() {
-      completion(.success(Void()))
-    }
+    // TODO: (tarrinneal) Once flutter api error handling is added, enable these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
   }
 
   func callFlutterEcho(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void) {

@@ -32,4 +32,6 @@ const Set<String> _expectedAnnotatedTests = <String>{
   'UnsupportedType',
   'theAnswer',
   'EnumParam',
+  'DefaultValueRoute',
+  'NullableDefaultValueRoute',
 };

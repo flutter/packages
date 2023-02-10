@@ -801,7 +801,7 @@ void main() {
     );
     generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void (^)(NSError *_Nullable))'));
+    expect(code, contains('completion:(void (^)(FlutterError *_Nullable))'));
   });
 
   test('gen flutter void return source', () {
@@ -836,7 +836,7 @@ void main() {
     );
     generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void (^)(NSError *_Nullable))'));
+    expect(code, contains('completion:(void (^)(FlutterError *_Nullable))'));
     expect(code, contains('completion(nil)'));
   });
 
@@ -927,7 +927,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void (^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void (^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
   });
 
   test('gen flutter void arg source', () {
@@ -959,7 +959,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void (^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void (^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
     expect(code, contains('channel sendMessage:nil'));
   });
 
@@ -1818,7 +1818,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion;'));
+              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1834,7 +1834,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void (^)(NSNumber *_Nullable, NSError *_Nullable))completion {'));
+              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {'));
       expect(
           code,
           contains(
@@ -1977,7 +1977,7 @@ void main() {
     expect(
         code,
         matches(
-            r'doitWithCompletion.*void.*NSNumber \*_Nullable.*NSError.*completion;'));
+            r'doitWithCompletion.*void.*NSNumber \*_Nullable.*FlutterError.*completion;'));
   });
 
   test('return nullable flutter source', () {

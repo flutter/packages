@@ -278,14 +278,14 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
         });
   }
 
-  // TODO: (tarrinneal) Update error handling tests to properly recieve and handle errors.
-  // See issue https://github.com/flutter/flutter/issues/118243
   @Override
   public void callFlutterThrowError(Result<Object> result) {
     flutterApi.throwError(
         new FlutterIntegrationCoreApi.Reply<Object>() {
           public void reply(Object value) {
-            result.error(new RuntimeException("An error"));
+            // TODO: (tarrinneal) Once flutter api error handling is added,
+            // update error handling tests to properly recieve and handle errors.
+            // See issue https://github.com/flutter/flutter/issues/118243
           }
         });
   }
@@ -295,7 +295,9 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
     flutterApi.throwErrorFromVoid(
         new FlutterIntegrationCoreApi.Reply<Void>() {
           public void reply(Void value) {
-            result.error(new RuntimeException("An error"));
+            // TODO: (tarrinneal) Once flutter api error handling is added,
+            // update error handling tests to properly recieve and handle errors.
+            // See issue https://github.com/flutter/flutter/issues/118243
           }
         });
   }

@@ -5,11 +5,7 @@
 @import Flutter;
 @import XCTest;
 
-#ifdef LEGACY_HARNESS
-#import "AsyncHandlers.gen.h"
-#else
 @import alternate_language_test_plugin;
-#endif
 
 #import "MockBinaryMessenger.h"
 
@@ -61,7 +57,7 @@
   input.number = @(1);
   XCTestExpectation *expectation = [self expectationWithDescription:@"calculate callback"];
   [api2Flutter calculateValue:input
-                   completion:^(Value *_Nonnull output, NSError *_Nullable error) {
+                   completion:^(Value *_Nonnull output, FlutterError *_Nullable error) {
                      XCTAssertEqual(output.number.intValue, 2);
                      [expectation fulfill];
                    }];

@@ -4,11 +4,7 @@
 
 @import XCTest;
 
-#ifdef LEGACY_HARNESS
-#import "Message.gen.h"
-#else
 @import alternate_language_test_plugin;
-#endif
 
 @interface ACMessageSearchReply ()
 + (ACMessageSearchReply *)fromList:(NSArray *)list;
