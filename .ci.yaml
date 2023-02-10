@@ -44,6 +44,20 @@ platform_properties:
       xcode: 14a5294e # xcode 14.0 beta 5
 
 targets:
+  ### iOS+macOS tasks ***
+  # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
+  # support. `pod lint` makes a synthetic target that doesn't respect the
+  # pod's arch exclusions, so fails to build.
+  # When moving it, rename the task and file to check_podspecs
+  - name: Mac_x64 check_podspecs
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: macos_check_podspecs.yaml
+
   ### iOS tasks ###
   # TODO(stuartmorgan): Switch ios_build_all_packages to Intel once the
   # iOS platform tests are brough up on ARM, to give build coverage on
