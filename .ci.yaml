@@ -129,7 +129,8 @@ targets:
       version_file: flutter_master.version
       target_file: ios_build_all_packages.yaml
 
-  - name: Mac_x64 ios_build_all_packagess stable
+  - name: Mac_x64 ios_build_all_packages stable
+    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
