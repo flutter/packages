@@ -48,9 +48,7 @@ targets:
   # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
   # support. `pod lint` makes a synthetic target that doesn't respect the
   # pod's arch exclusions, so fails to build.
-  # When moving it, rename the task and file to check_podspecs
   - name: Mac_x64 check_podspecs
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -120,30 +118,9 @@ targets:
       channel: stable
 
   ### iOS tasks ###
-  # TODO(stuartmorgan): Remove these when the versions below are brought out of
-  # bringup mode.
-  - name: Mac_arm64 ios_build_all_packages master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_master.version
-      target_file: ios_build_all_packages.yaml
-      channel: master
-
-  - name: Mac_arm64 ios_build_all_packages stable
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_stable.version
-      target_file: ios_build_all_packages.yaml
-      channel: stable
-
   # ios_platform_tests builds all the packages on ARM, so this build is run
   # on Intel to give us build coverage of both host types.
   - name: Mac_x64 ios_build_all_packages master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -152,7 +129,7 @@ targets:
       version_file: flutter_master.version
       target_file: ios_build_all_packages.yaml
 
-  - name: Mac_x64 ios_build_all_packagess stable
+  - name: Mac_x64 ios_build_all_packages stable
     bringup: true # New target
     recipe: packages/packages
     timeout: 30
@@ -347,8 +324,7 @@ targets:
         ]
 
   - name: Windows repo_tools_tests
-    bringup: true # New target
-    recipe: plugins/plugins
+    recipe: packages/packages
     timeout: 30
     properties:
       add_recipes_cq: "true"
