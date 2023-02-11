@@ -1,3 +1,7 @@
+## 0.6.14
+
+* Require `markdown: ^7.0.0`
+
 ## 0.6.13+1
 
 * Adjusts code to account for nullability change in Flutter SDK.
