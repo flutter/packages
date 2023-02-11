@@ -486,7 +486,6 @@ class MarkdownBuilder implements md.NodeVisitor {
               break;
           }
         }
-
         final Widget child = _buildTableCell(
           _mergeInlineChildren(current.children, align),
           textAlign: align,
