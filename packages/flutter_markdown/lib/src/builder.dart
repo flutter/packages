@@ -470,7 +470,6 @@ class MarkdownBuilder implements md.NodeVisitor {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
         TextAlign? align;
-        // `align` is using in pkg:markdown > 6.0.1
         final String? alignAttribute = element.attributes['align'];
         if (alignAttribute == null) {
           align = tag == 'th' ? styleSheet.tableHeadAlign : TextAlign.left;
