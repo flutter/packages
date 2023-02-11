@@ -89,7 +89,4 @@ extension GoRouterHelper on BuildContext {
         queryParams: queryParams,
         extra: extra,
       );
-
-  /// Returns true if the route is registered within the [GoRouter].
-  bool hasRoute(String name) => GoRouter.of(this).hasRoute(name);
 }
