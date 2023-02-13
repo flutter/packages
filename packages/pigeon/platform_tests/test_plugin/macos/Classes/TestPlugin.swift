@@ -36,7 +36,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  func throwError() throws {
+  func throwError() throws -> Any? {
+    throw FlutterError(code: "code", message: "message", details: "details")
+  }
+
+  func throwErrorFromVoid() throws {
     throw FlutterError(code: "code", message: "message", details: "details")
   }
 
@@ -205,6 +209,16 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     flutterAPI.noop() {
       completion(.success(Void()))
     }
+  }
+
+  func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void) {
+    // TODO: (tarrinneal) Once flutter api error handling is added, enable these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
+  }
+
+  func callFlutterThrowErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void) {
+    // TODO: (tarrinneal) Once flutter api error handling is added, enable these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
   }
 
   func callFlutterEcho(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void) {

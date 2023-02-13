@@ -296,9 +296,31 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns an error, to test error handling.
-  Future<void> throwError() async {
+  Future<Object?> throwError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.throwError', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return replyList[0];
+    }
+  }
+
+  /// Responds with an error from an async void function.
+  Future<void> throwErrorFromVoid() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -1400,6 +1422,50 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<Object?> callFlutterThrowError() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowError',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return replyList[0];
+    }
+  }
+
+  Future<void> callFlutterThrowErrorFromVoid() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   Future<AllTypes> callFlutterEchoAllTypes(AllTypes arg_everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes',
@@ -1860,6 +1926,12 @@ abstract class FlutterIntegrationCoreApi {
   /// test basic calling.
   void noop();
 
+  /// Responds with an error from an async function returning a value.
+  Object? throwError();
+
+  /// Responds with an error from an async void function.
+  void throwErrorFromVoid();
+
   /// Returns the passed object, to test serialization and deserialization.
   AllTypes echoAllTypes(AllTypes everything);
 
@@ -1926,6 +1998,35 @@ abstract class FlutterIntegrationCoreApi {
         channel.setMessageHandler((Object? message) async {
           // ignore message
           api.noop();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.throwError', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          final Object? output = api.throwError();
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.throwErrorFromVoid',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.throwErrorFromVoid();
           return;
         });
       }

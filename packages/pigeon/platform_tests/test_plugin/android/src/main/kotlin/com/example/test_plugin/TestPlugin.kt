@@ -39,7 +39,11 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  override fun throwError() {
+  override fun throwError(): Object? {
+    throw Exception("An error");
+  }
+
+  override fun throwErrorFromVoid() {
     throw Exception("An error");
   }
 
@@ -123,19 +127,11 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun throwAsyncError(callback: (Result<Any?>) -> Unit) {
-    try {
-      throw Exception("except")
-    } catch (e: Exception) {
-      callback(Result.failure(e))
-    }
+    callback(Result.failure(Exception("except")))
   }
 
   override fun throwAsyncErrorFromVoid(callback: (Result<Unit>) -> Unit) {
-    try {
-      throw Exception("except")
-    } catch (e: Exception) {
-      callback(Result.failure(e))
-    }
+    callback(Result.failure(Exception("except")))
   }
 
   override fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
@@ -212,6 +208,15 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
 
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
     flutterApi!!.noop() { callback(Result.success(Unit)) }
+  }
+  
+  override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
+    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
+  }
+  override fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
+    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
   }
 
   override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
