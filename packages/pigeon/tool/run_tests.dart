@@ -38,11 +38,8 @@ Future<void> main(List<String> args) async {
     commandLineTests,
     androidJavaUnitTests,
     androidKotlinUnitTests,
-    // TODO(stuartmorgan): Include these once CI supports running simulator
-    // tests. Currently these tests aren't run in CI.
-    // See https://github.com/flutter/flutter/issues/111505.
-    // androidJavaIntegrationTests,
-    // androidKotlinIntegrationTests,
+    androidJavaIntegrationTests,
+    androidKotlinIntegrationTests,
   ];
   // Run macOS and iOS tests on macOS, since that's the only place they can run.
   // TODO(stuartmorgan): Move everything to LUCI, and eliminate the LUCI/Cirrus
