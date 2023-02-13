@@ -1,6 +1,6 @@
 # CHANGES
 
-## Next
+## 2.0.1
 
 - Disable Isolate parsing in debug mode.
 - Fix internal Color representation leakage from `package:vector_graphics_compiler`.
