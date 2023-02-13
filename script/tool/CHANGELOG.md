@@ -1,3 +1,12 @@
+## 0.13.4+3
+
+* Moves source to flutter/packages.
+
+## 0.13.4+2
+
+* Expands the `--packages-for-branch` detection of main to include ancestors
+  of `origin/main` and `upstream/main`.
+
 ## 0.13.4+1
 
 * Makes `--packages-for-branch` detect any commit on `main` as being `main`,
