@@ -897,7 +897,7 @@ String _className(String? prefix, String className) {
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
       ? 'void (^)(FlutterError *_Nullable)'
-      : 'void (^)(${objcType.ptr.trim()}_Nullable, FlutterError *_Nullable)';
+      : 'void (^)(${objcType.ptr}_Nullable, FlutterError *_Nullable)';
 }
 
 /// Represents an ObjC pointer (ex 'id', 'NSString *').

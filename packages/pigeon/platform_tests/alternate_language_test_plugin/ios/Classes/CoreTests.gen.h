@@ -106,7 +106,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (nullable AllTypes *)echoAllTypes:(AllTypes *)everything
                               error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns an error, to test error handling.
-- (void)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable id)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// Responds with an error from an async void function.
+- (void)throwErrorFromVoidWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in int.
 ///
 /// @return `nil` only when `error != nil`.
@@ -259,6 +261,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
                   completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                        FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
+                                                      FlutterError *_Nullable))completion;
+- (void)callFlutterThrowErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterEchoAllTypes:(AllTypes *)everything
                      completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterSendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
@@ -318,6 +323,10 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
 - (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Responds with an error from an async function returning a value.
+- (void)throwErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
+/// Responds with an error from an async void function.
+- (void)throwErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 /// Returns the passed object, to test serialization and deserialization.
 - (void)echoAllTypes:(AllTypes *)everything
           completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;

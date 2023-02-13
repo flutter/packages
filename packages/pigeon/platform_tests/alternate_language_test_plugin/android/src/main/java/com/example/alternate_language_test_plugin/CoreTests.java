@@ -196,6 +196,7 @@ public class CoreTests {
     private AllTypes() {}
 
     public static final class Builder {
+
       private @Nullable Boolean aBool;
 
       public @NonNull Builder setABool(@NonNull Boolean setterArg) {
@@ -479,6 +480,7 @@ public class CoreTests {
     }
 
     public static final class Builder {
+
       private @Nullable Boolean aNullableBool;
 
       public @NonNull Builder setANullableBool(@Nullable Boolean setterArg) {
@@ -675,6 +677,7 @@ public class CoreTests {
     private AllNullableTypesWrapper() {}
 
     public static final class Builder {
+
       private @Nullable AllNullableTypes values;
 
       public @NonNull Builder setValues(@NonNull AllNullableTypes setterArg) {
@@ -762,7 +765,10 @@ public class CoreTests {
     @NonNull
     AllTypes echoAllTypes(@NonNull AllTypes everything);
     /** Returns an error, to test error handling. */
-    void throwError();
+    @Nullable
+    Object throwError();
+    /** Responds with an error from an async void function. */
+    void throwErrorFromVoid();
     /** Returns passed in int. */
     @NonNull
     Long echoInt(@NonNull Long anInt);
@@ -880,6 +886,10 @@ public class CoreTests {
 
     void callFlutterNoop(Result<Void> result);
 
+    void callFlutterThrowError(Result<Object> result);
+
+    void callFlutterThrowErrorFromVoid(Result<Void> result);
+
     void callFlutterEchoAllTypes(@NonNull AllTypes everything, Result<AllTypes> result);
 
     void callFlutterSendMultipleNullableTypes(
@@ -987,7 +997,30 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
-                  api.throwError();
+                  Object output = api.throwError();
+                  wrapped.add(0, output);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  api.throwErrorFromVoid();
                   wrapped.add(0, null);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -2380,6 +2413,74 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowError",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Result<Object> resultCallback =
+                      new Result<Object>() {
+                        public void success(Object result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.callFlutterThrowError(resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Result<Void> resultCallback =
+                      new Result<Void>() {
+                        public void success(Void result) {
+                          wrapped.add(0, null);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.callFlutterThrowErrorFromVoid(resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes",
                 getCodec());
         if (api != null) {
@@ -3070,6 +3171,30 @@ public class CoreTests {
               binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.noop", getCodec());
       channel.send(null, channelReply -> callback.reply(null));
     }
+    /** Responds with an error from an async function returning a value. */
+    public void throwError(Reply<Object> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwError",
+              getCodec());
+      channel.send(
+          null,
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Object output = (Object) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Responds with an error from an async void function. */
+    public void throwErrorFromVoid(Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwErrorFromVoid",
+              getCodec());
+      channel.send(null, channelReply -> callback.reply(null));
+    }
     /** Returns the passed object, to test serialization and deserialization. */
     public void echoAllTypes(@NonNull AllTypes everythingArg, Reply<AllTypes> callback) {
       BasicMessageChannel<Object> channel =
@@ -3335,6 +3460,7 @@ public class CoreTests {
    * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface HostTrivialApi {
+
     void noop();
 
     /** The codec used by HostTrivialApi. */

@@ -269,7 +269,9 @@ class HostIntegrationCoreApi {
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<AllTypes> EchoAllTypes(const AllTypes& everything) = 0;
   // Returns an error, to test error handling.
-  virtual std::optional<FlutterError> ThrowError() = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableValue>> ThrowError() = 0;
+  // Responds with an error from an async void function.
+  virtual std::optional<FlutterError> ThrowErrorFromVoid() = 0;
   // Returns passed in int.
   virtual ErrorOr<int64_t> EchoInt(int64_t an_int) = 0;
   // Returns passed in double.
@@ -421,6 +423,11 @@ class HostIntegrationCoreApi {
           result) = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void CallFlutterThrowError(
+      std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
+          result) = 0;
+  virtual void CallFlutterThrowErrorFromVoid(
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterEchoAllTypes(
       const AllTypes& everything,
       std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
@@ -519,6 +526,13 @@ class FlutterIntegrationCoreApi {
   // test basic calling.
   void Noop(std::function<void(void)>&& on_success,
             std::function<void(const FlutterError&)>&& on_error);
+  // Responds with an error from an async function returning a value.
+  void ThrowError(
+      std::function<void(const flutter::EncodableValue*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
+  // Responds with an error from an async void function.
+  void ThrowErrorFromVoid(std::function<void(void)>&& on_success,
+                          std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed object, to test serialization and deserialization.
   void EchoAllTypes(const AllTypes& everything,
                     std::function<void(const AllTypes&)>&& on_success,

@@ -36,7 +36,12 @@
   return everything;
 }
 
-- (void)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable id)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
+  *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
+  return nil;
+}
+
+- (void)throwErrorFromVoidWithError:(FlutterError *_Nullable *_Nonnull)error {
   *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
 }
 
@@ -254,6 +259,19 @@
 
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   [self.flutterAPI noopWithCompletion:^(FlutterError *error) {
+    completion(error);
+  }];
+}
+
+- (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
+                                                      FlutterError *_Nullable))completion {
+  [self.flutterAPI throwErrorWithCompletion:^(id value, FlutterError *error) {
+    completion(value, error);
+  }];
+}
+
+- (void)callFlutterThrowErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  [self.flutterAPI throwErrorFromVoidWithCompletion:^(FlutterError *error) {
     completion(error);
   }];
 }
