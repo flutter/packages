@@ -9,11 +9,9 @@ Note: The commands in tools are designed to run at the root of the repository or
 
 ## Getting Started
 
-In flutter/plugins, the tool is run from source. In flutter/packages, the
+In flutter/packages, the tool is run from source. In flutter/plugins, the
 [published version](https://pub.dev/packages/flutter_plugin_tools) is used
-instead. (It is marked as Discontinued since it is no longer maintained as
-a general-purpose tool, but updates are still published for use in
-flutter/packages.)
+instead.
 
 The commands in tools require the Flutter-bundled version of Dart to be the first `dart` loaded in the path.
 
@@ -23,7 +21,7 @@ When updating sample code excerpts (`update-excerpts`) for the README.md files,
 there is some [extra setup for
 submodules](#update-readmemd-from-example-sources) that is necessary.
 
-### From Source (flutter/plugins only)
+### From Source (flutter/packages only)
 
 Set up:
 
@@ -163,7 +161,7 @@ the automated process fails. Please, read
 on the Flutter Wiki first.
 
 ```sh
-cd <path_to_plugins>
+cd <path_to_repo>
 git checkout <commit_hash_to_publish>
 dart run ./script/tool/bin/flutter_plugin_tools.dart publish --packages <package>
 ```
@@ -182,7 +180,7 @@ control present.
 
 ## Updating the Tool
 
-For flutter/plugins, just changing the source here is all that's needed.
+For flutter/packages, just changing the source here is all that's needed.
 
 For changes that are relevant to flutter/packages, you will also need to:
 - Update the tool's pubspec.yaml and CHANGELOG
