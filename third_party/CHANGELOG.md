@@ -1,5 +1,9 @@
 # CHANGES
 
+## Next
+
+- Fix internal Color representation leakage from `package:vector_graphics_compiler`.
+
 ## 2.0.0+1
 
 - Fix bug in asset loading from packages.

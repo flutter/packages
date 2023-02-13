@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vector_graphics/vector_graphics_compat.dart';
-import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'src/cache.dart';
 import 'src/loaders.dart';
@@ -11,8 +10,6 @@ import 'src/utilities/file.dart';
 
 export 'package:vector_graphics/vector_graphics.dart'
     show BytesLoader, vg, VectorGraphicUtilities, PictureInfo;
-export 'package:vector_graphics_compiler/vector_graphics_compiler.dart'
-    show SvgTheme;
 
 export 'src/cache.dart';
 export 'src/loaders.dart';

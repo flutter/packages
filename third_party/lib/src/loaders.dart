@@ -5,11 +5,92 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/src/utilities/http.dart';
 import 'package:vector_graphics/vector_graphics.dart';
-import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
+import 'package:vector_graphics_compiler/vector_graphics_compiler.dart' as vg;
 
 import '../svg.dart' show svg;
 import 'utilities/compute.dart';
 import 'utilities/file.dart';
+
+/// A theme used when decoding an SVG picture.
+@immutable
+class SvgTheme {
+  /// Instantiates an SVG theme with the [currentColor]
+  /// and [fontSize].
+  ///
+  /// Defaults the [fontSize] to 14.
+  const SvgTheme({
+    this.currentColor,
+    this.fontSize = 14,
+    double? xHeight,
+  }) : xHeight = xHeight ?? fontSize / 2;
+
+  /// The default color applied to SVG elements that inherit the color property.
+  /// See: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#currentcolor_keyword
+  final Color? currentColor;
+
+  /// The font size used when calculating em units of SVG elements.
+  /// See: https://www.w3.org/TR/SVG11/coords.html#Units
+  final double fontSize;
+
+  /// The x-height (corpus size) of the font used when calculating ex units of SVG elements.
+  /// Defaults to [fontSize] / 2 if not provided.
+  /// See: https://www.w3.org/TR/SVG11/coords.html#Units, https://en.wikipedia.org/wiki/X-height
+  final double xHeight;
+
+  vg.SvgTheme _toVgTheme() {
+    return vg.SvgTheme(
+      currentColor: currentColor != null ? vg.Color(currentColor!.value) : null,
+      fontSize: fontSize,
+      xHeight: xHeight,
+    );
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+
+    return other is SvgTheme &&
+        currentColor == other.currentColor &&
+        fontSize == other.fontSize &&
+        xHeight == other.xHeight;
+  }
+
+  @override
+  int get hashCode => Object.hash(currentColor, fontSize, xHeight);
+
+  @override
+  String toString() =>
+      'SvgTheme(currentColor: $currentColor, fontSize: $fontSize, xHeight: $xHeight)';
+}
+
+/// A class that transforms from one color to another during SVG parsing.
+abstract class ColorMapper {
+  /// Returns a new color to use in place of [color] during SVG parsing.
+  ///
+  /// The SVG parser will call this method every time it parses a color
+  Color substitute(
+    String? id,
+    String elementName,
+    String attributeName,
+    Color color,
+  );
+}
+
+class _DelegateVgColorMapper extends vg.ColorMapper {
+  _DelegateVgColorMapper(this.colorMapper);
+
+  final ColorMapper colorMapper;
+
+  @override
+  vg.Color substitute(
+      String? id, String elementName, String attributeName, vg.Color color) {
+    final Color substituteColor = colorMapper.substitute(
+        id, elementName, attributeName, Color(color.value));
+    return vg.Color(substituteColor.value);
+  }
+}
 
 /// A [BytesLoader] that parses a SVG data in an isolate and creates a
 /// vector_graphics binary representation.
@@ -38,15 +119,20 @@ abstract class SvgLoader<T> extends BytesLoader {
   Future<ByteData> _load(BuildContext? context) {
     return prepareMessage(context).then((T? message) {
       return compute((T? message) {
-        return encodeSvg(
-          xml: provideSvg(message),
-          theme: theme,
-          colorMapper: colorMapper,
-          debugName: 'Svg loader',
-          enableClippingOptimizer: false,
-          enableMaskingOptimizer: false,
-          enableOverdrawOptimizer: false,
-        ).buffer.asByteData();
+        return vg
+            .encodeSvg(
+              xml: provideSvg(message),
+              theme: theme._toVgTheme(),
+              colorMapper: colorMapper == null
+                  ? null
+                  : _DelegateVgColorMapper(colorMapper!),
+              debugName: 'Svg loader',
+              enableClippingOptimizer: false,
+              enableMaskingOptimizer: false,
+              enableOverdrawOptimizer: false,
+            )
+            .buffer
+            .asByteData();
       }, message, debugLabel: 'Load Bytes');
     });
   }
