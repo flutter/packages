@@ -2,6 +2,7 @@
 
 ## Next
 
+- Disable Isolate parsing in debug mode.
 - Fix internal Color representation leakage from `package:vector_graphics_compiler`.
 
 ## 2.0.0+1
