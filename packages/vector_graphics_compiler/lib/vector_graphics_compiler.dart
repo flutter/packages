@@ -305,7 +305,7 @@ Uint8List _encodeInstructions(VectorInstructions instructions) {
 
       case DrawCommandType.pattern:
         final PatternData patternData =
-            instructions.patterns[command.objectId!];
+            instructions.patternData[command.patternDataId!];
         codec.writePattern(
           buffer,
           patternData.x,

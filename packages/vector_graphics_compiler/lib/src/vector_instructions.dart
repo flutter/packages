@@ -27,7 +27,7 @@ class VectorInstructions {
     this.text = const <TextConfig>[],
     this.images = const <ImageData>[],
     this.drawImages = const <DrawImageData>[],
-    this.patterns = const <PatternData>[],
+    this.patternData = const <PatternData>[],
     required this.commands,
   });
 
@@ -55,8 +55,8 @@ class VectorInstructions {
   /// The [DrawImageData] objects, if any, used in [commands].
   final List<DrawImageData> drawImages;
 
-  /// The [PatternData] objects, if any used in [commands].
-  final List<PatternData> patterns;
+  /// The pattern data objects, if any used in [commands].
+  final List<PatternData> patternData;
 
   /// The painting order list of drawing commands.
   ///
@@ -71,7 +71,7 @@ class VectorInstructions {
   int get hashCode => Object.hash(
       width,
       height,
-      Object.hashAll(patterns),
+      Object.hashAll(patternData),
       Object.hashAll(paints),
       Object.hashAll(paths),
       Object.hashAll(vertices),
@@ -85,7 +85,7 @@ class VectorInstructions {
     return other is VectorInstructions &&
         other.width == width &&
         other.height == height &&
-        listEquals(other.patterns, patterns) &&
+        listEquals(other.patternData, patternData) &&
         listEquals(other.paints, paints) &&
         listEquals(other.paths, paths) &&
         listEquals(other.vertices, vertices) &&
@@ -154,8 +154,14 @@ class DrawCommand {
   /// Creates a new canvas drawing operation.
   ///
   /// See [DrawCommand].
-  const DrawCommand(this.type,
-      {this.objectId, this.paintId, this.debugString, this.patternId});
+  const DrawCommand(
+    this.type, {
+    this.objectId,
+    this.paintId,
+    this.debugString,
+    this.patternId,
+    this.patternDataId,
+  });
 
   /// A string, possibly from the original source SVG file, identifying a source
   /// for this command.
@@ -181,9 +187,11 @@ class DrawCommand {
   final int? paintId;
 
   /// The index of a pattern for this object in [VectorInstructions.patterns].
-  ///
-  /// A value of `null` indicates that there is no paint object a
   final int? patternId;
+
+  /// The index of a pattern configuration for this object in
+  /// [VectorInstructions.patternData].
+  final int? patternDataId;
 
   @override
   int get hashCode => Object.hash(type, objectId, paintId, debugString);
@@ -209,7 +217,10 @@ class DrawCommand {
       buffer.write(", debugString: '$debugString'");
     }
     if (patternId != null) {
-      buffer.write(", patternId: '$patternId'");
+      buffer.write(', patternId: $patternId');
+    }
+    if (patternDataId != null) {
+      buffer.write(', patternDataId: $patternDataId');
     }
     buffer.write(')');
     return buffer.toString();

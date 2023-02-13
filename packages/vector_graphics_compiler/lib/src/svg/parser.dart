@@ -659,7 +659,7 @@ class SvgParser {
   bool enableOverdrawOptimizer = true;
 
   /// List of known patternIds.
-  List<String> patternIds = <String>[];
+  Set<String> patternIds = <String>{};
 
   ViewportNode? _root;
   SvgAttributes _currentAttributes = SvgAttributes.empty;

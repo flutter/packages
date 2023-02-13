@@ -519,7 +519,7 @@ class PatternNode extends TransformableNode {
     required AffineMatrix transform,
   }) : super(transform);
 
-  /// This id will match any path or text element that has a non-null patternId.
+  /// A unique identifier for this pattern.
   final String patternId;
 
   /// The child(ren) to apply the pattern to.

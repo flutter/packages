@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'geometry/pattern.dart';
 import 'geometry/image.dart';
+import 'geometry/matrix.dart';
 import 'geometry/path.dart';
+import 'geometry/pattern.dart';
 import 'geometry/vertices.dart';
 import 'paint.dart';
 import 'svg/resolver.dart';
@@ -19,15 +20,10 @@ class DrawCommandBuilder {
   final Map<DrawImageData, int> _drawImages = <DrawImageData, int>{};
   final Map<IndexedVertices, int> _vertices = <IndexedVertices, int>{};
   final List<DrawCommand> _commands = <DrawCommand>[];
-
-  /// Maps a [PatternData] object to a patternId.
-  final Map<PatternData, int> patterns = <PatternData, int>{};
+  final Map<Object, int> _patterns = <Object, int>{};
+  final Map<PatternData, int> _patternData = <PatternData, int>{};
 
   int _getOrGenerateId<T>(T object, Map<T, int> map) =>
-      map.putIfAbsent(object, () => map.length);
-
-  /// Generates  a new patternId.
-  int getOrGeneratePatternId<T>(T object, Map<T, int> map) =>
       map.putIfAbsent(object, () => map.length);
 
   /// Add a vertices to the command stack.
@@ -67,12 +63,28 @@ class DrawCommandBuilder {
   }
 
   /// Adds a pattern to the command stack.
-  void addPattern(int patternId) {
-    _commands.add(DrawCommand(DrawCommandType.pattern, objectId: patternId));
+  void addPattern(
+    Object id, {
+    required double x,
+    required double y,
+    required double width,
+    required double height,
+    required AffineMatrix transform,
+  }) {
+    final int patternId = _getOrGenerateId(id, _patterns);
+    final int patternDataId = _getOrGenerateId(
+      PatternData(x, y, width, height, transform),
+      _patternData,
+    );
+    _commands.add(DrawCommand(
+      DrawCommandType.pattern,
+      objectId: patternId,
+      patternDataId: patternDataId,
+    ));
   }
 
   /// Add a path to the current draw command stack
-  void addPath(Path path, Paint paint, String? debugString, int? patternId) {
+  void addPath(Path path, Paint paint, String? debugString, Object? patternId) {
     if (path.isEmpty) {
       return;
     }
@@ -83,7 +95,7 @@ class DrawCommandBuilder {
         objectId: pathId,
         paintId: paintId,
         debugString: debugString,
-        patternId: patternId));
+        patternId: patternId != null ? _patterns[patternId] : null));
   }
 
   /// Adds a text to the current draw command stack.
@@ -91,7 +103,7 @@ class DrawCommandBuilder {
     TextConfig textConfig,
     Paint paint,
     String? debugString,
-    int? patternId,
+    Object? patternId,
   ) {
     final int paintId = _getOrGenerateId(paint, _paints);
     final int styleId = _getOrGenerateId(textConfig, _text);
@@ -100,7 +112,8 @@ class DrawCommandBuilder {
       objectId: styleId,
       paintId: paintId,
       debugString: debugString,
-      patternId: patternId,
+      patternId: patternId != null ? _patterns[patternId] : null,
+      patternDataId: patternId != null ? _patternData[patternId] : null,
     ));
   }
 
@@ -134,7 +147,7 @@ class DrawCommandBuilder {
       images: _images.keys.toList(),
       drawImages: _drawImages.keys.toList(),
       commands: _commands,
-      patterns: patterns.keys.toList(),
+      patternData: _patternData.keys.toList(),
     );
   }
 }

@@ -827,14 +827,40 @@ void main() {
     );
 
     expect(instructions.commands, const <DrawCommand>[
-      DrawCommand(DrawCommandType.pattern, objectId: 0),
+      DrawCommand(DrawCommandType.pattern, objectId: 0, patternDataId: 0),
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
       DrawCommand(DrawCommandType.restore),
       DrawCommand(DrawCommandType.path, objectId: 1, paintId: 1, patternId: 0),
-      DrawCommand(DrawCommandType.pattern, objectId: 1),
+      DrawCommand(DrawCommandType.pattern, objectId: 0, patternDataId: 0),
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
       DrawCommand(DrawCommandType.restore),
-      DrawCommand(DrawCommandType.path, objectId: 2, paintId: 2, patternId: 1)
+      DrawCommand(DrawCommandType.path, objectId: 2, paintId: 2, patternId: 0)
+    ]);
+  });
+
+  test('Alternating pattern usage', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
+      alternatingPattern,
+      warningsAsErrors: true,
+    );
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.pattern, objectId: 0, patternDataId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 1, patternId: 0),
+      DrawCommand(DrawCommandType.pattern, objectId: 1, patternDataId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 2, paintId: 2),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.path, objectId: 3, paintId: 1, patternId: 1),
+      DrawCommand(DrawCommandType.pattern, objectId: 0, patternDataId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.path, objectId: 4, paintId: 1, patternId: 0),
+      DrawCommand(DrawCommandType.pattern, objectId: 1, patternDataId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 2, paintId: 2),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.path, objectId: 5, paintId: 1, patternId: 1)
     ]);
   });
 

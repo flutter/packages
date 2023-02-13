@@ -259,11 +259,12 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     return ResolvedPatternNode(
       child: child,
       pattern: pattern,
-      x: resolvedPattern.attributes.x,
-      y: resolvedPattern.attributes.y,
+      x: resolvedPattern.attributes.x ?? 0,
+      y: resolvedPattern.attributes.y ?? 0,
       width: resolvedPattern.attributes.width!,
       height: resolvedPattern.attributes.height!,
       transform: data,
+      id: node.patternId,
     );
   }
 
@@ -457,6 +458,7 @@ class ResolvedPatternNode extends Node {
     required this.y,
     required this.height,
     required this.transform,
+    required this.id,
   });
 
   /// The child to apply a pattern to.
@@ -466,18 +468,21 @@ class ResolvedPatternNode extends Node {
   final Node pattern;
 
   /// The x coordinate shift of the pattern tile.
-  double? x;
+  final double x;
 
   /// The y coordinate shift of the pattern tile.
-  double? y;
+  final double y;
 
   /// The width of the pattern's viewbox in px.
   /// Values must be > = 1.
-  double width;
+  final double width;
 
   /// The height of the pattern's viewbox in px.
   /// Values must be > = 1.
-  double height;
+  final double height;
+
+  /// A unique identifier for the [pattern].
+  final Object id;
 
   /// This is the transform of the pattern that has been created from the children.
   AffineMatrix transform;

@@ -1132,6 +1132,22 @@ const String complexOpacityTest =
 </svg>
 ''';
 
+const String alternatingPattern = '''
+<svg viewBox="0.0 0.0 180.4 249.4">
+  <defs>
+    <pattern id="star" viewBox="0,0,10,10" width="10%" height="10%">
+      <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2"/>
+    </pattern>
+    <pattern id="arrow" viewBox="0,0,10,10" width="10%" height="10%">
+      <path d="M0,0 L7,0 L3.5,7 z" fill="red" stroke="blue"/>
+    </pattern>
+  </defs>
+  <circle id="0" cx="-20" cy="150" r="30" fill="url(#star)" stroke-width="20" stroke="none"/>
+  <circle id="1" cx="50" cy="150" r="30" fill="url(#arrow)" stroke-width="20" stroke="none"/>
+  <circle id="2" cx="120" cy="150" r="30" fill="url(#star)" stroke-width="20" stroke="none"/>
+  <circle id="3" cx="190" cy="150" r="30" fill="url(#arrow)" stroke-width="20" stroke="none"/>
+</svg>''';
+
 const String starPatternCircles =
     ''' <svg viewBox="0 0 230 100" xmlns="http://www.w3.org/2000/svg">
   <defs>

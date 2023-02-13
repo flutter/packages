@@ -4,7 +4,6 @@
 
 import '../draw_command_builder.dart';
 import '../geometry/path.dart';
-import '../geometry/pattern.dart';
 import '../paint.dart';
 import '../vector_instructions.dart';
 import 'node.dart';
@@ -120,7 +119,7 @@ class CommandBuilderVisitor extends Visitor<void, void>
 
   /// The current patternId. This will be `null` if
   /// there is no current pattern.
-  int? currentPatternId;
+  Object? currentPatternId;
 
   /// Return the vector instructions encoded by the visitor given to this tree.
   VectorInstructions toInstructions() {
@@ -205,12 +204,17 @@ class CommandBuilderVisitor extends Visitor<void, void>
 
   @override
   void visitResolvedPatternNode(ResolvedPatternNode patternNode, void data) {
-    final int patternId = _builder.getOrGeneratePatternId(
-        PatternData.fromNode(patternNode), _builder.patterns);
-    _builder.addPattern(patternId);
+    _builder.addPattern(
+      patternNode.id,
+      x: patternNode.x,
+      y: patternNode.y,
+      width: patternNode.width,
+      height: patternNode.height,
+      transform: patternNode.transform,
+    );
     patternNode.pattern.accept(this, data);
     _builder.restore();
-    currentPatternId = patternId;
+    currentPatternId = patternNode.id;
     patternNode.child.accept(this, data);
     currentPatternId = null;
   }
