@@ -159,6 +159,41 @@ void main() {
     expect(fittedBox.clipBehavior, Clip.hardEdge);
   });
 
+  group('ClipBehavior', () {
+    testWidgets('Sets clipBehavior to hardEdge if not provided',
+        (WidgetTester tester) async {
+      final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+      await tester.pumpWidget(VectorGraphic(
+        loader: TestBytesLoader(buffer.done()),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(FittedBox), findsOneWidget);
+
+      final FittedBox fittedBox =
+          (find.byType(FittedBox).evaluate().first.widget as FittedBox);
+
+      expect(fittedBox.clipBehavior, Clip.hardEdge);
+    });
+
+    testWidgets('Passes clipBehavior to FittedBox if provided',
+        (WidgetTester tester) async {
+      final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+      await tester.pumpWidget(VectorGraphic(
+        loader: TestBytesLoader(buffer.done()),
+        clipBehavior: Clip.none,
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(FittedBox), findsOneWidget);
+
+      final FittedBox fittedBox =
+          (find.byType(FittedBox).evaluate().first.widget as FittedBox);
+
+      expect(fittedBox.clipBehavior, Clip.none);
+    });
+  });
+
   testWidgets('Sizes VectorGraphic based on encoded viewbox information',
       (WidgetTester tester) async {
     final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();

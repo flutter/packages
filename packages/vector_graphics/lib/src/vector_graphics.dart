@@ -53,6 +53,7 @@ VectorGraphic createCompatVectorGraphic({
   AlignmentGeometry alignment = Alignment.center,
   String? semanticsLabel,
   bool excludeFromSemantics = false,
+  Clip clipBehavior = Clip.hardEdge,
   WidgetBuilder? placeholderBuilder,
   ColorFilter? colorFilter,
   Animation<double>? opacity,
@@ -68,6 +69,7 @@ VectorGraphic createCompatVectorGraphic({
     alignment: alignment,
     semanticsLabel: semanticsLabel,
     excludeFromSemantics: excludeFromSemantics,
+    clipBehavior: clipBehavior,
     placeholderBuilder: placeholderBuilder,
     colorFilter: colorFilter,
     opacity: opacity,
@@ -101,6 +103,7 @@ class VectorGraphic extends StatefulWidget {
     this.alignment = Alignment.center,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
     this.placeholderBuilder,
     this.colorFilter,
     this.opacity,
@@ -117,6 +120,7 @@ class VectorGraphic extends StatefulWidget {
     this.alignment = Alignment.center,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
     this.placeholderBuilder,
     this.colorFilter,
     this.opacity,
@@ -178,6 +182,14 @@ class VectorGraphic extends StatefulWidget {
   /// Useful for pictures which do not contribute meaningful semantic information to an
   /// application.
   final bool excludeFromSemantics;
+
+  /// The content will be clipped (or not) according to this option.
+  ///
+  /// See the enum [Clip] for details of all possible options and their common
+  /// use cases.
+  ///
+  /// Defaults to [Clip.hardEdge], and must not be null.
+  final Clip clipBehavior;
 
   /// The placeholder to use while fetching, decoding, and parsing the vector_graphics data.
   final WidgetBuilder? placeholderBuilder;
@@ -430,7 +442,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         child: FittedBox(
           fit: widget.fit,
           alignment: widget.alignment,
-          clipBehavior: Clip.hardEdge,
+          clipBehavior: widget.clipBehavior,
           child: SizedBox.fromSize(
             size: pictureInfo.size,
             child: renderWidget,
