@@ -1,0 +1,4 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+  # TODO(stuartmorgan): Add actual tests here when moving the repo tooling.

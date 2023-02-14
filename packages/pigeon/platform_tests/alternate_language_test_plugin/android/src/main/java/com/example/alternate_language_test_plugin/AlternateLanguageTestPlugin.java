@@ -45,7 +45,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void throwError() {
+  public @Nullable Object throwError() {
+    throw new RuntimeException("An error");
+  }
+
+  @Override
+  public void throwErrorFromVoid() {
     throw new RuntimeException("An error");
   }
 
@@ -269,6 +274,30 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
         new FlutterIntegrationCoreApi.Reply<Void>() {
           public void reply(Void value) {
             result.success(value);
+          }
+        });
+  }
+
+  @Override
+  public void callFlutterThrowError(Result<Object> result) {
+    flutterApi.throwError(
+        new FlutterIntegrationCoreApi.Reply<Object>() {
+          public void reply(Object value) {
+            // TODO: (tarrinneal) Once flutter api error handling is added,
+            // update error handling tests to properly recieve and handle errors.
+            // See issue https://github.com/flutter/flutter/issues/118243
+          }
+        });
+  }
+
+  @Override
+  public void callFlutterThrowErrorFromVoid(Result<Void> result) {
+    flutterApi.throwErrorFromVoid(
+        new FlutterIntegrationCoreApi.Reply<Void>() {
+          public void reply(Void value) {
+            // TODO: (tarrinneal) Once flutter api error handling is added,
+            // update error handling tests to properly recieve and handle errors.
+            // See issue https://github.com/flutter/flutter/issues/118243
           }
         });
   }
