@@ -139,7 +139,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
             indent, field.documentationComments, _docCommentSpec);
 
         final String datatype = _addGenericTypesNullable(field.type);
-        indent.writeln('$datatype ${field.name};');
+        indent.writeln('final $datatype ${field.name};');
         indent.newln();
       }
       writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
