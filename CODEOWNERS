@@ -18,11 +18,10 @@ packages/flutter_template_images/**       @stuartmorgan
 packages/go_router/**                     @chunhtai
 packages/go_router_builder/**             @chunhtai
 packages/google_identity_services_web/**  @ditman
-packages/imitation_game/**                @gaaclarke
 packages/metrics_center/**                @keyonghan
 packages/multicast_dns/**                 @dnfield
 packages/palette_generator/**             @gspencergoog
-packages/pigeon/**                        @tarrinneal @gaaclarke
+packages/pigeon/**                        @tarrinneal
 packages/pointer_interceptor/**           @ditman
 packages/rfw/**                           @Hixie
 packages/standard_message_codec/**        @jonahwilliams

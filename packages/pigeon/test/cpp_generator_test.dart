@@ -4,6 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/cpp_generator.dart';
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart' show Error;
 import 'package:test/test.dart';
 
@@ -45,15 +46,28 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('class Input'));
       expect(code, contains('class Output'));
       expect(code, contains('class Api'));
+      expect(code, contains('virtual ~Api() {}\n'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('Input::Input()'));
       expect(code, contains('Output::Output'));
@@ -101,7 +115,13 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // Method name and argument names should be adjusted.
       expect(code, contains(' DoSomething(const Input& some_input)'));
@@ -116,7 +136,13 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('pointer_input_field'));
       expect(code, contains('Output::output_field()'));
@@ -144,7 +170,17 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+      );
       final String code = sink.toString();
 
       expect(
@@ -184,7 +220,13 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
 
       expect(
@@ -238,14 +280,26 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
       expect(code, isNot(contains('const{')));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
       expect(code, isNot(contains('const{')));
@@ -271,7 +325,13 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('''
 #include <flutter/basic_message_channel.h>
@@ -286,7 +346,13 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(header: 'a_header.h'), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(headerIncludePath: 'a_header.h'),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('''
 #include "a_header.h"
@@ -322,14 +388,26 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(namespace: 'foo'), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(namespace: 'foo'),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
       expect(code, contains('}  // namespace foo'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(namespace: 'foo'), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(namespace: 'foo'),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
       expect(code, contains('}  // namespace foo'));
@@ -390,7 +468,13 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // Getters should return const pointers.
       expect(code, contains('const bool* nullable_bool()'));
@@ -422,7 +506,13 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // Getters extract optionals.
       expect(code,
@@ -457,14 +547,22 @@ void main() {
       // Serialization handles optionals.
       expect(
           code,
-          contains('{flutter::EncodableValue("nullableBool"), '
-              'nullable_bool_ ? flutter::EncodableValue(*nullable_bool_) '
-              ': flutter::EncodableValue()}'));
+          contains('nullable_bool_ ? EncodableValue(*nullable_bool_) '
+              ': EncodableValue()'));
       expect(
           code,
-          contains('{flutter::EncodableValue("nullableNested"), '
-              'nullable_nested_ ? nullable_nested_->ToEncodableMap() '
-              ': flutter::EncodableValue()}'));
+          contains(
+              'nullable_nested_ ? EncodableValue(nullable_nested_->ToEncodableList()) '
+              ': EncodableValue()'));
+
+      // Serialization should use push_back, not initializer lists, to avoid
+      // copies.
+      expect(code, contains('list.reserve(4)'));
+      expect(
+          code,
+          contains('list.push_back(nullable_bool_ ? '
+              'EncodableValue(*nullable_bool_) : '
+              'EncodableValue())'));
     }
   });
 
@@ -522,7 +620,13 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // POD getters should return copies references.
       expect(code, contains('bool non_nullable_bool()'));
@@ -547,7 +651,13 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // Getters just return the value.
       expect(code, contains('return non_nullable_bool_;'));
@@ -560,14 +670,14 @@ void main() {
       expect(code, contains('non_nullable_string_ = value_arg;'));
       expect(code, contains('non_nullable_nested_ = value_arg;'));
       // Serialization uses the value directly.
+      expect(code, contains('EncodableValue(non_nullable_bool_)'));
+      expect(code, contains('non_nullable_nested_.ToEncodableList()'));
+
+      // Serialization should use push_back, not initializer lists, to avoid
+      // copies.
+      expect(code, contains('list.reserve(4)'));
       expect(
-          code,
-          contains('{flutter::EncodableValue("nonNullableBool"), '
-              'flutter::EncodableValue(non_nullable_bool_)}'));
-      expect(
-          code,
-          contains('{flutter::EncodableValue("nonNullableNested"), '
-              'non_nullable_nested_.ToEncodableMap()}'));
+          code, contains('list.push_back(EncodableValue(non_nullable_bool_))'));
     }
   });
 
@@ -651,7 +761,13 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code, contains('ErrorOr<std::optional<bool>> ReturnNullableBool()'));
@@ -756,7 +872,13 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(code, contains('ErrorOr<bool> ReturnBool()'));
       expect(code, contains('ErrorOr<int64_t> ReturnInt()'));
@@ -816,6 +938,12 @@ void main() {
                   baseName: 'ParameterObject',
                   isNullable: true,
                 )),
+            NamedType(
+                name: 'aGenericObject',
+                type: const TypeDeclaration(
+                  baseName: 'Object',
+                  isNullable: true,
+                )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
         ),
@@ -832,7 +960,13 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       expect(
           code,
@@ -841,11 +975,18 @@ void main() {
               'const std::string* a_string, '
               'const flutter::EncodableList* a_list, '
               'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object)'));
+              'const ParameterObject* an_object, '
+              'const flutter::EncodableValue* a_generic_object)'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(), root, sink);
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
       // Most types should just use get_if, since the parameter is a pointer,
       // and get_if will automatically handle null values (since a null
@@ -862,11 +1003,11 @@ void main() {
       expect(
           code,
           contains(
-              'const auto* a_list_arg = std::get_if<flutter::EncodableList>(&encodable_a_list_arg);'));
+              'const auto* a_list_arg = std::get_if<EncodableList>(&encodable_a_list_arg);'));
       expect(
           code,
           contains(
-              'const auto* a_map_arg = std::get_if<flutter::EncodableMap>(&encodable_a_map_arg);'));
+              'const auto* a_map_arg = std::get_if<EncodableMap>(&encodable_a_map_arg);'));
       // Ints are complicated since there are two possible pointer types, but
       // the paramter always needs an int64_t*.
       expect(
@@ -881,11 +1022,657 @@ void main() {
       expect(
           code,
           contains(
-              'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<flutter::CustomEncodableValue>(encodable_an_object_arg)));'));
+              'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
+      // "Object" requires no extraction at all since it has to use
+      // EncodableValue directly.
+      expect(
+          code,
+          contains(
+              'const auto* a_generic_object_arg = &encodable_a_generic_object_arg;'));
     }
   });
 
   test('host non-nullable arguments map correctly', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'aBool',
+                type: const TypeDeclaration(
+                  baseName: 'bool',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anInt',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aString',
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aList',
+                type: const TypeDeclaration(
+                  baseName: 'List',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'Object', isNullable: true)
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aMap',
+                type: const TypeDeclaration(
+                  baseName: 'Map',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'Object', isNullable: true),
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anObject',
+                type: const TypeDeclaration(
+                  baseName: 'ParameterObject',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aGenericObject',
+                type: const TypeDeclaration(
+                  baseName: 'Object',
+                  isNullable: false,
+                )),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+        ),
+      ])
+    ], classes: <Class>[
+      Class(name: 'ParameterObject', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
+            ),
+            name: 'aValue'),
+      ]),
+    ], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains('DoSomething(bool a_bool, '
+              'int64_t an_int, '
+              'const std::string& a_string, '
+              'const flutter::EncodableList& a_list, '
+              'const flutter::EncodableMap& a_map, '
+              'const ParameterObject& an_object, '
+              'const flutter::EncodableValue& a_generic_object)'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
+      final String code = sink.toString();
+      // Most types should extract references. Since the type is non-nullable,
+      // there's only one possible type.
+      expect(
+          code,
+          contains(
+              'const auto& a_bool_arg = std::get<bool>(encodable_a_bool_arg);'));
+      expect(
+          code,
+          contains(
+              'const auto& a_string_arg = std::get<std::string>(encodable_a_string_arg);'));
+      expect(
+          code,
+          contains(
+              'const auto& a_list_arg = std::get<EncodableList>(encodable_a_list_arg);'));
+      expect(
+          code,
+          contains(
+              'const auto& a_map_arg = std::get<EncodableMap>(encodable_a_map_arg);'));
+      // Ints use a copy since there are two possible reference types, but
+      // the paramter always needs an int64_t.
+      expect(
+          code,
+          contains(
+            'const int64_t an_int_arg = encodable_an_int_arg.LongValue();',
+          ));
+      // Custom class types require an extra layer of extraction.
+      expect(
+          code,
+          contains(
+              'const auto& an_object_arg = std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg));'));
+      // "Object" requires no extraction at all since it has to use
+      // EncodableValue directly.
+      expect(
+          code,
+          contains(
+              'const auto& a_generic_object_arg = encodable_a_generic_object_arg;'));
+    }
+  });
+
+  test('flutter nullable arguments map correctly', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'aBool',
+                type: const TypeDeclaration(
+                  baseName: 'bool',
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'anInt',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'aString',
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'aList',
+                type: const TypeDeclaration(
+                  baseName: 'List',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'Object', isNullable: true)
+                  ],
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'aMap',
+                type: const TypeDeclaration(
+                  baseName: 'Map',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'Object', isNullable: true),
+                  ],
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'anObject',
+                type: const TypeDeclaration(
+                  baseName: 'ParameterObject',
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'aGenericObject',
+                type: const TypeDeclaration(
+                  baseName: 'Object',
+                  isNullable: true,
+                )),
+          ],
+          returnType: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: true,
+          ),
+        ),
+      ])
+    ], classes: <Class>[
+      Class(name: 'ParameterObject', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
+            ),
+            name: 'aValue'),
+      ]),
+    ], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
+      final String code = sink.toString();
+      // Nullable arguments should all be pointers. This will make them somewhat
+      // awkward for some uses (literals, values that could be inlined) but
+      // unlike setters there's no way to provide reference-based alternatives
+      // since it's not always just one argument.
+      // TODO(stuartmorgan): Consider generating a second variant using
+      // `std::optional`s; that may be more ergonomic, but the perf implications
+      // would need to be considered.
+      expect(
+          code,
+          contains('DoSomething(const bool* a_bool, '
+              'const int64_t* an_int, '
+              // Nullable strings use std::string* rather than std::string_view*
+              // since there's no implicit conversion for pointer types.
+              'const std::string* a_string, '
+              'const flutter::EncodableList* a_list, '
+              'const flutter::EncodableMap* a_map, '
+              'const ParameterObject* an_object, '
+              'const flutter::EncodableValue* a_generic_object, '));
+      // The callback should pass a pointer as well.
+      expect(
+          code,
+          contains('std::function<void(const bool*)>&& on_success, '
+              'std::function<void(const FlutterError&)>&& on_error)'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
+      final String code = sink.toString();
+      // All types pass nulls values when the pointer is null.
+      // Standard types are wrapped an EncodableValues.
+      expect(
+          code,
+          contains(
+              'a_bool_arg ? EncodableValue(*a_bool_arg) : EncodableValue()'));
+      expect(
+          code,
+          contains(
+              'an_int_arg ? EncodableValue(*an_int_arg) : EncodableValue()'));
+      expect(
+          code,
+          contains(
+              'a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue()'));
+      expect(
+          code,
+          contains(
+              'a_list_arg ? EncodableValue(*a_list_arg) : EncodableValue()'));
+      expect(
+          code,
+          contains(
+              'a_map_arg ? EncodableValue(*a_map_arg) : EncodableValue()'));
+      // Class types use ToEncodableList.
+      expect(
+          code,
+          contains(
+              'an_object_arg ? EncodableValue(an_object_arg->ToEncodableList()) : EncodableValue()'));
+    }
+  });
+
+  test('flutter non-nullable arguments map correctly', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'aBool',
+                type: const TypeDeclaration(
+                  baseName: 'bool',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anInt',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aString',
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aList',
+                type: const TypeDeclaration(
+                  baseName: 'List',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'Object', isNullable: true)
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aMap',
+                type: const TypeDeclaration(
+                  baseName: 'Map',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'Object', isNullable: true),
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'anObject',
+                type: const TypeDeclaration(
+                  baseName: 'ParameterObject',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'aGenericObject',
+                type: const TypeDeclaration(
+                  baseName: 'Object',
+                  isNullable: false,
+                )),
+          ],
+          returnType: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
+        ),
+      ])
+    ], classes: <Class>[
+      Class(name: 'ParameterObject', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
+            ),
+            name: 'aValue'),
+      ]),
+    ], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.header,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains('DoSomething(bool a_bool, '
+              'int64_t an_int, '
+              // Non-nullable strings use std::string for consistency with
+              // nullable strings.
+              'const std::string& a_string, '
+              // Non-POD types use const references.
+              'const flutter::EncodableList& a_list, '
+              'const flutter::EncodableMap& a_map, '
+              'const ParameterObject& an_object, '
+              'const flutter::EncodableValue& a_generic_object, '));
+      // The callback should pass a value.
+      expect(
+          code,
+          contains('std::function<void(bool)>&& on_success, '
+              'std::function<void(const FlutterError&)>&& on_error)'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      const CppGenerator generator = CppGenerator();
+      final OutputFileOptions<CppOptions> generatorOptions =
+          OutputFileOptions<CppOptions>(
+        fileType: FileType.source,
+        languageOptions: const CppOptions(),
+      );
+      generator.generate(generatorOptions, root, sink);
+      final String code = sink.toString();
+      // Standard types are wrapped an EncodableValues.
+      expect(code, contains('EncodableValue(a_bool_arg)'));
+      expect(code, contains('EncodableValue(an_int_arg)'));
+      expect(code, contains('EncodableValue(a_string_arg)'));
+      expect(code, contains('EncodableValue(a_list_arg)'));
+      expect(code, contains('EncodableValue(a_map_arg)'));
+      // Class types use ToEncodableList.
+      expect(code, contains('EncodableValue(an_object_arg.ToEncodableList())'));
+    }
+  });
+
+  test('host API argument extraction uses references', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'anArg',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                )),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+        ),
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.source,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
+    final String code = sink.toString();
+    // A bare 'auto' here would create a copy, not a reference, which is
+    // ineffecient.
+    expect(
+        code, contains('const auto& args = std::get<EncodableList>(message);'));
+    expect(code, contains('const auto& encodable_an_arg_arg = args.at(0);'));
+  });
+
+  test('enum argument', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'bar',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                        baseName: 'Foo', isNullable: false))
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[
+        Enum(name: 'Foo', members: <EnumMember>[
+          EnumMember(name: 'one'),
+          EnumMember(name: 'two'),
+        ])
+      ],
+    );
+    final List<Error> errors = validateCpp(const CppOptions(), root);
+    expect(errors.length, 1);
+  });
+
+  test('transfers documentation comments', () {
+    final List<String> comments = <String>[
+      ' api comment',
+      ' api method comment',
+      ' class comment',
+      ' class field comment',
+      ' enum comment',
+      ' enum member comment',
+    ];
+    int count = 0;
+
+    final List<String> unspacedComments = <String>['////////'];
+    int unspacedCount = 0;
+
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          documentationComments: <String>[comments[count++]],
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              documentationComments: <String>[comments[count++]],
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[
+        Class(
+          name: 'class',
+          documentationComments: <String>[comments[count++]],
+          fields: <NamedType>[
+            NamedType(
+                documentationComments: <String>[comments[count++]],
+                type: const TypeDeclaration(
+                    baseName: 'Map',
+                    isNullable: true,
+                    typeArguments: <TypeDeclaration>[
+                      TypeDeclaration(baseName: 'String', isNullable: true),
+                      TypeDeclaration(baseName: 'int', isNullable: true),
+                    ]),
+                name: 'field1'),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'enum',
+          documentationComments: <String>[
+            comments[count++],
+            unspacedComments[unspacedCount++]
+          ],
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
+            EnumMember(name: 'two'),
+          ],
+        ),
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.header,
+      languageOptions: const CppOptions(headerIncludePath: 'foo'),
+    );
+    generator.generate(generatorOptions, root, sink);
+    final String code = sink.toString();
+    for (final String comment in comments) {
+      expect(code, contains('//$comment'));
+    }
+    expect(code, contains('// ///'));
+  });
+
+  test('doesnt create codecs if no custom datatypes', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.header,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
+  });
+
+  test('creates custom codecs if custom datatypes present', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
+                name: '')
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'input')
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'output')
+      ])
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.header,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains(' : public flutter::StandardCodecSerializer'));
+  });
+
+  test('Does not send unwrapped EncodableLists', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
@@ -948,252 +1735,82 @@ void main() {
             name: 'aValue'),
       ]),
     ], enums: <Enum>[]);
-    {
-      final StringBuffer sink = StringBuffer();
-      generateCppHeader('', const CppOptions(), root, sink);
-      final String code = sink.toString();
-      expect(
-          code,
-          contains('DoSomething(bool a_bool, '
-              'int64_t an_int, '
-              'const std::string& a_string, '
-              'const flutter::EncodableList& a_list, '
-              'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object)'));
-    }
-    {
-      final StringBuffer sink = StringBuffer();
-      generateCppSource(const CppOptions(), root, sink);
-      final String code = sink.toString();
-      // Most types should extract references. Since the type is non-nullable,
-      // there's only one possible type.
-      expect(
-          code,
-          contains(
-              'const auto& a_bool_arg = std::get<bool>(encodable_a_bool_arg);'));
-      expect(
-          code,
-          contains(
-              'const auto& a_string_arg = std::get<std::string>(encodable_a_string_arg);'));
-      expect(
-          code,
-          contains(
-              'const auto& a_list_arg = std::get<flutter::EncodableList>(encodable_a_list_arg);'));
-      expect(
-          code,
-          contains(
-              'const auto& a_map_arg = std::get<flutter::EncodableMap>(encodable_a_map_arg);'));
-      // Ints use a copy since there are two possible reference types, but
-      // the paramter always needs an int64_t.
-      expect(
-          code,
-          contains(
-            'const int64_t an_int_arg = encodable_an_int_arg.LongValue();',
-          ));
-      // Custom class types require an extra layer of extraction.
-      expect(
-          code,
-          contains(
-              'const auto& an_object_arg = std::any_cast<const ParameterObject&>(std::get<flutter::CustomEncodableValue>(encodable_an_object_arg));'));
-    }
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.source,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(contains('reply(wrap')));
+    expect(code, contains('reply(EncodableValue('));
   });
 
-  test('host API argument extraction uses references', () {
+  test('does not keep unowned references in async handlers', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      Api(name: 'HostApi', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'noop',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          isAsynchronous: true,
+        ),
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
             NamedType(
-                name: 'anArg',
                 type: const TypeDeclaration(
                   baseName: 'int',
-                  isNullable: false,
-                )),
-          ],
-          returnType: const TypeDeclaration.voidDeclaration(),
-        ),
-      ])
-    ], classes: <Class>[], enums: <Enum>[]);
-
-    final StringBuffer sink = StringBuffer();
-    generateCppSource(const CppOptions(), root, sink);
-    final String code = sink.toString();
-    // A bare 'auto' here would create a copy, not a reference, which is
-    // ineffecient.
-    expect(
-        code,
-        contains(
-            'const auto& args = std::get<flutter::EncodableList>(message);'));
-    expect(code, contains('const auto& encodable_an_arg_arg = args.at(0);'));
-  });
-
-  test('enum argument', () {
-    final Root root = Root(
-      apis: <Api>[
-        Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
-          Method(
-              name: 'bar',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
-                    name: 'foo',
-                    type: const TypeDeclaration(
-                        baseName: 'Foo', isNullable: false))
-              ])
-        ])
-      ],
-      classes: <Class>[],
-      enums: <Enum>[
-        Enum(name: 'Foo', members: <String>['one', 'two'])
-      ],
-    );
-    final List<Error> errors = validateCpp(const CppOptions(), root);
-    expect(errors.length, 1);
-  });
-
-  test('transfers documentation comments', () {
-    final List<String> comments = <String>[
-      ' api comment',
-      ' api method comment',
-      ' class comment',
-      ' class field comment',
-      ' enum comment',
-    ];
-    int count = 0;
-
-    final Root root = Root(
-      apis: <Api>[
-        Api(
-          name: 'Api',
-          location: ApiLocation.flutter,
-          documentationComments: <String>[comments[count++]],
-          methods: <Method>[
-            Method(
-              name: 'method',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              documentationComments: <String>[comments[count++]],
-              arguments: <NamedType>[
-                NamedType(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[
-        Class(
-          name: 'class',
-          documentationComments: <String>[comments[count++]],
-          fields: <NamedType>[
-            NamedType(
-                documentationComments: <String>[comments[count++]],
-                type: const TypeDeclaration(
-                    baseName: 'Map',
-                    isNullable: true,
-                    typeArguments: <TypeDeclaration>[
-                      TypeDeclaration(baseName: 'String', isNullable: true),
-                      TypeDeclaration(baseName: 'int', isNullable: true),
-                    ]),
-                name: 'field1'),
-          ],
-        ),
-      ],
-      enums: <Enum>[
-        Enum(
-          name: 'enum',
-          documentationComments: <String>[comments[count++]],
-          members: <String>[
-            'one',
-            'two',
-          ],
-        ),
-      ],
-    );
-    final StringBuffer sink = StringBuffer();
-    generateCppHeader('foo', const CppOptions(), root, sink);
-    final String code = sink.toString();
-    for (final String comment in comments) {
-      expect(code, contains('//$comment'));
-    }
-  });
-
-  test('doesnt create codecs if no custom datatypes', () {
-    final Root root = Root(
-      apis: <Api>[
-        Api(
-          name: 'Api',
-          location: ApiLocation.flutter,
-          methods: <Method>[
-            Method(
-              name: 'method',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    generateCppHeader('', const CppOptions(), root, sink);
-    final String code = sink.toString();
-    expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
-    final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(
-          name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
-                  baseName: 'Input',
                   isNullable: false,
                 ),
                 name: '')
           ],
           returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+              const TypeDeclaration(baseName: 'double', isNullable: false),
           isAsynchronous: true,
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
-            ),
-            name: 'input')
+        ),
       ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
-            ),
-            name: 'output')
+      Api(name: 'FlutterApi', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'noop',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          isAsynchronous: true,
+        ),
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                ),
+                name: '')
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'bool', isNullable: false),
+          isAsynchronous: true,
+        ),
       ])
-    ], enums: <Enum>[]);
+    ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateCppHeader('', const CppOptions(), root, sink);
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.source,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains(' : public flutter::StandardCodecSerializer'));
+    // Nothing should be captured by reference for async handlers, since their
+    // lifetime is unknown (and expected to be longer than the stack's).
+    expect(code, isNot(contains('&reply')));
+    expect(code, isNot(contains('&wrapped')));
+    // Check for the exact capture format that is currently being used, to
+    // ensure that the negative tests above get updated if there are any
+    // changes to lambda capture.
+    expect(code, contains('[reply]('));
   });
 }

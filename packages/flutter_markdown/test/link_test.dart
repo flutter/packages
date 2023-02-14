@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'utils.dart';
 
 void main() => defineTests();
@@ -628,7 +629,7 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, const MarkdownLink('link', 'foo\bar'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', 'foo%08ar'));
       },
     );
 
@@ -650,7 +651,7 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(
-            linkTapResults, const MarkdownLink('link', 'foo%20b&auml;'));
+            linkTapResults, const MarkdownLink('link', 'foo%20b%C3%A4'));
       },
     );
 
@@ -760,7 +761,7 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(linkTapResults,
-            const MarkdownLink('link', '/url', 'title %22&quot;'));
+            const MarkdownLink('link', '/url', 'title &quot;&quot;'));
       },
     );
 
@@ -782,7 +783,7 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(linkTapResults,
-            const MarkdownLink('link', '/url\u{C2A0}%22title%22'));
+            const MarkdownLink('link', '/url%EC%8A%A0%22title%22'));
       },
     );
 
@@ -825,8 +826,10 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults,
-            const MarkdownLink('link', '/url', 'title %22and%22 title'));
+        expectLinkTap(
+          linkTapResults,
+          const MarkdownLink('link', '/url', 'title &quot;and&quot; title'),
+        );
       },
     );
 

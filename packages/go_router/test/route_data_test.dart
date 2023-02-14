@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +11,8 @@ import 'package:go_router/go_router.dart';
 class _GoRouteDataBuild extends GoRouteData {
   const _GoRouteDataBuild();
   @override
-  Widget build(BuildContext context) => const SizedBox(key: Key('build'));
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SizedBox(key: Key('build'));
 }
 
 final GoRoute _goRouteDataBuild = GoRouteData.$route(
@@ -20,7 +23,8 @@ final GoRoute _goRouteDataBuild = GoRouteData.$route(
 class _GoRouteDataBuildPage extends GoRouteData {
   const _GoRouteDataBuildPage();
   @override
-  Page<void> buildPage(BuildContext context) => const MaterialPage<void>(
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      const MaterialPage<void>(
         child: SizedBox(key: Key('buildPage')),
       );
 }
@@ -30,24 +34,22 @@ final GoRoute _goRouteDataBuildPage = GoRouteData.$route(
   factory: (GoRouterState state) => const _GoRouteDataBuildPage(),
 );
 
-class _GoRouteDataBuildPageWithState extends GoRouteData {
-  const _GoRouteDataBuildPageWithState();
+class _GoRouteDataRedirectPage extends GoRouteData {
+  const _GoRouteDataRedirectPage();
   @override
-  Page<void> buildPageWithState(BuildContext context, GoRouterState state) =>
-      const MaterialPage<void>(
-        child: SizedBox(key: Key('buildPageWithState')),
-      );
+  FutureOr<String> redirect(BuildContext context, GoRouterState state) =>
+      '/build-page';
 }
 
-final GoRoute _goRouteDataBuildPageWithState = GoRouteData.$route(
-  path: '/build-page-with-state',
-  factory: (GoRouterState state) => const _GoRouteDataBuildPageWithState(),
+final GoRoute _goRouteDataRedirect = GoRouteData.$route(
+  path: '/redirect',
+  factory: (GoRouterState state) => const _GoRouteDataRedirectPage(),
 );
 
 final List<GoRoute> _routes = <GoRoute>[
   _goRouteDataBuild,
   _goRouteDataBuildPage,
-  _goRouteDataBuildPageWithState,
+  _goRouteDataRedirect,
 ];
 
 void main() {
@@ -65,7 +67,6 @@ void main() {
       ));
       expect(find.byKey(const Key('build')), findsOneWidget);
       expect(find.byKey(const Key('buildPage')), findsNothing);
-      expect(find.byKey(const Key('buildPageWithState')), findsNothing);
     },
   );
 
@@ -83,12 +84,11 @@ void main() {
       ));
       expect(find.byKey(const Key('build')), findsNothing);
       expect(find.byKey(const Key('buildPage')), findsOneWidget);
-      expect(find.byKey(const Key('buildPageWithState')), findsNothing);
     },
   );
 
   testWidgets(
-    'It should build the page from the overridden buildPageWithState method',
+    'It should build the page from the overridden buildPage method',
     (WidgetTester tester) async {
       final GoRouter goRouter = GoRouter(
         initialLocation: '/build-page-with-state',
@@ -101,7 +101,39 @@ void main() {
       ));
       expect(find.byKey(const Key('build')), findsNothing);
       expect(find.byKey(const Key('buildPage')), findsNothing);
-      expect(find.byKey(const Key('buildPageWithState')), findsOneWidget);
+    },
+  );
+  testWidgets(
+    'It should redirect using the overridden redirect method',
+    (WidgetTester tester) async {
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/redirect',
+        routes: _routes,
+      );
+      await tester.pumpWidget(MaterialApp.router(
+        routeInformationProvider: goRouter.routeInformationProvider,
+        routeInformationParser: goRouter.routeInformationParser,
+        routerDelegate: goRouter.routerDelegate,
+      ));
+      expect(find.byKey(const Key('build')), findsNothing);
+      expect(find.byKey(const Key('buildPage')), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'It should redirect using the overridden redirect method',
+    (WidgetTester tester) async {
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/redirect-with-state',
+        routes: _routes,
+      );
+      await tester.pumpWidget(MaterialApp.router(
+        routeInformationProvider: goRouter.routeInformationProvider,
+        routeInformationParser: goRouter.routeInformationParser,
+        routerDelegate: goRouter.routerDelegate,
+      ));
+      expect(find.byKey(const Key('build')), findsNothing);
+      expect(find.byKey(const Key('buildPage')), findsNothing);
     },
   );
 }

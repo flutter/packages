@@ -24,7 +24,11 @@ any migrations that are broken.
 
 ## Usage
 
-The core command sequence to use is `start`, `apply`.
+To run the tool enter the root directory of your flutter project and run:
+
+  `dart run <path_to_flutter_migrate_package>/bin/flutter_migrate.dart <subcommand> [parameters]`
+
+The core subcommand sequence to use is `start`, `apply`.
 
 * `start` will generate a migration that will be staged in the `migration_staging_directory`
   in your project home. This command may take some time to complete depending on network speed.

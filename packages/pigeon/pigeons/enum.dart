@@ -6,8 +6,13 @@ import 'package:pigeon/pigeon.dart';
 
 /// This comment is to test enum documentation comments.
 enum EnumState {
+  /// This comment is to test enum member (Pending) documentation comments.
   Pending,
+
+  /// This comment is to test enum member (Success) documentation comments.
   Success,
+
+  /// This comment is to test enum member (Error) documentation comments.
   Error,
 }
 

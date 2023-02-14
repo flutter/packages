@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
-import '../shared/dropdown_menu.dart';
+import '../shared/dropdown_menu.dart' as dropdown;
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
 
@@ -79,7 +79,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
             children: <Widget>[
-              DropdownMenu<WrapAlignment>(
+              dropdown.DropdownMenu<WrapAlignment>(
                 items: _wrapAlignmentMenuItems,
                 label: 'Wrap Alignment:',
                 initialValue: _wrapAlignment,
@@ -91,7 +91,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
                   }
                 },
               ),
-              DropdownMenu<double>(
+              dropdown.DropdownMenu<double>(
                 items: _blockSpacingMenuItems,
                 label: 'Block Spacing:',
                 initialValue: _blockSpacing,

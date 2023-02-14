@@ -14,7 +14,7 @@ import 'misc/errors.dart';
 @immutable
 class GoRouterState {
   /// Default constructor for creating route state during routing.
-  GoRouterState(
+  const GoRouterState(
     this._configuration, {
     required this.location,
     required this.subloc,
@@ -26,13 +26,8 @@ class GoRouterState {
     this.queryParametersAll = const <String, List<String>>{},
     this.extra,
     this.error,
-    ValueKey<String>? pageKey,
-  }) : pageKey = pageKey ??
-            ValueKey<String>(error != null
-                ? 'error'
-                : fullpath != null && fullpath.isNotEmpty
-                    ? fullpath
-                    : subloc);
+    required this.pageKey,
+  });
 
   // TODO(johnpryan): remove once namedLocation is removed from go_router.
   // See https://github.com/flutter/flutter/issues/107729

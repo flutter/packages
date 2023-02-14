@@ -42,7 +42,7 @@ void main() {
             path: '/',
             builder: (_, __) {
               return Builder(builder: (BuildContext context) {
-                return Text(GoRouterState.of(context).location);
+                return Text('1 ${GoRouterState.of(context).location}');
               });
             },
             routes: <GoRoute>[
@@ -50,7 +50,7 @@ void main() {
                   path: 'a',
                   builder: (_, __) {
                     return Builder(builder: (BuildContext context) {
-                      return Text(GoRouterState.of(context).location);
+                      return Text('2 ${GoRouterState.of(context).location}');
                     });
                   }),
             ]),
@@ -58,13 +58,13 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/?p=123');
       await tester.pumpAndSettle();
-      expect(find.text('/?p=123'), findsOneWidget);
+      expect(find.text('1 /?p=123'), findsOneWidget);
 
       router.go('/a');
       await tester.pumpAndSettle();
-      expect(find.text('/a'), findsOneWidget);
+      expect(find.text('2 /a'), findsOneWidget);
       // The query parameter is removed, so is the location in first page.
-      expect(find.text('/', skipOffstage: false), findsOneWidget);
+      expect(find.text('1 /a', skipOffstage: false), findsOneWidget);
     });
 
     testWidgets('registry retains GoRouterState for exiting route',

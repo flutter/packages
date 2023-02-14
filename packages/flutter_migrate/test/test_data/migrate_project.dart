@@ -56,7 +56,7 @@ class MigrateProject extends Project {
       'git',
       'commit',
       '-m',
-      '"Initial commit"',
+      '"All changes"',
     ], workingDirectory: dir.path);
   }
 
@@ -101,18 +101,37 @@ class MigrateProject extends Project {
     ], workingDirectory: dir.path);
 
     if (Platform.isWindows) {
-      await processManager.run(<String>[
+      ProcessResult res = await processManager.run(<String>[
         'robocopy',
         tempDir.path,
         dir.path,
         '*',
         '/E',
+        '/V',
         '/mov',
       ]);
-      // Add full access permissions to Users
-      await processManager.run(<String>[
+      // Robocopy exit code 1 means some files were copied. 0 means no files were copied.
+      assert(res.exitCode == 1);
+      res = await processManager.run(<String>[
+        'takeown',
+        '/f',
+        dir.path,
+        '/r',
+      ]);
+      res = await processManager.run(<String>[
+        'takeown',
+        '/f',
+        '${dir.path}\\lib\\main.dart',
+        '/r',
+      ]);
+      res = await processManager.run(<String>[
         'icacls',
-        tempDir.path,
+        dir.path,
+      ], workingDirectory: dir.path);
+      // Add full access permissions to Users
+      res = await processManager.run(<String>[
+        'icacls',
+        dir.path,
         '/q',
         '/c',
         '/t',
@@ -138,8 +157,16 @@ class MigrateProject extends Project {
 
       await processManager.run(<String>[
         'chmod',
+        '-R',
         '+w',
-        '${dir.path}${fileSystem.path.separator}*',
+        dir.path,
+      ], workingDirectory: dir.path);
+
+      await processManager.run(<String>[
+        'chmod',
+        '-R',
+        '+r',
+        dir.path,
       ], workingDirectory: dir.path);
     }
 

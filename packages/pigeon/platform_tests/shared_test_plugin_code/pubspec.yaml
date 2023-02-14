@@ -1,0 +1,19 @@
+name: shared_test_plugin_code
+description: Common code for test_plugin and altenate_language_test_plugin
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # These are normal dependencies rather than dev_dependencies because the
+  # package exports the integration test code to be shared by the integration
+  # tests for the two plugins.
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter

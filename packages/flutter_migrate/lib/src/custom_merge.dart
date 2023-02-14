@@ -4,7 +4,6 @@
 
 import 'base/file_system.dart';
 import 'base/logger.dart';
-import 'base/project.dart';
 import 'flutter_project_metadata.dart';
 import 'utils.dart';
 
@@ -82,23 +81,24 @@ class MetadataCustomMerge extends CustomMerge {
   MigrateConfig mergeMigrateConfig(
       MigrateConfig current, MigrateConfig target) {
     // Create the superset of current and target platforms with baseRevision updated to be that of target.
-    final Map<SupportedPlatform, MigratePlatformConfig> platformConfigs =
-        <SupportedPlatform, MigratePlatformConfig>{};
-    for (final MapEntry<SupportedPlatform, MigratePlatformConfig> entry
+    final Map<FlutterProjectComponent, MigratePlatformConfig>
+        projectComponentConfigs =
+        <FlutterProjectComponent, MigratePlatformConfig>{};
+    for (final MapEntry<FlutterProjectComponent, MigratePlatformConfig> entry
         in current.platformConfigs.entries) {
       if (target.platformConfigs.containsKey(entry.key)) {
-        platformConfigs[entry.key] = MigratePlatformConfig(
-            platform: entry.value.platform,
+        projectComponentConfigs[entry.key] = MigratePlatformConfig(
+            component: entry.value.component,
             createRevision: entry.value.createRevision,
             baseRevision: target.platformConfigs[entry.key]?.baseRevision);
       } else {
-        platformConfigs[entry.key] = entry.value;
+        projectComponentConfigs[entry.key] = entry.value;
       }
     }
-    for (final MapEntry<SupportedPlatform, MigratePlatformConfig> entry
+    for (final MapEntry<FlutterProjectComponent, MigratePlatformConfig> entry
         in target.platformConfigs.entries) {
-      if (!platformConfigs.containsKey(entry.key)) {
-        platformConfigs[entry.key] = entry.value;
+      if (!projectComponentConfigs.containsKey(entry.key)) {
+        projectComponentConfigs[entry.key] = entry.value;
       }
     }
 
@@ -112,7 +112,7 @@ class MetadataCustomMerge extends CustomMerge {
       }
     }
     return MigrateConfig(
-      platformConfigs: platformConfigs,
+      platformConfigs: projectComponentConfigs,
       unmanagedFiles: unmanagedFiles,
     );
   }

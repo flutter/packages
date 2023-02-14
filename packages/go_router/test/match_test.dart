@@ -14,47 +14,36 @@ void main() {
         path: '/users/:userId',
         builder: _builder,
       );
+      final Map<String, String> pathParameters = <String, String>{};
       final RouteMatch? match = RouteMatch.match(
         route: route,
         restLoc: '/users/123',
         parentSubloc: '',
-        fullpath: '/users/:userId',
-        queryParams: <String, String>{},
+        pathParameters: pathParameters,
         extra: const _Extra('foo'),
-        queryParametersAll: <String, List<String>>{
-          'bar': <String>['baz', 'biz'],
-        },
       );
       if (match == null) {
         fail('Null match');
       }
       expect(match.route, route);
       expect(match.subloc, '/users/123');
-      expect(match.fullpath, '/users/:userId');
-      expect(match.encodedParams['userId'], '123');
-      expect(match.queryParams['foo'], isNull);
-      expect(match.queryParametersAll['bar'], <String>['baz', 'biz']);
+      expect(pathParameters['userId'], '123');
       expect(match.extra, const _Extra('foo'));
       expect(match.error, isNull);
-      expect(match.pageKey, isNull);
-      expect(match.fullUriString, '/users/123?bar=baz&bar=biz');
+      expect(match.pageKey, isNotNull);
     });
+
     test('subloc', () {
       final GoRoute route = GoRoute(
         path: 'users/:userId',
         builder: _builder,
       );
+      final Map<String, String> pathParameters = <String, String>{};
       final RouteMatch? match = RouteMatch.match(
         route: route,
         restLoc: 'users/123',
         parentSubloc: '/home',
-        fullpath: '/home/users/:userId',
-        queryParams: <String, String>{
-          'foo': 'bar',
-        },
-        queryParametersAll: <String, List<String>>{
-          'foo': <String>['bar'],
-        },
+        pathParameters: pathParameters,
         extra: const _Extra('foo'),
       );
       if (match == null) {
@@ -62,14 +51,12 @@ void main() {
       }
       expect(match.route, route);
       expect(match.subloc, '/home/users/123');
-      expect(match.fullpath, '/home/users/:userId');
-      expect(match.encodedParams['userId'], '123');
-      expect(match.queryParams['foo'], 'bar');
+      expect(pathParameters['userId'], '123');
       expect(match.extra, const _Extra('foo'));
       expect(match.error, isNull);
-      expect(match.pageKey, isNull);
-      expect(match.fullUriString, '/home/users/123?foo=bar');
+      expect(match.pageKey, isNotNull);
     });
+
     test('ShellRoute has a unique pageKey', () {
       final ShellRoute route = ShellRoute(
         builder: _shellBuilder,
@@ -80,23 +67,73 @@ void main() {
           ),
         ],
       );
+      final Map<String, String> pathParameters = <String, String>{};
       final RouteMatch? match = RouteMatch.match(
         route: route,
         restLoc: 'users/123',
         parentSubloc: '/home',
-        fullpath: '/home/users/:userId',
-        queryParams: <String, String>{
-          'foo': 'bar',
-        },
-        queryParametersAll: <String, List<String>>{
-          'foo': <String>['bar'],
-        },
+        pathParameters: pathParameters,
         extra: const _Extra('foo'),
       );
       if (match == null) {
         fail('Null match');
       }
       expect(match.pageKey, isNotNull);
+    });
+
+    test('ShellRoute Match has stable unique key', () {
+      final ShellRoute route = ShellRoute(
+        builder: _shellBuilder,
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/users/:userId',
+            builder: _builder,
+          ),
+        ],
+      );
+      final Map<String, String> pathParameters = <String, String>{};
+      final RouteMatch? match1 = RouteMatch.match(
+        route: route,
+        restLoc: 'users/123',
+        parentSubloc: '/home',
+        pathParameters: pathParameters,
+        extra: const _Extra('foo'),
+      );
+
+      final RouteMatch? match2 = RouteMatch.match(
+        route: route,
+        restLoc: 'users/1234',
+        parentSubloc: '/home',
+        pathParameters: pathParameters,
+        extra: const _Extra('foo1'),
+      );
+
+      expect(match1!.pageKey, match2!.pageKey);
+    });
+
+    test('GoRoute Match has stable unique key', () {
+      final GoRoute route = GoRoute(
+        path: 'users/:userId',
+        builder: _builder,
+      );
+      final Map<String, String> pathParameters = <String, String>{};
+      final RouteMatch? match1 = RouteMatch.match(
+        route: route,
+        restLoc: 'users/123',
+        parentSubloc: '/home',
+        pathParameters: pathParameters,
+        extra: const _Extra('foo'),
+      );
+
+      final RouteMatch? match2 = RouteMatch.match(
+        route: route,
+        restLoc: 'users/1234',
+        parentSubloc: '/home',
+        pathParameters: pathParameters,
+        extra: const _Extra('foo1'),
+      );
+
+      expect(match1!.pageKey, match2!.pageKey);
     });
   });
 }

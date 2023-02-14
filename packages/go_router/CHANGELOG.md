@@ -1,3 +1,84 @@
+## 6.0.7
+
+- Add observers parameter to the ShellRoute that will be passed to the nested Navigator.
+- Use `HeroControllerScope` for nested Navigator that fixes Hero Widgets not animating in Nested Navigator.
+
+## 6.0.6
+
+- Adds `reverseTransitionDuration` to `CustomTransitionPage`
+
+## 6.0.5
+
+- Fixes [unnecessary_null_comparison](https://dart-lang.github.io/linter/lints/unnecessary_null_checks.html) lint warnings.
+
+## 6.0.4
+
+- Fixes redirection info log.
+
+## 6.0.3
+
+- Makes `CustomTransitionPage.barrierDismissible` work
+
+## 6.0.2
+
+- Fixes missing result on pop in go_router extension.
+
+## 6.0.1
+
+- Fixes crashes when popping navigators manually.
+- Fixes trailing slashes after pops.
+
+## 6.0.0
+
+- **BREAKING CHANGE**
+  - `GoRouteData`'s `redirect` now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `GoRouteData`'s `build` now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `GoRouteData`'s `buildPageWithState` has been removed and replaced by `buildPage` with now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`. 
+  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`. 
+  - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
+
+## 5.2.4
+
+- Fixes crashes when using async redirect.
+
+## 5.2.3
+
+- Fixes link for router configuration and sub-routes
+
+## 5.2.2
+
+- Fixes `pop` and `push` to update urls correctly.
+
+## 5.2.1
+
+- Refactors `GoRouter.pop` to be able to pop individual pageless route with result.
+
+## 5.2.0
+
+- Fixes `GoRouterState.location` and `GoRouterState.param` to return correct value.
+- Cleans up `RouteMatch` and `RouteMatchList` API.
+
+## 5.1.10
+
+- Fixes link of ShellRoute in README.
+
+## 5.1.9
+
+- Fixes broken links in documentation.
+
+## 5.1.8
+
+- Fixes a bug with `replace` where it was not generated a new `pageKey`.
+
+## 5.1.7
+
+- Adds documentation using dartdoc topics.
+
+## 5.1.6
+
+- Fixes crashes when multiple `GoRoute`s use the same `parentNavigatorKey` in a route subtree.
+
 ## 5.1.5
 
 - Adds migration guide for 5.1.2 to readme.

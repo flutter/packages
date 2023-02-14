@@ -5,89 +5,93 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-// This scenario demonstrates a simple two-page app.
-//
-// The first route '/' is mapped to Page1Screen, and the second route '/page2'
-// is mapped to Page2Screen. To navigate between pages, press the buttons on the
-// pages.
-//
-// The onPress callbacks use context.go() to navigate to another page. This is
-// equivalent to entering url to the browser url bar directly.
+/// This sample app shows an app with two screens.
+///
+/// The first route '/' is mapped to [HomeScreen], and the second route
+/// '/details' is mapped to [DetailsScreen].
+///
+/// The buttons use context.go() to navigate to each destination. On mobile
+/// devices, each destination is deep-linkable and on the web, can be navigated
+/// to using the address bar.
+void main() => runApp(const MyApp());
 
-void main() => runApp(App());
+/// The route configuration.
+final GoRouter _router = GoRouter(
+  routes: <RouteBase>[
+    GoRoute(
+      path: '/',
+      builder: (BuildContext context, GoRouterState state) {
+        return const HomeScreen();
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'details',
+          builder: (BuildContext context, GoRouterState state) {
+            return const DetailsScreen();
+          },
+        ),
+      ],
+    ),
+  ],
+);
 
 /// The main app.
-class App extends StatelessWidget {
-  /// Creates an [App].
-  App({Key? key}) : super(key: key);
-
-  /// The title of the app.
-  static const String title = 'GoRouter Example: Declarative Routes';
+class MyApp extends StatelessWidget {
+  /// Constructs a [MyApp]
+  const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-        title: title,
-      );
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: _router,
+    );
+  }
+}
 
-  final GoRouter _router = GoRouter(
-    routes: <GoRoute>[
-      GoRoute(
-        path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const Page1Screen(),
-        routes: <GoRoute>[
-          GoRoute(
-            path: 'page2',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Page2Screen(),
-          ),
-        ],
+/// The home screen
+class HomeScreen extends StatelessWidget {
+  /// Constructs a [HomeScreen]
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Home Screen')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () => context.go('/details'),
+              child: const Text('Go to the Details screen'),
+            ),
+          ],
+        ),
       ),
-    ],
-  );
+    );
+  }
 }
 
-/// The screen of the first page.
-class Page1Screen extends StatelessWidget {
-  /// Creates a [Page1Screen].
-  const Page1Screen({Key? key}) : super(key: key);
+/// The details screen
+class DetailsScreen extends StatelessWidget {
+  /// Constructs a [DetailsScreen]
+  const DetailsScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () => context.go('/page2'),
-                child: const Text('Go to page 2'),
-              ),
-            ],
-          ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Details Screen')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <ElevatedButton>[
+            ElevatedButton(
+              onPressed: () => context.go('/'),
+              child: const Text('Go back to the Home screen'),
+            ),
+          ],
         ),
-      );
-}
-
-/// The screen of the second page.
-class Page2Screen extends StatelessWidget {
-  /// Creates a [Page2Screen].
-  const Page2Screen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () => context.go('/'),
-                child: const Text('Go back to home page'),
-              ),
-            ],
-          ),
-        ),
-      );
+      ),
+    );
+  }
 }

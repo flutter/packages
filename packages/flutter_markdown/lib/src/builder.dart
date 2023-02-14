@@ -470,31 +470,11 @@ class MarkdownBuilder implements md.NodeVisitor {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
         TextAlign? align;
-        // `style` was using in pkg:markdown <= 6.0.1
-        // Can be removed when min pkg:markedwn > 6.0.1
-        final String? style = element.attributes['style'];
-        if (style == null) {
-          // `align` is using in pkg:markdown > 6.0.1
-          final String? alignAttribute = element.attributes['align'];
-          if (alignAttribute == null) {
-            align = tag == 'th' ? styleSheet.tableHeadAlign : TextAlign.left;
-          } else {
-            switch (alignAttribute) {
-              case 'left':
-                align = TextAlign.left;
-                break;
-              case 'center':
-                align = TextAlign.center;
-                break;
-              case 'right':
-                align = TextAlign.right;
-                break;
-            }
-          }
+        final String? alignAttribute = element.attributes['align'];
+        if (alignAttribute == null) {
+          align = tag == 'th' ? styleSheet.tableHeadAlign : TextAlign.left;
         } else {
-          final RegExp regExp = RegExp(r'text-align: (left|center|right)');
-          final Match match = regExp.matchAsPrefix(style)!;
-          switch (match[1]) {
+          switch (alignAttribute) {
             case 'left':
               align = TextAlign.left;
               break;
@@ -510,7 +490,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           _mergeInlineChildren(current.children, align),
           textAlign: align,
         );
-        _tables.single.rows.last.children!.add(child);
+        _ambiguate(_tables.single.rows.last.children)!.add(child);
       } else if (tag == 'a') {
         _linkHandlers.removeLast();
       }
@@ -859,4 +839,10 @@ class MarkdownBuilder implements md.NodeVisitor {
       );
     }
   }
+
+  /// This allows a value of type T or T? to be treated as a value of type T?.
+  ///
+  /// We use this so that APIs that have become non-nullable can still be used
+  /// with `!` and `?` on the stable branch.
+  T? _ambiguate<T>(T? value) => value;
 }
