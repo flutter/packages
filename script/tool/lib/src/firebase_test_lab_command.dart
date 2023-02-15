@@ -12,6 +12,7 @@ import 'package:uuid/uuid.dart';
 import 'common/core.dart';
 import 'common/gradle.dart';
 import 'common/package_looping_command.dart';
+import 'common/plugin_utils.dart';
 import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
@@ -158,8 +159,13 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
         .childDirectory('androidTest');
     if (!uiTestDirectory.existsSync()) {
       printError('No androidTest directory found.');
-      return PackageResult.fail(
-          <String>['No tests ran (use --exclude if this is intentional).']);
+      if (isFlutterPlugin(package)) {
+        return PackageResult.fail(
+            <String>['No tests ran (use --exclude if this is intentional).']);
+      } else {
+        return PackageResult.skip(
+            '${example.displayName} has no native Android tests.');
+      }
     }
 
     // Ensure that the Dart integration tests will be run, not just native UI

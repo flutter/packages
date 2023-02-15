@@ -1,3 +1,8 @@
+## 6.0.7
+
+- Add observers parameter to the ShellRoute that will be passed to the nested Navigator.
+- Use `HeroControllerScope` for nested Navigator that fixes Hero Widgets not animating in Nested Navigator.
+
 ## 6.0.6
 
 - Adds `reverseTransitionDuration` to `CustomTransitionPage`
