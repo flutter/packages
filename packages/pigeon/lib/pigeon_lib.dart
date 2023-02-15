@@ -100,6 +100,20 @@ class ObjCSelector {
   final String value;
 }
 
+/// Metadata to annotate methods to control the signature used for Swift output.
+///
+/// The number of components in the provided signature must match the number of
+/// arguments in the annotated method.
+/// For example:
+///   @SwiftFunction('divide(_:by:)') double divide(int x, String y);
+class SwiftFunction {
+  /// Constructor.
+  const SwiftFunction(this.value);
+
+  /// The string representation of the function signature.
+  final String value;
+}
+
 /// Type of TaskQueue which determines how handlers are dispatched for
 /// HostApi's.
 enum TaskQueueType {
@@ -260,11 +274,10 @@ class PigeonOptions {
       kotlinOptions: map.containsKey('kotlinOptions')
           ? KotlinOptions.fromMap(map['kotlinOptions']! as Map<String, Object>)
           : null,
-      cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
-      cppSourceOut: map['experimental_cppSourceOut'] as String?,
-      cppOptions: map.containsKey('experimental_cppOptions')
-          ? CppOptions.fromMap(
-              map['experimental_cppOptions']! as Map<String, Object>)
+      cppHeaderOut: map['cppHeaderOut'] as String?,
+      cppSourceOut: map['cppSourceOut'] as String?,
+      cppOptions: map.containsKey('cppOptions')
+          ? CppOptions.fromMap(map['cppOptions']! as Map<String, Object>)
           : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
@@ -292,9 +305,9 @@ class PigeonOptions {
       if (swiftOptions != null) 'swiftOptions': swiftOptions!.toMap(),
       if (kotlinOut != null) 'kotlinOut': kotlinOut!,
       if (kotlinOptions != null) 'kotlinOptions': kotlinOptions!.toMap(),
-      if (cppHeaderOut != null) 'experimental_cppHeaderOut': cppHeaderOut!,
-      if (cppSourceOut != null) 'experimental_cppSourceOut': cppSourceOut!,
-      if (cppOptions != null) 'experimental_cppOptions': cppOptions!.toMap(),
+      if (cppHeaderOut != null) 'cppHeaderOut': cppHeaderOut!,
+      if (cppSourceOut != null) 'cppSourceOut': cppSourceOut!,
+      if (cppOptions != null) 'cppOptions': cppOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
@@ -355,85 +368,112 @@ IOSink? _openSink(String? output) {
   return sink;
 }
 
-/// A generator that will write code to a sink based on the contents of [PigeonOptions].
-abstract class Generator {
-  /// Returns an [IOSink] instance to be written to if the [Generator] should
-  /// generate.  If it returns `null`, the [Generator] will be skipped.
-  IOSink? shouldGenerate(PigeonOptions options);
+/// An adapter that will call a generator to write code to a sink
+/// based on the contents of [PigeonOptions].
+abstract class GeneratorAdapter {
+  /// Constructor for [GeneratorAdapter]
+  GeneratorAdapter(this.fileTypeList);
 
-  /// Write the generated code described in [root] to [sink] using the
-  /// [options].
-  void generate(StringSink sink, PigeonOptions options, Root root);
+  /// A list of file types the generator should create.
+  List<FileType> fileTypeList;
 
-  /// Generates errors that would only be appropriate for this [Generator]. For
-  /// example, maybe a certain feature isn't implemented in a [Generator] yet.
+  /// Returns an [IOSink] instance to be written to
+  /// if the [GeneratorAdapter] should generate.
+  ///
+  /// If it returns `null`, the [GeneratorAdapter] will be skipped.
+  IOSink? shouldGenerate(PigeonOptions options, FileType fileType);
+
+  /// Write the generated code described in [root] to [sink] using the [options].
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType);
+
+  /// Generates errors that would only be appropriate for this [GeneratorAdapter].
+  ///
+  /// For example, if a certain feature isn't implemented in a [GeneratorAdapter] yet.
   List<Error> validate(PigeonOptions options, Root root);
 }
 
 DartOptions _dartOptionsWithCopyrightHeader(
-    DartOptions? dartOptions, String? copyrightHeader) {
-  dartOptions = dartOptions ?? const DartOptions();
+    DartOptions? dartOptions, String? copyrightHeader,
+    {String? dartOutPath, String? testOutPath}) {
+  dartOptions = dartOptions ?? DartOptions();
   return dartOptions.merge(DartOptions(
+      sourceOutPath: dartOutPath,
+      testOutPath: testOutPath,
       copyrightHeader:
           copyrightHeader != null ? _lineReader(copyrightHeader) : null));
 }
 
-/// A [Generator] that generates the AST.
-class AstGenerator implements Generator {
-  /// Constructor for [AstGenerator].
-  const AstGenerator();
+/// A [GeneratorAdapter] that generates the AST.
+class AstGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [AstGeneratorAdapter].
+  AstGeneratorAdapter();
 
   @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     generateAst(root, sink);
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.astOut);
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
+      _openSink(options.astOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Generator] that generates Dart source code.
-class DartGenerator implements Generator {
-  /// Constructor for [DartGenerator].
-  const DartGenerator();
+/// A [GeneratorAdapter] that generates Dart source code.
+class DartGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [DartGeneratorAdapter].
+  DartGeneratorAdapter();
 
   @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
         options.dartOptions, options.copyrightHeader);
-    generateDart(dartOptionsWithHeader, root, sink);
+    const DartGenerator generator = DartGenerator();
+    generator.generate(dartOptionsWithHeader, root, sink);
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.dartOut);
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
+      _openSink(options.dartOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Generator] that generates Dart test source code.
-class DartTestGenerator implements Generator {
-  /// Constructor for [DartTestGenerator].
-  const DartTestGenerator();
+/// A [GeneratorAdapter] that generates Dart test source code.
+class DartTestGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [DartTestGeneratorAdapter].
+  DartTestGeneratorAdapter();
 
   @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
-        options.dartOptions, options.copyrightHeader);
-    generateTestDart(
-      dartOptionsWithHeader,
-      root,
-      sink,
-      dartOutPath: options.dartOut!,
-      testOutPath: options.dartTestOut!,
+      options.dartOptions,
+      options.copyrightHeader,
+      dartOutPath: options.dartOut,
+      testOutPath: options.dartTestOut,
     );
+    const DartGenerator testGenerator = DartGenerator();
+    testGenerator.generateTest(dartOptionsWithHeader, root, sink);
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) {
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) {
     if (options.dartTestOut != null) {
       return _openSink(options.dartTestOut);
     } else {
@@ -445,60 +485,55 @@ class DartTestGenerator implements Generator {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Generator] that generates Objective-C header code.
-class ObjcHeaderGenerator implements Generator {
-  /// Constructor for [ObjcHeaderGenerator].
-  const ObjcHeaderGenerator();
+/// A [GeneratorAdapter] that generates Objective-C code.
+class ObjcGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [ObjcGeneratorAdapter].
+  ObjcGeneratorAdapter(
+      {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
 
   @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
+  List<FileType> fileTypeList;
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateObjcHeader(objcOptionsWithHeader, root, sink);
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(options.copyrightHeader!)
+          : null,
+    ));
+    final OutputFileOptions<ObjcOptions> outputFileOptions =
+        OutputFileOptions<ObjcOptions>(
+            fileType: fileType, languageOptions: objcOptionsWithHeader);
+    const ObjcGenerator generator = ObjcGenerator();
+    generator.generate(outputFileOptions, root, sink);
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      _openSink(options.objcHeaderOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) =>
-      validateObjc(options.objcOptions!, root);
-}
-
-/// A [Generator] that generates Objective-C source code.
-class ObjcSourceGenerator implements Generator {
-  /// Constructor for [ObjcSourceGenerator].
-  const ObjcSourceGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
-    final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateObjcSource(objcOptionsWithHeader, root, sink);
+  IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
+    if (fileType == FileType.source) {
+      return _openSink(options.objcSourceOut);
+    } else {
+      return _openSink(options.objcHeaderOut);
+    }
   }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      _openSink(options.objcSourceOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Generator] that generates Java source code.
-class JavaGenerator implements Generator {
-  /// Constructor for [JavaGenerator].
-  const JavaGenerator();
+/// A [GeneratorAdapter] that generates Java source code.
+class JavaGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [JavaGeneratorAdapter].
+  JavaGeneratorAdapter();
 
   @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     JavaOptions javaOptions = options.javaOptions ?? const JavaOptions();
     javaOptions = javaOptions.merge(JavaOptions(
         className: javaOptions.className ??
@@ -506,104 +541,108 @@ class JavaGenerator implements Generator {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateJava(javaOptions, root, sink);
+    const JavaGenerator generator = JavaGenerator();
+    generator.generate(javaOptions, root, sink);
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
+      _openSink(options.javaOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Generator] that generates Swift source code.
-class SwiftGenerator implements Generator {
-  /// Constructor for [SwiftGenerator].
-  const SwiftGenerator();
+/// A [GeneratorAdapter] that generates Swift source code.
+class SwiftGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [SwiftGeneratorAdapter].
+  SwiftGeneratorAdapter();
 
   @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
+  List<FileType> fileTypeList = const <FileType>[FileType.na];
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
     swiftOptions = swiftOptions.merge(SwiftOptions(
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink);
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.swiftOut);
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
+      _openSink(options.swiftOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Generator] that generates C++ header code.
-class CppHeaderGenerator implements Generator {
-  /// Constructor for [CppHeaderGenerator].
-  const CppHeaderGenerator();
+/// A [GeneratorAdapter] that generates C++ source code.
+class CppGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [CppGeneratorAdapter].
+  CppGeneratorAdapter(
+      {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
 
   @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
+  List<FileType> fileTypeList;
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
     final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateCppHeader(path.basenameWithoutExtension(options.cppHeaderOut!),
-        cppOptionsWithHeader, root, sink);
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(options.copyrightHeader!)
+          : null,
+    ));
+    final OutputFileOptions<CppOptions> outputFileOptions =
+        OutputFileOptions<CppOptions>(
+            fileType: fileType, languageOptions: cppOptionsWithHeader);
+    const CppGenerator generator = CppGenerator();
+    generator.generate(outputFileOptions, root, sink);
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      _openSink(options.cppHeaderOut);
-
-  @override
-  List<Error> validate(PigeonOptions options, Root root) =>
-      validateCpp(options.cppOptions!, root);
-}
-
-/// A [Generator] that generates C++ source code.
-class CppSourceGenerator implements Generator {
-  /// Constructor for [CppSourceGenerator].
-  const CppSourceGenerator();
-
-  @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
-    final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
-    final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
-    generateCppSource(cppOptionsWithHeader, root, sink);
+  IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
+    if (fileType == FileType.source) {
+      return _openSink(options.cppSourceOut);
+    } else {
+      return _openSink(options.cppHeaderOut);
+    }
   }
-
-  @override
-  IOSink? shouldGenerate(PigeonOptions options) =>
-      _openSink(options.cppSourceOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [Generator] that generates Kotlin source code.
-class KotlinGenerator implements Generator {
-  /// Constructor for [KotlinGenerator].
-  const KotlinGenerator();
+/// A [GeneratorAdapter] that generates Kotlin source code.
+class KotlinGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [KotlinGeneratorAdapter].
+  KotlinGeneratorAdapter({this.fileTypeList = const <FileType>[FileType.na]});
 
   @override
-  void generate(StringSink sink, PigeonOptions options, Root root) {
+  List<FileType> fileTypeList;
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     KotlinOptions kotlinOptions =
         options.kotlinOptions ?? const KotlinOptions();
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateKotlin(kotlinOptions, root, sink);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.kotlinOut);
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
+      _openSink(options.kotlinOut);
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -694,6 +733,17 @@ List<Error> _validateAst(Root root, String source) {
           result.add(Error(
             message:
                 'Invalid selector, expected ${method.arguments.length} arguments.',
+            lineNumber: _calculateLineNumberNullable(source, method.offset),
+          ));
+        }
+      }
+      if (method.swiftFunction.isNotEmpty) {
+        final RegExp signatureRegex =
+            RegExp('\\w+ *\\((\\w+:){${method.arguments.length}}\\)');
+        if (!signatureRegex.hasMatch(method.swiftFunction)) {
+          result.add(Error(
+            message:
+                'Invalid function signature, expected ${method.arguments.length} arguments.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
@@ -901,7 +951,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
         _currentApi = Api(
-          name: node.name2.lexeme,
+          name: node.name.lexeme,
           location: ApiLocation.host,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
@@ -910,7 +960,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
         _currentApi = Api(
-          name: node.name2.lexeme,
+          name: node.name.lexeme,
           location: ApiLocation.flutter,
           methods: <Method>[],
           documentationComments:
@@ -919,7 +969,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     } else {
       _currentClass = Class(
-        name: node.name2.lexeme,
+        name: node.name.lexeme,
         fields: <NamedType>[],
         documentationComments:
             _documentationCommentsParser(node.documentationComment?.tokens),
@@ -1000,6 +1050,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             .asNullable<dart_ast.SimpleStringLiteral>()
             ?.value ??
         '';
+    final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
+            ?.arguments
+            ?.arguments
+            .first
+            .asNullable<dart_ast.SimpleStringLiteral>()
+            ?.value ??
+        '';
     final dart_ast.ArgumentList? taskQueueArguments =
         _findMetadata(node.metadata, 'TaskQueue')?.arguments;
     final String? taskQueueTypeName = taskQueueArguments == null
@@ -1019,7 +1076,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
       _currentApi!.methods.add(
         Method(
-          name: node.name2.lexeme,
+          name: node.name.lexeme,
           returnType: TypeDeclaration(
               baseName: returnTypeIdentifier.name,
               typeArguments: typeAnnotationsToTypeArguments(
@@ -1028,6 +1085,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           arguments: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
+          swiftFunction: swiftFunction,
           offset: node.offset,
           taskQueueType: taskQueueType,
           documentationComments:
@@ -1037,7 +1095,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else if (_currentClass != null) {
       _errors.add(Error(
           message:
-              'Methods aren\'t supported in Pigeon data classes ("${node.name2.lexeme}").',
+              'Methods aren\'t supported in Pigeon data classes ("${node.name.lexeme}").',
           lineNumber: _calculateLineNumber(source, node.offset)));
     }
     node.visitChildren(this);
@@ -1047,10 +1105,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
     _enums.add(Enum(
-      name: node.name2.lexeme,
+      name: node.name.lexeme,
       members: node.constants
           .map((dart_ast.EnumConstantDeclaration e) => EnumMember(
-                name: e.name2.lexeme,
+                name: e.name.lexeme,
                 documentationComments: _documentationCommentsParser(
                     e.documentationComment?.tokens),
               ))
@@ -1103,7 +1161,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               isNullable: type.question != null,
               typeArguments: typeAnnotationsToTypeArguments(typeArguments),
             ),
-            name: node.fields.variables[0].name2.lexeme,
+            name: node.fields.variables[0].name.lexeme,
             offset: node.offset,
             documentationComments:
                 _documentationCommentsParser(node.documentationComment?.tokens),
@@ -1280,33 +1338,34 @@ ${_argParser.usage}''';
     final ArgResults results = _argParser.parse(args);
 
     final PigeonOptions opts = PigeonOptions(
-      input: results['input'],
-      dartOut: results['dart_out'],
-      dartTestOut: results['dart_test_out'],
-      objcHeaderOut: results['objc_header_out'],
-      objcSourceOut: results['objc_source_out'],
+      input: results['input'] as String?,
+      dartOut: results['dart_out'] as String?,
+      dartTestOut: results['dart_test_out'] as String?,
+      objcHeaderOut: results['objc_header_out'] as String?,
+      objcSourceOut: results['objc_source_out'] as String?,
       objcOptions: ObjcOptions(
-        prefix: results['objc_prefix'],
+        prefix: results['objc_prefix'] as String?,
       ),
-      javaOut: results['java_out'],
+      javaOut: results['java_out'] as String?,
       javaOptions: JavaOptions(
-        package: results['java_package'],
-        useGeneratedAnnotation: results['java_use_generated_annotation'],
+        package: results['java_package'] as String?,
+        useGeneratedAnnotation:
+            results['java_use_generated_annotation'] as bool?,
       ),
-      swiftOut: results['experimental_swift_out'],
-      kotlinOut: results['experimental_kotlin_out'],
+      swiftOut: results['experimental_swift_out'] as String?,
+      kotlinOut: results['experimental_kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
-        package: results['experimental_kotlin_package'],
+        package: results['experimental_kotlin_package'] as String?,
       ),
-      cppHeaderOut: results['experimental_cpp_header_out'],
-      cppSourceOut: results['experimental_cpp_source_out'],
+      cppHeaderOut: results['experimental_cpp_header_out'] as String?,
+      cppSourceOut: results['experimental_cpp_source_out'] as String?,
       cppOptions: CppOptions(
-        namespace: results['cpp_namespace'],
+        namespace: results['cpp_namespace'] as String?,
       ),
-      copyrightHeader: results['copyright_header'],
-      oneLanguage: results['one_language'],
-      astOut: results['ast_out'],
-      debugGenerators: results['debug_generators'],
+      copyrightHeader: results['copyright_header'] as String?,
+      oneLanguage: results['one_language'] as bool?,
+      astOut: results['ast_out'] as String?,
+      debugGenerators: results['debug_generators'] as bool?,
     );
     return opts;
   }
@@ -1331,37 +1390,35 @@ ${_argParser.usage}''';
   }
 
   /// The 'main' entrypoint used by the command-line tool.  [args] are the
-  /// command-line arguments.  The optional parameter [generators] allows you to
+  /// command-line arguments.  The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
   static Future<int> run(List<String> args,
-      {List<Generator>? generators, String? sdkPath}) {
+      {List<GeneratorAdapter>? adapters, String? sdkPath}) {
     final PigeonOptions options = Pigeon.parseArgs(args);
-    return runWithOptions(options, generators: generators, sdkPath: sdkPath);
+    return runWithOptions(options, adapters: adapters, sdkPath: sdkPath);
   }
 
   /// The 'main' entrypoint used by external packages.  [options] is
-  /// used when running the code generator.  The optional parameter [generators] allows you to
+  /// used when running the code generator.  The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
   static Future<int> runWithOptions(PigeonOptions options,
-      {List<Generator>? generators, String? sdkPath}) async {
+      {List<GeneratorAdapter>? adapters, String? sdkPath}) async {
     final Pigeon pigeon = Pigeon.setup();
     if (options.debugGenerators ?? false) {
       generator_tools.debugGenerators = true;
     }
-    final List<Generator> safeGenerators = generators ??
-        <Generator>[
-          const DartGenerator(),
-          const JavaGenerator(),
-          const SwiftGenerator(),
-          const KotlinGenerator(),
-          const CppHeaderGenerator(),
-          const CppSourceGenerator(),
-          const DartTestGenerator(),
-          const ObjcHeaderGenerator(),
-          const ObjcSourceGenerator(),
-          const AstGenerator(),
+    final List<GeneratorAdapter> safeGeneratorAdapters = adapters ??
+        <GeneratorAdapter>[
+          DartGeneratorAdapter(),
+          JavaGeneratorAdapter(),
+          SwiftGeneratorAdapter(),
+          KotlinGeneratorAdapter(),
+          CppGeneratorAdapter(),
+          DartTestGeneratorAdapter(),
+          ObjcGeneratorAdapter(),
+          AstGeneratorAdapter(),
         ];
     _executeConfigurePigeon(options);
 
@@ -1383,12 +1440,12 @@ ${_argParser.usage}''';
       }
     }
 
-    for (final Generator generator in safeGenerators) {
-      final IOSink? sink = generator.shouldGenerate(options);
+    for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
+      final IOSink? sink = adapter.shouldGenerate(options, FileType.source);
       if (sink != null) {
-        final List<Error> generatorErrors =
-            generator.validate(options, parseResults.root);
-        errors.addAll(generatorErrors);
+        final List<Error> adapterErrors =
+            adapter.validate(options, parseResults.root);
+        errors.addAll(adapterErrors);
         await releaseSink(sink);
       }
     }
@@ -1415,22 +1472,24 @@ ${_argParser.usage}''';
 
     if (options.objcHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          objcOptions: options.objcOptions!.merge(
-              ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
+          objcOptions: options.objcOptions!.merge(ObjcOptions(
+              headerIncludePath: path.basename(options.objcHeaderOut!)))));
     }
 
     if (options.cppHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          cppOptions: options.cppOptions!.merge(
-              CppOptions(header: path.basename(options.cppHeaderOut!)))));
+          cppOptions: options.cppOptions!.merge(CppOptions(
+              headerIncludePath: path.basename(options.cppHeaderOut!)))));
     }
 
-    for (final Generator generator in safeGenerators) {
-      final IOSink? sink = generator.shouldGenerate(options);
-      if (sink != null) {
-        generator.generate(sink, options, parseResults.root);
-        await sink.flush();
-        await releaseSink(sink);
+    for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
+      for (final FileType fileType in adapter.fileTypeList) {
+        final IOSink? sink = adapter.shouldGenerate(options, fileType);
+        if (sink != null) {
+          adapter.generate(sink, options, parseResults.root, fileType);
+          await sink.flush();
+          await releaseSink(sink);
+        }
       }
     }
 

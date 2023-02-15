@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -134,6 +135,11 @@ class RouteMatchList {
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.first.error;
+
+  @override
+  String toString() {
+    return '${objectRuntimeType(this, 'RouteMatchList')}($fullpath)';
+  }
 }
 
 /// An error that occurred during matching.

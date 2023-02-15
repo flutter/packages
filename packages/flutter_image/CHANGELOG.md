@@ -1,3 +1,7 @@
+## 4.1.5
+
+* Removes use of `runtimeType.toString()`.
+
 ## 4.1.4
 
 * Ignores lint warnings from new changes in Flutter master.

@@ -70,6 +70,10 @@ void main() {
 
       await tempDir.delete(recursive: true);
     });
+
+    test('nullability is correct', () async {
+      expect(_ensureNonnullPathArgument('a/path'), isNotNull);
+    });
   });
 
   group('Create with data', () {
@@ -107,9 +111,16 @@ void main() {
   });
 }
 
+// This is to create an analysis error if the version of XFile in
+// interface.dart, which should never actually be used but is what the analyzer
+// runs against, has the nullability of `path` changed.
+XFile _ensureNonnullPathArgument(String? path) {
+  return XFile(path!);
+}
+
 /// An XFile subclass that tracks reads, for testing purposes.
 class TestXFile extends XFile {
-  TestXFile(String path) : super(path);
+  TestXFile(super.path);
 
   bool hasBeenRead = false;
 

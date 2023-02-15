@@ -106,12 +106,20 @@ extension $BoolRouteExtension on BoolRoute {
         requiredBoolField: _$boolConverter(state.params['requiredBoolField']!),
         boolField:
             _$convertMapValue('bool-field', state.queryParams, _$boolConverter),
+        boolFieldWithDefaultValue: _$convertMapValue(
+                'bool-field-with-default-value',
+                state.queryParams,
+                _$boolConverter) ??
+            true,
       );
 
   String get location => GoRouteData.$location(
         '/bool-route/${Uri.encodeComponent(requiredBoolField.toString())}',
         queryParams: {
           if (boolField != null) 'bool-field': boolField!.toString(),
+          if (boolFieldWithDefaultValue != true)
+            'bool-field-with-default-value':
+                boolFieldWithDefaultValue.toString(),
         },
       );
 
@@ -152,12 +160,20 @@ extension $DoubleRouteExtension on DoubleRoute {
         requiredDoubleField: double.parse(state.params['requiredDoubleField']!),
         doubleField:
             _$convertMapValue('double-field', state.queryParams, double.parse),
+        doubleFieldWithDefaultValue: _$convertMapValue(
+                'double-field-with-default-value',
+                state.queryParams,
+                double.parse) ??
+            1.0,
       );
 
   String get location => GoRouteData.$location(
         '/double-route/${Uri.encodeComponent(requiredDoubleField.toString())}',
         queryParams: {
           if (doubleField != null) 'double-field': doubleField!.toString(),
+          if (doubleFieldWithDefaultValue != 1.0)
+            'double-field-with-default-value':
+                doubleFieldWithDefaultValue.toString(),
         },
       );
 
@@ -173,12 +189,17 @@ extension $IntRouteExtension on IntRoute {
   static IntRoute _fromState(GoRouterState state) => IntRoute(
         requiredIntField: int.parse(state.params['requiredIntField']!),
         intField: _$convertMapValue('int-field', state.queryParams, int.parse),
+        intFieldWithDefaultValue: _$convertMapValue(
+                'int-field-with-default-value', state.queryParams, int.parse) ??
+            1,
       );
 
   String get location => GoRouteData.$location(
         '/int-route/${Uri.encodeComponent(requiredIntField.toString())}',
         queryParams: {
           if (intField != null) 'int-field': intField!.toString(),
+          if (intFieldWithDefaultValue != 1)
+            'int-field-with-default-value': intFieldWithDefaultValue.toString(),
         },
       );
 
@@ -194,12 +215,17 @@ extension $NumRouteExtension on NumRoute {
   static NumRoute _fromState(GoRouterState state) => NumRoute(
         requiredNumField: num.parse(state.params['requiredNumField']!),
         numField: _$convertMapValue('num-field', state.queryParams, num.parse),
+        numFieldWithDefaultValue: _$convertMapValue(
+                'num-field-with-default-value', state.queryParams, num.parse) ??
+            1,
       );
 
   String get location => GoRouteData.$location(
         '/num-route/${Uri.encodeComponent(requiredNumField.toString())}',
         queryParams: {
           if (numField != null) 'num-field': numField!.toString(),
+          if (numFieldWithDefaultValue != 1)
+            'num-field-with-default-value': numFieldWithDefaultValue.toString(),
         },
       );
 
@@ -217,6 +243,11 @@ extension $EnumRouteExtension on EnumRoute {
             ._$fromName(state.params['requiredEnumField']!),
         enumField: _$convertMapValue(
             'enum-field', state.queryParams, _$PersonDetailsEnumMap._$fromName),
+        enumFieldWithDefaultValue: _$convertMapValue(
+                'enum-field-with-default-value',
+                state.queryParams,
+                _$PersonDetailsEnumMap._$fromName) ??
+            PersonDetails.favoriteFood,
       );
 
   String get location => GoRouteData.$location(
@@ -224,6 +255,9 @@ extension $EnumRouteExtension on EnumRoute {
         queryParams: {
           if (enumField != null)
             'enum-field': _$PersonDetailsEnumMap[enumField!]!,
+          if (enumFieldWithDefaultValue != PersonDetails.favoriteFood)
+            'enum-field-with-default-value':
+                _$PersonDetailsEnumMap[enumFieldWithDefaultValue]!,
         },
       );
 
@@ -241,6 +275,11 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
             ._$fromName(state.params['requiredEnumField']!),
         enumField: _$convertMapValue(
             'enum-field', state.queryParams, _$SportDetailsEnumMap._$fromName),
+        enumFieldWithDefaultValue: _$convertMapValue(
+                'enum-field-with-default-value',
+                state.queryParams,
+                _$SportDetailsEnumMap._$fromName) ??
+            SportDetails.football,
       );
 
   String get location => GoRouteData.$location(
@@ -248,6 +287,9 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
         queryParams: {
           if (enumField != null)
             'enum-field': _$SportDetailsEnumMap[enumField!]!,
+          if (enumFieldWithDefaultValue != SportDetails.football)
+            'enum-field-with-default-value':
+                _$SportDetailsEnumMap[enumFieldWithDefaultValue]!,
         },
       );
 
@@ -263,12 +305,17 @@ extension $StringRouteExtension on StringRoute {
   static StringRoute _fromState(GoRouterState state) => StringRoute(
         requiredStringField: state.params['requiredStringField']!,
         stringField: state.queryParams['string-field'],
+        stringFieldWithDefaultValue:
+            state.queryParams['string-field-with-default-value'] ??
+                'defaultValue',
       );
 
   String get location => GoRouteData.$location(
         '/string-route/${Uri.encodeComponent(requiredStringField)}',
         queryParams: {
           if (stringField != null) 'string-field': stringField!,
+          if (stringFieldWithDefaultValue != 'defaultValue')
+            'string-field-with-default-value': stringFieldWithDefaultValue,
         },
       );
 

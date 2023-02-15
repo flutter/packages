@@ -8,8 +8,10 @@ import 'dart:mirrors';
 
 import 'ast.dart';
 
-/// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '4.2.15';
+/// The current version of pigeon.
+///
+/// This must match the version in pubspec.yaml.
+const String pigeonVersion = '8.0.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -81,15 +83,18 @@ class Indent {
     }
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented.
-  void scoped(
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented.
+  void addScoped(
     String? begin,
     String? end,
     Function func, {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
     if (begin != null) {
       _sink.write(begin + newline);
     }
@@ -102,19 +107,22 @@ class Indent {
     }
   }
 
-  /// Like `scoped` but writes the current indentation level.
+  /// Like `addScoped` but writes the current indentation level.
   void writeScoped(
     String? begin,
     String end,
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    scoped(str() + (begin ?? ''), end, func,
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
+    addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented by the given amount.
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented by the given amount.
   void nest(int count, Function func) {
     inc(count);
     func(); // ignore: avoid_dynamic_calls
@@ -143,6 +151,13 @@ class Indent {
   /// Just adds [text].
   void add(String text) {
     _sink.write(text);
+  }
+
+  /// Adds [lines] number of newlines.
+  void newln([int lines = 1]) {
+    for (; lines > 0; lines--) {
+      _sink.write(newline);
+    }
   }
 }
 
@@ -263,9 +278,10 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   }
 }
 
-/// Recursively merges [modification] into [base].  In other words, whenever
-/// there is a conflict over the value of a key path, [modification]'s value for
-/// that key path is selected.
+/// Recursively merges [modification] into [base].
+///
+/// In other words, whenever there is a conflict over the value of a key path,
+/// [modification]'s value for that key path is selected.
 Map<String, Object> mergeMaps(
   Map<String, Object> base,
   Map<String, Object> modification,
@@ -496,4 +512,30 @@ void addDocumentationComments(
 Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
   // This returns the fields in the order they are declared in the pigeon file.
   return klass.fields;
+}
+
+/// Enum to specify which file will be generated for multi-file generators
+enum FileType {
+  /// header file.
+  header,
+
+  /// source file.
+  source,
+
+  /// file type is not applicable.
+  na,
+}
+
+/// Options for [Generator]s that have multiple output file types.
+///
+/// Specifies which file to write as well as wraps all language options.
+class OutputFileOptions<T> {
+  /// Constructor.
+  OutputFileOptions({required this.fileType, required this.languageOptions});
+
+  /// To specify which file type should be created.
+  FileType fileType;
+
+  /// Options for specified language across all file types.
+  T languageOptions;
 }

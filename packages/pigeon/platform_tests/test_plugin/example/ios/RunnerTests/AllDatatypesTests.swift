@@ -15,7 +15,7 @@ class AllDatatypesTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echoAllNullableTypes(everything: everything) { result in
+    api.echoNullable(everything) { result in
       XCTAssertNil(result.aNullableBool)
       XCTAssertNil(result.aNullableInt)
       XCTAssertNil(result.aNullableDouble)
@@ -40,7 +40,6 @@ class AllDatatypesTests: XCTestCase {
       aNullableBool: false,
       aNullableInt: 1,
       aNullableDouble: 2.0,
-      aNullableString: "123",
       aNullableByteArray: FlutterStandardTypedData(bytes: "1234".data(using: .utf8)!),
       aNullable4ByteArray: FlutterStandardTypedData(int32: "1234".data(using: .utf8)!),
       aNullable8ByteArray: FlutterStandardTypedData(int64: "12345678".data(using: .utf8)!),
@@ -49,7 +48,8 @@ class AllDatatypesTests: XCTestCase {
       aNullableMap: ["hello": 1234],
       nullableNestedList: [[true, false], [true]],
       nullableMapWithAnnotations: ["hello": "world"],
-      nullableMapWithObject: ["hello": 1234, "goodbye" : "world"]
+      nullableMapWithObject: ["hello": 1234, "goodbye" : "world"],
+      aNullableString: "123"
     )
     
     let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
@@ -57,7 +57,7 @@ class AllDatatypesTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echoAllNullableTypes(everything: everything) { result in
+    api.echoNullable(everything) { result in
       XCTAssertEqual(result.aNullableBool, everything.aNullableBool)
       XCTAssertEqual(result.aNullableInt, everything.aNullableInt)
       XCTAssertEqual(result.aNullableDouble, everything.aNullableDouble)

@@ -6,7 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_unit_tests/null_safe_pigeon.dart';
+import 'package:flutter_unit_tests/flutter_unittests.gen.dart';
 import 'package:flutter_unit_tests/nullable_returns.gen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

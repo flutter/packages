@@ -1,6 +1,10 @@
-## 1.0.17
+## 1.1.1
 
 * Support for the generation of the pushReplacement method has been added.
+
+## 1.1.0
+
+* Supports default value for the route parameters.
 
 ## 1.0.16
 
