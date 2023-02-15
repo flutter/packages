@@ -1,6 +1,7 @@
 ## 9.0.0
 
 * **Breaking Change** Updates `DartOptions` to be immutable and adds const to the constructor.
+* **Breaking Change** Reverts `final` changes to Flutter Api classes.
 
 ## 8.0.0
 
