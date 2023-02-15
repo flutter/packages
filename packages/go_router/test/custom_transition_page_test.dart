@@ -117,6 +117,47 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(homeKey), findsOneWidget);
   });
+
+  testWidgets('transitionDuration and reverseTransitionDuration is different',
+      (WidgetTester tester) async {
+    const ValueKey<String> homeKey = ValueKey<String>('home');
+    const ValueKey<String> loginKey = ValueKey<String>('login');
+    const Duration transitionDuration = Duration(milliseconds: 50);
+    const Duration reverseTransitionDuration = Duration(milliseconds: 500);
+
+    final GoRouter router = GoRouter(
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const HomeScreen(key: homeKey),
+        ),
+        GoRoute(
+          path: '/login',
+          pageBuilder: (_, GoRouterState state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            transitionDuration: transitionDuration,
+            reverseTransitionDuration: reverseTransitionDuration,
+            transitionsBuilder:
+                (_, Animation<double> animation, ___, Widget child) =>
+                    FadeTransition(opacity: animation, child: child),
+            child: const LoginScreen(key: loginKey),
+          ),
+        ),
+      ],
+    );
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    expect(find.byKey(homeKey), findsOneWidget);
+
+    router.push('/login');
+    final int pushingPumped = await tester.pumpAndSettle();
+    expect(find.byKey(loginKey), findsOneWidget);
+
+    router.pop();
+    final int poppingPumped = await tester.pumpAndSettle();
+    expect(find.byKey(homeKey), findsOneWidget);
+
+    expect(pushingPumped != poppingPumped, true);
+  });
 }
 
 class HomeScreen extends StatelessWidget {

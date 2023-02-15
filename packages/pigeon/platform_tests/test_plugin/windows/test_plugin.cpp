@@ -57,7 +57,11 @@ ErrorOr<std::optional<AllNullableTypes>> TestPlugin::EchoAllNullableTypes(
   return *everything;
 }
 
-std::optional<FlutterError> TestPlugin::ThrowError() {
+ErrorOr<std::optional<flutter::EncodableValue>> TestPlugin::ThrowError() {
+  return FlutterError("An error");
+}
+
+std::optional<FlutterError> TestPlugin::ThrowErrorFromVoid() {
   return FlutterError("An error");
 }
 
@@ -320,6 +324,23 @@ void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
   flutter_api_->Noop([result]() { result(std::nullopt); },
                      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterThrowError(
+    std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
+        result) {
+  flutter_api_->ThrowError(
+      [result](const std::optional<flutter::EncodableValue>& echo) {
+        result(echo);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterThrowErrorFromVoid(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  flutter_api_->ThrowErrorFromVoid(
+      [result]() { result(std::nullopt); },
+      [result](const FlutterError& error) { result(error); });
 }
 
 void TestPlugin::CallFlutterEchoAllTypes(

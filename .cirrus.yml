@@ -4,7 +4,7 @@ gcp_credentials: ENCRYPTED[!3a93d98d7c95a41f5033834ef30e50928fc5d81239dc632b153c
 only_if: $CIRRUS_TAG == '' && ($CIRRUS_PR != '' || $CIRRUS_BRANCH == 'main')
 env:
   CHANNEL: "master" # Default to master when not explicitly set by a task.
-  PLUGIN_TOOL_COMMAND: "dart pub global run flutter_plugin_tools"
+  PLUGIN_TOOL_COMMAND: "dart ./script/tool/bin/flutter_plugin_tools.dart"
 
 install_chrome_linux_template: &INSTALL_CHROME_LINUX
   env:
@@ -84,6 +84,10 @@ task:
     namespace: default
   matrix:
     ### Platform-agnostic tasks ###
+    - name: Linux plugin_tools_tests
+      script:
+        - cd script/tool
+        - dart pub run test
     # Repository rules and best-practice enforcement.
     # Only channel-agnostic tests should go here since it is only run once
     # (on Flutter master).
@@ -127,7 +131,12 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+      analyze_tool_script:
+        - cd script/tool
+        - dart analyze --fatal-infos
       analyze_script:
+        # DO NOT change the custom-analysis argument here without changing the Dart repo.
+        # See the comment in script/configs/custom_analysis.yaml for details.
         - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
       pathified_analyze_script:
         # Re-run analysis with path-based dependencies to ensure that publishing
@@ -206,7 +215,7 @@ task:
       native_test_script:
         - xvfb-run ./script/tool_runner.sh native-test --linux --no-integration
       drive_script:
-        - xvfb-run ./script/tool_runner.sh drive-examples --linux
+        - xvfb-run ./script/tool_runner.sh drive-examples --linux --exclude=script/configs/exclude_integration_linux.yaml
 
 # Heavy-workload Linux tasks.
 # These use machines with more CPUs and memory, so will reduce parallelization
@@ -260,6 +269,8 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+        MAPS_API_KEY: ENCRYPTED[d6583b08f79f91ea4844c77460f04539965e46ad2fd97fb7c062b4dfe88016228b86ebe8c220ab4187e0c4bd773dc1e7]
+        GCLOUD_FIREBASE_TESTLAB_KEY: ENCRYPTED[62dec6b6b5e7f32dd915552cc33202a350796824de621870bbc54c9ae28a10751e6bd8112f9e21f7f77e65fde1d588cf]
       build_script:
         - ./script/tool_runner.sh build-examples --apk
       lint_script:
@@ -268,10 +279,14 @@ task:
         # Native integration tests are handled by Firebase Test Lab below, so
         # only run unit tests.
         # Must come after build-examples.
-        - ./script/tool_runner.sh native-test --android --no-integration
-      # TODO(stuartmorgan): Copy firebase_test_lab_script from flutter/plugins
-      # once https://github.com/flutter/flutter/issues/119730 is resolved.
-      # firebase_test_lab_script:
+        - ./script/tool_runner.sh native-test --android --no-integration --exclude script/configs/exclude_native_unit_android.yaml
+      firebase_test_lab_script:
+        - if [[ -n "$GCLOUD_FIREBASE_TESTLAB_KEY" ]]; then
+        -   echo $GCLOUD_FIREBASE_TESTLAB_KEY > ${HOME}/gcloud-service-key.json
+        -   ./script/tool_runner.sh firebase-test-lab --device model=redfin,version=30 --device model=starqlteue,version=26 --exclude=script/configs/exclude_integration_android.yaml
+        - else
+        -   echo "This user does not have permission to run Firebase Test Lab tests."
+        - fi
       # Upload the full lint results to Cirrus to display in the results UI.
       always:
         android-lint_artifacts:
@@ -300,7 +315,7 @@ task:
       build_script:
         - ./script/tool_runner.sh build-examples --web
       drive_script:
-        - ./script/tool_runner.sh drive-examples --web
+        - ./script/tool_runner.sh drive-examples --web --exclude=script/configs/exclude_integration_web.yaml
     - name: web_benchmarks_test
       env:
         matrix:
