@@ -2022,6 +2022,28 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
                    completion(output, nil);
                  }];
 }
+- (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:nil
+                 reply:^(id reply) {
+                   completion(nil);
+                 }];
+}
+- (void)echoAsyncString:(NSString *)arg_aString
+             completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSString *output = reply;
+                   completion(output, nil);
+                 }];
+}
 @end
 
 NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec() {
@@ -2044,6 +2066,52 @@ void HostTrivialApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
         FlutterError *error;
         [api noopWithError:&error];
         callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+}
+NSObject<FlutterMessageCodec> *HostSmallApiGetCodec() {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  return sSharedObject;
+}
+
+void HostSmallApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<HostSmallApi> *api) {
+  {
+    FlutterBasicMessageChannel *channel =
+        [[FlutterBasicMessageChannel alloc] initWithName:@"dev.flutter.pigeon.HostSmallApi.echo"
+                                         binaryMessenger:binaryMessenger
+                                                   codec:HostSmallApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoString:completion:)],
+                @"HostSmallApi api (%@) doesn't respond to @selector(echoString:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
+        [api echoString:arg_aString
+             completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+               callback(wrapResult(output, error));
+             }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+        [[FlutterBasicMessageChannel alloc] initWithName:@"dev.flutter.pigeon.HostSmallApi.voidVoid"
+                                         binaryMessenger:binaryMessenger
+                                                   codec:HostSmallApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(voidVoidWithCompletion:)],
+                @"HostSmallApi api (%@) doesn't respond to @selector(voidVoidWithCompletion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api voidVoidWithCompletion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];

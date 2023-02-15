@@ -3453,6 +3453,33 @@ public class CoreTests {
             callback.reply(output);
           });
     }
+    /**
+     * A no-op function taking no arguments and returning no value, to sanity test basic
+     * asynchronous calling.
+     */
+    public void noopAsync(Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync",
+              getCodec());
+      channel.send(null, channelReply -> callback.reply(null));
+    }
+    /** Returns the passed in generic Object asynchronously. */
+    public void echoAsyncString(@NonNull String aStringArg, Reply<String> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aStringArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            String output = (String) channelReply;
+            callback.reply(output);
+          });
+    }
   }
   /**
    * An API that can be implemented for minimal, compile-only tests.
@@ -3485,6 +3512,95 @@ public class CoreTests {
                   wrapped = wrappedError;
                 }
                 reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /**
+   * A simple API implemented in some unit tests.
+   *
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
+  public interface HostSmallApi {
+
+    void echo(@NonNull String aString, Result<String> result);
+
+    void voidVoid(Result<Void> result);
+
+    /** The codec used by HostSmallApi. */
+    static MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
+    static void setup(BinaryMessenger binaryMessenger, HostSmallApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.HostSmallApi.echo", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  String aStringArg = (String) args.get(0);
+                  if (aStringArg == null) {
+                    throw new NullPointerException("aStringArg unexpectedly null.");
+                  }
+                  Result<String> resultCallback =
+                      new Result<String>() {
+                        public void success(String result) {
+                          wrapped.add(0, result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.echo(aStringArg, resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.HostSmallApi.voidVoid", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Result<Void> resultCallback =
+                      new Result<Void>() {
+                        public void success(Void result) {
+                          wrapped.add(0, null);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          ArrayList<Object> wrappedError = wrapError(error);
+                          reply.reply(wrappedError);
+                        }
+                      };
+
+                  api.voidVoid(resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  reply.reply(wrappedError);
+                }
               });
         } else {
           channel.setMessageHandler(null);

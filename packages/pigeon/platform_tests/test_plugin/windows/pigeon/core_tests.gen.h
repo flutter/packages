@@ -57,6 +57,7 @@ class ErrorOr {
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
   friend class HostTrivialApi;
+  friend class HostSmallApi;
   ErrorOr() = default;
   T TakeValue() && { return std::get<T>(std::move(v_)); }
 
@@ -111,6 +112,8 @@ class AllTypes {
   friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
   friend class HostTrivialApiCodecSerializer;
+  friend class HostSmallApi;
+  friend class HostSmallApiCodecSerializer;
   friend class CoreTestsTest;
   bool a_bool_;
   int64_t an_int_;
@@ -197,6 +200,8 @@ class AllNullableTypes {
   friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
   friend class HostTrivialApiCodecSerializer;
+  friend class HostSmallApi;
+  friend class HostSmallApiCodecSerializer;
   friend class CoreTestsTest;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
@@ -230,6 +235,8 @@ class AllNullableTypesWrapper {
   friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
   friend class HostTrivialApiCodecSerializer;
+  friend class HostSmallApi;
+  friend class HostSmallApiCodecSerializer;
   friend class CoreTestsTest;
   AllNullableTypes values_;
 };
@@ -607,6 +614,14 @@ class FlutterIntegrationCoreApi {
       const flutter::EncodableMap* a_map,
       std::function<void(const flutter::EncodableMap*)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
+  // A no-op function taking no arguments and returning no value, to sanity
+  // test basic asynchronous calling.
+  void NoopAsync(std::function<void(void)>&& on_success,
+                 std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed in generic Object asynchronously.
+  void EchoAsyncString(const std::string& a_string,
+                       std::function<void(const std::string&)>&& on_success,
+                       std::function<void(const FlutterError&)>&& on_error);
 };
 
 // An API that can be implemented for minimal, compile-only tests.
@@ -631,6 +646,32 @@ class HostTrivialApi {
 
  protected:
   HostTrivialApi() = default;
+};
+// A simple API implemented in some unit tests.
+//
+// Generated interface from Pigeon that represents a handler of messages from
+// Flutter.
+class HostSmallApi {
+ public:
+  HostSmallApi(const HostSmallApi&) = delete;
+  HostSmallApi& operator=(const HostSmallApi&) = delete;
+  virtual ~HostSmallApi() {}
+  virtual void Echo(const std::string& a_string,
+                    std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  virtual void VoidVoid(
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+
+  // The codec used by HostSmallApi.
+  static const flutter::StandardMessageCodec& GetCodec();
+  // Sets up an instance of `HostSmallApi` to handle messages through the
+  // `binary_messenger`.
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    HostSmallApi* api);
+  static flutter::EncodableValue WrapError(std::string_view error_message);
+  static flutter::EncodableValue WrapError(const FlutterError& error);
+
+ protected:
+  HostSmallApi() = default;
 };
 }  // namespace core_tests_pigeontest
 #endif  // PIGEON_CORE_TESTS_GEN_H_

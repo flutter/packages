@@ -220,7 +220,6 @@ Future<int> _runFlutterUnitTests() async {
     // they are intended to cover is in core_tests.dart (or, if necessary in
     // the short term due to limitations in non-Dart generators, a single other
     // file). They aren't being unit tested, only analyzed.
-    'async_handlers',
     'host2flutter',
     'list',
     'message',

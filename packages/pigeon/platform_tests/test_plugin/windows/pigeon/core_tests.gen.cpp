@@ -3355,6 +3355,41 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
         on_success(return_value);
       });
 }
+void FlutterIntegrationCoreApi::NoopAsync(
+    std::function<void(void)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync", &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue();
+  channel->Send(
+      encoded_api_arguments,
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) { on_success(); });
+}
+void FlutterIntegrationCoreApi::EchoAsyncString(
+    const std::string& a_string_arg,
+    std::function<void(const std::string&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString",
+      &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      EncodableValue(a_string_arg),
+  });
+  channel->Send(
+      encoded_api_arguments,
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto& return_value =
+            std::get<std::string>(encodable_return_value);
+        on_success(return_value);
+      });
+}
 /// The codec used by HostTrivialApi.
 const flutter::StandardMessageCodec& HostTrivialApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
@@ -3398,6 +3433,89 @@ EncodableValue HostTrivialApi::WrapError(std::string_view error_message) {
                     EncodableValue("Error"), EncodableValue()});
 }
 EncodableValue HostTrivialApi::WrapError(const FlutterError& error) {
+  return EncodableValue(EncodableList{EncodableValue(error.message()),
+                                      EncodableValue(error.code()),
+                                      error.details()});
+}
+
+/// The codec used by HostSmallApi.
+const flutter::StandardMessageCodec& HostSmallApi::GetCodec() {
+  return flutter::StandardMessageCodec::GetInstance(
+      &flutter::StandardCodecSerializer::GetInstance());
+}
+
+// Sets up an instance of `HostSmallApi` to handle messages through the
+// `binary_messenger`.
+void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                         HostSmallApi* api) {
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger, "dev.flutter.pigeon.HostSmallApi.echo", &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_a_string_arg = args.at(0);
+              if (encodable_a_string_arg.IsNull()) {
+                reply(WrapError("a_string_arg unexpectedly null."));
+                return;
+              }
+              const auto& a_string_arg =
+                  std::get<std::string>(encodable_a_string_arg);
+              api->Echo(a_string_arg, [reply](ErrorOr<std::string>&& output) {
+                if (output.has_error()) {
+                  reply(WrapError(output.error()));
+                  return;
+                }
+                EncodableList wrapped;
+                wrapped.push_back(
+                    EncodableValue(std::move(output).TakeValue()));
+                reply(EncodableValue(std::move(wrapped)));
+              });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger, "dev.flutter.pigeon.HostSmallApi.voidVoid",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              api->VoidVoid([reply](std::optional<FlutterError>&& output) {
+                if (output.has_value()) {
+                  reply(WrapError(output.value()));
+                  return;
+                }
+                EncodableList wrapped;
+                wrapped.push_back(EncodableValue());
+                reply(EncodableValue(std::move(wrapped)));
+              });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+}
+
+EncodableValue HostSmallApi::WrapError(std::string_view error_message) {
+  return EncodableValue(
+      EncodableList{EncodableValue(std::string(error_message)),
+                    EncodableValue("Error"), EncodableValue()});
+}
+EncodableValue HostSmallApi::WrapError(const FlutterError& error) {
   return EncodableValue(EncodableList{EncodableValue(error.message()),
                                       EncodableValue(error.code()),
                                       error.details()});

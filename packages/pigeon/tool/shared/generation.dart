@@ -52,7 +52,6 @@ Future<int> generatePigeons({required String baseDir}) async {
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const List<String> inputs = <String>[
     'android_unittests',
-    'async_handlers',
     'background_platform_channels',
     'core_tests',
     'enum_args',

@@ -538,10 +538,41 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoNullableMap:')
   @SwiftFunction('echoNullable(_:)')
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
+
+  // ========== Async tests ==========
+  // These are minimal since async FlutterApi only changes Dart generation.
+  // Currently they aren't integration tested, but having them here ensures
+  // analysis coverage.
+
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  @async
+  void noopAsync();
+
+  /// Returns the passed in generic Object asynchronously.
+  @async
+  @ObjCSelector('echoAsyncString:')
+  @SwiftFunction('echoAsync(_:)')
+  String echoAsyncString(String aString);
 }
 
 /// An API that can be implemented for minimal, compile-only tests.
 @HostApi()
 abstract class HostTrivialApi {
   void noop();
+}
+
+/// A simple API implemented in some unit tests.
+//
+// This is separate from HostIntegrationCoreApi to avoid having to update a
+// lot of unit tests every time we add something to the integration test API.
+// TODO(stuartmorgan): Restructure the unit tests to reduce the number of
+// different HostApis we define.
+@HostApi()
+abstract class HostSmallApi {
+  @async
+  @ObjCSelector('echoString:')
+  String echo(String aString);
+  @async
+  void voidVoid();
 }

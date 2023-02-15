@@ -1658,6 +1658,22 @@ class FlutterIntegrationCoreApi {
       completion(result)
     }
   }
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  func noopAsync(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Returns the passed in generic Object asynchronously.
+  func echoAsync(_ aStringArg: String, completion: @escaping (String) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aStringArg] as [Any?]) { response in
+      let result = response as! String
+      completion(result)
+    }
+  }
 }
 /// An API that can be implemented for minimal, compile-only tests.
 ///
@@ -1683,6 +1699,53 @@ class HostTrivialApiSetup {
       }
     } else {
       noopChannel.setMessageHandler(nil)
+    }
+  }
+}
+/// A simple API implemented in some unit tests.
+///
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol HostSmallApi {
+  func echo(aString: String, completion: @escaping (Result<String, Error>) -> Void)
+  func voidVoid(completion: @escaping (Result<Void, Error>) -> Void)
+}
+
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class HostSmallApiSetup {
+  /// The codec used by HostSmallApi.
+  /// Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: HostSmallApi?) {
+    let echoChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostSmallApi.echo", binaryMessenger: binaryMessenger)
+    if let api = api {
+      echoChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aStringArg = args[0] as! String
+        api.echo(aString: aStringArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoChannel.setMessageHandler(nil)
+    }
+    let voidVoidChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostSmallApi.voidVoid", binaryMessenger: binaryMessenger)
+    if let api = api {
+      voidVoidChannel.setMessageHandler { _, reply in
+        api.voidVoid() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      voidVoidChannel.setMessageHandler(nil)
     }
   }
 }

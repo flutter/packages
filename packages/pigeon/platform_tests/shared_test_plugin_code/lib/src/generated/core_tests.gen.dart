@@ -1986,6 +1986,13 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
 
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  Future<void> noopAsync();
+
+  /// Returns the passed in generic Object asynchronously.
+  Future<String> echoAsyncString(String aString);
+
   static void setup(FlutterIntegrationCoreApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -2354,6 +2361,39 @@ abstract class FlutterIntegrationCoreApi {
         });
       }
     }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          await api.noopAsync();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_aString = (args[0] as String?);
+          assert(arg_aString != null,
+              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString was null, expected non-null String.');
+          final String output = await api.echoAsyncString(arg_aString!);
+          return output;
+        });
+      }
+    }
   }
 }
 
@@ -2371,6 +2411,66 @@ class HostTrivialApi {
   Future<void> noop() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostTrivialApi.noop', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+/// A simple API implemented in some unit tests.
+class HostSmallApi {
+  /// Constructor for [HostSmallApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  HostSmallApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<String> echo(String arg_aString) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostSmallApi.echo', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_aString]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as String?)!;
+    }
+  }
+
+  Future<void> voidVoid() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostSmallApi.voidVoid', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {

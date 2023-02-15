@@ -1824,6 +1824,24 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
       callback(result)
     }
   }
+  /**
+   * A no-op function taking no arguments and returning no value, to sanity
+   * test basic asynchronous calling.
+   */
+  fun noopAsync(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Returns the passed in generic Object asynchronously. */
+  fun echoAsyncString(aStringArg: String, callback: (String) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString", codec)
+    channel.send(listOf(aStringArg)) {
+      val result = it as String
+      callback(result)
+    }
+  }
 }
 /**
  * An API that can be implemented for minimal, compile-only tests.
@@ -1853,6 +1871,65 @@ interface HostTrivialApi {
               wrapped = wrapError(exception)
             }
             reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+}
+/**
+ * A simple API implemented in some unit tests.
+ *
+ * Generated interface from Pigeon that represents a handler of messages from Flutter.
+ */
+interface HostSmallApi {
+  fun echo(aString: String, callback: (Result<String>) -> Unit)
+  fun voidVoid(callback: (Result<Unit>) -> Unit)
+
+  companion object {
+    /** The codec used by HostSmallApi. */
+    val codec: MessageCodec<Any?> by lazy {
+      StandardMessageCodec()
+    }
+    /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
+    @Suppress("UNCHECKED_CAST")
+    fun setUp(binaryMessenger: BinaryMessenger, api: HostSmallApi?) {
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostSmallApi.echo", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val aStringArg = args[0] as String
+            api.echo(aStringArg) { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostSmallApi.voidVoid", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.voidVoid() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
           }
         } else {
           channel.setMessageHandler(null)
