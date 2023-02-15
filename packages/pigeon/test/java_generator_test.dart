@@ -259,7 +259,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public static final class Api'));
+    expect(code, contains('public static class Api'));
     expect(code, matches('doSomething.*Input.*Output'));
   });
 
@@ -568,7 +568,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public static final class Api'));
+    expect(code, contains('public static class Api'));
     expect(code, matches('doSomething.*Input.*Output'));
   });
 

@@ -378,7 +378,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
-    indent.write('public static final class ${api.name} ');
+    indent.write('public static class ${api.name} ');
     indent.addScoped('{', '}', () {
       indent.writeln('private final BinaryMessenger binaryMessenger;');
       indent.newln();
