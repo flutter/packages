@@ -199,6 +199,28 @@ class AllNullableTypesWrapper {
   }
 }
 
+/// A data class containing a List, used in unit tests.
+class TestMessage {
+  TestMessage({
+    this.testList,
+  });
+
+  List<Object?>? testList;
+
+  Object encode() {
+    return <Object?>[
+      testList,
+    ];
+  }
+
+  static TestMessage decode(Object result) {
+    result as List<Object?>;
+    return TestMessage(
+      testList: result[0] as List<Object?>?,
+    );
+  }
+}
+
 class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   const _HostIntegrationCoreApiCodec();
   @override
@@ -211,6 +233,9 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
       writeValue(buffer, value.encode());
     } else if (value is AllTypes) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -226,6 +251,8 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
         return AllNullableTypesWrapper.decode(readValue(buffer)!);
       case 130:
         return AllTypes.decode(readValue(buffer)!);
+      case 131:
+        return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1897,6 +1924,9 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
     } else if (value is AllTypes) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -1911,6 +1941,8 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
         return AllNullableTypesWrapper.decode(readValue(buffer)!);
       case 130:
         return AllTypes.decode(readValue(buffer)!);
+      case 131:
+        return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1985,6 +2017,13 @@ abstract class FlutterIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
+
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  Future<void> noopAsync();
+
+  /// Returns the passed in generic Object asynchronously.
+  Future<String> echoAsyncString(String aString);
 
   static void setup(FlutterIntegrationCoreApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -2354,6 +2393,39 @@ abstract class FlutterIntegrationCoreApi {
         });
       }
     }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          await api.noopAsync();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_aString = (args[0] as String?);
+          assert(arg_aString != null,
+              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString was null, expected non-null String.');
+          final String output = await api.echoAsyncString(arg_aString!);
+          return output;
+        });
+      }
+    }
   }
 }
 
@@ -2386,6 +2458,118 @@ class HostTrivialApi {
       );
     } else {
       return;
+    }
+  }
+}
+
+/// A simple API implemented in some unit tests.
+class HostSmallApi {
+  /// Constructor for [HostSmallApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  HostSmallApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<String> echo(String arg_aString) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostSmallApi.echo', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_aString]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as String?)!;
+    }
+  }
+
+  Future<void> voidVoid() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostSmallApi.voidVoid', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+class _FlutterSmallApiCodec extends StandardMessageCodec {
+  const _FlutterSmallApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is TestMessage) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return TestMessage.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+/// A simple API called in some unit tests.
+abstract class FlutterSmallApi {
+  static const MessageCodec<Object?> codec = _FlutterSmallApiCodec();
+
+  TestMessage echoWrappedList(TestMessage msg);
+
+  static void setup(FlutterSmallApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterSmallApi.echoWrappedList', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.FlutterSmallApi.echoWrappedList was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final TestMessage? arg_msg = (args[0] as TestMessage?);
+          assert(arg_msg != null,
+              'Argument for dev.flutter.pigeon.FlutterSmallApi.echoWrappedList was null, expected non-null TestMessage.');
+          final TestMessage output = api.echoWrappedList(arg_msg!);
+          return output;
+        });
+      }
     }
   }
 }

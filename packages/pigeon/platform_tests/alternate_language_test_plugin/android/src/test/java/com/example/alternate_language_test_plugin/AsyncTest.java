@@ -7,7 +7,8 @@ package com.example.alternate_language_test_plugin;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import com.example.alternate_language_test_plugin.AsyncHandlers.*;
+import androidx.annotation.NonNull;
+import com.example.alternate_language_test_plugin.CoreTests.*;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import java.nio.ByteBuffer;
@@ -16,9 +17,9 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class AsyncTest {
-  class Success implements Api2Host {
+  class Success implements HostSmallApi {
     @Override
-    public void calculate(Value value, Result<Value> result) {
+    public void echo(@NonNull String value, Result<String> result) {
       result.success(value);
     }
 
@@ -28,9 +29,9 @@ public class AsyncTest {
     }
   }
 
-  class Error implements Api2Host {
+  class Error implements HostSmallApi {
     @Override
-    public void calculate(Value value, Result<Value> result) {
+    public void echo(@NonNull String value, Result<String> result) {
       result.error(new Exception("error"));
     }
 
@@ -44,13 +45,13 @@ public class AsyncTest {
   public void asyncSuccess() {
     Success api = new Success();
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    Api2Host.setup(binaryMessenger, api);
+    HostSmallApi.setup(binaryMessenger, api);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
-    verify(binaryMessenger).setMessageHandler(eq("dev.flutter.pigeon.Api2Host.calculate"), any());
+    verify(binaryMessenger).setMessageHandler(eq("dev.flutter.pigeon.HostSmallApi.echo"), any());
     verify(binaryMessenger)
-        .setMessageHandler(eq("dev.flutter.pigeon.Api2Host.voidVoid"), handler.capture());
-    MessageCodec<Object> codec = Pigeon.AndroidApi.getCodec();
+        .setMessageHandler(eq("dev.flutter.pigeon.HostSmallApi.voidVoid"), handler.capture());
+    MessageCodec<Object> codec = HostSmallApi.getCodec();
     ByteBuffer message = codec.encodeMessage(null);
     Boolean[] didCall = {false};
     handler
@@ -71,13 +72,13 @@ public class AsyncTest {
   public void asyncError() {
     Error api = new Error();
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    Api2Host.setup(binaryMessenger, api);
+    HostSmallApi.setup(binaryMessenger, api);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
-    verify(binaryMessenger).setMessageHandler(eq("dev.flutter.pigeon.Api2Host.calculate"), any());
+    verify(binaryMessenger).setMessageHandler(eq("dev.flutter.pigeon.HostSmallApi.echo"), any());
     verify(binaryMessenger)
-        .setMessageHandler(eq("dev.flutter.pigeon.Api2Host.voidVoid"), handler.capture());
-    MessageCodec<Object> codec = Pigeon.AndroidApi.getCodec();
+        .setMessageHandler(eq("dev.flutter.pigeon.HostSmallApi.voidVoid"), handler.capture());
+    MessageCodec<Object> codec = HostSmallApi.getCodec();
     ByteBuffer message = codec.encodeMessage(null);
     Boolean[] didCall = {false};
     handler

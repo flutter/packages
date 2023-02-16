@@ -190,6 +190,26 @@ struct AllNullableTypesWrapper {
   }
 }
 
+/// A data class containing a List, used in unit tests.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct TestMessage {
+  var testList: [Any?]? = nil
+
+  static func fromList(_ list: [Any?]) -> TestMessage? {
+    let testList = list[0] as? [Any?] 
+
+    return TestMessage(
+      testList: testList
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      testList,
+    ]
+  }
+}
+
 private class HostIntegrationCoreApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -199,6 +219,8 @@ private class HostIntegrationCoreApiCodecReader: FlutterStandardReader {
         return AllNullableTypesWrapper.fromList(self.readValue() as! [Any])
       case 130:
         return AllTypes.fromList(self.readValue() as! [Any])
+      case 131:
+        return TestMessage.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
     }
@@ -215,6 +237,9 @@ private class HostIntegrationCoreApiCodecWriter: FlutterStandardWriter {
       super.writeValue(value.toList())
     } else if let value = value as? AllTypes {
       super.writeByte(130)
+      super.writeValue(value.toList())
+    } else if let value = value as? TestMessage {
+      super.writeByte(131)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -1448,6 +1473,8 @@ private class FlutterIntegrationCoreApiCodecReader: FlutterStandardReader {
         return AllNullableTypesWrapper.fromList(self.readValue() as! [Any])
       case 130:
         return AllTypes.fromList(self.readValue() as! [Any])
+      case 131:
+        return TestMessage.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
     }
@@ -1464,6 +1491,9 @@ private class FlutterIntegrationCoreApiCodecWriter: FlutterStandardWriter {
       super.writeValue(value.toList())
     } else if let value = value as? AllTypes {
       super.writeByte(130)
+      super.writeValue(value.toList())
+    } else if let value = value as? TestMessage {
+      super.writeByte(131)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -1658,6 +1688,22 @@ class FlutterIntegrationCoreApi {
       completion(result)
     }
   }
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  func noopAsync(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Returns the passed in generic Object asynchronously.
+  func echoAsync(_ aStringArg: String, completion: @escaping (String) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aStringArg] as [Any?]) { response in
+      let result = response as! String
+      completion(result)
+    }
+  }
 }
 /// An API that can be implemented for minimal, compile-only tests.
 ///
@@ -1683,6 +1729,108 @@ class HostTrivialApiSetup {
       }
     } else {
       noopChannel.setMessageHandler(nil)
+    }
+  }
+}
+/// A simple API implemented in some unit tests.
+///
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol HostSmallApi {
+  func echo(aString: String, completion: @escaping (Result<String, Error>) -> Void)
+  func voidVoid(completion: @escaping (Result<Void, Error>) -> Void)
+}
+
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class HostSmallApiSetup {
+  /// The codec used by HostSmallApi.
+  /// Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: HostSmallApi?) {
+    let echoChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostSmallApi.echo", binaryMessenger: binaryMessenger)
+    if let api = api {
+      echoChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aStringArg = args[0] as! String
+        api.echo(aString: aStringArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoChannel.setMessageHandler(nil)
+    }
+    let voidVoidChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostSmallApi.voidVoid", binaryMessenger: binaryMessenger)
+    if let api = api {
+      voidVoidChannel.setMessageHandler { _, reply in
+        api.voidVoid() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      voidVoidChannel.setMessageHandler(nil)
+    }
+  }
+}
+private class FlutterSmallApiCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+      case 128:
+        return TestMessage.fromList(self.readValue() as! [Any])
+      default:
+        return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class FlutterSmallApiCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? TestMessage {
+      super.writeByte(128)
+      super.writeValue(value.toList())
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class FlutterSmallApiCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return FlutterSmallApiCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return FlutterSmallApiCodecWriter(data: data)
+  }
+}
+
+class FlutterSmallApiCodec: FlutterStandardMessageCodec {
+  static let shared = FlutterSmallApiCodec(readerWriter: FlutterSmallApiCodecReaderWriter())
+}
+
+/// A simple API called in some unit tests.
+///
+/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
+class FlutterSmallApi {
+  private let binaryMessenger: FlutterBinaryMessenger
+  init(binaryMessenger: FlutterBinaryMessenger){
+    self.binaryMessenger = binaryMessenger
+  }
+  var codec: FlutterStandardMessageCodec {
+    return FlutterSmallApiCodec.shared
+  }
+  func echo(_ msgArg: TestMessage, completion: @escaping (TestMessage) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterSmallApi.echoWrappedList", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([msgArg] as [Any?]) { response in
+      let result = response as! TestMessage
+      completion(result)
     }
   }
 }

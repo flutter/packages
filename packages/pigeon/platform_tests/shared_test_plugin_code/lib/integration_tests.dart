@@ -1368,4 +1368,12 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
 
   @override
   Uint8List? echoNullableUint8List(Uint8List? aList) => aList;
+
+  @override
+  Future<void> noopAsync() async {}
+
+  @override
+  Future<String> echoAsyncString(String aString) async {
+    return aString;
+  }
 }
