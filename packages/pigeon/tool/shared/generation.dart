@@ -16,9 +16,7 @@ enum GeneratorLanguages {
 // A map of pigeons/ files to the languages that they can't yet be generated
 // for due to limitations of that generator.
 const Map<String, Set<GeneratorLanguages>> _unsupportedFiles =
-    <String, Set<GeneratorLanguages>>{
-  'enum_args': <GeneratorLanguages>{GeneratorLanguages.cpp},
-};
+    <String, Set<GeneratorLanguages>>{};
 
 String _snakeToPascalCase(String snake) {
   final List<String> parts = snake.split('_');
@@ -50,7 +48,6 @@ Future<int> generatePigeons({required String baseDir}) async {
     'android_unittests',
     'background_platform_channels',
     'core_tests',
-    'enum_args',
     'enum',
     'message',
     'multiple_arity',
