@@ -69,17 +69,6 @@ class StatefulShellRouteState {
           StatefulShellBranchState? branchState, bool navigateToDefaultLocation)
       _resetState;
 
-  /// Gets the [Widget]s representing each of the shell branches.
-  ///
-  /// The Widget returned from this method contains the [Navigator]s of the
-  /// branches. Note that the Widgets returned by this method should only be
-  /// added to the widget tree if using a custom branch container Widget
-  /// implementation, where the child parameter in the [ShellRouteBuilder] of
-  /// the [StatefulShellRoute] is ignored (i.e. not added to the widget tree).
-  /// See [StatefulShellBranchState.child].
-  List<Widget> get children =>
-      branchStates.map((StatefulShellBranchState e) => e.child).toList();
-
   StatefulShellBranchState _branchStateFor({
     GlobalKey<NavigatorState>? navigatorKey,
     String? name,
@@ -202,18 +191,15 @@ class StatefulShellBranchState {
   /// Constructs a [StatefulShellBranchState].
   const StatefulShellBranchState({
     required this.branch,
-    required this.child,
     this.isLoaded = false,
     this.routeState,
   });
 
   /// Constructs a copy of this [StatefulShellBranchState], with updated values for
   /// some of the fields.
-  StatefulShellBranchState copy(
-      {Widget? child, bool? isLoaded, GoRouterState? routeState}) {
+  StatefulShellBranchState copy({bool? isLoaded, GoRouterState? routeState}) {
     return StatefulShellBranchState(
       branch: branch,
-      child: child ?? this.child,
       isLoaded: isLoaded ?? this.isLoaded,
       routeState: routeState ?? this.routeState,
     );
@@ -221,15 +207,6 @@ class StatefulShellBranchState {
 
   /// The associated [StatefulShellBranch]
   final StatefulShellBranch branch;
-
-  /// The [Widget] representing this route branch in a [StatefulShellRoute].
-  ///
-  /// The Widget returned from this method contains the [Navigator] of the
-  /// branch. Note that the Widget returned by this method should only
-  /// be added to the widget tree if using a custom branch container Widget
-  /// implementation, where the child parameter in the [ShellRouteBuilder] of
-  /// the [StatefulShellRoute] is ignored (i.e. not added to the widget tree).
-  final Widget child;
 
   /// The current GoRouterState associated with the branch.
   final GoRouterState? routeState;
@@ -246,13 +223,11 @@ class StatefulShellBranchState {
     if (other is! StatefulShellBranchState) {
       return false;
     }
-    return other.branch == branch &&
-        other.child == child &&
-        other.routeState == routeState;
+    return other.branch == branch && other.routeState == routeState;
   }
 
   @override
-  int get hashCode => Object.hash(branch, child, routeState);
+  int get hashCode => Object.hash(branch, routeState);
 
   /// Gets the state for the current branch of the nearest stateful shell route
   /// in the Widget tree.

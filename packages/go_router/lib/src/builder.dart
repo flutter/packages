@@ -261,7 +261,7 @@ class RouteBuilder {
 
       // Build the Page for this route
       final Page<Object?> page = _buildPageForRoute(context, state, match,
-          child: RouteNavigatorBuilder(this, route, heroController,
+          child: RouteNavigatorBuilder(this, state, route, heroController,
               shellNavigatorKey, keyToPages[shellNavigatorKey]!, onPopPage));
       registry[page] = state;
       // Place the ShellRoute's Page onto the list for the parent navigator.
@@ -317,12 +317,9 @@ class RouteBuilder {
         page = pageBuilder(context, state);
       }
     } else if (route is ShellRouteBase) {
-      final ShellRouteNavigationPageBuilder? pageBuilder = route.pageBuilder;
       assert(child is ShellNavigatorBuilder,
-          '${route.runtimeType} must contain a child route');
-      if (pageBuilder != null) {
-        page = pageBuilder(context, state, child! as ShellNavigatorBuilder);
-      }
+          '${route.runtimeType} must contain a child');
+      page = route.buildPage(context, state, child! as ShellNavigatorBuilder);
     }
 
     if (page is NoOpPage) {
@@ -358,13 +355,12 @@ class RouteBuilder {
             'Attempt to build ShellRoute without a child widget');
       }
 
-      final ShellRouteNavigationBuilder? builder = route.builder;
-
-      if (builder == null) {
+      final Widget? widget = route.buildWidget(context, state, child);
+      if (widget == null) {
         throw _RouteBuilderError('No builder provided to ShellRoute: $route');
       }
 
-      return builder(context, state, child);
+      return widget;
     }
 
     throw _RouteBuilderException('Unsupported route type $route');

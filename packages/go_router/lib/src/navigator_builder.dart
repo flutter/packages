@@ -12,6 +12,7 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
   /// Constructs a NavigatorBuilder.
   RouteNavigatorBuilder(
       this.routeBuilder,
+      this.state,
       this.currentRoute,
       this.heroController,
       this.navigatorKeyForCurrentRoute,
@@ -20,6 +21,9 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
 
   /// The route builder.
   final RouteBuilder routeBuilder;
+
+  @override
+  final GoRouterState state;
 
   @override
   final ShellRouteBase currentRoute;

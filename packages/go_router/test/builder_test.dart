@@ -579,11 +579,8 @@ void main() {
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           StatefulShellRoute(
-            builder: (BuildContext context, GoRouterState state,
-                ShellNavigatorBuilder navigatorBuilder) {
-              return navigatorBuilder.buildStatefulShell(
-                  context,
-                  state,
+            builder: (StatefulShellBuilder shellBuilder) {
+              return shellBuilder.buildShell(
                   (BuildContext context, GoRouterState state, Widget child) =>
                       _HomeScreen(child: child));
             },

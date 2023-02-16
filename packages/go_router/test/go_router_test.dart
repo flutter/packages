@@ -2408,9 +2408,8 @@ void main() {
       StatefulShellRouteState? routeState;
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state,
-              ShellNavigatorBuilder navigatorBuilder) {
-            return navigatorBuilder.buildStatefulShell(context, state,
+          builder: (StatefulShellBuilder shellBuilder) {
+            return shellBuilder.buildShell(
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -2948,9 +2947,8 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state,
-              ShellNavigatorBuilder navigatorBuilder) {
-            return navigatorBuilder.buildStatefulShell(context, state,
+          builder: (StatefulShellBuilder shellBuilder) {
+            return shellBuilder.buildShell(
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3060,9 +3058,8 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state,
-              ShellNavigatorBuilder navigatorBuilder) {
-            return navigatorBuilder.buildStatefulShell(context, state,
+          builder: (StatefulShellBuilder shellBuilder) {
+            return shellBuilder.buildShell(
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3136,9 +3133,8 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state,
-              ShellNavigatorBuilder navigatorBuilder) {
-            return navigatorBuilder.buildStatefulShell(context, state,
+          builder: (StatefulShellBuilder shellBuilder) {
+            return shellBuilder.buildShell(
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3224,9 +3220,8 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state,
-              ShellNavigatorBuilder navigatorBuilder) {
-            return navigatorBuilder.buildStatefulShell(context, state,
+          builder: (StatefulShellBuilder shellBuilder) {
+            return shellBuilder.buildShell(
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3286,9 +3281,8 @@ void main() {
               Text('Common - ${state.extra}'),
         ),
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state,
-              ShellNavigatorBuilder navigatorBuilder) {
-            return navigatorBuilder.buildStatefulShell(context, state,
+          builder: (StatefulShellBuilder shellBuilder) {
+            return shellBuilder.buildShell(
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3450,9 +3444,8 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state,
-              ShellNavigatorBuilder navigatorBuilder) {
-            return navigatorBuilder.buildStatefulShell(context, state,
+          builder: (StatefulShellBuilder shellBuilder) {
+            return shellBuilder.buildShell(
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3548,9 +3541,8 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state,
-              ShellNavigatorBuilder navigatorBuilder) {
-            return navigatorBuilder.buildStatefulShell(context, state,
+          builder: (StatefulShellBuilder shellBuilder) {
+            return shellBuilder.buildShell(
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3618,9 +3610,8 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (BuildContext context, GoRouterState state,
-              ShellNavigatorBuilder navigatorBuilder) {
-            return navigatorBuilder.buildStatefulShell(context, state,
+          builder: (StatefulShellBuilder shellBuilder) {
+            return shellBuilder.buildShell(
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;

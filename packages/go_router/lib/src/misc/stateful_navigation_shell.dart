@@ -47,7 +47,6 @@ class StatefulNavigationShell extends StatefulWidget {
   const StatefulNavigationShell({
     required this.shellRoute,
     required this.navigatorBuilder,
-    required this.shellGoRouterState,
     required this.shellBodyWidgetBuilder,
     super.key,
   });
@@ -57,9 +56,6 @@ class StatefulNavigationShell extends StatefulWidget {
 
   /// The shell navigator builder.
   final ShellNavigatorBuilder navigatorBuilder;
-
-  /// The [GoRouterState] for the navigation shell.
-  final GoRouterState shellGoRouterState;
 
   /// The shell body widget builder.
   final ShellBodyWidgetBuilder shellBodyWidgetBuilder;
@@ -76,6 +72,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
 
   List<StatefulShellBranch> get _branches => widget.shellRoute.branches;
 
+  GoRouterState get _currentGoRouterState => widget.navigatorBuilder.state;
   GlobalKey<NavigatorState> get _currentNavigatorKey =>
       widget.navigatorBuilder.navigatorKeyForCurrentRoute;
 
@@ -197,13 +194,13 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
       currentBranchState = _updateStatefulShellBranchState(
         currentBranchState,
         navigator: currentNavigator,
-        routeState: widget.shellGoRouterState,
+        routeState: _currentGoRouterState,
       );
     } else {
       currentBranchState = _createStatefulShellBranchState(
         branch,
         navigator: currentNavigator,
-        routeState: widget.shellGoRouterState,
+        routeState: _currentGoRouterState,
       );
     }
 
@@ -263,9 +260,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
 
     if (dirty) {
       return branchState.copy(
-        child: _BranchNavigatorProxy(
-            branch: branchState.branch,
-            navigatorForBranch: _navigatorForBranch),
         isLoaded: isLoaded,
         routeState: routeState,
       );
@@ -284,8 +278,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     }
     return StatefulShellBranchState(
       branch: branch,
-      child: _BranchNavigatorProxy(
-          branch: branch, navigatorForBranch: _navigatorForBranch),
       routeState: routeState,
     );
   }
@@ -324,6 +316,11 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> children = _branches
+        .map((StatefulShellBranch branch) => _BranchNavigatorProxy(
+            branch: branch, navigatorForBranch: _navigatorForBranch))
+        .toList();
+
     return InheritedStatefulNavigationShell(
       routeState: _routeState,
       child: Builder(builder: (BuildContext context) {
@@ -333,8 +330,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
             widget.shellBodyWidgetBuilder;
         return shellWidgetBuilder(
           context,
-          widget.shellGoRouterState,
-          _IndexedStackedRouteBranchContainer(routeState: _routeState),
+          _currentGoRouterState,
+          _IndexedStackedRouteBranchContainer(
+              routeState: _routeState, children: children),
         );
       }),
     );
@@ -362,29 +360,33 @@ class _BranchNavigatorProxy extends StatelessWidget {
 
 /// Default implementation of a container widget for the [Navigator]s of the
 /// route branches. This implementation uses an [IndexedStack] as a container.
-class _IndexedStackedRouteBranchContainer extends StatelessWidget {
-  const _IndexedStackedRouteBranchContainer({required this.routeState});
+class _IndexedStackedRouteBranchContainer extends ShellNavigatorContainer {
+  const _IndexedStackedRouteBranchContainer(
+      {required this.routeState, required this.children});
 
   final StatefulShellRouteState routeState;
 
   @override
+  final List<Widget> children;
+
+  @override
   Widget build(BuildContext context) {
     final int currentIndex = routeState.currentIndex;
-    final List<Widget> children = routeState.branchStates
-        .mapIndexed((int index, StatefulShellBranchState item) =>
-            _buildRouteBranchContainer(context, currentIndex == index, item))
+    final List<Widget> stackItems = children
+        .mapIndexed((int index, Widget child) =>
+            _buildRouteBranchContainer(context, currentIndex == index, child))
         .toList();
 
-    return IndexedStack(index: currentIndex, children: children);
+    return IndexedStack(index: currentIndex, children: stackItems);
   }
 
-  Widget _buildRouteBranchContainer(BuildContext context, bool isActive,
-      StatefulShellBranchState navigatorState) {
+  Widget _buildRouteBranchContainer(
+      BuildContext context, bool isActive, Widget child) {
     return Offstage(
       offstage: !isActive,
       child: TickerMode(
         enabled: isActive,
-        child: navigatorState.child,
+        child: child,
       ),
     );
   }

@@ -153,55 +153,42 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                     ),
                   ]),
                 ],
-                builder: (BuildContext context, GoRouterState state,
-                    ShellNavigatorBuilder navigatorBuilder) {
-                  /// For this nested StatefulShellRoute we are using a custom
-                  /// container (TabBarView) for the branch navigators, and thus
-                  /// ignoring the default navigator contained passed to the
-                  /// builder. Custom implementation can access the branch
-                  /// navigators via the StatefulShellRouteState
-                  /// (see TabbedRootScreen for details).
-                  return navigatorBuilder.buildStatefulShell(
-                    context,
-                    state,
-                    (BuildContext context, GoRouterState state, Widget child) =>
-                        const TabbedRootScreen(),
+                builder: (StatefulShellBuilder shellBuilder) {
+                  /// For this nested StatefulShellRoute, a custom container
+                  /// (TabBarView) is used for the branch navigators, and thus
+                  /// ignoring the default navigator container passed to the
+                  /// builder. Instead, the branch navigators are passed
+                  /// directly to the TabbedRootScreen, using the children
+                  /// field of ShellNavigatorContainer. See TabbedRootScreen
+                  /// for more details on how the children are used in the
+                  /// TabBarView.
+                  return shellBuilder.buildShell(
+                    (BuildContext context, GoRouterState state,
+                            ShellNavigatorContainer child) =>
+                        TabbedRootScreen(children: child.children),
                   );
                 },
               ),
             ],
           ),
         ],
-        builder: (BuildContext context, GoRouterState state,
-            ShellNavigatorBuilder navigatorBuilder) {
-          return navigatorBuilder.buildStatefulShell(
-            context,
-            state,
-            (BuildContext context, GoRouterState state, Widget child) =>
-                ScaffoldWithNavBar(body: child),
-          );
+        builder: (StatefulShellBuilder shellBuilder) {
+          /// This builder implementation uses the default navigator container
+          /// (ShellNavigatorContainer) to host the branch navigators. This is
+          /// the simplest way to use StatefulShellRoute, when no separate
+          /// customization is needed for the branch Widgets (Navigators).
+          return shellBuilder.buildShell((BuildContext context,
+                  GoRouterState state, ShellNavigatorContainer child) =>
+              ScaffoldWithNavBar(body: child));
         },
 
-        /// It's possible to customize the container for the branch navigators
-        /// even further, to for instance setup custom animations. The code
-        /// below is an example of such a customization (see
-        /// _AnimatedRouteBranchContainer). Note that in this case, the Widget
-        /// provided in the child parameter should not be added to the widget
-        /// tree. Instead, access the child widgets of each branch directly
-        /// (see StatefulShellRouteState.children) to implement a custom layout
-        /// and container for the navigators.
-        // builder: (BuildContext context, GoRouterState state, ShellNavigatorBuilder navigatorBuilder) {
-        //   return navigatorBuilder.buildStatefulShell(context, state,
-        //           (BuildContext context, GoRouterState state, Widget child) => ScaffoldWithNavBar(
-        //             body: _AnimatedRouteBranchContainer(),
-        //           ));
-        // },
-
         /// If it's necessary to customize the Page for StatefulShellRoute,
-        /// provide a pageBuilder function in addition to the builder, for example:
-        // pageBuilder: (BuildContext context, GoRouterState state, ShellNavigatorBuilder navigatorBuilder) {
-        //   final Widget statefulShell = navigatorBuilder.buildStatefulShell(context, state,
-        //           (BuildContext context, GoRouterState state, Widget child) => ScaffoldWithNavBar(body: child));
+        /// provide a pageBuilder function instead of the builder, for example:
+        // pageBuilder: (StatefulShellBuilder shellBuilder) {
+        //   final Widget statefulShell = shellBuilder.buildShell(
+        //       (BuildContext context, GoRouterState state,
+        //               ShellNavigatorContainer child) =>
+        //           ScaffoldWithNavBar(body: child));
         //   return NoTransitionPage<dynamic>(child: statefulShell);
         // },
       ),
@@ -463,15 +450,15 @@ class ModalScreen extends StatelessWidget {
 /// Builds a nested shell using a [TabBar] and [TabBarView].
 class TabbedRootScreen extends StatelessWidget {
   /// Constructs a TabbedRootScreen
-  const TabbedRootScreen({Key? key}) : super(key: key);
+  const TabbedRootScreen({required this.children, Key? key}) : super(key: key);
 
-  Widget _child(StatefulShellBranchState branchState) => branchState.child;
+  /// The children (Navigators) to display in the [TabBarView].
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
     final StatefulShellRouteState shellState =
         StatefulShellRouteState.of(context);
-    final List<Widget> children = shellState.branchStates.map(_child).toList();
     final List<Tab> tabs =
         children.mapIndexed((int i, _) => Tab(text: 'Tab ${i + 1}')).toList();
 
@@ -532,39 +519,5 @@ class TabScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-// ignore: unused_element
-class _AnimatedRouteBranchContainer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final StatefulShellRouteState shellRouteState =
-        StatefulShellRouteState.of(context);
-    final int currentIndex = shellRouteState.currentIndex;
-
-    final PageController controller = PageController(initialPage: currentIndex);
-    return PageView(
-      controller: controller,
-      children: shellRouteState.children,
-    );
-
-    // // return Stack(
-    // //     children: shellRouteState.children.mapIndexed(
-    // //   (int index, Widget? navigator) {
-    // //     return AnimatedScale(
-    // //       scale: index == currentIndex ? 1 : 1.5,
-    // //       duration: const Duration(milliseconds: 400),
-    // //       child: AnimatedOpacity(
-    // //         opacity: index == currentIndex ? 1 : 0,
-    // //         duration: const Duration(milliseconds: 400),
-    // //         child: Offstage(
-    // //           offstage: index != currentIndex,
-    // //           child: navigator ?? const SizedBox.shrink(),
-    // //         ),
-    // //       ),
-    // //     );
-    // //   },
-    // ).toList());
   }
 }
