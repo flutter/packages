@@ -243,7 +243,11 @@ Future<void> simulateAndroidBackButton(WidgetTester tester) async {
       .handlePlatformMessage('flutter/navigation', message, (_) {});
 }
 
-extension StatefulShellFactoryHelper on StatefulShellFactory {
-  Widget dummy() => buildShell(
-      (BuildContext context, GoRouterState state, Widget child) => child);
-}
+ShellRouteNavigationBuilder mockStatefulShellBuilder = (
+  BuildContext context,
+  GoRouterState state,
+  ShellNavigatorBuilder navigatorBuilder,
+) {
+  return navigatorBuilder.buildStatefulShell(
+      context, state, (_, __, Widget child) => child);
+};

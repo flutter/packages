@@ -153,25 +153,33 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                     ),
                   ]),
                 ],
-                builder: (StatefulShellFactory shellFactory) {
+                builder: (BuildContext context, GoRouterState state,
+                    ShellNavigatorBuilder navigatorBuilder) {
                   /// For this nested StatefulShellRoute we are using a custom
                   /// container (TabBarView) for the branch navigators, and thus
                   /// ignoring the default navigator contained passed to the
                   /// builder. Custom implementation can access the branch
                   /// navigators via the StatefulShellRouteState
                   /// (see TabbedRootScreen for details).
-                  return shellFactory.buildShell((BuildContext context,
-                          GoRouterState state, Widget child) =>
-                      const TabbedRootScreen());
+                  return navigatorBuilder.buildStatefulShell(
+                    context,
+                    state,
+                    (BuildContext context, GoRouterState state, Widget child) =>
+                        const TabbedRootScreen(),
+                  );
                 },
               ),
             ],
           ),
         ],
-        builder: (StatefulShellFactory shellFactory) {
-          return shellFactory.buildShell(
-              (BuildContext context, GoRouterState state, Widget child) =>
-                  ScaffoldWithNavBar(body: child));
+        builder: (BuildContext context, GoRouterState state,
+            ShellNavigatorBuilder navigatorBuilder) {
+          return navigatorBuilder.buildStatefulShell(
+            context,
+            state,
+            (BuildContext context, GoRouterState state, Widget child) =>
+                ScaffoldWithNavBar(body: child),
+          );
         },
 
         /// It's possible to customize the container for the branch navigators
@@ -182,19 +190,18 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
         /// tree. Instead, access the child widgets of each branch directly
         /// (see StatefulShellRouteState.children) to implement a custom layout
         /// and container for the navigators.
-        // builder: (StatefulShellFactory shellFactory) {
-        //   return shellFactory.buildShell((BuildContext context, GoRouterState state, Widget child) =>
-        //     ScaffoldWithNavBar(
-        //       body: _AnimatedRouteBranchContainer(),
-        //     ),
-        //   );
+        // builder: (BuildContext context, GoRouterState state, ShellNavigatorBuilder navigatorBuilder) {
+        //   return navigatorBuilder.buildStatefulShell(context, state,
+        //           (BuildContext context, GoRouterState state, Widget child) => ScaffoldWithNavBar(
+        //             body: _AnimatedRouteBranchContainer(),
+        //           ));
         // },
 
         /// If it's necessary to customize the Page for StatefulShellRoute,
         /// provide a pageBuilder function in addition to the builder, for example:
-        // pageBuilder: (StatefulShellFactory shellFactory) {
-        //   final Widget statefulShell = shellFactory.buildShell((BuildContext context,
-        //       GoRouterState state, Widget child) => ScaffoldWithNavBar(body: child));
+        // pageBuilder: (BuildContext context, GoRouterState state, ShellNavigatorBuilder navigatorBuilder) {
+        //   final Widget statefulShell = navigatorBuilder.buildStatefulShell(context, state,
+        //           (BuildContext context, GoRouterState state, Widget child) => ScaffoldWithNavBar(body: child));
         //   return NoTransitionPage<dynamic>(child: statefulShell);
         // },
       ),

@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 
 import '../go_router.dart';
 import 'configuration.dart';
+import 'matching.dart';
 import 'misc/errors.dart';
 
 /// The route state during routing.
@@ -15,7 +16,8 @@ import 'misc/errors.dart';
 class GoRouterState {
   /// Default constructor for creating route state during routing.
   const GoRouterState(
-    this._configuration, {
+    this._configuration,
+    this._routeMatchList, {
     required this.location,
     required this.subloc,
     required this.name,
@@ -32,6 +34,13 @@ class GoRouterState {
   // TODO(johnpryan): remove once namedLocation is removed from go_router.
   // See https://github.com/flutter/flutter/issues/107729
   final RouteConfiguration _configuration;
+
+  /// Snapshot of the current route match list.
+  ///
+  /// Use to restore the navigation stack based on a GoRouterState, and also
+  /// to make two GoRouterState instances from different match lists unique
+  /// (i.e. not equal).
+  final UnmodifiableRouteMatchList _routeMatchList;
 
   /// The full location of the route, e.g. /family/f2/person/p1
   final String location;
@@ -146,12 +155,24 @@ class GoRouterState {
         other.queryParametersAll == queryParametersAll &&
         other.extra == extra &&
         other.error == error &&
-        other.pageKey == pageKey;
+        other.pageKey == pageKey &&
+        other._routeMatchList == _routeMatchList;
   }
 
   @override
-  int get hashCode => Object.hash(location, subloc, name, path, fullpath,
-      params, queryParams, queryParametersAll, extra, error, pageKey);
+  int get hashCode => Object.hash(
+      location,
+      subloc,
+      name,
+      path,
+      fullpath,
+      params,
+      queryParams,
+      queryParametersAll,
+      extra,
+      error,
+      pageKey,
+      _routeMatchList);
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.
@@ -214,7 +235,8 @@ class GoRouterStateRegistry extends ChangeNotifier {
   }
 
   /// Updates this registry with new records.
-  void updateRegistry(Map<Page<Object?>, GoRouterState> newRegistry) {
+  void updateRegistry(Map<Page<Object?>, GoRouterState> newRegistry,
+      {bool replace = true}) {
     bool shouldNotify = false;
     final Set<Page<Object?>> pagesWithAssociation =
         _routePageAssociation.values.toSet();
@@ -234,21 +256,31 @@ class GoRouterStateRegistry extends ChangeNotifier {
       // Adding or removing registry does not need to notify the listen since
       // no one should be depending on them.
     }
-    registry.removeWhere((Page<Object?> key, GoRouterState value) {
-      if (newRegistry.containsKey(key)) {
-        return false;
-      }
-      // For those that have page route association, it will be removed by the
-      // route future. Need to notify the listener so they can update the page
-      // route association if its page has changed.
-      if (pagesWithAssociation.contains(key)) {
-        shouldNotify = true;
-        return false;
-      }
-      return true;
-    });
+    if (replace) {
+      registry.removeWhere((Page<Object?> key, GoRouterState value) {
+        if (newRegistry.containsKey(key)) {
+          return false;
+        }
+        // For those that have page route association, it will be removed by the
+        // route future. Need to notify the listener so they can update the page
+        // route association if its page has changed.
+        if (pagesWithAssociation.contains(key)) {
+          shouldNotify = true;
+          return false;
+        }
+        return true;
+      });
+    }
     if (shouldNotify) {
       notifyListeners();
     }
+  }
+}
+
+/// Internal extension to expose the routeMatchList associated with a [GoRouterState].
+extension GoRouterStateInternal on GoRouterState {
+  /// The route match list associated with this [GoRouterState].
+  UnmodifiableRouteMatchList get routeMatchList {
+    return _routeMatchList;
   }
 }

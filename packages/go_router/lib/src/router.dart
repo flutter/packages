@@ -132,8 +132,6 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       _routeInformationParser;
 
   /// The route configuration. Used for testing.
-  // TODO(johnpryan): Remove this, integration tests shouldn't need access
-  @visibleForTesting
   RouteConfiguration get routeConfiguration => _routeConfiguration;
 
   /// Gets the current location.
@@ -201,6 +199,14 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
         namedLocation(name, params: params, queryParams: queryParams),
         extra: extra,
       );
+
+  /// Restore the location represented by the provided state.
+  Future<void> goState(GoRouterState state, BuildContext context) {
+    final RouteMatchList matchList = state.routeMatchList.modifiableMatchList;
+    return routeInformationParser
+        .processRedirection(matchList, context)
+        .then(routerDelegate.setNewRoutePath);
+  }
 
   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`

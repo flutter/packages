@@ -20,6 +20,20 @@ typedef GoRouterPageBuilder = Page<dynamic> Function(
   GoRouterState state,
 );
 
+/// The widget builder for [ShellRouteBase].
+typedef ShellRouteNavigationBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  ShellNavigatorBuilder navigatorBuilder,
+);
+
+/// The page builder for [ShellRouteBase].
+typedef ShellRouteNavigationPageBuilder = Page<dynamic> Function(
+  BuildContext context,
+  GoRouterState state,
+  ShellNavigatorBuilder navigatorBuilder,
+);
+
 /// The widget builder for [ShellRoute].
 typedef ShellRouteBuilder = Widget Function(
   BuildContext context,
@@ -37,23 +51,6 @@ typedef ShellRoutePageBuilder = Page<dynamic> Function(
 /// The shell body widget builder for [StatefulShellRoute].
 typedef ShellBodyWidgetBuilder = Widget Function(
     BuildContext context, GoRouterState state, Widget child);
-
-/// The factory for building the shell of a [StatefulShellRoute].
-abstract class StatefulShellFactory {
-  /// Builds the shell of a [StatefulShellRoute], using the provided builder to
-  /// build the body.
-  Widget buildShell(ShellBodyWidgetBuilder shellBodyWidgetBuilder);
-}
-
-/// The widget builder for [StatefulShellRoute].
-typedef StatefulShellRouteBuilder = Widget Function(
-  StatefulShellFactory statefulNavigation,
-);
-
-/// The page builder for [StatefulShellRoute].
-typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
-  StatefulShellFactory statefulNavigation,
-);
 
 /// The signature of the navigatorBuilder callback.
 typedef GoRouterNavigatorBuilder = Widget Function(

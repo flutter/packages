@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -55,7 +56,7 @@ class RouteMatchList {
         fullpath = _generateFullPath(matches);
 
   /// Creates an immutable clone of this RouteMatchList.
-  UnmodifiableRouteMatchList unmodifiableRouteMatchList() {
+  UnmodifiableRouteMatchList unmodifiableMatchList() {
     return UnmodifiableRouteMatchList.from(this);
   }
 
@@ -139,33 +140,66 @@ class RouteMatchList {
   bool get isError => matches.length == 1 && matches.first.error != null;
 
   /// Returns the error that this match intends to display.
-  Exception? get error => matches.first.error;
+  Exception? get error => matches.firstOrNull?.error;
 }
 
 /// Unmodifiable version of [RouteMatchList].
 @immutable
-class UnmodifiableRouteMatchList {
+class UnmodifiableRouteMatchList implements RouteMatchList {
   /// UnmodifiableRouteMatchList constructor.
   UnmodifiableRouteMatchList.from(RouteMatchList routeMatchList)
       : _matches = List<RouteMatch>.unmodifiable(routeMatchList.matches),
         _uri = routeMatchList.uri,
-        _pathParameters =
-            Map<String, String>.unmodifiable(routeMatchList.pathParameters);
+        fullpath = routeMatchList.fullpath,
+        pathParameters =
+            Map<String, String>.unmodifiable(routeMatchList.pathParameters),
+        error = routeMatchList.error,
+        extra = routeMatchList.extra,
+        isEmpty = routeMatchList.isEmpty,
+        isError = routeMatchList.isError,
+        isNotEmpty = routeMatchList.isNotEmpty;
 
   /// Creates a new [RouteMatchList] from this UnmodifiableRouteMatchList.
-  RouteMatchList get routeMatchList => RouteMatchList(
+  RouteMatchList get modifiableMatchList => RouteMatchList(
       List<RouteMatch>.from(_matches),
       _uri,
-      Map<String, String>.from(_pathParameters));
+      Map<String, String>.from(pathParameters));
 
-  /// The route matches.
-  final List<RouteMatch> _matches;
-
-  /// The uri of the current match.
+  @override
+  Uri get uri => _uri;
+  @override
   final Uri _uri;
+  @override
+  set _uri(Uri uri) => throw UnimplementedError();
 
-  /// Parameters for the matched route, URI-encoded.
-  final Map<String, String> _pathParameters;
+  @override
+  final List<RouteMatch> _matches;
+  @override
+  List<RouteMatch> get matches => _matches;
+
+  @override
+  final String fullpath;
+
+  @override
+  final Map<String, String> pathParameters;
+
+  @override
+  final Exception? error;
+
+  @override
+  final Object? extra;
+
+  @override
+  final bool isEmpty;
+
+  @override
+  final bool isError;
+
+  @override
+  final bool isNotEmpty;
+
+  @override
+  RouteMatch get last => _matches.last;
 
   @override
   bool operator ==(Object other) {
@@ -177,11 +211,20 @@ class UnmodifiableRouteMatchList {
     }
     return listEquals(other._matches, _matches) &&
         other._uri == _uri &&
-        mapEquals(other._pathParameters, _pathParameters);
+        mapEquals(other.pathParameters, pathParameters);
   }
 
   @override
-  int get hashCode => Object.hash(_matches, _uri, _pathParameters);
+  int get hashCode => Object.hash(_matches, _uri, pathParameters);
+
+  @override
+  void push(RouteMatch match) => throw UnimplementedError();
+
+  @override
+  void remove(RouteMatch match) => throw UnimplementedError();
+
+  @override
+  UnmodifiableRouteMatchList unmodifiableMatchList() => this;
 }
 
 /// An error that occurred during matching.

@@ -2403,8 +2403,9 @@ void main() {
       StatefulShellRouteState? routeState;
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) {
-            return factory.buildShell(
+          builder: (BuildContext context, GoRouterState state,
+              ShellNavigatorBuilder navigatorBuilder) {
+            return navigatorBuilder.buildStatefulShell(context, state,
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -2927,8 +2928,9 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) {
-            return factory.buildShell(
+          builder: (BuildContext context, GoRouterState state,
+              ShellNavigatorBuilder navigatorBuilder) {
+            return navigatorBuilder.buildStatefulShell(context, state,
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3038,8 +3040,9 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) {
-            return factory.buildShell(
+          builder: (BuildContext context, GoRouterState state,
+              ShellNavigatorBuilder navigatorBuilder) {
+            return navigatorBuilder.buildStatefulShell(context, state,
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3113,8 +3116,9 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) {
-            return factory.buildShell(
+          builder: (BuildContext context, GoRouterState state,
+              ShellNavigatorBuilder navigatorBuilder) {
+            return navigatorBuilder.buildStatefulShell(context, state,
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3200,8 +3204,9 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) {
-            return factory.buildShell(
+          builder: (BuildContext context, GoRouterState state,
+              ShellNavigatorBuilder navigatorBuilder) {
+            return navigatorBuilder.buildStatefulShell(context, state,
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3261,8 +3266,9 @@ void main() {
               Text('Common - ${state.extra}'),
         ),
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) {
-            return factory.buildShell(
+          builder: (BuildContext context, GoRouterState state,
+              ShellNavigatorBuilder navigatorBuilder) {
+            return navigatorBuilder.buildStatefulShell(context, state,
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3317,6 +3323,16 @@ void main() {
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> b1NavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'b1');
+      final GlobalKey<NavigatorState> b2NavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'b2');
+      final GlobalKey<NavigatorState> b3NavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'b3');
+      final GlobalKey<NavigatorState> b4NavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'b4');
+      final GlobalKey<NavigatorState> b5NavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'b5');
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyA =
           GlobalKey<DummyStatefulWidgetState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyB =
@@ -3330,28 +3346,33 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) => factory.dummy(),
+          builder: mockStatefulShellBuilder,
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(routes: <RouteBase>[
-              GoRoute(
-                path: '/a',
-                builder: (BuildContext context, GoRouterState state) =>
-                    DummyStatefulWidget(key: statefulWidgetKeyA),
-              ),
-            ]),
-            StatefulShellBranch(routes: <RouteBase>[
-              GoRoute(
-                path: '/b',
-                builder: (BuildContext context, GoRouterState state) =>
-                    DummyStatefulWidget(key: statefulWidgetKeyB),
-              ),
-            ]),
+            StatefulShellBranch(
+                navigatorKey: b1NavigatorKey,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/a',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DummyStatefulWidget(key: statefulWidgetKeyA),
+                  ),
+                ]),
+            StatefulShellBranch(
+                navigatorKey: b2NavigatorKey,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DummyStatefulWidget(key: statefulWidgetKeyB),
+                  ),
+                ]),
           ],
         ),
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) => factory.dummy(),
+          builder: mockStatefulShellBuilder,
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
+              navigatorKey: b3NavigatorKey,
               preload: true,
               routes: <RouteBase>[
                 GoRoute(
@@ -3362,6 +3383,7 @@ void main() {
               ],
             ),
             StatefulShellBranch(
+              navigatorKey: b4NavigatorKey,
               preload: true,
               routes: <RouteBase>[
                 GoRoute(
@@ -3372,6 +3394,7 @@ void main() {
               ],
             ),
             StatefulShellBranch(
+              navigatorKey: b5NavigatorKey,
               preload: true,
               routes: <RouteBase>[
                 GoRoute(
@@ -3424,8 +3447,9 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) {
-            return factory.buildShell(
+          builder: (BuildContext context, GoRouterState state,
+              ShellNavigatorBuilder navigatorBuilder) {
+            return navigatorBuilder.buildStatefulShell(context, state,
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3521,8 +3545,9 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) {
-            return factory.buildShell(
+          builder: (BuildContext context, GoRouterState state,
+              ShellNavigatorBuilder navigatorBuilder) {
+            return navigatorBuilder.buildStatefulShell(context, state,
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3590,8 +3615,9 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute(
-          builder: (StatefulShellFactory factory) {
-            return factory.buildShell(
+          builder: (BuildContext context, GoRouterState state,
+              ShellNavigatorBuilder navigatorBuilder) {
+            return navigatorBuilder.buildStatefulShell(context, state,
                 (BuildContext context, GoRouterState state, Widget child) {
               routeState = StatefulShellRouteState.of(context);
               return child;
@@ -3779,9 +3805,7 @@ void main() {
             initialLocation: '/a',
             routes: <RouteBase>[
               StatefulShellRoute(
-                builder: (StatefulShellFactory factory) {
-                  return factory.dummy();
-                },
+                builder: mockStatefulShellBuilder,
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(routes: <GoRoute>[
                     GoRoute(

@@ -160,10 +160,8 @@ void main() {
         const <String, String>{},
       );
 
-      final UnmodifiableRouteMatchList list1 =
-          list.unmodifiableRouteMatchList();
-      final UnmodifiableRouteMatchList list2 =
-          list.unmodifiableRouteMatchList();
+      final UnmodifiableRouteMatchList list1 = list.unmodifiableMatchList();
+      final UnmodifiableRouteMatchList list2 = list.unmodifiableMatchList();
 
       expect(list1, equals(list2));
     });

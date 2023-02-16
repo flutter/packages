@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../go_router.dart';
-import 'matching.dart';
 import 'misc/errors.dart';
 import 'misc/stateful_navigation_shell.dart';
 
@@ -24,9 +23,7 @@ class StatefulShellRouteState {
     required this.route,
     required this.branchStates,
     required this.currentIndex,
-    required void Function(
-            StatefulShellBranchState, UnmodifiableRouteMatchList?)
-        switchActiveBranch,
+    required void Function(StatefulShellBranchState, bool) switchActiveBranch,
     required void Function(StatefulShellBranchState? branchState,
             bool navigateToDefaultLocation)
         resetState,
@@ -66,8 +63,7 @@ class StatefulShellRouteState {
   GlobalKey<NavigatorState> get currentNavigatorKey =>
       currentBranchState.branch.navigatorKey;
 
-  final void Function(StatefulShellBranchState, UnmodifiableRouteMatchList?)
-      _switchActiveBranch;
+  final void Function(StatefulShellBranchState, bool) _switchActiveBranch;
 
   final void Function(
           StatefulShellBranchState? branchState, bool navigateToDefaultLocation)
@@ -130,13 +126,13 @@ class StatefulShellRouteState {
       name: name,
       index: index,
     );
-    _switchActiveBranch(state, resetLocation ? null : state._matchList);
+    _switchActiveBranch(state, resetLocation);
   }
 
   /// Refreshes this StatefulShellRouteState by rebuilding the state for the
   /// current location.
   void refresh() {
-    _switchActiveBranch(currentBranchState, currentBranchState._matchList);
+    _switchActiveBranch(currentBranchState, true);
   }
 
   /// Resets this StatefulShellRouteState by clearing all navigation state of
@@ -208,18 +204,18 @@ class StatefulShellBranchState {
     required this.branch,
     required this.child,
     this.isLoaded = false,
-    UnmodifiableRouteMatchList? matchList,
-  }) : _matchList = matchList;
+    this.routeState,
+  });
 
   /// Constructs a copy of this [StatefulShellBranchState], with updated values for
   /// some of the fields.
   StatefulShellBranchState copy(
-      {Widget? child, bool? isLoaded, UnmodifiableRouteMatchList? matchList}) {
+      {Widget? child, bool? isLoaded, GoRouterState? routeState}) {
     return StatefulShellBranchState(
       branch: branch,
       child: child ?? this.child,
       isLoaded: isLoaded ?? this.isLoaded,
-      matchList: matchList ?? _matchList,
+      routeState: routeState ?? this.routeState,
     );
   }
 
@@ -235,8 +231,8 @@ class StatefulShellBranchState {
   /// the [StatefulShellRoute] is ignored (i.e. not added to the widget tree).
   final Widget child;
 
-  /// The current navigation stack for the branch.
-  final UnmodifiableRouteMatchList? _matchList;
+  /// The current GoRouterState associated with the branch.
+  final GoRouterState? routeState;
 
   /// Returns true if this branch has been loaded (i.e. visited once or
   /// pre-loaded).
@@ -252,20 +248,14 @@ class StatefulShellBranchState {
     }
     return other.branch == branch &&
         other.child == child &&
-        other._matchList == _matchList;
+        other.routeState == routeState;
   }
 
   @override
-  int get hashCode => Object.hash(branch, child, _matchList);
+  int get hashCode => Object.hash(branch, child, routeState);
 
   /// Gets the state for the current branch of the nearest stateful shell route
   /// in the Widget tree.
   static StatefulShellBranchState of(BuildContext context) =>
       StatefulShellRouteState.of(context).currentBranchState;
-}
-
-/// Helper extension on [StatefulShellBranchState], for internal use.
-extension StatefulShellBranchStateHelper on StatefulShellBranchState {
-  /// The current navigation stack for the branch.
-  UnmodifiableRouteMatchList? get matchList => _matchList;
 }

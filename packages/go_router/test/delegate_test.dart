@@ -64,7 +64,7 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
                     builder: (_, __) => const DummyStatefulWidget()),
               ]),
         ]),
-      ], builder: (StatefulShellFactory factory) => factory.dummy()),
+      ], builder: mockStatefulShellBuilder),
     ],
   );
   await tester.pumpWidget(MaterialApp.router(

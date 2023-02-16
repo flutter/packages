@@ -11,9 +11,11 @@ export 'src/configuration.dart'
         GoRoute,
         GoRouterState,
         RouteBase,
+        ShellNavigatorBuilder,
         ShellRoute,
         StatefulShellBranch,
         StatefulShellBranchState,
+        StatefulShellNavigationBuilder,
         StatefulShellRoute,
         StatefulShellRouteState;
 export 'src/misc/extensions.dart';
@@ -26,9 +28,8 @@ export 'src/typedefs.dart'
         GoRouterPageBuilder,
         GoRouterRedirect,
         GoRouterWidgetBuilder,
-        StatefulShellFactory,
         ShellRouteBuilder,
         ShellRoutePageBuilder,
         ShellBodyWidgetBuilder,
-        StatefulShellRouteBuilder,
-        StatefulShellRoutePageBuilder;
+        ShellRouteNavigationBuilder,
+        ShellRouteNavigationPageBuilder;
