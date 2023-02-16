@@ -168,7 +168,7 @@ Future<int> runPigeon({
     copyrightHeader: './copyright_header.txt',
     dartOut: dartOut,
     dartTestOut: dartTestOut,
-    dartOptions: DartOptions(),
+    dartOptions: const DartOptions(),
     cppHeaderOut: cppHeaderOut,
     cppSourceOut: cppSourceOut,
     cppOptions: CppOptions(namespace: cppNamespace),
