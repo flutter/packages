@@ -420,7 +420,7 @@ public class MainActivityTest {
       );
     });
 
-    test('fails for packages with no androidTest directory', () async {
+    test('fails for plugins with no androidTest directory', () async {
       createFakePlugin('plugin', packagesDir, extraFiles: <String>[
         'example/integration_test/foo_test.dart',
         'example/android/gradlew',
@@ -448,6 +448,30 @@ public class MainActivityTest {
           contains('The following packages had errors:'),
           contains('plugin:\n'
               '    No tests ran (use --exclude if this is intentional).'),
+        ]),
+      );
+    });
+
+    test('skips for non-plugin packages with no androidTest directory',
+        () async {
+      createFakePackage('a_package', packagesDir, extraFiles: <String>[
+        'example/integration_test/foo_test.dart',
+        'example/android/gradlew',
+      ]);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'firebase-test-lab',
+        '--device',
+        'model=redfin,version=30',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for a_package'),
+          contains('No androidTest directory found.'),
+          contains('No examples support Android.'),
+          contains('Skipped 1 package'),
         ]),
       );
     });

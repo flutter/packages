@@ -396,7 +396,7 @@ abstract class GeneratorAdapter {
 DartOptions _dartOptionsWithCopyrightHeader(
     DartOptions? dartOptions, String? copyrightHeader,
     {String? dartOutPath, String? testOutPath}) {
-  dartOptions = dartOptions ?? DartOptions();
+  dartOptions = dartOptions ?? const DartOptions();
   return dartOptions.merge(DartOptions(
       sourceOutPath: dartOutPath,
       testOutPath: testOutPath,
