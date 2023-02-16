@@ -23,6 +23,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @class AllTypes;
 @class AllNullableTypes;
 @class AllNullableTypesWrapper;
+@class TestMessage;
 
 @interface AllTypes : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -89,6 +90,12 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithValues:(AllNullableTypes *)values;
 @property(nonatomic, strong) AllNullableTypes *values;
+@end
+
+/// A data class containing a List, used in unit tests.
+@interface TestMessage : NSObject
++ (instancetype)makeWithTestList:(nullable NSArray *)testList;
+@property(nonatomic, strong, nullable) NSArray *testList;
 @end
 
 /// The codec used by HostIntegrationCoreApi.
@@ -388,6 +395,12 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
              completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                   FlutterError *_Nullable))completion;
+/// A no-op function taking no arguments and returning no value, to sanity
+/// test basic asynchronous calling.
+- (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Returns the passed in generic Object asynchronously.
+- (void)echoAsyncString:(NSString *)aString
+             completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by HostTrivialApi.
@@ -400,5 +413,28 @@ NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void);
 
 extern void HostTrivialApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                                 NSObject<HostTrivialApi> *_Nullable api);
+
+/// The codec used by HostSmallApi.
+NSObject<FlutterMessageCodec> *HostSmallApiGetCodec(void);
+
+/// A simple API implemented in some unit tests.
+@protocol HostSmallApi
+- (void)echoString:(NSString *)aString
+        completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)voidVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+@end
+
+extern void HostSmallApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+                              NSObject<HostSmallApi> *_Nullable api);
+
+/// The codec used by FlutterSmallApi.
+NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void);
+
+/// A simple API called in some unit tests.
+@interface FlutterSmallApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (void)echoWrappedList:(TestMessage *)msg
+             completion:(void (^)(TestMessage *_Nullable, FlutterError *_Nullable))completion;
+@end
 
 NS_ASSUME_NONNULL_END
