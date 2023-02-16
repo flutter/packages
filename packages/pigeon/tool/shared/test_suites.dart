@@ -220,13 +220,8 @@ Future<int> _runFlutterUnitTests() async {
     // they are intended to cover is in core_tests.dart (or, if necessary in
     // the short term due to limitations in non-Dart generators, a single other
     // file). They aren't being unit tested, only analyzed.
-    'host2flutter',
     'list',
     'message',
-    'void_arg_flutter',
-    'void_arg_host',
-    'voidflutter',
-    'voidhost',
   ];
   final int generateCode = await _generateDart(<String, String>{
     for (final String name in inputPigeons)
