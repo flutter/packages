@@ -52,7 +52,6 @@ Future<int> generatePigeons({required String baseDir}) async {
     'core_tests',
     'enum_args',
     'enum',
-    'java_double_host_api',
     'message',
     'multiple_arity',
     'non_null_fields',

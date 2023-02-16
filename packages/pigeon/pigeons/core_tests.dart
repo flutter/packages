@@ -557,6 +557,10 @@ abstract class FlutterIntegrationCoreApi {
 }
 
 /// An API that can be implemented for minimal, compile-only tests.
+//
+// This is also here to test that multiple host APIs can be generated
+// successfully in all languages (e.g., in Java where it requires having a
+// wrapper class).
 @HostApi()
 abstract class HostTrivialApi {
   void noop();
