@@ -35,7 +35,6 @@ String _snakeToPascalCase(String snake) {
 // https://github.com/flutter/flutter/issues/115168.
 String _javaFilenameForName(String inputName) {
   const Map<String, String> specialCases = <String, String>{
-    'android_unittests': 'Pigeon',
     'message': 'MessagePigeon',
   };
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
@@ -45,7 +44,6 @@ Future<int> generatePigeons({required String baseDir}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const List<String> inputs = <String>[
-    'android_unittests',
     'background_platform_channels',
     'core_tests',
     'enum',

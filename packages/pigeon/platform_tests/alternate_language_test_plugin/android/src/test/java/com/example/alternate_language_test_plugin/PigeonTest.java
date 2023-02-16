@@ -7,39 +7,40 @@ package com.example.alternate_language_test_plugin;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import com.example.alternate_language_test_plugin.CoreTests.HostSmallApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class PigeonTest {
   @Test
   public void clearsHandler() {
-    Pigeon.AndroidApi mockApi = mock(Pigeon.AndroidApi.class);
+    HostSmallApi mockApi = mock(HostSmallApi.class);
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    Pigeon.AndroidApi.setup(binaryMessenger, mockApi);
+    HostSmallApi.setup(binaryMessenger, mockApi);
     ArgumentCaptor<String> channelName = ArgumentCaptor.forClass(String.class);
-    verify(binaryMessenger).setMessageHandler(channelName.capture(), isNotNull());
-    Pigeon.AndroidApi.setup(binaryMessenger, null);
-    verify(binaryMessenger).setMessageHandler(eq(channelName.getValue()), isNull());
+    verify(binaryMessenger, atLeast(1)).setMessageHandler(channelName.capture(), isNotNull());
+    HostSmallApi.setup(binaryMessenger, null);
+    verify(binaryMessenger, atLeast(1)).setMessageHandler(eq(channelName.getValue()), isNull());
   }
 
-  /** Causes an exception in the handler by passing in null when a AndroidSetRequest is expected. */
+  /** Causes an exception in the handler by passing in null when a non-null value is expected. */
   @Test
   public void errorMessage() {
-    Pigeon.AndroidApi mockApi = mock(Pigeon.AndroidApi.class);
+    HostSmallApi mockApi = mock(HostSmallApi.class);
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    Pigeon.AndroidApi.setup(binaryMessenger, mockApi);
+    HostSmallApi.setup(binaryMessenger, mockApi);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
-    verify(binaryMessenger).setMessageHandler(anyString(), handler.capture());
-    MessageCodec<Object> codec = Pigeon.AndroidApi.getCodec();
+    verify(binaryMessenger, atLeast(1)).setMessageHandler(anyString(), handler.capture());
+    MessageCodec<Object> codec = HostSmallApi.getCodec();
     ByteBuffer message = codec.encodeMessage(null);
     handler
-        .getValue()
+        .getAllValues()
+        .get(0) // "echo" is the first method.
         .onMessage(
             message,
             (bytes) -> {
