@@ -137,7 +137,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
       location: _defaultBranchLocation(branchState.branch),
       parentShellRoute: widget.shellRoute,
       navigatorKey: branchState.navigatorKey,
-      // TODO, observers,
+      observers: branchState.branch.observers,
       restorationScopeId: branchState.branch.restorationScopeId,
     );
 
@@ -183,10 +183,11 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
     final int index = _findCurrentIndex();
     final StatefulShellBranch branch = _branches[index];
 
-    // TODO: Observers
-    final Widget currentNavigator = widget.navigatorBuilder
-        .buildNavigatorForCurrentRoute(
-            restorationScopeId: branch.restorationScopeId);
+    final Widget currentNavigator =
+        widget.navigatorBuilder.buildNavigatorForCurrentRoute(
+      observers: branch.observers,
+      restorationScopeId: branch.restorationScopeId,
+    );
 
     // Update or create a new StatefulShellBranchState for the current branch
     // (i.e. the arguments currently provided to the Widget).

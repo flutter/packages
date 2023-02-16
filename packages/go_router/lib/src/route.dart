@@ -539,7 +539,7 @@ abstract class ShellNavigatorBuilder {
     Object? extra,
     required GlobalKey<NavigatorState> navigatorKey,
     required ShellRouteBase parentShellRoute,
-    List<NavigatorObserver> observers = const <NavigatorObserver>[],
+    List<NavigatorObserver>? observers,
     String? restorationScopeId,
   });
 }
@@ -826,6 +826,7 @@ class StatefulShellBranch {
     this.defaultLocation,
     this.name,
     this.restorationScopeId,
+    this.observers,
     this.preload = false,
   }) : navigatorKey = navigatorKey ??
             GlobalKey<NavigatorState>(
@@ -868,6 +869,11 @@ class StatefulShellBranch {
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
+
+  /// The observers for this branch.
+  ///
+  /// The observers parameter is used by the [Navigator] built for this branch.
+  final List<NavigatorObserver>? observers;
 
   @override
   bool operator ==(Object other) {

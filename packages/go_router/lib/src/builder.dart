@@ -143,8 +143,8 @@ class RouteBuilder {
     final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
         <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
     try {
-      _buildRecursive(context, matchList.unmodifiableMatchList(), 0, onPopPage,
-          routerNeglect, keyToPage, navigatorKey, registry);
+      _buildRecursive(context, matchList.unmodifiableMatchList(), startIndex,
+          onPopPage, routerNeglect, keyToPage, navigatorKey, registry);
 
       // Every Page should have a corresponding RouteMatch.
       assert(keyToPage.values.flattened
@@ -161,7 +161,8 @@ class RouteBuilder {
     }
   }
 
-  /// Builds the pages for the given [RouteMatchList].
+  /// Builds a preloaded nested [Navigator], containing a sub-tree (beginning
+  /// at startIndex) of the provided route match list.
   Widget buildPreloadedNestedNavigator(
       BuildContext context,
       RouteMatchList matchList,
@@ -169,11 +170,13 @@ class RouteBuilder {
       PopPageCallback onPopPage,
       bool routerNeglect,
       GlobalKey<NavigatorState> navigatorKey,
-      {List<NavigatorObserver> observers = const <NavigatorObserver>[],
+      {List<NavigatorObserver>? observers,
       String? restorationScopeId}) {
     try {
       final Map<Page<Object?>, GoRouterState> newRegistry =
           <Page<Object?>, GoRouterState>{};
+      final HeroController heroController = _goHeroCache.putIfAbsent(
+          navigatorKey, () => _getHeroController(context));
       final Widget result = RouteNavigatorBuilder.buildNavigator(
         onPopPage,
         buildPages(context, matchList, startIndex, onPopPage, routerNeglect,
@@ -181,6 +184,7 @@ class RouteBuilder {
         navigatorKey,
         observers: observers,
         restorationScopeId: restorationScopeId,
+        heroController: heroController,
       );
       _registry.updateRegistry(newRegistry, replace: false);
       return result;

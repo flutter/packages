@@ -24,6 +24,7 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
   @override
   final ShellRouteBase currentRoute;
 
+  /// The hero controller.
   final HeroController heroController;
 
   @override
@@ -36,20 +37,29 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
   final PopPageCallback onPopPage;
 
   /// Builds a navigator.
-  static Navigator buildNavigator(
+  static Widget buildNavigator(
     PopPageCallback onPopPage,
     List<Page<Object?>> pages,
     Key? navigatorKey, {
     List<NavigatorObserver>? observers,
     String? restorationScopeId,
+    HeroController? heroController,
   }) {
-    return Navigator(
+    final Widget navigator = Navigator(
       key: navigatorKey,
       restorationScopeId: restorationScopeId,
       pages: pages,
       observers: observers ?? const <NavigatorObserver>[],
       onPopPage: onPopPage,
     );
+    if (heroController != null) {
+      return HeroControllerScope(
+        controller: heroController,
+        child: navigator,
+      );
+    } else {
+      return navigator;
+    }
   }
 
   @override
@@ -58,15 +68,14 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
     String? restorationScopeId,
     GlobalKey<NavigatorState>? navigatorKey,
   }) {
-    return HeroControllerScope(
-        controller: heroController,
-        child: buildNavigator(
-          onPopPage,
-          pages,
-          navigatorKey ?? navigatorKeyForCurrentRoute,
-          observers: observers,
-          restorationScopeId: restorationScopeId,
-        ));
+    return buildNavigator(
+      onPopPage,
+      pages,
+      navigatorKey ?? navigatorKeyForCurrentRoute,
+      observers: observers,
+      restorationScopeId: restorationScopeId,
+      heroController: heroController,
+    );
   }
 
   @override
@@ -76,7 +85,7 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
     Object? extra,
     required GlobalKey<NavigatorState> navigatorKey,
     required ShellRouteBase parentShellRoute,
-    List<NavigatorObserver> observers = const <NavigatorObserver>[],
+    List<NavigatorObserver>? observers,
     String? restorationScopeId,
   }) {
     // Parse a RouteMatchList from location and handle any redirects
@@ -93,7 +102,6 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
       final int parentShellRouteIndex = matchList.matches
           .indexWhere((RouteMatch e) => e.route == parentShellRoute);
       assert(parentShellRouteIndex >= 0);
-
       return routeBuilder.buildPreloadedNestedNavigator(
         context,
         matchList,
@@ -102,6 +110,7 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
         true,
         navigatorKey,
         restorationScopeId: restorationScopeId,
+        observers: observers,
       );
     }
 

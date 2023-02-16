@@ -154,7 +154,7 @@ class UnmodifiableRouteMatchList implements RouteMatchList {
   /// UnmodifiableRouteMatchList constructor.
   UnmodifiableRouteMatchList.from(RouteMatchList routeMatchList)
       : _matches = List<RouteMatch>.unmodifiable(routeMatchList.matches),
-        _uri = routeMatchList.uri,
+        __uri = routeMatchList.uri,
         fullpath = routeMatchList.fullpath,
         pathParameters =
             Map<String, String>.unmodifiable(routeMatchList.pathParameters),
@@ -170,10 +170,11 @@ class UnmodifiableRouteMatchList implements RouteMatchList {
       _uri,
       Map<String, String>.from(pathParameters));
 
+  final Uri __uri;
   @override
-  Uri get uri => _uri;
+  Uri get uri => __uri;
   @override
-  final Uri _uri;
+  Uri get _uri => __uri;
   @override
   set _uri(Uri uri) => throw UnimplementedError();
 
