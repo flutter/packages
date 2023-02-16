@@ -690,7 +690,8 @@ void main() {
         'Handles the Android back button when parentNavigatorKey is set to the root navigator',
         (WidgetTester tester) async {
       final List<MethodCall> log = <MethodCall>[];
-      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+          .defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.platform,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -732,7 +733,8 @@ void main() {
     testWidgets("Handles the Android back button when ShellRoute can't pop",
         (WidgetTester tester) async {
       final List<MethodCall> log = <MethodCall>[];
-      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+          .defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.platform,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -796,7 +798,8 @@ void main() {
       'Handles the Android back button when a second Shell has a GoRoute with parentNavigator key',
       (WidgetTester tester) async {
     final List<MethodCall> log = <MethodCall>[];
-    TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+        .defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform,
             (MethodCall methodCall) async {
       log.add(methodCall);
@@ -885,7 +888,8 @@ void main() {
   group('report correct url', () {
     final List<MethodCall> log = <MethodCall>[];
     setUp(() {
-      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+          .defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.navigation,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -893,7 +897,8 @@ void main() {
       });
     });
     tearDown(() {
-      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+          .defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.navigation, null);
       log.clear();
     });
@@ -2766,6 +2771,21 @@ void main() {
       );
       key.currentContext!.pop();
       expect(router.popped, true);
+      expect(router.poppedResult, null);
+    });
+
+    testWidgets('calls [pop] on closest GoRouter with result',
+        (WidgetTester tester) async {
+      final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.pop('result');
+      expect(router.popped, true);
+      expect(router.poppedResult, 'result');
     });
   });
 
@@ -4058,6 +4078,62 @@ void main() {
         final bool? result = await resultFuture;
         expect(result, isTrue);
       });
+
+      testWidgets('Triggers a Hero inside a ShellRoute',
+          (WidgetTester tester) async {
+        final UniqueKey heroKey = UniqueKey();
+        const String kHeroTag = 'hero';
+
+        final List<RouteBase> routes = <RouteBase>[
+          ShellRoute(
+            builder: (BuildContext context, GoRouterState state, Widget child) {
+              return child;
+            },
+            routes: <GoRoute>[
+              GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, _) {
+                    return Hero(
+                      tag: kHeroTag,
+                      child: Container(),
+                      flightShuttleBuilder: (_, __, ___, ____, _____) {
+                        return Container(key: heroKey);
+                      },
+                    );
+                  }),
+              GoRoute(
+                  path: '/b',
+                  builder: (BuildContext context, _) {
+                    return Hero(
+                      tag: kHeroTag,
+                      child: Container(),
+                    );
+                  }),
+            ],
+          )
+        ];
+        final GoRouter router =
+            await createRouter(routes, tester, initialLocation: '/a');
+
+        // check that flightShuttleBuilder widget is not yet present
+        expect(find.byKey(heroKey), findsNothing);
+
+        // start navigation
+        router.go('/b');
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 10));
+        // check that flightShuttleBuilder widget is visible
+        expect(find.byKey(heroKey), isOnstage);
+        // // Waits for the animation finishes.
+        await tester.pumpAndSettle();
+        expect(find.byKey(heroKey), findsNothing);
+      });
     });
   });
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+T? _ambiguate<T>(T? value) => value;

@@ -94,7 +94,14 @@ String _stateValueAccess(ParameterElement element) {
   }
 
   if (element.isOptional) {
-    return 'queryParams[${escapeDartString(element.name.kebab)}]';
+    String value = 'queryParams[${escapeDartString(element.name.kebab)}]';
+    if (element.hasDefaultValue) {
+      if (element.type.isNullableType) {
+        throw NullableDefaultValueError(element);
+      }
+      value += ' ?? ${element.defaultValueCode!}';
+    }
+    return value;
   }
 
   throw InvalidGenerationSourceError(
@@ -106,8 +113,10 @@ String _stateValueAccess(ParameterElement element) {
 abstract class _TypeHelper {
   const _TypeHelper();
 
+  /// Decodes the value from its string representation in the URL.
   String _decode(ParameterElement parameterElement);
 
+  /// Encodes the value from its string representation in the URL.
   String _encode(String fieldName, DartType type);
 
   bool _matchesType(DartType type);
@@ -253,13 +262,16 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
   String _decode(ParameterElement parameterElement) {
     final DartType paramType = parameterElement.type;
 
-    if (paramType.isNullableType) {
-      return '$convertMapValueHelperName('
+    if (!parameterElement.isRequired) {
+      String decoded = '$convertMapValueHelperName('
           '${escapeDartString(parameterElement.name.kebab)}, '
           'state.queryParams, '
           '${helperName(paramType)})';
+      if (parameterElement.hasDefaultValue) {
+        decoded += ' ?? ${parameterElement.defaultValueCode!}';
+      }
+      return decoded;
     }
-
     return '${helperName(paramType)}'
         '(state.${_stateValueAccess(parameterElement)})';
   }
@@ -276,4 +288,16 @@ extension ParameterElementExtension on ParameterElement {
 
   /// Returns `true` if `this` has a name that matches [extraFieldName];
   bool get isExtraField => name == extraFieldName;
+}
+
+/// An error thrown when a default value is used with a nullable type.
+class NullableDefaultValueError extends InvalidGenerationSourceError {
+  /// An error thrown when a default value is used with a nullable type.
+  NullableDefaultValueError(
+    Element element,
+  ) : super(
+          'Default value used with a nullable type. Only non-nullable type can have a default value.',
+          todo: 'Remove the default value or make the type non-nullable.',
+          element: element,
+        );
 }

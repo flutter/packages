@@ -36,7 +36,7 @@ class TestScaffold extends StatefulWidget {
     this.isAnimated = true,
   });
 
-  final int initialIndex;
+  final int? initialIndex;
   final bool isAnimated;
 
   static const List<NavigationDestination> destinations =
@@ -63,7 +63,7 @@ class TestScaffold extends StatefulWidget {
 }
 
 class TestScaffoldState extends State<TestScaffold> {
-  late int index = widget.initialIndex;
+  late int? index = widget.initialIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +86,9 @@ class TestScaffoldState extends State<TestScaffold> {
       smallSecondaryBody: (_) => Container(color: Colors.red),
       secondaryBody: (_) => Container(color: Colors.green),
       largeSecondaryBody: (_) => Container(color: Colors.blue),
+      leadingExtendedNavRail: const Text('leading_extended'),
+      leadingUnextendedNavRail: const Text('leading_unextended'),
+      trailingNavRail: const Text('trailing'),
     );
   }
 }
@@ -107,7 +110,7 @@ enum SimulatedLayout {
   Size get size => Size(_width, _height);
 
   MaterialApp app({
-    int initialIndex = 0,
+    int? initialIndex,
     bool animations = true,
   }) {
     return MaterialApp(
@@ -123,6 +126,9 @@ enum SimulatedLayout {
 
   MediaQuery get slot {
     return MediaQuery(
+      // TODO(stuartmorgan): Replace with .fromView once this package requires
+      // Flutter 3.8+.
+      // ignore: deprecated_member_use
       data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
           .copyWith(size: Size(_width, _height)),
       child: Theme(

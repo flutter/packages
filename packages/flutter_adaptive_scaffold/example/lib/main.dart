@@ -409,6 +409,8 @@ class _LargeComposeIcon extends StatelessWidget {
       child: Column(children: <Widget>[
         Container(
           padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
+          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+          // ignore: prefer_const_constructors
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const <Widget>[
@@ -439,8 +441,12 @@ class _LargeComposeIcon extends StatelessWidget {
           ),
           width: 200,
           height: 50,
+          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+          // ignore: prefer_const_constructors
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
+            // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+            // ignore: prefer_const_constructors
             child: Row(
               children: const <Widget>[
                 Icon(Icons.edit_outlined),

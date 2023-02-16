@@ -9,10 +9,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:markdown/markdown.dart' as md show version;
-
-// TODO(Zhiguang): delete this once the min version of pkg:markdown is updated
-final bool newMarkdown = md.version.compareTo('6.0.1') > 0;
 
 final TextTheme textTheme = Typography.material2018()
     .black
@@ -157,7 +153,7 @@ void expectTableSize(int rows, int columns) {
 
   expect(table.children.length, rows);
   for (int index = 0; index < rows; index++) {
-    expect(table.children[index].children!.length, columns);
+    expect(_ambiguate(table.children[index].children)!.length, columns);
   }
 }
 
@@ -212,3 +208,9 @@ class TestAssetBundle extends CachingAssetBundle {
     }
   }
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+T? _ambiguate<T>(T? value) => value;

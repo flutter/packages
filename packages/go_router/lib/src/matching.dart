@@ -141,6 +141,11 @@ class RouteMatchList {
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.firstOrNull?.error;
+
+  @override
+  String toString() {
+    return '${objectRuntimeType(this, 'RouteMatchList')}($fullpath)';
+  }
 }
 
 /// Unmodifiable version of [RouteMatchList].

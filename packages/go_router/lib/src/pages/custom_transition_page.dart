@@ -17,6 +17,7 @@ class CustomTransitionPage<T> extends Page<T> {
     required this.child,
     required this.transitionsBuilder,
     this.transitionDuration = const Duration(milliseconds: 300),
+    this.reverseTransitionDuration = const Duration(milliseconds: 300),
     this.maintainState = true,
     this.fullscreenDialog = false,
     this.opaque = true,
@@ -37,6 +38,12 @@ class CustomTransitionPage<T> extends Page<T> {
   ///
   /// Defaults to 300ms.
   final Duration transitionDuration;
+
+  /// A duration argument to customize the duration of the custom page
+  /// transition on pop.
+  ///
+  /// Defaults to 300ms.
+  final Duration reverseTransitionDuration;
 
   /// Whether the route should remain in memory when it is inactive.
   ///
@@ -107,6 +114,9 @@ class _CustomTransitionPageRoute<T> extends PageRoute<T> {
   CustomTransitionPage<T> get _page => settings as CustomTransitionPage<T>;
 
   @override
+  bool get barrierDismissible => _page.barrierDismissible;
+
+  @override
   Color? get barrierColor => _page.barrierColor;
 
   @override
@@ -114,6 +124,9 @@ class _CustomTransitionPageRoute<T> extends PageRoute<T> {
 
   @override
   Duration get transitionDuration => _page.transitionDuration;
+
+  @override
+  Duration get reverseTransitionDuration => _page.reverseTransitionDuration;
 
   @override
   bool get maintainState => _page.maintainState;

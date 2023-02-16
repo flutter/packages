@@ -1,3 +1,8 @@
+## 1.0.0
+
+* Updates version to 1.0 to reflect the level of API stability.
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 0.2.0+3
 
 * Returns null instead of throwing exception from getUserDirectory when xdg-user-dir executable is missing.

@@ -61,7 +61,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     }
     indent.writeln('// $generatedCodeWarning');
     indent.writeln('// $seeAlsoWarning');
-    indent.addln('');
+    indent.newln();
   }
 
   @override
@@ -77,18 +77,18 @@ import FlutterMacOS
 #error("Unsupported platform.")
 #endif
 ''');
-    indent.writeln('');
+    indent.newln();
   }
 
   @override
   void writeEnum(
       SwiftOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
-    indent.writeln('');
+    indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
     indent.write('enum ${anEnum.name}: Int ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
@@ -108,18 +108,18 @@ import FlutterMacOS
     const List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
-    indent.addln('');
+    indent.newln();
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
     indent.write('struct ${klass.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       getFieldsInSerializationOrder(klass).forEach((NamedType field) {
         _writeClassField(indent, field);
       });
 
-      indent.writeln('');
+      indent.newln();
       writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
           customEnumNames);
       writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
@@ -137,9 +137,9 @@ import FlutterMacOS
     Set<String> customEnumNames,
   ) {
     indent.write('func toList() -> [Any?] ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write('return ');
-      indent.scoped('[', ']', () {
+      indent.addScoped('[', ']', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final HostDatatype hostDatatype = _getHostDatatype(root, field);
           String toWriteValue = '';
@@ -173,7 +173,7 @@ import FlutterMacOS
     final String className = klass.name;
     indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(klass),
           (int index, final NamedType field) {
         final HostDatatype hostDatatype = _getHostDatatype(root, field);
@@ -186,7 +186,7 @@ import FlutterMacOS
               customClassNames.contains(field.type.baseName)) {
             indent.writeln('var ${field.name}: $fieldType? = nil');
             indent.write('if let ${field.name}List = $listValue as? [Any?] ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln(
                   '${field.name} = $fieldType.fromList(${field.name}List)');
             });
@@ -194,7 +194,7 @@ import FlutterMacOS
               customEnumNames.contains(field.type.baseName)) {
             indent.writeln('var ${field.name}: $fieldType? = nil');
             indent.write('if let ${field.name}RawValue = $listValue as? Int ');
-            indent.scoped('{', '}', () {
+            indent.addScoped('{', '}', () {
               indent.writeln(
                   '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
             });
@@ -216,9 +216,9 @@ import FlutterMacOS
         }
       });
 
-      indent.writeln('');
+      indent.newln();
       indent.write('return ');
-      indent.scoped('$className(', ')', () {
+      indent.addScoped('$className(', ')', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final String comma =
               getFieldsInSerializationOrder(klass).last == field ? '' : ',';
@@ -247,7 +247,7 @@ import FlutterMacOS
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
-      indent.addln('');
+      indent.newln();
     }
     super.writeApis(generatorOptions, root, indent);
   }
@@ -278,10 +278,10 @@ import FlutterMacOS
         generatorComments: generatedComments);
 
     indent.write('class ${api.name} ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
       indent.write('init(binaryMessenger: FlutterBinaryMessenger)');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('self.binaryMessenger = binaryMessenger');
       });
       final String codecName = _getCodecName(api);
@@ -289,11 +289,14 @@ import FlutterMacOS
       if (getCodecClasses(api, root).isNotEmpty) {
         codecArgumentString = ', codec: codec';
         indent.write('var codec: FlutterStandardMessageCodec ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           indent.writeln('return $codecName.shared');
         });
       }
       for (final Method func in api.methods) {
+        final _SwiftFunctionComponents components =
+            _SwiftFunctionComponents.fromMethod(func);
+
         final String channelName = makeChannelName(api, func);
         final String returnType = func.returnType.isVoid
             ? ''
@@ -309,8 +312,11 @@ import FlutterMacOS
         } else {
           final Iterable<String> argTypes = func.arguments
               .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
-          final Iterable<String> argLabels =
-              indexMap(func.arguments, _getArgumentName);
+          final Iterable<String> argLabels = indexMap(components.arguments,
+              (int index, _SwiftFunctionArgument argument) {
+            return argument.label ??
+                _getArgumentName(index, argument.namedType);
+          });
           final Iterable<String> argNames =
               indexMap(func.arguments, _getSafeArgumentName);
           sendArgument = '[${argNames.join(', ')}] as [Any?]';
@@ -322,23 +328,23 @@ import FlutterMacOS
                   '$label $name: $type').join(', ');
           if (func.returnType.isVoid) {
             indent.write(
-                'func ${func.name}($argsSignature, completion: @escaping () -> Void) ');
+                'func ${components.name}($argsSignature, completion: @escaping () -> Void) ');
           } else {
             indent.write(
-                'func ${func.name}($argsSignature, completion: @escaping ($returnType) -> Void) ');
+                'func ${components.name}($argsSignature, completion: @escaping ($returnType) -> Void) ');
           }
         }
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln(
               'let $channel = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
           indent.write('$channel.sendMessage($sendArgument) ');
           if (func.returnType.isVoid) {
-            indent.scoped('{ _ in', '}', () {
+            indent.addScoped('{ _ in', '}', () {
               indent.writeln('completion()');
             });
           } else {
-            indent.scoped('{ response in', '}', () {
+            indent.addScoped('{ response in', '}', () {
               indent.writeln(
                   'let result = ${_castForceUnwrap("response", func.returnType, root)}');
               indent.writeln('completion(result)');
@@ -369,7 +375,6 @@ import FlutterMacOS
     if (isCustomCodec) {
       _writeCodec(indent, api, root);
     }
-
     const List<String> generatedComments = <String>[
       ' Generated protocol from Pigeon that represents a handler of messages from Flutter.'
     ];
@@ -377,43 +382,47 @@ import FlutterMacOS
         generatorComments: generatedComments);
 
     indent.write('protocol $apiName ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
-        final List<String> argSignature = <String>[];
-        if (method.arguments.isNotEmpty) {
-          final Iterable<String> argTypes = method.arguments
-              .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
-          final Iterable<String> argNames =
-              method.arguments.map((NamedType e) => e.name);
-          argSignature.addAll(
-              map2(argTypes, argNames, (String argType, String argName) {
-            return '$argName: $argType';
-          }));
-        }
+        final _SwiftFunctionComponents components =
+            _SwiftFunctionComponents.fromMethod(method);
+        final List<String> argSignature =
+            components.arguments.map((_SwiftFunctionArgument argument) {
+          final String? label = argument.label;
+          final String name = argument.name;
+          final String type = _nullsafeSwiftTypeForDartType(argument.type);
+          return '${label == null ? '' : '$label '}$name: $type';
+        }).toList();
 
         final String returnType = method.returnType.isVoid
-            ? ''
+            ? 'Void'
             : _nullsafeSwiftTypeForDartType(method.returnType);
+
+        final String escapeType =
+            method.returnType.isVoid ? 'Void' : returnType;
+
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
 
         if (method.isAsynchronous) {
-          argSignature.add('completion: @escaping ($returnType) -> Void');
-          indent.writeln('func ${method.name}(${argSignature.join(', ')})');
+          argSignature.add(
+              'completion: @escaping (Result<$escapeType, Error>) -> Void');
+          indent.writeln('func ${components.name}(${argSignature.join(', ')})');
         } else if (method.returnType.isVoid) {
-          indent.writeln('func ${method.name}(${argSignature.join(', ')})');
+          indent.writeln(
+              'func ${components.name}(${argSignature.join(', ')}) throws');
         } else {
           indent.writeln(
-              'func ${method.name}(${argSignature.join(', ')}) -> $returnType');
+              'func ${components.name}(${argSignature.join(', ')}) throws -> $returnType');
         }
       }
     });
 
-    indent.addln('');
+    indent.newln();
     indent.writeln(
         '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
     indent.write('class ${apiName}Setup ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       final String codecName = _getCodecName(api);
       indent.writeln('$_docCommentPrefix The codec used by $apiName.');
       String codecArgumentString = '';
@@ -426,8 +435,11 @@ import FlutterMacOS
           '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
       indent.write(
           'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
+          final _SwiftFunctionComponents components =
+              _SwiftFunctionComponents.fromMethod(method);
+
           final String channelName = makeChannelName(api, method);
           final String varChannelName = '${method.name}Channel';
           addDocumentationComments(
@@ -436,47 +448,70 @@ import FlutterMacOS
           indent.writeln(
               'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
           indent.write('if let api = api ');
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             indent.write('$varChannelName.setMessageHandler ');
             final String messageVarName =
                 method.arguments.isNotEmpty ? 'message' : '_';
-            indent.scoped('{ $messageVarName, reply in', '}', () {
+            indent.addScoped('{ $messageVarName, reply in', '}', () {
               final List<String> methodArgument = <String>[];
-              if (method.arguments.isNotEmpty) {
+              if (components.arguments.isNotEmpty) {
                 indent.writeln('let args = message as! [Any?]');
-                enumerate(method.arguments, (int index, NamedType arg) {
-                  final String argName = _getSafeArgumentName(index, arg);
+                enumerate(components.arguments,
+                    (int index, _SwiftFunctionArgument arg) {
+                  final String argName =
+                      _getSafeArgumentName(index, arg.namedType);
                   final String argIndex = 'args[$index]';
                   indent.writeln(
                       'let $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
-                  methodArgument.add('${arg.name}: $argName');
+
+                  if (arg.label == '_') {
+                    methodArgument.add(argName);
+                  } else {
+                    methodArgument.add('${arg.label ?? arg.name}: $argName');
+                  }
                 });
               }
+              final String tryStatement = method.isAsynchronous ? '' : 'try ';
               final String call =
-                  'api.${method.name}(${methodArgument.join(', ')})';
+                  '${tryStatement}api.${components.name}(${methodArgument.join(', ')})';
               if (method.isAsynchronous) {
+                final String resultName =
+                    method.returnType.isVoid ? 'nil' : 'res';
+                final String successVariableInit =
+                    method.returnType.isVoid ? '' : '(let res)';
                 indent.write('$call ');
-                if (method.returnType.isVoid) {
-                  indent.scoped('{', '}', () {
-                    indent.writeln('reply(wrapResult(nil))');
+
+                indent.addScoped('{ result in', '}', () {
+                  indent.write('switch result ');
+                  indent.addScoped('{', '}', () {
+                    indent.writeln('case .success$successVariableInit:');
+                    indent.nest(1, () {
+                      indent.writeln('reply(wrapResult($resultName))');
+                    });
+                    indent.writeln('case .failure(let error):');
+                    indent.nest(1, () {
+                      indent.writeln('reply(wrapError(error))');
+                    });
                   });
-                } else {
-                  indent.scoped('{ result in', '}', () {
-                    indent.writeln('reply(wrapResult(result))');
-                  });
-                }
+                });
               } else {
-                if (method.returnType.isVoid) {
-                  indent.writeln(call);
-                  indent.writeln('reply(wrapResult(nil))');
-                } else {
-                  indent.writeln('let result = $call');
-                  indent.writeln('reply(wrapResult(result))');
-                }
+                indent.write('do ');
+                indent.addScoped('{', '}', () {
+                  if (method.returnType.isVoid) {
+                    indent.writeln(call);
+                    indent.writeln('reply(wrapResult(nil))');
+                  } else {
+                    indent.writeln('let result = $call');
+                    indent.writeln('reply(wrapResult(result))');
+                  }
+                }, addTrailingNewline: false);
+                indent.addScoped(' catch {', '}', () {
+                  indent.writeln('reply(wrapError(error))');
+                });
               }
             });
           }, addTrailingNewline: false);
-          indent.scoped(' else {', '}', () {
+          indent.addScoped(' else {', '}', () {
             indent.writeln('$varChannelName.setMessageHandler(nil)');
           });
         }
@@ -498,22 +533,22 @@ import FlutterMacOS
 
     // Generate Reader
     indent.write('private class $readerName: FlutterStandardReader ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       if (getCodecClasses(api, root).isNotEmpty) {
         indent.write('override func readValue(ofType type: UInt8) -> Any? ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           indent.write('switch type ');
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             for (final EnumeratedClass customClass
                 in getCodecClasses(api, root)) {
-              indent.write('case ${customClass.enumeration}:');
-              indent.scoped('', '', () {
-                indent.write(
+              indent.writeln('case ${customClass.enumeration}:');
+              indent.nest(1, () {
+                indent.writeln(
                     'return ${customClass.name}.fromList(self.readValue() as! [Any])');
               });
             }
-            indent.write('default:');
-            indent.scoped('', '', () {
+            indent.writeln('default:');
+            indent.nest(1, () {
               indent.writeln('return super.readValue(ofType: type)');
             });
           });
@@ -522,72 +557,82 @@ import FlutterMacOS
     });
 
     // Generate Writer
+    indent.newln();
     indent.write('private class $writerName: FlutterStandardWriter ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       if (getCodecClasses(api, root).isNotEmpty) {
         indent.write('override func writeValue(_ value: Any) ');
-        indent.scoped('{', '}', () {
+        indent.addScoped('{', '}', () {
           indent.write('');
           for (final EnumeratedClass customClass
               in getCodecClasses(api, root)) {
             indent.add('if let value = value as? ${customClass.name} ');
-            indent.scoped('{', '} else ', () {
+            indent.addScoped('{', '} else ', () {
               indent.writeln('super.writeByte(${customClass.enumeration})');
               indent.writeln('super.writeValue(value.toList())');
             }, addTrailingNewline: false);
           }
-          indent.scoped('{', '}', () {
+          indent.addScoped('{', '}', () {
             indent.writeln('super.writeValue(value)');
           });
         });
       }
     });
-    indent.writeln('');
+    indent.newln();
 
     // Generate ReaderWriter
     indent
         .write('private class $readerWriterName: FlutterStandardReaderWriter ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.write(
           'override func reader(with data: Data) -> FlutterStandardReader ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('return $readerName(data: data)');
       });
-      indent.writeln('');
+      indent.newln();
       indent.write(
           'override func writer(with data: NSMutableData) -> FlutterStandardWriter ');
-      indent.scoped('{', '}', () {
+      indent.addScoped('{', '}', () {
         indent.writeln('return $writerName(data: data)');
       });
     });
-    indent.writeln('');
+    indent.newln();
 
     // Generate Codec
     indent.write('class $codecName: FlutterStandardMessageCodec ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln(
           'static let shared = $codecName(readerWriter: $readerWriterName())');
     });
-    indent.addln('');
+    indent.newln();
   }
 
   void _writeWrapResult(Indent indent) {
-    indent.addln('');
+    indent.newln();
     indent.write('private func wrapResult(_ result: Any?) -> [Any?] ');
-    indent.scoped('{', '}', () {
+    indent.addScoped('{', '}', () {
       indent.writeln('return [result]');
     });
   }
 
   void _writeWrapError(Indent indent) {
-    indent.addln('');
-    indent.write('private func wrapError(_ error: FlutterError) -> [Any?] ');
-    indent.scoped('{', '}', () {
+    indent.newln();
+    indent.write('private func wrapError(_ error: Any) -> [Any?] ');
+    indent.addScoped('{', '}', () {
+      indent.write('if let flutterError = error as? FlutterError ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        indent.addScoped('[', ']', () {
+          indent.writeln('flutterError.code,');
+          indent.writeln('flutterError.message,');
+          indent.writeln('flutterError.details');
+        });
+      });
       indent.write('return ');
-      indent.scoped('[', ']', () {
-        indent.writeln('error.code,');
-        indent.writeln('error.message,');
-        indent.writeln('error.details');
+      indent.addScoped('[', ']', () {
+        indent.writeln(r'"\(error)",');
+        indent.writeln(r'"\(type(of: error))",');
+        indent.writeln(r'"Stacktrace: \(Thread.callStackSymbols)"');
       });
     });
   }
@@ -693,4 +738,88 @@ String _swiftTypeForDartType(TypeDeclaration type) {
 String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
   return '${_swiftTypeForDartType(type)}$nullSafe';
+}
+
+/// A class that represents a Swift function argument.
+///
+/// The [name] is the name of the argument.
+/// The [type] is the type of the argument.
+/// The [namedType] is the [NamedType] that this argument is generated from.
+/// The [label] is the label of the argument.
+class _SwiftFunctionArgument {
+  _SwiftFunctionArgument({
+    required this.name,
+    required this.type,
+    required this.namedType,
+    this.label,
+  });
+
+  final String name;
+  final TypeDeclaration type;
+  final NamedType namedType;
+  final String? label;
+}
+
+/// A class that represents a Swift function signature.
+///
+/// The [name] is the name of the function.
+/// The [arguments] are the arguments of the function.
+/// The [returnType] is the return type of the function.
+/// The [method] is the method that this function signature is generated from.
+class _SwiftFunctionComponents {
+  _SwiftFunctionComponents._({
+    required this.name,
+    required this.arguments,
+    required this.returnType,
+    required this.method,
+  });
+
+  /// Constructor that generates a [_SwiftFunctionComponents] from a [Method].
+  factory _SwiftFunctionComponents.fromMethod(Method method) {
+    if (method.swiftFunction.isEmpty) {
+      return _SwiftFunctionComponents._(
+        name: method.name,
+        returnType: method.returnType,
+        arguments: method.arguments
+            .map((NamedType field) => _SwiftFunctionArgument(
+                  name: field.name,
+                  type: field.type,
+                  namedType: field,
+                ))
+            .toList(),
+        method: method,
+      );
+    }
+
+    final String argsExtractor =
+        repeat(r'(\w+):', method.arguments.length).join();
+    final RegExp signatureRegex = RegExp(r'(\w+) *\(' + argsExtractor + r'\)');
+    final RegExpMatch match = signatureRegex.firstMatch(method.swiftFunction)!;
+
+    final Iterable<String> labels = match
+        .groups(List<int>.generate(
+            method.arguments.length, (int index) => index + 2))
+        .whereType();
+
+    return _SwiftFunctionComponents._(
+      name: match.group(1)!,
+      returnType: method.returnType,
+      arguments: map2(
+        method.arguments,
+        labels,
+        (NamedType field, String label) => _SwiftFunctionArgument(
+          name: field.name,
+          label: label == field.name ? null : label,
+          type: field.type,
+          namedType: field,
+        ),
+      ).toList(),
+      method: method,
+    );
+  }
+
+  final String name;
+  final List<_SwiftFunctionArgument> arguments;
+  final TypeDeclaration returnType;
+  final Method method;
 }

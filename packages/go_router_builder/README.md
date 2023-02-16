@@ -179,6 +179,23 @@ class LoginRoute extends GoRouteData {
 }
 ```
 
+### Default values
+
+For query parameters with a **non-nullable** type, you can define a default value:
+
+```dart
+class MyRoute extends GoRouteData {
+  MyRoute({this.queryParameter = 'defaultValue'});
+  final String from;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => MyScreen(from: from);
+}
+```
+
+A query parameter that equals to its default value is not included in the location.
+
+
 ## Extra parameter
 
 A route can consume an extra parameter by taking it as a typed constructor

@@ -449,6 +449,7 @@ class ShellRoute extends ShellRouteBase {
   ShellRoute({
     ShellRouteBuilder? builder,
     ShellRoutePageBuilder? pageBuilder,
+    this.observers,
     super.routes,
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
@@ -475,9 +476,8 @@ class ShellRoute extends ShellRouteBase {
     }
     return (BuildContext context, GoRouterState state,
         ShellNavigatorBuilder navigatorBuilder) {
-      // TODO: Observers
       final Widget navigator = navigatorBuilder.buildNavigatorForCurrentRoute(
-          restorationScopeId: restorationScopeId);
+          restorationScopeId: restorationScopeId, observers: observers);
       return _builder!(context, state, navigator);
     };
   }();
@@ -490,10 +490,16 @@ class ShellRoute extends ShellRouteBase {
     return (BuildContext context, GoRouterState state,
         ShellNavigatorBuilder navigatorBuilder) {
       final Widget navigator = navigatorBuilder.buildNavigatorForCurrentRoute(
-          restorationScopeId: restorationScopeId);
+          restorationScopeId: restorationScopeId, observers: observers);
       return _pageBuilder!(context, state, navigator);
     };
   }();
+
+  /// The observers for a shell route.
+  ///
+  /// The observers parameter is used by the [Navigator] built for this route.
+  /// sub-route's observers.
+  final List<NavigatorObserver>? observers;
 
   /// The [GlobalKey] to be used by the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
@@ -521,7 +527,7 @@ abstract class ShellNavigatorBuilder {
 
   /// Builds a [Navigator] for the current route.
   Widget buildNavigatorForCurrentRoute({
-    List<NavigatorObserver> observers = const <NavigatorObserver>[],
+    List<NavigatorObserver>? observers,
     String? restorationScopeId,
     GlobalKey<NavigatorState>? navigatorKey,
   });
