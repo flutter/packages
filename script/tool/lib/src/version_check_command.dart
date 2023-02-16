@@ -47,6 +47,9 @@ enum _CurrentVersionState {
   /// The version has changed, and the transition is invalid.
   invalidChange,
 
+  /// The package is new.
+  newPackage,
+
   /// There was an error determining the version state.
   unknown,
 }
@@ -216,6 +219,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
         break;
       case _CurrentVersionState.validIncrease:
       case _CurrentVersionState.validRevert:
+      case _CurrentVersionState.newPackage:
         versionChanged = true;
         break;
       case _CurrentVersionState.invalidChange:
@@ -318,7 +322,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
           '${getBoolArg(_againstPubFlag) ? 'on pub server' : 'at git base'}.');
       logWarning(
           '${indentation}If this package is not new, something has gone wrong.');
-      return _CurrentVersionState.validIncrease; // Assume new, thus valid.
+      return _CurrentVersionState.newPackage;
     }
 
     if (previousVersion == currentVersion) {
