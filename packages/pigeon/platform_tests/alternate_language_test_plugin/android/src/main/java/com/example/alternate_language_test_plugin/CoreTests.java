@@ -708,6 +708,53 @@ public class CoreTests {
     }
   }
 
+  /**
+   * A data class containing a List, used in unit tests.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class TestMessage {
+    private @Nullable List<Object> testList;
+
+    public @Nullable List<Object> getTestList() {
+      return testList;
+    }
+
+    public void setTestList(@Nullable List<Object> setterArg) {
+      this.testList = setterArg;
+    }
+
+    public static final class Builder {
+
+      private @Nullable List<Object> testList;
+
+      public @NonNull Builder setTestList(@Nullable List<Object> setterArg) {
+        this.testList = setterArg;
+        return this;
+      }
+
+      public @NonNull TestMessage build() {
+        TestMessage pigeonReturn = new TestMessage();
+        pigeonReturn.setTestList(testList);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(testList);
+      return toListResult;
+    }
+
+    static @NonNull TestMessage fromList(@NonNull ArrayList<Object> list) {
+      TestMessage pigeonResult = new TestMessage();
+      Object testList = list.get(0);
+      pigeonResult.setTestList((List<Object>) testList);
+      return pigeonResult;
+    }
+  }
+
   public interface Result<T> {
     void success(T result);
 
@@ -728,6 +775,8 @@ public class CoreTests {
           return AllNullableTypesWrapper.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
           return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
+          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -744,6 +793,9 @@ public class CoreTests {
       } else if (value instanceof AllTypes) {
         stream.write(130);
         writeValue(stream, ((AllTypes) value).toList());
+      } else if (value instanceof TestMessage) {
+        stream.write(131);
+        writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -3119,6 +3171,8 @@ public class CoreTests {
           return AllNullableTypesWrapper.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
           return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
+          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -3135,6 +3189,9 @@ public class CoreTests {
       } else if (value instanceof AllTypes) {
         stream.write(130);
         writeValue(stream, ((AllTypes) value).toList());
+      } else if (value instanceof TestMessage) {
+        stream.write(131);
+        writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -3606,6 +3663,67 @@ public class CoreTests {
           channel.setMessageHandler(null);
         }
       }
+    }
+  }
+
+  private static class FlutterSmallApiCodec extends StandardMessageCodec {
+    public static final FlutterSmallApiCodec INSTANCE = new FlutterSmallApiCodec();
+
+    private FlutterSmallApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof TestMessage) {
+        stream.write(128);
+        writeValue(stream, ((TestMessage) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /**
+   * A simple API called in some unit tests.
+   *
+   * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
+   */
+  public static final class FlutterSmallApi {
+    private final BinaryMessenger binaryMessenger;
+
+    public FlutterSmallApi(BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by FlutterSmallApi. */
+    static MessageCodec<Object> getCodec() {
+      return FlutterSmallApiCodec.INSTANCE;
+    }
+
+    public void echoWrappedList(@NonNull TestMessage msgArg, Reply<TestMessage> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.FlutterSmallApi.echoWrappedList", getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(msgArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            TestMessage output = (TestMessage) channelReply;
+            callback.reply(output);
+          });
     }
   }
 }

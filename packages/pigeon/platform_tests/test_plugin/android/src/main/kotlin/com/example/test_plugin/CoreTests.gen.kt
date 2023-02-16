@@ -167,6 +167,29 @@ data class AllNullableTypesWrapper (
   }
 }
 
+/**
+ * A data class containing a List, used in unit tests.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class TestMessage (
+  val testList: List<Any?>? = null
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): TestMessage {
+      val testList = list[0] as? List<Any?>
+      return TestMessage(testList)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      testList,
+    )
+  }
+}
+
 @Suppress("UNCHECKED_CAST")
 private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
@@ -186,6 +209,11 @@ private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
           AllTypes.fromList(it)
         }
       }
+      131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          TestMessage.fromList(it)
+        }
+      }
       else -> super.readValueOfType(type, buffer)
     }
   }
@@ -201,6 +229,10 @@ private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
       }
       is AllTypes -> {
         stream.write(130)
+        writeValue(stream, value.toList())
+      }
+      is TestMessage -> {
+        stream.write(131)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -1623,6 +1655,11 @@ private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
           AllTypes.fromList(it)
         }
       }
+      131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          TestMessage.fromList(it)
+        }
+      }
       else -> super.readValueOfType(type, buffer)
     }
   }
@@ -1638,6 +1675,10 @@ private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
       }
       is AllTypes -> {
         stream.write(130)
+        writeValue(stream, value.toList())
+      }
+      is TestMessage -> {
+        stream.write(131)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -1935,6 +1976,50 @@ interface HostSmallApi {
           channel.setMessageHandler(null)
         }
       }
+    }
+  }
+}
+@Suppress("UNCHECKED_CAST")
+private object FlutterSmallApiCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          TestMessage.fromList(it)
+        }
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+    when (value) {
+      is TestMessage -> {
+        stream.write(128)
+        writeValue(stream, value.toList())
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+
+/**
+ * A simple API called in some unit tests.
+ *
+ * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
+ */
+@Suppress("UNCHECKED_CAST")
+class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
+  companion object {
+    /** The codec used by FlutterSmallApi. */
+    val codec: MessageCodec<Any?> by lazy {
+      FlutterSmallApiCodec
+    }
+  }
+  fun echoWrappedList(msgArg: TestMessage, callback: (TestMessage) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.FlutterSmallApi.echoWrappedList", codec)
+    channel.send(listOf(msgArg)) {
+      val result = it as TestMessage
+      callback(result)
     }
   }
 }

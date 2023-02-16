@@ -199,6 +199,28 @@ class AllNullableTypesWrapper {
   }
 }
 
+/// A data class containing a List, used in unit tests.
+class TestMessage {
+  TestMessage({
+    this.testList,
+  });
+
+  List<Object?>? testList;
+
+  Object encode() {
+    return <Object?>[
+      testList,
+    ];
+  }
+
+  static TestMessage decode(Object result) {
+    result as List<Object?>;
+    return TestMessage(
+      testList: result[0] as List<Object?>?,
+    );
+  }
+}
+
 class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   const _HostIntegrationCoreApiCodec();
   @override
@@ -211,6 +233,9 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
       writeValue(buffer, value.encode());
     } else if (value is AllTypes) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -226,6 +251,8 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
         return AllNullableTypesWrapper.decode(readValue(buffer)!);
       case 130:
         return AllTypes.decode(readValue(buffer)!);
+      case 131:
+        return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1897,6 +1924,9 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
     } else if (value is AllTypes) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -1911,6 +1941,8 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
         return AllNullableTypesWrapper.decode(readValue(buffer)!);
       case 130:
         return AllTypes.decode(readValue(buffer)!);
+      case 131:
+        return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2486,6 +2518,58 @@ class HostSmallApi {
       );
     } else {
       return;
+    }
+  }
+}
+
+class _FlutterSmallApiCodec extends StandardMessageCodec {
+  const _FlutterSmallApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is TestMessage) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return TestMessage.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+/// A simple API called in some unit tests.
+abstract class FlutterSmallApi {
+  static const MessageCodec<Object?> codec = _FlutterSmallApiCodec();
+
+  TestMessage echoWrappedList(TestMessage msg);
+
+  static void setup(FlutterSmallApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterSmallApi.echoWrappedList', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.FlutterSmallApi.echoWrappedList was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final TestMessage? arg_msg = (args[0] as TestMessage?);
+          assert(arg_msg != null,
+              'Argument for dev.flutter.pigeon.FlutterSmallApi.echoWrappedList was null, expected non-null TestMessage.');
+          final TestMessage output = api.echoWrappedList(arg_msg!);
+          return output;
+        });
+      }
     }
   }
 }

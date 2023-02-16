@@ -473,6 +473,36 @@ AllNullableTypesWrapper::AllNullableTypesWrapper(const EncodableList& list) {
   }
 }
 
+// TestMessage
+
+const EncodableList* TestMessage::test_list() const {
+  return test_list_ ? &(*test_list_) : nullptr;
+}
+void TestMessage::set_test_list(const EncodableList* value_arg) {
+  test_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+void TestMessage::set_test_list(const EncodableList& value_arg) {
+  test_list_ = value_arg;
+}
+
+EncodableList TestMessage::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(1);
+  list.push_back(test_list_ ? EncodableValue(*test_list_) : EncodableValue());
+  return list;
+}
+
+TestMessage::TestMessage() {}
+
+TestMessage::TestMessage(const EncodableList& list) {
+  auto& encodable_test_list = list[0];
+  if (const EncodableList* pointer_test_list =
+          std::get_if<EncodableList>(&encodable_test_list)) {
+    test_list_ = *pointer_test_list;
+  }
+}
+
 HostIntegrationCoreApiCodecSerializer::HostIntegrationCoreApiCodecSerializer() {
 }
 EncodableValue HostIntegrationCoreApiCodecSerializer::ReadValueOfType(
@@ -487,6 +517,9 @@ EncodableValue HostIntegrationCoreApiCodecSerializer::ReadValueOfType(
     case 130:
       return CustomEncodableValue(
           AllTypes(std::get<EncodableList>(ReadValue(stream))));
+    case 131:
+      return CustomEncodableValue(
+          TestMessage(std::get<EncodableList>(ReadValue(stream))));
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
@@ -517,6 +550,14 @@ void HostIntegrationCoreApiCodecSerializer::WriteValue(
       WriteValue(EncodableValue(
                      std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
                  stream);
+      return;
+    }
+    if (custom_value->type() == typeid(TestMessage)) {
+      stream->WriteByte(131);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
+          stream);
       return;
     }
   }
@@ -2881,6 +2922,9 @@ EncodableValue FlutterIntegrationCoreApiCodecSerializer::ReadValueOfType(
     case 130:
       return CustomEncodableValue(
           AllTypes(std::get<EncodableList>(ReadValue(stream))));
+    case 131:
+      return CustomEncodableValue(
+          TestMessage(std::get<EncodableList>(ReadValue(stream))));
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
@@ -2911,6 +2955,14 @@ void FlutterIntegrationCoreApiCodecSerializer::WriteValue(
       WriteValue(EncodableValue(
                      std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
                  stream);
+      return;
+    }
+    if (custom_value->type() == typeid(TestMessage)) {
+      stream->WriteByte(131);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
+          stream);
       return;
     }
   }
@@ -3521,4 +3573,65 @@ EncodableValue HostSmallApi::WrapError(const FlutterError& error) {
                                       error.details()});
 }
 
+FlutterSmallApiCodecSerializer::FlutterSmallApiCodecSerializer() {}
+EncodableValue FlutterSmallApiCodecSerializer::ReadValueOfType(
+    uint8_t type, flutter::ByteStreamReader* stream) const {
+  switch (type) {
+    case 128:
+      return CustomEncodableValue(
+          TestMessage(std::get<EncodableList>(ReadValue(stream))));
+    default:
+      return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
+  }
+}
+
+void FlutterSmallApiCodecSerializer::WriteValue(
+    const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
+  if (const CustomEncodableValue* custom_value =
+          std::get_if<CustomEncodableValue>(&value)) {
+    if (custom_value->type() == typeid(TestMessage)) {
+      stream->WriteByte(128);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
+          stream);
+      return;
+    }
+  }
+  flutter::StandardCodecSerializer::WriteValue(value, stream);
+}
+
+// Generated class from Pigeon that represents Flutter messages that can be
+// called from C++.
+FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger) {
+  this->binary_messenger_ = binary_messenger;
+}
+
+const flutter::StandardMessageCodec& FlutterSmallApi::GetCodec() {
+  return flutter::StandardMessageCodec::GetInstance(
+      &FlutterSmallApiCodecSerializer::GetInstance());
+}
+
+void FlutterSmallApi::EchoWrappedList(
+    const TestMessage& msg_arg,
+    std::function<void(const TestMessage&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<BasicMessageChannel<>>(
+      binary_messenger_, "dev.flutter.pigeon.FlutterSmallApi.echoWrappedList",
+      &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      EncodableValue(msg_arg.ToEncodableList()),
+  });
+  channel->Send(
+      encoded_api_arguments,
+      [on_success = std::move(on_success), on_error = std::move(on_error)](
+          const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto& return_value = std::any_cast<const TestMessage&>(
+            std::get<CustomEncodableValue>(encodable_return_value));
+        on_success(return_value);
+      });
+}
 }  // namespace core_tests_pigeontest

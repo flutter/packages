@@ -23,6 +23,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @class AllTypes;
 @class AllNullableTypes;
 @class AllNullableTypesWrapper;
+@class TestMessage;
 
 @interface AllTypes : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -89,6 +90,12 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithValues:(AllNullableTypes *)values;
 @property(nonatomic, strong) AllNullableTypes *values;
+@end
+
+/// A data class containing a List, used in unit tests.
+@interface TestMessage : NSObject
++ (instancetype)makeWithTestList:(nullable NSArray *)testList;
+@property(nonatomic, strong, nullable) NSArray *testList;
 @end
 
 /// The codec used by HostIntegrationCoreApi.
@@ -419,5 +426,15 @@ NSObject<FlutterMessageCodec> *HostSmallApiGetCodec(void);
 
 extern void HostSmallApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                               NSObject<HostSmallApi> *_Nullable api);
+
+/// The codec used by FlutterSmallApi.
+NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void);
+
+/// A simple API called in some unit tests.
+@interface FlutterSmallApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (void)echoWrappedList:(TestMessage *)msg
+             completion:(void (^)(TestMessage *_Nullable, FlutterError *_Nullable))completion;
+@end
 
 NS_ASSUME_NONNULL_END

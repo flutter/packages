@@ -38,7 +38,6 @@ String _snakeToPascalCase(String snake) {
 String _javaFilenameForName(String inputName) {
   const Map<String, String> specialCases = <String, String>{
     'android_unittests': 'Pigeon',
-    'list': 'PigeonList',
     'message': 'MessagePigeon',
   };
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
@@ -54,7 +53,6 @@ Future<int> generatePigeons({required String baseDir}) async {
     'enum_args',
     'enum',
     'java_double_host_api',
-    'list',
     'message',
     'multiple_arity',
     'non_null_fields',
