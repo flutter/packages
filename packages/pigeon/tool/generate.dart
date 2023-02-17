@@ -12,19 +12,59 @@
 
 import 'dart:io' show Platform, exit;
 
+import 'package:args/args.dart';
 import 'package:path/path.dart' as p;
 
 import 'shared/generation.dart';
+import 'shared/process_utils.dart';
+
+const String _helpFlag = 'help';
+const String _formatFlag = 'format';
 
 Future<void> main(List<String> args) async {
+  final ArgParser parser = ArgParser()
+    ..addFlag(_formatFlag, abbr: 'f', help: 'Autoformats after generation.')
+    ..addFlag(_helpFlag,
+        negatable: false, abbr: 'h', help: 'Print this reference.');
+
+  final ArgResults argResults = parser.parse(args);
+  if (argResults.wasParsed(_helpFlag)) {
+    print('''
+usage: dart run tool/generate.dart [options]
+
+${parser.usage}''');
+    exit(0);
+  }
+
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
 
   print('Generating platform_test/ output...');
-  final int exitCode = await generatePigeons(baseDir: baseDir);
-  if (exitCode == 0) {
+  final int generateExitCode = await generatePigeons(baseDir: baseDir);
+  if (generateExitCode == 0) {
     print('Generation complete!');
   } else {
     print('Generation failed; see above for errors.');
+    exit(generateExitCode);
   }
-  exit(exitCode);
+
+  if (argResults.wasParsed(_formatFlag)) {
+    print('Formatting generated output...');
+    final String repoRootDir = p.dirname(p.dirname(baseDir));
+    final String dartCommand = Platform.isWindows ? 'dart.exe' : 'dart';
+    final int formatExitCode = await runProcess(
+        dartCommand,
+        <String>[
+          'run',
+          'script/tool/bin/flutter_plugin_tools.dart',
+          'format',
+          '--packages=pigeon',
+        ],
+        streamOutput: false,
+        workingDirectory: repoRootDir,
+        logFailure: true);
+    if (formatExitCode != 0) {
+      print('Formatting failed; see above for errors.');
+      exit(formatExitCode);
+    }
+  }
 }
