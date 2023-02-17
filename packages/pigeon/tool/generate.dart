@@ -16,7 +16,6 @@ import 'package:args/args.dart';
 import 'package:path/path.dart' as p;
 
 import 'shared/generation.dart';
-import 'shared/process_utils.dart';
 
 const String _helpFlag = 'help';
 const String _formatFlag = 'format';
@@ -49,19 +48,8 @@ ${parser.usage}''');
 
   if (argResults.wasParsed(_formatFlag)) {
     print('Formatting generated output...');
-    final String repoRootDir = p.dirname(p.dirname(baseDir));
-    final String dartCommand = Platform.isWindows ? 'dart.exe' : 'dart';
-    final int formatExitCode = await runProcess(
-        dartCommand,
-        <String>[
-          'run',
-          'script/tool/bin/flutter_plugin_tools.dart',
-          'format',
-          '--packages=pigeon',
-        ],
-        streamOutput: false,
-        workingDirectory: repoRootDir,
-        logFailure: true);
+    final int formatExitCode =
+        await formatAllFiles(repositoryRoot: p.dirname(p.dirname(baseDir)));
     if (formatExitCode != 0) {
       print('Formatting failed; see above for errors.');
       exit(formatExitCode);
