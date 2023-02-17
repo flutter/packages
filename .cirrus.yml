@@ -340,6 +340,8 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+      create_simulator_script:
+        - .ci/scripts/create_simulator.sh
       local_tests_script:
         # script/configs/linux_only_custom_test.yaml
         #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)
