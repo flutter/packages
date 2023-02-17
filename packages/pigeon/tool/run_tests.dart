@@ -49,6 +49,7 @@ Future<void> main(List<String> args) async {
   // separation. See https://github.com/flutter/flutter/issues/120231.
   const List<String> macOSHostLuciTests = <String>[
     iOSObjCUnitTests,
+    iOSSwiftUnitTests,
     // TODO(stuartmorgan): Enable by default once CI issues are solved; see
     // https://github.com/flutter/packages/pull/2816.
     //iOSObjCIntegrationTests,
