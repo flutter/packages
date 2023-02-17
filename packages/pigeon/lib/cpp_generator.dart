@@ -303,7 +303,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       _writeCodec(generatorOptions, root, indent, api);
     }
     const List<String> generatedMessages = <String>[
-      ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
+      ' Generated interface from Pigeon that represents a handler of messages from Flutter. Test change.'
     ];
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
