@@ -79,6 +79,7 @@ Future<void> _validateGeneratedTestFiles() async {
   print('patch -p1 <<DONE');
   print(diffResult.stdout);
   print('DONE');
+  exit(1);
 }
 
 Future<List<String>> _modifiedFiles(
