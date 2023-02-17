@@ -201,7 +201,7 @@ void main() {
 
     test(
         'throws when a branch of a StatefulShellRoute has an incorrect '
-        'defaultLocation', () {
+        'initialLocation', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
       final GlobalKey<NavigatorState> sectionANavigatorKey =
@@ -246,7 +246,7 @@ void main() {
     });
 
     test(
-        'throws when a branch of a StatefulShellRoute has a defaultLocation '
+        'throws when a branch of a StatefulShellRoute has a initialLocation '
         'that is not a descendant of the same branch', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -300,7 +300,7 @@ void main() {
 
     test(
         'does not throw when a branch of a StatefulShellRoute has correctly '
-        'configured defaultLocations', () {
+        'configured initialLocations', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
 
@@ -395,7 +395,7 @@ void main() {
     });
 
     test(
-      'derives the correct defaultLocation for a StatefulShellBranch',
+      'derives the correct initialLocation for a StatefulShellBranch',
       () {
         final StatefulShellBranch branchA;
         final StatefulShellBranch branchY;

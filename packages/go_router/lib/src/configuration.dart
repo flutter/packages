@@ -124,7 +124,7 @@ class RouteConfiguration {
     return true;
   }
 
-  // Check to see that the configured defaultLocation of StatefulShellBranches
+  // Check to see that the configured initialLocation of StatefulShellBranches
   // points to a descendant route of the route branch.
   bool _debugCheckStatefulShellBranchDefaultLocations(
       List<RouteBase> routes, RouteMatcher matcher) {
@@ -137,14 +137,14 @@ class RouteConfiguration {
               // throw assertion error if not found.
               findStatefulShellBranchDefaultLocation(branch);
             } else {
-              final RouteBase defaultLocationRoute =
+              final RouteBase initialLocationRoute =
                   matcher.findMatch(branch.initialLocation!).last.route;
               final RouteBase? match = branch.routes.firstWhereOrNull(
                   (RouteBase e) => _debugIsDescendantOrSame(
-                      ancestor: e, route: defaultLocationRoute));
+                      ancestor: e, route: initialLocationRoute));
               assert(
                   match != null,
-                  'The defaultLocation (${branch.initialLocation}) of '
+                  'The initialLocation (${branch.initialLocation}) of '
                   'StatefulShellBranch must match a descendant route of the '
                   'branch');
             }
@@ -155,7 +155,7 @@ class RouteConfiguration {
     } on MatcherError catch (e) {
       assert(
           false,
-          'defaultLocation (${e.location}) of StatefulShellBranch must '
+          'initialLocation (${e.location}) of StatefulShellBranch must '
           'be a valid location');
     }
     return true;
@@ -179,13 +179,13 @@ class RouteConfiguration {
   /// find the first GoRoute, from which a full path will be derived.
   String findStatefulShellBranchDefaultLocation(StatefulShellBranch branch) {
     final GoRoute? route = _findFirstGoRoute(branch.routes);
-    final String? defaultLocation =
+    final String? initialLocation =
         route != null ? _fullPathForRoute(route, '', routes) : null;
     assert(
-        defaultLocation != null,
+        initialLocation != null,
         'The initial location of a StatefulShellBranch must be derivable from '
         'GoRoute descendant');
-    return defaultLocation!;
+    return initialLocation!;
   }
 
   static String? _fullPathForRoute(
