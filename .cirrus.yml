@@ -340,8 +340,11 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+      # Create an iPhone 13, to match what is available on LUCI, since Pigeon tests
+      # currently have a hard-coded device.
       create_simulator_script:
-        - .ci/scripts/create_simulator.sh
+        - xcrun simctl list
+        - xcrun simctl create "iPhone 13" com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-0
       local_tests_script:
         # script/configs/linux_only_custom_test.yaml
         #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)
