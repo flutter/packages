@@ -17,16 +17,10 @@ list(APPEND PLUGIN_SOURCES
   "test_plugin.cpp"
   "test_plugin.h"
   # Generated sources.
-  "pigeon/async_handlers.gen.cpp"
-  "pigeon/async_handlers.gen.h"
   "pigeon/core_tests.gen.cpp"
   "pigeon/core_tests.gen.h"
   "pigeon/enum.gen.cpp"
   "pigeon/enum.gen.h"
-  "pigeon/host2flutter.gen.cpp"
-  "pigeon/host2flutter.gen.h"
-  "pigeon/list.gen.cpp"
-  "pigeon/list.gen.h"
   "pigeon/message.gen.cpp"
   "pigeon/message.gen.h"
   "pigeon/multiple_arity.gen.cpp"
@@ -39,14 +33,6 @@ list(APPEND PLUGIN_SOURCES
   "pigeon/nullable_returns.gen.h"
   "pigeon/primitive.gen.cpp"
   "pigeon/primitive.gen.h"
-  "pigeon/void_arg_flutter.gen.cpp"
-  "pigeon/void_arg_flutter.gen.h"
-  "pigeon/void_arg_host.gen.cpp"
-  "pigeon/void_arg_host.gen.h"
-  "pigeon/voidflutter.gen.cpp"
-  "pigeon/voidflutter.gen.h"
-  "pigeon/voidhost.gen.cpp"
-  "pigeon/voidhost.gen.h"
 )
 
 # Define the plugin library target. Its name must not be changed (see comment
