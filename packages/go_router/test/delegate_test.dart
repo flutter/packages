@@ -67,7 +67,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches[1].pageKey,
-          const PageKey(path: '/a'),
+          const ValueKey<String>('/a-p0'),
         );
 
         goRouter.push('/a');
@@ -76,7 +76,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 3);
         expect(
           goRouter.routerDelegate.matches.matches[2].pageKey,
-          const PageKey(path: '/a', count: 1),
+          const ValueKey<String>('/a-p1'),
         );
       },
     );
@@ -166,7 +166,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/a'),
+          const ValueKey<String>('/a-p0'),
         );
 
         goRouter.pushReplacement('/a');
@@ -175,7 +175,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/a', count: 1),
+          const ValueKey<String>('/a-p1'),
         );
       },
     );
@@ -280,7 +280,7 @@ void main() {
     });
 
     testWidgets(
-      'It should use the same pageKey when replace is called with the same path',
+      'It should use the same pageKey when replace is called (with the same path)',
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester);
         expect(goRouter.routerDelegate.matches.matches.length, 1);
@@ -295,7 +295,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/a'),
+          const ValueKey<String>('/a-p0'),
         );
 
         goRouter.replace('/a');
@@ -304,13 +304,13 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/a'),
+          const ValueKey<String>('/a-p0'),
         );
       },
     );
 
     testWidgets(
-      'It should use a new pageKey when replace is called with a different path',
+      'It should use the same pageKey when replace is called (with a different path)',
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester);
         expect(goRouter.routerDelegate.matches.matches.length, 1);
@@ -325,7 +325,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/a'),
+          const ValueKey<String>('/a-p0'),
         );
 
         goRouter.replace('/');
@@ -334,7 +334,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/'),
+          const ValueKey<String>('/a-p0'),
         );
       },
     );
@@ -418,7 +418,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/page-0'),
+          const ValueKey<String>('/page-0-p0'),
         );
 
         goRouter.replaceNamed('page0');
@@ -427,7 +427,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/page-0'),
+          const ValueKey<String>('/page-0-p0'),
         );
       },
     );
@@ -448,7 +448,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/page-0'),
+          const ValueKey<String>('/page-0-p0'),
         );
 
         goRouter.replaceNamed('home');
@@ -457,7 +457,7 @@ void main() {
         expect(goRouter.routerDelegate.matches.matches.length, 2);
         expect(
           goRouter.routerDelegate.matches.matches.last.pageKey,
-          const PageKey(path: '/'),
+          const ValueKey<String>('/page-0-p0'),
         );
       },
     );

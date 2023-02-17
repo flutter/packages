@@ -8,7 +8,6 @@ import 'package:go_router/src/builder.dart';
 import 'package:go_router/src/configuration.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/matching.dart';
-import 'package:go_router/src/page_key.dart';
 
 void main() {
   group('RouteBuilder', () {
@@ -36,7 +35,7 @@ void main() {
               subloc: '/',
               extra: null,
               error: null,
-              pageKey: const PageKey(path: '/'),
+              pageKey: const ValueKey<String>('/'),
             ),
           ],
           Uri.parse('/'),
@@ -83,7 +82,7 @@ void main() {
               subloc: '/',
               extra: null,
               error: null,
-              pageKey: const PageKey(path: '/'),
+              pageKey: const ValueKey<String>('/'),
             ),
           ],
           Uri.parse('/'),
@@ -125,7 +124,7 @@ void main() {
               subloc: '/',
               extra: null,
               error: null,
-              pageKey: const PageKey(path: '/'),
+              pageKey: const ValueKey<String>('/'),
             ),
           ],
           Uri.parse('/'),
@@ -180,14 +179,14 @@ void main() {
               subloc: '',
               extra: null,
               error: null,
-              pageKey: const PageKey(path: ''),
+              pageKey: const ValueKey<String>(''),
             ),
             RouteMatch(
               route: config.routes.first.routes.first,
               subloc: '/details',
               extra: null,
               error: null,
-              pageKey: const PageKey(path: '/details'),
+              pageKey: const ValueKey<String>('/details'),
             ),
           ],
           Uri.parse('/details'),
@@ -255,7 +254,7 @@ void main() {
               subloc: '/a/details',
               extra: null,
               error: null,
-              pageKey: const PageKey(path: '/a/details'),
+              pageKey: const ValueKey<String>('/a/details'),
             ),
           ],
           Uri.parse('/a/details'),

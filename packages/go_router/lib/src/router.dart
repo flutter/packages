@@ -208,8 +208,8 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [pushReplacement] which replaces the top-most page of the page stack and
   ///   always use a new page key.
-  /// * [replace] which replaces the top-most page of the page stack and keeps
-  ///   the page key when possible.
+  /// * [replace] which replaces the top-most page of the page stack and reuses
+  ///   the page key.
   void push(String location, {Object? extra}) {
     assert(() {
       log.info('pushing $location');
@@ -246,8 +246,8 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [go] which navigates to the location.
   /// * [push] which pushes the given location onto the page stack.
-  /// * [replace] which replaces the top-most page of the page stack but keeps
-  ///   the page key when possible.
+  /// * [replace] which replaces the top-most page of the page stack but reuses
+  ///   the page key.
   void pushReplacement(String location, {Object? extra}) {
     routeInformationParser
         .parseRouteInformationWithDependencies(
@@ -285,7 +285,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
   /// * [pushReplacement] which replaces the top-most page of the page stack but
-  ///   always use a new page key.
+  ///   always uses a new page key.
   void replace(String location, {Object? extra}) {
     routeInformationParser
         .parseRouteInformationWithDependencies(
@@ -306,7 +306,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [pushNamed] which pushes the given location onto the page stack.
   /// * [pushReplacementNamed] which replaces the top-most page of the page
-  ///   stack but always use a new page key.
+  ///   stack but always uses a new page key.
   void replaceNamed(
     String name, {
     Map<String, String> params = const <String, String>{},

@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
 import 'misc/errors.dart';
-import 'page_key.dart';
 
 /// The route state during routing.
 ///
@@ -67,9 +66,9 @@ class GoRouterState {
   /// A unique string key for this sub-route.
   /// E.g.
   /// ```dart
-  /// PageKey(path: '/family/:fid', count: 0)
+  /// ValueKey('/family/:fid')
   /// ```
-  final PageKey pageKey;
+  final ValueKey<String> pageKey;
 
   /// Gets the [GoRouterState] from context.
   ///

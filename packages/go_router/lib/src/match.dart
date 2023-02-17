@@ -2,10 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'configuration.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+
 import 'matching.dart';
-import 'page_key.dart';
 import 'path_utils.dart';
+import 'route.dart';
 
 ///  An instance of a GoRoute plus information about the current location.
 class RouteMatch {
@@ -32,7 +34,7 @@ class RouteMatch {
         subloc: restLoc,
         extra: extra,
         error: null,
-        pageKey: PageKey(path: route.hashCode.toString()),
+        pageKey: ValueKey<String>(route.hashCode.toString()),
       );
     } else if (route is GoRoute) {
       assert(!route.path.contains('//'));
@@ -53,7 +55,7 @@ class RouteMatch {
         subloc: subloc,
         extra: extra,
         error: null,
-        pageKey: PageKey(path: route.hashCode.toString()),
+        pageKey: ValueKey<String>(route.hashCode.toString()),
       );
     }
     throw MatcherError('Unexpected route type: $route', restLoc);
@@ -71,6 +73,6 @@ class RouteMatch {
   /// An exception if there was an error during matching.
   final Exception? error;
 
-  /// Value key, to hold a unique reference to a page.
-  final PageKey pageKey;
+  /// Value key of type string, to hold a unique reference to a page.
+  final ValueKey<String> pageKey;
 }
