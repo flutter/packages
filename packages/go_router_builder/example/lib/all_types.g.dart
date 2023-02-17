@@ -258,10 +258,10 @@ extension $EnumRouteExtension on EnumRoute {
         '/enum-route/${Uri.encodeComponent(_$PersonDetailsEnumMap[requiredEnumField]!)}',
         queryParams: {
           if (enumField != null)
-            'enum-field': _$PersonDetailsEnumMap[enumField!]!,
+            'enum-field': _$PersonDetailsEnumMap[enumField!],
           if (enumFieldWithDefaultValue != PersonDetails.favoriteFood)
             'enum-field-with-default-value':
-                _$PersonDetailsEnumMap[enumFieldWithDefaultValue]!,
+                _$PersonDetailsEnumMap[enumFieldWithDefaultValue],
         },
       );
 
@@ -290,10 +290,10 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
         '/enhanced-enum-route/${Uri.encodeComponent(_$SportDetailsEnumMap[requiredEnumField]!)}',
         queryParams: {
           if (enumField != null)
-            'enum-field': _$SportDetailsEnumMap[enumField!]!,
+            'enum-field': _$SportDetailsEnumMap[enumField!],
           if (enumFieldWithDefaultValue != SportDetails.football)
             'enum-field-with-default-value':
-                _$SportDetailsEnumMap[enumFieldWithDefaultValue]!,
+                _$SportDetailsEnumMap[enumFieldWithDefaultValue],
         },
       );
 
@@ -317,7 +317,7 @@ extension $StringRouteExtension on StringRoute {
   String get location => GoRouteData.$location(
         '/string-route/${Uri.encodeComponent(requiredStringField)}',
         queryParams: {
-          if (stringField != null) 'string-field': stringField!,
+          if (stringField != null) 'string-field': stringField,
           if (stringFieldWithDefaultValue != 'defaultValue')
             'string-field-with-default-value': stringFieldWithDefaultValue,
         },
