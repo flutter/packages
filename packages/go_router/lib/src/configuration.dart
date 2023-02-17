@@ -132,19 +132,19 @@ class RouteConfiguration {
       for (final RouteBase route in routes) {
         if (route is StatefulShellRoute) {
           for (final StatefulShellBranch branch in route.branches) {
-            if (branch.defaultLocation == null) {
+            if (branch.initialLocation == null) {
               // Recursively search for the first GoRoute descendant. Will
               // throw assertion error if not found.
               findStatefulShellBranchDefaultLocation(branch);
             } else {
               final RouteBase defaultLocationRoute =
-                  matcher.findMatch(branch.defaultLocation!).last.route;
+                  matcher.findMatch(branch.initialLocation!).last.route;
               final RouteBase? match = branch.routes.firstWhereOrNull(
                   (RouteBase e) => _debugIsDescendantOrSame(
                       ancestor: e, route: defaultLocationRoute));
               assert(
                   match != null,
-                  'The defaultLocation (${branch.defaultLocation}) of '
+                  'The defaultLocation (${branch.initialLocation}) of '
                   'StatefulShellBranch must match a descendant route of the '
                   'branch');
             }
@@ -183,7 +183,7 @@ class RouteConfiguration {
         route != null ? _fullPathForRoute(route, '', routes) : null;
     assert(
         defaultLocation != null,
-        'The default location of a StatefulShellBranch must be derivable from '
+        'The initial location of a StatefulShellBranch must be derivable from '
         'GoRoute descendant');
     return defaultLocation!;
   }

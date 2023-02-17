@@ -566,7 +566,7 @@ class ShellRoute extends ShellRouteBase {
 /// A StatefulShellRoute is created by specifying a List of [StatefulShellBranch]
 /// items, each representing a separate stateful branch in the route tree.
 /// StatefulShellBranch provides the root routes and the Navigator key ([GlobalKey])
-/// for the branch, as well as an optional default location.
+/// for the branch, as well as an optional initial location.
 ///
 /// Like [ShellRoute], either a [builder] or a [pageBuilder] must be provided
 /// when creating a StatefulShellRoute. However, these builders differ in that
@@ -708,15 +708,8 @@ class StatefulShellRoute extends ShellRouteBase {
             'builder or pageBuilder must be provided'),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
             'Navigator keys must be unique'),
-        super._(routes: _routes(branches)) {
-    for (int i = 0; i < routes.length; ++i) {
-      final RouteBase route = routes[i];
-      if (route is GoRoute) {
-        assert(route.parentNavigatorKey == null ||
-            route.parentNavigatorKey == branches[i].navigatorKey);
-      }
-    }
-  }
+        assert(_debugValidateParentNavigatorKeys(branches)),
+        super._(routes: _routes(branches));
 
   /// The widget builder for a stateful shell route.
   ///
@@ -797,6 +790,19 @@ class StatefulShellRoute extends ShellRouteBase {
           List<StatefulShellBranch> branches) =>
       Set<GlobalKey<NavigatorState>>.from(
           branches.map((StatefulShellBranch e) => e.navigatorKey));
+
+  static bool _debugValidateParentNavigatorKeys(
+      List<StatefulShellBranch> branches) {
+    for (final StatefulShellBranch branch in branches) {
+      for (final RouteBase route in branch.routes) {
+        if (route is GoRoute) {
+          assert(route.parentNavigatorKey == null ||
+              route.parentNavigatorKey == branch.navigatorKey);
+        }
+      }
+    }
+    return true;
+  }
 }
 
 /// Builds the Widget managing a StatefulShellRoute.
@@ -831,7 +837,7 @@ abstract class ShellNavigatorContainer extends StatelessWidget {
 ///
 /// The only required argument when creating a StatefulShellBranch is the
 /// sub-routes ([routes]), however sometimes it may be convenient to also
-/// provide a [defaultLocation]. The value of this parameter is used when
+/// provide a [initialLocation]. The value of this parameter is used when
 /// loading the branch for the first time (for instance when switching branch
 /// using the goBranch method in [StatefulShellBranchState]). A [navigatorKey]
 /// can be useful to provide in case it's necessary to access the [Navigator]
@@ -842,14 +848,11 @@ class StatefulShellBranch {
   StatefulShellBranch({
     required this.routes,
     GlobalKey<NavigatorState>? navigatorKey,
-    this.defaultLocation,
-    this.name,
+    this.initialLocation,
     this.restorationScopeId,
     this.observers,
     this.preload = false,
-  }) : navigatorKey = navigatorKey ??
-            GlobalKey<NavigatorState>(
-                debugLabel: name != null ? 'Branch-$name' : null);
+  }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>();
 
   /// The [GlobalKey] to be used by the [Navigator] built for this branch.
   ///
@@ -862,23 +865,20 @@ class StatefulShellBranch {
   /// The list of child routes associated with this route branch.
   final List<RouteBase> routes;
 
-  /// The default location for this route branch.
+  /// The initial location for this route branch.
   ///
   /// If none is specified, the location of the first descendant [GoRoute] will
   /// be used (i.e. first element in [routes], or a descendant). The default
   /// location is used when loading the branch for the first time (for instance
   /// when switching branch using the goBranch method in
   /// [StatefulShellBranchState]).
-  final String? defaultLocation;
-
-  /// An optional name for this branch.
-  final String? name;
+  final String? initialLocation;
 
   /// Whether this route branch should be preloaded when the associated
   /// [StatefulShellRoute] is visited for the first time.
   ///
   /// If this is true, this branch will be preloaded by navigating to
-  /// the default location (see [defaultLocation]). The primary purpose of
+  /// the initial location (see [initialLocation]). The primary purpose of
   /// branch preloading is to enhance the user experience when switching
   /// branches, which might for instance involve preparing the UI for animated
   /// transitions etc. Care must be taken to **keep the preloading to an
@@ -903,13 +903,12 @@ class StatefulShellBranch {
       return false;
     }
     return other.navigatorKey == navigatorKey &&
-        other.defaultLocation == defaultLocation &&
-        other.name == name &&
+        other.initialLocation == initialLocation &&
         other.preload == preload &&
         other.restorationScopeId == restorationScopeId;
   }
 
   @override
-  int get hashCode => Object.hash(
-      navigatorKey, defaultLocation, name, preload, restorationScopeId);
+  int get hashCode =>
+      Object.hash(navigatorKey, initialLocation, preload, restorationScopeId);
 }

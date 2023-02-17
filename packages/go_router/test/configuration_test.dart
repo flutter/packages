@@ -215,7 +215,7 @@ void main() {
             routes: <RouteBase>[
               StatefulShellRoute(branches: <StatefulShellBranch>[
                 StatefulShellBranch(
-                  defaultLocation: '/x',
+                  initialLocation: '/x',
                   navigatorKey: sectionANavigatorKey,
                   routes: <RouteBase>[
                     GoRoute(
@@ -261,7 +261,7 @@ void main() {
             routes: <RouteBase>[
               StatefulShellRoute(branches: <StatefulShellBranch>[
                 StatefulShellBranch(
-                  defaultLocation: '/b',
+                  initialLocation: '/b',
                   navigatorKey: sectionANavigatorKey,
                   routes: <RouteBase>[
                     GoRoute(
@@ -271,7 +271,7 @@ void main() {
                   ],
                 ),
                 StatefulShellBranch(
-                  defaultLocation: '/b',
+                  initialLocation: '/b',
                   navigatorKey: sectionBNavigatorKey,
                   routes: <RouteBase>[
                     StatefulShellRoute(branches: <StatefulShellBranch>[
@@ -322,7 +322,7 @@ void main() {
               ],
             ),
             StatefulShellBranch(
-              defaultLocation: '/b/detail',
+              initialLocation: '/b/detail',
               routes: <RouteBase>[
                 GoRoute(
                     path: '/b',
@@ -336,7 +336,7 @@ void main() {
               ],
             ),
             StatefulShellBranch(
-              defaultLocation: '/c/detail',
+              initialLocation: '/c/detail',
               routes: <RouteBase>[
                 StatefulShellRoute(branches: <StatefulShellBranch>[
                   StatefulShellBranch(
@@ -353,7 +353,7 @@ void main() {
                     ],
                   ),
                   StatefulShellBranch(
-                    defaultLocation: '/d/detail',
+                    initialLocation: '/d/detail',
                     routes: <RouteBase>[
                       GoRoute(
                           path: '/d',

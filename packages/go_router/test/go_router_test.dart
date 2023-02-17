@@ -14,7 +14,6 @@ import 'package:go_router/go_router.dart';
 import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/matching.dart';
-import 'package:go_router/src/misc/errors.dart';
 import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
@@ -2937,10 +2936,6 @@ void main() {
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> branchANavigatorKey =
-          GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> branchCNavigatorKey =
-          GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
       StatefulShellRouteState? routeState;
@@ -2965,7 +2960,6 @@ void main() {
               ],
             ),
             StatefulShellBranch(
-              name: 'B',
               routes: <RouteBase>[
                 GoRoute(
                   path: '/b',
@@ -2975,7 +2969,6 @@ void main() {
               ],
             ),
             StatefulShellBranch(
-              navigatorKey: branchCNavigatorKey,
               routes: <RouteBase>[
                 GoRoute(
                   path: '/c',
@@ -3005,14 +2998,14 @@ void main() {
       expect(find.text('Screen C'), findsNothing);
       expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(name: 'B');
+      routeState!.goBranch(index: 1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen C'), findsNothing);
       expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(navigatorKey: branchCNavigatorKey);
+      routeState!.goBranch(index: 2);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
@@ -3025,21 +3018,6 @@ void main() {
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Screen C'), findsNothing);
       expect(find.text('Screen D'), findsOneWidget);
-
-      expect(() {
-        // Verify that navigation without specifying name, key or index fails
-        routeState!.goBranch();
-      }, throwsA(isAssertionError));
-
-      expect(() {
-        // Verify that navigation to unknown name fails
-        routeState!.goBranch(name: 'C');
-      }, throwsA(isA<GoError>()));
-
-      expect(() {
-        // Verify that navigation to unknown name fails
-        routeState!.goBranch(navigatorKey: branchANavigatorKey);
-      }, throwsA(isA<GoError>()));
 
       expect(() {
         // Verify that navigation to unknown index fails

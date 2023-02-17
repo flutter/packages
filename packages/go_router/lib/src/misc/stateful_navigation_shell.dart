@@ -106,7 +106,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> {
   }
 
   String _defaultBranchLocation(StatefulShellBranch branch) {
-    return branch.defaultLocation ??
+    return branch.initialLocation ??
         GoRouter.of(context)
             .routeConfiguration
             .findStatefulShellBranchDefaultLocation(branch);

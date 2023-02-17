@@ -2,12 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../go_router.dart';
-import 'misc/errors.dart';
 import 'misc/stateful_navigation_shell.dart';
 
 /// The snapshot of the current state of a [StatefulShellRoute].
@@ -69,53 +67,19 @@ class StatefulShellRouteState {
           StatefulShellBranchState? branchState, bool navigateToDefaultLocation)
       _resetState;
 
-  StatefulShellBranchState _branchStateFor({
-    GlobalKey<NavigatorState>? navigatorKey,
-    String? name,
-    int? index,
-  }) {
-    assert(navigatorKey != null || name != null || index != null);
-    assert(<dynamic>[navigatorKey, name, index].whereNotNull().length == 1);
-
-    final StatefulShellBranchState? state;
-    if (navigatorKey != null) {
-      state = branchStates.firstWhereOrNull((StatefulShellBranchState e) =>
-          e.branch.navigatorKey == navigatorKey);
-      if (state == null) {
-        throw GoError('Unable to find branch with key $navigatorKey');
-      }
-    } else if (name != null) {
-      state = branchStates.firstWhereOrNull(
-          (StatefulShellBranchState e) => e.branch.name == name);
-      if (state == null) {
-        throw GoError('Unable to find branch with name "$name"');
-      }
-    } else {
-      state = branchStates[index!];
-    }
-    return state;
-  }
-
   /// Navigate to the current location of the shell navigator with the provided
-  /// Navigator key, name or index.
+  /// index.
   ///
   /// This method will switch the currently active [Navigator] for the
   /// [StatefulShellRoute] by replacing the current navigation stack with the
-  /// one of the route branch identified by the provided Navigator key, name or
-  /// index. If resetLocation is true, the branch will be reset to its default
-  /// location (see [StatefulShellBranch.defaultLocation]).
+  /// one of the route branch identified by the provided index. If resetLocation
+  /// is true, the branch will be reset to its initial location
+  /// (see [StatefulShellBranch.initialLocation]).
   void goBranch({
-    GlobalKey<NavigatorState>? navigatorKey,
-    String? name,
-    int? index,
+    required int index,
     bool resetLocation = false,
   }) {
-    final StatefulShellBranchState state = _branchStateFor(
-      navigatorKey: navigatorKey,
-      name: name,
-      index: index,
-    );
-    _switchActiveBranch(state, resetLocation);
+    _switchActiveBranch(branchStates[index], resetLocation);
   }
 
   /// Refreshes this StatefulShellRouteState by rebuilding the state for the
@@ -128,28 +92,20 @@ class StatefulShellRouteState {
   /// the branches
   ///
   /// After the state has been reset, the current branch will navigated to its
-  /// default location, if [navigateToDefaultLocation] is true.
+  /// initial location, if [navigateToDefaultLocation] is true.
   void reset({bool navigateToDefaultLocation = true}) {
     _resetState(null, navigateToDefaultLocation);
   }
 
-  /// Resets the navigation state of the branch identified by the provided
-  /// Navigator key, name or index.
+  /// Resets the navigation state of the branch identified by the provided index.
   ///
   /// After the state has been reset, the branch will navigated to its
-  /// default location, if [navigateToDefaultLocation] is true.
+  /// initial location, if [navigateToDefaultLocation] is true.
   void resetBranch({
-    GlobalKey<NavigatorState>? navigatorKey,
-    String? name,
-    int? index,
+    required int index,
     bool navigateToDefaultLocation = true,
   }) {
-    final StatefulShellBranchState state = _branchStateFor(
-      navigatorKey: navigatorKey,
-      name: name,
-      index: index,
-    );
-    _resetState(state, navigateToDefaultLocation);
+    _resetState(branchStates[index], navigateToDefaultLocation);
   }
 
   @override
