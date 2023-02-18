@@ -4,6 +4,16 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Opacity on a default fill', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 10 10">
+  <path d="M10 10 L20 20" opacity=".4" />
+</svg>
+''');
+
+    expect(instructions.paints.single.fill!.color, const Color(0x66000000));
+  });
+
   test('Stroke width with scaling', () {
     final VectorInstructions instructions = parseWithoutOptimizers(
       signWithScaledStroke,

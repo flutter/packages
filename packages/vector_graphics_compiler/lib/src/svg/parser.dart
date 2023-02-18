@@ -1578,6 +1578,7 @@ class SvgParser {
       dashArray: _parseDashArray(rawStrokeDashArray),
       dashOffset: _parseDashOffset(rawStrokeDashOffset),
       hasPattern: hasPattern,
+      opacity: opacity,
     );
   }
 
@@ -1612,6 +1613,7 @@ class SvgParser {
         color: Color.fromRGBO(255, 255, 255, opacity),
         shaderId: rawFill,
         hasPattern: hasPattern,
+        opacity: opacity,
       );
     }
 
@@ -1630,6 +1632,7 @@ class SvgParser {
     return SvgFillAttributes._(
       _definitions,
       color: fillColor,
+      opacity: opacity,
     );
   }
 
@@ -2068,6 +2071,7 @@ class SvgStrokeAttributes {
     this.dashArray,
     this.dashOffset,
     this.hasPattern,
+    this.opacity,
   });
 
   /// Specifies that strokes should not be drawn, even if they otherwise would
@@ -2104,6 +2108,9 @@ class SvgStrokeAttributes {
   /// Indicates whether or not a pattern is used for stroke.
   final bool? hasPattern;
 
+  /// The opacity to apply to a default color, if [color] is null.
+  final double? opacity;
+
   /// Inherits attributes in this from parent.
   SvgStrokeAttributes applyParent(SvgStrokeAttributes? parent) {
     return SvgStrokeAttributes._(
@@ -2117,6 +2124,7 @@ class SvgStrokeAttributes {
       dashArray: dashArray ?? parent?.dashArray,
       dashOffset: dashOffset ?? parent?.dashOffset,
       hasPattern: hasPattern ?? parent?.hasPattern,
+      opacity: opacity ?? parent?.opacity,
     );
   }
 
@@ -2172,6 +2180,7 @@ class SvgFillAttributes {
     this.color,
     this.shaderId,
     this.hasPattern,
+    this.opacity,
   });
 
   /// Specifies that fills should not be drawn, even if they otherwise would be.
@@ -2182,6 +2191,9 @@ class SvgFillAttributes {
   /// The color to use for filling. _Does_ include the opacity value. Only
   /// opacity is used if the [shaderId] is not null.
   final Color? color;
+
+  /// The opacity to apply to a default color, if [color] is null.
+  final double? opacity;
 
   /// The literal reference to a shader defined elsewhere.
   final String? shaderId;
@@ -2196,6 +2208,7 @@ class SvgFillAttributes {
       color: color ?? parent?.color,
       shaderId: shaderId ?? parent?.shaderId,
       hasPattern: hasPattern ?? parent?.hasPattern,
+      opacity: opacity ?? parent?.opacity,
     );
   }
 
@@ -2208,7 +2221,8 @@ class SvgFillAttributes {
     AffineMatrix transform, {
     Color? defaultColor,
   }) {
-    final Color? resolvedColor = color ?? defaultColor;
+    final Color? resolvedColor =
+        color ?? defaultColor?.withOpacity(opacity ?? 1.0);
     if (resolvedColor == null) {
       return null;
     }
