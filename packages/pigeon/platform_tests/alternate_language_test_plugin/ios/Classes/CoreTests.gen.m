@@ -43,6 +43,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
+@interface TestMessage ()
++ (TestMessage *)fromList:(NSArray *)list;
++ (nullable TestMessage *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
 @implementation AllTypes
 + (instancetype)makeWithABool:(NSNumber *)aBool
                         anInt:(NSNumber *)anInt
@@ -210,6 +216,27 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@implementation TestMessage
++ (instancetype)makeWithTestList:(nullable NSArray *)testList {
+  TestMessage *pigeonResult = [[TestMessage alloc] init];
+  pigeonResult.testList = testList;
+  return pigeonResult;
+}
++ (TestMessage *)fromList:(NSArray *)list {
+  TestMessage *pigeonResult = [[TestMessage alloc] init];
+  pigeonResult.testList = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable TestMessage *)nullableFromList:(NSArray *)list {
+  return (list) ? [TestMessage fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.testList ?: [NSNull null]),
+  ];
+}
+@end
+
 @interface HostIntegrationCoreApiCodecReader : FlutterStandardReader
 @end
 @implementation HostIntegrationCoreApiCodecReader
@@ -221,6 +248,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
       return [AllNullableTypesWrapper fromList:[self readValue]];
     case 130:
       return [AllTypes fromList:[self readValue]];
+    case 131:
+      return [TestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -239,6 +268,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[AllTypes class]]) {
     [self writeByte:130];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[TestMessage class]]) {
+    [self writeByte:131];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -1715,6 +1747,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       return [AllNullableTypesWrapper fromList:[self readValue]];
     case 130:
       return [AllTypes fromList:[self readValue]];
+    case 131:
+      return [TestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -1733,6 +1767,9 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[AllTypes class]]) {
     [self writeByte:130];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[TestMessage class]]) {
+    [self writeByte:131];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -2022,6 +2059,28 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec() {
                    completion(output, nil);
                  }];
 }
+- (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:nil
+                 reply:^(id reply) {
+                   completion(nil);
+                 }];
+}
+- (void)echoAsyncString:(NSString *)arg_aString
+             completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   NSString *output = reply;
+                   completion(output, nil);
+                 }];
+}
 @end
 
 NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec() {
@@ -2050,3 +2109,123 @@ void HostTrivialApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
 }
+NSObject<FlutterMessageCodec> *HostSmallApiGetCodec() {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  return sSharedObject;
+}
+
+void HostSmallApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<HostSmallApi> *api) {
+  {
+    FlutterBasicMessageChannel *channel =
+        [[FlutterBasicMessageChannel alloc] initWithName:@"dev.flutter.pigeon.HostSmallApi.echo"
+                                         binaryMessenger:binaryMessenger
+                                                   codec:HostSmallApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoString:completion:)],
+                @"HostSmallApi api (%@) doesn't respond to @selector(echoString:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
+        [api echoString:arg_aString
+             completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+               callback(wrapResult(output, error));
+             }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+        [[FlutterBasicMessageChannel alloc] initWithName:@"dev.flutter.pigeon.HostSmallApi.voidVoid"
+                                         binaryMessenger:binaryMessenger
+                                                   codec:HostSmallApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(voidVoidWithCompletion:)],
+                @"HostSmallApi api (%@) doesn't respond to @selector(voidVoidWithCompletion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api voidVoidWithCompletion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+}
+@interface FlutterSmallApiCodecReader : FlutterStandardReader
+@end
+@implementation FlutterSmallApiCodecReader
+- (nullable id)readValueOfType:(UInt8)type {
+  switch (type) {
+    case 128:
+      return [TestMessage fromList:[self readValue]];
+    default:
+      return [super readValueOfType:type];
+  }
+}
+@end
+
+@interface FlutterSmallApiCodecWriter : FlutterStandardWriter
+@end
+@implementation FlutterSmallApiCodecWriter
+- (void)writeValue:(id)value {
+  if ([value isKindOfClass:[TestMessage class]]) {
+    [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else {
+    [super writeValue:value];
+  }
+}
+@end
+
+@interface FlutterSmallApiCodecReaderWriter : FlutterStandardReaderWriter
+@end
+@implementation FlutterSmallApiCodecReaderWriter
+- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
+  return [[FlutterSmallApiCodecWriter alloc] initWithData:data];
+}
+- (FlutterStandardReader *)readerWithData:(NSData *)data {
+  return [[FlutterSmallApiCodecReader alloc] initWithData:data];
+}
+@end
+
+NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec() {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  static dispatch_once_t sPred = 0;
+  dispatch_once(&sPred, ^{
+    FlutterSmallApiCodecReaderWriter *readerWriter =
+        [[FlutterSmallApiCodecReaderWriter alloc] init];
+    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+  });
+  return sSharedObject;
+}
+
+@interface FlutterSmallApi ()
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@end
+
+@implementation FlutterSmallApi
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
+  self = [super init];
+  if (self) {
+    _binaryMessenger = binaryMessenger;
+  }
+  return self;
+}
+- (void)echoWrappedList:(TestMessage *)arg_msg
+             completion:(void (^)(TestMessage *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.FlutterSmallApi.echoWrappedList"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterSmallApiGetCodec()];
+  [channel sendMessage:@[ arg_msg ?: [NSNull null] ]
+                 reply:^(id reply) {
+                   TestMessage *output = reply;
+                   completion(output, nil);
+                 }];
+}
+@end

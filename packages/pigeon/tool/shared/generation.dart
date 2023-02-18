@@ -2,8 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' show Platform;
+
 import 'package:path/path.dart' as p;
 import 'package:pigeon/pigeon.dart';
+
+import 'process_utils.dart';
 
 enum GeneratorLanguages {
   cpp,
@@ -16,9 +20,7 @@ enum GeneratorLanguages {
 // A map of pigeons/ files to the languages that they can't yet be generated
 // for due to limitations of that generator.
 const Map<String, Set<GeneratorLanguages>> _unsupportedFiles =
-    <String, Set<GeneratorLanguages>>{
-  'enum_args': <GeneratorLanguages>{GeneratorLanguages.cpp},
-};
+    <String, Set<GeneratorLanguages>>{};
 
 String _snakeToPascalCase(String snake) {
   final List<String> parts = snake.split('_');
@@ -37,12 +39,7 @@ String _snakeToPascalCase(String snake) {
 // https://github.com/flutter/flutter/issues/115168.
 String _javaFilenameForName(String inputName) {
   const Map<String, String> specialCases = <String, String>{
-    'android_unittests': 'Pigeon',
-    'host2flutter': 'Host2Flutter',
-    'list': 'PigeonList',
     'message': 'MessagePigeon',
-    'voidflutter': 'VoidFlutter',
-    'voidhost': 'VoidHost',
   };
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
 }
@@ -51,25 +48,15 @@ Future<int> generatePigeons({required String baseDir}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const List<String> inputs = <String>[
-    'android_unittests',
-    'async_handlers',
     'background_platform_channels',
     'core_tests',
-    'enum_args',
     'enum',
-    'host2flutter',
-    'java_double_host_api',
-    'list',
     'message',
     'multiple_arity',
     'non_null_fields',
     'null_fields',
     'nullable_returns',
     'primitive',
-    'void_arg_flutter',
-    'void_arg_host',
-    'voidflutter',
-    'voidhost',
   ];
 
   final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');
@@ -182,4 +169,24 @@ Future<int> runPigeon({
     swiftOut: swiftOut,
     swiftOptions: const SwiftOptions(),
   ));
+}
+
+/// Runs the repository tooling's format command on this package.
+///
+/// This is intended for formatting generated autoput, but since there's no
+/// way to filter to specific files in with the repo tooling it runs over the
+/// entire package.
+Future<int> formatAllFiles({required String repositoryRoot}) {
+  final String dartCommand = Platform.isWindows ? 'dart.exe' : 'dart';
+  return runProcess(
+      dartCommand,
+      <String>[
+        'run',
+        'script/tool/bin/flutter_plugin_tools.dart',
+        'format',
+        '--packages=pigeon',
+      ],
+      streamOutput: false,
+      workingDirectory: repositoryRoot,
+      logFailure: true);
 }
