@@ -1,6 +1,6 @@
 ## 1.0.17
 
-* Update router_config to not passing `extra` unconditionally.
+* Updates router_config to not passing itself as `extra`.
 
 
 ## 1.0.16
