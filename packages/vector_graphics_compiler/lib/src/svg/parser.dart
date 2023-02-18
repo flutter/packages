@@ -186,7 +186,8 @@ class _Elements {
     );
 
     final ParentNode group = ParentNode(
-      parserState._currentAttributes,
+      // parserState._currentAttributes,
+      SvgAttributes.empty,
       precalculatedTransform: transform,
     );
 
@@ -469,7 +470,6 @@ class _Elements {
           !isPercentage(rawX); // TODO: do we need to handle mixed case.
       final double x = parseDecimalOrPercentage(rawX);
       final double y = parseDecimalOrPercentage(rawY);
-
       parserState.currentGroup!.addChild(
         TextNode(
           text,
@@ -687,7 +687,7 @@ class SvgParser {
   }
 
   bool _isShapeOrText(String elementName) {
-    // Avoid applying default fill colors unless we need to.
+    // Avoid applying default fill/stroke colors unless we need to.
     // https://www.w3.org/TR/SVG11/single-page.html#intro-TermShape
     // https://www.w3.org/TR/SVG11/single-page.html#intro-TermTextContentElement
     return elementName == 'path' ||
@@ -1050,15 +1050,15 @@ class SvgParser {
   /// Parses a `text-anchor` attribute.
   double? parseTextAnchor(String? raw) {
     switch (raw) {
-      case 'inherit':
-        return null;
       case 'end':
         return 1;
       case 'middle':
         return .5;
       case 'start':
-      default:
         return 0;
+      case 'inherit':
+      default:
+        return null;
     }
   }
 
@@ -1219,17 +1219,14 @@ class SvgParser {
   }
 
   Color? _determineFillColor(
-    bool isShapeOrText,
     String rawFill,
     double opacity,
     bool explicitOpacity,
-    Color? defaultFillColor,
     Color? currentColor,
     String? id,
   ) {
-    final Color? color = parseColor(rawFill, attributeName: 'fill', id: id) ??
-        currentColor ??
-        (isShapeOrText ? defaultFillColor : null);
+    final Color? color =
+        parseColor(rawFill, attributeName: 'fill', id: id) ?? currentColor;
 
     if (explicitOpacity && color != null) {
       return color.withOpacity(opacity);
@@ -1492,9 +1489,6 @@ class SvgParser {
 
   Map<String, String> _createAttributeMap(List<XmlEventAttribute> attributes) {
     final Map<String, String> attributeMap = <String, String>{};
-    if (_parentDrawables.isNotEmpty && currentGroup != null) {
-      attributeMap.addEntries(currentGroup!.attributes.heritable);
-    }
 
     for (final XmlEventAttribute attribute in attributes) {
       final String value = attribute.value.trim();
@@ -1518,6 +1512,7 @@ class SvgParser {
   }
 
   SvgStrokeAttributes? _parseStrokeAttributes(
+    bool isShapeOrText,
     Map<String, String> attributeMap,
     double? uniformOpacity,
     Color? currentColor,
@@ -1569,10 +1564,13 @@ class SvgParser {
       strokeColor = parseColor(rawStroke, attributeName: 'stroke', id: id);
     }
 
+    final Color? color =
+        isShapeOrText ? (strokeColor ?? currentColor) : strokeColor;
+
     return SvgStrokeAttributes._(
       _definitions,
       shaderId: shaderId,
-      color: (strokeColor ?? currentColor)?.withOpacity(opacity),
+      color: color?.withOpacity(opacity),
       cap: _parseCap(rawStrokeCap, null),
       join: _parseJoin(rawLineJoin, null),
       miterLimit: parseDouble(rawMiterLimit),
@@ -1618,16 +1616,14 @@ class SvgParser {
     }
 
     final Color? fillColor = _determineFillColor(
-      isShapeOrText,
       rawFill,
       opacity,
       uniformOpacity != null || rawFillOpacity != '',
-      Color.opaqueBlack,
       currentColor,
       id,
     );
 
-    if (fillColor == null) {
+    if (fillColor == null && !isShapeOrText) {
       return null;
     }
 
@@ -1659,7 +1655,13 @@ class SvgParser {
         href: attributeMap['href'],
         opacity: opacity,
         color: color,
-        stroke: _parseStrokeAttributes(attributeMap, opacity, color, id),
+        stroke: _parseStrokeAttributes(
+          isShapeOrText,
+          attributeMap,
+          opacity,
+          color,
+          id,
+        ),
         fill: _parseFillAttributes(
           isShapeOrText,
           attributeMap,
@@ -1862,7 +1864,7 @@ class SvgAttributes {
 
   /// Whether these attributes could result in any visual display if applied to
   /// a leaf shape node.
-  bool get paintsAnything => opacity != 0 && (stroke != null || fill != null);
+  bool get paintsAnything => opacity != 0;
 
   /// The raw attribute map.
   final Map<String, String> raw;
@@ -2012,38 +2014,43 @@ class SvgAttributes {
   ///
   /// If `includePosition` is true, the `x`/`y` coordinates are also inherited. This
   /// is intended to be used by text parsing. Defaults to `false`.
-  SvgAttributes applyParent(SvgAttributes parent,
-      {bool includePosition = false}) {
+  SvgAttributes applyParent(
+    SvgAttributes parent, {
+    bool includePosition = false,
+    AffineMatrix? transformOverride,
+    String? hrefOverride,
+  }) {
     final Map<String, String> newRaw = <String, String>{
       ...Map<String, String>.fromEntries(parent.heritable),
       if (includePosition && parent.raw.containsKey('x')) 'x': parent.raw['x']!,
       if (includePosition && parent.raw.containsKey('y')) 'y': parent.raw['y']!,
       ...raw,
     };
+
     return SvgAttributes._(
       raw: newRaw,
-      id: id,
-      href: href,
-      transform: transform,
-      color: parent.color ?? color,
-      opacity: parent.opacity ?? opacity,
-      stroke: parent.stroke ?? stroke,
-      fill: parent.fill ?? fill,
+      id: newRaw['id'],
+      href: newRaw['href'],
+      transform: transformOverride ?? transform,
+      color: color ?? parent.color,
+      opacity: opacity ?? parent.opacity,
+      stroke: stroke?.applyParent(parent.stroke) ?? parent.stroke,
+      fill: fill?.applyParent(parent.fill) ?? parent.fill,
       fillRule: fillRule,
-      clipRule: parent.clipRule ?? clipRule,
-      clipPathId: parent.clipPathId ?? clipPathId,
-      blendMode: parent.blendMode ?? blendMode,
-      fontFamily: parent.fontFamily ?? fontFamily,
-      fontWeight: parent.fontWeight ?? fontWeight,
-      fontSize: parent.fontSize ?? fontSize,
-      textDecoration: parent.textDecoration ?? textDecoration,
-      textDecorationStyle: parent.textDecorationStyle ?? textDecorationStyle,
-      textDecorationColor: parent.textDecorationColor ?? textDecorationColor,
-      textAnchorMultiplier: parent.textAnchorMultiplier ?? textAnchorMultiplier,
-      x: parent.x ?? x,
-      y: parent.y ?? y,
-      height: parent.height ?? height,
-      width: parent.width ?? width,
+      clipRule: clipRule ?? parent.clipRule,
+      clipPathId: clipPathId ?? parent.clipPathId,
+      blendMode: blendMode ?? parent.blendMode,
+      fontFamily: fontFamily ?? parent.fontFamily,
+      fontWeight: fontWeight ?? parent.fontWeight,
+      fontSize: fontSize ?? parent.fontSize,
+      textDecoration: textDecoration ?? parent.textDecoration,
+      textDecorationStyle: textDecorationStyle ?? parent.textDecorationStyle,
+      textDecorationColor: textDecorationColor ?? parent.textDecorationColor,
+      textAnchorMultiplier: textAnchorMultiplier ?? parent.textAnchorMultiplier,
+      x: x ?? parent.x,
+      y: y ?? parent.y,
+      height: height ?? parent.height,
+      width: width ?? parent.width,
     );
   }
 }
@@ -2097,6 +2104,22 @@ class SvgStrokeAttributes {
   /// Indicates whether or not a pattern is used for stroke.
   final bool? hasPattern;
 
+  /// Inherits attributes in this from parent.
+  SvgStrokeAttributes applyParent(SvgStrokeAttributes? parent) {
+    return SvgStrokeAttributes._(
+      _definitions,
+      color: color ?? parent?.color,
+      shaderId: shaderId ?? parent?.shaderId,
+      join: join ?? parent?.join,
+      cap: cap ?? parent?.cap,
+      miterLimit: miterLimit ?? parent?.miterLimit,
+      width: width ?? parent?.width,
+      dashArray: dashArray ?? parent?.dashArray,
+      dashOffset: dashOffset ?? parent?.dashOffset,
+      hasPattern: hasPattern ?? parent?.hasPattern,
+    );
+  }
+
   /// Creates a stroking paint object from this set of attributes, using the
   /// bounds and transform specified for shader computation.
   ///
@@ -2144,8 +2167,12 @@ class SvgStrokeAttributes {
 /// SVG attributes specific to filling.
 class SvgFillAttributes {
   /// Create a new [SvgFillAttributes];
-  const SvgFillAttributes._(this._definitions,
-      {this.color, this.shaderId, this.hasPattern});
+  const SvgFillAttributes._(
+    this._definitions, {
+    this.color,
+    this.shaderId,
+    this.hasPattern,
+  });
 
   /// Specifies that fills should not be drawn, even if they otherwise would be.
   static const SvgFillAttributes none = SvgFillAttributes._(null);
@@ -2162,13 +2189,31 @@ class SvgFillAttributes {
   /// If there is a pattern a default fill will be returned.
   final bool? hasPattern;
 
+  /// Inherits attributes in this from parent.
+  SvgFillAttributes applyParent(SvgFillAttributes? parent) {
+    return SvgFillAttributes._(
+      _definitions,
+      color: color ?? parent?.color,
+      shaderId: shaderId ?? parent?.shaderId,
+      hasPattern: hasPattern ?? parent?.hasPattern,
+    );
+  }
+
   /// Creates a [Fill] from this information with appropriate transforms and
   /// bounds for shaders.
   ///
   /// Returns null if this is [none].
-  Fill? toFill(Rect shaderBounds, AffineMatrix transform) {
+  Fill? toFill(
+    Rect shaderBounds,
+    AffineMatrix transform, {
+    Color? defaultColor,
+  }) {
+    final Color? resolvedColor = color ?? defaultColor;
+    if (resolvedColor == null) {
+      return null;
+    }
     if (hasPattern == true) {
-      return Fill(color: color);
+      return Fill(color: resolvedColor);
     }
 
     if (_definitions == null) {
@@ -2184,6 +2229,6 @@ class SvgFillAttributes {
       }
     }
 
-    return Fill(color: color, shader: shader);
+    return Fill(color: resolvedColor, shader: shader);
   }
 }

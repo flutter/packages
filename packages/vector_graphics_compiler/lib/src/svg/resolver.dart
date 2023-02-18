@@ -64,7 +64,9 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         precalculatedTransform: AffineMatrix.identity,
         children: <Node>[
           for (Node child in parentNode.children)
-            child.accept(this, nextTransform),
+            child
+                .applyAttributes(parentNode.attributes)
+                .accept(this, nextTransform),
         ],
       );
     } else {
@@ -127,6 +129,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   Node visitTextNode(TextNode textNode, AffineMatrix data) {
     final Paint? paint = textNode.computePaint(_bounds, data);
     final TextConfig textConfig = textNode.computeTextConfig(_bounds, data);
+
     if (paint != null && textConfig.text.trim().isNotEmpty) {
       return ResolvedTextNode(
         textConfig: textConfig,
@@ -158,8 +161,10 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     if (resolvedNode == null) {
       return Node.empty;
     }
-    final AttributedNode concreteRef =
-        resolvedNode.applyAttributes(deferredNode.attributes);
+    final Node concreteRef = resolvedNode.applyAttributes(
+      deferredNode.attributes,
+      replace: true,
+    );
     return concreteRef.accept(this, data);
   }
 

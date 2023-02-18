@@ -4,6 +4,45 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Use handles stroke and fill correctly', () async {
+    final VectorInstructions instructions = parseWithoutOptimizers(
+      useStar,
+    );
+
+    // These kinds of paths are verified elsewhere, and the FP math can vary
+    // by platform.
+    expect(instructions.paths.length, 4);
+
+    expect(
+      instructions.paints,
+      const <Paint>[
+        Paint(
+          blendMode: BlendMode.srcOver,
+          stroke: Stroke(color: Color(0xff000000), width: 12.0),
+        ),
+        Paint(
+          blendMode: BlendMode.srcOver,
+          stroke: Stroke(color: Color(0xff008000)),
+          fill: Fill(color: Color(0xffffbb44)),
+        ),
+      ],
+    );
+
+    expect(
+      instructions.commands,
+      const <DrawCommand>[
+        DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+        DrawCommand(DrawCommandType.path, objectId: 1, paintId: 0),
+        DrawCommand(DrawCommandType.path, objectId: 2, paintId: 0),
+        DrawCommand(DrawCommandType.path, objectId: 3, paintId: 0),
+        DrawCommand(DrawCommandType.path, objectId: 0, paintId: 1),
+        DrawCommand(DrawCommandType.path, objectId: 1, paintId: 1),
+        DrawCommand(DrawCommandType.path, objectId: 2, paintId: 1),
+        DrawCommand(DrawCommandType.path, objectId: 3, paintId: 1),
+      ],
+    );
+  });
+
   test('Use preserves fill from shape', () async {
     final VectorInstructions instructions = parseWithoutOptimizers(
       useColor,
@@ -910,7 +949,7 @@ void main() {
       warningsAsErrors: true,
     );
 
-    expect(instructions.paints, ghostScriptTigerPaints.toSet().toList());
+    expect(instructions.paints.toSet(), ghostScriptTigerPaints.toSet());
     expect(instructions.paths, ghostScriptTigerPaths);
     expect(
       instructions.commands,

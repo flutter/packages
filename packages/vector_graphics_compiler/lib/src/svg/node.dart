@@ -45,6 +45,16 @@ abstract class Node {
 
   /// Accept a [Visitor] implementation.
   S accept<S, V>(Visitor<S, V> visitor, V data);
+
+  /// Creates a new compatible new node with attribute inheritence.
+  ///
+  /// If [replace] is true, treats the application of attributes as if this node
+  /// is the parent. Otherwise, treats the application of the attributes as if
+  /// the [newAttributes] are from the parent.
+  ///
+  /// By default, returns this.
+  Node applyAttributes(SvgAttributes newAttributes, {bool replace = false}) =>
+      this;
 }
 
 class _EmptyNode extends Node {
@@ -88,10 +98,6 @@ abstract class AttributedNode extends TransformableNode {
   ///
   /// Painting attributes inherit down the tree.
   final SvgAttributes attributes;
-
-  /// Creates a new compatible node with this as if the `newPaint` had
-  /// the current paint applied as a parent.
-  AttributedNode applyAttributes(SvgAttributes newAttributes);
 }
 
 /// A graphics node describing a viewport area, which has a [width] and [height]
@@ -196,9 +202,12 @@ class ParentNode extends AttributedNode {
   }
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     return ParentNode(
-      newAttributes.applyParent(attributes),
+      attributes.applyParent(newAttributes),
       precalculatedTransform: transform,
     ).._children.addAll(_children);
   }
@@ -329,8 +338,12 @@ class PathNode extends AttributedNode {
 
   /// Compute the paint used by this Path.
   Paint? computePaint(Rect bounds, AffineMatrix transform) {
-    final Fill? fill = attributes.fill?.toFill(bounds, transform);
     final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
+    final Fill? fill = attributes.fill?.toFill(
+      bounds,
+      transform,
+      defaultColor: stroke?.color == null ? Color.opaqueBlack : null,
+    );
     if (fill == null && stroke == null) {
       return null;
     }
@@ -342,10 +355,15 @@ class PathNode extends AttributedNode {
   }
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     return PathNode(
       path,
-      attributes.applyParent(newAttributes),
+      replace
+          ? newAttributes.applyParent(attributes, transformOverride: transform)
+          : attributes.applyParent(newAttributes),
     );
   }
 
@@ -377,9 +395,14 @@ class DeferredNode extends AttributedNode {
   final Resolver<AttributedNode?> resolver;
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     return DeferredNode(
-      attributes.applyParent(newAttributes),
+      replace
+          ? newAttributes.applyParent(attributes, transformOverride: transform)
+          : attributes.applyParent(newAttributes),
       refId: refId,
       resolver: resolver,
     );
@@ -426,7 +449,8 @@ class TextNode extends AttributedNode {
 
   /// Compute the [Paint] that this text node uses.
   Paint? computePaint(Rect bounds, AffineMatrix transform) {
-    final Fill? fill = attributes.fill?.toFill(bounds, transform);
+    final Fill? fill = attributes.fill
+        ?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
     final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
     if (fill == null && stroke == null) {
       return null;
@@ -458,14 +482,19 @@ class TextNode extends AttributedNode {
   }
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     return TextNode(
       text,
       baseline,
       absolute,
       fontSize,
       fontWeight,
-      attributes.applyParent(newAttributes),
+      replace
+          ? newAttributes.applyParent(attributes, transformOverride: transform)
+          : attributes.applyParent(newAttributes),
     );
   }
 
@@ -493,10 +522,15 @@ class ImageNode extends AttributedNode {
   final Uint8List data;
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     return ImageNode(
       data,
-      attributes.applyParent(newAttributes),
+      replace
+          ? newAttributes.applyParent(attributes, transformOverride: transform)
+          : attributes.applyParent(newAttributes),
     );
   }
 
