@@ -2159,7 +2159,7 @@ class SvgStrokeAttributes {
       join: join,
       cap: cap,
       miterLimit: miterLimit,
-      width: width,
+      width: transform.scaleStrokeWidth(width),
     );
   }
 }

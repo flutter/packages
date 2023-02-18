@@ -11,6 +11,30 @@ import 'package:test/test.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 void main() {
+  test('scaleStrokeWidth', () {
+    expect(AffineMatrix.identity.scaleStrokeWidth(null), null);
+    expect(AffineMatrix.identity.scaleStrokeWidth(1), 1);
+    expect(AffineMatrix.identity.scaleStrokeWidth(2), 2);
+    expect(AffineMatrix.identity.rotated(1.2).scaleStrokeWidth(1), 1);
+    expect(AffineMatrix.identity.rotated(1.2).scaleStrokeWidth(2), 2);
+
+    expect(AffineMatrix.identity.scaled(2.0).scaleStrokeWidth(1), 2);
+    expect(AffineMatrix.identity.scaled(2.0).scaleStrokeWidth(2), 4);
+    expect(
+        AffineMatrix.identity.scaled(2.0).rotated(1.2).scaleStrokeWidth(1), 2);
+    expect(
+        AffineMatrix.identity.scaled(2.0).rotated(1.2).scaleStrokeWidth(2), 4);
+
+    expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(1), 1.5);
+    expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(2), 3);
+    expect(
+        AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(1),
+        1.5);
+    expect(
+        AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(2),
+        3);
+  });
+
   test('Parse rotate and scale', () {
     // Regression test for https://github.com/dnfield/flutter_svg/issues/801
     final AffineMatrix mat = parseTransform('rotate(-1 4 -12) scale(2)')!;
