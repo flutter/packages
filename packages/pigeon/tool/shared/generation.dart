@@ -2,8 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' show Platform;
+
 import 'package:path/path.dart' as p;
 import 'package:pigeon/pigeon.dart';
+
+import 'process_utils.dart';
 
 enum GeneratorLanguages {
   cpp,
@@ -165,4 +169,24 @@ Future<int> runPigeon({
     swiftOut: swiftOut,
     swiftOptions: const SwiftOptions(),
   ));
+}
+
+/// Runs the repository tooling's format command on this package.
+///
+/// This is intended for formatting generated autoput, but since there's no
+/// way to filter to specific files in with the repo tooling it runs over the
+/// entire package.
+Future<int> formatAllFiles({required String repositoryRoot}) {
+  final String dartCommand = Platform.isWindows ? 'dart.exe' : 'dart';
+  return runProcess(
+      dartCommand,
+      <String>[
+        'run',
+        'script/tool/bin/flutter_plugin_tools.dart',
+        'format',
+        '--packages=pigeon',
+      ],
+      streamOutput: false,
+      workingDirectory: repositoryRoot,
+      logFailure: true);
 }
