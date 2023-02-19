@@ -132,8 +132,7 @@ class GoRouterState {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
-  @Deprecated(
-      'Uses GoRouter.of(context).routeInformationParser.namedLocation instead')
+  @Deprecated('Use GoRouter.of(context).namedLocation instead')
   String namedLocation(
     String name, {
     Map<String, String> params = const <String, String>{},

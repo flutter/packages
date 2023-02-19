@@ -57,6 +57,8 @@ class ErrorOr {
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
   friend class HostTrivialApi;
+  friend class HostSmallApi;
+  friend class FlutterSmallApi;
   ErrorOr() = default;
   T TakeValue() && { return std::get<T>(std::move(v_)); }
 
@@ -111,6 +113,10 @@ class AllTypes {
   friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
   friend class HostTrivialApiCodecSerializer;
+  friend class HostSmallApi;
+  friend class HostSmallApiCodecSerializer;
+  friend class FlutterSmallApi;
+  friend class FlutterSmallApiCodecSerializer;
   friend class CoreTestsTest;
   bool a_bool_;
   int64_t an_int_;
@@ -197,6 +203,10 @@ class AllNullableTypes {
   friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
   friend class HostTrivialApiCodecSerializer;
+  friend class HostSmallApi;
+  friend class HostSmallApiCodecSerializer;
+  friend class FlutterSmallApi;
+  friend class FlutterSmallApiCodecSerializer;
   friend class CoreTestsTest;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
@@ -230,8 +240,39 @@ class AllNullableTypesWrapper {
   friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
   friend class HostTrivialApiCodecSerializer;
+  friend class HostSmallApi;
+  friend class HostSmallApiCodecSerializer;
+  friend class FlutterSmallApi;
+  friend class FlutterSmallApiCodecSerializer;
   friend class CoreTestsTest;
   AllNullableTypes values_;
+};
+
+// A data class containing a List, used in unit tests.
+//
+// Generated class from Pigeon that represents data sent in messages.
+class TestMessage {
+ public:
+  TestMessage();
+  const flutter::EncodableList* test_list() const;
+  void set_test_list(const flutter::EncodableList* value_arg);
+  void set_test_list(const flutter::EncodableList& value_arg);
+
+ private:
+  TestMessage(const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  friend class HostIntegrationCoreApi;
+  friend class HostIntegrationCoreApiCodecSerializer;
+  friend class FlutterIntegrationCoreApi;
+  friend class FlutterIntegrationCoreApiCodecSerializer;
+  friend class HostTrivialApi;
+  friend class HostTrivialApiCodecSerializer;
+  friend class HostSmallApi;
+  friend class HostSmallApiCodecSerializer;
+  friend class FlutterSmallApi;
+  friend class FlutterSmallApiCodecSerializer;
+  friend class CoreTestsTest;
+  std::optional<flutter::EncodableList> test_list_;
 };
 
 class HostIntegrationCoreApiCodecSerializer
@@ -607,6 +648,14 @@ class FlutterIntegrationCoreApi {
       const flutter::EncodableMap* a_map,
       std::function<void(const flutter::EncodableMap*)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
+  // A no-op function taking no arguments and returning no value, to sanity
+  // test basic asynchronous calling.
+  void NoopAsync(std::function<void(void)>&& on_success,
+                 std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed in generic Object asynchronously.
+  void EchoAsyncString(const std::string& a_string,
+                       std::function<void(const std::string&)>&& on_success,
+                       std::function<void(const FlutterError&)>&& on_error);
 };
 
 // An API that can be implemented for minimal, compile-only tests.
@@ -632,5 +681,65 @@ class HostTrivialApi {
  protected:
   HostTrivialApi() = default;
 };
+// A simple API implemented in some unit tests.
+//
+// Generated interface from Pigeon that represents a handler of messages from
+// Flutter.
+class HostSmallApi {
+ public:
+  HostSmallApi(const HostSmallApi&) = delete;
+  HostSmallApi& operator=(const HostSmallApi&) = delete;
+  virtual ~HostSmallApi() {}
+  virtual void Echo(const std::string& a_string,
+                    std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  virtual void VoidVoid(
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+
+  // The codec used by HostSmallApi.
+  static const flutter::StandardMessageCodec& GetCodec();
+  // Sets up an instance of `HostSmallApi` to handle messages through the
+  // `binary_messenger`.
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    HostSmallApi* api);
+  static flutter::EncodableValue WrapError(std::string_view error_message);
+  static flutter::EncodableValue WrapError(const FlutterError& error);
+
+ protected:
+  HostSmallApi() = default;
+};
+class FlutterSmallApiCodecSerializer : public flutter::StandardCodecSerializer {
+ public:
+  inline static FlutterSmallApiCodecSerializer& GetInstance() {
+    static FlutterSmallApiCodecSerializer sInstance;
+    return sInstance;
+  }
+
+  FlutterSmallApiCodecSerializer();
+
+ public:
+  void WriteValue(const flutter::EncodableValue& value,
+                  flutter::ByteStreamWriter* stream) const override;
+
+ protected:
+  flutter::EncodableValue ReadValueOfType(
+      uint8_t type, flutter::ByteStreamReader* stream) const override;
+};
+
+// A simple API called in some unit tests.
+//
+// Generated class from Pigeon that represents Flutter messages that can be
+// called from C++.
+class FlutterSmallApi {
+ private:
+  flutter::BinaryMessenger* binary_messenger_;
+
+ public:
+  FlutterSmallApi(flutter::BinaryMessenger* binary_messenger);
+  static const flutter::StandardMessageCodec& GetCodec();
+  void EchoWrappedList(const TestMessage& msg,
+                       std::function<void(const TestMessage&)>&& on_success,
+                       std::function<void(const FlutterError&)>&& on_error);
+};
+
 }  // namespace core_tests_pigeontest
 #endif  // PIGEON_CORE_TESTS_GEN_H_

@@ -7,8 +7,8 @@ package com.example.alternate_language_test_plugin;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import com.example.alternate_language_test_plugin.PigeonList.EchoApi;
-import com.example.alternate_language_test_plugin.PigeonList.TestMessage;
+import com.example.alternate_language_test_plugin.CoreTests.FlutterSmallApi;
+import com.example.alternate_language_test_plugin.CoreTests.TestMessage;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -28,17 +28,17 @@ public class ListTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList args = (ArrayList) EchoApi.getCodec().decodeMessage(message);
-              ByteBuffer replyData = EchoApi.getCodec().encodeMessage(args.get(0));
+              ArrayList args = (ArrayList) FlutterSmallApi.getCodec().decodeMessage(message);
+              ByteBuffer replyData = FlutterSmallApi.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);
               return null;
             })
         .when(binaryMessenger)
         .send(anyString(), any(), any());
-    EchoApi api = new EchoApi(binaryMessenger);
+    FlutterSmallApi api = new FlutterSmallApi(binaryMessenger);
     boolean[] didCall = {false};
-    api.echo(
+    api.echoWrappedList(
         top,
         (result) -> {
           didCall[0] = true;

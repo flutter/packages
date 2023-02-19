@@ -525,6 +525,9 @@ void main() {
       const String version = '1.0.1';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: version);
+      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
+        MockProcess(stdout: 'version: 1.0.0'),
+      ];
 
       const String changelog = '''
 ## NEXT
@@ -538,7 +541,7 @@ void main() {
 
       bool hasError = false;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['version-check', '--base-sha=main', '--against-pub'],
+          runner, <String>['version-check', '--base-sha=main'],
           errorHandler: (Error e) {
         expect(e, isA<ToolExit>());
         hasError = true;
@@ -559,6 +562,9 @@ void main() {
     test('fails if the version increases without replacing NEXT', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.1');
+      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
+        MockProcess(stdout: 'version: 1.0.0'),
+      ];
 
       const String changelog = '''
 ## NEXT
@@ -570,7 +576,7 @@ void main() {
 
       bool hasError = false;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['version-check', '--base-sha=main', '--against-pub'],
+          runner, <String>['version-check', '--base-sha=main'],
           errorHandler: (Error e) {
         expect(e, isA<ToolExit>());
         hasError = true;
@@ -609,6 +615,30 @@ void main() {
         containsAllInOrder(<Matcher>[
           contains('New version is lower than previous version. '
               'This is assumed to be a revert.'),
+        ]),
+      );
+    });
+
+    // This handles imports of a package with a NEXT section.
+    test('allows NEXT for a new package', () async {
+      final RepositoryPackage plugin =
+          createFakePackage('a_package', packagesDir, version: '1.0.0');
+
+      const String changelog = '''
+## NEXT
+* Some changes that should be listed in the next release.
+## 1.0.0
+* Some other changes.
+''';
+      plugin.changelogFile.writeAsStringSync(changelog);
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['version-check', '--base-sha=main']);
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Unable to find previous version at git base'),
+          contains('Found NEXT; validating next version in the CHANGELOG'),
         ]),
       );
     });

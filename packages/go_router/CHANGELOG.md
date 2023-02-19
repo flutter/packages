@@ -7,6 +7,14 @@
   describe the meaning of the child argument in the builder functions.
 - Adds support for restorationId to ShellRoute (and StatefulShellRoute).
 
+## 6.0.9
+
+- Fixes deprecation message for `GoRouterState.namedLocation`
+
+## 6.0.8
+
+* Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
+
 ## 6.0.7
 
 - Add observers parameter to the ShellRoute that will be passed to the nested Navigator.
