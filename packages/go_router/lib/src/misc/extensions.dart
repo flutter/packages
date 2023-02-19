@@ -41,8 +41,9 @@ extension GoRouterHelper on BuildContext {
   /// See also:
   /// * [pushReplacement] which replaces the top-most page of the page stack and
   ///   always uses a new page key.
-  /// * [replace] which replaces the top-most page of the page stack and reuses
-  ///   the page key.
+  /// * [replace] which replaces the top-most page of the page stack but treats
+  ///   it as the same page. The page key will be reused. This will preserve the
+  ///   state and not run any page animation.
   void push(String location, {Object? extra}) =>
       GoRouter.of(this).push(location, extra: extra);
 
@@ -73,8 +74,9 @@ extension GoRouterHelper on BuildContext {
   /// See also:
   /// * [go] which navigates to the location.
   /// * [push] which pushes the given location onto the page stack.
-  /// * [replace] which replaces the top-most page of the page stack but reuses
-  ///   the page key.
+  /// * [replace] which replaces the top-most page of the page stack but treats
+  ///   it as the same page. The page key will be reused. This will preserve the
+  ///   state and not run any page animation.
   void pushReplacement(String location, {Object? extra}) =>
       GoRouter.of(this).pushReplacement(location, extra: extra);
 
