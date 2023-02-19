@@ -11,13 +11,14 @@ import 'parser.dart';
 class RouteNavigatorBuilder extends ShellNavigatorBuilder {
   /// Constructs a NavigatorBuilder.
   RouteNavigatorBuilder(
-      this.routeBuilder,
-      this.state,
-      this.currentRoute,
-      this.heroController,
-      this.navigatorKeyForCurrentRoute,
-      this.pages,
-      this.onPopPage);
+    this.routeBuilder,
+    this.state,
+    this.currentRoute,
+    this.heroController,
+    this.navigatorKeyForCurrentRoute,
+    this.pages,
+    this.pagePopContext,
+  );
 
   /// The route builder.
   final RouteBuilder routeBuilder;
@@ -37,8 +38,8 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
   /// The pages for the current route.
   final List<Page<Object?>> pages;
 
-  /// The callback for popping a page.
-  final PopPageCallback onPopPage;
+  /// The page pop context.
+  final PagePopContext pagePopContext;
 
   /// Builds a navigator.
   static Widget buildNavigator(
@@ -73,7 +74,7 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
     GlobalKey<NavigatorState>? navigatorKey,
   }) {
     return buildNavigator(
-      onPopPage,
+      pagePopContext.onPopPage,
       pages,
       navigatorKey ?? navigatorKeyForCurrentRoute,
       observers: observers,
@@ -110,7 +111,7 @@ class RouteNavigatorBuilder extends ShellNavigatorBuilder {
         context,
         matchList,
         parentShellRouteIndex + 1,
-        onPopPage,
+        pagePopContext.routeBuilderOnPopPage,
         true,
         navigatorKey,
         restorationScopeId: restorationScopeId,

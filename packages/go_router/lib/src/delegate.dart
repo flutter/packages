@@ -128,12 +128,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     );
   }
 
-  bool _onPopPage(Route<Object?> route, Object? result) {
+  bool _onPopPage(Route<Object?> route, Object? result, RouteMatch? match) {
     if (!route.didPop(result)) {
       return false;
     }
-    final Page<Object?> page = route.settings as Page<Object?>;
-    final RouteMatch? match = builder.getRouteMatchForPage(page);
     if (match == null) {
       return true;
     }
