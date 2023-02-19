@@ -2,6 +2,10 @@
 
 - Adds `GoRouter.maybeOf` to get the closest `GoRouter` from the context, if there is any.
 
+## 6.0.9
+
+- Fixes deprecation message for `GoRouterState.namedLocation`
+
 ## 6.0.8
 
 * Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
