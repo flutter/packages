@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../go_router.dart';
@@ -150,9 +151,9 @@ class GoRouterState {
         other.name == name &&
         other.path == path &&
         other.fullpath == fullpath &&
-        other.params == params &&
-        other.queryParams == queryParams &&
-        other.queryParametersAll == queryParametersAll &&
+        mapEquals(other.params, params) &&
+        mapEquals(other.queryParams, queryParams) &&
+        mapEquals(other.queryParametersAll, queryParametersAll) &&
         other.extra == extra &&
         other.error == error &&
         other.pageKey == pageKey &&
