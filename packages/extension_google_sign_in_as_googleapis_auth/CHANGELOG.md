@@ -1,5 +1,10 @@
 ## NEXT
 
+* Updates [google_sign_in](https://pub.dev/packages/google_sign_in/changelog) dependency to 6.0.0, 
+  that migrates to Google Identity Services (GIS) SDK for [google_sign_in_web](https://pub.dev/packages/google_sign_in_web)
+
+## NEXT
+
 * Updates minimum Flutter version to 3.0.
 
 ## 2.0.7
