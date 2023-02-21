@@ -1,4 +1,25 @@
 # Packages that are excluded from dart unit test on Windows.
-
 # Exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
 - flutter_image
+# This test is very slow, so isn't worth running a second time
+# on Windows; the Linux run is enough coverage.
+- flutter_migrate
+# Unit tests for plugins that support web currently run in
+# Chrome, which isn't currently supported by web infrastructure.
+# TODO(ditman): Fix this in the repo tooling.
+- camera
+- camera_web
+- file_selector
+- file_selector_web
+- google_maps_flutter_web
+- google_sign_in
+- google_sign_in_web
+- image_picker
+- image_picker_for_web
+- shared_preferences
+- shared_preferences_web
+- url_launcher
+- url_launcher_web
+- video_player
+- video_player_web
+- webview_flutter_web
