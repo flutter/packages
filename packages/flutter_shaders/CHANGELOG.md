@@ -1,3 +1,7 @@
+## 0.0.6+1
+
+* Update URLs in pubspec.yaml.
+
 ## 0.0.6
 
 * Fix bug in `AnimatedSampler` that caused children with non-zero offsets to
