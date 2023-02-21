@@ -1338,7 +1338,8 @@ void main() {
   });
 
   test('wrap error returns flutter exception appropriately', () {
-    final Api api = Api(name: 'Api', location: ApiLocation.host, methods: <Method>[]);
+    final Api api =
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[]);
     final Root root = Root(
       apis: <Api>[api],
       classes: <Class>[],
@@ -1350,7 +1351,10 @@ void main() {
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('if (exception instanceof FlutterException)'));
-    expect(code, contains('FlutterException flutterException = (FlutterException) exception;'));
+    expect(
+        code,
+        contains(
+            'FlutterException flutterException = (FlutterException) exception;'));
     expect(code, contains('errorList.add(flutterException.code);'));
     expect(code, contains('errorList.add(flutterException.getMessage());'));
     expect(code, contains('errorList.add(flutterException.details);'));

@@ -1331,7 +1331,8 @@ void main() {
   });
 
   test('wrap error returns flutter exception appropriately', () {
-    final Api api = Api(name: 'Api', location: ApiLocation.host, methods: <Method>[]);
+    final Api api =
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[]);
     final Root root = Root(
       apis: <Api>[api],
       classes: <Class>[],
