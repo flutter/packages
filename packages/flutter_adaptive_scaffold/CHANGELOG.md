@@ -1,4 +1,4 @@
-## NEXT
+## 0.1.1
 
 * Adds three built-in Animation: `topOutIn`, `topInOut`, `rightInOut`.
 
