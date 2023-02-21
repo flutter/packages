@@ -404,6 +404,28 @@ class AdaptiveScaffold extends StatefulWidget {
     );
   }
 
+  /// Animation from top off the screen into the screen.
+  static AnimatedWidget topOutIn(Widget child, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0, -1),
+        end: Offset.zero,
+      ).animate(animation),
+      child: child,
+    );
+  }
+
+  /// Animation from on screen to top off screen.
+  static AnimatedWidget topInOut(Widget child, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(0, -1),
+      ).animate(animation),
+      child: child,
+    );
+  }
+
   /// Animation from left off the screen into the screen.
   static AnimatedWidget leftOutIn(Widget child, Animation<double> animation) {
     return SlideTransition(
@@ -432,6 +454,17 @@ class AdaptiveScaffold extends StatefulWidget {
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: Offset.zero,
+      ).animate(animation),
+      child: child,
+    );
+  }
+
+  /// Animation from on screen to right off screen.
+  static AnimatedWidget rightInOut(Widget child, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(1, 0),
       ).animate(animation),
       child: child,
     );
