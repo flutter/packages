@@ -1,5 +1,5 @@
 name: metrics_center
-version: 1.0.6
+version: 1.0.7
 description:
   Support multiple performance metrics sources/formats and destinations.
 repository: https://github.com/flutter/packages/tree/main/packages/metrics_center

@@ -99,13 +99,11 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AllTypes echoAllTypes(AllTypes everything);
 
-  /// Returns the passed object, to test serialization and deserialization.
-  @ObjCSelector('echoAllNullableTypes:')
-  @SwiftFunction('echo(_:)')
-  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
-
   /// Returns an error, to test error handling.
-  void throwError();
+  Object? throwError();
+
+  /// Responds with an error from an async void function.
+  void throwErrorFromVoid();
 
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
@@ -137,7 +135,22 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   Object echoObject(Object anObject);
 
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoList:')
+  @SwiftFunction('echo(_:)')
+  List<Object?> echoList(List<Object?> aList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoMap:')
+  @SwiftFunction('echo(_:)')
+  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+
   // ========== Syncronous nullable method tests ==========
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllNullableTypes:')
+  @SwiftFunction('echo(_:)')
+  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
@@ -187,6 +200,16 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   Object? echoNullableObject(Object? aNullableObject);
 
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableList:')
+  @SwiftFunction('echoNullable(_:)')
+  List<Object?>? echoNullableList(List<Object?>? aNullableList);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableMap:')
+  @SwiftFunction('echoNullable(_:)')
+  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aNullableMap);
+
   // ========== Asyncronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -194,16 +217,133 @@ abstract class HostIntegrationCoreApi {
   @async
   void noopAsync();
 
+  /// Returns passed in int asynchronously.
+  @async
+  @ObjCSelector('echoAsyncInt:')
+  @SwiftFunction('echoAsync(_:)')
+  int echoAsyncInt(int anInt);
+
+  /// Returns passed in double asynchronously.
+  @async
+  @ObjCSelector('echoAsyncDouble:')
+  @SwiftFunction('echoAsync(_:)')
+  double echoAsyncDouble(double aDouble);
+
+  /// Returns the passed in boolean asynchronously.
+  @async
+  @ObjCSelector('echoAsyncBool:')
+  @SwiftFunction('echoAsync(_:)')
+  bool echoAsyncBool(bool aBool);
+
   /// Returns the passed string asynchronously.
   @async
   @ObjCSelector('echoAsyncString:')
   @SwiftFunction('echoAsync(_:)')
   String echoAsyncString(String aString);
 
+  /// Returns the passed in Uint8List asynchronously.
+  @async
+  @ObjCSelector('echoAsyncUint8List:')
+  @SwiftFunction('echoAsync(_:)')
+  Uint8List echoAsyncUint8List(Uint8List aUint8List);
+
+  /// Returns the passed in generic Object asynchronously.
+  @async
+  @ObjCSelector('echoAsyncObject:')
+  @SwiftFunction('echoAsync(_:)')
+  Object echoAsyncObject(Object anObject);
+
+  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  @async
+  @ObjCSelector('echoAsyncList:')
+  @SwiftFunction('echoAsync(_:)')
+  List<Object?> echoAsyncList(List<Object?> aList);
+
+  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  @async
+  @ObjCSelector('echoAsyncMap:')
+  @SwiftFunction('echoAsync(_:)')
+  Map<String?, Object?> echoAsyncMap(Map<String?, Object?> aMap);
+
+  /// Responds with an error from an async function returning a value.
+  @async
+  Object? throwAsyncError();
+
+  /// Responds with an error from an async void function.
+  @async
+  void throwAsyncErrorFromVoid();
+
+  /// Returns the passed object, to test async serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncAllTypes:')
+  @SwiftFunction('echoAsync(_:)')
+  AllTypes echoAsyncAllTypes(AllTypes everything);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableAllNullableTypes:')
+  @SwiftFunction('echoAsync(_:)')
+  AllNullableTypes? echoAsyncNullableAllNullableTypes(
+      AllNullableTypes? everything);
+
+  /// Returns passed in int asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableInt:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  int? echoAsyncNullableInt(int? anInt);
+
+  /// Returns passed in double asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableDouble:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  double? echoAsyncNullableDouble(double? aDouble);
+
+  /// Returns the passed in boolean asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableBool:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  bool? echoAsyncNullableBool(bool? aBool);
+
+  /// Returns the passed string asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableString:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  String? echoAsyncNullableString(String? aString);
+
+  /// Returns the passed in Uint8List asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableUint8List:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  Uint8List? echoAsyncNullableUint8List(Uint8List? aUint8List);
+
+  /// Returns the passed in generic Object asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableObject:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  Object? echoAsyncNullableObject(Object? anObject);
+
+  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableList:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  List<Object?>? echoAsyncNullableList(List<Object?>? aList);
+
+  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableMap:')
+  @SwiftFunction('echAsyncoNullable(_:)')
+  Map<String?, Object?>? echoAsyncNullableMap(Map<String?, Object?>? aMap);
+
   // ========== Flutter API test wrappers ==========
 
   @async
   void callFlutterNoop();
+
+  @async
+  Object? callFlutterThrowError();
+
+  @async
+  void callFlutterThrowErrorFromVoid();
 
   @async
   @ObjCSelector('callFlutterEchoAllTypes:')
@@ -301,6 +441,12 @@ abstract class FlutterIntegrationCoreApi {
   /// test basic calling.
   void noop();
 
+  /// Responds with an error from an async function returning a value.
+  Object? throwError();
+
+  /// Responds with an error from an async void function.
+  void throwErrorFromVoid();
+
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllTypes:')
   @SwiftFunction('echo(_:)')
@@ -392,10 +538,68 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoNullableMap:')
   @SwiftFunction('echoNullable(_:)')
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
+
+  // ========== Async tests ==========
+  // These are minimal since async FlutterApi only changes Dart generation.
+  // Currently they aren't integration tested, but having them here ensures
+  // analysis coverage.
+
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  @async
+  void noopAsync();
+
+  /// Returns the passed in generic Object asynchronously.
+  @async
+  @ObjCSelector('echoAsyncString:')
+  @SwiftFunction('echoAsync(_:)')
+  String echoAsyncString(String aString);
 }
 
 /// An API that can be implemented for minimal, compile-only tests.
+//
+// This is also here to test that multiple host APIs can be generated
+// successfully in all languages (e.g., in Java where it requires having a
+// wrapper class).
 @HostApi()
 abstract class HostTrivialApi {
   void noop();
+}
+
+/// A simple API implemented in some unit tests.
+//
+// This is separate from HostIntegrationCoreApi to avoid having to update a
+// lot of unit tests every time we add something to the integration test API.
+// TODO(stuartmorgan): Restructure the unit tests to reduce the number of
+// different APIs we define.
+@HostApi()
+abstract class HostSmallApi {
+  @async
+  @ObjCSelector('echoString:')
+  String echo(String aString);
+
+  @async
+  void voidVoid();
+}
+
+/// A simple API called in some unit tests.
+//
+// This is separate from FlutterIntegrationCoreApi to allow for incrementally
+// moving from the previous fragmented unit test structure to something more
+// unified.
+// TODO(stuartmorgan): Restructure the unit tests to reduce the number of
+// different APIs we define.
+@FlutterApi()
+abstract class FlutterSmallApi {
+  @ObjCSelector('echoWrappedList:')
+  @SwiftFunction('echo(_:)')
+  TestMessage echoWrappedList(TestMessage msg);
+}
+
+/// A data class containing a List, used in unit tests.
+// TODO(stuartmorgan): Evaluate whether these unit tests are still useful; see
+// TODOs above about restructring.
+class TestMessage {
+  // ignore: always_specify_types, strict_raw_type
+  List? testList;
 }

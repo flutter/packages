@@ -126,6 +126,9 @@ enum SimulatedLayout {
 
   MediaQuery get slot {
     return MediaQuery(
+      // TODO(stuartmorgan): Replace with .fromView once this package requires
+      // Flutter 3.8+.
+      // ignore: deprecated_member_use
       data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
           .copyWith(size: Size(_width, _height)),
       child: Theme(

@@ -10,7 +10,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
 
 /**
  * This plugin handles the native side of the integration tests in
@@ -40,7 +39,11 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  override fun throwError() {
+  override fun throwError(): Object? {
+    throw Exception("An error");
+  }
+
+  override fun throwErrorFromVoid() {
     throw Exception("An error");
   }
 
@@ -66,6 +69,14 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoObject(anObject: Any): Any {
     return anObject
+  }
+
+  override fun echoList(aList: List<Any?>): List<Any?> {
+    return aList
+  }
+
+  override fun echoMap(aMap: Map<String?, Any?>): Map<String?, Any?> {
+    return aMap
   }
 
   override fun extractNestedNullableString(wrapper: AllNullableTypesWrapper): String? {
@@ -104,87 +115,179 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aNullableObject
   }
 
-  override fun noopAsync(callback: () -> Unit) {
-    callback()
+  override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
+    return aNullableList
   }
 
-  override fun echoAsyncString(aString: String, callback: (String) -> Unit) {
-    callback(aString)
+  override fun echoNullableMap(aNullableMap: Map<String?, Any?>?): Map<String?, Any?>? {
+    return aNullableMap
+  }
+  override fun noopAsync(callback: (Result<Unit>) -> Unit) {
+    callback(Result.success(Unit))
   }
 
-  override fun callFlutterNoop(callback: () -> Unit) {
-    flutterApi!!.noop() { callback() }
+  override fun throwAsyncError(callback: (Result<Any?>) -> Unit) {
+    callback(Result.failure(Exception("except")))
   }
 
-  override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (AllTypes) -> Unit) {
-    flutterApi!!.echoAllTypes(everything) { echo -> callback(echo) }
+  override fun throwAsyncErrorFromVoid(callback: (Result<Unit>) -> Unit) {
+    callback(Result.failure(Exception("except")))
+  }
+
+  override fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
+    callback(Result.success(everything))
+  }
+
+  override fun echoAsyncNullableAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit) {
+    callback(Result.success(everything))
+  }
+
+  override fun echoAsyncInt(anInt: Long, callback: (Result<Long>) -> Unit) {
+    callback(Result.success(anInt))
+  }
+
+  override fun echoAsyncDouble(aDouble: Double, callback: (Result<Double>) -> Unit) {
+    callback(Result.success(aDouble))
+  }
+
+  override fun echoAsyncBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit) {
+    callback(Result.success(aBool))
+  }
+
+  override fun echoAsyncString(aString: String, callback: (Result<String>) -> Unit) {
+    callback(Result.success(aString))
+  }
+
+  override fun echoAsyncUint8List(aUint8List: ByteArray, callback: (Result<ByteArray>) -> Unit) {
+    callback(Result.success(aUint8List))
+  }
+
+  override fun echoAsyncObject(anObject: Any, callback: (Result<Any>) -> Unit) {
+    callback(Result.success(anObject))
+  }
+
+  override fun echoAsyncList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+    callback(Result.success(aList))
+  }
+
+  override fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit) {
+    callback(Result.success(aMap))
+  }
+  
+  override fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit) {
+    callback(Result.success(anInt))
+  }
+
+  override fun echoAsyncNullableDouble(aDouble: Double?, callback: (Result<Double?>) -> Unit) {
+    callback(Result.success(aDouble))
+  }
+
+  override fun echoAsyncNullableBool(aBool: Boolean?, callback: (Result<Boolean?>) -> Unit) {
+    callback(Result.success(aBool))
+  }
+
+  override fun echoAsyncNullableString(aString: String?, callback: (Result<String?>) -> Unit) {
+    callback(Result.success(aString))
+  }
+
+  override fun echoAsyncNullableUint8List(aUint8List: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
+    callback(Result.success(aUint8List))
+  }
+
+  override fun echoAsyncNullableObject(anObject: Any?, callback: (Result<Any?>) -> Unit) {
+    callback(Result.success(anObject))
+  }
+
+  override fun echoAsyncNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
+    callback(Result.success(aList))
+  }
+
+  override fun echoAsyncNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit) {
+    callback(Result.success(aMap))
+  }
+
+  override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
+    flutterApi!!.noop() { callback(Result.success(Unit)) }
+  }
+  
+  override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
+    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
+  }
+  override fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
+    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
+  }
+
+  override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
+    flutterApi!!.echoAllTypes(everything) { echo -> callback(Result.success(echo)) }
   }
 
   override fun callFlutterSendMultipleNullableTypes(
-    aNullableBool: Boolean?,
-    aNullableInt: Long?,
-    aNullableString: String?,
-    callback: (AllNullableTypes) -> Unit
+    aNullableBool: Boolean?, 
+    aNullableInt: Long?, 
+    aNullableString: String?, 
+    callback: (Result<AllNullableTypes>) -> Unit
   ) {
     flutterApi!!.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString) {
-      echo -> callback(echo)
+      echo -> callback(Result.success(echo))
     }
   }
 
-  override fun callFlutterEchoBool(aBool: Boolean, callback: (Boolean) -> Unit) {
-    flutterApi!!.echoBool(aBool) { echo -> callback(echo) }
+  override fun callFlutterEchoBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit) {
+    flutterApi!!.echoBool(aBool) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoInt(anInt: Long, callback: (Long) -> Unit) {
-    flutterApi!!.echoInt(anInt) { echo -> callback(echo) }
+  override fun callFlutterEchoInt(anInt: Long, callback: (Result<Long>) -> Unit) {
+    flutterApi!!.echoInt(anInt) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoDouble(aDouble: Double, callback: (Double) -> Unit) {
-    flutterApi!!.echoDouble(aDouble) { echo -> callback(echo) }
+  override fun callFlutterEchoDouble(aDouble: Double, callback: (Result<Double>) -> Unit) {
+    flutterApi!!.echoDouble(aDouble) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoString(aString: String, callback: (String) -> Unit) {
-    flutterApi!!.echoString(aString) { echo -> callback(echo) }
+  override fun callFlutterEchoString(aString: String, callback: (Result<String>) -> Unit) {
+    flutterApi!!.echoString(aString) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoUint8List(aList: ByteArray, callback: (ByteArray) -> Unit) {
-    flutterApi!!.echoUint8List(aList) { echo -> callback(echo) }
+  override fun callFlutterEchoUint8List(aList: ByteArray, callback: (Result<ByteArray>) -> Unit) {
+    flutterApi!!.echoUint8List(aList) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoList(aList: List<Any?>, callback: (List<Any?>) -> Unit) {
-    flutterApi!!.echoList(aList) { echo -> callback(echo) }
+  override fun callFlutterEchoList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit){
+    flutterApi!!.echoList(aList) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoMap(aMap: Map<String?, Any?>, callback: (Map<String?, Any?>) -> Unit) {
-    flutterApi!!.echoMap(aMap) { echo -> callback(echo) }
+  override fun callFlutterEchoMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit) {
+    flutterApi!!.echoMap(aMap) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoNullableBool(aBool: Boolean?, callback: (Boolean?) -> Unit) {
-    flutterApi!!.echoNullableBool(aBool) { echo -> callback(echo) }
+  override fun callFlutterEchoNullableBool(aBool: Boolean?, callback: (Result<Boolean?>) -> Unit) {
+    flutterApi!!.echoNullableBool(aBool) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoNullableInt(anInt: Long?, callback: (Long?) -> Unit) {
-    flutterApi!!.echoNullableInt(anInt) { echo -> callback(echo) }
+  override fun callFlutterEchoNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit) {
+    flutterApi!!.echoNullableInt(anInt) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoNullableDouble(aDouble: Double?, callback: (Double?) -> Unit) {
-    flutterApi!!.echoNullableDouble(aDouble) { echo -> callback(echo) }
+  override fun callFlutterEchoNullableDouble(aDouble: Double?, callback: (Result<Double?>) -> Unit) {
+    flutterApi!!.echoNullableDouble(aDouble) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoNullableString(aString: String?, callback: (String?) -> Unit) {
-    flutterApi!!.echoNullableString(aString) { echo -> callback(echo) }
+  override fun callFlutterEchoNullableString(aString: String?, callback: (Result<String?>) -> Unit) {
+    flutterApi!!.echoNullableString(aString) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoNullableUint8List(aList: ByteArray?, callback: (ByteArray?) -> Unit) {
-    flutterApi!!.echoNullableUint8List(aList) { echo -> callback(echo) }
+  override fun callFlutterEchoNullableUint8List(aList: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
+    flutterApi!!.echoNullableUint8List(aList) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoNullableList(aList: List<Any?>?, callback: (List<Any?>?) -> Unit) {
-    flutterApi!!.echoNullableList(aList) { echo -> callback(echo) }
+  override fun callFlutterEchoNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
+    flutterApi!!.echoNullableList(aList) { echo -> callback(Result.success(echo)) }
   }
 
-  override fun callFlutterEchoNullableMap(aMap: Map<String?, Any?>?, callback: (Map<String?, Any?>?) -> Unit) {
-    flutterApi!!.echoNullableMap(aMap) { echo -> callback(echo) }
+  override fun callFlutterEchoNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit) {
+    flutterApi!!.echoNullableMap(aMap) { echo -> callback(Result.success(echo)) }
   }
 
 }

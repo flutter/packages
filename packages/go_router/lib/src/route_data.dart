@@ -67,7 +67,7 @@ abstract class GoRouteData extends RouteData {
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
-  static String $location(String path, {Map<String, String>? queryParams}) =>
+  static String $location(String path, {Map<String, dynamic>? queryParams}) =>
       Uri.parse(path)
           .replace(
             queryParameters:
