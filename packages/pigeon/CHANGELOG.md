@@ -1,3 +1,8 @@
+## 9.0.1
+
+* [kotlin] Standardize Host api error wrapping
+* [java] Standardize Host api error wrapping
+
 ## 9.0.0
 
 * **Breaking Change** Updates `DartOptions` to be immutable and adds const to the constructor.
