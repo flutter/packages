@@ -215,16 +215,16 @@ class ParentNode extends AttributedNode {
   /// Create the paint required to draw a save layer, or `null` if none is
   /// required.
   Paint? createLayerPaint() {
-    final bool needsLayer = attributes.blendMode != null ||
-        (attributes.opacity != null &&
-            attributes.opacity != 1.0 &&
-            attributes.opacity != 0.0);
+    final double? fillOpacity = attributes.fill?.opacity;
+    final bool needsLayer = (attributes.blendMode != null) ||
+        (fillOpacity != null && fillOpacity != 1.0 && fillOpacity != 0.0);
+
     if (needsLayer) {
       return Paint(
         blendMode: attributes.blendMode,
         fill: attributes.fill?.toFill(Rect.largest, transform) ??
             Fill(
-              color: Color.opaqueBlack.withOpacity(attributes.opacity ?? 1.0),
+              color: Color.opaqueBlack.withOpacity(fillOpacity ?? 1.0),
             ),
       );
     }

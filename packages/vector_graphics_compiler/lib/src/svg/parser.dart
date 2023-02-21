@@ -17,7 +17,6 @@ import 'masking_optimizer.dart';
 import 'node.dart';
 import 'numbers.dart' hide parseDoubleWithUnits;
 import 'numbers.dart' as numbers show parseDoubleWithUnits;
-import 'opacity_peephole.dart';
 import 'overdraw_optimizer.dart';
 import 'parsers.dart';
 import 'path_ops.dart' as path_ops;
@@ -146,7 +145,6 @@ class _Elements {
         href: attributes.href,
         transform: attributes.transform,
         color: attributes.color,
-        opacity: attributes.opacity,
         stroke: attributes.stroke,
         fill: attributes.fill,
         fillRule: attributes.fillRule,
@@ -686,24 +684,6 @@ class SvgParser {
     }
   }
 
-  bool _isShapeOrText(String elementName) {
-    // Avoid applying default fill/stroke colors unless we need to.
-    // https://www.w3.org/TR/SVG11/single-page.html#intro-TermShape
-    // https://www.w3.org/TR/SVG11/single-page.html#intro-TermTextContentElement
-    return elementName == 'path' ||
-        elementName == 'rect' ||
-        elementName == 'circle' ||
-        elementName == 'ellipse' ||
-        elementName == 'line' ||
-        elementName == 'polyline' ||
-        elementName == 'polygon' ||
-        elementName == 'altGlyph' ||
-        elementName == 'textPath' ||
-        elementName == 'text' ||
-        elementName == 'tref' ||
-        elementName == 'tspan';
-  }
-
   Iterable<XmlEvent> _readSubtree() sync* {
     final int subtreeStartDepth = depth;
     while (_eventIterator.moveNext()) {
@@ -721,7 +701,6 @@ class SvgParser {
         }
         _currentStartElement = event;
         _currentAttributes = _createSvgAttributes(
-          _isShapeOrText(event.localName),
           attributeMap,
           currentColor: depth == 0 ? theme.currentColor : null,
         );
@@ -775,8 +754,6 @@ class SvgParser {
 
     /// Resolve the tree
     final ResolvingVisitor resolvingVisitor = ResolvingVisitor();
-    final OpacityPeepholeOptimizer opacityPeepholeOptimizer =
-        OpacityPeepholeOptimizer();
     final Tessellator tessellator = Tessellator();
     final MaskingOptimizer maskingOptimizer = MaskingOptimizer();
     final ClippingOptimizer clippingOptimizer = ClippingOptimizer();
@@ -794,8 +771,6 @@ class SvgParser {
     if (isTesselatorInitialized) {
       newRoot = newRoot.accept(tessellator, null);
     }
-
-    newRoot = opacityPeepholeOptimizer.apply(newRoot);
 
     if (enableMaskingOptimizer == true) {
       if (path_ops.isPathOpsInitialized) {
@@ -862,9 +837,6 @@ class SvgParser {
     final _PathFunc? pathFunc = _svgPathFuncs[event.name];
     if (pathFunc == null) {
       return false;
-    }
-    if (!_currentAttributes.paintsAnything) {
-      return true;
     }
     final ParentNode parent = _parentDrawables.last.drawable;
     final Path path = pathFunc(this)!;
@@ -1220,17 +1192,11 @@ class SvgParser {
 
   Color? _determineFillColor(
     String rawFill,
-    double opacity,
-    bool explicitOpacity,
     Color? currentColor,
     String? id,
   ) {
     final Color? color =
         parseColor(rawFill, attributeName: 'fill', id: id) ?? currentColor;
-
-    if (explicitOpacity && color != null) {
-      return color.withOpacity(opacity);
-    }
 
     return color;
   }
@@ -1512,7 +1478,6 @@ class SvgParser {
   }
 
   SvgStrokeAttributes? _parseStrokeAttributes(
-    bool isShapeOrText,
     Map<String, String> attributeMap,
     double? uniformOpacity,
     Color? currentColor,
@@ -1524,12 +1489,16 @@ class SvgParser {
     }
 
     final String? rawStrokeOpacity = attributeMap['stroke-opacity'];
-    double opacity = 1.0;
+    double? opacity;
     if (rawStrokeOpacity != null) {
       opacity = parseDouble(rawStrokeOpacity)!.clamp(0.0, 1.0).toDouble();
     }
     if (uniformOpacity != null) {
-      opacity *= uniformOpacity;
+      if (opacity == null) {
+        opacity = uniformOpacity;
+      } else {
+        opacity *= uniformOpacity;
+      }
     }
 
     final String? rawStrokeCap = attributeMap['stroke-linecap'];
@@ -1556,7 +1525,7 @@ class SvgParser {
     bool? hasPattern;
     if (rawStroke?.startsWith('url') == true) {
       shaderId = rawStroke;
-      strokeColor = Color.fromRGBO(255, 255, 255, opacity);
+      strokeColor = const Color(0xFFFFFFFF);
       if (patternIds.contains(rawStroke)) {
         hasPattern = true;
       }
@@ -1564,13 +1533,12 @@ class SvgParser {
       strokeColor = parseColor(rawStroke, attributeName: 'stroke', id: id);
     }
 
-    final Color? color =
-        isShapeOrText ? (strokeColor ?? currentColor) : strokeColor;
+    final Color? color = strokeColor ?? currentColor;
 
     return SvgStrokeAttributes._(
       _definitions,
       shaderId: shaderId,
-      color: color?.withOpacity(opacity),
+      color: color,
       cap: _parseCap(rawStrokeCap, null),
       join: _parseJoin(rawLineJoin, null),
       miterLimit: parseDouble(rawMiterLimit),
@@ -1583,7 +1551,6 @@ class SvgParser {
   }
 
   SvgFillAttributes? _parseFillAttributes(
-    bool isShapeOrText,
     Map<String, String> attributeMap,
     double? uniformOpacity,
     Color? currentColor,
@@ -1596,12 +1563,16 @@ class SvgParser {
     }
 
     final String? rawFillOpacity = attributeMap['fill-opacity'];
-    double opacity = 1.0;
+    double? opacity;
     if (rawFillOpacity != null) {
       opacity = parseDouble(rawFillOpacity)!.clamp(0.0, 1.0).toDouble();
     }
     if (uniformOpacity != null) {
-      opacity *= uniformOpacity;
+      if (opacity == null) {
+        opacity = uniformOpacity;
+      } else {
+        opacity *= uniformOpacity;
+      }
     }
     bool? hasPattern;
     if (rawFill.startsWith('url')) {
@@ -1610,7 +1581,7 @@ class SvgParser {
       }
       return SvgFillAttributes._(
         _definitions,
-        color: Color.fromRGBO(255, 255, 255, opacity),
+        color: const Color(0xFFFFFFFF),
         shaderId: rawFill,
         hasPattern: hasPattern,
         opacity: opacity,
@@ -1619,15 +1590,9 @@ class SvgParser {
 
     final Color? fillColor = _determineFillColor(
       rawFill,
-      opacity,
-      uniformOpacity != null || rawFillOpacity != '',
       currentColor,
       id,
     );
-
-    if (fillColor == null && !isShapeOrText) {
-      return null;
-    }
 
     return SvgFillAttributes._(
       _definitions,
@@ -1642,7 +1607,6 @@ class SvgParser {
   }
 
   SvgAttributes _createSvgAttributes(
-    bool isShapeOrText,
     Map<String, String> attributeMap, {
     Color? currentColor,
   }) {
@@ -1656,17 +1620,14 @@ class SvgParser {
         raw: attributeMap,
         id: id,
         href: attributeMap['href'],
-        opacity: opacity,
         color: color,
         stroke: _parseStrokeAttributes(
-          isShapeOrText,
           attributeMap,
           opacity,
           color,
           id,
         ),
         fill: _parseFillAttributes(
-          isShapeOrText,
           attributeMap,
           opacity,
           color,
@@ -1842,7 +1803,6 @@ class SvgAttributes {
     this.href,
     this.transform = AffineMatrix.identity,
     this.color,
-    this.opacity,
     this.stroke,
     this.fill,
     this.fillRule = PathFillType.nonZero,
@@ -1865,12 +1825,11 @@ class SvgAttributes {
   /// The empty set of properties.
   static const SvgAttributes empty = SvgAttributes._(raw: <String, String>{});
 
-  /// Whether these attributes could result in any visual display if applied to
-  /// a leaf shape node.
-  bool get paintsAnything => opacity != 0;
-
   /// The raw attribute map.
   final Map<String, String> raw;
+
+  /// Whether either the stroke or fill on this object has opacity.
+  bool get hasOpacity => (fill?.opacity ?? stroke?.opacity) != null;
 
   /// Generated from https://www.w3.org/TR/SVG11/single-page.html
   ///
@@ -1948,13 +1907,10 @@ class SvgAttributes {
   /// The `@href` attribute.
   final String? href;
 
-  /// The uniform opacity for the object, i.e. the `@opacity` attribute.
-  /// https://www.w3.org/TR/SVG11/masking.html#OpacityProperty
-  final double? opacity;
-
   /// The `@color` attribute, which provides an indirect current color.
   ///
-  /// Does _not_ include the [opacity] value.
+  /// Does _not_ include the opacity value, which is specified on the [fill] or
+  /// [stroke].
   ///
   /// https://www.w3.org/TR/SVG11/color.html#ColorProperty
   final Color? color;
@@ -2036,7 +1992,6 @@ class SvgAttributes {
       href: newRaw['href'],
       transform: transformOverride ?? transform,
       color: color ?? parent.color,
-      opacity: opacity ?? parent.opacity,
       stroke: stroke?.applyParent(parent.stroke) ?? parent.stroke,
       fill: fill?.applyParent(parent.fill) ?? parent.fill,
       fillRule: fillRule,
@@ -2080,7 +2035,7 @@ class SvgStrokeAttributes {
 
   final _Resolver? _definitions;
 
-  /// The color to use for stroking. _Does_ include the opacity value. Only
+  /// The color to use for stroking. Does _not_ include the [opacity] value. Only
   /// opacity is used if the [shaderId] is not null.
   final Color? color;
 
@@ -2188,7 +2143,7 @@ class SvgFillAttributes {
 
   final _Resolver? _definitions;
 
-  /// The color to use for filling. _Does_ include the opacity value. Only
+  /// The color to use for filling. Does _not_ include the [opacity] value. Only
   /// opacity is used if the [shaderId] is not null.
   final Color? color;
 
@@ -2221,8 +2176,8 @@ class SvgFillAttributes {
     AffineMatrix transform, {
     Color? defaultColor,
   }) {
-    final Color? resolvedColor =
-        color ?? defaultColor?.withOpacity(opacity ?? 1.0);
+    final Color? resolvedColor = color?.withOpacity(opacity ?? 1.0) ??
+        defaultColor?.withOpacity(opacity ?? 1.0);
     if (resolvedColor == null) {
       return null;
     }

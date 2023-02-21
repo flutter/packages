@@ -22,38 +22,50 @@ void main() {
     expect(instructions.paints, const <Paint>[
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xffffee44), width: 3.0)),
+          stroke: Stroke(
+              color: Color(0xffffee44), join: StrokeJoin.round, width: 3.0)),
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xff333333), width: 3.0),
+          stroke: Stroke(
+              color: Color(0xff333333), join: StrokeJoin.round, width: 3.0),
           fill: Fill(color: Color(0xffffee44))),
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xffccaa00)),
+          stroke: Stroke(color: Color(0xffccaa00), join: StrokeJoin.round),
           fill: Fill(color: Color(0xffccaa00))),
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xff333333)),
+          stroke: Stroke(color: Color(0xff333333), join: StrokeJoin.round),
           fill: Fill(color: Color(0xff555555))),
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xff446699), width: 0.5)),
+          stroke: Stroke(
+              color: Color(0xff446699), join: StrokeJoin.round, width: 0.5)),
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xffbbaa55), width: 0.49999999999999994)),
+          stroke: Stroke(
+              color: Color(0xffbbaa55),
+              join: StrokeJoin.round,
+              width: 0.49999999999999994)),
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xff6688cc), width: 0.49999999999999994)),
+          stroke: Stroke(
+              color: Color(0xff6688cc),
+              join: StrokeJoin.round,
+              width: 0.49999999999999994)),
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xff333311), width: 0.5)),
+          stroke: Stroke(
+              color: Color(0xff333311), join: StrokeJoin.round, width: 0.5)),
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xffffee44), width: 0.5),
+          stroke: Stroke(
+              color: Color(0xffffee44), join: StrokeJoin.round, width: 0.5),
           fill: Fill(color: Color(0xff80a3cf))),
       Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xffffee44), width: 0.5),
+          stroke: Stroke(
+              color: Color(0xffffee44), join: StrokeJoin.round, width: 0.5),
           fill: Fill(color: Color(0xff668899)))
     ]);
   });
@@ -567,14 +579,16 @@ void main() {
     final VectorInstructions instructions = parseWithoutOptimizers(
       svg,
     );
-
     expect(instructions.paints, const <Paint>[
       Paint(fill: Fill(color: Color(0xffff0000))),
+      Paint(blendMode: BlendMode.screen, fill: Fill(color: Color(0xff000000))),
       Paint(blendMode: BlendMode.screen, fill: Fill(color: Color(0xff008000))),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
-      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 1),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 2),
+      DrawCommand(DrawCommandType.restore),
     ]);
   });
 

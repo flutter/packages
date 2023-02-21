@@ -166,7 +166,7 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
 
     /// If the group opacity is set the children path nodes
     /// cannot be optimized.
-    if (parentNode.attributes.opacity == null) {
+    if (!parentNode.attributes.hasOpacity) {
       /// If there are not at least 2 path nodes, an optimization cannot be
       /// performed since 2 nodes are required for an 'overlap' to occur.
       if (pathNodeCount >= 2) {

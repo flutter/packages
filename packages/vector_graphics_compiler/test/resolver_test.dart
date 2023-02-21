@@ -14,6 +14,52 @@ import 'package:vector_graphics_compiler/src/svg/resolver.dart';
 import 'helpers.dart';
 
 void main() {
+  test('viewport node inheritence', () {
+    final Node node = parseToNodeTree('''
+<svg viewBox="0 0 200 200" fill="red">
+    <rect x="0" y="0" width="10" height="10" />
+    <rect x="5" y="5" width="10" height="10" />
+</svg>''');
+    final Node resolvedNode =
+        node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final List<ResolvedPathNode> nodes =
+        queryChildren<ResolvedPathNode>(resolvedNode);
+
+    expect(nodes.length, 2);
+    expect(
+      nodes.first.paint,
+      const Paint(fill: Fill(color: Color(0xFFFF0000))),
+    );
+    expect(
+      nodes.last.paint,
+      const Paint(fill: Fill(color: Color(0xFFFF0000))),
+    );
+  });
+
+  test('group opacity node inheritence', () {
+    final Node node = parseToNodeTree('''
+<svg viewBox="0 0 200 200">
+  <g opacity=".5" fill="red">
+    <rect x="0" y="0" width="10" height="10" />
+    <rect x="5" y="5" width="10" height="10" />
+  </g>
+</svg>''');
+    final Node resolvedNode =
+        node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final List<ResolvedPathNode> nodes =
+        queryChildren<ResolvedPathNode>(resolvedNode);
+
+    expect(nodes.length, 2);
+    expect(
+      nodes.first.paint,
+      const Paint(fill: Fill(color: Color(0x7FFF0000))),
+    );
+    expect(
+      nodes.last.paint,
+      const Paint(fill: Fill(color: Color(0x7FFF0000))),
+    );
+  });
+
   test(
       'Resolves PathNodes to ResolvedPathNodes by flattening the transform '
       'and computing bounds', () async {

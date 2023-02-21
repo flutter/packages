@@ -75,7 +75,9 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         paint: saveLayerPaint,
         children: <Node>[
           for (Node child in parentNode.children)
-            child.accept(this, nextTransform),
+            child
+                .applyAttributes(parentNode.attributes)
+                .accept(this, nextTransform),
         ],
       );
     }
@@ -149,7 +151,10 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       height: viewportNode.height,
       transform: AffineMatrix.identity,
       children: <Node>[
-        for (Node child in viewportNode.children) child.accept(this, transform),
+        for (Node child in viewportNode.children)
+          child
+              .applyAttributes(viewportNode.attributes)
+              .accept(this, transform),
       ],
     );
   }
