@@ -1,3 +1,7 @@
+## 1.1.1
+
+* Fixes the example for the default values in the README.
+
 ## 1.1.0
 
 * Supports default value for the route parameters.
