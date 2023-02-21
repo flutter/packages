@@ -117,23 +117,23 @@ struct AllNullableTypes {
   var aNullableString: String? = nil
 
   static func fromList(_ list: [Any?]) -> AllNullableTypes? {
-    let aNullableBool = list[0] as? Bool 
-    let aNullableInt = list[1] as? Int32 
-    let aNullableDouble = list[2] as? Double 
-    let aNullableByteArray = list[3] as? FlutterStandardTypedData 
-    let aNullable4ByteArray = list[4] as? FlutterStandardTypedData 
-    let aNullable8ByteArray = list[5] as? FlutterStandardTypedData 
-    let aNullableFloatArray = list[6] as? FlutterStandardTypedData 
-    let aNullableList = list[7] as? [Any?] 
-    let aNullableMap = list[8] as? [AnyHashable: Any?] 
-    let nullableNestedList = list[9] as? [[Bool?]?] 
-    let nullableMapWithAnnotations = list[10] as? [String?: String?] 
-    let nullableMapWithObject = list[11] as? [String?: Any?] 
+    let aNullableBool = list[0] as! Bool? 
+    let aNullableInt = list[1] as! Int32? 
+    let aNullableDouble = list[2] as! Double? 
+    let aNullableByteArray = list[3] as! FlutterStandardTypedData? 
+    let aNullable4ByteArray = list[4] as! FlutterStandardTypedData? 
+    let aNullable8ByteArray = list[5] as! FlutterStandardTypedData? 
+    let aNullableFloatArray = list[6] as! FlutterStandardTypedData? 
+    let aNullableList = list[7] as! [Any?]? 
+    let aNullableMap = list[8] as! [AnyHashable: Any?]? 
+    let nullableNestedList = list[9] as! [[Bool?]?]? 
+    let nullableMapWithAnnotations = list[10] as! [String?: String?]? 
+    let nullableMapWithObject = list[11] as! [String?: Any?]? 
     var aNullableEnum: AnEnum? = nil
     if let aNullableEnumRawValue = list[12] as? Int {
       aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)
     }
-    let aNullableString = list[13] as? String 
+    let aNullableString = list[13] as! String? 
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -197,7 +197,7 @@ struct TestMessage {
   var testList: [Any?]? = nil
 
   static func fromList(_ list: [Any?]) -> TestMessage? {
-    let testList = list[0] as? [Any?] 
+    let testList = list[0] as! [Any?]? 
 
     return TestMessage(
       testList: testList

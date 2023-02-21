@@ -199,7 +199,7 @@ import FlutterMacOS
                   '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
             });
           } else {
-            indent.writeln('let ${field.name} = $listValue as? $fieldType ');
+            indent.writeln('let ${field.name} = $listValue as! $fieldType? ');
           }
         } else {
           if (!hostDatatype.isBuiltin &&
