@@ -89,6 +89,9 @@ extension $EnumParamExtension on EnumParam {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 const _$EnumTestEnumMap = {
@@ -138,6 +141,9 @@ extension $DefaultValueRouteExtension on DefaultValueRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 T? _$convertMapValue<T>(
