@@ -4,6 +4,10 @@
 # This test is very slow, so isn't worth running a second time
 # on Windows; the Linux run is enough coverage.
 - flutter_migrate
+# TODO(stuartmorgan): Fix these tests to run correctly on a
+# Windows host and enable them.
+- path_provider_linux
+- webview_flutter_android
 # Unit tests for plugins that support web currently run in
 # Chrome, which isn't currently supported by web infrastructure.
 # TODO(ditman): Fix this in the repo tooling.
