@@ -1336,4 +1336,23 @@ void main() {
     final String code = sink.toString();
     expect(code, contains(' extends StandardMessageCodec'));
   });
+
+  test('wrap error returns flutter exception appropriately', () {
+    final Api api = Api(name: 'Api', location: ApiLocation.host, methods: <Method>[]);
+    final Root root = Root(
+      apis: <Api>[api],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaGenerator generator = JavaGenerator();
+    generator.generate(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('if (exception instanceof FlutterException)'));
+    expect(code, contains('FlutterException flutterException = (FlutterException) exception;'));
+    expect(code, contains('errorList.add(flutterException.code);'));
+    expect(code, contains('errorList.add(flutterException.getMessage());'));
+    expect(code, contains('errorList.add(flutterException.details);'));
+  });
 }
