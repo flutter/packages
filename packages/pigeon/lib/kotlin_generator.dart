@@ -93,6 +93,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
     indent.writeln('import io.flutter.plugin.common.MessageCodec');
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
+    indent.writeln('import io.flutter.plugin.common.FlutterException');
     indent.writeln('import java.io.ByteArrayOutputStream');
     indent.writeln('import java.nio.ByteBuffer');
   }
@@ -627,10 +628,19 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   void _writeWrapError(Indent indent) {
     indent.newln();
-    indent.write('private fun wrapError(exception: Throwable): List<Any> ');
+    indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
+      indent.write('if (exception is FlutterException) ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        indent.addScoped('listOf(', ')', () {
+          indent.writeln('exception.code,');
+          indent.writeln('exception.message,');
+          indent.writeln('exception.details');
+        });
+      });
       indent.write('return ');
-      indent.addScoped('listOf<Any>(', ')', () {
+      indent.addScoped('listOf(', ')', () {
         indent.writeln('exception.javaClass.simpleName,');
         indent.writeln('exception.toString(),');
         indent.writeln(

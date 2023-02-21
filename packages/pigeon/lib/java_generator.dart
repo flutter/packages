@@ -115,6 +115,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
     indent.writeln('import io.flutter.plugin.common.MessageCodec;');
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
+    indent.writeln('import io.flutter.plugin.common.FlutterException;');
     indent.writeln('import java.io.ByteArrayOutputStream;');
     indent.writeln('import java.nio.ByteBuffer;');
     indent.writeln('import java.util.ArrayList;');
@@ -770,10 +771,17 @@ Result<$returnType> $resultName =
 @NonNull
 private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 \tArrayList<Object> errorList = new ArrayList<Object>(3);
-\terrorList.add(exception.toString());
-\terrorList.add(exception.getClass().getSimpleName());
-\terrorList.add(
-\t\t"Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\tif (exception instanceof FlutterException) {
+\t\tFlutterException flutterException = (FlutterException) exception;
+\t\terrorList.add(flutterException.code);
+\t\terrorList.add(flutterException.getMessage());
+\t\terrorList.add(flutterException.details);
+\t} else {
+\t\terrorList.add(exception.getClass().getSimpleName());
+\t\terrorList.add(exception.toString());
+\t\terrorList.add(
+\t\t\t"Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\t}
 \treturn errorList;
 }''');
   }
