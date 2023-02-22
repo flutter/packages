@@ -72,7 +72,7 @@ class MissingPathParam extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $enumParam => GoRouteData.$route(
+RouteBase get $enumParam => GoRouteData.$route(
       path: '/:y',
       factory: $EnumParamExtension._fromState,
     );

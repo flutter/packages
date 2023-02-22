@@ -47,7 +47,7 @@ class GoRouterGenerator extends GeneratorForAnnotation<void> {
 
     return <String>[
       '''
-List<GoRoute> get \$appRoutes => [
+List<RouteBase> get \$appRoutes => [
 ${getters.map((String e) => "$e,").join('\n')}
     ];
 ''',

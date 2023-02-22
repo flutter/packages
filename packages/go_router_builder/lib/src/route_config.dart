@@ -39,6 +39,8 @@ class RouteConfig {
     this._path,
     this._routeDataClass,
     this._parent,
+    this._key,
+    this._isShellRoute,
   );
 
   /// Creates a new [RouteConfig] represented the annotation data in [reader].
@@ -66,19 +68,23 @@ class RouteConfig {
     RouteConfig? parent,
   ) {
     assert(!reader.isNull, 'reader should not be null');
-    final ConstantReader pathValue = reader.read('path');
-    if (pathValue.isNull) {
-      throw InvalidGenerationSourceError(
-        'Missing `path` value on annotation.',
-        element: element,
-      );
+    final InterfaceType type = reader.objectValue.type! as InterfaceType;
+    final bool isShellRoute = type.element2.name == 'TypedShellRoute';
+
+    String? path;
+
+    if (!isShellRoute) {
+      final ConstantReader pathValue = reader.read('path');
+      if (pathValue.isNull) {
+        throw InvalidGenerationSourceError(
+          'Missing `path` value on annotation.',
+          element: element,
+        );
+      }
+      path = pathValue.stringValue;
     }
 
-    final String path = pathValue.stringValue;
-
-    final InterfaceType type = reader.objectValue.type! as InterfaceType;
     final DartType typeParamType = type.typeArguments.single;
-
     if (typeParamType is! InterfaceType) {
       throw InvalidGenerationSourceError(
         'The type parameter on one of the @TypedGoRoute declarations could not '
@@ -93,18 +99,56 @@ class RouteConfig {
     // ignore: deprecated_member_use
     final InterfaceElement classElement = typeParamType.element;
 
-    final RouteConfig value = RouteConfig._(path, classElement, parent);
+    final RouteConfig value = RouteConfig._(
+      path ?? '',
+      classElement,
+      parent,
+      _decodeKey(classElement),
+      isShellRoute,
+    );
 
     value._children.addAll(reader.read('routes').listValue.map((DartObject e) =>
         RouteConfig._fromAnnotation(ConstantReader(e), element, value)));
 
     return value;
   }
-
   final List<RouteConfig> _children = <RouteConfig>[];
   final String _path;
   final InterfaceElement _routeDataClass;
   final RouteConfig? _parent;
+  final String? _key;
+  final bool _isShellRoute;
+
+  static String? _decodeKey(InterfaceElement classElement) {
+    bool whereStatic(FieldElement element) => element.isStatic;
+    bool whereKeyName(FieldElement element) => element.name == r'$navigatorKey';
+    final String? fieldDisplayName = classElement.fields
+        .where(whereStatic)
+        .where(whereKeyName)
+        .where((FieldElement element) {
+          final DartType type = element.type;
+          if (type is! ParameterizedType) {
+            return false;
+          }
+          final List<DartType> typeArguments = type.typeArguments;
+          if (typeArguments.length != 1) {
+            return false;
+          }
+          final DartType typeArgument = typeArguments.single;
+          if (typeArgument.getDisplayString(withNullability: false) ==
+              'NavigatorState') {
+            return true;
+          }
+          return false;
+        })
+        .map<String>((FieldElement e) => e.displayName)
+        .firstOrNull;
+
+    if (fieldDisplayName == null) {
+      return null;
+    }
+    return '${classElement.name}.$fieldDisplayName';
+  }
 
   /// Generates all of the members that correspond to `this`.
   InfoIterable generateMembers() => InfoIterable._(
@@ -164,7 +208,7 @@ extension $_extensionName on $_className {
 
   /// Returns the `GoRoute` code for the annotated class.
   String _rootDefinition() => '''
-GoRoute get $_routeGetterName => ${_routeDefinition()};
+RouteBase get $_routeGetterName => ${_routeDefinition()};
 ''';
 
   /// Returns code representing the constant maps that contain the `enum` to
@@ -257,11 +301,21 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
         : '''
 routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
 ''';
-
+    final String navigatorKey = _key == null || _key!.isEmpty ? '' : 'navigatorKey: $_key,';
+    if (_isShellRoute) {
+      return '''
+  ShellRouteData.\$route(
+    factory: $_extensionName._fromState,
+    $navigatorKey
+    $routesBit
+  )
+''';
+    }
     return '''
 GoRouteData.\$route(
       path: ${escapeDartString(_path)},
       factory: $_extensionName._fromState,
+      $navigatorKey
       $routesBit
 )
 ''';
