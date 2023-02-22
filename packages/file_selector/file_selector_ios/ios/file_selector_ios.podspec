@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Displays the native iOS document picker.
                        DESC
-  s.homepage         = 'https://github.com/flutter/plugins/tree/main/packages/file_selector'
+  s.homepage         = 'https://github.com/flutter/packages/tree/main/packages/file_selector'
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
-  s.source           = { :http => 'https://github.com/flutter/plugins/tree/main/packages/file_selector/file_selector_ios' }
+  s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/file_selector/file_selector_ios' }
   s.source_files = 'Classes/**/*.{h,m}'
   s.module_map = 'Classes/FileSelectorPlugin.modulemap'
   s.dependency 'Flutter'

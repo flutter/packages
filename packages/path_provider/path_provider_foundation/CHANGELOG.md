@@ -1,5 +1,6 @@
-## NEXT
+## 2.1.2
 
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum supported Flutter version to 3.0.
 
 ## 2.1.1

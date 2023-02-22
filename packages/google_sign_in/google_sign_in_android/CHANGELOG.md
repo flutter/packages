@@ -1,3 +1,7 @@
+## 6.1.7
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 6.1.6
 
 * Minor implementation cleanup

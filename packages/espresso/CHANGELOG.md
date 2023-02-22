@@ -1,3 +1,7 @@
+## 0.2.0+9
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.2.0+8
 
 * Updates espresso and junit dependencies.
