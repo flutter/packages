@@ -1,3 +1,7 @@
+## 3.1.5
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 3.1.4
 
 * Updates iOS minimum version in README.

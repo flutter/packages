@@ -1,3 +1,7 @@
+## 4.0.5
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 4.0.4
 
 * Adds examples of accessing platform-specific features for each class.

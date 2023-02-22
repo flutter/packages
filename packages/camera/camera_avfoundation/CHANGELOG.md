@@ -1,3 +1,7 @@
+## 0.9.11+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.9.11
 
 * Adds back use of Optional type.
