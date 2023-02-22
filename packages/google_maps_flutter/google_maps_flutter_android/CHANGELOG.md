@@ -1,3 +1,7 @@
+## 2.4.6
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 2.4.5
 
 * Fixes Initial padding not working when map has not been created yet.
