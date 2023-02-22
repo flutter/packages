@@ -165,8 +165,7 @@ public class ImagePickerDelegateTest {
 
     verify(mockActivity)
         .startActivityForResult(
-            any(Intent.class),
-            eq(ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY_USING_PHOTO_PICKER));
+            any(Intent.class), eq(ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY));
   }
 
   @Test
@@ -198,9 +197,7 @@ public class ImagePickerDelegateTest {
     verify(mockActivity)
         .startActivityForResult(
             any(Intent.class),
-            eq(
-                ImagePickerDelegate
-                    .REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY_USING_PHOTO_PICKER));
+            eq(ImagePickerDelegate.REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY));
   }
 
   @Test
@@ -230,8 +227,7 @@ public class ImagePickerDelegateTest {
 
     verify(mockActivity)
         .startActivityForResult(
-            any(Intent.class),
-            eq(ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY_USING_PHOTO_PICKER));
+            any(Intent.class), eq(ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY));
   }
 
   @Test

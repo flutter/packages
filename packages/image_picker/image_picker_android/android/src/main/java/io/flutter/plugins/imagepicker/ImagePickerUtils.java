@@ -30,25 +30,6 @@ final class ImagePickerUtils {
     }
   }
 
-  static boolean isPhotoPickerAvailable() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      return getExtensionVersion(Build.VERSION_CODES.R) >= 2;
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  static int getPickImagesMaxLimit() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      return MediaStore.getPickImagesMaxLimit();
-    } else {
-      return 0;
-    }
-  }
-
   /**
    * Camera permission need request if it present in manifest, because for M or great for take Photo
    * ar Video by intent need it permission, even if the camera permission is not used.
