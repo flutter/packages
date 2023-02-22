@@ -27,9 +27,16 @@ class MyApp extends StatelessWidget {
 
 /// Creates a basic adaptive page with navigational elements and a body using
 /// [AdaptiveLayout].
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   /// Creates a const [MyHomePage].
   const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int selectedNavigation = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -113,19 +120,23 @@ class MyHomePage extends StatelessWidget {
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
         label: 'Inbox',
-        icon: Icon(Icons.inbox, color: Colors.black),
+        icon: Icon(Icons.inbox_outlined),
+        selectedIcon: Icon(Icons.inbox),
       ),
       NavigationDestination(
         label: 'Articles',
-        icon: Icon(Icons.article_outlined, color: Colors.black),
+        icon: Icon(Icons.article_outlined),
+        selectedIcon: Icon(Icons.article),
       ),
       NavigationDestination(
         label: 'Chat',
-        icon: Icon(Icons.chat_bubble_outline, color: Colors.black),
+        icon: Icon(Icons.chat_outlined),
+        selectedIcon: Icon(Icons.chat),
       ),
       NavigationDestination(
         label: 'Video',
-        icon: Icon(Icons.video_call_outlined, color: Colors.black),
+        icon: Icon(Icons.video_call_outlined),
+        selectedIcon: Icon(Icons.video_call),
       ),
     ];
 
@@ -142,6 +153,10 @@ class MyHomePage extends StatelessWidget {
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
+              selectedIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() => selectedNavigation = newIndex);
+              },
               leading: const Icon(Icons.menu),
               destinations: destinations
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
@@ -152,6 +167,10 @@ class MyHomePage extends StatelessWidget {
             key: const Key('Primary Navigation Large'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
+              selectedIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() => selectedNavigation = newIndex);
+              },
               extended: true,
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -197,11 +216,12 @@ class MyHomePage extends StatelessWidget {
             key: const Key('Bottom Navigation Small'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
-            builder: (_) => BottomNavigationBarTheme(
-              data: const BottomNavigationBarThemeData(
-                  selectedItemColor: Colors.black),
-              child: AdaptiveScaffold.standardBottomNavigationBar(
-                  destinations: destinations),
+            builder: (_) => AdaptiveScaffold.standardBottomNavigationBar(
+              destinations: destinations,
+              currentIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() => selectedNavigation = newIndex);
+              },
             ),
           )
         },

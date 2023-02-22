@@ -1,3 +1,7 @@
+## 0.1.1
+
+* 🐛 : FIX - [**121135**](https://github.com/flutter/flutter/issues/121135) : `selectedIcon` parameter not displayed even if it is provided from example.
+
 ## 0.1.0
 
 * Change the `selectedIndex` parameter on `standardNavigationRail` to allow null values to indicate "no destination".

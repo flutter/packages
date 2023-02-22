@@ -54,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   // The index of the selected mail card.
   int? selected;
+
   void selectCard(int? index) {
     setState(() {
       selected = index;
@@ -68,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage>
   late AnimationController _articleIconSlideController;
   late AnimationController _chatIconSlideController;
   late AnimationController _videoIconSlideController;
+
   @override
   void initState() {
     showGridView.addListener(() {
@@ -187,16 +189,21 @@ class _MyHomePageState extends State<MyHomePage>
     // builders.
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
-          label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
+        label: 'Inbox',
+        icon: Icon(Icons.inbox),
+      ),
       NavigationDestination(
-          label: 'Articles',
-          icon: Icon(Icons.article_outlined, color: iconColor)),
+        label: 'Articles',
+        icon: Icon(Icons.article_outlined),
+      ),
       NavigationDestination(
-          label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
+        label: 'Chat',
+        icon: Icon(Icons.chat_bubble_outline),
+      ),
       NavigationDestination(
-          label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: iconColor))
+        label: 'Video',
+        icon: Icon(Icons.video_call_outlined),
+      )
     ];
 
     // Updating the listener value.
@@ -325,11 +332,8 @@ class _MyHomePageState extends State<MyHomePage>
               // You can define inAnimations or outAnimations to override the
               // default offset transition.
               outAnimation: AdaptiveScaffold.topToBottom,
-              builder: (_) => BottomNavigationBarTheme(
-                data: const BottomNavigationBarThemeData(
-                    selectedItemColor: Colors.black),
-                child: AdaptiveScaffold.standardBottomNavigationBar(
-                    destinations: destinations),
+              builder: (_) => AdaptiveScaffold.standardBottomNavigationBar(
+                destinations: destinations,
               ),
             )
           },
@@ -890,6 +894,7 @@ class _ScreenArguments {
     required this.item,
     required this.selectCard,
   });
+
   final _Item item;
   final _CardSelectedCallback selectCard;
 }
