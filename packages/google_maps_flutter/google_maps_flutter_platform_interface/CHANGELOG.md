@@ -1,5 +1,6 @@
-## NEXT
+## 2.3.0
 
+* Adds options for gesture handling and tilt controls on web.
 * Updates minimum Flutter version to 3.0.
 
 ## 2.2.5
@@ -47,7 +48,7 @@
 
 ## 2.1.5
 
-Removes dependency on `meta`.
+* Removes dependency on `meta`.
 
 ## 2.1.4
 

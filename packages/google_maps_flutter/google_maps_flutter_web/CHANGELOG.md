@@ -1,5 +1,6 @@
-## NEXT
+## 0.4.1
 
+* Adds options for gesture handling and tilt controls.
 * Updates minimum Flutter version to 3.0.
 
 ## 0.4.0+5
