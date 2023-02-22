@@ -1,5 +1,6 @@
-## NEXT
+## 2.3.11
 
+* Synchronizes `VideoPlayerValue.isPlaying` with `ExoPlayer`.
 * Updates minimum Flutter version to 3.0.
 
 ## 2.3.10

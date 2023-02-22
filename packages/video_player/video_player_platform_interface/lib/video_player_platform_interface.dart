@@ -212,6 +212,7 @@ class VideoEvent {
     this.size,
     this.rotationCorrection,
     this.buffered,
+    this.isPlaying,
   });
 
   /// The type of the event.
@@ -237,6 +238,11 @@ class VideoEvent {
   /// Only used if [eventType] is [VideoEventType.bufferingUpdate].
   final List<DurationRange>? buffered;
 
+  /// Play state changed.
+  ///
+  /// Only used if [eventType] is [VideoEventType.isPlayingStateUpdate].
+  final bool? isPlaying;
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -246,7 +252,8 @@ class VideoEvent {
             duration == other.duration &&
             size == other.size &&
             rotationCorrection == other.rotationCorrection &&
-            listEquals(buffered, other.buffered);
+            listEquals(buffered, other.buffered) &&
+            isPlaying == other.isPlaying;
   }
 
   @override
@@ -256,13 +263,14 @@ class VideoEvent {
         size,
         rotationCorrection,
         buffered,
+        isPlaying,
       );
 }
 
 /// Type of the event.
 ///
 /// Emitted by the platform implementation when the video is initialized or
-/// completed or to communicate buffering events.
+/// completed or to communicate buffering events or play state changed.
 enum VideoEventType {
   /// The video has been initialized.
   initialized,
@@ -278,6 +286,14 @@ enum VideoEventType {
 
   /// The video stopped to buffer.
   bufferingEnd,
+
+  /// Represents an event type emitted by the platform implementation when the
+  /// video playback state is updated, for example, when the video starts or
+  /// pauses due to user actions or phone calls, or other app media such as
+  /// music players.
+  /// Note that when [VideoPlayerOptions.mixWithOthers] is true, the video may
+  /// continue playing even during a phone call.
+  isPlayingStateUpdate,
 
   /// An unknown event has been received.
   unknown,

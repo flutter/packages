@@ -1,5 +1,7 @@
-## NEXT
+## 6.0.2
 
+* Add the `VideoEventType.isPlayingStateUpdate` event to track changes in play / pause state with
+the underlying video player.
 * Updates minimum Flutter version to 3.0.
 
 ## 6.0.1
