@@ -18,7 +18,7 @@ Additional resources specific to the packages repository:
   [**PRs need tests**](https://github.com/flutter/flutter/wiki/Tree-hygiene#tests), so
   this is critical to read before submitting a plugin PR.
 
-## Other notes
+## Notes
 
 ### Style
 
@@ -40,5 +40,5 @@ use, and use auto-formatters:
 ### Releasing
 
 If you are a team member landing a PR, or just want to know what the release
-process is for packages changes, see [the release
+process is for package changes, see [the release
 documentation](https://github.com/flutter/flutter/wiki/Releasing-a-Plugin-or-Package).
