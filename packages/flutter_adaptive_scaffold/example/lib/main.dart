@@ -118,7 +118,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    const Color iconColor = Color.fromARGB(255, 29, 25, 43);
     final Widget trailingNavRail = Column(
       children: <Widget>[
         const Divider(color: Colors.white, thickness: 1.5),
