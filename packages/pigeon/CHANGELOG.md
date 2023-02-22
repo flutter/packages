@@ -1,7 +1,8 @@
 ## 9.0.1
 
-* [kotlin] Standardize Host api error wrapping
-* [java] Standardize Host api error wrapping
+* [kotlin] Standardize Host api async error handling
+* [java] Standardize Host api async error handling
+* [swift] Standardize Host api async error handling
 
 ## 9.0.0
 
