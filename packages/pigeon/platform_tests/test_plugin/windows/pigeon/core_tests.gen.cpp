@@ -2898,13 +2898,13 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 
 EncodableValue HostIntegrationCoreApi::WrapError(
     std::string_view error_message) {
-  return EncodableValue(
-      EncodableList{EncodableValue(std::string(error_message)),
-                    EncodableValue("Error"), EncodableValue()});
+  return EncodableValue(EncodableList{
+      EncodableValue("Error"), EncodableValue(std::string(error_message)),
+      EncodableValue()});
 }
 EncodableValue HostIntegrationCoreApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{EncodableValue(error.message()),
-                                      EncodableValue(error.code()),
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
                                       error.details()});
 }
 
@@ -3480,13 +3480,13 @@ void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 }
 
 EncodableValue HostTrivialApi::WrapError(std::string_view error_message) {
-  return EncodableValue(
-      EncodableList{EncodableValue(std::string(error_message)),
-                    EncodableValue("Error"), EncodableValue()});
+  return EncodableValue(EncodableList{
+      EncodableValue("Error"), EncodableValue(std::string(error_message)),
+      EncodableValue()});
 }
 EncodableValue HostTrivialApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{EncodableValue(error.message()),
-                                      EncodableValue(error.code()),
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
                                       error.details()});
 }
 
@@ -3563,13 +3563,13 @@ void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 }
 
 EncodableValue HostSmallApi::WrapError(std::string_view error_message) {
-  return EncodableValue(
-      EncodableList{EncodableValue(std::string(error_message)),
-                    EncodableValue("Error"), EncodableValue()});
+  return EncodableValue(EncodableList{
+      EncodableValue("Error"), EncodableValue(std::string(error_message)),
+      EncodableValue()});
 }
 EncodableValue HostSmallApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{EncodableValue(error.message()),
-                                      EncodableValue(error.code()),
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
                                       error.details()});
 }
 

@@ -832,15 +832,15 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
     indent.format('''
 EncodableValue ${api.name}::WrapError(std::string_view error_message) {
 \treturn EncodableValue(EncodableList{
-\t\tEncodableValue(std::string(error_message)),
 \t\tEncodableValue("Error"),
+\t\tEncodableValue(std::string(error_message)),
 \t\tEncodableValue()
 \t});
 }
 EncodableValue ${api.name}::WrapError(const FlutterError& error) {
 \treturn EncodableValue(EncodableList{
-\t\tEncodableValue(error.message()),
 \t\tEncodableValue(error.code()),
+\t\tEncodableValue(error.message()),
 \t\terror.details()
 \t});
 }''');
