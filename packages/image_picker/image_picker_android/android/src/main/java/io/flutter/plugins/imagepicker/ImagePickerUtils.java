@@ -4,14 +4,11 @@
 
 package io.flutter.plugins.imagepicker;
 
-import static android.os.ext.SdkExtensions.getExtensionVersion;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.provider.MediaStore;
 import java.util.Arrays;
 
 final class ImagePickerUtils {
