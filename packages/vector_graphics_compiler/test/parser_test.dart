@@ -4,6 +4,33 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('currentColor', () {
+    const String currentColorSvg = '''
+<svg viewBox="0 0 10 10">
+  <rect x="0" y="0" width="5" height="5" fill="currentColor" />
+</svg>
+''';
+
+    final VectorInstructions blueInstructions = parseWithoutOptimizers(
+      currentColorSvg,
+      theme: const SvgTheme(currentColor: Color(0xFF0000FF)),
+    );
+    final VectorInstructions redInstructions = parseWithoutOptimizers(
+      currentColorSvg,
+      theme: const SvgTheme(currentColor: Color(0xFFFF0000)),
+    );
+
+    expect(
+      blueInstructions.paints.single,
+      const Paint(fill: Fill(color: Color(0xFF0000FF))),
+    );
+
+    expect(
+      redInstructions.paints.single,
+      const Paint(fill: Fill(color: Color(0xFFFF0000))),
+    );
+  });
+
   test('Opacity with a save layer does not continue to inherit', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg width="283" height="180" viewBox="0 0 283 180" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -14,14 +14,14 @@ class SvgTheme {
   ///
   /// Defaults the [fontSize] to 14.
   const SvgTheme({
-    this.currentColor,
+    this.currentColor = Color.opaqueBlack,
     this.fontSize = 14,
     double? xHeight,
   }) : xHeight = xHeight ?? fontSize / 2;
 
   /// The default color applied to SVG elements that inherit the color property.
   /// See: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#currentcolor_keyword
-  final Color? currentColor;
+  final Color currentColor;
 
   /// The font size used when calculating em units of SVG elements.
   /// See: https://www.w3.org/TR/SVG11/coords.html#Units

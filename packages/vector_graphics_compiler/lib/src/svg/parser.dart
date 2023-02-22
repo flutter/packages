@@ -1195,8 +1195,7 @@ class SvgParser {
     Color? currentColor,
     String? id,
   ) {
-    final Color? color =
-        parseColor(rawFill, attributeName: 'fill', id: id) ?? currentColor;
+    final Color? color = parseColor(rawFill, attributeName: 'fill', id: id);
 
     return color;
   }
@@ -1533,7 +1532,7 @@ class SvgParser {
       strokeColor = parseColor(rawStroke, attributeName: 'stroke', id: id);
     }
 
-    final Color? color = strokeColor ?? currentColor;
+    final Color? color = strokeColor;
 
     return SvgStrokeAttributes._(
       _definitions,
