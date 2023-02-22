@@ -1,5 +1,10 @@
 # CHANGES
 
+## 2.0.2
+
+- Consume newer version of vector_graphics with multiple fixes around
+  inheritence, patterns, and currentColor handling.
+
 ## 2.0.1
 
 - Disable Isolate parsing in debug mode.
