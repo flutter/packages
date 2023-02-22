@@ -100,7 +100,9 @@ extension GoRouterHelper on BuildContext {
         extra: extra,
       );
 
-  /// Replaces the top-most page of the page stack with the given one.
+  /// Replaces the top-most page of the page stack with the given one but treats
+  /// it as the same page. The page key will be reused. This will preserve the
+  /// state and not run any page animation.
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
@@ -111,7 +113,8 @@ extension GoRouterHelper on BuildContext {
 
   /// Replaces the top-most page of the page stack with the named route w/
   /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
-  /// 'p1'}`.
+  /// 'p1'}`. But it treats it as the same page. The page key will be reused.
+  /// This will preserve the state and not run any page animation.
   ///
   /// See also:
   /// * [pushNamed] which pushes the given location onto the page stack.
