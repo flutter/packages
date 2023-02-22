@@ -243,13 +243,12 @@ task:
           CHANNEL: "stable"
       unit_test_script:
         - ./script/tool_runner.sh test --exclude=script/configs/dart_unit_tests_exceptions.yaml
-        # TODO(stuartmorgan): Re-enable once https://github.com/flutter/packages/pull/3256 lands.
-        #pathified_unit_test_script:
+        pathified_unit_test_script:
         # Run tests with path-based dependencies to ensure that publishing
         # the changes won't break tests of other packages in the repository
         # that depend on it.
-        #- ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        #- $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
+        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
+        - $PLUGIN_TOOL_COMMAND test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
     - name: linux-custom_package_tests
       env:
         PATH: $PATH:/usr/local/bin
