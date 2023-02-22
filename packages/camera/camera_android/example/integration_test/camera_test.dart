@@ -8,7 +8,9 @@ import 'dart:ui';
 import 'package:camera_android/camera_android.dart';
 import 'package:camera_example/camera_controller.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path_provider/path_provider.dart';
@@ -203,6 +205,63 @@ void main() {
     await videoController.dispose();
 
     expect(duration, lessThan(recordingTime - timePaused));
+  });
+
+  testWidgets('Set description while recording', (WidgetTester tester) async {
+    final List<CameraDescription> cameras =
+        await CameraPlatform.instance.availableCameras();
+    if (cameras.length < 2) {
+      return;
+    }
+
+    final CameraController controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
+
+    await controller.initialize();
+    await controller.prepareForVideoRecording();
+
+    await controller.startVideoRecording();
+    sleep(const Duration(milliseconds: 500));
+
+    // set description while recording requires android >= 26
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    final int sdk = androidInfo.version.sdkInt;
+    if (sdk < 26) {
+      await expectLater(() => controller.setDescription(cameras[1]),
+          throwsA(isA<PlatformException>()));
+      // old devices don't switch after throwing an error
+      expect(controller.description, cameras[0]);
+    } else {
+      await controller.setDescription(cameras[1]);
+      sleep(const Duration(milliseconds: 500));
+
+      expect(controller.description, cameras[1]);
+    }
+  });
+
+  testWidgets('Set description', (WidgetTester tester) async {
+    final List<CameraDescription> cameras =
+        await CameraPlatform.instance.availableCameras();
+    if (cameras.length < 2) {
+      return;
+    }
+
+    final CameraController controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
+
+    await controller.initialize();
+    sleep(const Duration(milliseconds: 500));
+    await controller.setDescription(cameras[1]);
+    sleep(const Duration(milliseconds: 500));
+
+    expect(controller.description, cameras[1]);
   });
 
   testWidgets(
