@@ -78,11 +78,13 @@ final class GoogleMapController
   private final PolygonsController polygonsController;
   private final PolylinesController polylinesController;
   private final CirclesController circlesController;
+  private final HeatmapsController heatmapsController;
   private final TileOverlaysController tileOverlaysController;
   private List<Object> initialMarkers;
   private List<Object> initialPolygons;
   private List<Object> initialPolylines;
   private List<Object> initialCircles;
+  private List<Object> initialHeatmaps;
   private List<Map<String, ?>> initialTileOverlays;
   @VisibleForTesting List<Float> initialPadding;
 
@@ -105,6 +107,7 @@ final class GoogleMapController
     this.polygonsController = new PolygonsController(methodChannel, density);
     this.polylinesController = new PolylinesController(methodChannel, density);
     this.circlesController = new CirclesController(methodChannel, density);
+    this.heatmapsController = new HeatmapsController();
     this.tileOverlaysController = new TileOverlaysController(methodChannel);
   }
 
@@ -204,11 +207,13 @@ final class GoogleMapController
     polygonsController.setGoogleMap(googleMap);
     polylinesController.setGoogleMap(googleMap);
     circlesController.setGoogleMap(googleMap);
+    heatmapsController.setGoogleMap(googleMap);
     tileOverlaysController.setGoogleMap(googleMap);
     updateInitialMarkers();
     updateInitialPolygons();
     updateInitialPolylines();
     updateInitialCircles();
+    updateInitialHeatmaps();
     updateInitialTileOverlays();
     if (initialPadding != null && initialPadding.size() == 4) {
       setPadding(
@@ -376,6 +381,17 @@ final class GoogleMapController
           result.success(null);
           break;
         }
+      case "heatmaps#update":
+        {
+          List<Object> heatmapsToAdd = call.argument("heatmapsToAdd");
+          heatmapsController.addHeatmaps(heatmapsToAdd);
+          List<Object> heatmapsToChange = call.argument("heatmapsToChange");
+          heatmapsController.changeHeatmaps(heatmapsToChange);
+          List<String> heatmapIdsToRemove = call.argument("heatmapIdsToRemove");
+          heatmapsController.removeHeatmaps(heatmapIdsToRemove);
+          result.success(null);
+          break;
+        }
       case "map#isCompassEnabled":
         {
           result.success(googleMap.getUiSettings().isCompassEnabled());
@@ -493,6 +509,12 @@ final class GoogleMapController
           result.success(tileOverlaysController.getTileOverlayInfo(tileOverlayId));
           break;
         }
+      case "map#getHeatmapInfo":
+        {
+          String heatmapId = call.argument("heatmapId");
+          result.success(heatmapsController.getHeatmapInfo(heatmapId));
+          break;
+        }
       default:
         result.notImplemented();
     }
@@ -608,17 +630,21 @@ final class GoogleMapController
   }
 
   // @Override
-  // The minimum supported version of Flutter doesn't have this method on the PlatformView interface, but the maximum
+  // The minimum supported version of Flutter doesn't have this method on the PlatformView
+  // interface, but the maximum
   // does. This will override it when available even with the annotation commented out.
   public void onInputConnectionLocked() {
-    // TODO(mklim): Remove this empty override once https://github.com/flutter/flutter/issues/40126 is fixed in stable.
+    // TODO(mklim): Remove this empty override once https://github.com/flutter/flutter/issues/40126
+    // is fixed in stable.
   }
 
   // @Override
-  // The minimum supported version of Flutter doesn't have this method on the PlatformView interface, but the maximum
+  // The minimum supported version of Flutter doesn't have this method on the PlatformView
+  // interface, but the maximum
   // does. This will override it when available even with the annotation commented out.
   public void onInputConnectionUnlocked() {
-    // TODO(mklim): Remove this empty override once https://github.com/flutter/flutter/issues/40126 is fixed in stable.
+    // TODO(mklim): Remove this empty override once https://github.com/flutter/flutter/issues/40126
+    // is fixed in stable.
   }
 
   // DefaultLifecycleObserver
@@ -859,8 +885,21 @@ final class GoogleMapController
     }
   }
 
+  @Override
+  public void setInitialHeatmaps(Object initialHeatmaps) {
+    ArrayList<?> heatmaps = (ArrayList<?>) initialHeatmaps;
+    this.initialHeatmaps = heatmaps != null ? new ArrayList<>(heatmaps) : null;
+    if (googleMap != null) {
+      updateInitialHeatmaps();
+    }
+  }
+
   private void updateInitialCircles() {
     circlesController.addCircles(initialCircles);
+  }
+
+  private void updateInitialHeatmaps() {
+    heatmapsController.addHeatmaps(initialHeatmaps);
   }
 
   @Override

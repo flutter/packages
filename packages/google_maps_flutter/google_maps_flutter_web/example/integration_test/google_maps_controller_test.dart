@@ -22,6 +22,7 @@ const double _acceptableDelta = 0.0000000001;
 
 @GenerateMocks(<Type>[], customMocks: <MockSpec<dynamic>>[
   MockSpec<CirclesController>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<HeatmapsController>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<PolygonsController>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<PolylinesController>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<MarkersController>(onMissingStub: OnMissingStub.returnDefault),
@@ -148,6 +149,20 @@ void main() {
           }, throwsAssertionError);
         });
 
+        testWidgets('cannot updateHeatmaps after dispose',
+            (WidgetTester tester) async {
+          controller.dispose();
+
+          expect(() {
+            controller.updateHeatmaps(
+              HeatmapUpdates.from(
+                const <Heatmap>{},
+                const <Heatmap>{},
+              ),
+            );
+          }, throwsAssertionError);
+        });
+
         testWidgets('cannot updatePolygons after dispose',
             (WidgetTester tester) async {
           controller.dispose();
@@ -209,6 +224,7 @@ void main() {
 
     group('init', () {
       late MockCirclesController circles;
+      late MockHeatmapsController heatmaps;
       late MockMarkersController markers;
       late MockPolygonsController polygons;
       late MockPolylinesController polylines;
@@ -216,6 +232,7 @@ void main() {
 
       setUp(() {
         circles = MockCirclesController();
+        heatmaps = MockHeatmapsController();
         markers = MockMarkersController();
         polygons = MockPolygonsController();
         polylines = MockPolylinesController();
@@ -227,6 +244,7 @@ void main() {
         controller.debugSetOverrides(
           createMap: (_, __) => map,
           circles: circles,
+          heatmaps: heatmaps,
           markers: markers,
           polygons: polygons,
           polylines: polylines,
@@ -266,6 +284,7 @@ void main() {
         controller.debugSetOverrides(
           createMap: (_, __) => map,
           circles: circles,
+          heatmaps: heatmaps,
           markers: markers,
           polygons: polygons,
           polylines: polylines,
@@ -274,6 +293,7 @@ void main() {
         controller.init();
 
         verify(circles.bindToMap(mapId, map));
+        verify(heatmaps.bindToMap(mapId, map));
         verify(markers.bindToMap(mapId, map));
         verify(polygons.bindToMap(mapId, map));
         verify(polylines.bindToMap(mapId, map));
@@ -285,6 +305,16 @@ void main() {
           const Circle(
             circleId: CircleId('circle-1'),
             zIndex: 1234,
+          ),
+        }, heatmaps: <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('heatmap-1'),
+            data: <WeightedLatLng>[
+              WeightedLatLng(LatLng(43.355114, -5.851333)),
+              WeightedLatLng(LatLng(43.354797, -5.851860)),
+              WeightedLatLng(LatLng(43.354469, -5.851318)),
+              WeightedLatLng(LatLng(43.354762, -5.850824)),
+            ],
           ),
         }, markers: <Marker>{
           const Marker(
@@ -328,6 +358,7 @@ void main() {
 
         controller.debugSetOverrides(
           circles: circles,
+          heatmaps: heatmaps,
           markers: markers,
           polygons: polygons,
           polylines: polylines,
@@ -337,6 +368,9 @@ void main() {
 
         final Set<Circle> capturedCircles =
             verify(circles.addCircles(captureAny)).captured[0] as Set<Circle>;
+        final Set<Heatmap> capturedHeatmaps =
+            verify(heatmaps.addHeatmaps(captureAny)).captured[0]
+                as Set<Heatmap>;
         final Set<Marker> capturedMarkers =
             verify(markers.addMarkers(captureAny)).captured[0] as Set<Marker>;
         final Set<Polygon> capturedPolygons =
@@ -348,6 +382,7 @@ void main() {
 
         expect(capturedCircles.first.circleId.value, 'circle-1');
         expect(capturedCircles.first.zIndex, 1234);
+        expect(capturedHeatmaps.first.heatmapId.value, 'heatmap-1');
         expect(capturedMarkers.first.markerId.value, 'marker-1');
         expect(capturedMarkers.first.infoWindow.snippet, 'snippet for test');
         expect(capturedMarkers.first.infoWindow.title, 'title for test');
@@ -599,6 +634,35 @@ void main() {
         }));
         verify(mock.changeCircles(<Circle>{
           const Circle(circleId: CircleId('to-be-updated'), visible: false),
+        }));
+      });
+
+      testWidgets('updateHeatmaps', (WidgetTester tester) async {
+        final MockHeatmapsController mock = MockHeatmapsController();
+        controller.debugSetOverrides(heatmaps: mock);
+
+        final Set<Heatmap> previous = <Heatmap>{
+          const Heatmap(heatmapId: HeatmapId('to-be-updated')),
+          const Heatmap(heatmapId: HeatmapId('to-be-removed')),
+        };
+
+        final Set<Heatmap> current = <Heatmap>{
+          const Heatmap(
+              heatmapId: HeatmapId('to-be-updated'), dissipating: false),
+          const Heatmap(heatmapId: HeatmapId('to-be-added')),
+        };
+
+        controller.updateHeatmaps(HeatmapUpdates.from(previous, current));
+
+        verify(mock.removeHeatmaps(<HeatmapId>{
+          const HeatmapId('to-be-removed'),
+        }));
+        verify(mock.addHeatmaps(<Heatmap>{
+          const Heatmap(heatmapId: HeatmapId('to-be-added')),
+        }));
+        verify(mock.changeHeatmaps(<Heatmap>{
+          const Heatmap(
+              heatmapId: HeatmapId('to-be-updated'), dissipating: false),
         }));
       });
 

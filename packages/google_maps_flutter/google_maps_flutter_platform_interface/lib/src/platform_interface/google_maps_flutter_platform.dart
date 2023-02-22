@@ -132,6 +132,19 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('updateCircles() has not been implemented.');
   }
 
+  /// Updates heatmap configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) {
+    throw UnimplementedError('updateHeatmaps() has not been implemented.');
+  }
+
   /// Updates tile overlay configuration.
   ///
   /// Change listeners are notified once the update has been made on the
@@ -375,6 +388,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
     Set<Circle> circles = const <Circle>{},
+    Set<Heatmap> heatmaps = const <Heatmap>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers =
         const <Factory<OneSequenceGestureRecognizer>>{},
@@ -405,6 +419,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
     Set<Circle> circles = const <Circle>{},
+    Set<Heatmap> heatmaps = const <Heatmap>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
   }) {
@@ -416,6 +431,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
       polygons: polygons,
       polylines: polylines,
       circles: circles,
+      heatmaps: heatmaps,
       tileOverlays: tileOverlays,
       gestureRecognizers: gestureRecognizers,
       mapOptions: mapOptions,

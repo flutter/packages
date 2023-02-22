@@ -90,6 +90,15 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     _map(mapId).updateCircles(circleUpdates);
   }
 
+  /// Applies the passed in `heatmapUpdates` to the `mapId`.
+  @override
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) async {
+    _map(mapId).updateHeatmaps(heatmapUpdates);
+  }
+
   @override
   Future<void> updateTileOverlays({
     required Set<TileOverlay> newTileOverlays,

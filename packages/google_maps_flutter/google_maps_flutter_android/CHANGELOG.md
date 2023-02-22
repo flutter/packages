@@ -1,3 +1,6 @@
+## 2.5.0
+* Adds support for heatmap layers.
+
 ## 2.4.5
 
 * Fixes Initial padding not working when map has not been created yet.

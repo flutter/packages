@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 #import <Flutter/Flutter.h>
+#import <Foundation/Foundation.h>
 #import <GoogleMaps/GoogleMaps.h>
+@import GoogleMapsUtils;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (CGPoint)pointFromArray:(NSArray *)array;
 + (NSArray *)arrayFromLocation:(CLLocationCoordinate2D)location;
 + (UIColor *)colorFromRGBA:(NSNumber *)data;
++ (NSNumber *)rgbaFromColor:(UIColor *)color;
 + (NSArray<CLLocation *> *)pointsFromLatLongs:(NSArray *)data;
 + (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data;
 + (nullable NSDictionary<NSString *, id> *)dictionaryFromPosition:
@@ -24,6 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
 + (nullable GMSCameraUpdate *)cameraUpdateFromChannelValue:(NSArray *)channelValue;
++ (nullable GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray *)data;
++ (NSArray *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng;
++ (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray *)data;
++ (NSArray *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData;
++ (GMUGradient *)gradientFromDictionary:(NSDictionary *)data;
++ (NSDictionary *)dictionaryFromGradient:(GMUGradient *)gradient;
 
 @end
 

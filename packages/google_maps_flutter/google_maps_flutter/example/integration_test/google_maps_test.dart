@@ -1161,6 +1161,257 @@ void main() {
       expect(tileOverlayInfo1, isNull);
     },
   );
+
+  /// Check that two lists of [WeightedLatLng] are more or less equal
+  void expectHeatmapDataMoreOrLessEquals(
+    List<WeightedLatLng> data1,
+    List<WeightedLatLng> data2,
+  ) {
+    expect(data1.length, data2.length);
+    for (int i = 0; i < data1.length; i++) {
+      final WeightedLatLng wll1 = data1[i];
+      final WeightedLatLng wll2 = data2[i];
+      expect(wll1.weight, wll2.weight);
+      expect(wll1.point.latitude, moreOrLessEquals(wll2.point.latitude));
+      expect(wll1.point.longitude, moreOrLessEquals(wll2.point.longitude));
+    }
+  }
+
+  /// Check that two [HeatmapGradient]s are more or less equal
+  void expectHeatmapGradientMoreOrLessEquals(
+    HeatmapGradient? gradient1,
+    HeatmapGradient? gradient2,
+  ) {
+    if (gradient1 == null) {
+      expect(gradient2, isNull);
+      return;
+    }
+    expect(gradient2, isNotNull);
+
+    expect(gradient1.colors.length, gradient2!.colors.length);
+    for (int i = 0; i < gradient1.colors.length; i++) {
+      final HeatmapGradientColor color1 = gradient1.colors[i];
+      final HeatmapGradientColor color2 = gradient2.colors[i];
+      expect(color1.color, color2.color);
+      expect(
+        color1.startPoint,
+        moreOrLessEquals(color2.startPoint, epsilon: 1e-7),
+      );
+    }
+
+    expect(gradient1.colorMapSize, gradient2.colorMapSize);
+  }
+
+  void expectHeatmapEquals(Heatmap heatmap1, Heatmap heatmap2) {
+    expectHeatmapDataMoreOrLessEquals(heatmap1.data, heatmap2.data);
+    expectHeatmapGradientMoreOrLessEquals(heatmap1.gradient, heatmap2.gradient);
+    if (Platform.isAndroid) {
+      expect(heatmap1.maxIntensity, heatmap2.maxIntensity);
+    }
+    expect(heatmap1.opacity, moreOrLessEquals(heatmap2.opacity, epsilon: 1e-8));
+    expect(heatmap1.radius, heatmap2.radius);
+    if (Platform.isIOS) {
+      expect(heatmap1.minimumZoomIntensity, heatmap2.minimumZoomIntensity);
+      expect(heatmap1.maximumZoomIntensity, heatmap2.maximumZoomIntensity);
+    }
+  }
+
+  final Heatmap heatmap1 = Heatmap(
+    heatmapId: const HeatmapId('heatmap_1'),
+    data: const <WeightedLatLng>[
+      WeightedLatLng(LatLng(37.782, -122.447)),
+      WeightedLatLng(LatLng(37.782, -122.445)),
+      WeightedLatLng(LatLng(37.782, -122.443)),
+      WeightedLatLng(LatLng(37.782, -122.441)),
+      WeightedLatLng(LatLng(37.782, -122.439)),
+      WeightedLatLng(LatLng(37.782, -122.437)),
+      WeightedLatLng(LatLng(37.782, -122.435)),
+      WeightedLatLng(LatLng(37.785, -122.447)),
+      WeightedLatLng(LatLng(37.785, -122.445)),
+      WeightedLatLng(LatLng(37.785, -122.443)),
+      WeightedLatLng(LatLng(37.785, -122.441)),
+      WeightedLatLng(LatLng(37.785, -122.439)),
+      WeightedLatLng(LatLng(37.785, -122.437)),
+      WeightedLatLng(LatLng(37.785, -122.435), weight: 2)
+    ],
+    dissipating: false,
+    gradient: HeatmapGradient(
+      const <HeatmapGradientColor>[
+        HeatmapGradientColor(
+          Color.fromARGB(255, 0, 255, 255),
+          0.2,
+        ),
+        HeatmapGradientColor(
+          Color.fromARGB(255, 0, 63, 255),
+          0.4,
+        ),
+        HeatmapGradientColor(
+          Color.fromARGB(255, 0, 0, 191),
+          0.6,
+        ),
+        HeatmapGradientColor(
+          Color.fromARGB(255, 63, 0, 91),
+          0.8,
+        ),
+        HeatmapGradientColor(
+          Color.fromARGB(255, 255, 0, 0),
+          1,
+        ),
+      ],
+    ),
+    maxIntensity: 1,
+    opacity: 0.5,
+    radius: 40,
+    minimumZoomIntensity: 1,
+    maximumZoomIntensity: 20,
+  );
+
+  testWidgets(
+    'set heatmap correctly',
+    (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Heatmap heatmap2 = Heatmap(
+        heatmapId: const HeatmapId('heatmap_2'),
+        data: heatmap1.data,
+        dissipating: heatmap1.dissipating,
+        gradient: heatmap1.gradient,
+        maxIntensity: heatmap1.maxIntensity,
+        opacity: heatmap1.opacity - 0.1,
+        radius: heatmap1.radius,
+        minimumZoomIntensity: heatmap1.minimumZoomIntensity,
+        maximumZoomIntensity: heatmap1.maximumZoomIntensity,
+      );
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            initialCameraPosition: _kInitialCameraPosition,
+            heatmaps: <Heatmap>{heatmap1, heatmap2},
+            onMapCreated: (GoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      final Heatmap heatmapInfo1 =
+          (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
+      final Heatmap heatmapInfo2 =
+          (await inspector.getHeatmapInfo(heatmap2.mapsId, mapId: mapId))!;
+
+      expectHeatmapEquals(heatmap1, heatmapInfo1);
+      expectHeatmapEquals(heatmap2, heatmapInfo2);
+    },
+  );
+
+  testWidgets(
+    'update heatmaps correctly',
+    (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            heatmaps: <Heatmap>{heatmap1},
+            onMapCreated: (GoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      final Heatmap heatmap1New = heatmap1.copyWith(
+        dataParam: heatmap1.data.sublist(5),
+        dissipatingParam: !heatmap1.dissipating,
+        gradientParam: heatmap1.gradient,
+        maxIntensityParam: heatmap1.maxIntensity! + 1,
+        opacityParam: heatmap1.opacity - 0.1,
+        radiusParam: heatmap1.radius + 1,
+        minimumZoomIntensityParam: heatmap1.minimumZoomIntensity + 1,
+        maximumZoomIntensityParam: heatmap1.maximumZoomIntensity + 1,
+      );
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            heatmaps: <Heatmap>{heatmap1New},
+            onMapCreated: (GoogleMapController controller) {
+              fail('update: OnMapCreated should get called only once.');
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      final Heatmap heatmapInfo1 =
+          (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
+
+      expectHeatmapEquals(heatmap1New, heatmapInfo1);
+    },
+  );
+
+  testWidgets(
+    'remove heatmaps correctly',
+    (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            heatmaps: <Heatmap>{heatmap1},
+            onMapCreated: (GoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            onMapCreated: (GoogleMapController controller) {
+              fail('OnMapCreated should get called only once.');
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      final Heatmap? heatmapInfo1 =
+          await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId);
+
+      expect(heatmapInfo1, isNull);
+    },
+  );
 }
 
 class _DebugTileProvider implements TileProvider {

@@ -116,6 +116,93 @@ class MockCirclesController extends _i1.Mock implements _i3.CirclesController {
       );
 }
 
+/// A class which mocks [HeatmapsController].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockHeatmapsController extends _i1.Mock
+    implements _i3.HeatmapsController {
+  @override
+  Map<_i4.HeatmapId, _i3.HeatmapController> get heatmaps => (super.noSuchMethod(
+        Invocation.getter(#heatmaps),
+        returnValue: <_i4.HeatmapId, _i3.HeatmapController>{},
+        returnValueForMissingStub: <_i4.HeatmapId, _i3.HeatmapController>{},
+      ) as Map<_i4.HeatmapId, _i3.HeatmapController>);
+  @override
+  _i2.GMap get googleMap => (super.noSuchMethod(
+        Invocation.getter(#googleMap),
+        returnValue: _FakeGMap_0(
+          this,
+          Invocation.getter(#googleMap),
+        ),
+        returnValueForMissingStub: _FakeGMap_0(
+          this,
+          Invocation.getter(#googleMap),
+        ),
+      ) as _i2.GMap);
+  @override
+  set googleMap(_i2.GMap? _googleMap) => super.noSuchMethod(
+        Invocation.setter(
+          #googleMap,
+          _googleMap,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  int get mapId => (super.noSuchMethod(
+        Invocation.getter(#mapId),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+  @override
+  set mapId(int? _mapId) => super.noSuchMethod(
+        Invocation.setter(
+          #mapId,
+          _mapId,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void addHeatmaps(Set<_i4.Heatmap>? heatmapsToAdd) => super.noSuchMethod(
+        Invocation.method(
+          #addHeatmaps,
+          [heatmapsToAdd],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void changeHeatmaps(Set<_i4.Heatmap>? heatmapsToChange) => super.noSuchMethod(
+        Invocation.method(
+          #changeHeatmaps,
+          [heatmapsToChange],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void removeHeatmaps(Set<_i4.HeatmapId>? heatmapIdsToRemove) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #removeHeatmaps,
+          [heatmapIdsToRemove],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void bindToMap(
+    int? mapId,
+    _i2.GMap? googleMap,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #bindToMap,
+          [
+            mapId,
+            googleMap,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [PolygonsController].
 ///
 /// See the documentation for Mockito's code generation for more information.
