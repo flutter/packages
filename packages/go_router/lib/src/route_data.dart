@@ -11,11 +11,9 @@ import 'package:meta/meta_meta.dart';
 import 'route.dart';
 import 'state.dart';
 
-/// {@template route_data}
 /// A superclass for each route data
-/// {@endtemplate}
 abstract class RouteData {
-  /// {@macro route_data}
+  /// Default const constructor
   const RouteData();
 }
 
@@ -128,12 +126,10 @@ abstract class GoRouteData extends RouteData {
   GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
-/// {@template shell_route_data}
-/// Baseclass for supporting
+/// Base class for supporting
 /// [nested navigation](https://pub.dev/packages/go_router#nested-navigation)
-/// {@endtemplate}
 abstract class ShellRouteData extends RouteData {
-  /// {@macro shell_route_data}
+  /// Default const constructor
   const ShellRouteData();
 
   /// [pageBuilder] is used to build the page
@@ -215,20 +211,16 @@ abstract class ShellRouteData extends RouteData {
   GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
-/// {@template typed_route}
 /// A superclass for each typed route descendant
-/// {@endtemplate}
 class TypedRoute<T extends RouteData> {
-  /// {@macro typed_route}
+  /// Default const constructor
   const TypedRoute();
 }
 
-/// {@template typed_go_route}
 /// A superclass for each typed go route descendant
-/// {@endtemplate}
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
-  /// {@macro typed_go_route}
+  /// Default const constructor
   const TypedGoRoute({
     required this.path,
     this.routes = const <TypedRoute<RouteData>>[],
@@ -247,12 +239,10 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   final List<TypedRoute<RouteData>> routes;
 }
 
-/// {@template typed_shell_route}
 /// A superclass for each typed shell route descendant
-/// {@endtemplate}
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
-  /// {@macro typed_shell_route}
+  /// Default const constructor
   const TypedShellRoute({
     this.routes = const <TypedRoute<RouteData>>[],
   });

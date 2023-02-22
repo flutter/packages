@@ -106,9 +106,9 @@ final List<GoRoute> _routes = <GoRoute>[
 ];
 
 void main() {
-  group('GoRouteData >', () {
+  group('GoRouteData', () {
     testWidgets(
-      'build',
+      'It should build the page from the overridden build method',
       (WidgetTester tester) async {
         final GoRouter goRouter = GoRouter(
           initialLocation: '/build',
@@ -125,7 +125,7 @@ void main() {
     );
 
     testWidgets(
-      'buildPage',
+      'It should build the page from the overridden buildPage method',
       (WidgetTester tester) async {
         final GoRouter goRouter = GoRouter(
           initialLocation: '/build-page',
@@ -142,9 +142,9 @@ void main() {
     );
   });
 
-  group('ShellRouteData >', () {
+  group('ShellRouteData', () {
     testWidgets(
-      'builder',
+      'It should build the page from the overridden build method',
       (WidgetTester tester) async {
         final GoRouter goRouter = GoRouter(
           initialLocation: '/child',
@@ -163,7 +163,7 @@ void main() {
     );
 
     testWidgets(
-      'pageBuilder',
+      'It should build the page from the overridden buildPage method',
       (WidgetTester tester) async {
         final GoRouter goRouter = GoRouter(
           initialLocation: '/child',
@@ -181,39 +181,6 @@ void main() {
       },
     );
   });
-  testWidgets(
-    'It should build the page from the overridden build method',
-    (WidgetTester tester) async {
-      final GoRouter goRouter = GoRouter(
-        initialLocation: '/build',
-        routes: _routes,
-      );
-      await tester.pumpWidget(MaterialApp.router(
-        routeInformationProvider: goRouter.routeInformationProvider,
-        routeInformationParser: goRouter.routeInformationParser,
-        routerDelegate: goRouter.routerDelegate,
-      ));
-      expect(find.byKey(const Key('build')), findsOneWidget);
-      expect(find.byKey(const Key('buildPage')), findsNothing);
-    },
-  );
-
-  testWidgets(
-    'It should build the page from the overridden buildPage method',
-    (WidgetTester tester) async {
-      final GoRouter goRouter = GoRouter(
-        initialLocation: '/build-page',
-        routes: _routes,
-      );
-      await tester.pumpWidget(MaterialApp.router(
-        routeInformationProvider: goRouter.routeInformationProvider,
-        routeInformationParser: goRouter.routeInformationParser,
-        routerDelegate: goRouter.routerDelegate,
-      ));
-      expect(find.byKey(const Key('build')), findsNothing);
-      expect(find.byKey(const Key('buildPage')), findsOneWidget);
-    },
-  );
 
   testWidgets(
     'It should redirect using the overridden redirect method',

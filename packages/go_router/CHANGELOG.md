@@ -32,6 +32,7 @@
 - Makes `CustomTransitionPage.barrierDismissible` work
 
 ## 6.0.2
+
 - Fixes missing result on pop in go_router extension.
 
 ## 6.0.1
