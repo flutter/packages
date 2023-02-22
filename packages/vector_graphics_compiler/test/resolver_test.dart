@@ -40,23 +40,29 @@ void main() {
     final Node node = parseToNodeTree('''
 <svg viewBox="0 0 200 200">
   <g opacity=".5" fill="red">
-    <rect x="0" y="0" width="10" height="10" />
-    <rect x="5" y="5" width="10" height="10" />
+    <rect x="0" y="0" width="100" height="100" />
+    <rect x="50" y="50" width="100" height="100" />
   </g>
 </svg>''');
     final Node resolvedNode =
         node.accept(ResolvingVisitor(), AffineMatrix.identity);
     final List<ResolvedPathNode> nodes =
         queryChildren<ResolvedPathNode>(resolvedNode);
+    final SaveLayerNode saveLayerNode =
+        queryChildren<SaveLayerNode>(resolvedNode).single;
+
+    expect(saveLayerNode.paint.fill!.color, const Color(0x7FFF0000));
 
     expect(nodes.length, 2);
+
+    // Opacity is not inherited since it is applied in a saveLayer.
     expect(
       nodes.first.paint,
-      const Paint(fill: Fill(color: Color(0x7FFF0000))),
+      const Paint(fill: Fill(color: Color(0xFFFF0000))),
     );
     expect(
       nodes.last.paint,
-      const Paint(fill: Fill(color: Color(0x7FFF0000))),
+      const Paint(fill: Fill(color: Color(0xFFFF0000))),
     );
   });
 

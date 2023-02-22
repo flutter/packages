@@ -4,6 +4,32 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Opacity with a save layer does not continue to inherit', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="283" height="180" viewBox="0 0 283 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path opacity=".3" d="M61.72 181.636L187.521 0H0v181.636h61.72z" fill="#202124" fill-opacity=".08"/>
+  <g opacity=".04">
+    <path d="M0 0l283.728 90.818V0H0z" fill="black"/>
+  </g>
+</svg>
+''');
+
+    expect(instructions.paints, const <Paint>[
+      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x06202124))),
+      // The paint for the saveLayer.
+      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x0a000000))),
+      // The paint for the path drawn in the saveLayer - must not be the same as
+      // the saveLayer otherwise the path will be drawn almost completely transparent.
+      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff000000))),
+    ]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 2),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
   test('Opacity on a default fill', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 10 10">

@@ -1969,6 +1969,39 @@ class SvgAttributes {
   /// The y translation.
   final double? y;
 
+  /// A copy of these attributes after absorbing a saveLayer.
+  ///
+  /// Specifically, this will null out `blendMode` and any opacity related
+  /// attributes, since those have been applied in a saveLayer call.
+  ///
+  /// The [raw] map preserves old values.
+  SvgAttributes forSaveLayer() {
+    return SvgAttributes._(
+      raw: raw,
+      id: id,
+      href: href,
+      transform: transform,
+      color: color,
+      stroke: stroke?.forSaveLayer(),
+      fill: fill?.forSaveLayer(),
+      fillRule: fillRule,
+      clipRule: clipRule,
+      clipPathId: clipPathId,
+      blendMode: blendMode,
+      fontFamily: fontFamily,
+      fontWeight: fontWeight,
+      fontSize: fontSize,
+      textDecoration: textDecoration,
+      textDecorationStyle: textDecorationStyle,
+      textDecorationColor: textDecorationColor,
+      x: x,
+      textAnchorMultiplier: textAnchorMultiplier,
+      y: y,
+      width: width,
+      height: height,
+    );
+  }
+
   /// Creates a new set of attributes as if this inherited from `parent`.
   ///
   /// If `includePosition` is true, the `x`/`y` coordinates are also inherited. This
@@ -2066,6 +2099,25 @@ class SvgStrokeAttributes {
   /// The opacity to apply to a default color, if [color] is null.
   final double? opacity;
 
+  /// A copy of these attributes after absorbing a saveLayer.
+  ///
+  /// Specifically, this will null out any opacity related
+  /// attributes, since those have been applied in a saveLayer call.
+  SvgStrokeAttributes forSaveLayer() {
+    return SvgStrokeAttributes._(
+      _definitions,
+      color: color,
+      shaderId: shaderId,
+      join: join,
+      cap: cap,
+      miterLimit: miterLimit,
+      width: width,
+      dashArray: dashArray,
+      dashOffset: dashOffset,
+      hasPattern: hasPattern,
+    );
+  }
+
   /// Inherits attributes in this from parent.
   SvgStrokeAttributes applyParent(SvgStrokeAttributes? parent) {
     return SvgStrokeAttributes._(
@@ -2155,6 +2207,19 @@ class SvgFillAttributes {
 
   /// If there is a pattern a default fill will be returned.
   final bool? hasPattern;
+
+  /// A copy of these attributes after absorbing a saveLayer.
+  ///
+  /// Specifically, this will null out any opacity related
+  /// attributes, since those have been applied in a saveLayer call.
+  SvgFillAttributes forSaveLayer() {
+    return SvgFillAttributes._(
+      _definitions,
+      color: color,
+      shaderId: shaderId,
+      hasPattern: hasPattern,
+    );
+  }
 
   /// Inherits attributes in this from parent.
   SvgFillAttributes applyParent(SvgFillAttributes? parent) {

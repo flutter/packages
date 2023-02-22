@@ -76,7 +76,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         children: <Node>[
           for (Node child in parentNode.children)
             child
-                .applyAttributes(parentNode.attributes)
+                .applyAttributes(parentNode.attributes.forSaveLayer())
                 .accept(this, nextTransform),
         ],
       );
