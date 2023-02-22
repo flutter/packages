@@ -12,9 +12,7 @@ import 'package:test/test.dart';
 import 'mocks.dart';
 import 'util.dart';
 
-/// Returns the top section of a pubspec.yaml for a package named [name],
-/// for either a flutter/packages or flutter/plugins package depending on
-/// the values of [isPlugin].
+/// Returns the top section of a pubspec.yaml for a package named [name].
 ///
 /// By default it will create a header that includes all of the expected
 /// values, elements can be changed via arguments to create incorrect

@@ -66,7 +66,7 @@ from Flutter.
 @end
 
 @implementation AppDelegate
-- (BOOL)application:(UIApplication *)application 
+- (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions {
   MyApi *api = [[MyApi alloc] init];
   BookApiSetup(getFlutterEngine().binaryMessenger, api);
@@ -158,4 +158,4 @@ A full example of using Pigeon for add-to-app with Swift on iOS can be found at
 ## Video player plugin
 
 A full real-world example can also be found in the
-[video_player plugin](https://github.com/flutter/plugins/tree/main/packages/video_player).
+[video_player plugin](https://github.com/flutter/packages/tree/main/packages/video_player).
