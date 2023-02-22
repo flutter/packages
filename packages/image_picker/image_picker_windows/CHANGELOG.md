@@ -1,3 +1,7 @@
+## 0.1.0+5
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.1.0+4
 
 * Updates example code for `use_build_context_synchronously` lint.
