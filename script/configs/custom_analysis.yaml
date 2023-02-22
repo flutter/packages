@@ -6,6 +6,11 @@
 # All entries here shoud include a comment explaining why they use different
 # options.
 
+# DO NOT move or delete this file without updating
+# https://github.com/dart-lang/sdk/blob/master/tools/bots/flutter/analyze_flutter_plugins.sh
+# which references this file from source, but out-of-repo.
+# Contact stuartmorgan or devoncarew for assistance if necessary.
+
 # Deliberately uses flutter_lints, as that's what it is demonstrating.
 - flutter_lints/example
 # Adopts some flutter_tools rules regarding public api docs due to being an
