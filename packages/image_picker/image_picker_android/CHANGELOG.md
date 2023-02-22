@@ -1,5 +1,7 @@
-## 0.8.5+6
+## 0.8.6
 
+* Adds Android 13 photo picker functionality if SDK version is at least 33.
+* Bumps compileSdkVersion from 31 to 33
 * Updates minimum Flutter version to 3.0.
 * Fixes names of picked files to match original filenames where possible.
 
