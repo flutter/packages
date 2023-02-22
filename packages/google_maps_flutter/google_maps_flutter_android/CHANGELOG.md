@@ -1,3 +1,7 @@
+## 2.4.7
+
+* Update annotioan and espresso dependencies.
+
 ## 2.4.6
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
