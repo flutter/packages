@@ -1,3 +1,7 @@
+## 6.0.10
+
+- Disable logging in tests
+
 ## 6.0.9
 
 - Fixes deprecation message for `GoRouterState.namedLocation`
