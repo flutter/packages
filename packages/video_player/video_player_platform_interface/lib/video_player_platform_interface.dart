@@ -102,6 +102,11 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   Future<void> setMixWithOthers(bool mixWithOthers) {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
+
+  /// Sets additional options on web
+  Future<void> setWebOptions(int textureId, VideoPlayerWebOptions options) {
+    throw UnimplementedError('setWebOptions() has not been implemented.');
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
@@ -373,6 +378,7 @@ class VideoPlayerOptions {
   VideoPlayerOptions({
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
+    this.webOptions,
   });
 
   /// Set this to true to keep playing video in background, when app goes in background.
@@ -385,4 +391,57 @@ class VideoPlayerOptions {
   /// Note: This option will be silently ignored in the web platform (there is
   /// currently no way to implement this feature in this platform).
   final bool mixWithOthers;
+
+  /// Additional web controls
+  final VideoPlayerWebOptions? webOptions;
+}
+
+/// [VideoPlayerWebOptions] can be optionally used to set additional web settings
+@immutable
+class VideoPlayerWebOptions {
+  /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
+  const VideoPlayerWebOptions({
+    this.controlsEnabled = false,
+    this.allowDownload = true,
+    this.allowFullscreen = true,
+    this.allowPlaybackRate = true,
+    this.allowContextMenu = true,
+  });
+
+  /// Whether native controls are enabled
+  final bool controlsEnabled;
+
+  /// Whether downloaded control is displayed
+  ///
+  /// Only applicable when [controlsEnabled] is true
+  final bool allowDownload;
+
+  /// Whether fullscreen control is enabled
+  ///
+  /// Only applicable when [controlsEnabled] is true
+  final bool allowFullscreen;
+
+  /// Whether playback rate control is displayed
+  ///
+  /// Only applicable when [controlsEnabled] is true
+  final bool allowPlaybackRate;
+
+  /// Whether context menu (right click) is allowed
+  final bool allowContextMenu;
+
+  /// A string representation of disallowed controls
+  String get controlsList {
+    final List<String> controlsList = <String>[];
+    if (!allowDownload) {
+      controlsList.add('nodownload');
+    }
+    if (!allowFullscreen) {
+      controlsList.add('nofullscreen');
+    }
+    if (!allowPlaybackRate) {
+      controlsList.add('noplaybackrate');
+    }
+
+    return controlsList.join(' ');
+  }
 }
