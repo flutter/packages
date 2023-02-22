@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
 A Flutter plugin that provides a Google Maps widget.
 Downloaded by pub (not CocoaPods).
                        DESC
-  s.homepage         = 'https://github.com/flutter/plugins'
+  s.homepage         = 'https://github.com/flutter/packages'
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
-  s.source           = { :http => 'https://github.com/flutter/plugins/tree/main/packages/google_maps_flutter/google_maps_flutter/ios' }
+  s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/google_maps_flutter/google_maps_flutter/ios' }
   s.documentation_url = 'https://pub.dev/packages/google_maps_flutter_ios'
   s.source_files = 'Classes/**/*.{h,m}'
   s.public_header_files = 'Classes/**/*.h'
