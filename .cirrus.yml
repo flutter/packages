@@ -236,6 +236,9 @@ task:
     - name: dart_unit_tests
       env:
         matrix:
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 2"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 2"
+        matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
       unit_test_script:
@@ -315,7 +318,13 @@ task:
       build_script:
         - ./script/tool_runner.sh build-examples --web
       drive_script:
-        - ./script/tool_runner.sh drive-examples --web --exclude=script/configs/exclude_integration_web.yaml
+        # TODO(stuartmorgan): Figure out why url_launcher_web is failing on stable and re-enable it:
+        # https://github.com/flutter/flutter/issues/121161
+        - if [[ "$CHANNEL" == "master" ]]; then
+        -   ./script/tool_runner.sh drive-examples --web --exclude=script/configs/exclude_integration_web.yaml
+        - else
+        -   ./script/tool_runner.sh drive-examples --web --exclude=script/configs/exclude_integration_web.yaml,url_launcher_web
+        - fi
     - name: web_benchmarks_test
       env:
         matrix:
