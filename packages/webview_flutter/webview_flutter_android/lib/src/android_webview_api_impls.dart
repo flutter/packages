@@ -147,7 +147,12 @@ class WebViewHostApiImpl extends WebViewHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebView instance) {
     return create(
-      instanceManager.addDartCreatedInstance(instance),
+      instanceManager.addDartCreatedInstance(
+        instance,
+        onCopy: (WebView original) => WebView.detached(
+          useHybridComposition: original.useHybridComposition,
+        ),
+      ),
       instance.useHybridComposition,
     );
   }
@@ -360,7 +365,12 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebSettings instance, WebView webView) {
     return create(
-      instanceManager.addDartCreatedInstance(instance),
+      instanceManager.addDartCreatedInstance(
+        instance,
+        onCopy: (WebSettings original) {
+          return WebSettings.detached();
+        },
+      ),
       instanceManager.getIdentifier(webView)!,
     );
   }
@@ -501,7 +511,13 @@ class JavaScriptChannelHostApiImpl extends JavaScriptChannelHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(JavaScriptChannel instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(instance);
+      final int identifier = instanceManager.addDartCreatedInstance(
+        instance,
+        onCopy: (JavaScriptChannel original) => JavaScriptChannel.detached(
+          original.channelName,
+          postMessage: original.postMessage,
+        ),
+      );
       await create(
         identifier,
         instance.channelName,
@@ -545,7 +561,10 @@ class WebViewClientHostApiImpl extends WebViewClientHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebViewClient instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(instance);
+      final int identifier = instanceManager.addDartCreatedInstance(
+        instance,
+        onCopy: (WebViewClient original) => WebViewClient.detached(),
+      );
       return create(identifier);
     }
   }
@@ -732,7 +751,12 @@ class DownloadListenerHostApiImpl extends DownloadListenerHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(DownloadListener instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(instance);
+      final int identifier = instanceManager.addDartCreatedInstance(
+        instance,
+        onCopy: (DownloadListener original) => DownloadListener.detached(
+          onDownloadStart: original.onDownloadStart,
+        ),
+      );
       return create(identifier);
     }
   }
@@ -786,7 +810,10 @@ class WebChromeClientHostApiImpl extends WebChromeClientHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebChromeClient instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(instance);
+      final int identifier = instanceManager.addDartCreatedInstance(
+        instance,
+        onCopy: (WebChromeClient original) => WebChromeClient.detached(),
+      );
       return create(identifier);
     }
   }
@@ -866,7 +893,10 @@ class WebStorageHostApiImpl extends WebStorageHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebStorage instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(instance);
+      final int identifier = instanceManager.addDartCreatedInstance(
+        instance,
+        onCopy: (WebStorage original) => WebStorage.detached(),
+      );
       return create(identifier);
     }
   }
@@ -880,8 +910,16 @@ class WebStorageHostApiImpl extends WebStorageHostApi {
 /// Flutter api implementation for [FileChooserParams].
 class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
   /// Constructs a [FileChooserParamsFlutterApiImpl].
-  FileChooserParamsFlutterApiImpl({InstanceManager? instanceManager})
-      : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  FileChooserParamsFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -902,6 +940,14 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
         filenameHint: filenameHint,
       ),
       instanceId,
+      onCopy: (FileChooserParams original) => FileChooserParams.detached(
+        isCaptureEnabled: isCaptureEnabled,
+        acceptTypes: acceptTypes.cast(),
+        mode: mode.value,
+        filenameHint: filenameHint,
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
     );
   }
 }

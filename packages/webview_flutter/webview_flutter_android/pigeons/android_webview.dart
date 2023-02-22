@@ -27,6 +27,15 @@ import 'package:pigeon/pigeon.dart';
   ),
 )
 
+/// Host API for managing the native `InstanceManager`.
+@HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
+abstract class InstanceManagerHostApi {
+  /// Clear the native `InstanceManager`.
+  ///
+  /// This is typically only used after a hot restart.
+  void clear();
+}
+
 /// Mode of how to select files for a file chooser.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams.
