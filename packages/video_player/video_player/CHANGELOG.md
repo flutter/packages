@@ -1,6 +1,7 @@
-## NEXT
+## 2.5.2
 
 * Updates minimum Flutter version to 3.0.
+* Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
 
 ## 2.5.1
 
