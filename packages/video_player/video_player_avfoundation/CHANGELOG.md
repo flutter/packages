@@ -1,6 +1,10 @@
-## 2.3.9
+## 2.3.10
 
 * Synchronizes `VideoPlayerValue.isPlaying` with `AVPlayer`.
+
+## 2.3.9
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
 
 ## 2.3.8
