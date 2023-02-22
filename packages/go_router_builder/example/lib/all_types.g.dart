@@ -442,6 +442,9 @@ extension $IterableRouteExtension on IterableRoute {
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
 }
 
 const _$PersonDetailsEnumMap = {
