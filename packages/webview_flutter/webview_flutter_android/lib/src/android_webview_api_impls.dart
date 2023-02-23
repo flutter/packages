@@ -597,6 +597,12 @@ class WebViewClientHostApiImpl extends WebViewClientHostApi {
         instance,
         onCopy: (WebViewClient original) {
           return WebViewClient.detached(
+            onPageStarted: original.onPageStarted,
+            onPageFinished: original.onPageFinished,
+            onReceivedRequestError: original.onReceivedRequestError,
+            onReceivedError: original.onReceivedError,
+            requestLoading: original.requestLoading,
+            urlLoading: original.urlLoading,
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager,
           );
