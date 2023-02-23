@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:camera_android_camerax/camera_android_camerax.dart';
+import 'package:camera_android_camerax_example/camera_controller.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -30,11 +35,12 @@ void main() {
       (WidgetTester tester) async {
     final List<CameraDescription> availableCameras =
         await CameraPlatform.instance.availableCameras();
-    if (cameras.isEmpty) {
+    if (availableCameras.isEmpty) {
       return;
     }
     for (final CameraDescription cameraDescription in availableCameras) {
-      final CameraController controller = CameraController(cameraDescription);
+      final CameraController controller =
+          CameraController(cameraDescription, ResolutionPreset.high);
       // Take Picture
       final XFile file = await controller.takePicture();
 
