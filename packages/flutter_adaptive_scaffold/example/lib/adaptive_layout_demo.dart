@@ -195,8 +195,8 @@ class MyHomePage extends StatelessWidget {
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
             key: const Key('Bottom Navigation Small'),
-            inAnimation: AdaptiveScaffold.bottomToTop,
-            outAnimation: AdaptiveScaffold.topToBottom,
+            inAnimation: AdaptiveScaffold.slideOnFromBottom,
+            outAnimation: AdaptiveScaffold.slideOffToBottom,
             builder: (_) => BottomNavigationBarTheme(
               data: const BottomNavigationBarThemeData(
                   selectedItemColor: Colors.black),

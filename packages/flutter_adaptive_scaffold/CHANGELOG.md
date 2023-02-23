@@ -1,6 +1,12 @@
 ## 0.1.1
 
-* Adds three built-in Animation: `topOutIn`, `topInOut`, `rightInOut`.
+* Adds three new Animations: `slideOnFromTop`, `slideOffToTop`, `slideOffToRight`.
+* Renames five existing Animations:
+  * `bottomToTop` => `slideOnFromBottom`
+  * `topToBottom` => `slideOffToBottom`
+  * `leftOutIn` => `slideOnFromLeft`
+  * `leftInOut` => `slideOffToLeft`
+  * `rightOutIn` => `slideOnFromRight`
 
 ## 0.1.0
 

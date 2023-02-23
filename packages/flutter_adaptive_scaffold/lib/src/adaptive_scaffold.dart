@@ -383,6 +383,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from bottom offscreen up onto the screen.
+  @Deprecated('Use slideOnFromBottom instead')
   static AnimatedWidget bottomToTop(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
@@ -394,6 +395,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from on the screen down off the screen.
+  @Deprecated('Use slideOffToBottom instead')
   static AnimatedWidget topToBottom(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
@@ -404,8 +406,33 @@ class AdaptiveScaffold extends StatefulWidget {
     );
   }
 
-  /// Animation from top off the screen into the screen.
-  static AnimatedWidget topOutIn(Widget child, Animation<double> animation) {
+  /// Animation slide from bottom off screen to top on screen.
+  static AnimatedWidget slideOnFromBottom(
+      Widget child, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0, 1),
+        end: Offset.zero,
+      ).animate(animation),
+      child: child,
+    );
+  }
+
+  /// Animation slide from top on screen to bottom off screen.
+  static AnimatedWidget slideOffToBottom(
+      Widget child, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(0, 1),
+      ).animate(animation),
+      child: child,
+    );
+  }
+
+  /// Animation slide from top off screen to bottom on screen.
+  static AnimatedWidget slideOnFromTop(
+      Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(0, -1),
@@ -415,8 +442,9 @@ class AdaptiveScaffold extends StatefulWidget {
     );
   }
 
-  /// Animation from on screen to top off screen.
-  static AnimatedWidget topInOut(Widget child, Animation<double> animation) {
+  /// Animation slide from bottom on screen to top off screen.
+  static AnimatedWidget slideOffToTop(
+      Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: Offset.zero,
@@ -427,6 +455,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from left off the screen into the screen.
+  @Deprecated('Use slideOnFromLeft instead')
   static AnimatedWidget leftOutIn(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
@@ -438,6 +467,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from on screen to left off screen.
+  @Deprecated('Use slideOffToLeft instead')
   static AnimatedWidget leftInOut(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
@@ -449,6 +479,7 @@ class AdaptiveScaffold extends StatefulWidget {
   }
 
   /// Animation from right off screen to on screen.
+  @Deprecated('Use slideOnFromRight instead')
   static AnimatedWidget rightOutIn(Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
@@ -459,8 +490,45 @@ class AdaptiveScaffold extends StatefulWidget {
     );
   }
 
-  /// Animation from on screen to right off screen.
-  static AnimatedWidget rightInOut(Widget child, Animation<double> animation) {
+  /// Animation slide from left off screen to right on screen.
+  static AnimatedWidget slideOnFromLeft(
+      Widget child, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(-1, 0),
+        end: Offset.zero,
+      ).animate(animation),
+      child: child,
+    );
+  }
+
+  /// Animation slide from right on screen to left off screen.
+  static AnimatedWidget slideOffToLeft(
+      Widget child, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(-1, 0),
+      ).animate(animation),
+      child: child,
+    );
+  }
+
+  /// Animation slide from right off screen to left on screen.
+  static AnimatedWidget slideOnFromRight(
+      Widget child, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(1, 0),
+        end: Offset.zero,
+      ).animate(animation),
+      child: child,
+    );
+  }
+
+  /// Animation slide from left on screen to right off screen.
+  static AnimatedWidget slideOffToRight(
+      Widget child, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: Offset.zero,

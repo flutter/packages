@@ -87,7 +87,7 @@ enum _SlotIds {
 ///     config: {
 ///       Breakpoints.small: SlotLayout.from(
 ///         key: const Key('Bottom Navigation Small'),
-///         inAnimation: bottomToTop,
+///         inAnimation: slideOnFromBottom,
 ///         builder: (_) => AdaptiveScaffold.toBottomNavigationBar(destinations: destinations),
 ///       ),
 ///     },

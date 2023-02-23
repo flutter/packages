@@ -324,7 +324,7 @@ class _MyHomePageState extends State<MyHomePage>
               key: const Key('bottomNavigation'),
               // You can define inAnimations or outAnimations to override the
               // default offset transition.
-              outAnimation: AdaptiveScaffold.topToBottom,
+              outAnimation: AdaptiveScaffold.slideOffToBottom,
               builder: (_) => BottomNavigationBarTheme(
                 data: const BottomNavigationBarThemeData(
                     selectedItemColor: Colors.black),
