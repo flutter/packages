@@ -11,13 +11,19 @@ import 'package:meta/meta_meta.dart';
 import 'route.dart';
 import 'state.dart';
 
+/// A superclass for each route data
+abstract class RouteData {
+  /// Default const constructor
+  const RouteData();
+}
+
 /// Baseclass for supporting
 /// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
 ///
 /// Subclasses must override one of [build], [buildPage], or
 /// [redirect].
 /// {@category Type-safe routes}
-abstract class GoRouteData {
+abstract class GoRouteData extends RouteData {
   /// Allows subclasses to have `const` constructors.
   ///
   /// [GoRouteData] is abstract and cannot be instantiated directly.
@@ -74,7 +80,8 @@ abstract class GoRouteData {
   static GoRoute $route<T extends GoRouteData>({
     required String path,
     required T Function(GoRouterState) factory,
-    List<GoRoute> routes = const <GoRoute>[],
+    GlobalKey<NavigatorState>? parentNavigatorKey,
+    List<RouteBase> routes = const <RouteBase>[],
   }) {
     T factoryImpl(GoRouterState state) {
       final Object? extra = state.extra;
@@ -103,6 +110,7 @@ abstract class GoRouteData {
       pageBuilder: pageBuilder,
       redirect: redirect,
       routes: routes,
+      parentNavigatorKey: parentNavigatorKey,
     );
   }
 
@@ -111,26 +119,138 @@ abstract class GoRouteData {
   static final Expando<GoRouteData> _stateObjectExpando = Expando<GoRouteData>(
     'GoRouteState to GoRouteData expando',
   );
+
+  /// [navigatorKey] is used to point to a certain navigator
+  ///
+  /// It will use the given key to find the right navigator for [GoRoute]
+  GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
-/// Annotation for types that support typed routing.
+/// Base class for supporting
+/// [nested navigation](https://pub.dev/packages/go_router#nested-navigation)
+abstract class ShellRouteData extends RouteData {
+  /// Default const constructor
+  const ShellRouteData();
+
+  /// [pageBuilder] is used to build the page
+  Page<void> pageBuilder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) =>
+      const NoOpPage();
+
+  /// [pageBuilder] is used to build the page
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) =>
+      throw UnimplementedError(
+        'One of `builder` or `pageBuilder` must be implemented.',
+      );
+
+  /// A helper function used by generated code.
+  ///
+  /// Should not be used directly.
+  static ShellRoute $route<T extends ShellRouteData>({
+    required T Function(GoRouterState) factory,
+    GlobalKey<NavigatorState>? navigatorKey,
+    List<RouteBase> routes = const <RouteBase>[],
+  }) {
+    T factoryImpl(GoRouterState state) {
+      final Object? extra = state.extra;
+
+      // If the "extra" value is of type `T` then we know it's the source
+      // instance of `GoRouteData`, so it doesn't need to be recreated.
+      if (extra is T) {
+        return extra;
+      }
+
+      return (_stateObjectExpando[state] ??= factory(state)) as T;
+    }
+
+    Widget builder(
+      BuildContext context,
+      GoRouterState state,
+      Widget navigator,
+    ) =>
+        factoryImpl(state).builder(
+          context,
+          state,
+          navigator,
+        );
+
+    Page<void> pageBuilder(
+      BuildContext context,
+      GoRouterState state,
+      Widget navigator,
+    ) =>
+        factoryImpl(state).pageBuilder(
+          context,
+          state,
+          navigator,
+        );
+
+    return ShellRoute(
+      builder: builder,
+      pageBuilder: pageBuilder,
+      routes: routes,
+      navigatorKey: navigatorKey,
+    );
+  }
+
+  /// Used to cache [ShellRouteData] that corresponds to a given [GoRouterState]
+  /// to minimize the number of times it has to be deserialized.
+  static final Expando<ShellRouteData> _stateObjectExpando =
+      Expando<ShellRouteData>(
+    'GoRouteState to ShellRouteData expando',
+  );
+
+  /// It will be used to instantiate [Navigator] with the given key
+  GlobalKey<NavigatorState>? get navigatorKey => null;
+}
+
+/// A superclass for each typed route descendant
+class TypedRoute<T extends RouteData> {
+  /// Default const constructor
+  const TypedRoute();
+}
+
+/// A superclass for each typed go route descendant
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
-class TypedGoRoute<T extends GoRouteData> {
-  /// Instantiates a new instance of [TypedGoRoute].
+class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
+  /// Default const constructor
   const TypedGoRoute({
     required this.path,
-    this.routes = const <TypedGoRoute<GoRouteData>>[],
+    this.routes = const <TypedRoute<RouteData>>[],
   });
 
-  /// The path that corresponds to this rout.
+  /// The path that corresponds to this route.
   ///
   /// See [GoRoute.path].
+  ///
+  ///
   final String path;
 
   /// Child route definitions.
   ///
-  /// See [GoRoute.routes].
-  final List<TypedGoRoute<GoRouteData>> routes;
+  /// See [RouteBase.routes].
+  final List<TypedRoute<RouteData>> routes;
+}
+
+/// A superclass for each typed shell route descendant
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
+  /// Default const constructor
+  const TypedShellRoute({
+    this.routes = const <TypedRoute<RouteData>>[],
+  });
+
+  /// Child route definitions.
+  ///
+  /// See [RouteBase.routes].
+  final List<TypedRoute<RouteData>> routes;
 }
 
 /// Internal class used to signal that the default page behavior should be used.
