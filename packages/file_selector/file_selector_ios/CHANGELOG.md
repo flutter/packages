@@ -1,5 +1,6 @@
-## NEXT
+## 0.5.0+3
 
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates example code for `use_build_context_synchronously` lint.
 * Updates minimum Flutter version to 3.0.
 

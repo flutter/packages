@@ -59,7 +59,7 @@ For web integration details, see the
 
 ### Handling Lifecycle states
 
-As of version [0.5.0](https://github.com/flutter/plugins/blob/main/packages/camera/CHANGELOG.md#050) of the camera plugin, lifecycle changes are no longer handled by the plugin. This means developers are now responsible to control camera resources when the lifecycle state is updated. Failure to do so might lead to unexpected behavior (for example as described in issue [#39109](https://github.com/flutter/flutter/issues/39109)). Handling lifecycle changes can be done by overriding the `didChangeAppLifecycleState` method like so:
+As of version [0.5.0](https://github.com/flutter/packages/blob/main/packages/camera/CHANGELOG.md#050) of the camera plugin, lifecycle changes are no longer handled by the plugin. This means developers are now responsible to control camera resources when the lifecycle state is updated. Failure to do so might lead to unexpected behavior (for example as described in issue [#39109](https://github.com/flutter/flutter/issues/39109)). Handling lifecycle changes can be done by overriding the `didChangeAppLifecycleState` method like so:
 
 <?code-excerpt "main.dart (AppLifecycle)"?>
 ```dart
@@ -169,6 +169,6 @@ class _CameraAppState extends State<CameraApp> {
 }
 ```
 
-For a more elaborate usage example see [here](https://github.com/flutter/plugins/tree/main/packages/camera/camera/example).
+For a more elaborate usage example see [here](https://github.com/flutter/packages/tree/main/packages/camera/camera/example).
 
 [1]: https://pub.dev/packages/camera_web#limitations-on-the-web-platform
