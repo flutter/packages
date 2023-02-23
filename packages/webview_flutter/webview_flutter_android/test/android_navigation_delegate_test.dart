@@ -5,13 +5,23 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/src/android_webview.dart'
     as android_webview;
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
+import 'android_navigation_delegate_test.mocks.dart';
+import 'test_android_webview.g.dart';
+
+@GenerateMocks(<Type>[TestInstanceManagerHostApi])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
   group('AndroidNavigationDelegate', () {
     test('onPageFinished', () {
       final AndroidNavigationDelegate androidNavigationDelegate =
@@ -22,10 +32,7 @@ void main() {
           .setOnPageFinished((String url) => callbackUrl = url);
 
       CapturingWebViewClient.lastCreatedDelegate.onPageFinished!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         'https://www.google.com',
       );
 
@@ -41,10 +48,7 @@ void main() {
           .setOnPageStarted((String url) => callbackUrl = url);
 
       CapturingWebViewClient.lastCreatedDelegate.onPageStarted!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         'https://www.google.com',
       );
 
@@ -60,10 +64,7 @@ void main() {
           (WebResourceError error) => callbackError = error);
 
       CapturingWebViewClient.lastCreatedDelegate.onReceivedRequestError!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: false,
@@ -94,10 +95,7 @@ void main() {
           (WebResourceError error) => callbackError = error);
 
       CapturingWebViewClient.lastCreatedDelegate.onReceivedError!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         android_webview.WebViewClient.errorFileNotFound,
         'Page not found.',
         'https://www.google.com',
@@ -124,10 +122,7 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
@@ -154,10 +149,7 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
@@ -191,10 +183,7 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
@@ -232,10 +221,7 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
@@ -267,10 +253,7 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         'https://www.google.com',
       );
 
@@ -290,10 +273,7 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         'https://www.google.com',
       );
 
@@ -320,10 +300,7 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         'https://www.google.com',
       );
 
@@ -354,10 +331,7 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(
-          binaryMessenger: null,
-          instanceManager: null,
-        ),
+        android_webview.WebView.detached(),
         'https://www.google.com',
       );
 

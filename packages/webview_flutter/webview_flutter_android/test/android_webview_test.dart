@@ -18,6 +18,7 @@ import 'test_android_webview.g.dart';
   DownloadListener,
   JavaScriptChannel,
   TestDownloadListenerHostApi,
+  TestInstanceManagerHostApi,
   TestJavaObjectHostApi,
   TestJavaScriptChannelHostApi,
   TestWebChromeClientHostApi,
@@ -32,6 +33,9 @@ import 'test_android_webview.g.dart';
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('Android WebView', () {
     group('JavaObject', () {
@@ -302,13 +306,25 @@ void main() {
           instanceManager: instanceManager,
         );
 
-        final JavaScriptChannel mockJavaScriptChannel = MockJavaScriptChannel();
-        when(mockJavaScriptChannel.channelName).thenReturn('aChannel');
+        const int javaScriptChannelInstanceId = 5;
+        final JavaScriptChannel javaScriptChannel = JavaScriptChannel.detached(
+          'aChannel',
+          postMessage: (_) {},
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(
+          javaScriptChannel,
+          javaScriptChannelInstanceId,
+          onCopy: (JavaScriptChannel original) {
+            return JavaScriptChannel.detached(
+              original.channelName,
+              postMessage: original.postMessage,
+            );
+          },
+        );
 
-        webView.addJavaScriptChannel(mockJavaScriptChannel);
+        webView.addJavaScriptChannel(javaScriptChannel);
 
-        final int javaScriptChannelInstanceId =
-            instanceManager.getIdentifier(mockJavaScriptChannel)!;
         verify(mockPlatformHostApi.addJavaScriptChannel(
           webViewInstanceId,
           javaScriptChannelInstanceId,
@@ -321,19 +337,26 @@ void main() {
           instanceManager: instanceManager,
         );
 
-        final JavaScriptChannel mockJavaScriptChannel = MockJavaScriptChannel();
-        when(mockJavaScriptChannel.channelName).thenReturn('aChannel');
-
-        expect(
-          webView.removeJavaScriptChannel(mockJavaScriptChannel),
-          completes,
+        const int javaScriptChannelInstanceId = 5;
+        final JavaScriptChannel javaScriptChannel = JavaScriptChannel.detached(
+          'aChannel',
+          postMessage: (_) {},
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(
+          javaScriptChannel,
+          javaScriptChannelInstanceId,
+          onCopy: (JavaScriptChannel original) {
+            return JavaScriptChannel.detached(
+              original.channelName,
+              postMessage: original.postMessage,
+            );
+          },
         );
 
-        webView.addJavaScriptChannel(mockJavaScriptChannel);
-        webView.removeJavaScriptChannel(mockJavaScriptChannel);
+        webView.addJavaScriptChannel(javaScriptChannel);
+        webView.removeJavaScriptChannel(javaScriptChannel);
 
-        final int javaScriptChannelInstanceId =
-            instanceManager.getIdentifier(mockJavaScriptChannel)!;
         verify(mockPlatformHostApi.removeJavaScriptChannel(
           webViewInstanceId,
           javaScriptChannelInstanceId,
@@ -346,19 +369,22 @@ void main() {
           instanceManager: instanceManager,
         );
 
-        final DownloadListener mockDownloadListener = MockDownloadListener();
-        instanceManager.addDartCreatedInstance(
-          mockDownloadListener,
+        const int downloadListenerInstanceId = 5;
+        final DownloadListener downloadListener = DownloadListener.detached(
+          onDownloadStart: (_, __, ___, ____, _____) {},
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(
+          downloadListener,
+          downloadListenerInstanceId,
           onCopy: (DownloadListener original) {
             return DownloadListener.detached(
               onDownloadStart: original.onDownloadStart,
             );
           },
         );
-        webView.setDownloadListener(mockDownloadListener);
+        webView.setDownloadListener(downloadListener);
 
-        final int downloadListenerInstanceId =
-            instanceManager.getIdentifier(mockDownloadListener)!;
         verify(mockPlatformHostApi.setDownloadListener(
           webViewInstanceId,
           downloadListenerInstanceId,
@@ -530,17 +556,11 @@ void main() {
         );
 
         mockJavaScriptChannel = MockJavaScriptChannel();
-        when(mockJavaScriptChannel.copy()).thenReturn(MockJavaScriptChannel());
 
         mockJavaScriptChannelInstanceId =
             instanceManager.addDartCreatedInstance(
           mockJavaScriptChannel,
-          onCopy: (JavaScriptChannel original) {
-            return JavaScriptChannel.detached(
-              original.channelName,
-              postMessage: original.postMessage,
-            );
-          },
+          onCopy: (_) => MockJavaScriptChannel(),
         );
       });
 
@@ -577,7 +597,6 @@ void main() {
         );
 
         mockWebViewClient = MockWebViewClient();
-        when(mockWebViewClient.copy()).thenReturn(MockWebViewClient());
         mockWebViewClientInstanceId = instanceManager.addDartCreatedInstance(
           mockWebViewClient,
           onCopy: (WebViewClient original) {
@@ -586,7 +605,6 @@ void main() {
         );
 
         mockWebView = MockWebView();
-        when(mockWebView.copy()).thenReturn(MockWebView());
         mockWebViewInstanceId = instanceManager.addDartCreatedInstance(
           mockWebView,
           onCopy: (WebView original) {
@@ -750,14 +768,9 @@ void main() {
         );
 
         mockDownloadListener = MockDownloadListener();
-        when(mockDownloadListener.copy()).thenReturn(MockDownloadListener());
         mockDownloadListenerInstanceId = instanceManager.addDartCreatedInstance(
           mockDownloadListener,
-          onCopy: (DownloadListener original) {
-            return DownloadListener.detached(
-              onDownloadStart: original.onDownloadStart,
-            );
-          },
+          onCopy: (_) => MockDownloadListener(),
         );
       });
 
@@ -821,7 +834,6 @@ void main() {
         );
 
         mockWebChromeClient = MockWebChromeClient();
-        when(mockWebChromeClient.copy()).thenReturn(MockWebChromeClient());
 
         mockWebChromeClientInstanceId = instanceManager.addDartCreatedInstance(
           mockWebChromeClient,
@@ -831,7 +843,6 @@ void main() {
         );
 
         mockWebView = MockWebView();
-        when(mockWebView.copy()).thenReturn(MockWebView());
         mockWebViewInstanceId = instanceManager.addDartCreatedInstance(
           mockWebView,
           onCopy: (WebView original) {

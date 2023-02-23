@@ -5,6 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:webview_flutter_android/src/android_webview.dart';
 import 'package:webview_flutter_android/src/instance_manager.dart';
 
 import 'instance_manager_test.mocks.dart';
@@ -184,7 +185,7 @@ void main() {
           MockTestInstanceManagerHostApi();
       TestInstanceManagerHostApi.setup(mockApi);
 
-      BaseObject.globalInstanceManager;
+      JavaObject.globalInstanceManager;
 
       verify(mockApi.clear());
 

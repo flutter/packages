@@ -8,8 +8,8 @@ import 'dart:typed_data' as _i7;
 import 'dart:ui' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_android/src/android_webview.dart' as _i2;
-import 'package:webview_flutter_android/src/android_webview.g.dart' as _i3;
+import 'package:webview_flutter_android/src/android_webview.dart' as _i3;
+import 'package:webview_flutter_android/src/android_webview.g.dart' as _i2;
 
 import 'test_android_webview.g.dart' as _i6;
 
@@ -24,9 +24,8 @@ import 'test_android_webview.g.dart' as _i6;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeDownloadListener_0 extends _i1.SmartFake
-    implements _i2.DownloadListener {
-  _FakeDownloadListener_0(
+class _FakeWebViewPoint_0 extends _i1.SmartFake implements _i2.WebViewPoint {
+  _FakeWebViewPoint_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -35,9 +34,8 @@ class _FakeDownloadListener_0 extends _i1.SmartFake
         );
 }
 
-class _FakeJavaScriptChannel_1 extends _i1.SmartFake
-    implements _i2.JavaScriptChannel {
-  _FakeJavaScriptChannel_1(
+class _FakeWebSettings_1 extends _i1.SmartFake implements _i3.WebSettings {
+  _FakeWebSettings_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -46,59 +44,8 @@ class _FakeJavaScriptChannel_1 extends _i1.SmartFake
         );
 }
 
-class _FakeWebViewPoint_2 extends _i1.SmartFake implements _i3.WebViewPoint {
-  _FakeWebViewPoint_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeWebChromeClient_3 extends _i1.SmartFake
-    implements _i2.WebChromeClient {
-  _FakeWebChromeClient_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeWebSettings_4 extends _i1.SmartFake implements _i2.WebSettings {
-  _FakeWebSettings_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeOffset_5 extends _i1.SmartFake implements _i4.Offset {
-  _FakeOffset_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeWebView_6 extends _i1.SmartFake implements _i2.WebView {
-  _FakeWebView_6(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeWebViewClient_7 extends _i1.SmartFake implements _i2.WebViewClient {
-  _FakeWebViewClient_7(
+class _FakeOffset_2 extends _i1.SmartFake implements _i4.Offset {
+  _FakeOffset_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -111,7 +58,7 @@ class _FakeWebViewClient_7 extends _i1.SmartFake implements _i2.WebViewClient {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockCookieManagerHostApi extends _i1.Mock
-    implements _i3.CookieManagerHostApi {
+    implements _i2.CookieManagerHostApi {
   MockCookieManagerHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -145,7 +92,8 @@ class MockCookieManagerHostApi extends _i1.Mock
 /// A class which mocks [DownloadListener].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
+// ignore: must_be_immutable
+class MockDownloadListener extends _i1.Mock implements _i3.DownloadListener {
   MockDownloadListener() {
     _i1.throwOnMissingStub(this);
   }
@@ -173,26 +121,13 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
         String,
         int,
       ));
-  @override
-  _i2.DownloadListener copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeDownloadListener_0(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.DownloadListener);
 }
 
 /// A class which mocks [JavaScriptChannel].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
+// ignore: must_be_immutable
+class MockJavaScriptChannel extends _i1.Mock implements _i3.JavaScriptChannel {
   MockJavaScriptChannel() {
     _i1.throwOnMissingStub(this);
   }
@@ -207,20 +142,6 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
         Invocation.getter(#postMessage),
         returnValue: (String message) {},
       ) as void Function(String));
-  @override
-  _i2.JavaScriptChannel copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeJavaScriptChannel_1(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.JavaScriptChannel);
 }
 
 /// A class which mocks [TestDownloadListenerHostApi].
@@ -237,6 +158,25 @@ class MockTestDownloadListenerHostApi extends _i1.Mock
         Invocation.method(
           #create,
           [instanceId],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
+/// A class which mocks [TestInstanceManagerHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestInstanceManagerHostApi extends _i1.Mock
+    implements _i6.TestInstanceManagerHostApi {
+  MockTestInstanceManagerHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void clear() => super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
         ),
         returnValueForMissingStub: null,
       );
@@ -819,19 +759,19 @@ class MockTestWebViewHostApi extends _i1.Mock
         returnValue: 0,
       ) as int);
   @override
-  _i3.WebViewPoint getScrollPosition(int? instanceId) => (super.noSuchMethod(
+  _i2.WebViewPoint getScrollPosition(int? instanceId) => (super.noSuchMethod(
         Invocation.method(
           #getScrollPosition,
           [instanceId],
         ),
-        returnValue: _FakeWebViewPoint_2(
+        returnValue: _FakeWebViewPoint_0(
           this,
           Invocation.method(
             #getScrollPosition,
             [instanceId],
           ),
         ),
-      ) as _i3.WebViewPoint);
+      ) as _i2.WebViewPoint);
   @override
   void setWebContentsDebuggingEnabled(bool? enabled) => super.noSuchMethod(
         Invocation.method(
@@ -962,7 +902,8 @@ class MockTestAssetManagerHostApi extends _i1.Mock
 /// A class which mocks [WebChromeClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
+// ignore: must_be_immutable
+class MockWebChromeClient extends _i1.Mock implements _i3.WebChromeClient {
   MockWebChromeClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -977,26 +918,13 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
-  @override
-  _i2.WebChromeClient copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeWebChromeClient_3(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.WebChromeClient);
 }
 
 /// A class which mocks [WebView].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWebView extends _i1.Mock implements _i2.WebView {
+// ignore: must_be_immutable
+class MockWebView extends _i1.Mock implements _i3.WebView {
   MockWebView() {
     _i1.throwOnMissingStub(this);
   }
@@ -1007,13 +935,13 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: false,
       ) as bool);
   @override
-  _i2.WebSettings get settings => (super.noSuchMethod(
+  _i3.WebSettings get settings => (super.noSuchMethod(
         Invocation.getter(#settings),
-        returnValue: _FakeWebSettings_4(
+        returnValue: _FakeWebSettings_1(
           this,
           Invocation.getter(#settings),
         ),
-      ) as _i2.WebSettings);
+      ) as _i3.WebSettings);
   @override
   _i5.Future<void> loadData({
     required String? data,
@@ -1219,7 +1147,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           #getScrollPosition,
           [],
         ),
-        returnValue: _i5.Future<_i4.Offset>.value(_FakeOffset_5(
+        returnValue: _i5.Future<_i4.Offset>.value(_FakeOffset_2(
           this,
           Invocation.method(
             #getScrollPosition,
@@ -1228,7 +1156,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         )),
       ) as _i5.Future<_i4.Offset>);
   @override
-  _i5.Future<void> setWebViewClient(_i2.WebViewClient? webViewClient) =>
+  _i5.Future<void> setWebViewClient(_i3.WebViewClient? webViewClient) =>
       (super.noSuchMethod(
         Invocation.method(
           #setWebViewClient,
@@ -1239,7 +1167,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> addJavaScriptChannel(
-          _i2.JavaScriptChannel? javaScriptChannel) =>
+          _i3.JavaScriptChannel? javaScriptChannel) =>
       (super.noSuchMethod(
         Invocation.method(
           #addJavaScriptChannel,
@@ -1250,7 +1178,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> removeJavaScriptChannel(
-          _i2.JavaScriptChannel? javaScriptChannel) =>
+          _i3.JavaScriptChannel? javaScriptChannel) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeJavaScriptChannel,
@@ -1260,7 +1188,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
-  _i5.Future<void> setDownloadListener(_i2.DownloadListener? listener) =>
+  _i5.Future<void> setDownloadListener(_i3.DownloadListener? listener) =>
       (super.noSuchMethod(
         Invocation.method(
           #setDownloadListener,
@@ -1270,7 +1198,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
-  _i5.Future<void> setWebChromeClient(_i2.WebChromeClient? client) =>
+  _i5.Future<void> setWebChromeClient(_i3.WebChromeClient? client) =>
       (super.noSuchMethod(
         Invocation.method(
           #setWebChromeClient,
@@ -1288,26 +1216,13 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
-  @override
-  _i2.WebView copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeWebView_6(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.WebView);
 }
 
 /// A class which mocks [WebViewClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
+// ignore: must_be_immutable
+class MockWebViewClient extends _i1.Mock implements _i3.WebViewClient {
   MockWebViewClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -1323,18 +1238,4 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
-  @override
-  _i2.WebViewClient copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeWebViewClient_7(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.WebViewClient);
 }
