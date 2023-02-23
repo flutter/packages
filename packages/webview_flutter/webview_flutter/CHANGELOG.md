@@ -2,6 +2,7 @@
 
 * Updates minimum Flutter version to 3.3.
 * Fixes common typos in tests and documentation.
+* Adds onHttpError callback to NavigationDelegate to catch HTTP error status codes.
 
 ## 4.0.7
 
@@ -10,7 +11,8 @@
 
 ## 4.0.6
 
-* Updates iOS minimum version in README.
+* Updates the README with the migration of `WebView.initialCookies` and Hybrid Composition on
+  Android.
 
 ## 4.0.5
 
