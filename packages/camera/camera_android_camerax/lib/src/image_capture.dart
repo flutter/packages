@@ -19,21 +19,21 @@ class ImageCapture extends UseCase {
   ImageCapture(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.flashMode,
+      this.targetFlashMode,
       this.targetResolution})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     _api = ImageCaptureHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, flashMode, targetResolution);
+    _api.createFromInstance(this, targetFlashMode, targetResolution);
   }
 
   /// Constructs a [ImageCapture] that is not automatically attached to a native object.
   ImageCapture.detached(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.flashMode,
+      this.targetFlashMode,
       this.targetResolution})
       : super.detached(
             binaryMessenger: binaryMessenger,
@@ -45,7 +45,7 @@ class ImageCapture extends UseCase {
   late final ImageCaptureHostApiImpl _api;
 
   /// Flash mode used to take a picture.
-  int? flashMode;
+  final int? targetFlashMode;
 
   /// Target resolution of the image output from taking a picture.
   final ResolutionInfo? targetResolution;
@@ -68,13 +68,13 @@ class ImageCapture extends UseCase {
   /// Sets the flash mode to use for image capture.
   void setFlashMode(int newFlashMode) {
     _api.setFlashModeFromInstance(this, newFlashMode);
-    flashMode = newFlashMode;
   }
 
   /// Takes a picture and returns the absolute path of where the capture image
   /// was saved.
   Future<String> takePicture() async {
-    return await _api.takePictureFromInstance(this);
+    final String pictureFile = await _api.takePictureFromInstance(this);
+    return pictureFile;
   }
 }
 
@@ -97,22 +97,22 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
 
   /// Creates a [ImageCapture] instance with the flash mode and target resolution
   /// if specified.
-  void createFromInstance(ImageCapture instance, int? flashMode,
-      ResolutionInfo? targetResolution) async {
+  void createFromInstance(ImageCapture instance, int? targetFlashMode,
+      ResolutionInfo? targetResolution) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (ImageCapture original) {
       return ImageCapture.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
-          flashMode: original.flashMode,
+          targetFlashMode: original.targetFlashMode,
           targetResolution: original.targetResolution);
     });
-    create(identifier, flashMode, targetResolution);
+    create(identifier, targetFlashMode, targetResolution);
   }
 
   /// Sets the flash mode for the specified [ImageCapture] instance to take
   /// a picture with.
-  void setFlashModeFromInstance(ImageCapture instance, int flashMode) async {
+  void setFlashModeFromInstance(ImageCapture instance, int flashMode) {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
         'No ImageCapture has the identifer of that requested to get the resolution information for.');
@@ -126,7 +126,7 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
     assert(identifier != null,
         'No ImageCapture has the identifer of that requested to get the resolution information for.');
 
-    String picturePath = await takePicture(identifier!);
+    final String picturePath = await takePicture(identifier!);
     if (picturePath == '') {
       throw CameraException(
         'TAKE_PICTURE_FAILED',

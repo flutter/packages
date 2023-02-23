@@ -28,7 +28,7 @@ void main() {
       );
       ImageCapture.detached(
         instanceManager: instanceManager,
-        flashMode: ImageCapture.flashModeOn,
+        targetFlashMode: ImageCapture.flashModeOn,
         targetResolution: ResolutionInfo(width: 50, height: 10),
       );
 
@@ -43,18 +43,18 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      const int flashMode = ImageCapture.flashModeAuto;
+      const int targetFlashMode = ImageCapture.flashModeAuto;
       const int targetResolutionWidth = 10;
       const int targetResolutionHeight = 50;
       ImageCapture(
         instanceManager: instanceManager,
-        flashMode: flashMode,
+        targetFlashMode: targetFlashMode,
         targetResolution: ResolutionInfo(
             width: targetResolutionWidth, height: targetResolutionHeight),
       );
 
       final VerificationResult createVerification = verify(mockApi.create(
-          argThat(isA<int>()), argThat(equals(flashMode)), captureAny));
+          argThat(isA<int>()), argThat(equals(targetFlashMode)), captureAny));
       final ResolutionInfo capturedResolutionInfo =
           createVerification.captured.single as ResolutionInfo;
       expect(capturedResolutionInfo.width, equals(targetResolutionWidth));

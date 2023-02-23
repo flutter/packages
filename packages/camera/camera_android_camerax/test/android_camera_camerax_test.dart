@@ -371,7 +371,7 @@ void main() {
       'takePicture binds and unbinds ImageCapture to lifecycle and makes call to take a picture',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    const String testPicturePath = "test/absolute/path/to/picture";
+    const String testPicturePath = 'test/absolute/path/to/picture';
 
     camera.processCameraProvider = MockProcessCameraProvider();
     camera.cameraSelector = MockCameraSelector();
@@ -380,7 +380,7 @@ void main() {
     when(camera.imageCapture!.takePicture())
         .thenAnswer((_) async => testPicturePath);
 
-    XFile imageFile = await camera.takePicture(3);
+    final XFile imageFile = await camera.takePicture(3);
 
     verify(camera.processCameraProvider!.bindToLifecycle(
         camera.cameraSelector!, <UseCase>[camera.imageCapture!]));

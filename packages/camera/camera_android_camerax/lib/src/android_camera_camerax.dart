@@ -293,10 +293,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     // TODO(camsim99): Add support for flash mode configuration.
     // https://github.com/flutter/flutter/issues/120715
     imageCapture ??=
-        ImageCapture(flashMode: null, targetResolution: targetResolution);
+        ImageCapture(targetResolution: targetResolution);
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[imageCapture!]);
-    String picturePath = await imageCapture!.takePicture();
+    final String picturePath = await imageCapture!.takePicture();
     processCameraProvider!.unbind(<UseCase>[imageCapture!]);
 
     return XFile(picturePath);
@@ -381,6 +381,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       ResolutionPreset? resolution) {
     // TODO(camsim99): Implement resolution configuration.
     // https://github.com/flutter/flutter/issues/120462
+    return null;
   }
 
   // Methods for calls that need to be tested:
@@ -426,6 +427,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   ImageCapture createImageCapture(
       int? flashMode, ResolutionInfo? targetResolution) {
     return ImageCapture(
-        flashMode: flashMode, targetResolution: targetResolution);
+        targetFlashMode: flashMode, targetResolution: targetResolution);
   }
 }
