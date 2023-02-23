@@ -227,9 +227,12 @@ class PubspecCheckCommand extends PackageLoopingCommand {
             .add('The "repository" link should end with the package path.');
       }
 
-      if (pubspec.repository!.path.contains('/master/')) {
+      if (!pubspec.repository!
+          .toString()
+          .startsWith('https://github.com/flutter/packages/tree/main')) {
         errorMessages
-            .add('The "repository" link should use "main", not "master".');
+            .add('The "repository" link should start with the repository\'s '
+                'main tree: "https://github.com/flutter/packages/tree/main".');
       }
     }
 
