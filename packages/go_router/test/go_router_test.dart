@@ -18,7 +18,7 @@ import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
 
-const bool enableLogs = true;
+const bool enableLogs = false;
 final Logger log = Logger('GoRouter tests');
 
 Future<void> sendPlatformUrl(String url) async {

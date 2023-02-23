@@ -1,3 +1,7 @@
+## 0.2.2+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.2.2
 
 * Updates minimum version to iOS 11.

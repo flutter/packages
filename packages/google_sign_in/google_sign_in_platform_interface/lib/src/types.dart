@@ -57,7 +57,7 @@ class SignInInitParameters {
   /// here takes precedence over a value specified in a configuration file.
   /// See also:
   ///
-  ///   * [Platform Integration](https://github.com/flutter/plugins/tree/main/packages/google_sign_in/google_sign_in#platform-integration),
+  ///   * [Platform Integration](https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in#platform-integration),
   ///     where you can find the details about the configuration files.
   final String? clientId;
 
@@ -70,7 +70,7 @@ class SignInInitParameters {
   ///
   /// See also:
   ///
-  ///   * [Platform Integration](https://github.com/flutter/plugins/tree/main/packages/google_sign_in/google_sign_in#platform-integration),
+  ///   * [Platform Integration](https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in#platform-integration),
   ///     where you can find the details about the configuration files.
   final String? serverClientId;
 

@@ -1,3 +1,7 @@
+## 2.1.9
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 2.1.8
 
 * Adds compatibility with `xdg_directories` 1.0.
