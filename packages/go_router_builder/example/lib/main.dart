@@ -64,16 +64,16 @@ class App extends StatelessWidget {
   );
 }
 
-const key = GlobalObjectKey<NavigatorState>('navigator_key');
+const GlobalObjectKey<NavigatorState> key = GlobalObjectKey('navigator_key');
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
-  routes: [
+  routes: <TypedShellRoute<FamilyRoute>>[
     TypedShellRoute<FamilyRoute>(
       routes: <TypedGoRoute<GoRouteData>>[
         TypedGoRoute<FamilyIdRoute>(
           path: 'family/:fid',
-          routes: [
+          routes: <TypedGoRoute<PersonRoute>>[
             TypedGoRoute<PersonRoute>(
               path: 'person/:pid',
               routes: <TypedGoRoute<GoRouteData>>[
@@ -99,8 +99,8 @@ class FamilyRoute extends ShellRouteData {
   static final GlobalKey<NavigatorState> $navigatorKey = GlobalKey();
 
   @override
-  Widget builder(BuildContext context, GoRouterState state, Widget child) {
-    return FamilyScreen(child: child);
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
+    return FamilyScreen(child: navigator);
   }
 }
 

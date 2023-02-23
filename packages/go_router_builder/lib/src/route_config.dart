@@ -69,7 +69,7 @@ class RouteConfig {
   ) {
     assert(!reader.isNull, 'reader should not be null');
     final InterfaceType type = reader.objectValue.type! as InterfaceType;
-    final bool isShellRoute = type.element2.name == 'TypedShellRoute';
+    final bool isShellRoute = type.element.name == 'TypedShellRoute';
 
     String? path;
 
