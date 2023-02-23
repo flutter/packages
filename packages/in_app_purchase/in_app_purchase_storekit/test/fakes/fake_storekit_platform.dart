@@ -163,7 +163,7 @@ class FakeStoreKitPlatform {
         return Future<void>.sync(() {});
       case '-[InAppPurchasePlugin retrieveReceiptData:result:]':
         if (receiptData != null) {
-          return Future<String>.value(receiptData);
+          return Future<String>.value(receiptData!);
         } else {
           throw PlatformException(code: 'no_receipt_data');
         }
