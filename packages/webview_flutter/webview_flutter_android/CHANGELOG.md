@@ -1,3 +1,8 @@
+## 3.3.2
+
+* Updates internal Java InstanceManager to be cleared on hot restart.
+* Updates internal Dart InstanceManager to handle creating copies of objects.
+
 ## 3.3.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
