@@ -163,7 +163,7 @@ class FakeStoreKitPlatform {
         return Future<void>.sync(() {});
       case '-[InAppPurchasePlugin retrieveReceiptData:result:]':
         if (receiptData != null) {
-          // TODO(asashour): Remove when Dart 3 is released.
+          // TODO(asashour): Remove the `ignore` when Dart 3 is released.
           // ignore: unnecessary_null_checks
           return Future<String>.value(receiptData!);
         } else {
