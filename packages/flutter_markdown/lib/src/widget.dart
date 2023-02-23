@@ -76,8 +76,15 @@ abstract class MarkdownElementBuilder {
   /// If [MarkdownWidget.styleSheet] has a style of this tag, will passing
   /// to [preferredStyle].
   ///
+  /// If parent element has [TextStyle]'s set, it will be passed as
+  /// [parentStyle].
+  ///
   /// If you needn't build a widget, return null.
-  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) =>
+  Widget? visitElementAfter(
+    md.Element element,
+    TextStyle? preferredStyle,
+    TextStyle? parentStyle,
+  ) =>
       null;
 }
 
