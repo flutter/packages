@@ -16,8 +16,8 @@ import 'common/process_runner.dart';
 
 /// In theory this should be 8191, but in practice that was still resulting in
 /// "The input line is too long" errors. This was chosen as a value that worked
-/// in practice in testing with flutter/plugins, but may need to be adjusted
-/// based on further experience.
+/// in practice via trial and error, but may need to be adjusted based on
+/// further experience.
 @visibleForTesting
 const int windowsCommandLineMax = 8000;
 
