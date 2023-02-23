@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Adds Support for ShellRoute
+
 ## 1.1.5
 
 * Replaces unnecessary Flutter SDK constraint with corresponding Dart
