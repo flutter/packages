@@ -52,6 +52,18 @@ void main() {
       verify(delegate.platform.setOnPageFinished(onPageFinished));
     });
 
+    test('onPageError', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onPageError(int statusCode) {}
+
+      final NavigationDelegate delegate = NavigationDelegate(
+        onPageError: onPageError,
+      );
+
+      verify(delegate.platform.setOnPageError(onPageError));
+    });
+
     test('onProgress', () async {
       WebViewPlatform.instance = TestWebViewPlatform();
 

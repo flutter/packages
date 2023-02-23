@@ -96,6 +96,21 @@ enum WKNavigationActionPolicy {
   cancel,
 }
 
+/// Indicate whether to allow or cancel navigation to a webpage.
+///
+/// Wraps [WKNavigationResponsePolicy](https://developer.apple.com/documentation/webkit/wknavigationresponsepolicy?language=objc).
+enum WKNavigationResponsePolicy {
+  /// Allow navigation to continue.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wknavigationresponsepolicy/wknavigationresponsepolicyallow?language=objc.
+  allow,
+
+  /// Cancel navigation.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wknavigationresponsepolicy/wknavigationresponsepolicycancel?language=objc.
+  cancel,
+}
+
 /// Possible error values that WebKit APIs can return.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkerrorcode.
@@ -160,6 +175,24 @@ class WKNavigationAction {
 
   /// The type of action that triggered the navigation.
   final WKNavigationType navigationType;
+}
+
+/// An object that contains information about the http error.
+///
+/// Wraps [WKNavigationResponse](https://developer.apple.com/documentation/webkit/wknavigationresponse?language=objc).
+@immutable
+class WKNavigationResponse {
+  /// Constructs a [WKNavigationResponse].
+  const WKNavigationResponse({
+    required this.response,
+    required this.forMainFrame,
+  });
+
+  /// The URL request object associated with the navigation action.
+  final NSHttpUrlResponse response;
+
+  /// The frame in which to display the new content.
+  final bool forMainFrame;
 }
 
 /// An object that contains information about a frame on a webpage.
@@ -776,6 +809,7 @@ class WKNavigationDelegate extends NSObject {
     this.didFinishNavigation,
     this.didStartProvisionalNavigation,
     this.decidePolicyForNavigationAction,
+    this.decidePolicyForNavigationResponse,
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
@@ -801,6 +835,7 @@ class WKNavigationDelegate extends NSObject {
     this.didFinishNavigation,
     this.didStartProvisionalNavigation,
     this.decidePolicyForNavigationAction,
+    this.decidePolicyForNavigationResponse,
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
@@ -834,6 +869,14 @@ class WKNavigationDelegate extends NSObject {
     WKNavigationAction navigationAction,
   )? decidePolicyForNavigationAction;
 
+  /// Called when permission is needed to navigate to new content.
+  ///
+  /// {@macro webview_flutter_wkwebview.foundation.callbacks}
+  final Future<WKNavigationResponsePolicy> Function(
+    WKWebView webView,
+    WKNavigationResponse navigationResponse,
+  )? decidePolicyForNavigationResponse;
+
   /// Called when an error occurred during navigation.
   ///
   /// {@macro webview_flutter_wkwebview.foundation.callbacks}
@@ -856,6 +899,7 @@ class WKNavigationDelegate extends NSObject {
       didFinishNavigation: didFinishNavigation,
       didStartProvisionalNavigation: didStartProvisionalNavigation,
       decidePolicyForNavigationAction: decidePolicyForNavigationAction,
+      decidePolicyForNavigationResponse: decidePolicyForNavigationResponse,
       didFailNavigation: didFailNavigation,
       didFailProvisionalNavigation: didFailProvisionalNavigation,
       webViewWebContentProcessDidTerminate:

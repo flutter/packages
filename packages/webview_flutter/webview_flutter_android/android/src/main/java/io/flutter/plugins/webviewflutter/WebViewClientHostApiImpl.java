@@ -11,6 +11,7 @@ import android.os.Build;
 import android.view.KeyEvent;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
@@ -52,6 +53,11 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @Override
     public void onPageFinished(WebView view, String url) {
       flutterApi.onPageFinished(this, view, url, reply -> {});
+    }
+
+    @Override
+    public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+      flutterApi.onPageError(this, view, errorResponse.getStatusCode(), reply -> {});
     }
 
     @Override
@@ -115,6 +121,13 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @Override
     public void onPageFinished(WebView view, String url) {
       flutterApi.onPageFinished(this, view, url, reply -> {});
+    }
+
+    @Override
+    public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        flutterApi.onPageError(this, view, errorResponse.getStatusCode(), reply -> {});
+      }
     }
 
     // This method is only called when the WebViewFeature.RECEIVE_WEB_RESOURCE_ERROR feature is

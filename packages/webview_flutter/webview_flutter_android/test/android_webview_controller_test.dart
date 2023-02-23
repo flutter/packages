@@ -87,6 +87,8 @@ void main() {
                     onPageFinished,
                 void Function(android_webview.WebView webView, String url)?
                     onPageStarted,
+                void Function(android_webview.WebView webView, int statusCode)?
+                    onPageError,
                 @Deprecated('Only called on Android version < 23.')
                     void Function(
                   android_webview.WebView webView,

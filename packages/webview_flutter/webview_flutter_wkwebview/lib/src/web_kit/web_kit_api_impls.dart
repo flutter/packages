@@ -73,6 +73,16 @@ extension _WKNavigationActionPolicyConverter on WKNavigationActionPolicy {
   }
 }
 
+extension _WKNavigationResponsePolicyConverter on WKNavigationResponsePolicy {
+  WKNavigationResponsePolicyEnumData toWKNavigationResponsePolicyEnumData() {
+    return WKNavigationResponsePolicyEnumData(
+      value: WKNavigationResponsePolicyEnum.values.firstWhere(
+        (WKNavigationResponsePolicyEnum element) => element.name == name,
+      ),
+    );
+  }
+}
+
 extension _NSHttpCookiePropertyKeyConverter on NSHttpCookiePropertyKey {
   NSHttpCookiePropertyKeyEnumData toNSHttpCookiePropertyKeyEnumData() {
     late final NSHttpCookiePropertyKeyEnum value;
@@ -176,6 +186,15 @@ extension _NavigationActionDataConverter on WKNavigationActionData {
   }
 }
 
+extension _NavigationResponseDataConverter on WKNavigationResponseData {
+  WKNavigationResponse toNavigationResponse() {
+    return WKNavigationResponse(
+      response: response.toNSUrlResponse(),
+      forMainFrame: forMainFrame
+    );
+  }
+}
+
 extension _WKFrameInfoDataConverter on WKFrameInfoData {
   WKFrameInfo toWKFrameInfo() {
     return WKFrameInfo(isMainFrame: isMainFrame);
@@ -189,6 +208,14 @@ extension _NSUrlRequestDataConverter on NSUrlRequestData {
       httpBody: httpBody,
       httpMethod: httpMethod,
       allHttpHeaderFields: allHttpHeaderFields.cast(),
+    );
+  }
+}
+
+extension _NSUrlResponseDataConverter on NSHttpUrlResponseData {
+  NSHttpUrlResponse toNSUrlResponse() {
+    return NSHttpUrlResponse(
+      statusCode: statusCode
     );
   }
 }
@@ -842,6 +869,31 @@ class WKNavigationDelegateFlutterApiImpl
           as WKWebView,
       url,
     );
+  }
+
+  @override
+  Future<WKNavigationResponsePolicyEnumData> decidePolicyForNavigationResponse(
+    int identifier,
+    int webViewIdentifier,
+    WKNavigationResponseData navigationResponse,
+  ) async {
+    final Future<WKNavigationResponsePolicy> Function(
+      WKWebView,
+      WKNavigationResponse navigationResponse,
+    )? function = _getDelegate(identifier).decidePolicyForNavigationResponse;
+
+    if (function == null) {
+      return WKNavigationResponsePolicyEnumData(
+        value: WKNavigationResponsePolicyEnum.allow,
+      );
+    }
+
+    final WKNavigationResponsePolicy policy = await function(
+      instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
+          as WKWebView,
+      navigationResponse.toNavigationResponse(),
+    );
+    return policy.toWKNavigationResponsePolicyEnumData();
   }
 
   @override

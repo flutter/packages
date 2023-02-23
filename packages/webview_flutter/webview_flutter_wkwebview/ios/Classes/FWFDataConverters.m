@@ -175,6 +175,19 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNSURLRequest(NSURLRequest *request) 
       allHttpHeaderFields:request.allHTTPHeaderFields ? request.allHTTPHeaderFields : @{}];
 }
 
+FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNavigationResponse(
+    WKNavigationResponse *response) {
+  return [FWFWKNavigationResponseData
+          makeWithResponse:FWFNSHttpUrlResponseDataFromNSURLResponse(response.response)
+              forMainFrame:@(response.forMainFrame)];
+}
+
+FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNSURLResponse(NSURLResponse *response) {
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+  return [FWFNSHttpUrlResponseData
+          makeWithStatusCode:@(httpResponse.statusCode)];
+}
+
 FWFWKFrameInfoData *FWFWKFrameInfoDataFromWKFrameInfo(WKFrameInfo *info) {
   return [FWFWKFrameInfoData makeWithIsMainFrame:@(info.isMainFrame)];
 }
@@ -186,6 +199,18 @@ WKNavigationActionPolicy FWFWKNavigationActionPolicyFromEnumData(
       return WKNavigationActionPolicyAllow;
     case FWFWKNavigationActionPolicyEnumCancel:
       return WKNavigationActionPolicyCancel;
+  }
+
+  return -1;
+}
+
+WKNavigationResponsePolicy FWFWKNavigationResponsePolicyFromEnumData(
+    FWFWKNavigationResponsePolicyEnumData *data) {
+  switch (data.value) {
+    case FWFWKNavigationResponsePolicyEnumAllow:
+      return WKNavigationResponsePolicyAllow;
+    case FWFWKNavigationResponsePolicyEnumCancel:
+      return WKNavigationResponsePolicyCancel;
   }
 
   return -1;

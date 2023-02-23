@@ -199,6 +199,20 @@ class NSUrlRequest {
   final Map<String, String> allHttpHeaderFields;
 }
 
+/// A URL load request that is independent of protocol or URL scheme.
+///
+/// Wraps [NSHttpUrlResponse](https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc).
+@immutable
+class NSHttpUrlResponse {
+  /// Constructs an [NSHttpUrlResponse].
+  const NSHttpUrlResponse({
+    required this.statusCode,
+  });
+
+  /// The URL being requested.
+  final int statusCode;
+}
+
 /// Information about an error condition.
 ///
 /// Wraps [NSError](https://developer.apple.com/documentation/foundation/nserror?language=objc).

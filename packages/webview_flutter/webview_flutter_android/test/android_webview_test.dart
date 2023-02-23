@@ -634,6 +634,23 @@ void main() {
         expect(result, <Object>[mockWebView, 'https://www.google.com']);
       });
 
+      test('onPageError', () {
+        late final List<Object> result;
+        when(mockWebViewClient.onPageError).thenReturn(
+          (WebView webView, int statusCode) {
+            result = <Object>[webView, statusCode];
+          },
+        );
+
+        flutterApi.onPageError(
+          mockWebViewClientInstanceId,
+          mockWebViewInstanceId,
+          401,
+        );
+
+        expect(result, <Object>[mockWebView, 401]);
+      });
+
       test('onReceivedRequestError', () {
         late final List<Object> result;
         when(mockWebViewClient.onReceivedRequestError).thenReturn(

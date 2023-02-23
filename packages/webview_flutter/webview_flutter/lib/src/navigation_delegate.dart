@@ -41,6 +41,7 @@ class NavigationDelegate {
         onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
+    void Function(int statusCode)? onPageError,
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
   }) : this.fromPlatformCreationParams(
@@ -48,6 +49,7 @@ class NavigationDelegate {
           onNavigationRequest: onNavigationRequest,
           onPageStarted: onPageStarted,
           onPageFinished: onPageFinished,
+          onPageError: onPageError,
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
         );
@@ -87,6 +89,7 @@ class NavigationDelegate {
         onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
+    void Function(int statusCode)? onPageError,
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
   }) : this.fromPlatform(
@@ -94,6 +97,7 @@ class NavigationDelegate {
           onNavigationRequest: onNavigationRequest,
           onPageStarted: onPageStarted,
           onPageFinished: onPageFinished,
+          onPageError: onPageError,
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
         );
@@ -104,6 +108,7 @@ class NavigationDelegate {
     this.onNavigationRequest,
     this.onPageStarted,
     this.onPageFinished,
+    this.onPageError,
     this.onProgress,
     this.onWebResourceError,
   }) {
@@ -115,6 +120,9 @@ class NavigationDelegate {
     }
     if (onPageFinished != null) {
       platform.setOnPageFinished(onPageFinished!);
+    }
+    if (onPageError != null) {
+      platform.setOnPageError(onPageError!);
     }
     if (onProgress != null) {
       platform.setOnProgress(onProgress!);
@@ -144,6 +152,8 @@ class NavigationDelegate {
 
   /// Invoked when a page has finished loading.
   final PageEventCallback? onPageFinished;
+
+  final PageErrorCallback? onPageError;
 
   /// Invoked when a page is loading to report the progress.
   final ProgressCallback? onProgress;

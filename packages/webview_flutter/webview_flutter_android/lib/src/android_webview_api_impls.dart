@@ -648,6 +648,25 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   @override
+  void onPageError(int instanceId, int webViewInstanceId, int statusCode) {
+    final WebViewClient? instance = instanceManager
+        .getInstanceWithWeakReference(instanceId) as WebViewClient?;
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      instance != null,
+      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+    );
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+    );
+    if (instance!.onPageError != null) {
+      instance.onPageError!(webViewInstance!, statusCode);
+    }
+  }
+
+  @override
   void onReceivedError(
     int instanceId,
     int webViewInstanceId,
