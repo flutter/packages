@@ -1,3 +1,7 @@
+## 6.0.1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 6.0.0
 
 * **Breaking change** for platform `web`:

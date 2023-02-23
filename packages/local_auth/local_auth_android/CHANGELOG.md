@@ -1,3 +1,7 @@
+## 1.0.19
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 1.0.18
 
 * Updates minimum Flutter version to 3.0.

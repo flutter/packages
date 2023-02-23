@@ -42,9 +42,9 @@ bool isPackage(FileSystemEntity entity) {
   // According to
   // https://dart.dev/guides/libraries/create-library-packages#what-makes-a-library-package
   // a package must also have a `lib/` directory, but in practice that's not
-  // always true. flutter/plugins has some special cases (espresso, some
-  // federated implementation packages) that don't have any source, so this
-  // deliberately doesn't check that there's a lib directory.
+  // always true. Some special cases (espresso, flutter_template_images, etc.)
+  // don't have any source, so this deliberately doesn't check that there's a
+  // lib directory.
   return entity.childFile('pubspec.yaml').existsSync();
 }
 

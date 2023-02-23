@@ -1,5 +1,12 @@
-## NEXT
+## 2.0.9
 
+* Makes the extension compatible with `google_sign_in` version `^5.0.0` and `^6.0.0`.
+* Fixes a small typo in the code (`oath` -> `oauth`).
+* Updates example app to use `google_sign_in: ^6.0.0`.
+
+## 2.0.8
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
 
 ## 2.0.7
