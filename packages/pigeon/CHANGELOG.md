@@ -1,3 +1,7 @@
+## 9.0.2
+
+* Adds parameter to generate Kotlin code in example README.
+
 ## 9.0.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
