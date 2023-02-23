@@ -1,3 +1,8 @@
+## 9.0.1
+
+* [swift] Removes safe casting from decode process.
+* [kotlin] Removes safe casting from decode process.
+
 ## 9.0.0
 
 * **Breaking Change** Updates `DartOptions` to be immutable and adds const to the constructor.

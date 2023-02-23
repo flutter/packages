@@ -193,7 +193,7 @@ import FlutterMacOS
           } else if (!hostDatatype.isBuiltin &&
               customEnumNames.contains(field.type.baseName)) {
             indent.writeln('var ${field.name}: $fieldType? = nil');
-            indent.write('if let ${field.name}RawValue = $listValue as? Int ');
+            indent.write('if let ${field.name}RawValue = $listValue as! Int? ');
             indent.addScoped('{', '}', () {
               indent.writeln(
                   '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
