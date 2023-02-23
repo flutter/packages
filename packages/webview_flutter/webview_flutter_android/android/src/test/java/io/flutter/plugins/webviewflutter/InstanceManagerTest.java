@@ -108,4 +108,67 @@ public class InstanceManagerTest {
 
     assertFalse(instanceManager.containsInstance(object));
   }
+
+  @Test
+  public void clear() {
+    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+
+    final Object instance = new Object();
+
+    instanceManager.addDartCreatedInstance(instance, 0);
+    assertTrue(instanceManager.containsInstance(instance));
+
+    instanceManager.clear();
+    assertFalse(instanceManager.containsInstance(instance));
+
+    instanceManager.close();
+  }
+
+  @Test
+  public void canAddSameObjectWithAddDartCreatedInstance() {
+    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+
+    final Object instance = new Object();
+
+    instanceManager.addDartCreatedInstance(instance, 0);
+    instanceManager.addDartCreatedInstance(instance, 1);
+
+    assertTrue(instanceManager.containsInstance(instance));
+
+    assertEquals(instanceManager.getInstance(0), instance);
+    assertEquals(instanceManager.getInstance(1), instance);
+
+    instanceManager.close();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void cannotAddSameObjectsWithAddHostCreatedInstance() {
+    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+
+    final Object instance = new Object();
+
+    instanceManager.addHostCreatedInstance(instance);
+    instanceManager.addHostCreatedInstance(instance);
+
+    instanceManager.close();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void cannotUseIdentifierLessThanZero() {
+    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+
+    instanceManager.addDartCreatedInstance(new Object(), -1);
+
+    instanceManager.close();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void identifiersMustBeUnique() {
+    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+
+    instanceManager.addDartCreatedInstance(new Object(), 0);
+    instanceManager.addDartCreatedInstance(new Object(), 0);
+
+    instanceManager.close();
+  }
 }

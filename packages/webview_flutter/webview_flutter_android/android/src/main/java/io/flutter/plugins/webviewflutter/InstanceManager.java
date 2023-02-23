@@ -97,8 +97,14 @@ public class InstanceManager {
   /**
    * Retrieves the identifier paired with an instance.
    *
-   * <p>If the manager contains `instance`, as a strong or weak reference, the strong reference to
-   * `instance` will be recreated and will need to be removed again with {@link #remove(long)}.
+   * <p>If the manager contains a strong reference to `instance`, it will return the identifier
+   * associated with `instance`. If the manager contains only a weak reference to `instance`, a new
+   * strong reference to `instance` will be added and will need to be removed again with {@link
+   * #remove(long)}.
+   *
+   * <p>If this method returns a nonnull identifier, this method also expects the Dart
+   * `InstanceManager` to have, or recreate, a weak reference to the Dart instance the identifier is
+   * associated with.
    *
    * @param instance an instance that may be stored in the manager.
    * @return the identifier associated with `instance` if the manager contains the value, otherwise
@@ -120,14 +126,15 @@ public class InstanceManager {
   /**
    * Adds a new instance that was instantiated from Dart.
    *
-   * <p>If an instance or identifier has already been added, it will be replaced by the new values.
-   * The Dart InstanceManager is considered the source of truth and has the capability to overwrite
-   * stored pairs in response to hot restarts.
+   * <p>The same instance can be added multiple times, but each identifier must be unique. This
+   * allows two objects that are equivalent (e.g. the `equals` method returns true and their
+   * hashcodes are equal) to both be added.
    *
-   * <p>If the manager is closed, the addition is ignored.
+   * <p>If the manager is closed, the addition is ignored and a warning is logged.
    *
    * @param instance the instance to be stored.
-   * @param identifier the identifier to be paired with instance. This value must be >= 0.
+   * @param identifier the identifier to be paired with instance. This value must be >= 0 and
+   *     unique.
    */
   public void addDartCreatedInstance(Object instance, long identifier) {
     if (isClosed()) {
@@ -140,13 +147,16 @@ public class InstanceManager {
   /**
    * Adds a new instance that was instantiated from the host platform.
    *
-   * @param instance the instance to be stored.
+   * @param instance the instance to be stored. This must be unique to all other added instances.
    * @return the unique identifier stored with instance. If the manager is closed, returns -1.
    */
   public long addHostCreatedInstance(Object instance) {
     if (isClosed()) {
       Log.w(TAG, CLOSED_WARNING);
       return -1;
+    } else if (containsInstance(instance)) {
+      throw new IllegalArgumentException(
+          String.format("Instance of `%s` has already been added.", instance.getClass()));
     }
     final long identifier = nextIdentifier++;
     addInstance(instance, identifier);
@@ -156,7 +166,7 @@ public class InstanceManager {
   /**
    * Retrieves the instance associated with identifier.
    *
-   * @param identifier the identifier paired to an instance.
+   * @param identifier the identifier associated with an instance.
    * @param <T> the expected return type.
    * @return the instance associated with `identifier` if the manager contains the value, otherwise
    *     null if the manager doesn't contain the value or the manager is closed.
@@ -171,7 +181,7 @@ public class InstanceManager {
     if (instance != null) {
       return instance.get();
     }
-    return (T) strongInstances.get(identifier);
+    return null;
   }
 
   /**
@@ -197,6 +207,15 @@ public class InstanceManager {
   public void close() {
     handler.removeCallbacks(this::releaseAllFinalizedInstances);
     isClosed = true;
+    clear();
+  }
+
+  /**
+   * Removes all of the instances from this manager.
+   *
+   * <p>The manager will be empty after this call returns.
+   */
+  public void clear() {
     identifiers.clear();
     weakInstances.clear();
     strongInstances.clear();
@@ -204,7 +223,7 @@ public class InstanceManager {
   }
 
   /**
-   * Whether the manager has released resources and is not longer usable.
+   * Whether the manager has released resources and is no longer usable.
    *
    * <p>See {@link #close()}.
    */
@@ -228,7 +247,11 @@ public class InstanceManager {
 
   private void addInstance(Object instance, long identifier) {
     if (identifier < 0) {
-      throw new IllegalArgumentException("Identifier must be >= 0.");
+      throw new IllegalArgumentException(String.format("Identifier must be >= 0: %d", identifier));
+    }
+    if (weakInstances.containsKey(identifier)) {
+      throw new IllegalArgumentException(
+          String.format("Identifier has already been added: %d", identifier));
     }
     final WeakReference<Object> weakReference = new WeakReference<>(instance, referenceQueue);
     identifiers.put(instance, identifier);

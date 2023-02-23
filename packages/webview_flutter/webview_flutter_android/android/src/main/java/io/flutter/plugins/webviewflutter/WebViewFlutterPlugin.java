@@ -17,6 +17,7 @@ import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CookieManagerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.DownloadListenerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.FlutterAssetManagerHostApi;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.InstanceManagerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaObjectHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaScriptChannelHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebChromeClientHostApi;
@@ -83,6 +84,8 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             identifier ->
                 new GeneratedAndroidWebView.JavaObjectFlutterApi(binaryMessenger)
                     .dispose(identifier, reply -> {}));
+
+    InstanceManagerHostApi.setup(binaryMessenger, () -> instanceManager.clear());
 
     viewRegistry.registerViewFactory(
         "plugins.flutter.io/webview", new FlutterWebViewFactory(instanceManager));
