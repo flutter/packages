@@ -1,6 +1,10 @@
-## 1.1.1
+## 1.1.2
 
 * Fixes the example for the default values in the README.
+
+## 1.1.1
+
+* Support for the generation of the pushReplacement method has been added.
 
 ## 1.1.0
 
