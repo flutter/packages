@@ -1,3 +1,7 @@
+## 6.0.10
+
+- Adds helpers for go_router_builder for ShellRoute support
+
 ## 6.0.9
 
 - Fixes deprecation message for `GoRouterState.namedLocation`
