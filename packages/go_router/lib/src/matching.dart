@@ -215,7 +215,7 @@ class UnmodifiableRouteMatchList implements RouteMatchList {
     if (other is! UnmodifiableRouteMatchList) {
       return false;
     }
-    return listEquals(other._matches, _matches) &&
+    return listEquals<RouteMatch>(other._matches, _matches) &&
         other._uri == _uri &&
         mapEquals(other.pathParameters, pathParameters);
   }
