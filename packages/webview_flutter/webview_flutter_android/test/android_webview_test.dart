@@ -57,7 +57,13 @@ void main() {
         final JavaObject object = JavaObject.detached(
           instanceManager: instanceManager,
         );
-        instanceManager.addHostCreatedInstance(object, 0);
+        instanceManager.addHostCreatedInstance(
+          object,
+          0,
+          onCopy: (JavaObject original) {
+            return JavaObject.detached(instanceManager: instanceManager);
+          },
+        );
 
         JavaObject.dispose(object);
 
@@ -72,7 +78,13 @@ void main() {
         final JavaObject object = JavaObject.detached(
           instanceManager: instanceManager,
         );
-        instanceManager.addHostCreatedInstance(object, 0);
+        instanceManager.addHostCreatedInstance(
+          object,
+          0,
+          onCopy: (JavaObject original) {
+            return JavaObject.detached(instanceManager: instanceManager);
+          },
+        );
         instanceManager.removeWeakReference(object);
 
         expect(instanceManager.containsIdentifier(0), isTrue);
@@ -268,8 +280,12 @@ void main() {
         );
 
         final WebViewClient mockWebViewClient = MockWebViewClient();
-        when(mockWebViewClient.copy()).thenReturn(MockWebViewClient());
-        instanceManager.addDartCreatedInstance(mockWebViewClient);
+        instanceManager.addDartCreatedInstance(
+          mockWebViewClient,
+          onCopy: (WebViewClient original) {
+            return WebViewClient.detached();
+          },
+        );
         webView.setWebViewClient(mockWebViewClient);
 
         final int webViewClientInstanceId =
@@ -287,7 +303,6 @@ void main() {
         );
 
         final JavaScriptChannel mockJavaScriptChannel = MockJavaScriptChannel();
-        when(mockJavaScriptChannel.copy()).thenReturn(MockJavaScriptChannel());
         when(mockJavaScriptChannel.channelName).thenReturn('aChannel');
 
         webView.addJavaScriptChannel(mockJavaScriptChannel);
@@ -307,7 +322,6 @@ void main() {
         );
 
         final JavaScriptChannel mockJavaScriptChannel = MockJavaScriptChannel();
-        when(mockJavaScriptChannel.copy()).thenReturn(MockJavaScriptChannel());
         when(mockJavaScriptChannel.channelName).thenReturn('aChannel');
 
         expect(
@@ -333,8 +347,14 @@ void main() {
         );
 
         final DownloadListener mockDownloadListener = MockDownloadListener();
-        when(mockDownloadListener.copy()).thenReturn(MockDownloadListener());
-        instanceManager.addDartCreatedInstance(mockDownloadListener);
+        instanceManager.addDartCreatedInstance(
+          mockDownloadListener,
+          onCopy: (DownloadListener original) {
+            return DownloadListener.detached(
+              onDownloadStart: original.onDownloadStart,
+            );
+          },
+        );
         webView.setDownloadListener(mockDownloadListener);
 
         final int downloadListenerInstanceId =
@@ -352,8 +372,12 @@ void main() {
         );
 
         final WebChromeClient mockWebChromeClient = MockWebChromeClient();
-        when(mockWebChromeClient.copy()).thenReturn(MockWebChromeClient());
-        instanceManager.addDartCreatedInstance(mockWebChromeClient);
+        instanceManager.addDartCreatedInstance(
+          mockWebChromeClient,
+          onCopy: (WebChromeClient original) {
+            return WebChromeClient.detached();
+          },
+        );
         webView.setWebChromeClient(mockWebChromeClient);
 
         final int webChromeClientInstanceId =
@@ -362,10 +386,6 @@ void main() {
           webViewInstanceId,
           webChromeClientInstanceId,
         ));
-      });
-
-      test('copy', () {
-        expect(webView.copy(), isA<WebView>());
       });
     });
 
@@ -513,7 +533,15 @@ void main() {
         when(mockJavaScriptChannel.copy()).thenReturn(MockJavaScriptChannel());
 
         mockJavaScriptChannelInstanceId =
-            instanceManager.addDartCreatedInstance(mockJavaScriptChannel);
+            instanceManager.addDartCreatedInstance(
+          mockJavaScriptChannel,
+          onCopy: (JavaScriptChannel original) {
+            return JavaScriptChannel.detached(
+              original.channelName,
+              postMessage: original.postMessage,
+            );
+          },
+        );
       });
 
       test('postMessage', () {
@@ -528,13 +556,6 @@ void main() {
         );
 
         expect(result, 'Hello, World!');
-      });
-
-      test('copy', () {
-        expect(
-          JavaScriptChannel.detached('channel', postMessage: (_) {}).copy(),
-          isA<JavaScriptChannel>(),
-        );
       });
     });
 
@@ -557,13 +578,21 @@ void main() {
 
         mockWebViewClient = MockWebViewClient();
         when(mockWebViewClient.copy()).thenReturn(MockWebViewClient());
-        mockWebViewClientInstanceId =
-            instanceManager.addDartCreatedInstance(mockWebViewClient);
+        mockWebViewClientInstanceId = instanceManager.addDartCreatedInstance(
+          mockWebViewClient,
+          onCopy: (WebViewClient original) {
+            return WebViewClient.detached();
+          },
+        );
 
         mockWebView = MockWebView();
         when(mockWebView.copy()).thenReturn(MockWebView());
-        mockWebViewInstanceId =
-            instanceManager.addDartCreatedInstance(mockWebView);
+        mockWebViewInstanceId = instanceManager.addDartCreatedInstance(
+          mockWebView,
+          onCopy: (WebView original) {
+            return WebView.detached();
+          },
+        );
       });
 
       test('onPageStarted', () {
@@ -704,10 +733,6 @@ void main() {
           containsAllInOrder(<Object?>[mockWebView, 'https://www.google.com']),
         );
       });
-
-      test('copy', () {
-        expect(WebViewClient.detached().copy(), isA<WebViewClient>());
-      });
     });
 
     group('DownloadListener', () {
@@ -726,8 +751,14 @@ void main() {
 
         mockDownloadListener = MockDownloadListener();
         when(mockDownloadListener.copy()).thenReturn(MockDownloadListener());
-        mockDownloadListenerInstanceId =
-            instanceManager.addDartCreatedInstance(mockDownloadListener);
+        mockDownloadListenerInstanceId = instanceManager.addDartCreatedInstance(
+          mockDownloadListener,
+          onCopy: (DownloadListener original) {
+            return DownloadListener.detached(
+              onDownloadStart: original.onDownloadStart,
+            );
+          },
+        );
       });
 
       test('onDownloadStart', () {
@@ -770,15 +801,6 @@ void main() {
           ]),
         );
       });
-
-      test('copy', () {
-        expect(
-          DownloadListener.detached(
-            onDownloadStart: (_, __, ____, _____, ______) {},
-          ).copy(),
-          isA<DownloadListener>(),
-        );
-      });
     });
 
     group('WebChromeClient', () {
@@ -801,13 +823,21 @@ void main() {
         mockWebChromeClient = MockWebChromeClient();
         when(mockWebChromeClient.copy()).thenReturn(MockWebChromeClient());
 
-        mockWebChromeClientInstanceId =
-            instanceManager.addDartCreatedInstance(mockWebChromeClient);
+        mockWebChromeClientInstanceId = instanceManager.addDartCreatedInstance(
+          mockWebChromeClient,
+          onCopy: (WebChromeClient original) {
+            return WebChromeClient.detached();
+          },
+        );
 
         mockWebView = MockWebView();
         when(mockWebView.copy()).thenReturn(MockWebView());
-        mockWebViewInstanceId =
-            instanceManager.addDartCreatedInstance(mockWebView);
+        mockWebViewInstanceId = instanceManager.addDartCreatedInstance(
+          mockWebView,
+          onCopy: (WebView original) {
+            return WebView.detached();
+          },
+        );
       });
 
       test('onProgressChanged', () {
@@ -838,12 +868,23 @@ void main() {
 
         final FileChooserParams params = FileChooserParams.detached(
           isCaptureEnabled: false,
-          acceptTypes: <String>[],
+          acceptTypes: const <String>[],
           filenameHint: 'filenameHint',
           mode: FileChooserMode.open,
         );
 
-        instanceManager.addHostCreatedInstance(params, 3);
+        instanceManager.addHostCreatedInstance(
+          params,
+          3,
+          onCopy: (FileChooserParams original) {
+            return FileChooserParams.detached(
+              acceptTypes: original.acceptTypes,
+              filenameHint: original.filenameHint,
+              isCaptureEnabled: original.isCaptureEnabled,
+              mode: original.mode,
+            );
+          },
+        );
 
         await expectLater(
           flutterApi.onShowFileChooser(
@@ -866,7 +907,13 @@ void main() {
             WebChromeClientHostApiImpl(instanceManager: instanceManager);
 
         final WebChromeClient webChromeClient = WebChromeClient.detached();
-        instanceManager.addHostCreatedInstance(webChromeClient, 2);
+        instanceManager.addHostCreatedInstance(
+          webChromeClient,
+          2,
+          onCopy: (WebChromeClient original) {
+            return WebChromeClient.detached();
+          },
+        );
 
         webChromeClient.setSynchronousReturnValueForOnShowFileChooser(false);
 
@@ -887,7 +934,13 @@ void main() {
 
         final WebChromeClient clientWithNullCallback =
             WebChromeClient.detached();
-        instanceManager.addHostCreatedInstance(clientWithNullCallback, 2);
+        instanceManager.addHostCreatedInstance(
+          clientWithNullCallback,
+          2,
+          onCopy: (WebChromeClient original) {
+            return WebChromeClient.detached();
+          },
+        );
 
         expect(
           () => clientWithNullCallback
@@ -899,7 +952,13 @@ void main() {
             WebChromeClient.detached(
           onShowFileChooser: (_, __) async => <String>[],
         );
-        instanceManager.addHostCreatedInstance(clientWithNonnullCallback, 3);
+        instanceManager.addHostCreatedInstance(
+          clientWithNonnullCallback,
+          3,
+          onCopy: (WebChromeClient original) {
+            return WebChromeClient.detached();
+          },
+        );
 
         clientWithNonnullCallback
             .setSynchronousReturnValueForOnShowFileChooser(true);

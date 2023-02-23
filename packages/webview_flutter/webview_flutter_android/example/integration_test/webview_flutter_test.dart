@@ -83,7 +83,13 @@ Future<void> main() async {
     );
 
     ClassWithCallbackClass? instance = ClassWithCallbackClass();
-    instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
+    instanceManager.addHostCreatedInstance(
+      instance.callbackClass,
+      0,
+      onCopy: (CopyableObjectWithCallback original) {
+        return CopyableObjectWithCallback(original.callback);
+      },
+    );
     instance = null;
 
     // Force garbage collection.
@@ -104,7 +110,7 @@ Future<void> main() async {
       late final InstanceManager instanceManager;
       instanceManager =
           InstanceManager(onWeakReferenceRemoved: (int identifier) {
-        final Copyable instance =
+        final Object instance =
             instanceManager.getInstanceWithWeakReference(identifier)!;
         if (instance is android.WebView && !webViewGCCompleter.isCompleted) {
           webViewGCCompleter.complete();
@@ -1222,15 +1228,10 @@ class ResizableWebViewState extends State<ResizableWebView> {
   }
 }
 
-class CopyableObjectWithCallback with Copyable {
+class CopyableObjectWithCallback {
   CopyableObjectWithCallback(this.callback);
 
   final VoidCallback callback;
-
-  @override
-  CopyableObjectWithCallback copy() {
-    return CopyableObjectWithCallback(callback);
-  }
 }
 
 class ClassWithCallbackClass {

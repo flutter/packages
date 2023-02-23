@@ -589,7 +589,7 @@ void main() {
         android_webview.WebView.detached(),
         android_webview.FileChooserParams.detached(
           isCaptureEnabled: false,
-          acceptTypes: <String>['png'],
+          acceptTypes: const <String>['png'],
           filenameHint: 'filenameHint',
           mode: android_webview.FileChooserMode.open,
         ),
@@ -890,7 +890,14 @@ void main() {
     final InstanceManager instanceManager = InstanceManager(
       onWeakReferenceRemoved: (_) {},
     );
-    instanceManager.addHostCreatedInstance(mockWebView, 0);
+    instanceManager.addHostCreatedInstance(
+      mockWebView,
+      0,
+      onCopy: (android_webview.WebView original) {
+        return android_webview.WebView.detached(
+            instanceManager: instanceManager);
+      },
+    );
 
     android_webview.WebView.api = WebViewHostApiImpl(
       instanceManager: instanceManager,
