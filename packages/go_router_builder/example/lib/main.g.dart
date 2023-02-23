@@ -59,17 +59,6 @@ extension $HomeRouteExtension on HomeRoute {
 
 extension $FamilyRouteExtension on FamilyRoute {
   static FamilyRoute _fromState(GoRouterState state) => const FamilyRoute();
-
-  String get location => GoRouteData.$location(
-        '/',
-      );
-
-  void go(BuildContext context) => context.go(location, extra: this);
-
-  void push(BuildContext context) => context.push(location, extra: this);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
 }
 
 extension $FamilyIdRouteExtension on FamilyIdRoute {

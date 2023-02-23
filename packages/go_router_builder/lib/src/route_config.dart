@@ -115,6 +115,7 @@ class RouteConfig {
 
     return value;
   }
+
   final List<RouteConfig> _children = <RouteConfig>[];
   final String _path;
   final InterfaceElement _routeDataClass;
@@ -183,7 +184,15 @@ class RouteConfig {
   }
 
   /// Returns `extension` code.
-  String _extensionDefinition() => '''
+  String _extensionDefinition() {
+    if (_isShellRoute) {
+      return '''
+extension $_extensionName on $_className {
+  static $_className _fromState(GoRouterState state) $_newFromState
+}
+''';
+    }
+    return '''
 extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) $_newFromState
 
@@ -197,6 +206,7 @@ extension $_extensionName on $_className {
       context.pushReplacement(location, extra: this);
 }
 ''';
+  }
 
   /// Returns this [RouteConfig] and all child [RouteConfig] instances.
   Iterable<RouteConfig> _flatten() sync* {
