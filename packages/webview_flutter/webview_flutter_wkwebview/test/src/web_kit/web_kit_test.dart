@@ -605,11 +605,8 @@ void main() {
           instanceManager.getIdentifier(navigationDelegate)!,
           instanceManager.getIdentifier(webView)!,
           WKNavigationResponseData(
-            response: NSHttpUrlResponseData(
-              statusCode: 401
-            ),
-            forMainFrame: true
-          ),
+              response: NSHttpUrlResponseData(statusCode: 401),
+              forMainFrame: true),
         );
 
         expect(policyData.value, WKNavigationResponsePolicyEnum.cancel);

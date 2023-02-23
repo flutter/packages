@@ -101,7 +101,7 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
 
   /** Passes arguments from {@link WebViewClient#onReceivedHttpError} to Dart. */
   public void onPageError(
-          WebViewClient webViewClient, WebView webView, int statusCodeArg, Reply<Void> callback) {
+      WebViewClient webViewClient, WebView webView, int statusCodeArg, Reply<Void> callback) {
     final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
     if (webViewIdentifier == null) {
       throw new IllegalStateException("Could not find identifier for WebView.");

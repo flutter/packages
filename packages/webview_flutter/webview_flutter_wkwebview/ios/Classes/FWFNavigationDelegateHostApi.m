@@ -73,15 +73,15 @@
                                              webView:(WKWebView *)webView
                                   navigationResponse:(WKNavigationResponse *)navigationResponse
                                           completion:
-                                              (void (^)(FWFWKNavigationResponsePolicyEnumData *_Nullable,
-                                                        NSError *_Nullable))completion {
-    NSNumber *webViewIdentifier =
-        @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
-    FWFWKNavigationResponseData *navigationResponseData =
-        FWFWKNavigationResponseDataFromNavigationResponse(navigationResponse);
-    [self
-        decidePolicyForNavigationResponseForDelegateWithIdentifier:@([self
-                                                                       identifierForDelegate:instance])
+                                              (void (^)(
+                                                  FWFWKNavigationResponsePolicyEnumData *_Nullable,
+                                                  NSError *_Nullable))completion {
+  NSNumber *webViewIdentifier =
+      @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
+  FWFWKNavigationResponseData *navigationResponseData =
+      FWFWKNavigationResponseDataFromNavigationResponse(navigationResponse);
+  [self decidePolicyForNavigationResponseForDelegateWithIdentifier:
+            @([self identifierForDelegate:instance])
                                                  webViewIdentifier:webViewIdentifier
                                                 navigationResponse:navigationResponseData
                                                         completion:completion];
@@ -172,7 +172,7 @@
 
 - (void)webView:(WKWebView *)webView
     decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse
-                      decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {     
+                      decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
   [self.navigationDelegateAPI
       decidePolicyForNavigationResponseForDelegate:self
                                            webView:webView

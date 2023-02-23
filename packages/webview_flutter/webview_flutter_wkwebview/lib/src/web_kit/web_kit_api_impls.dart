@@ -189,9 +189,7 @@ extension _NavigationActionDataConverter on WKNavigationActionData {
 extension _NavigationResponseDataConverter on WKNavigationResponseData {
   WKNavigationResponse toNavigationResponse() {
     return WKNavigationResponse(
-      response: response.toNSUrlResponse(),
-      forMainFrame: forMainFrame
-    );
+        response: response.toNSUrlResponse(), forMainFrame: forMainFrame);
   }
 }
 
@@ -214,9 +212,7 @@ extension _NSUrlRequestDataConverter on NSUrlRequestData {
 
 extension _NSUrlResponseDataConverter on NSHttpUrlResponseData {
   NSHttpUrlResponse toNSUrlResponse() {
-    return NSHttpUrlResponse(
-      statusCode: statusCode
-    );
+    return NSHttpUrlResponse(statusCode: statusCode);
   }
 }
 

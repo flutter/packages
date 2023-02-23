@@ -60,8 +60,7 @@ void main() {
           AndroidNavigationDelegate(_buildCreationParams());
 
       late final int statusCode;
-      androidNavigationDelegate
-          .setOnPageError((int code) => statusCode = code);
+      androidNavigationDelegate.setOnPageError((int code) => statusCode = code);
 
       CapturingWebViewClient.lastCreatedDelegate.onPageError!(
         android_webview.WebView.detached(),

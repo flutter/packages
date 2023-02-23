@@ -86,16 +86,15 @@ void main() {
       );
 
       late final int callbackStatusCode;
-      webKitDelgate.setOnPageError((int statusCode) => callbackStatusCode = statusCode);
+      webKitDelgate
+          .setOnPageError((int statusCode) => callbackStatusCode = statusCode);
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.decidePolicyForNavigationResponse!(
-            WKWebView.detached(),
-            const WKNavigationResponse(
-              response: NSHttpUrlResponse(statusCode: 401),
-              forMainFrame: true
-            ),
-          );
+        WKWebView.detached(),
+        const WKNavigationResponse(
+            response: NSHttpUrlResponse(statusCode: 401), forMainFrame: true),
+      );
 
       expect(callbackStatusCode, 401);
     });

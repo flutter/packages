@@ -178,14 +178,13 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNSURLRequest(NSURLRequest *request) 
 FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNavigationResponse(
     WKNavigationResponse *response) {
   return [FWFWKNavigationResponseData
-          makeWithResponse:FWFNSHttpUrlResponseDataFromNSURLResponse(response.response)
-              forMainFrame:@(response.forMainFrame)];
+      makeWithResponse:FWFNSHttpUrlResponseDataFromNSURLResponse(response.response)
+          forMainFrame:@(response.forMainFrame)];
 }
 
 FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNSURLResponse(NSURLResponse *response) {
-    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-  return [FWFNSHttpUrlResponseData
-          makeWithStatusCode:@(httpResponse.statusCode)];
+  NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+  return [FWFNSHttpUrlResponseData makeWithStatusCode:@(httpResponse.statusCode)];
 }
 
 FWFWKFrameInfoData *FWFWKFrameInfoDataFromWKFrameInfo(WKFrameInfo *info) {
