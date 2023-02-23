@@ -121,7 +121,7 @@ enum EnumTest {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $defaultValueRoute => GoRouteData.$route(
+RouteBase get $defaultValueRoute => GoRouteData.$route(
       path: '/default-value-route',
       factory: $DefaultValueRouteExtension._fromState,
     );
