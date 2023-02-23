@@ -69,7 +69,10 @@ class RouteConfig {
   ) {
     assert(!reader.isNull, 'reader should not be null');
     final InterfaceType type = reader.objectValue.type! as InterfaceType;
-    final bool isShellRoute = type.element.name == 'TypedShellRoute';
+    // Ignore the deprected `element2` so that the "downgraded_analyze" CI step
+    // passes.
+    //ignore: deprecated_member_use
+    final bool isShellRoute = type.element2.name == 'TypedShellRoute';
 
     String? path;
 
