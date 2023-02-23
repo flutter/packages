@@ -308,9 +308,9 @@ public class WebViewTest {
           }
         };
 
-    testInstanceManager.addDartCreatedInstance(webView, 0);
+    testInstanceManager.addDartCreatedInstance(webView, 1);
     final JavaObjectHostApiImpl javaObjectHostApi = new JavaObjectHostApiImpl(testInstanceManager);
-    javaObjectHostApi.dispose(0L);
+    javaObjectHostApi.dispose(1L);
 
     assertTrue(destroyCalled[0]);
   }
