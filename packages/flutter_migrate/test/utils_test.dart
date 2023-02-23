@@ -281,7 +281,11 @@ void main() {
 
       projectRoot.deleteSync(recursive: true);
     });
-  }, timeout: const Timeout(Duration(seconds: 500)));
+  },
+      timeout: const Timeout(Duration(seconds: 500)),
+      // TODO(stuartmorgan): These should not be unit tests, see
+      // https://github.com/flutter/flutter/issues/121257.
+      skip: 'TODO: Speed up, or move to another type of test');
 
   testWithoutContext('conflictsResolved', () async {
     expect(utils.conflictsResolved(''), true);
