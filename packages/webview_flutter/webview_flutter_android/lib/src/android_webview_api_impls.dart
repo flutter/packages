@@ -137,9 +137,16 @@ class JavaObjectFlutterApiImpl implements JavaObjectFlutterApi {
 class WebViewHostApiImpl extends WebViewHostApi {
   /// Constructs a [WebViewHostApiImpl].
   WebViewHostApiImpl({
-    super.binaryMessenger,
+    this.binaryMessenger,
     InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -151,6 +158,8 @@ class WebViewHostApiImpl extends WebViewHostApi {
         instance,
         onCopy: (WebView original) => WebView.detached(
           useHybridComposition: original.useHybridComposition,
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
         ),
       ),
       instance.useHybridComposition,
@@ -355,9 +364,15 @@ class WebViewHostApiImpl extends WebViewHostApi {
 class WebSettingsHostApiImpl extends WebSettingsHostApi {
   /// Constructs a [WebSettingsHostApiImpl].
   WebSettingsHostApiImpl({
-    super.binaryMessenger,
+    this.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -368,7 +383,10 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
       instanceManager.addDartCreatedInstance(
         instance,
         onCopy: (WebSettings original) {
-          return WebSettings.detached();
+          return WebSettings.detached(
+            binaryMessenger: binaryMessenger,
+            instanceManager: instanceManager,
+          );
         },
       ),
       instanceManager.getIdentifier(webView)!,
@@ -501,9 +519,15 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
 class JavaScriptChannelHostApiImpl extends JavaScriptChannelHostApi {
   /// Constructs a [JavaScriptChannelHostApiImpl].
   JavaScriptChannelHostApiImpl({
-    super.binaryMessenger,
+    this.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -516,6 +540,8 @@ class JavaScriptChannelHostApiImpl extends JavaScriptChannelHostApi {
         onCopy: (JavaScriptChannel original) => JavaScriptChannel.detached(
           original.channelName,
           postMessage: original.postMessage,
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
         ),
       );
       await create(
@@ -551,9 +577,15 @@ class JavaScriptChannelFlutterApiImpl extends JavaScriptChannelFlutterApi {
 class WebViewClientHostApiImpl extends WebViewClientHostApi {
   /// Constructs a [WebViewClientHostApiImpl].
   WebViewClientHostApiImpl({
-    super.binaryMessenger,
+    this.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -563,7 +595,12 @@ class WebViewClientHostApiImpl extends WebViewClientHostApi {
     if (instanceManager.getIdentifier(instance) == null) {
       final int identifier = instanceManager.addDartCreatedInstance(
         instance,
-        onCopy: (WebViewClient original) => WebViewClient.detached(),
+        onCopy: (WebViewClient original) {
+          return WebViewClient.detached(
+            binaryMessenger: binaryMessenger,
+            instanceManager: instanceManager,
+          );
+        },
       );
       return create(identifier);
     }
@@ -741,9 +778,15 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
 class DownloadListenerHostApiImpl extends DownloadListenerHostApi {
   /// Constructs a [DownloadListenerHostApiImpl].
   DownloadListenerHostApiImpl({
-    super.binaryMessenger,
+    this.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -755,6 +798,8 @@ class DownloadListenerHostApiImpl extends DownloadListenerHostApi {
         instance,
         onCopy: (DownloadListener original) => DownloadListener.detached(
           onDownloadStart: original.onDownloadStart,
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
         ),
       );
       return create(identifier);
@@ -800,9 +845,15 @@ class DownloadListenerFlutterApiImpl extends DownloadListenerFlutterApi {
 class WebChromeClientHostApiImpl extends WebChromeClientHostApi {
   /// Constructs a [WebChromeClientHostApiImpl].
   WebChromeClientHostApiImpl({
-    super.binaryMessenger,
+    this.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -812,7 +863,12 @@ class WebChromeClientHostApiImpl extends WebChromeClientHostApi {
     if (instanceManager.getIdentifier(instance) == null) {
       final int identifier = instanceManager.addDartCreatedInstance(
         instance,
-        onCopy: (WebChromeClient original) => WebChromeClient.detached(),
+        onCopy: (WebChromeClient original) => WebChromeClient.detached(
+          onProgressChanged: original.onProgressChanged,
+          onShowFileChooser: original.onShowFileChooser,
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
       );
       return create(identifier);
     }
@@ -883,9 +939,16 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
 class WebStorageHostApiImpl extends WebStorageHostApi {
   /// Constructs a [WebStorageHostApiImpl].
   WebStorageHostApiImpl({
-    super.binaryMessenger,
+    this.binaryMessenger,
     InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -895,7 +958,10 @@ class WebStorageHostApiImpl extends WebStorageHostApi {
     if (instanceManager.getIdentifier(instance) == null) {
       final int identifier = instanceManager.addDartCreatedInstance(
         instance,
-        onCopy: (WebStorage original) => WebStorage.detached(),
+        onCopy: (WebStorage original) => WebStorage.detached(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
       );
       return create(identifier);
     }
@@ -938,6 +1004,8 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
         acceptTypes: acceptTypes.cast(),
         mode: mode.value,
         filenameHint: filenameHint,
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
       ),
       instanceId,
       onCopy: (FileChooserParams original) => FileChooserParams.detached(

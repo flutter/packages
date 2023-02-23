@@ -32,6 +32,7 @@ class JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   JavaObject.detached({
     required BinaryMessenger? binaryMessenger,
     required InstanceManager? instanceManager,
@@ -472,8 +473,11 @@ class WebSettings extends JavaObject {
   /// This constructor is only used for testing. An instance should be obtained
   /// with [WebView.settings].
   @visibleForTesting
-  WebSettings(WebView webView, {super.binaryMessenger, super.instanceManager})
-      : super.detached() {
+  WebSettings(
+    WebView webView, {
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached() {
     api.createFromInstance(this, webView);
   }
 
@@ -481,8 +485,11 @@ class WebSettings extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  WebSettings.detached({required super.binaryMessenger, required super.instanceManager})
-      : super.detached();
+  @protected
+  WebSettings.detached({
+    required super.binaryMessenger,
+    required super.instanceManager,
+  }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebSettings].
   @visibleForTesting
@@ -616,7 +623,8 @@ class JavaScriptChannel extends JavaObject {
   JavaScriptChannel(
     this.channelName, {
     required this.postMessage,
-        super.binaryMessenger, super.instanceManager
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
   }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
@@ -627,9 +635,12 @@ class JavaScriptChannel extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   JavaScriptChannel.detached(
     this.channelName, {
     required this.postMessage,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [JavaScriptChannel].
@@ -654,6 +665,8 @@ class WebViewClient extends JavaObject {
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
   }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
@@ -663,6 +676,7 @@ class WebViewClient extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   WebViewClient.detached({
     this.onPageStarted,
     this.onPageFinished,
@@ -670,6 +684,8 @@ class WebViewClient extends JavaObject {
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// User authentication failed on server.
@@ -836,7 +852,11 @@ class WebViewClient extends JavaObject {
 @immutable
 class DownloadListener extends JavaObject {
   /// Constructs a [DownloadListener].
-  DownloadListener({required this.onDownloadStart}) : super.detached() {
+  DownloadListener({
+    required this.onDownloadStart,
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
   }
@@ -846,7 +866,12 @@ class DownloadListener extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  DownloadListener.detached({required this.onDownloadStart}) : super.detached();
+  @protected
+  DownloadListener.detached({
+    required this.onDownloadStart,
+    required super.binaryMessenger,
+    required super.instanceManager,
+  }) : super.detached();
 
   /// Pigeon Host Api implementation for [DownloadListener].
   @visibleForTesting
@@ -866,8 +891,12 @@ class DownloadListener extends JavaObject {
 @immutable
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
-  WebChromeClient({this.onProgressChanged, this.onShowFileChooser})
-      : super.detached() {
+  WebChromeClient({
+    this.onProgressChanged,
+    this.onShowFileChooser,
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
   }
@@ -877,9 +906,12 @@ class WebChromeClient extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   WebChromeClient.detached({
-    this.onProgressChanged,
-    this.onShowFileChooser,
+    required this.onProgressChanged,
+    required this.onShowFileChooser,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebChromeClient].
@@ -942,13 +974,14 @@ class FileChooserParams extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   FileChooserParams.detached({
     required this.isCaptureEnabled,
     required this.acceptTypes,
     required this.filenameHint,
     required this.mode,
-    super.binaryMessenger,
-    super.instanceManager,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Preference for a live media captured value (e.g. Camera, Microphone).
@@ -1044,7 +1077,10 @@ class WebStorage extends JavaObject {
   /// This constructor is only used for testing. An instance should be obtained
   /// with [WebStorage.instance].
   @visibleForTesting
-  WebStorage() : super.detached() {
+  WebStorage({
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
   }
@@ -1053,7 +1089,11 @@ class WebStorage extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  WebStorage.detached() : super.detached();
+  @protected
+  WebStorage.detached({
+    required super.binaryMessenger,
+    required super.instanceManager,
+  }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebStorage].
   @visibleForTesting

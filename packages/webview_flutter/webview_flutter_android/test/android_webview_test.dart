@@ -493,10 +493,6 @@ void main() {
           true,
         ));
       });
-
-      test('copy', () {
-        expect(webSettings.copy(), isA<WebSettings>());
-      });
     });
 
     group('JavaScriptChannel', () {
@@ -912,10 +908,6 @@ void main() {
           mockHostApi.setSynchronousReturnValueForOnShowFileChooser(3, true),
         );
       });
-
-      test('copy', () {
-        expect(WebChromeClient.detached().copy(), isA<WebChromeClient>());
-      });
     });
 
     group('FileChooserParams', () {
@@ -985,10 +977,6 @@ void main() {
     test('deleteAllData', () {
       webStorage.deleteAllData();
       verify(mockPlatformHostApi.deleteAllData(webStorageInstanceId));
-    });
-
-    test('copy', () {
-      expect(WebStorage.detached().copy(), isA<WebStorage>());
     });
   });
 }

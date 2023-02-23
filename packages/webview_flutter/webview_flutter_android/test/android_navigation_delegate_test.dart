@@ -22,7 +22,10 @@ void main() {
           .setOnPageFinished((String url) => callbackUrl = url);
 
       CapturingWebViewClient.lastCreatedDelegate.onPageFinished!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         'https://www.google.com',
       );
 
@@ -38,7 +41,10 @@ void main() {
           .setOnPageStarted((String url) => callbackUrl = url);
 
       CapturingWebViewClient.lastCreatedDelegate.onPageStarted!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         'https://www.google.com',
       );
 
@@ -54,7 +60,10 @@ void main() {
           (WebResourceError error) => callbackError = error);
 
       CapturingWebViewClient.lastCreatedDelegate.onReceivedRequestError!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: false,
@@ -85,7 +94,10 @@ void main() {
           (WebResourceError error) => callbackError = error);
 
       CapturingWebViewClient.lastCreatedDelegate.onReceivedError!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         android_webview.WebViewClient.errorFileNotFound,
         'Page not found.',
         'https://www.google.com',
@@ -112,7 +124,10 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
@@ -139,7 +154,10 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
@@ -173,7 +191,10 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
@@ -211,7 +232,10 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
@@ -243,7 +267,10 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         'https://www.google.com',
       );
 
@@ -263,7 +290,10 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         'https://www.google.com',
       );
 
@@ -290,7 +320,10 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         'https://www.google.com',
       );
 
@@ -321,7 +354,10 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(),
+        android_webview.WebView.detached(
+          binaryMessenger: null,
+          instanceManager: null,
+        ),
         'https://www.google.com',
       );
 
@@ -452,6 +488,7 @@ AndroidNavigationDelegateCreationParams _buildCreationParams() {
 }
 
 // Records the last created instance of itself.
+// ignore: must_be_immutable
 class CapturingWebViewClient extends android_webview.WebViewClient {
   CapturingWebViewClient({
     super.onPageFinished,
@@ -460,6 +497,8 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onReceivedRequestError,
     super.requestLoading,
     super.urlLoading,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
@@ -480,6 +519,8 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
   CapturingWebChromeClient({
     super.onProgressChanged,
     super.onShowFileChooser,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
@@ -491,6 +532,8 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
 class CapturingDownloadListener extends android_webview.DownloadListener {
   CapturingDownloadListener({
     required super.onDownloadStart,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached() {
     lastCreatedListener = this;
   }
