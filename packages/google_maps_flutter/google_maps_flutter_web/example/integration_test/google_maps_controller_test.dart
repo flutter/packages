@@ -25,6 +25,9 @@ const double _acceptableDelta = 0.0000000001;
   MockSpec<PolygonsController>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<PolylinesController>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<MarkersController>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<html.Geolocation>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<html.Geoposition>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<html.Coordinates>(onMissingStub: OnMissingStub.returnDefault),
 ])
 
 /// Test Google Map Controller
@@ -35,7 +38,6 @@ void main() {
     const int mapId = 33930;
     late GoogleMapController controller;
     late StreamController<MapEvent<Object?>> stream;
-
     // Creates a controller with the default mapId and stream controller, and any `options` needed.
     GoogleMapController createController({
       CameraPosition initialCameraPosition =
@@ -484,6 +486,153 @@ void main() {
           controller.init();
           expect(controller.trafficLayer, isNotNull);
         });
+      });
+
+      group('My Location', () {
+        testWidgets('by default is disabled', (WidgetTester tester) async {
+          controller = createController();
+          controller.init();
+          expect(controller.myLocationButton, isNull);
+        });
+
+        testWidgets('initializes with my location & display my location button',
+            (WidgetTester tester) async {
+          late final MockGeolocation mockGeolocation = MockGeolocation();
+          late final MockGeoposition mockGeoposition = MockGeoposition();
+          late final MockCoordinates mockCoordinates = MockCoordinates();
+          const LatLng currentLocation = LatLng(10.8231, 106.6297);
+
+          controller = createController(
+              mapConfiguration: const MapConfiguration(
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          ));
+          controller.debugSetOverrides(
+            createMap: (_, __) => map,
+            markers: markers,
+            geolocation: mockGeolocation,
+          );
+
+          when(mockGeoposition.coords).thenReturn(mockCoordinates);
+
+          when(mockCoordinates.longitude).thenReturn(currentLocation.longitude);
+
+          when(mockCoordinates.latitude).thenReturn(currentLocation.latitude);
+
+          when(mockGeolocation.getCurrentPosition(
+                  timeout: const Duration(seconds: 30)))
+              .thenAnswer((_) async => mockGeoposition);
+
+          when(mockGeolocation.watchPosition()).thenAnswer((_) {
+            return Stream<MockGeoposition>.fromIterable(
+                <MockGeoposition>[mockGeoposition]);
+          });
+
+          controller.init();
+
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+
+          final Set<Marker> capturedMarkers =
+              verify(markers.addMarkers(captureAny)).captured[1] as Set<Marker>;
+
+          final gmaps.LatLng gmCenter = map.center!;
+
+          expect(controller.myLocationButton, isNotNull);
+          expect(capturedMarkers.length, 1);
+          expect(capturedMarkers.first.position, currentLocation);
+          expect(capturedMarkers.first.zIndex, 0.5);
+          expect(gmCenter.lat, currentLocation.latitude);
+          expect(gmCenter.lng, currentLocation.longitude);
+        });
+
+        testWidgets('initializes with my location only',
+            (WidgetTester tester) async {
+          late final MockGeolocation mockGeolocation = MockGeolocation();
+          late final MockGeoposition mockGeoposition = MockGeoposition();
+          late final MockCoordinates mockCoordinates = MockCoordinates();
+          const LatLng currentLocation = LatLng(10.8231, 106.6297);
+
+          controller = createController(
+              mapConfiguration: const MapConfiguration(
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+          ));
+          controller.debugSetOverrides(
+            createMap: (_, __) => map,
+            markers: markers,
+            geolocation: mockGeolocation,
+          );
+
+          when(mockGeoposition.coords).thenReturn(mockCoordinates);
+
+          when(mockCoordinates.longitude).thenReturn(currentLocation.longitude);
+
+          when(mockCoordinates.latitude).thenReturn(currentLocation.latitude);
+
+          when(mockGeolocation.getCurrentPosition(
+                  timeout: const Duration(seconds: 30)))
+              .thenAnswer((_) async => mockGeoposition);
+
+          when(mockGeolocation.watchPosition()).thenAnswer((_) {
+            return Stream<MockGeoposition>.fromIterable(
+                <MockGeoposition>[mockGeoposition]);
+          });
+
+          controller.init();
+
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+
+          final Set<Marker> capturedMarkers =
+              verify(markers.addMarkers(captureAny)).captured[1] as Set<Marker>;
+
+          final gmaps.LatLng gmCenter = map.center!;
+
+          expect(controller.myLocationButton, isNull);
+          expect(capturedMarkers.length, 1);
+          expect(capturedMarkers.first.position, currentLocation);
+          expect(capturedMarkers.first.zIndex, 0.5);
+          expect(gmCenter.lat, currentLocation.latitude);
+          expect(gmCenter.lng, currentLocation.longitude);
+        });
+      });
+
+      testWidgets(
+          'My location button should be disable when dont have permission access to location',
+          (WidgetTester tester) async {
+        late final MockGeolocation mockGeolocation = MockGeolocation();
+
+        controller = createController(
+            mapConfiguration: const MapConfiguration(
+          myLocationEnabled: true,
+          myLocationButtonEnabled: true,
+        ));
+
+        controller.debugSetOverrides(
+          createMap: (_, __) => map,
+          markers: markers,
+          geolocation: mockGeolocation,
+        );
+
+        when(mockGeolocation.getCurrentPosition(
+                timeout: const Duration(seconds: 30)))
+            .thenAnswer(
+          (_) async => throw Exception('permission denied'),
+        );
+
+        when(mockGeolocation.watchPosition()).thenAnswer((_) {
+          return Stream<MockGeoposition>.fromIterable(<MockGeoposition>[]);
+        });
+
+        controller.init();
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        final Set<Marker> capturedMarkers =
+            verify(markers.addMarkers(captureAny)).captured[0] as Set<Marker>;
+
+        expect(controller.myLocationButton, isNotNull);
+        expect(controller.myLocationButton?.isDisabled(), true);
+        expect(capturedMarkers.length, 0);
       });
     });
 
