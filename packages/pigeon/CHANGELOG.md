@@ -1,7 +1,11 @@
-## 9.0.1
+## 9.0.2
 
 * [swift] Removes safe casting from decode process.
 * [kotlin] Removes safe casting from decode process.
+
+## 9.0.1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 
 ## 9.0.0
 
