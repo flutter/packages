@@ -12,3 +12,4 @@
 * Adds implementation of availableCameras().
 * Implements camera preview, createCamera, initializeCamera, onCameraError, onDeviceOrientationChanged, and onCameraInitialized.
 * Adds integration test to plugin.
+* Implements image capture.

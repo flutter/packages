@@ -86,16 +86,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
     try {
       temporaryCaptureFile = File.createTempFile("CAP", ".jpg", outputDir);
     } catch (IOException | SecurityException e) {
-      // Send empty path because file could not be created to save image.
-      result.success("");
-
-      // Send error.
-      if (systemServicesFlutterApiImpl == null) {
-        systemServicesFlutterApiImpl =
-            cameraXProxy.createSystemServicesFlutterApiImpl(binaryMessenger);
-      }
-      systemServicesFlutterApiImpl.sendCameraError(
-          "Cannot create file to save captured image: " + e.getMessage(), reply -> {});
+      handleImageFileError(result, "Cannot create file to save captured image: " + e.getMessage());
       return;
     }
 
@@ -120,18 +111,23 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
 
       @Override
       public void onError(@NonNull ImageCaptureException exception) {
-        // Send empty path because image was not saved.
-        result.success("");
-
-        // Send error.
-        if (systemServicesFlutterApiImpl == null) {
-          systemServicesFlutterApiImpl =
-              cameraXProxy.createSystemServicesFlutterApiImpl(binaryMessenger);
-        }
-        systemServicesFlutterApiImpl.sendCameraError(
-            getOnImageSavedExceptionDescription(exception), reply -> {});
+        handleImageFileError(result, getOnImageSavedExceptionDescription(exception));
       }
     };
+  }
+
+  /** Handle errors with creating a file to save captured image or capturing an image. */
+  private void handleImageFileError(
+      @NonNull GeneratedCameraXLibrary.Result<String> result, @NonNull String errorDescription) {
+    // Send empty path because image was not saved.
+    result.success("");
+
+    // Send error.
+    if (systemServicesFlutterApiImpl == null) {
+      systemServicesFlutterApiImpl =
+          cameraXProxy.createSystemServicesFlutterApiImpl(binaryMessenger);
+    }
+    systemServicesFlutterApiImpl.sendCameraError(errorDescription, reply -> {});
   }
 
   /** Gets exception description for a failure with saving a captured image. */
