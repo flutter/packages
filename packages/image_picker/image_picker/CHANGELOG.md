@@ -1,3 +1,7 @@
+## 0.8.6+3
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.8.6+2
 
 * Updates `NSPhotoLibraryUsageDescription` description in README.

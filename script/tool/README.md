@@ -1,19 +1,27 @@
 # Flutter Plugin Tools
 
-This is a set of utilities used in the flutter/plugins and flutter/packages
-repositories. It is no longer explictily maintained as a general-purpose tool
-for multi-package repositories, so your mileage may vary if using it in other
-repositories.
+This is a set of utilities used in this repository, both for CI and for
+local development.
 
-Note: The commands in tools are designed to run at the root of the repository or `<repository-root>/packages/`.
+The tool is designed to be run at the root of the repository or `<repository-root>/packages/`.
 
 ## Getting Started
 
-In flutter/packages, the tool is run from source. In flutter/plugins, the
-[published version](https://pub.dev/packages/flutter_plugin_tools) is used
-instead.
+In flutter/packages, the tool is run from source.
 
-The commands in tools require the Flutter-bundled version of Dart to be the first `dart` loaded in the path.
+Set up:
+
+```sh
+cd script/tool && dart pub get && cd ../../
+```
+
+Run:
+
+```sh
+dart run script/tool/bin/flutter_plugin_tools.dart <args>
+```
+
+Many commands require the Flutter-bundled version of Dart to be the first `dart` in the path.
 
 ### Extra Setup
 
@@ -21,41 +29,10 @@ When updating sample code excerpts (`update-excerpts`) for the README.md files,
 there is some [extra setup for
 submodules](#update-readmemd-from-example-sources) that is necessary.
 
-### From Source (flutter/packages only)
-
-Set up:
-
-```sh
-cd ./script/tool && dart pub get && cd ../../
-```
-
-Run:
-
-```sh
-dart run ./script/tool/bin/flutter_plugin_tools.dart <args>
-```
-
-### Published Version
-
-Set up:
-
-```sh
-dart pub global activate flutter_plugin_tools
-```
-
-Run:
-
-```sh
-dart pub global run flutter_plugin_tools <args>
-```
-
 ## Commands
 
 Run with `--help` for a full list of commands and arguments, but the
 following shows a number of common commands being run for a specific package.
-
-All examples assume running from source; see above for running the
-published version instead.
 
 Most commands take a `--packages` argument to control which package(s) the
 command is targetting. An package name can be any of:
@@ -69,29 +46,29 @@ command is targetting. An package name can be any of:
 
 ```sh
 cd <repository root>
-dart run ./script/tool/bin/flutter_plugin_tools.dart format --packages package_name
+dart run script/tool/bin/flutter_plugin_tools.dart format --packages package_name
 ```
 
 ### Run the Dart Static Analyzer
 
 ```sh
 cd <repository root>
-dart run ./script/tool/bin/flutter_plugin_tools.dart analyze --packages package_name
+dart run script/tool/bin/flutter_plugin_tools.dart analyze --packages package_name
 ```
 
 ### Run Dart Unit Tests
 
 ```sh
 cd <repository root>
-dart run ./script/tool/bin/flutter_plugin_tools.dart test --packages package_name
+dart run script/tool/bin/flutter_plugin_tools.dart test --packages package_name
 ```
 
 ### Run Dart Integration Tests
 
 ```sh
 cd <repository root>
-dart run ./script/tool/bin/flutter_plugin_tools.dart build-examples --apk --packages package_name
-dart run ./script/tool/bin/flutter_plugin_tools.dart drive-examples --android --packages package_name
+dart run script/tool/bin/flutter_plugin_tools.dart build-examples --apk --packages package_name
+dart run script/tool/bin/flutter_plugin_tools.dart drive-examples --android --packages package_name
 ```
 
 Replace `--apk`/`--android` with the platform you want to test against
@@ -108,11 +85,11 @@ Examples:
 ```sh
 cd <repository root>
 # Run just unit tests for iOS and Android:
-dart run ./script/tool/bin/flutter_plugin_tools.dart native-test --ios --android --no-integration --packages package_name
+dart run script/tool/bin/flutter_plugin_tools.dart native-test --ios --android --no-integration --packages package_name
 # Run all tests for macOS:
-dart run ./script/tool/bin/flutter_plugin_tools.dart native-test --macos --packages package_name
+dart run script/tool/bin/flutter_plugin_tools.dart native-test --macos --packages package_name
 # Run all tests for Windows:
-dart run ./script/tool/bin/flutter_plugin_tools.dart native-test --windows --packages package_name
+dart run script/tool/bin/flutter_plugin_tools.dart native-test --windows --packages package_name
 ```
 
 ### Update README.md from Example Sources
@@ -123,7 +100,7 @@ before running this command.
 
 ```sh
 cd <repository root>
-dart run ./script/tool/bin/flutter_plugin_tools.dart update-excerpts --packages package_name
+dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts --packages package_name
 ```
 
 ### Update CHANGELOG and Version
@@ -138,7 +115,7 @@ code changes across many packages:
 
 ```sh
 cd <repository root>
-dart run ./script/tool/bin/flutter_plugin_tools.dart update-release-info \
+dart run script/tool/bin/flutter_plugin_tools.dart update-release-info \
   --version=minimal \
   --changelog="Fixes violations of new analysis option some_new_option."
 ```
@@ -153,7 +130,7 @@ changing the version.
 
 ### Publish a Release
 
-**Releases are automated for `flutter/plugins` and `flutter/packages`.**
+**Releases are automated for `flutter/packages`.**
 
 The manual procedure described here is _deprecated_, and should only be used when
 the automated process fails. Please, read
@@ -163,11 +140,11 @@ on the Flutter Wiki first.
 ```sh
 cd <path_to_repo>
 git checkout <commit_hash_to_publish>
-dart run ./script/tool/bin/flutter_plugin_tools.dart publish --packages <package>
+dart run script/tool/bin/flutter_plugin_tools.dart publish --packages <package>
 ```
 
 By default the tool tries to push tags to the `upstream` remote, but some
-additional settings can be configured. Run `dart run ./script/tool/bin/flutter_plugin_tools.dart
+additional settings can be configured. Run `dart run script/tool/bin/flutter_plugin_tools.dart
 publish --help` for more usage information.
 
 The tool wraps `pub publish` for pushing the package to pub, and then will

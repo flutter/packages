@@ -1,3 +1,7 @@
+## 3.1.1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 3.1.0
 
 * Adds support to access native `WKWebView`.
