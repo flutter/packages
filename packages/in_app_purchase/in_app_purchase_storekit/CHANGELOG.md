@@ -1,3 +1,7 @@
+## 0.3.6+2
+
+* Adds a null check, to prevent a new diagnostic.
+
 ## 0.3.6+1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
@@ -8,7 +12,7 @@
 
 ## 0.3.5+2
 
-* Fix a crash when `appStoreReceiptURL` is nil.
+* Fixes a crash when `appStoreReceiptURL` is nil.
 
 ## 0.3.5+1
 
