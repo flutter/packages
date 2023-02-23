@@ -1100,6 +1100,156 @@ public class GeneratedCameraXLibrary {
     }
   }
 
+  private static class ImageCaptureHostApiCodec extends StandardMessageCodec {
+    public static final ImageCaptureHostApiCodec INSTANCE = new ImageCaptureHostApiCodec();
+
+    private ImageCaptureHostApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return ResolutionInfo.fromMap((Map<String, Object>) readValue(buffer));
+
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(ByteArrayOutputStream stream, Object value) {
+      if (value instanceof ResolutionInfo) {
+        stream.write(128);
+        writeValue(stream, ((ResolutionInfo) value).toMap());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface ImageCaptureHostApi {
+    void create(
+        @NonNull Long identifier,
+        @Nullable Long flashMode,
+        @Nullable ResolutionInfo targetResolution);
+
+    void setFlashMode(@NonNull Long identifier, @NonNull Long flashMode);
+
+    void takePicture(@NonNull Long identifier, Result<String> result);
+
+    /** The codec used by ImageCaptureHostApi. */
+    static MessageCodec<Object> getCodec() {
+      return ImageCaptureHostApiCodec.INSTANCE;
+    }
+
+    /**
+     * Sets up an instance of `ImageCaptureHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(BinaryMessenger binaryMessenger, ImageCaptureHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.ImageCaptureHostApi.create", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                Map<String, Object> wrapped = new HashMap<>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  Number identifierArg = (Number) args.get(0);
+                  if (identifierArg == null) {
+                    throw new NullPointerException("identifierArg unexpectedly null.");
+                  }
+                  Number flashModeArg = (Number) args.get(1);
+                  ResolutionInfo targetResolutionArg = (ResolutionInfo) args.get(2);
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (flashModeArg == null) ? null : flashModeArg.longValue(),
+                      targetResolutionArg);
+                  wrapped.put("result", null);
+                } catch (Error | RuntimeException exception) {
+                  wrapped.put("error", wrapError(exception));
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.ImageCaptureHostApi.setFlashMode", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                Map<String, Object> wrapped = new HashMap<>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  Number identifierArg = (Number) args.get(0);
+                  if (identifierArg == null) {
+                    throw new NullPointerException("identifierArg unexpectedly null.");
+                  }
+                  Number flashModeArg = (Number) args.get(1);
+                  if (flashModeArg == null) {
+                    throw new NullPointerException("flashModeArg unexpectedly null.");
+                  }
+                  api.setFlashMode(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (flashModeArg == null) ? null : flashModeArg.longValue());
+                  wrapped.put("result", null);
+                } catch (Error | RuntimeException exception) {
+                  wrapped.put("error", wrapError(exception));
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.ImageCaptureHostApi.takePicture", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                Map<String, Object> wrapped = new HashMap<>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  Number identifierArg = (Number) args.get(0);
+                  if (identifierArg == null) {
+                    throw new NullPointerException("identifierArg unexpectedly null.");
+                  }
+                  Result<String> resultCallback =
+                      new Result<String>() {
+                        public void success(String result) {
+                          wrapped.put("result", result);
+                          reply.reply(wrapped);
+                        }
+
+                        public void error(Throwable error) {
+                          wrapped.put("error", wrapError(error));
+                          reply.reply(wrapped);
+                        }
+                      };
+
+                  api.takePicture(
+                      (identifierArg == null) ? null : identifierArg.longValue(), resultCallback);
+                } catch (Error | RuntimeException exception) {
+                  wrapped.put("error", wrapError(exception));
+                  reply.reply(wrapped);
+                }
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+
   private static Map<String, Object> wrapError(Throwable exception) {
     Map<String, Object> errorMap = new HashMap<>();
     errorMap.put("message", exception.toString());

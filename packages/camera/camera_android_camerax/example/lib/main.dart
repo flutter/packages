@@ -505,7 +505,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         IconButton(
           icon: const Icon(Icons.camera_alt),
           color: Colors.blue,
-          onPressed: () {}, // TODO(camsim99): Add functionality back here.
+          onPressed: cameraController != null &&
+                  cameraController.value.isInitialized &&
+                  !cameraController.value.isRecordingVideo
+              ? onTakePictureButtonPressed
+              : null,
         ),
         IconButton(
           icon: const Icon(Icons.videocam),

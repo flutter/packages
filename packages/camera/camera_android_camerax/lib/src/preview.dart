@@ -84,7 +84,8 @@ class PreviewHostApiImpl extends PreviewHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates a [Preview] with the target rotation provided if specified.
+  /// Creates a [Preview] with the target rotation and target resolution if
+  /// specified.
   void createFromInstance(
       Preview instance, int? targetRotation, ResolutionInfo? targetResolution) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
@@ -92,7 +93,8 @@ class PreviewHostApiImpl extends PreviewHostApi {
       return Preview.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
-          targetRotation: original.targetRotation);
+          targetRotation: original.targetRotation,
+          targetResolution: original.targetResolution);
     });
     create(identifier, targetRotation, targetResolution);
   }

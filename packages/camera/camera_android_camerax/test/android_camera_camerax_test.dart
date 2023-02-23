@@ -10,6 +10,7 @@ import 'package:camera_android_camerax/src/camera.dart';
 import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camera_selector.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
+import 'package:camera_android_camerax/src/image_capture.dart';
 import 'package:camera_android_camerax/src/preview.dart';
 import 'package:camera_android_camerax/src/process_camera_provider.dart';
 import 'package:camera_android_camerax/src/system_services.dart';
@@ -27,6 +28,7 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
   MockSpec<CameraSelector>(),
+  MockSpec<ImageCapture>(),
   MockSpec<Preview>(),
   MockSpec<ProcessCameraProvider>(),
 ])
@@ -363,6 +365,28 @@ void main() {
             const AsyncSnapshot<void>.withData(ConnectionState.done, null))
         as Texture;
     expect(previewTexture.textureId, equals(textureId));
+  });
+
+  test(
+      'takePicture binds and unbinds ImageCapture to lifecycle and makes call to take a picture',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const String testPicturePath = "test/absolute/path/to/picture";
+
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.cameraSelector = MockCameraSelector();
+    camera.imageCapture = MockImageCapture();
+
+    when(camera.imageCapture!.takePicture())
+        .thenAnswer((_) async => testPicturePath);
+
+    XFile imageFile = await camera.takePicture(3);
+
+    verify(camera.processCameraProvider!.bindToLifecycle(
+        camera.cameraSelector!, <UseCase>[camera.imageCapture!]));
+    verify(
+        camera.processCameraProvider!.unbind(<UseCase>[camera.imageCapture!]));
+    expect(imageFile.path, equals(testPicturePath));
   });
 }
 

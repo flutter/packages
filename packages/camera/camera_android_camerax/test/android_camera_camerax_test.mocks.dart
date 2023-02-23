@@ -9,14 +9,15 @@ import 'package:camera_android_camerax/src/camera.dart' as _i3;
 import 'package:camera_android_camerax/src/camera_info.dart' as _i7;
 import 'package:camera_android_camerax/src/camera_selector.dart' as _i9;
 import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i2;
-import 'package:camera_android_camerax/src/preview.dart' as _i10;
+import 'package:camera_android_camerax/src/image_capture.dart' as _i10;
+import 'package:camera_android_camerax/src/preview.dart' as _i11;
 import 'package:camera_android_camerax/src/process_camera_provider.dart'
-    as _i11;
-import 'package:camera_android_camerax/src/use_case.dart' as _i12;
+    as _i12;
+import 'package:camera_android_camerax/src/use_case.dart' as _i13;
 import 'package:flutter/foundation.dart' as _i6;
 import 'package:flutter/services.dart' as _i5;
 import 'package:flutter/src/widgets/framework.dart' as _i4;
-import 'package:flutter/src/widgets/notification_listener.dart' as _i13;
+import 'package:flutter/src/widgets/notification_listener.dart' as _i14;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -135,10 +136,41 @@ class MockCameraSelector extends _i1.Mock implements _i9.CameraSelector {
       ) as _i8.Future<List<_i7.CameraInfo>>);
 }
 
+/// A class which mocks [ImageCapture].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockImageCapture extends _i1.Mock implements _i10.ImageCapture {
+  @override
+  set flashMode(int? _flashMode) => super.noSuchMethod(
+        Invocation.setter(
+          #flashMode,
+          _flashMode,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void setFlashMode(int? newFlashMode) => super.noSuchMethod(
+        Invocation.method(
+          #setFlashMode,
+          [newFlashMode],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  _i8.Future<String> takePicture() => (super.noSuchMethod(
+        Invocation.method(
+          #takePicture,
+          [],
+        ),
+        returnValue: _i8.Future<String>.value(''),
+        returnValueForMissingStub: _i8.Future<String>.value(''),
+      ) as _i8.Future<String>);
+}
+
 /// A class which mocks [Preview].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPreview extends _i1.Mock implements _i10.Preview {
+class MockPreview extends _i1.Mock implements _i11.Preview {
   @override
   _i8.Future<int> setSurfaceProvider() => (super.noSuchMethod(
         Invocation.method(
@@ -184,7 +216,7 @@ class MockPreview extends _i1.Mock implements _i10.Preview {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockProcessCameraProvider extends _i1.Mock
-    implements _i11.ProcessCameraProvider {
+    implements _i12.ProcessCameraProvider {
   @override
   _i8.Future<List<_i7.CameraInfo>> getAvailableCameraInfos() =>
       (super.noSuchMethod(
@@ -199,7 +231,7 @@ class MockProcessCameraProvider extends _i1.Mock
   @override
   _i8.Future<_i3.Camera> bindToLifecycle(
     _i9.CameraSelector? cameraSelector,
-    List<_i12.UseCase>? useCases,
+    List<_i13.UseCase>? useCases,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -231,7 +263,7 @@ class MockProcessCameraProvider extends _i1.Mock
         )),
       ) as _i8.Future<_i3.Camera>);
   @override
-  void unbind(List<_i12.UseCase>? useCases) => super.noSuchMethod(
+  void unbind(List<_i13.UseCase>? useCases) => super.noSuchMethod(
         Invocation.method(
           #unbind,
           [useCases],
@@ -295,7 +327,7 @@ class MockBuildContext extends _i1.Mock implements _i4.BuildContext {
         ),
       ) as _i4.InheritedWidget);
   @override
-  void visitAncestorElements(bool Function(_i4.Element)? visitor) =>
+  void visitAncestorElements(_i4.ConditionalElementVisitor? visitor) =>
       super.noSuchMethod(
         Invocation.method(
           #visitAncestorElements,
@@ -312,7 +344,7 @@ class MockBuildContext extends _i1.Mock implements _i4.BuildContext {
         returnValueForMissingStub: null,
       );
   @override
-  void dispatchNotification(_i13.Notification? notification) =>
+  void dispatchNotification(_i14.Notification? notification) =>
       super.noSuchMethod(
         Invocation.method(
           #dispatchNotification,

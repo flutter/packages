@@ -12,6 +12,7 @@ import 'camera.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camerax_library.g.dart';
+import 'image_capture.dart';
 import 'preview.dart';
 import 'process_camera_provider.dart';
 import 'surface.dart';
@@ -45,10 +46,18 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   bool _previewIsPaused = false;
 
+  /// The [ImageCapture] instance that can be configured to capture a still image.
+  @visibleForTesting
+  ImageCapture? imageCapture;
+
   /// The [CameraSelector] used to configure the [processCameraProvider] to use
   /// the desired camera.
   @visibleForTesting
   CameraSelector? cameraSelector;
+
+  /// The resolution preset used to create a camera that should be used for
+  /// capturing still images and recording video.
+  ResolutionPreset? _resolutionPreset;
 
   /// The controller we need to broadcast the different camera events.
   ///
@@ -141,6 +150,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
 
     // Configure Preview instance and bind to ProcessCameraProvider.
+    _resolutionPreset = resolutionPreset;
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
     final ResolutionInfo? targetResolution =
@@ -270,6 +280,28 @@ class AndroidCameraCameraX extends CameraPlatform {
         });
   }
 
+  /// Captures an image and returns the file where it was saved.
+  ///
+  /// [cameraId] is not used.
+  @override
+  Future<XFile> takePicture(int cameraId) async {
+    assert(processCameraProvider != null);
+    assert(cameraSelector != null);
+
+    final ResolutionInfo? targetResolution =
+        _getTargetResolutionForImageCapture(_resolutionPreset);
+    // TODO(camsim99): Add support for flash mode configuration.
+    // https://github.com/flutter/flutter/issues/120715
+    imageCapture ??=
+        ImageCapture(flashMode: null, targetResolution: targetResolution);
+    camera = await processCameraProvider!
+        .bindToLifecycle(cameraSelector!, <UseCase>[imageCapture!]);
+    String picturePath = await imageCapture!.takePicture();
+    processCameraProvider!.unbind(<UseCase>[imageCapture!]);
+
+    return XFile(picturePath);
+  }
+
   // Methods for binding UseCases to the lifecycle of the camera controlled
   // by a ProcessCameraProvider instance:
 
@@ -343,6 +375,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     return null;
   }
 
+  /// Returns [ResolutionInfo] that maps to the specified resolution preset for
+  /// image capture.
+  ResolutionInfo? _getTargetResolutionForImageCapture(
+      ResolutionPreset? resolution) {
+    // TODO(camsim99): Implement resolution configuration.
+    // https://github.com/flutter/flutter/issues/120462
+  }
+
   // Methods for calls that need to be tested:
 
   /// Requests camera permissions.
@@ -378,5 +418,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   Preview createPreview(int targetRotation, ResolutionInfo? targetResolution) {
     return Preview(
         targetRotation: targetRotation, targetResolution: targetResolution);
+  }
+
+  /// Returns an [ImageCapture] configured with specified flash mode and
+  /// target resolution.
+  @visibleForTesting
+  ImageCapture createImageCapture(
+      int? flashMode, ResolutionInfo? targetResolution) {
+    return ImageCapture(
+        flashMode: flashMode, targetResolution: targetResolution);
   }
 }

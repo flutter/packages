@@ -473,3 +473,101 @@ abstract class TestPreviewHostApi {
     }
   }
 }
+
+class _TestImageCaptureHostApiCodec extends StandardMessageCodec {
+  const _TestImageCaptureHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ResolutionInfo) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return ResolutionInfo.decode(readValue(buffer)!);
+
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class TestImageCaptureHostApi {
+  static const MessageCodec<Object?> codec = _TestImageCaptureHostApiCodec();
+
+  void create(int identifier, int? flashMode, ResolutionInfo? targetResolution);
+  void setFlashMode(int identifier, int flashMode);
+  Future<String> takePicture(int identifier);
+  static void setup(TestImageCaptureHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ImageCaptureHostApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.create was null, expected non-null int.');
+          final int? arg_flashMode = (args[1] as int?);
+          final ResolutionInfo? arg_targetResolution =
+              (args[2] as ResolutionInfo?);
+          api.create(arg_identifier!, arg_flashMode, arg_targetResolution);
+          return <Object?, Object?>{};
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ImageCaptureHostApi.setFlashMode', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.setFlashMode was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.setFlashMode was null, expected non-null int.');
+          final int? arg_flashMode = (args[1] as int?);
+          assert(arg_flashMode != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.setFlashMode was null, expected non-null int.');
+          api.setFlashMode(arg_identifier!, arg_flashMode!);
+          return <Object?, Object?>{};
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ImageCaptureHostApi.takePicture', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.takePicture was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.takePicture was null, expected non-null int.');
+          final String output = await api.takePicture(arg_identifier!);
+          return <Object?, Object?>{'result': output};
+        });
+      }
+    }
+  }
+}

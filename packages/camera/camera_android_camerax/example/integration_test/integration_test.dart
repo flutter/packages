@@ -25,4 +25,25 @@ void main() {
       expect(cameraDescription.sensorOrientation, anyOf(0, 90, 180, 270));
     }
   });
+
+  testWidgets('takePictures stores a valid image in memory',
+      (WidgetTester tester) async {
+    final List<CameraDescription> availableCameras =
+        await CameraPlatform.instance.availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+    for (final CameraDescription cameraDescription in availableCameras) {
+      final CameraController controller = CameraController(cameraDescription);
+      // Take Picture
+      final XFile file = await controller.takePicture();
+
+      // Try loading picture
+      final File fileImage = File(file.path);
+      final Image image =
+          await decodeImageFromList(fileImage.readAsBytesSync());
+
+      expect(image, isNotNull);
+    }
+  });
 }
