@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Adds Support for ShellRoute
+
 ## 1.1.1
 
 * Support for the generation of the pushReplacement method has been added.
