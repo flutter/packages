@@ -610,7 +610,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             if (method.arguments.isNotEmpty) {
               indent.writeln(
                   'ArrayList<Object> args = (ArrayList<Object>) message;');
-              indent.writeln('assert args != null;');
+              indent.write('if (args == null) ');
+              indent.addScoped('{', '}', () {
+                indent.writeln('reply.reply(wrapError(new IllegalArgumentException("Arguments expected but none received.")));');
+                indent.writeln('return;');
+              });
               enumerate(method.arguments, (int index, NamedType arg) {
                 // The StandardMessageCodec can give us [Integer, Long] for
                 // a Dart 'int'.  To keep things simple we just use 64bit
@@ -633,7 +637,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                   indent.write('if ($argName == null) ');
                   indent.addScoped('{', '}', () {
                     indent.writeln(
-                        'throw new NullPointerException("$argName unexpectedly null.");');
+                        'reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));');
+                    indent.writeln('return;');
                   });
                 }
                 methodArgument.add(argExpression);
