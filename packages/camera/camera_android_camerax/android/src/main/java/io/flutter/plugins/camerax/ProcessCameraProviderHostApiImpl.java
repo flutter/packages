@@ -121,8 +121,7 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
     }
 
     Camera camera =
-        processCameraProvider.bindToLifecycle(
-            (LifecycleOwner) lifecycleOwner, cameraSelector, useCases);
+        processCameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, useCases);
 
     final CameraFlutterApiImpl cameraFlutterApi =
         new CameraFlutterApiImpl(binaryMessenger, instanceManager);

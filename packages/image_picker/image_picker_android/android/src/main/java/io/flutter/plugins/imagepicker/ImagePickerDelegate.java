@@ -29,12 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-enum CameraDevice {
-  REAR,
-
-  FRONT
-}
-
 /**
  * A delegate class doing the heavy lifting for the plugin.
  *
@@ -82,6 +76,11 @@ public class ImagePickerDelegate
   @VisibleForTesting static final int REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY = 2352;
   @VisibleForTesting static final int REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA = 2353;
   @VisibleForTesting static final int REQUEST_CAMERA_VIDEO_PERMISSION = 2355;
+
+  public enum CameraDevice {
+    REAR,
+    FRONT
+  }
 
   @VisibleForTesting final String fileProviderName;
 
@@ -219,21 +218,21 @@ public class ImagePickerDelegate
   void retrieveLostImage(MethodChannel.Result result) {
     Map<String, Object> resultMap = cache.getCacheMap();
     @SuppressWarnings("unchecked")
-    ArrayList<String> pathList = (ArrayList<String>) resultMap.get(cache.MAP_KEY_PATH_LIST);
+    ArrayList<String> pathList = (ArrayList<String>) resultMap.get(ImagePickerCache.MAP_KEY_PATH_LIST);
     ArrayList<String> newPathList = new ArrayList<>();
     if (pathList != null) {
       for (String path : pathList) {
-        Double maxWidth = (Double) resultMap.get(cache.MAP_KEY_MAX_WIDTH);
-        Double maxHeight = (Double) resultMap.get(cache.MAP_KEY_MAX_HEIGHT);
+        Double maxWidth = (Double) resultMap.get(ImagePickerCache.MAP_KEY_MAX_WIDTH);
+        Double maxHeight = (Double) resultMap.get(ImagePickerCache.MAP_KEY_MAX_HEIGHT);
         int imageQuality =
-            resultMap.get(cache.MAP_KEY_IMAGE_QUALITY) == null
+            resultMap.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY) == null
                 ? 100
-                : (int) resultMap.get(cache.MAP_KEY_IMAGE_QUALITY);
+                : (int) resultMap.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);
 
         newPathList.add(imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality));
       }
-      resultMap.put(cache.MAP_KEY_PATH_LIST, newPathList);
-      resultMap.put(cache.MAP_KEY_PATH, newPathList.get(newPathList.size() - 1));
+      resultMap.put(ImagePickerCache.MAP_KEY_PATH_LIST, newPathList);
+      resultMap.put(ImagePickerCache.MAP_KEY_PATH, newPathList.get(newPathList.size() - 1));
     }
     if (resultMap.isEmpty()) {
       result.success(null);
