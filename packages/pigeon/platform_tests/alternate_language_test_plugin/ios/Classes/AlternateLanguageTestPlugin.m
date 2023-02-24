@@ -170,7 +170,8 @@
   completion([FlutterError errorWithCode:@"An error" message:nil details:nil]);
 }
 
-- (void)throwAsyncFlutterErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
+- (void)throwAsyncFlutterErrorWithCompletion:(void (^)(id _Nullable,
+                                                       FlutterError *_Nullable))completion {
   completion(nil, [FlutterError errorWithCode:@"code" message:@"message" details:@"details"]);
 }
 

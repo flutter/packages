@@ -612,7 +612,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                   'ArrayList<Object> args = (ArrayList<Object>) message;');
               indent.write('if (args == null) ');
               indent.addScoped('{', '}', () {
-                indent.writeln('reply.reply(wrapError(new IllegalArgumentException("Arguments expected but none received.")));');
+                indent.writeln(
+                    'reply.reply(wrapError(new IllegalArgumentException("Arguments expected but none received.")));');
                 indent.writeln('return;');
               });
               enumerate(method.arguments, (int index, NamedType arg) {
