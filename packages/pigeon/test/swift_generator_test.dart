@@ -412,7 +412,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: [AnyHashable: Any?]? = nil'));
+    expect(code, contains('var field1: [AnyHashable: Any]? = nil'));
   });
 
   test('gen nested', () {

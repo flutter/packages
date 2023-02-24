@@ -693,7 +693,7 @@ String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
     if (type.baseName == 'List') {
       return '[Any]';
     } else if (type.baseName == 'Map') {
-      return '[AnyHashable: Any?]';
+      return '[AnyHashable: Any]';
     } else {
       return 'Any';
     }

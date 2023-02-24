@@ -51,7 +51,7 @@ struct AllTypes {
   var a8ByteArray: FlutterStandardTypedData
   var aFloatArray: FlutterStandardTypedData
   var aList: [Any]
-  var aMap: [AnyHashable: Any?]
+  var aMap: [AnyHashable: Any]
   var anEnum: AnEnum
   var aString: String
 
@@ -64,7 +64,7 @@ struct AllTypes {
     let a8ByteArray = list[5] as! FlutterStandardTypedData
     let aFloatArray = list[6] as! FlutterStandardTypedData
     let aList = list[7] as! [Any]
-    let aMap = list[8] as! [AnyHashable: Any?]
+    let aMap = list[8] as! [AnyHashable: Any]
     let anEnum = AnEnum(rawValue: list[9] as! Int)!
     let aString = list[10] as! String
 
@@ -109,7 +109,7 @@ struct AllNullableTypes {
   var aNullable8ByteArray: FlutterStandardTypedData? = nil
   var aNullableFloatArray: FlutterStandardTypedData? = nil
   var aNullableList: [Any]? = nil
-  var aNullableMap: [AnyHashable: Any?]? = nil
+  var aNullableMap: [AnyHashable: Any]? = nil
   var nullableNestedList: [[Bool?]?]? = nil
   var nullableMapWithAnnotations: [String?: String?]? = nil
   var nullableMapWithObject: [String?: Any?]? = nil
@@ -125,7 +125,7 @@ struct AllNullableTypes {
     let aNullable8ByteArray = list[5] as! FlutterStandardTypedData? 
     let aNullableFloatArray = list[6] as! FlutterStandardTypedData? 
     let aNullableList = list[7] as! [Any]? 
-    let aNullableMap = list[8] as! [AnyHashable: Any?]? 
+    let aNullableMap = list[8] as! [AnyHashable: Any]? 
     let nullableNestedList = list[9] as! [[Bool?]?]? 
     let nullableMapWithAnnotations = list[10] as! [String?: String?]? 
     let nullableMapWithObject = list[11] as! [String?: Any?]? 
