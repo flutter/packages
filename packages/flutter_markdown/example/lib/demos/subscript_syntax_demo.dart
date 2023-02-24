@@ -148,6 +148,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
 
   @override
   Widget visitElementAfter(
+    BuildContext context,
     md.Element element,
     TextStyle? preferredStyle,
     TextStyle? parentStyle,

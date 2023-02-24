@@ -74,6 +74,13 @@ class _InlineElement {
 
 /// A delegate used by [MarkdownBuilder] to control the widgets it creates.
 abstract class MarkdownBuilderDelegate {
+  /// Returns the [BuildContext] of the [MarkdownWidget].
+  ///
+  /// The state will be passed down to the
+  /// [MarkdownElementBuilder.visitElementBefore] method and allows elements to
+  /// access the context.
+  BuildContext get context;
+
   /// Returns a gesture recognizer to use for an `a` element with the given
   /// text, `href` attribute, and title.
   GestureRecognizer createLink(String text, String? href, String title);
@@ -452,6 +459,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
       if (builders.containsKey(tag)) {
         final Widget? child = builders[tag]!.visitElementAfter(
+          delegate.context,
           element,
           styleSheet.styles[tag],
           parent.style,

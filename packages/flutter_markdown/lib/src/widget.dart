@@ -81,6 +81,7 @@ abstract class MarkdownElementBuilder {
   ///
   /// If you needn't build a widget, return null.
   Widget? visitElementAfter(
+    BuildContext context,
     md.Element element,
     TextStyle? preferredStyle,
     TextStyle? parentStyle,

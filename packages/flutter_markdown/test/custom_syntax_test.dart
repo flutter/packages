@@ -141,7 +141,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
   ];
 
   @override
-  Widget visitElementAfter(md.Element element, _, __) {
+  Widget visitElementAfter(BuildContext context, md.Element element, _, __) {
     // We don't currently have a way to control the vertical alignment of text spans.
     // See https://github.com/flutter/flutter/issues/10906#issuecomment-385723664
     final String textContent = element.textContent;
@@ -172,7 +172,7 @@ class WikilinkSyntax extends md.InlineSyntax {
 
 class WikilinkBuilder extends MarkdownElementBuilder {
   @override
-  Widget visitElementAfter(md.Element element, _, __) {
+  Widget visitElementAfter(BuildContext context, md.Element element, _, __) {
     return RichText(
       text: TextSpan(
           text: element.textContent,
@@ -197,7 +197,7 @@ class ContainerSyntax extends md.InlineSyntax {
 
 class ContainerBuilder extends MarkdownElementBuilder {
   @override
-  Widget? visitElementAfter(md.Element element, _, __) {
+  Widget? visitElementAfter(BuildContext context, md.Element element, _, __) {
     return RichText(
       text: TextSpan(
         children: <InlineSpan>[
@@ -212,7 +212,7 @@ class ContainerBuilder extends MarkdownElementBuilder {
 
 class ContainerBuilder2 extends MarkdownElementBuilder {
   @override
-  Widget? visitElementAfter(md.Element element, _, __) {
+  Widget? visitElementAfter(BuildContext context, md.Element element, _, __) {
     return RichText(
       text: TextSpan(
         children: <InlineSpan>[
