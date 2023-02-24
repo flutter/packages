@@ -1,6 +1,5 @@
 ## 9.0.1
-
-* Standardize Host api async error handling
+* Updates links for the merge of flutter/plugins into flutter/packages.
 
 ## 9.0.0
 
