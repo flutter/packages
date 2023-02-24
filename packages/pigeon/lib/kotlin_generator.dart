@@ -91,7 +91,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln('import android.util.Log');
     indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
-    indent.writeln('import io.flutter.plugin.common.FlutterException');
     indent.writeln('import io.flutter.plugin.common.MessageCodec');
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
     indent.writeln('import java.io.ByteArrayOutputStream');
@@ -397,6 +396,17 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     });
   }
 
+  void _writeHostApiError(Indent indent, Api api) {
+    indent.newln();
+    indent.write('class ${api.name}Error ');
+    indent.addScoped('(', ')', () {
+      indent.writeln('val code: String,');
+      indent.writeln('override val message: String? = null,');
+      indent.writeln('val details: Any? = null');
+    }, addTrailingNewline: false);
+    indent.add(' : Throwable()');
+  }
+
   /// Write the kotlin code that represents a host [Api], [api].
   /// Example:
   /// interface Foo {
@@ -405,6 +415,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   ///     fun setUp(binaryMessenger: BinaryMessenger, api: Api) {...}
   ///   }
   /// }
+  ///
   @override
   void writeHostApi(
     KotlinOptions generatorOptions,
@@ -413,6 +424,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Api api,
   ) {
     assert(api.location == ApiLocation.host);
+
+    _writeHostApiError(indent, api);
+    indent.newln();
 
     final String apiName = api.name;
 
@@ -530,9 +544,17 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                         : _nullsafeKotlinTypeForDartType(method.returnType);
                     indent.addScoped('{ result: Result<$resultType> ->', '}',
                         () {
-                      indent.writeln('val error = result.exceptionOrNull()');
-                      indent.writeScoped('if (error != null) {', '}', () {
-                        indent.writeln('reply.reply(wrapError(error))');
+                      indent
+                          .writeln('val exception = result.exceptionOrNull()');
+                      indent.writeScoped('if (exception != null) {', '}', () {
+                        indent.write('if (exception is ${apiName}Error) ');
+                        indent.addScoped('{', '}', () {
+                          indent.writeln(
+                              'reply.reply(wrapError(exception.code, exception.message, exception.details))');
+                        }, addTrailingNewline: false);
+                        indent.addScoped(' else {', '}', () {
+                          indent.writeln('reply.reply(wrapError(exception))');
+                        });
                       }, addTrailingNewline: false);
                       indent.addScoped(' else {', '}', () {
                         if (method.returnType.isVoid) {
@@ -553,9 +575,16 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                         indent.writeln('wrapped = listOf<Any?>($call)');
                       }
                     }, addTrailingNewline: false);
-                    indent.add(' catch (exception: Error) ');
+                    indent.add(' catch (exception: Throwable) ');
                     indent.addScoped('{', '}', () {
-                      indent.writeln('wrapped = wrapError(exception)');
+                      indent.write('if (exception is ${apiName}Error) ');
+                      indent.addScoped('{', '}', () {
+                        indent.writeln(
+                            'wrapped = wrapError(exception.code, exception.message, exception.details)');
+                      }, addTrailingNewline: false);
+                      indent.addScoped(' else {', '}', () {
+                        indent.writeln('wrapped = wrapError(exception)');
+                      });
                     });
                     indent.writeln('reply.reply(wrapped)');
                   }
@@ -630,15 +659,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.newln();
     indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
-      indent.write('if (exception is FlutterException) ');
-      indent.addScoped('{', '}', () {
-        indent.write('return ');
-        indent.addScoped('listOf(', ')', () {
-          indent.writeln('exception.code,');
-          indent.writeln('exception.message,');
-          indent.writeln('exception.details');
-        });
-      });
       indent.write('return ');
       indent.addScoped('listOf(', ')', () {
         indent.writeln('exception.javaClass.simpleName,');
@@ -646,6 +666,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln(
             '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
       });
+    });
+    indent.newln();
+    indent.write(
+        'private fun wrapError(code: String, message: String?, details: Any?): List<Any?> ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('return listOf(code, message, details)');
     });
   }
 

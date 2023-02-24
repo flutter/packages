@@ -238,8 +238,34 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       expect(() async {
-        await api.throwAsyncErrorFromVoid();
+        await api.throwErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
+    });
+
+    testWidgets('flutter errors are returned correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(
+          () => api.throwFlutterError(),
+          throwsA((dynamic e) =>
+              e is PlatformException &&
+              e.code == 'code' &&
+              e.message == 'message' &&
+              e.details == 'details'));
+    });
+
+    testWidgets('flutter errors are returned from void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(
+          () => api.throwFlutterErrorFromVoid(),
+          throwsA((dynamic e) =>
+              e is PlatformException &&
+              e.code == 'code' &&
+              e.message == 'message' &&
+              e.details == 'details'));
     });
 
     testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
@@ -565,6 +591,33 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.throwAsyncErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
+    });
+
+    testWidgets(
+        'async flutter errors are returned from non void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(
+          () => api.throwAsyncFlutterError(),
+          throwsA((dynamic e) =>
+              e is PlatformException &&
+              e.code == 'code' &&
+              e.message == 'message' &&
+              e.details == 'details'));
+    });
+
+    testWidgets('async flutter errors are returned from void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(
+          () => api.throwAsyncFlutterErrorFromVoid(),
+          throwsA((dynamic e) =>
+              e is PlatformException &&
+              e.code == 'code' &&
+              e.message == 'message' &&
+              e.details == 'details'));
     });
 
     testWidgets('all datatypes async serialize and deserialize correctly',

@@ -190,8 +190,12 @@ void main() {
             val inputArg = args[0] as Input
             try {
               wrapped = listOf<Any?>(api.doSomething(inputArg))
-            } catch (exception: Error) {
-              wrapped = wrapError(exception)
+            } catch (exception: Throwable) {
+              if (exception is ApiError) {
+                wrapped = wrapError(exception.code, exception.message, exception.details)
+              } else {
+                wrapped = wrapError(exception)
+              }
             }
             reply.reply(wrapped)
           }
@@ -1330,9 +1334,13 @@ void main() {
     expect(code, contains(' : StandardMessageCodec() '));
   });
 
-  test('wrap error returns flutter exception appropriately', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[]);
+  test('creates api specific error class for custom errors', () {
+    final Method method = Method(
+        name: 'doSomething',
+        returnType: const TypeDeclaration.voidDeclaration(),
+        arguments: <NamedType>[]);
+    final Api api = Api(
+        name: 'SomeApi', location: ApiLocation.host, methods: <Method>[method]);
     final Root root = Root(
       apis: <Api>[api],
       classes: <Class>[],
@@ -1343,7 +1351,8 @@ void main() {
     const KotlinGenerator generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('if (exception is FlutterException)'));
+    expect(code, contains('class SomeApiError'));
+    expect(code, contains('if (exception is SomeApiError)'));
     expect(code, contains('exception.code,'));
     expect(code, contains('exception.message,'));
     expect(code, contains('exception.details'));

@@ -105,6 +105,12 @@ abstract class HostIntegrationCoreApi {
   /// Responds with an error from an async void function.
   void throwErrorFromVoid();
 
+  /// Returns a flutter error, to test error handling.
+  Object? throwFlutterError();
+
+  /// Responds with a flutter error from an async void function.
+  void throwFlutterErrorFromVoid();
+
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
   @SwiftFunction('echo(_:)')
@@ -272,6 +278,14 @@ abstract class HostIntegrationCoreApi {
   /// Responds with an error from an async void function.
   @async
   void throwAsyncErrorFromVoid();
+
+  /// Responds with a fluttererror from an async function returning a value.
+  @async
+  Object? throwAsyncFlutterError();
+
+  /// Responds with a flutter error from an async void function.
+  @async
+  void throwAsyncFlutterErrorFromVoid();
 
   /// Returns the passed object, to test async serialization and deserialization.
   @async

@@ -55,6 +55,16 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @Nullable Object throwFlutterError() {
+    throw new CoreTests.ApiError("code", "message", "details");
+  }
+
+  @Override
+  public void throwFlutterErrorFromVoid() {
+    throw new CoreTests.ApiError("code", "message", "details");
+  }
+
+  @Override
   public Long echoInt(@NonNull Long anInt) {
     return anInt;
   }
@@ -174,6 +184,16 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public void throwAsyncErrorFromVoid(Result<Void> result) {
     result.error(new RuntimeException("An error"));
+  }
+
+  @Override
+  public void throwAsyncFlutterError(Result<Object> result) {
+    result.error(new CoreTests.ApiError("code", "message", "details"));
+  }
+
+  @Override
+  public void throwAsyncFlutterErrorFromVoid(Result<Void> result) {
+    result.error(new CoreTests.ApiError("code", "message", "details"));
   }
 
   @Override
