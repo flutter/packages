@@ -216,13 +216,6 @@ allprojects {
       writeFakeBuildGradle(plugin.getExamples().first, 'plugin1',
           warningsConfigured: false);
 
-      final String gradlewPath = plugin
-          .getExamples()
-          .first
-          .platformDirectory(FlutterPlatform.android)
-          .childFile('gradlew')
-          .path;
-
       Error? commandError;
       final List<String> output = await runCapturingPrint(
           runner, <String>['lint-android'], errorHandler: (Error e) {
