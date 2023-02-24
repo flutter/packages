@@ -45,6 +45,15 @@
   *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
 }
 
+- (nullable id)throwFlutterErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
+  *error = [FlutterError errorWithCode:@"code" message:@"message" details:@"details"];
+  return nil;
+}
+
+- (void)throwFlutterErrorFromVoidWithError:(FlutterError *_Nullable *_Nonnull)error {
+  *error = [FlutterError errorWithCode:@"code" message:@"message" details:@"details"];
+}
+
 - (nullable NSNumber *)echoInt:(NSNumber *)anInt error:(FlutterError *_Nullable *_Nonnull)error {
   return anInt;
 }
@@ -159,6 +168,14 @@
 
 - (void)throwAsyncErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion([FlutterError errorWithCode:@"An error" message:nil details:nil]);
+}
+
+- (void)throwAsyncFlutterErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
+  completion(nil, [FlutterError errorWithCode:@"code" message:@"message" details:@"details"]);
+}
+
+- (void)throwAsyncFlutterErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  completion([FlutterError errorWithCode:@"code" message:@"message" details:@"details"]);
 }
 
 - (void)echoAsyncAllTypes:(AllTypes *)everything
