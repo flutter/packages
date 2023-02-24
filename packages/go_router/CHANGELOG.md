@@ -1,3 +1,7 @@
+## NEXT
+
+* Update compileSdkVersion to 33.
+
 ## 6.2.0
 
 - Export supertypes in route_data.dart library

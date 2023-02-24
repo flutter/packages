@@ -1,3 +1,7 @@
+## NEXT
+
+* Update compileSdkVersion to 33.
+
 ## 0.0.1+3
 
 * Minor README updates.

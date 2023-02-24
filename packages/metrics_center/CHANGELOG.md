@@ -1,3 +1,7 @@
+## NEXT
+
+* Update compileSdkVersion to 33.
+
 ## 1.0.7
 
 * Updates code to fix strict-cast violations.
