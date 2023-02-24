@@ -1,3 +1,7 @@
+## 0.8.5+8
+
+* Fixes compilation warnings.
+
 ## 0.8.5+7
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

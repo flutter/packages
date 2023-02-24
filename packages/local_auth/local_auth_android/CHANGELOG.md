@@ -1,3 +1,7 @@
+## 1.0.20
+
+* Fixes compilation warnings.
+
 ## 1.0.19
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
