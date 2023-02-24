@@ -1,10 +1,7 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ## 2.4.7
 
-* Update annotioan and espresso dependencies.
+* Update annotation and espresso dependencies.
+* Update compileSdkVersion to 33.
 
 ## 2.4.6
 
