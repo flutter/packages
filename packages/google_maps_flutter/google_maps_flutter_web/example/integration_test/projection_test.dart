@@ -46,7 +46,8 @@ void main() {
     });
 
     group('moveCamera', () {
-      testWidgets('center can be moved with newLatLngZoom', (WidgetTester tester) async {
+      testWidgets('center can be moved with newLatLngZoom',
+          (WidgetTester tester) async {
         await pumpCenteredMap(
           tester,
           initialCamera: initialCamera,
@@ -55,7 +56,6 @@ void main() {
         );
 
         final GoogleMapController controller = await controllerCompleter.future;
-
 
         await controller.moveCamera(
           CameraUpdate.newLatLngZoom(
