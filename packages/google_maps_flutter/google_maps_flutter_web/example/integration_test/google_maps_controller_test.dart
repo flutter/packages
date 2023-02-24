@@ -16,10 +16,6 @@ import 'package:mockito/mockito.dart';
 
 import 'google_maps_controller_test.mocks.dart';
 
-// This value is used when comparing long~num, like
-// LatLng values.
-const double _acceptableDelta = 0.0000000001;
-
 @GenerateMocks(<Type>[], customMocks: <MockSpec<dynamic>>[
   MockSpec<CirclesController>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<PolygonsController>(onMissingStub: OnMissingStub.returnDefault),
