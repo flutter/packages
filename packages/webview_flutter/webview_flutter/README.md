@@ -32,6 +32,7 @@ controller = WebViewController()
       },
       onPageStarted: (String url) {},
       onPageFinished: (String url) {},
+      onPageError: (int statusCode) {},
       onWebResourceError: (WebResourceError error) {},
       onNavigationRequest: (NavigationRequest request) {
         if (request.url.startsWith('https://www.youtube.com/')) {
