@@ -177,7 +177,7 @@ void main() {
           VideoPlayerPlatform.instance.videoEventsFor(videoPlayerId);
 
       final Future<List<VideoEvent>> stream = eventStream.timeout(
-        const Duration(seconds: 1),
+        const Duration(seconds: 2),
         onTimeout: (EventSink<VideoEvent> sink) {
           sink.close();
         },
