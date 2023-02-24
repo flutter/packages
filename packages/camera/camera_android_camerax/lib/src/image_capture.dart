@@ -88,7 +88,7 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
 
   /// Receives binary data across the Flutter platform barrier.
   ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// If it is null, the default [BinaryMessenger] will be used which routes to
   /// the host platform.
   final BinaryMessenger? binaryMessenger;
 

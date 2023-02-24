@@ -37,7 +37,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   }
 
   /**
-   * Sets the context that the {@code ImageCapture} will use to find a location to save a captured
+   * Sets the context that the {@link ImageCapture} will use to find a location to save a captured
    * image.
    */
   public void setContext(Context context) {
@@ -86,7 +86,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
     try {
       temporaryCaptureFile = File.createTempFile("CAP", ".jpg", outputDir);
     } catch (IOException | SecurityException e) {
-      handleImageFileError(result, "Cannot create file to save captured image: " + e.getMessage());
+      handleTakePictureError(result, "Cannot create file to save captured image: " + e.getMessage());
       return;
     }
 
@@ -111,13 +111,13 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
 
       @Override
       public void onError(@NonNull ImageCaptureException exception) {
-        handleImageFileError(result, getOnImageSavedExceptionDescription(exception));
+        handleTakePictureError(result, getOnImageSavedExceptionDescription(exception));
       }
     };
   }
 
   /** Handle errors with creating a file to save captured image or capturing an image. */
-  private void handleImageFileError(
+  private void handleTakePictureError(
       @NonNull GeneratedCameraXLibrary.Result<String> result, @NonNull String errorDescription) {
     // Send empty path because image was not saved.
     result.success("");
