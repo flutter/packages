@@ -76,9 +76,9 @@ class _InlineElement {
 abstract class MarkdownBuilderDelegate {
   /// Returns the [BuildContext] of the [MarkdownWidget].
   ///
-  /// The state will be passed down to the
+  /// The context will be passed down to the
   /// [MarkdownElementBuilder.visitElementBefore] method and allows elements to
-  /// access the context.
+  /// get information from the context.
   BuildContext get context;
 
   /// Returns a gesture recognizer to use for an `a` element with the given
