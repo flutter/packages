@@ -29,6 +29,7 @@ import io.flutter.plugin.common.PluginRegistry;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,18 +42,23 @@ public class GoogleSignInTest {
   @Mock Context mockContext;
   @Mock Resources mockResources;
   @Mock Activity mockActivity;
-  @Mock PluginRegistry.Registrar mockRegistrar;
   @Mock BinaryMessenger mockMessenger;
   @Spy MethodChannel.Result result;
   @Mock GoogleSignInWrapper mockGoogleSignIn;
   @Mock GoogleSignInAccount account;
   @Mock GoogleSignInClient mockClient;
   @Mock Task<GoogleSignInAccount> mockSignInTask;
+
+  @SuppressWarnings("deprecation")
+  @Mock
+  PluginRegistry.Registrar mockRegistrar;
+
   private GoogleSignInPlugin plugin;
+  private AutoCloseable mockCloseable;
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    mockCloseable = MockitoAnnotations.openMocks(this);
     when(mockRegistrar.messenger()).thenReturn(mockMessenger);
     when(mockRegistrar.context()).thenReturn(mockContext);
     when(mockRegistrar.activity()).thenReturn(mockActivity);
@@ -60,6 +66,11 @@ public class GoogleSignInTest {
     plugin = new GoogleSignInPlugin();
     plugin.initInstance(mockRegistrar.messenger(), mockRegistrar.context(), mockGoogleSignIn);
     plugin.setUpRegistrar(mockRegistrar);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    mockCloseable.close();
   }
 
   @Test
