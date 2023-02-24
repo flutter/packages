@@ -548,20 +548,7 @@ void main() {
       });
 
       group('moveCamera', () {
-        testWidgets('newLatLngZoom', (WidgetTester tester) async {
-          await controller.moveCamera(
-            CameraUpdate.newLatLngZoom(
-              const LatLng(19, 26),
-              12,
-            ),
-          );
-
-          final gmaps.LatLng gmCenter = map.center!;
-
-          expect(map.zoom, 12);
-          expect(gmCenter.lat, closeTo(19, _acceptableDelta));
-          expect(gmCenter.lng, closeTo(26, _acceptableDelta));
-        });
+        // Tested in projection_test.dart
       });
 
       group('map.projection methods', () {
