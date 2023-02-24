@@ -153,6 +153,7 @@ class NavigationDelegate {
   /// Invoked when a page has finished loading.
   final PageEventCallback? onPageFinished;
 
+  /// Invoked when a page failed loading
   final PageErrorCallback? onPageError;
 
   /// Invoked when a page is loading to report the progress.
