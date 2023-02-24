@@ -218,7 +218,8 @@ public class ImagePickerDelegate
   void retrieveLostImage(MethodChannel.Result result) {
     Map<String, Object> resultMap = cache.getCacheMap();
     @SuppressWarnings("unchecked")
-    ArrayList<String> pathList = (ArrayList<String>) resultMap.get(ImagePickerCache.MAP_KEY_PATH_LIST);
+    ArrayList<String> pathList =
+        (ArrayList<String>) resultMap.get(ImagePickerCache.MAP_KEY_PATH_LIST);
     ArrayList<String> newPathList = new ArrayList<>();
     if (pathList != null) {
       for (String path : pathList) {
