@@ -215,7 +215,10 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
   String get _locationArgs {
     final Iterable<String> pathItems = _parsedPath.map((Token e) {
       if (e is ParameterToken) {
-        return '\${Uri.encodeComponent(${_encodeFor(e.name)})}';
+        // Enum types are encoded using a map, so we need a nullability check
+        // here to ensure it matches Uri.encodeComponent nullability
+        final DartType? type = _field(e.name)?.returnType;
+        return '\${Uri.encodeComponent(${_encodeFor(e.name)}${type?.isEnum ?? false ? '!' : ''})}';
       }
       if (e is PathToken) {
         return e.value;
