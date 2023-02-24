@@ -1337,7 +1337,7 @@ void main() {
     expect(code, contains(' extends StandardMessageCodec'));
   });
 
-  test('wrap error returns flutter exception appropriately', () {
+  test('creates api error class for custom errors', () {
     final Api api =
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[]);
     final Root root = Root(
@@ -1350,13 +1350,10 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('if (exception instanceof FlutterException)'));
-    expect(
-        code,
-        contains(
-            'FlutterException flutterException = (FlutterException) exception;'));
-    expect(code, contains('errorList.add(flutterException.code);'));
-    expect(code, contains('errorList.add(flutterException.getMessage());'));
-    expect(code, contains('errorList.add(flutterException.details);'));
+    expect(code, contains('if (exception instanceof ApiError)'));
+    expect(code, contains('ApiError error = (ApiError) exception;'));
+    expect(code, contains('errorList.add(error.code);'));
+    expect(code, contains('errorList.add(error.message);'));
+    expect(code, contains('errorList.add(error.details);'));
   });
 }

@@ -113,7 +113,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln('import androidx.annotation.Nullable;');
     indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
-    indent.writeln('import io.flutter.plugin.common.FlutterException;');
     indent.writeln('import io.flutter.plugin.common.MessageCodec;');
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
     indent.writeln('import java.io.ByteArrayOutputStream;');
