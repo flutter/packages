@@ -45,6 +45,35 @@ void main() {
       };
     });
 
+    group('moveCamera', () {
+      testWidgets('center can be moved with newLatLngZoom',
+          (WidgetTester tester) async {
+        await pumpCenteredMap(
+          tester,
+          initialCamera: initialCamera,
+          size: size,
+          onMapCreated: onMapCreated,
+        );
+
+        final GoogleMapController controller = await controllerCompleter.future;
+
+        await controller.moveCamera(
+          CameraUpdate.newLatLngZoom(
+            const LatLng(19, 26),
+            12,
+          ),
+        );
+
+        final LatLng coords = await controller.getLatLng(
+          ScreenCoordinate(x: size.width ~/ 2, y: size.height ~/ 2),
+        );
+
+        expect(await controller.getZoomLevel(), 12);
+        expect(coords.latitude, closeTo(19, _acceptableLatLngDelta));
+        expect(coords.longitude, closeTo(26, _acceptableLatLngDelta));
+      });
+    });
+
     group('getScreenCoordinate', () {
       testWidgets('target of map is in center of widget',
           (WidgetTester tester) async {
