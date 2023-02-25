@@ -2,6 +2,7 @@
 
 * [java] Adds a `GeneratedApi.ApiError` exception for passing custom error parameters (code, message, details).
 * [kotlin] Adds a `GeneratedApiError` exception for passing custom error parameters (code, message, details).
+* [kotlin] Adds a `errorClassName` option in `KotlinOptions` for custom error class names.
 * [java] Removes legacy try catch in async apis.
 * Adds `FlutterError` handling integration tests for all platforms.
 
