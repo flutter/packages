@@ -48,11 +48,11 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun throwFlutterError(): Object? {
-    throw HostIntegrationCoreApiError("code", "message", "details");
+    throw CoreTestsError("code", "message", "details");
   }
 
   override fun throwFlutterErrorFromVoid() {
-    throw HostIntegrationCoreApiError("code", "message", "details");
+    throw CoreTestsError("code", "message", "details");
   }
 
   override fun echoInt(anInt: Long): Long {
@@ -143,11 +143,11 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun throwAsyncFlutterError(callback: (Result<Any?>) -> Unit) {
-    callback(Result.failure(HostIntegrationCoreApiError("code", "message", "details")))
+    callback(Result.failure(CoreTestsError("code", "message", "details")))
   }
 
   override fun throwAsyncFlutterErrorFromVoid(callback: (Result<Unit>) -> Unit) {
-    callback(Result.failure(HostIntegrationCoreApiError("code", "message", "details")))
+    callback(Result.failure(CoreTestsError("code", "message", "details")))
   }
 
   override fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
