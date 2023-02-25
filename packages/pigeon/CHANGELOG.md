@@ -1,8 +1,8 @@
 ## 9.0.2
 
-* [java] Adds a `ApiError` exception for passing custom error code, message, and details.
-* [kotlin] Adds a `{api_name}Error` exception for passing custom error code, message, and details.
-* [java] Removes legacy try catch for async apis.
+* [java] Adds a `GeneratedApi.ApiError` exception for passing custom error parameters (code, message, details).
+* [kotlin] Adds a `GeneratedApiError` exception for passing custom error parameters (code, message, details).
+* [java] Removes legacy try catch in async apis.
 * Adds `FlutterError` handling integration tests for all platforms.
 
 ## 9.0.1
