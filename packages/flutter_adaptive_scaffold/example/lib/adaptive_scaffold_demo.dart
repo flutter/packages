@@ -16,15 +16,40 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: MyHomePage());
+    return MaterialApp(
+      theme: ThemeData.light().copyWith(
+        navigationRailTheme: const NavigationRailThemeData(
+          selectedIconTheme: IconThemeData(
+            color: Colors.red,
+            size: 32,
+          ),
+          selectedLabelTextStyle: TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+          ),
+          unselectedLabelTextStyle: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+          ),
+        ),
+      ),
+      home: const MyHomePage(),
+    );
   }
 }
 
 /// Creates a basic adaptive page with navigational elements and a body using
 /// [AdaptiveScaffold].
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   /// Creates a const [MyHomePage].
   const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _selectedTab = 0;
 
   // #docregion Example
   @override
@@ -35,46 +60,49 @@ class MyHomePage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-            color: const Color.fromARGB(255, 255, 201, 197),
+            color: Colors.grey,
             height: 400,
           ),
         )
     ];
 
-    return BottomNavigationBarTheme(
-        data: const BottomNavigationBarThemeData(
-          unselectedItemColor: Colors.black,
-          selectedItemColor: Colors.black,
-          backgroundColor: Colors.white,
+    return AdaptiveScaffold(
+      selectedIndex: _selectedTab,
+      onSelectedIndexChange: (int index) {
+        setState(() => _selectedTab = index);
+      },
+      destinations: const <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.inbox_outlined),
+          label: 'Inbox',
         ),
-        child: AdaptiveScaffold(
-            // An option to override the default breakpoints used for small, medium,
-            // and large.
-            smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
-            mediumBreakpoint:
-                const WidthPlatformBreakpoint(begin: 700, end: 1000),
-            largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
-            useDrawer: false,
-            destinations: const <NavigationDestination>[
-              NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
-              NavigationDestination(
-                  icon: Icon(Icons.article), label: 'Articles'),
-              NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
-              NavigationDestination(
-                  icon: Icon(Icons.video_call), label: 'Video')
-            ],
-            body: (_) => GridView.count(crossAxisCount: 2, children: children),
-            smallBody: (_) => ListView.builder(
-                  itemCount: children.length,
-                  itemBuilder: (_, int idx) => children[idx],
-                ),
-            // Define a default secondaryBody.
-            secondaryBody: (_) =>
-                Container(color: const Color.fromARGB(255, 234, 158, 192)),
-            // Override the default secondaryBody during the smallBreakpoint to be
-            // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
-            // overridden.
-            smallSecondaryBody: AdaptiveScaffold.emptyBuilder));
+        NavigationDestination(
+          icon: Icon(Icons.article_outlined),
+          label: 'Articles',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.chat_outlined),
+          label: 'Chat',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.video_call_outlined),
+          label: 'Video',
+        ),
+      ],
+      body: (_) => GridView.count(crossAxisCount: 2, children: children),
+      smallBody: (_) => ListView.builder(
+        itemCount: children.length,
+        itemBuilder: (_, int idx) => children[idx],
+      ),
+      // Define a default secondaryBody.
+      secondaryBody: (_) => Container(
+        color: Colors.pink[200],
+      ),
+      // Override the default secondaryBody during the smallBreakpoint to be
+      // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
+      // overridden.
+      smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+    );
   }
   // #enddocregion
 }

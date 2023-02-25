@@ -249,21 +249,24 @@ class AdaptiveScaffold extends StatefulWidget {
   /// the [NavigationRail] and [extended] for whether the [NavigationRail]
   /// is extended or not.
   static Builder standardNavigationRail({
+    required BuildContext context,
     required List<NavigationRailDestination> destinations,
     double width = 72,
     int? selectedIndex,
     bool extended = false,
-    Color backgroundColor = Colors.transparent,
+    Color? backgroundColor,
     EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
     Widget? leading,
     Widget? trailing,
     Function(int)? onDestinationSelected,
-    IconThemeData selectedIconTheme = const IconThemeData(color: Colors.black),
-    IconThemeData unselectedIconTheme =
-        const IconThemeData(color: Colors.black),
-    TextStyle selectedLabelTextStyle = const TextStyle(color: Colors.black),
+    IconThemeData? selectedIconTheme,
+    IconThemeData? unselectedIconTheme,
+    TextStyle? selectedLabelTextStyle,
+    TextStyle? unSelectedLabelTextStyle,
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
+    final NavigationRailThemeData navRailTheme = Theme.of(context).navigationRailTheme;
+
     if (extended && width == 72) {
       width = 192;
     }
@@ -284,12 +287,13 @@ class AdaptiveScaffold extends StatefulWidget {
                     leading: leading,
                     trailing: trailing,
                     onDestinationSelected: onDestinationSelected,
-                    backgroundColor: backgroundColor,
+                    backgroundColor: backgroundColor ?? navRailTheme.backgroundColor,
                     extended: extended,
                     selectedIndex: selectedIndex,
-                    selectedIconTheme: selectedIconTheme,
-                    unselectedIconTheme: unselectedIconTheme,
-                    selectedLabelTextStyle: selectedLabelTextStyle,
+                    selectedIconTheme: selectedIconTheme ?? navRailTheme.selectedIconTheme,
+                    unselectedIconTheme: unselectedIconTheme ?? navRailTheme.unselectedIconTheme,
+                    selectedLabelTextStyle: selectedLabelTextStyle ?? navRailTheme.selectedLabelTextStyle,
+                    unselectedLabelTextStyle: unSelectedLabelTextStyle ?? navRailTheme.unselectedLabelTextStyle,
                     destinations: destinations,
                   ),
                 ),
@@ -313,6 +317,7 @@ class AdaptiveScaffold extends StatefulWidget {
     return Builder(
       builder: (_) {
         return BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           currentIndex: currentIndex ?? 0,
           iconSize: iconSize,
           items: destinations
@@ -500,6 +505,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               widget.mediumBreakpoint: SlotLayout.from(
                 key: const Key('primaryNavigation'),
                 builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  context: context,
                   width: widget.navigationRailWidth,
                   leading: widget.leadingUnextendedNavRail,
                   trailing: widget.trailingNavRail,
@@ -513,6 +519,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               widget.largeBreakpoint: SlotLayout.from(
                 key: const Key('primaryNavigation1'),
                 builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  context: context,
                   width: widget.extendedNavigationRailWidth,
                   extended: true,
                   leading: widget.leadingExtendedNavRail,

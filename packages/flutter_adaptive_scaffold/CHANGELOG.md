@@ -1,8 +1,12 @@
+## 0.1.1
+
+* 🐛 : FIX - Navigation Rail items not considering `NavigationRailTheme` values - [121135](https://github.com/flutter/flutter/issues/121135)
+* When `NavigationRailTheme` is provided, it shall that consider that if user has not given theme related data explicitly.
+
 ## 0.1.0
 
 * Change the `selectedIndex` parameter on `standardNavigationRail` to allow null values to indicate "no destination".
 * An explicitly null `currentIndex` parameter passed to `standardBottomNavigationBar` will also default to 0, just like implicitly null missing parameters.
-
 
 ## 0.0.9
 
