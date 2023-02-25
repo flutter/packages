@@ -1,3 +1,7 @@
+## 2.3.10
+
+* Makes seekTo async and only complete when AVPlayer.seekTo completes.
+
 ## 2.3.9
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
