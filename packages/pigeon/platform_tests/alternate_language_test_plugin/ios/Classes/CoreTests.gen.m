@@ -364,7 +364,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Responds with an error from an async void function.
+  /// Returns an error from a void function, to test error handling.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid"
@@ -404,7 +404,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Responds with a flutter error from an async void function.
+  /// Returns a flutter error from a void function, to test error handling.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterErrorFromVoid"
@@ -1114,7 +1114,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Responds with a fluttererror from an async function returning a value.
+  /// Responds with a flutter error from an async function returning a value.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterError"

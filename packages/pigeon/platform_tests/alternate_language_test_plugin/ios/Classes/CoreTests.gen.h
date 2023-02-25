@@ -114,11 +114,11 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
                               error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns an error, to test error handling.
 - (nullable id)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error;
-/// Responds with an error from an async void function.
+/// Returns an error from a void function, to test error handling.
 - (void)throwErrorFromVoidWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns a flutter error, to test error handling.
 - (nullable id)throwFlutterErrorWithError:(FlutterError *_Nullable *_Nonnull)error;
-/// Responds with a flutter error from an async void function.
+/// Returns a flutter error from a void function, to test error handling.
 - (void)throwFlutterErrorFromVoidWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in int.
 ///
@@ -238,7 +238,7 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async void function.
 - (void)throwAsyncErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
-/// Responds with a fluttererror from an async function returning a value.
+/// Responds with a flutter error from an async function returning a value.
 - (void)throwAsyncFlutterErrorWithCompletion:(void (^)(id _Nullable,
                                                        FlutterError *_Nullable))completion;
 /// Responds with a flutter error from an async void function.

@@ -102,13 +102,13 @@ abstract class HostIntegrationCoreApi {
   /// Returns an error, to test error handling.
   Object? throwError();
 
-  /// Responds with an error from an async void function.
+  /// Returns an error from a void function, to test error handling.
   void throwErrorFromVoid();
 
   /// Returns a flutter error, to test error handling.
   Object? throwFlutterError();
 
-  /// Responds with a flutter error from an async void function.
+  /// Returns a flutter error from a void function, to test error handling.
   void throwFlutterErrorFromVoid();
 
   /// Returns passed in int.
@@ -279,7 +279,7 @@ abstract class HostIntegrationCoreApi {
   @async
   void throwAsyncErrorFromVoid();
 
-  /// Responds with a fluttererror from an async function returning a value.
+  /// Responds with a flutter error from an async function returning a value.
   @async
   Object? throwAsyncFlutterError();
 

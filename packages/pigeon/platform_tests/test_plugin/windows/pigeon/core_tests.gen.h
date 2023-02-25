@@ -311,12 +311,12 @@ class HostIntegrationCoreApi {
   virtual ErrorOr<AllTypes> EchoAllTypes(const AllTypes& everything) = 0;
   // Returns an error, to test error handling.
   virtual ErrorOr<std::optional<flutter::EncodableValue>> ThrowError() = 0;
-  // Responds with an error from an async void function.
+  // Returns an error from a void function, to test error handling.
   virtual std::optional<FlutterError> ThrowErrorFromVoid() = 0;
   // Returns a flutter error, to test error handling.
   virtual ErrorOr<std::optional<flutter::EncodableValue>>
   ThrowFlutterError() = 0;
-  // Responds with a flutter error from an async void function.
+  // Returns a flutter error from a void function, to test error handling.
   virtual std::optional<FlutterError> ThrowFlutterErrorFromVoid() = 0;
   // Returns passed in int.
   virtual ErrorOr<int64_t> EchoInt(int64_t an_int) = 0;
@@ -419,7 +419,7 @@ class HostIntegrationCoreApi {
   // Responds with an error from an async void function.
   virtual void ThrowAsyncErrorFromVoid(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
-  // Responds with a fluttererror from an async function returning a value.
+  // Responds with a flutter error from an async function returning a value.
   virtual void ThrowAsyncFlutterError(
       std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
           result) = 0;

@@ -200,6 +200,7 @@ class HostIntegrationCoreApiError (
   override val message: String? = null,
   val details: Any? = null
 ) : Throwable()
+
 @Suppress("UNCHECKED_CAST")
 private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
@@ -266,11 +267,11 @@ interface HostIntegrationCoreApi {
   fun echoAllTypes(everything: AllTypes): AllTypes
   /** Returns an error, to test error handling. */
   fun throwError(): Any?
-  /** Responds with an error from an async void function. */
+  /** Returns an error from a void function, to test error handling. */
   fun throwErrorFromVoid()
   /** Returns a flutter error, to test error handling. */
   fun throwFlutterError(): Any?
-  /** Responds with a flutter error from an async void function. */
+  /** Returns a flutter error from a void function, to test error handling. */
   fun throwFlutterErrorFromVoid()
   /** Returns passed in int. */
   fun echoInt(anInt: Long): Long
@@ -343,7 +344,7 @@ interface HostIntegrationCoreApi {
   fun throwAsyncError(callback: (Result<Any?>) -> Unit)
   /** Responds with an error from an async void function. */
   fun throwAsyncErrorFromVoid(callback: (Result<Unit>) -> Unit)
-  /** Responds with a fluttererror from an async function returning a value. */
+  /** Responds with a flutter error from an async function returning a value. */
   fun throwAsyncFlutterError(callback: (Result<Any?>) -> Unit)
   /** Responds with a flutter error from an async void function. */
   fun throwAsyncFlutterErrorFromVoid(callback: (Result<Unit>) -> Unit)
@@ -2250,6 +2251,7 @@ class HostTrivialApiError (
   override val message: String? = null,
   val details: Any? = null
 ) : Throwable()
+
 /**
  * An API that can be implemented for minimal, compile-only tests.
  *
@@ -2296,6 +2298,7 @@ class HostSmallApiError (
   override val message: String? = null,
   val details: Any? = null
 ) : Throwable()
+
 /**
  * A simple API implemented in some unit tests.
  *

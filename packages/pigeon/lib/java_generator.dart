@@ -800,8 +800,8 @@ private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 \t\terrorList.add(error.message);
 \t\terrorList.add(error.details);
 \t} else {
-\t\terrorList.add(exception.getClass().getSimpleName());
 \t\terrorList.add(exception.toString());
+\t\terrorList.add(exception.getClass().getSimpleName());
 \t\terrorList.add(
 \t\t\t"Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
 \t}

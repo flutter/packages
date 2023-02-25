@@ -344,7 +344,7 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Responds with an error from an async void function.
+  /// Returns an error from a void function, to test error handling.
   Future<void> throwErrorFromVoid() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid', codec,
@@ -388,7 +388,7 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Responds with a flutter error from an async void function.
+  /// Returns a flutter error from a void function, to test error handling.
   Future<void> throwFlutterErrorFromVoid() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterErrorFromVoid',
@@ -1228,7 +1228,7 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Responds with a fluttererror from an async function returning a value.
+  /// Responds with a flutter error from an async function returning a value.
   Future<Object?> throwAsyncFlutterError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterError',

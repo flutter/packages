@@ -90,7 +90,7 @@ public class AsyncTest {
               @SuppressWarnings("unchecked")
               ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
               assertTrue(wrapped.size() > 1);
-              assertEquals("Exception", (String) wrapped.get(0));
+              assertEquals("java.lang.Exception: error", (String) wrapped.get(0));
               didCall[0] = true;
             });
     assertTrue(didCall[0]);

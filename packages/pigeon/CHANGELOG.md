@@ -1,12 +1,12 @@
 ## 9.0.2
 
-* Standardize error handling across platforms
-* [java] Add a `ApiError` exception for passing custom error code, message, and details
-* [kotlin] Add a `{api_name}Error` exception for passing custom error code, message, and details
-* [java] Remove legacy try catch for async apis
-* Add `FlutterError` handling integration tests for all platforms
+* [java] Adds a `ApiError` exception for passing custom error code, message, and details.
+* [kotlin] Adds a `{api_name}Error` exception for passing custom error code, message, and details.
+* [java] Removes legacy try catch for async apis.
+* Adds `FlutterError` handling integration tests for all platforms.
 
 ## 9.0.1
+
 * Updates links for the merge of flutter/plugins into flutter/packages.
 
 ## 9.0.0

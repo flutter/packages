@@ -404,7 +404,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       indent.writeln('override val message: String? = null,');
       indent.writeln('val details: Any? = null');
     }, addTrailingNewline: false);
-    indent.add(' : Throwable()');
+    indent.addln(' : Throwable()');
   }
 
   /// Write the kotlin code that represents a host [Api], [api].

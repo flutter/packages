@@ -47,8 +47,8 @@ public class CoreTests {
       errorList.add(error.message);
       errorList.add(error.details);
     } else {
-      errorList.add(exception.getClass().getSimpleName());
       errorList.add(exception.toString());
+      errorList.add(exception.getClass().getSimpleName());
       errorList.add(
           "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
@@ -839,12 +839,12 @@ public class CoreTests {
     /** Returns an error, to test error handling. */
     @Nullable
     Object throwError();
-    /** Responds with an error from an async void function. */
+    /** Returns an error from a void function, to test error handling. */
     void throwErrorFromVoid();
     /** Returns a flutter error, to test error handling. */
     @Nullable
     Object throwFlutterError();
-    /** Responds with a flutter error from an async void function. */
+    /** Returns a flutter error from a void function, to test error handling. */
     void throwFlutterErrorFromVoid();
     /** Returns passed in int. */
     @NonNull
@@ -938,7 +938,7 @@ public class CoreTests {
     void throwAsyncError(Result<Object> result);
     /** Responds with an error from an async void function. */
     void throwAsyncErrorFromVoid(Result<Void> result);
-    /** Responds with a fluttererror from an async function returning a value. */
+    /** Responds with a flutter error from an async function returning a value. */
     void throwAsyncFlutterError(Result<Object> result);
     /** Responds with a flutter error from an async void function. */
     void throwAsyncFlutterErrorFromVoid(Result<Void> result);
