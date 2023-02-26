@@ -12,9 +12,9 @@ import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
 import 'misc/error_screen.dart';
-import 'navigator_builder.dart';
 import 'pages/cupertino.dart';
 import 'pages/material.dart';
+import 'parser.dart';
 import 'route_data.dart';
 import 'typedefs.dart';
 
@@ -24,37 +24,6 @@ import 'typedefs.dart';
 /// Navigators in [RouteBuilder].
 typedef RouteBuilderPopPageCallback = bool Function(
     Route<dynamic> route, dynamic result, RouteMatch? match);
-
-/// Context used to provide a route to page association when popping routes.
-class PagePopContext {
-  /// [PagePopContext] constructor.
-  PagePopContext(this.routeBuilderOnPopPage);
-
-  final Map<Page<dynamic>, RouteMatch> _routeMatchLookUp =
-      <Page<Object?>, RouteMatch>{};
-
-  /// On pop page callback that includes the associated [RouteMatch].
-  final RouteBuilderPopPageCallback routeBuilderOnPopPage;
-
-  /// Looks for the [RouteMatch] for a given [Page].
-  ///
-  /// The [Page] must have been previously built via the [RouteBuilder] that
-  /// created this [PagePopContext]; otherwise, this method returns null.
-  RouteMatch? getRouteMatchForPage(Page<Object?> page) =>
-      _routeMatchLookUp[page];
-
-  void _setRouteMatchForPage(Page<Object?> page, RouteMatch match) =>
-      _routeMatchLookUp[page] = match;
-
-  /// Function used as [Navigator.onPopPage] callback when creating Navigators.
-  ///
-  /// This function forwards to [routeBuilderOnPopPage], including the
-  /// [RouteMatch] associated with the popped route.
-  bool onPopPage(Route<dynamic> route, dynamic result) {
-    final Page<Object?> page = route.settings as Page<Object?>;
-    return routeBuilderOnPopPage(route, result, _routeMatchLookUp[page]);
-  }
-}
 
 /// Builds the top-level Navigator for GoRouter.
 class RouteBuilder {
@@ -141,12 +110,12 @@ class RouteBuilder {
     GlobalKey<NavigatorState> navigatorKey,
     Map<Page<Object?>, GoRouterState> registry,
   ) {
-    final PagePopContext pagePopContext = PagePopContext(onPopPage);
+    final _PagePopContext pagePopContext = _PagePopContext._(onPopPage);
     return builderWithNav(
       context,
-      RouteNavigatorBuilder.buildNavigator(
+      _RouteNavigatorBuilder.buildNavigator(
         pagePopContext.onPopPage,
-        buildPages(context, matchList, 0, pagePopContext, routerNeglect,
+        _buildPages(context, matchList, 0, pagePopContext, routerNeglect,
             navigatorKey, registry),
         navigatorKey,
         observers: observers,
@@ -158,10 +127,21 @@ class RouteBuilder {
   /// testing.
   @visibleForTesting
   List<Page<Object?>> buildPages(
+          BuildContext context,
+          RouteMatchList matchList,
+          RouteBuilderPopPageCallback onPopPage,
+          int startIndex,
+          bool routerNeglect,
+          GlobalKey<NavigatorState> navigatorKey,
+          Map<Page<Object?>, GoRouterState> registry) =>
+      _buildPages(context, matchList, startIndex, _PagePopContext._(onPopPage),
+          routerNeglect, navigatorKey, registry);
+
+  List<Page<Object?>> _buildPages(
       BuildContext context,
       RouteMatchList matchList,
       int startIndex,
-      PagePopContext pagePopContext,
+      _PagePopContext pagePopContext,
       bool routerNeglect,
       GlobalKey<NavigatorState> navigatorKey,
       Map<Page<Object?>, GoRouterState> registry) {
@@ -197,23 +177,27 @@ class RouteBuilder {
       GlobalKey<NavigatorState> navigatorKey,
       {List<NavigatorObserver>? observers,
       String? restorationScopeId}) {
+    final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
+        <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
     try {
-      final Map<Page<Object?>, GoRouterState> newRegistry =
-          <Page<Object?>, GoRouterState>{};
-      final HeroController heroController = _goHeroCache.putIfAbsent(
-          navigatorKey, () => _getHeroController(context));
-      final PagePopContext pagePopContext = PagePopContext(onPopPage);
-      final Widget result = RouteNavigatorBuilder.buildNavigator(
+      final _PagePopContext pagePopContext = _PagePopContext._(onPopPage);
+      _buildRecursive(
+          context,
+          matchList.unmodifiableMatchList(),
+          startIndex,
+          pagePopContext,
+          routerNeglect,
+          keyToPage,
+          navigatorKey, <Page<Object?>, GoRouterState>{});
+
+      return _RouteNavigatorBuilder.buildNavigator(
         pagePopContext.onPopPage,
-        buildPages(context, matchList, startIndex, pagePopContext,
-            routerNeglect, navigatorKey, newRegistry),
+        keyToPage[navigatorKey]!,
         navigatorKey,
         observers: observers,
         restorationScopeId: restorationScopeId,
-        heroController: heroController,
+        heroController: _getHeroController(context),
       );
-      _registry.updateRegistry(newRegistry, replace: false);
-      return result;
     } on _RouteBuilderError catch (e) {
       return _buildErrorNavigator(
           context, e, matchList, onPopPage, configuration.navigatorKey);
@@ -224,7 +208,7 @@ class RouteBuilder {
     BuildContext context,
     UnmodifiableRouteMatchList matchList,
     int startIndex,
-    PagePopContext pagePopContext,
+    _PagePopContext pagePopContext,
     bool routerNeglect,
     Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPages,
     GlobalKey<NavigatorState> navigatorKey,
@@ -287,7 +271,7 @@ class RouteBuilder {
           shellNavigatorKey, () => _getHeroController(context));
 
       // Build the Navigator builder for this shell route
-      final RouteNavigatorBuilder navigatorBuilder = RouteNavigatorBuilder(
+      final _RouteNavigatorBuilder navigatorBuilder = _RouteNavigatorBuilder._(
           this,
           state,
           route,
@@ -342,7 +326,7 @@ class RouteBuilder {
 
   /// Builds a [Page] for [StackedRoute]
   Page<Object?> _buildPageForRoute(BuildContext context, GoRouterState state,
-      RouteMatch match, PagePopContext pagePopContext,
+      RouteMatch match, _PagePopContext pagePopContext,
       {Object? child}) {
     final RouteBase route = match.route;
     Page<Object?>? page;
@@ -481,7 +465,7 @@ class RouteBuilder {
       RouteMatchList matchList,
       RouteBuilderPopPageCallback onPopPage,
       GlobalKey<NavigatorState> navigatorKey) {
-    return RouteNavigatorBuilder.buildNavigator(
+    return _RouteNavigatorBuilder.buildNavigator(
       (Route<dynamic> route, dynamic result) => onPopPage(route, result, null),
       <Page<Object?>>[
         _buildErrorPage(context, e, matchList),
@@ -581,5 +565,161 @@ class _RouteBuilderException implements Exception {
   @override
   String toString() {
     return '$message ${exception ?? ""}';
+  }
+}
+
+/// Context used to provide a route to page association when popping routes.
+class _PagePopContext {
+  _PagePopContext._(this.routeBuilderOnPopPage);
+
+  final Map<Page<dynamic>, RouteMatch> _routeMatchLookUp =
+      <Page<Object?>, RouteMatch>{};
+
+  /// On pop page callback that includes the associated [RouteMatch].
+  final RouteBuilderPopPageCallback routeBuilderOnPopPage;
+
+  /// Looks for the [RouteMatch] for a given [Page].
+  ///
+  /// The [Page] must have been previously built via the [RouteBuilder] that
+  /// created this [PagePopContext]; otherwise, this method returns null.
+  RouteMatch? getRouteMatchForPage(Page<Object?> page) =>
+      _routeMatchLookUp[page];
+
+  void _setRouteMatchForPage(Page<Object?> page, RouteMatch match) =>
+      _routeMatchLookUp[page] = match;
+
+  /// Function used as [Navigator.onPopPage] callback when creating Navigators.
+  ///
+  /// This function forwards to [routeBuilderOnPopPage], including the
+  /// [RouteMatch] associated with the popped route.
+  bool onPopPage(Route<dynamic> route, dynamic result) {
+    final Page<Object?> page = route.settings as Page<Object?>;
+    return routeBuilderOnPopPage(route, result, _routeMatchLookUp[page]);
+  }
+}
+
+/// Provides support for building Navigators for routes.
+class _RouteNavigatorBuilder extends ShellNavigatorBuilder {
+  /// Constructs a NavigatorBuilder.
+  _RouteNavigatorBuilder._(
+    this.routeBuilder,
+    this.state,
+    this.currentRoute,
+    this.heroController,
+    this.navigatorKeyForCurrentRoute,
+    this.pages,
+    this.pagePopContext,
+  );
+
+  /// The route builder.
+  final RouteBuilder routeBuilder;
+
+  @override
+  final GoRouterState state;
+
+  @override
+  final ShellRouteBase currentRoute;
+
+  /// The hero controller.
+  final HeroController heroController;
+
+  @override
+  final GlobalKey<NavigatorState> navigatorKeyForCurrentRoute;
+
+  /// The pages for the current route.
+  final List<Page<Object?>> pages;
+
+  /// The page pop context.
+  final _PagePopContext pagePopContext;
+
+  /// Builds a navigator.
+  static Widget buildNavigator(
+    PopPageCallback onPopPage,
+    List<Page<Object?>> pages,
+    Key? navigatorKey, {
+    List<NavigatorObserver>? observers,
+    String? restorationScopeId,
+    HeroController? heroController,
+  }) {
+    final Widget navigator = Navigator(
+      key: navigatorKey,
+      restorationScopeId: restorationScopeId,
+      pages: pages,
+      observers: observers ?? const <NavigatorObserver>[],
+      onPopPage: onPopPage,
+    );
+    if (heroController != null) {
+      return HeroControllerScope(
+        controller: heroController,
+        child: navigator,
+      );
+    } else {
+      return navigator;
+    }
+  }
+
+  @override
+  Widget buildNavigatorForCurrentRoute({
+    List<NavigatorObserver>? observers,
+    String? restorationScopeId,
+    GlobalKey<NavigatorState>? navigatorKey,
+  }) {
+    return buildNavigator(
+      pagePopContext.onPopPage,
+      pages,
+      navigatorKey ?? navigatorKeyForCurrentRoute,
+      observers: observers,
+      restorationScopeId: restorationScopeId,
+      heroController: heroController,
+    );
+  }
+
+  @override
+  Future<Widget?> buildPreloadedShellNavigator({
+    required BuildContext context,
+    required String location,
+    required GlobalKey<NavigatorState> navigatorKey,
+    required ShellRouteBase parentShellRoute,
+    List<NavigatorObserver>? observers,
+    String? restorationScopeId,
+  }) {
+    // Parse a RouteMatchList from location and handle any redirects
+    final GoRouteInformationParser parser =
+        GoRouter.of(context).routeInformationParser;
+    final Future<RouteMatchList> routeMatchList =
+        parser.parseRouteInformationWithDependencies(
+      RouteInformation(location: location),
+      context,
+    );
+
+    Widget? buildNavigator(RouteMatchList matchList) {
+      // Find the index of fromRoute in the match list
+      final int parentShellRouteIndex = matchList.matches
+          .indexWhere((RouteMatch e) => e.route == parentShellRoute);
+      if (parentShellRouteIndex >= 0) {
+        final int startIndex = parentShellRouteIndex + 1;
+        final GlobalKey<NavigatorState> routeNavigatorKey = parentShellRoute
+            .navigatorKeyForSubRoute(matchList.matches[startIndex].route);
+        assert(
+            navigatorKey == routeNavigatorKey,
+            'Incorrect shell navigator key '
+            'for preloaded match list for location "$location"');
+
+        return routeBuilder.buildPreloadedNestedNavigator(
+          context,
+          matchList,
+          parentShellRouteIndex + 1,
+          pagePopContext.routeBuilderOnPopPage,
+          true,
+          navigatorKey,
+          restorationScopeId: restorationScopeId,
+          observers: observers,
+        );
+      } else {
+        return null;
+      }
+    }
+
+    return routeMatchList.then(buildNavigator);
   }
 }
