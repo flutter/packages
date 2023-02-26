@@ -170,6 +170,7 @@ GoRoute get $extraValueRoute => GoRouteData.$route(
 extension $ExtraValueRouteExtension on ExtraValueRoute {
   static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
         param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+        $extra: state.extra as int?,
       );
 
   String get location => GoRouteData.$location(
