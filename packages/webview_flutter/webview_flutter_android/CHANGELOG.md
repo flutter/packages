@@ -1,3 +1,7 @@
+## 3.4.0
+
+* Adds support for `PlatformNavigationDelegate.onUrlChange`.
+
 ## 3.3.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

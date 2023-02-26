@@ -702,6 +702,15 @@ class AndroidNavigationDelegateCreationParams
   final AndroidWebViewProxy androidWebViewProxy;
 }
 
+/// Android details of the change to a web view's url.
+class AndroidUrlChange extends UrlChange {
+  /// Constructs an [AndroidUrlChange].
+  const AndroidUrlChange({required super.url, required this.isReload});
+
+  /// Whether the url is being reloaded.
+  final bool isReload;
+}
+
 /// A place to register callback methods responsible to handle navigation events
 /// triggered by the [android_webview.WebView].
 class AndroidNavigationDelegate extends PlatformNavigationDelegate {
@@ -776,6 +785,18 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           weakThis.target!._handleNavigation(url, isForMainFrame: true);
         }
       },
+      doUpdateVisitedHistory: (
+        android_webview.WebView webView,
+        String url,
+        bool isReload,
+      ) {
+        if (weakThis.target?._onUrlChange != null) {
+          weakThis.target!._onUrlChange!(AndroidUrlChange(
+            url: url,
+            isReload: isReload,
+          ));
+        }
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
@@ -831,6 +852,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
+  UrlChangeCallback? _onUrlChange;
 
   void _handleNavigation(
     String url, {
@@ -910,5 +932,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     WebResourceErrorCallback onWebResourceError,
   ) async {
     _onWebResourceError = onWebResourceError;
+  }
+
+  @override
+  Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
+    _onUrlChange = onUrlChange;
   }
 }
