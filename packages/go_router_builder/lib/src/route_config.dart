@@ -189,8 +189,9 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
       yield _enumMapConst(enumParamType);
     }
   }
+
   ParameterElement? get _extraParam => _ctor.parameters
-    .singleWhereOrNull((ParameterElement element) => element.isExtraField);
+      .singleWhereOrNull((ParameterElement element) => element.isExtraField);
 
   String get _newFromState {
     final StringBuffer buffer = StringBuffer('=>');

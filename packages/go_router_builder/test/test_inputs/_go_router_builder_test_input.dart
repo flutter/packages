@@ -161,7 +161,6 @@ class DefaultValueRoute extends GoRouteData {
   final int param;
 }
 
-
 @ShouldGenerate(r'''
 GoRoute get $defaultValueRoute => GoRouteData.$route(
       path: '/default-value-route',
