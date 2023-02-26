@@ -24,6 +24,10 @@ void main() {
   const String startConnectionCall =
       'BillingClient#startConnection(BillingClientStateListener)';
   const String endConnectionCall = 'BillingClient#endConnection()';
+  const String acknowledgePurchaseCall =
+      'BillingClient#(AcknowledgePurchaseParams params, (AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
+  const String onBillingServiceDisconnectedCallback =
+      'BillingClientStateListener#onBillingServiceDisconnected()';
 
   setUpAll(() {
     _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
@@ -56,6 +60,45 @@ void main() {
     test('connects on initialization', () {
       //await iapAndroidPlatform.isAvailable();
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(1));
+    });
+
+    test('re-connects when client sends onBillingServiceDisconnected', () {
+      iapAndroidPlatform.billingClientManager.client.callHandler(
+        const MethodCall(onBillingServiceDisconnectedCallback,
+            <String, dynamic>{'handle': 0}),
+      );
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
+    });
+
+    test(
+        're-connects when operation returns BillingResponse.clientDisconnected',
+        () async {
+      final Map<String, dynamic> okValue = buildBillingResultMap(
+          const BillingResultWrapper(responseCode: BillingResponse.ok));
+      stubPlatform.addResponse(
+        name: acknowledgePurchaseCall,
+        value: buildBillingResultMap(
+          const BillingResultWrapper(
+            responseCode: BillingResponse.serviceDisconnected,
+          ),
+        ),
+      );
+      stubPlatform.addResponse(
+        name: startConnectionCall,
+        value: okValue,
+        additionalStepBeforeReturn: (dynamic _) => stubPlatform.addResponse(
+            name: acknowledgePurchaseCall, value: okValue),
+      );
+      final PurchaseDetails purchase =
+          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase);
+      final BillingResultWrapper result =
+          await iapAndroidPlatform.completePurchase(purchase);
+      expect(
+        stubPlatform.countPreviousCalls(acknowledgePurchaseCall),
+        equals(2),
+      );
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
+      expect(result.responseCode, equals(BillingResponse.ok));
     });
   });
 
@@ -314,7 +357,7 @@ void main() {
                 }
               ]
             });
-            iapAndroidPlatform.billingClient.callHandler(call);
+            iapAndroidPlatform.billingClientManager.client.callHandler(call);
           });
       final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;
@@ -358,7 +401,7 @@ void main() {
               'responseCode': const BillingResponseConverter().toJson(sentCode),
               'purchasesList': const <dynamic>[]
             });
-            iapAndroidPlatform.billingClient.callHandler(call);
+            iapAndroidPlatform.billingClientManager.client.callHandler(call);
           });
       final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;
@@ -416,7 +459,7 @@ void main() {
                 }
               ]
             });
-            iapAndroidPlatform.billingClient.callHandler(call);
+            iapAndroidPlatform.billingClientManager.client.callHandler(call);
           });
       final Completer<String> consumeCompleter = Completer<String>();
       // adding call back for consume purchase
@@ -531,7 +574,7 @@ void main() {
                 }
               ]
             });
-            iapAndroidPlatform.billingClient.callHandler(call);
+            iapAndroidPlatform.billingClientManager.client.callHandler(call);
           });
       final Completer<String> consumeCompleter = Completer<String>();
       // adding call back for consume purchase
@@ -609,7 +652,7 @@ void main() {
                 }
               ]
             });
-            iapAndroidPlatform.billingClient.callHandler(call);
+            iapAndroidPlatform.billingClientManager.client.callHandler(call);
           });
       final Completer<String?> consumeCompleter = Completer<String?>();
       // adding call back for consume purchase
@@ -675,7 +718,7 @@ void main() {
                 }
               ]
             });
-            iapAndroidPlatform.billingClient.callHandler(call);
+            iapAndroidPlatform.billingClientManager.client.callHandler(call);
           });
       final Completer<String> consumeCompleter = Completer<String>();
       // adding call back for consume purchase
@@ -733,7 +776,7 @@ void main() {
               'responseCode': const BillingResponseConverter().toJson(sentCode),
               'purchasesList': const <dynamic>[]
             });
-            iapAndroidPlatform.billingClient.callHandler(call);
+            iapAndroidPlatform.billingClientManager.client.callHandler(call);
           });
 
       final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();

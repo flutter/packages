@@ -29,18 +29,13 @@ const String kIAPSource = 'google_play';
 /// generic plugin API.
 class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
   InAppPurchaseAndroidPlatform._() {
-    billingClient = BillingClient((PurchasesResultWrapper resultWrapper) async {
-      _purchaseUpdatedController
-          .add(await _getPurchaseDetailsFromResult(resultWrapper));
-    });
-
     // Register [InAppPurchaseAndroidPlatformAddition].
     InAppPurchasePlatformAddition.instance =
-        InAppPurchaseAndroidPlatformAddition(billingClient);
+        InAppPurchaseAndroidPlatformAddition(billingClientManager);
 
-    _readyFuture = _connect();
-    _purchaseUpdatedController =
-        StreamController<List<PurchaseDetails>>.broadcast();
+    billingClientManager.purchasesUpdatedStream
+        .asyncMap(_getPurchaseDetailsFromResult)
+        .listen(_purchaseUpdatedController.add);
   }
 
   /// Registers this class as the default instance of [InAppPurchasePlatform].
@@ -50,26 +45,25 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
     InAppPurchasePlatform.instance = InAppPurchaseAndroidPlatform._();
   }
 
-  static late StreamController<List<PurchaseDetails>>
-      _purchaseUpdatedController;
+  final StreamController<List<PurchaseDetails>> _purchaseUpdatedController =
+      StreamController<List<PurchaseDetails>>.broadcast();
 
   @override
-  Stream<List<PurchaseDetails>> get purchaseStream =>
+  late final Stream<List<PurchaseDetails>> purchaseStream =
       _purchaseUpdatedController.stream;
 
   /// The [BillingClient] that's abstracted by [GooglePlayConnection].
   ///
   /// This field should not be used out of test code.
   @visibleForTesting
-  late final BillingClient billingClient;
+  final BillingClientManager billingClientManager = BillingClientManager();
 
-  late Future<void> _readyFuture;
   static final Set<String> _productIdsToConsume = <String>{};
 
   @override
   Future<bool> isAvailable() async {
-    await _readyFuture;
-    return billingClient.isReady();
+    return billingClientManager
+        .runRaw((BillingClient client) => client.isReady());
   }
 
   @override
@@ -77,27 +71,32 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
       Set<String> identifiers) async {
     List<SkuDetailsResponseWrapper> responses;
     PlatformException? exception;
+
+    Future<SkuDetailsResponseWrapper> querySkuDetails(SkuType type) {
+      return billingClientManager.run(
+        (BillingClient client) => client.querySkuDetails(
+          skuType: type,
+          skusList: identifiers.toList(),
+        ),
+      );
+    }
+
     try {
       responses = await Future.wait(<Future<SkuDetailsResponseWrapper>>[
-        billingClient.querySkuDetails(
-            skuType: SkuType.inapp, skusList: identifiers.toList()),
-        billingClient.querySkuDetails(
-            skuType: SkuType.subs, skusList: identifiers.toList())
+        querySkuDetails(SkuType.inapp),
+        querySkuDetails(SkuType.subs),
       ]);
     } on PlatformException catch (e) {
       exception = e;
-      responses = <SkuDetailsResponseWrapper>[
-        // ignore: invalid_use_of_visible_for_testing_member
-        SkuDetailsResponseWrapper(
-            billingResult: BillingResultWrapper(
-                responseCode: BillingResponse.error, debugMessage: e.code),
-            skuDetailsList: const <SkuDetailsWrapper>[]),
-        // ignore: invalid_use_of_visible_for_testing_member
-        SkuDetailsResponseWrapper(
-            billingResult: BillingResultWrapper(
-                responseCode: BillingResponse.error, debugMessage: e.code),
-            skuDetailsList: const <SkuDetailsWrapper>[])
-      ];
+      // ignore: invalid_use_of_visible_for_testing_member
+      final SkuDetailsResponseWrapper response = SkuDetailsResponseWrapper(
+        billingResult: BillingResultWrapper(
+          responseCode: BillingResponse.error,
+          debugMessage: e.code,
+        ),
+        skuDetailsList: const <SkuDetailsWrapper>[],
+      );
+      responses = <SkuDetailsResponseWrapper>[response, response];
     }
     final List<ProductDetails> productDetailsList =
         responses.expand((SkuDetailsResponseWrapper response) {
@@ -132,13 +131,16 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
     }
 
     final BillingResultWrapper billingResultWrapper =
-        await billingClient.launchBillingFlow(
-            sku: purchaseParam.productDetails.id,
-            accountId: purchaseParam.applicationUserName,
-            oldSku: changeSubscriptionParam?.oldPurchaseDetails.productID,
-            purchaseToken: changeSubscriptionParam
-                ?.oldPurchaseDetails.verificationData.serverVerificationData,
-            prorationMode: changeSubscriptionParam?.prorationMode);
+        await billingClientManager.run(
+      (BillingClient client) => client.launchBillingFlow(
+        sku: purchaseParam.productDetails.id,
+        accountId: purchaseParam.applicationUserName,
+        oldSku: changeSubscriptionParam?.oldPurchaseDetails.productID,
+        purchaseToken: changeSubscriptionParam
+            ?.oldPurchaseDetails.verificationData.serverVerificationData,
+        prorationMode: changeSubscriptionParam?.prorationMode,
+      ),
+    );
     return billingResultWrapper.responseCode == BillingResponse.ok;
   }
 
@@ -171,8 +173,10 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
           'completePurchase unsuccessful. The `purchase.verificationData` is not valid');
     }
 
-    return billingClient
-        .acknowledgePurchase(purchase.verificationData.serverVerificationData);
+    return billingClientManager.run(
+      (BillingClient client) => client.acknowledgePurchase(
+          purchase.verificationData.serverVerificationData),
+    );
   }
 
   @override
@@ -182,8 +186,10 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
     List<PurchasesResultWrapper> responses;
 
     responses = await Future.wait(<Future<PurchasesResultWrapper>>[
-      billingClient.queryPurchases(SkuType.inapp),
-      billingClient.queryPurchases(SkuType.subs)
+      billingClientManager
+          .run((BillingClient client) => client.queryPurchases(SkuType.inapp)),
+      billingClientManager
+          .run((BillingClient client) => client.queryPurchases(SkuType.subs)),
     ]);
 
     final Set<String> errorCodeSet = responses
@@ -219,11 +225,9 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
     _purchaseUpdatedController.add(pastPurchases);
   }
 
-  Future<void> _connect() =>
-      billingClient.startConnection(onBillingServiceDisconnected: () {});
-
   Future<PurchaseDetails> _maybeAutoConsumePurchase(
-      PurchaseDetails purchaseDetails) async {
+    PurchaseDetails purchaseDetails,
+  ) async {
     if (!(purchaseDetails.status == PurchaseStatus.purchased &&
         _productIdsToConsume.contains(purchaseDetails.productID))) {
       return purchaseDetails;
@@ -279,15 +283,16 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
       }
       return <PurchaseDetails>[
         PurchaseDetails(
-            purchaseID: '',
-            productID: '',
-            status: status,
-            transactionDate: null,
-            verificationData: PurchaseVerificationData(
-                localVerificationData: '',
-                serverVerificationData: '',
-                source: kIAPSource))
-          ..error = error
+          purchaseID: '',
+          productID: '',
+          status: status,
+          transactionDate: null,
+          verificationData: PurchaseVerificationData(
+            localVerificationData: '',
+            serverVerificationData: '',
+            source: kIAPSource,
+          ),
+        )..error = error
       ];
     }
   }

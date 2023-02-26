@@ -39,7 +39,7 @@ void main() {
         value: buildBillingResultMap(expectedBillingResult));
     stubPlatform.addResponse(name: endConnectionCall);
     iapAndroidPlatformAddition =
-        InAppPurchaseAndroidPlatformAddition(BillingClient((_) {}));
+        InAppPurchaseAndroidPlatformAddition(BillingClientManager());
   });
 
   group('consume purchases', () {

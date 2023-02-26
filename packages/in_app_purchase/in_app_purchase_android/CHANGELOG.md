@@ -1,3 +1,8 @@
+## 0.2.5
+
+* Fixes the management of `BillingClient` connection.
+* Introduces `BillingClientManager`.
+
 ## 0.2.4+1
 
 * Updates Google Play Billing Library to 5.1.0.
