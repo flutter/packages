@@ -1,3 +1,7 @@
+## 0.11.0+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.11.0
 
 * **Breaking Change:** Migrates JS-interop to `package:google_identity_services_web`

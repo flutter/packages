@@ -1,3 +1,7 @@
+## 0.8.5+7
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.8.5+6
 
 * Updates minimum Flutter version to 3.0.
