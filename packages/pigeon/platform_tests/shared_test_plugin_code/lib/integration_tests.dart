@@ -233,6 +233,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }, throwsA(isA<PlatformException>()));
     });
 
+    testWidgets('errors are returned from void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.throwAsyncErrorFromVoid();
+      }, throwsA(isA<PlatformException>()));
+    });
+
     testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
@@ -979,6 +988,30 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.callFlutterNoop(), completes);
     });
 
+    testWidgets('errors are returned from non void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.callFlutterThrowError();
+      }, throwsA(isA<PlatformException>()));
+    },
+        // TODO(tarrinneal): Once flutter api error handling is added, enable these tests.
+        // See: https://github.com/flutter/flutter/issues/118243
+        skip: true);
+
+    testWidgets('errors are returned from void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.callFlutterThrowErrorFromVoid();
+      }, throwsA(isA<PlatformException>()));
+    },
+        // TODO(tarrinneal): Once flutter api error handling is added, enable these tests.
+        // See: https://github.com/flutter/flutter/issues/118243
+        skip: true);
+
     testWidgets('all datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -1276,6 +1309,16 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   void noop() {}
 
   @override
+  Object? throwError() {
+    throw FlutterError('this is an error');
+  }
+
+  @override
+  void throwErrorFromVoid() {
+    throw FlutterError('this is an error');
+  }
+
+  @override
   AllNullableTypes sendMultipleNullableTypes(
       bool? aNullableBool, int? aNullableInt, String? aNullableString) {
     return AllNullableTypes(
@@ -1325,4 +1368,12 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
 
   @override
   Uint8List? echoNullableUint8List(Uint8List? aList) => aList;
+
+  @override
+  Future<void> noopAsync() async {}
+
+  @override
+  Future<String> echoAsyncString(String aString) async {
+    return aString;
+  }
 }

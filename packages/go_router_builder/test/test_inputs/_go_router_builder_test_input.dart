@@ -89,6 +89,9 @@ extension $EnumParamExtension on EnumParam {
   void go(BuildContext context) => context.go(location);
 
   void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 const _$EnumTestEnumMap = {
@@ -163,4 +166,55 @@ enum EnumWithExtraTest {
 
   const EnumWithExtraTest(this.x);
   final int x;
+
+
+@ShouldGenerate(r'''
+GoRoute get $defaultValueRoute => GoRouteData.$route(
+      path: '/default-value-route',
+      factory: $DefaultValueRouteExtension._fromState,
+    );
+
+extension $DefaultValueRouteExtension on DefaultValueRoute {
+  static DefaultValueRoute _fromState(GoRouterState state) => DefaultValueRoute(
+        param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+      );
+
+  String get location => GoRouteData.$location(
+        '/default-value-route',
+        queryParams: {
+          if (param != 0) 'param': param.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+''')
+@TypedGoRoute<DefaultValueRoute>(path: '/default-value-route')
+class DefaultValueRoute extends GoRouteData {
+  DefaultValueRoute({this.param = 0});
+  final int param;
+}
+
+@ShouldThrow(
+  'Default value used with a nullable type. Only non-nullable type can have a default value.',
+  todo: 'Remove the default value or make the type non-nullable.',
+)
+@TypedGoRoute<NullableDefaultValueRoute>(path: '/nullable-default-value-route')
+class NullableDefaultValueRoute extends GoRouteData {
+  NullableDefaultValueRoute({this.param = 0});
+  final int? param;
 }

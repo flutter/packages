@@ -1,7 +1,18 @@
-## 1.0.17
+## 1.1.3
 
 * Updates router_config to not passing itself as `extra`.
 
+## 1.1.2
+
+* Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
+
+## 1.1.1
+
+* Support for the generation of the pushReplacement method has been added.
+
+## 1.1.0
+
+* Supports default value for the route parameters.
 
 ## 1.0.16
 
