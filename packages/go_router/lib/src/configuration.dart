@@ -161,13 +161,16 @@ class RouteConfiguration {
     return true;
   }
 
-  static Iterable<RouteBase> _subRoutesRecursively(List<RouteBase> routes) =>
-      routes.expand(
-          (RouteBase e) => <RouteBase>[e, ..._subRoutesRecursively(e.routes)]);
+  static Iterable<RouteBase> _subRoutesRecursively(
+      List<RouteBase> routes) sync* {
+    for (final RouteBase route in routes) {
+      yield route;
+      yield* _subRoutesRecursively(route.routes);
+    }
+  }
 
   static GoRoute? _findFirstGoRoute(List<RouteBase> routes) =>
-      _subRoutesRecursively(routes)
-          .firstWhereOrNull((RouteBase e) => e is GoRoute) as GoRoute?;
+      _subRoutesRecursively(routes).whereType<GoRoute>().firstOrNull;
 
   /// Tests if a route is a descendant of, or same as, an ancestor route.
   bool _debugIsDescendantOrSame(

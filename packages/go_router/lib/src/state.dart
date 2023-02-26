@@ -235,8 +235,7 @@ class GoRouterStateRegistry extends ChangeNotifier {
   }
 
   /// Updates this registry with new records.
-  void updateRegistry(Map<Page<Object?>, GoRouterState> newRegistry,
-      {bool replace = true}) {
+  void updateRegistry(Map<Page<Object?>, GoRouterState> newRegistry) {
     bool shouldNotify = false;
     final Set<Page<Object?>> pagesWithAssociation =
         _routePageAssociation.values.toSet();
@@ -256,21 +255,19 @@ class GoRouterStateRegistry extends ChangeNotifier {
       // Adding or removing registry does not need to notify the listen since
       // no one should be depending on them.
     }
-    if (replace) {
-      registry.removeWhere((Page<Object?> key, GoRouterState value) {
-        if (newRegistry.containsKey(key)) {
-          return false;
-        }
-        // For those that have page route association, it will be removed by the
-        // route future. Need to notify the listener so they can update the page
-        // route association if its page has changed.
-        if (pagesWithAssociation.contains(key)) {
-          shouldNotify = true;
-          return false;
-        }
-        return true;
-      });
-    }
+    registry.removeWhere((Page<Object?> key, GoRouterState value) {
+      if (newRegistry.containsKey(key)) {
+        return false;
+      }
+      // For those that have page route association, it will be removed by the
+      // route future. Need to notify the listener so they can update the page
+      // route association if its page has changed.
+      if (pagesWithAssociation.contains(key)) {
+        shouldNotify = true;
+        return false;
+      }
+      return true;
+    });
     if (shouldNotify) {
       notifyListeners();
     }
