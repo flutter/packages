@@ -86,11 +86,9 @@ extension $EnumParamExtension on EnumParam {
         '/${Uri.encodeComponent(_$EnumTestEnumMap[y]!)}',
       );
 
-  void go(BuildContext context, {Object? extra}) =>
-      context.go(location, extra: extra);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context, {Object? extra}) =>
-      context.push(location, extra: extra);
+  void push(BuildContext context) => context.push(location);
 }
 
 const _$EnumTestEnumMap = {

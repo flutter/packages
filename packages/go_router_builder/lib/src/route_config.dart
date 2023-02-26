@@ -142,11 +142,11 @@ extension $_extensionName on $_className {
 
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
 
-  void go(BuildContext context, {Object? extra}) =>
-      context.go(location, extra: extra);
+  void go(BuildContext context) =>
+      context.go(location${_extraParam != null ? ', extra: ${_decodeFor(_extraParam!)}' : ''});
 
-  void push(BuildContext context, {Object? extra}) =>
-      context.push(location, extra: extra);
+  void push(BuildContext context) =>
+      context.go(location${_extraParam != null ? ', extra: ${_decodeFor(_extraParam!)}' : ''});
 }
 ''';
 
@@ -186,6 +186,8 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
       yield _enumMapConst(enumParamType);
     }
   }
+  ParameterElement? get _extraParam => _ctor.parameters
+    .singleWhereOrNull((ParameterElement element) => element.isExtraField);
 
   String get _newFromState {
     final StringBuffer buffer = StringBuffer('=>');
@@ -193,8 +195,7 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
       buffer.writeln('const ');
     }
 
-    final ParameterElement? extraParam = _ctor.parameters
-        .singleWhereOrNull((ParameterElement element) => element.isExtraField);
+    final ParameterElement? extraParam = _extraParam;
 
     buffer.writeln('$_className(');
     for (final ParameterElement param in <ParameterElement>[
