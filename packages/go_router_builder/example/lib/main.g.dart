@@ -46,6 +46,9 @@ extension $HomeRouteExtension on HomeRoute {
   void go(BuildContext context) => context.go(location);
 
   void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
@@ -60,6 +63,9 @@ extension $FamilyRouteExtension on FamilyRoute {
   void go(BuildContext context) => context.go(location);
 
   void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $PersonRouteExtension on PersonRoute {
@@ -75,6 +81,9 @@ extension $PersonRouteExtension on PersonRoute {
   void go(BuildContext context) => context.go(location);
 
   void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $PersonDetailsRouteExtension on PersonDetailsRoute {
@@ -93,6 +102,9 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
   void go(BuildContext context) => context.go(location, extra: $extra);
 
   void push(BuildContext context) => context.push(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
 }
 
 const _$PersonDetailsEnumMap = {
@@ -119,11 +131,14 @@ extension $LoginRouteExtension on LoginRoute {
   String get location => GoRouteData.$location(
         '/login',
         queryParams: {
-          if (fromPage != null) 'from-page': fromPage!,
+          if (fromPage != null) 'from-page': fromPage,
         },
       );
 
   void go(BuildContext context) => context.go(location);
 
   void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }

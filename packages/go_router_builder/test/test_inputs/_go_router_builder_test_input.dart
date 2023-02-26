@@ -120,54 +120,6 @@ enum EnumTest {
   final int x;
 }
 
-
-@ShouldGenerate(r'''
-GoRoute get $enumParam => GoRouteData.$route(
-      path: '/:y',
-      factory: $EnumParamExtension._fromState,
-    );
-
-extension $EnumParamExtension on EnumParam {
-  static EnumParam _fromState(GoRouterState state) => EnumParam(
-        y: _$EnumTestEnumMap._$fromName(state.params['y']!),
-      );
-
-  String get location => GoRouteData.$location(
-        '/${Uri.encodeComponent(_$EnumTestEnumMap[y]!)}',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  void push(BuildContext context) => context.push(location);
-}
-
-const _$EnumTestEnumMap = {
-  EnumTest.a: 'a',
-  EnumTest.b: 'b',
-  EnumTest.c: 'c',
-};
-
-extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
-}
-''')
-@TypedGoRoute<EnumParam>(path: '/:y')
-class EnumParamWithExtra extends GoRouteData {
-  EnumParamWithExtra({required this.y, this.$extra});
-  final EnumWithExtraTest y;
-  final int? $extra;
-}
-
-enum EnumWithExtraTest {
-  a(1),
-  b(3),
-  c(5);
-
-  const EnumWithExtraTest(this.x);
-  final int x;
-
-
 @ShouldGenerate(r'''
 GoRoute get $defaultValueRoute => GoRouteData.$route(
       path: '/default-value-route',
@@ -206,6 +158,48 @@ T? _$convertMapValue<T>(
 @TypedGoRoute<DefaultValueRoute>(path: '/default-value-route')
 class DefaultValueRoute extends GoRouteData {
   DefaultValueRoute({this.param = 0});
+  final int param;
+}
+
+
+@ShouldGenerate(r'''
+GoRoute get $defaultValueRoute => GoRouteData.$route(
+      path: '/default-value-route',
+      factory: $DefaultValueRouteExtension._fromState,
+    );
+
+extension $DefaultValueRouteExtension on DefaultValueRoute {
+  static DefaultValueRoute _fromState(GoRouterState state) => DefaultValueRoute(
+        param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+      );
+
+  String get location => GoRouteData.$location(
+        '/default-value-route',
+        queryParams: {
+          if (param != 0) 'param': param.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: this);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+''')
+@TypedGoRoute<DefaultValueRoute>(path: '/default-value-route')
+class ExtraValueRoute extends GoRouteData {
+  ExtraValueRoute({this.param = 0});
   final int param;
 }
 
