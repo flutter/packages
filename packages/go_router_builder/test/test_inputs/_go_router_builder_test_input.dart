@@ -162,13 +162,13 @@ class DefaultValueRoute extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $defaultValueRoute => GoRouteData.$route(
+GoRoute get $extraValueRoute => GoRouteData.$route(
       path: '/default-value-route',
-      factory: $DefaultValueRouteExtension._fromState,
+      factory: $ExtraValueRouteExtension._fromState,
     );
 
-extension $DefaultValueRouteExtension on DefaultValueRoute {
-  static DefaultValueRoute _fromState(GoRouterState state) => DefaultValueRoute(
+extension $ExtraValueRouteExtension on ExtraValueRoute {
+  static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
         param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
       );
 
@@ -196,10 +196,11 @@ T? _$convertMapValue<T>(
   return value == null ? null : converter(value);
 }
 ''')
-@TypedGoRoute<DefaultValueRoute>(path: '/default-value-route')
+@TypedGoRoute<ExtraValueRoute>(path: '/default-value-route')
 class ExtraValueRoute extends GoRouteData {
-  ExtraValueRoute({this.param = 0});
+  ExtraValueRoute({this.param = 0, this.$extra});
   final int param;
+  final int? $extra;
 }
 
 @ShouldThrow(
