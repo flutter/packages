@@ -143,10 +143,10 @@ extension $_extensionName on $_className {
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
 
   void go(BuildContext context) =>
-      context.go(location${_extraParam != null ? ', extra: ${_decodeFor(_extraParam!)}' : ''});
+      context.go(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
   void push(BuildContext context) =>
-      context.go(location${_extraParam != null ? ', extra: ${_decodeFor(_extraParam!)}' : ''});
+      context.push(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';
 
