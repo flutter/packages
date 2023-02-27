@@ -79,6 +79,7 @@ Future<int> generatePigeons({required String baseDir}) async {
           ? null
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
+      kotlinErrorClassName: '${pascalCaseName}Error',
       // iOS
       swiftOut: skipLanguages.contains(GeneratorLanguages.swift)
           ? null
@@ -139,6 +140,7 @@ Future<int> runPigeon({
   required String input,
   String? kotlinOut,
   String? kotlinPackage,
+  String? kotlinErrorClassName,
   String? swiftOut,
   String? cppHeaderOut,
   String? cppSourceOut,
@@ -162,7 +164,8 @@ Future<int> runPigeon({
     javaOut: javaOut,
     javaOptions: JavaOptions(package: javaPackage),
     kotlinOut: kotlinOut,
-    kotlinOptions: KotlinOptions(package: kotlinPackage),
+    kotlinOptions: KotlinOptions(
+        package: kotlinPackage, errorClassName: kotlinErrorClassName),
     objcHeaderOut: objcHeaderOut,
     objcSourceOut: objcSourceOut,
     objcOptions: const ObjcOptions(),

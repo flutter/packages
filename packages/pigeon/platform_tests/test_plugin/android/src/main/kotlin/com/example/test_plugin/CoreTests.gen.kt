@@ -20,7 +20,7 @@ private fun wrapResult(result: Any?): List<Any?> {
 }
 
 private fun wrapError(exception: Throwable): List<Any?> {
-  if (exception is FlutterError) {
+  if (exception is CoreTestsError) {
     return listOf(
       exception.code,
       exception.message,
@@ -35,7 +35,7 @@ private fun wrapError(exception: Throwable): List<Any?> {
   }
 }
 
-class FlutterError (
+class CoreTestsError (
   val code: String,
   override val message: String? = null,
   val details: Any? = null
