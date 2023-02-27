@@ -129,13 +129,21 @@ class VideoPlayerValue {
   /// * [isInitialized] is `false`
   /// * [size.width], or [size.height] is equal to `0.0`
   /// * aspect ratio would be less than or equal to `0.0`
-  double get aspectRatio {
+  double get aspectRatio => aspectRatioOrNull ?? 1.0;
+
+  /// Returns [size.width] / [size.height] if available.
+  ///
+  /// Will return null if:
+  /// * [isInitialized] is `false`
+  /// * [size.width], or [size.height] is equal to `0.0`
+  /// * aspect ratio would be less than or equal to `0.0`
+  double? get aspectRatioOrNull {
     if (!isInitialized || size.width == 0 || size.height == 0) {
-      return 1.0;
+      return null;
     }
     final double aspectRatio = size.width / size.height;
     if (aspectRatio <= 0) {
-      return 1.0;
+      return null;
     }
     return aspectRatio;
   }
