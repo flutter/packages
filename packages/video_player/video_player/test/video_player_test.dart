@@ -1038,7 +1038,7 @@ void main() {
           size: const Size(640, 480),
           duration: const Duration(seconds: 1),
         );
-        expect(value.aspectRatio, 4 / 3);
+        expect(value.aspectRatioOrNull, 4 / 3);
       });
 
       test('no size -> null', () {
@@ -1046,7 +1046,7 @@ void main() {
           isInitialized: true,
           duration: const Duration(seconds: 1),
         );
-        expect(value.aspectRatio, null);
+        expect(value.aspectRatioOrNull, null);
       });
 
       test('height = 0 -> null', () {
@@ -1055,7 +1055,7 @@ void main() {
           size: const Size(640, 0),
           duration: const Duration(seconds: 1),
         );
-        expect(value.aspectRatio, null);
+        expect(value.aspectRatioOrNull, null);
       });
 
       test('width = 0 -> null', () {
@@ -1064,7 +1064,7 @@ void main() {
           size: const Size(0, 480),
           duration: const Duration(seconds: 1),
         );
-        expect(value.aspectRatio, null);
+        expect(value.aspectRatioOrNull, null);
       });
 
       test('negative aspect ratio -> null', () {
@@ -1073,7 +1073,7 @@ void main() {
           size: const Size(640, -480),
           duration: const Duration(seconds: 1),
         );
-        expect(value.aspectRatio, null);
+        expect(value.aspectRatioOrNull, null);
       });
     });
   });
