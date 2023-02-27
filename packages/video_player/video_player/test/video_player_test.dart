@@ -904,7 +904,7 @@ void main() {
       expect(error.isInitialized, isFalse);
       expect(error.hasError, isTrue);
       expect(error.aspectRatio, 1.0);
-      expect(uninitialized.aspectRatioOrNull, null);
+      expect(error.aspectRatioOrNull, null);
     });
 
     test('toString()', () {
