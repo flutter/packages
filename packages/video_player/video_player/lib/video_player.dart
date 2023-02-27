@@ -141,11 +141,11 @@ class VideoPlayerValue {
     if (!isInitialized || size.width == 0 || size.height == 0) {
       return null;
     }
-    final double aspectRatio = size.width / size.height;
-    if (aspectRatio <= 0) {
+    final double localAspectRatio = size.width / size.height;
+    if (localAspectRatio <= 0) {
       return null;
     }
-    return aspectRatio;
+    return localAspectRatio;
   }
 
   /// Returns a new instance that has the same values as this current instance,
