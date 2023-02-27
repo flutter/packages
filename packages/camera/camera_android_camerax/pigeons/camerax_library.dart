@@ -46,6 +46,13 @@ class CameraPermissionsErrorData {
   String description;
 }
 
+abstract class InstanceManagerHostApi {
+  /// Clear the native `InstanceManager`.
+  ///
+  /// This is typically only used after a hot restart.
+  void clear();
+}
+
 @HostApi(dartHostTestHandler: 'TestJavaObjectHostApi')
 abstract class JavaObjectHostApi {
   void dispose(int identifier);
