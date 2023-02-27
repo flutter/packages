@@ -265,7 +265,8 @@ class AdaptiveScaffold extends StatefulWidget {
     TextStyle? unSelectedLabelTextStyle,
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
-    final NavigationRailThemeData navRailTheme = Theme.of(context).navigationRailTheme;
+    final NavigationRailThemeData navRailTheme =
+        Theme.of(context).navigationRailTheme;
 
     if (extended && width == 72) {
       width = 192;
@@ -287,13 +288,18 @@ class AdaptiveScaffold extends StatefulWidget {
                     leading: leading,
                     trailing: trailing,
                     onDestinationSelected: onDestinationSelected,
-                    backgroundColor: backgroundColor ?? navRailTheme.backgroundColor,
+                    backgroundColor:
+                        backgroundColor ?? navRailTheme.backgroundColor,
                     extended: extended,
                     selectedIndex: selectedIndex,
-                    selectedIconTheme: selectedIconTheme ?? navRailTheme.selectedIconTheme,
-                    unselectedIconTheme: unselectedIconTheme ?? navRailTheme.unselectedIconTheme,
-                    selectedLabelTextStyle: selectedLabelTextStyle ?? navRailTheme.selectedLabelTextStyle,
-                    unselectedLabelTextStyle: unSelectedLabelTextStyle ?? navRailTheme.unselectedLabelTextStyle,
+                    selectedIconTheme:
+                        selectedIconTheme ?? navRailTheme.selectedIconTheme,
+                    unselectedIconTheme:
+                        unselectedIconTheme ?? navRailTheme.unselectedIconTheme,
+                    selectedLabelTextStyle: selectedLabelTextStyle ??
+                        navRailTheme.selectedLabelTextStyle,
+                    unselectedLabelTextStyle: unSelectedLabelTextStyle ??
+                        navRailTheme.unselectedLabelTextStyle,
                     destinations: destinations,
                   ),
                 ),
