@@ -3239,7 +3239,7 @@ public class CoreTests {
           null,
           channelReply -> {
             @SuppressWarnings("ConstantConditions")
-            Object output = (Object) channelReply;
+            Object output = channelReply;
             callback.reply(output);
           });
     }

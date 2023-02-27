@@ -39,7 +39,7 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  override fun throwError(): Object? {
+  override fun throwError(): Any? {
     throw Exception("An error");
   }
 
@@ -173,7 +173,7 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit) {
     callback(Result.success(aMap))
   }
-  
+
   override fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit) {
     callback(Result.success(anInt))
   }
@@ -209,7 +209,7 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
     flutterApi!!.noop() { callback(Result.success(Unit)) }
   }
-  
+
   override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
     // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
     // See issue https://github.com/flutter/flutter/issues/118243
@@ -224,9 +224,9 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun callFlutterSendMultipleNullableTypes(
-    aNullableBool: Boolean?, 
-    aNullableInt: Long?, 
-    aNullableString: String?, 
+    aNullableBool: Boolean?,
+    aNullableInt: Long?,
+    aNullableString: String?,
     callback: (Result<AllNullableTypes>) -> Unit
   ) {
     flutterApi!!.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString) {
