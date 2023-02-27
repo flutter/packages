@@ -1,6 +1,7 @@
 ## 2.3.12
 
-* Bumps Exoplayer dependency versions to 2.18.3
+* Bumps Exoplayer dependency versions to 2.18.3.
+* Bump compileSdkVersion to 33.
 
 ## 2.3.11
 
