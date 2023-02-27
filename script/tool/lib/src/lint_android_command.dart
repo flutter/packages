@@ -81,15 +81,15 @@ class LintAndroidCommand extends PackageLoopingCommand {
         printError('The example '
             '${getRelativePosixPath(example.directory, from: package.directory)} '
             'is not configured to treat javac lints and warnings as errors. '
-            'Please add the following to the "allprojects" section:');
+            'Please add the following to its build.gradle:');
         print('''
-    gradle.projectsEvaluated {
-        project(":${package.directory.basename}") {
-            tasks.withType(JavaCompile) {
-                options.compilerArgs << "-Xlint:all" << "-Werror"
-            }
+gradle.projectsEvaluated {
+    project(":${package.directory.basename}") {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:all" << "-Werror"
         }
     }
+}
 ''');
       }
     }
