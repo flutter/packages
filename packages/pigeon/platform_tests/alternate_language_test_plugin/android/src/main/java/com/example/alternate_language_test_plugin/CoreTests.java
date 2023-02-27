@@ -25,12 +25,12 @@ import java.util.Map;
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})
 public class CoreTests {
-  public static class ApiError extends RuntimeException {
+  public static class FlutterError extends RuntimeException {
     public final String code;
     public final String message;
     public final Object details;
 
-    public ApiError(@NonNull String code, @Nullable String message, @Nullable Object details) {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.message = message;
@@ -41,8 +41,8 @@ public class CoreTests {
   @NonNull
   private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     ArrayList<Object> errorList = new ArrayList<Object>(3);
-    if (exception instanceof ApiError) {
-      ApiError error = (ApiError) exception;
+    if (exception instanceof FlutterError) {
+      FlutterError error = (FlutterError) exception;
       errorList.add(error.code);
       errorList.add(error.message);
       errorList.add(error.details);

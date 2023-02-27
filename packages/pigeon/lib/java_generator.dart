@@ -772,14 +772,14 @@ Result<$returnType> $resultName =
   }
 
   void _writeErrorClass(Indent indent) {
-    indent.write('public static class ApiError extends RuntimeException ');
+    indent.write('public static class FlutterError extends RuntimeException ');
     indent.addScoped('{', '}', () {
       indent.writeln('public final String code;');
       indent.writeln('public final String message;');
       indent.writeln('public final Object details;');
       indent.newln();
       indent.writeln(
-          'public ApiError(@NonNull String code, @Nullable String message, @Nullable Object details) ');
+          'public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) ');
       indent.writeScoped('{', '}', () {
         indent.writeln('super(message);');
         indent.writeln('this.code = code;');
@@ -794,8 +794,8 @@ Result<$returnType> $resultName =
 @NonNull
 private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 \tArrayList<Object> errorList = new ArrayList<Object>(3);
-\tif (exception instanceof ApiError) {
-\t\tApiError error = (ApiError) exception;
+\tif (exception instanceof FlutterError) {
+\t\tFlutterError error = (FlutterError) exception;
 \t\terrorList.add(error.code);
 \t\terrorList.add(error.message);
 \t\terrorList.add(error.details);

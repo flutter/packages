@@ -634,7 +634,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
       indent.write(
-          'if (exception is ${generatorOptions.errorClassName ?? "Error"}) ');
+          'if (exception is ${generatorOptions.errorClassName ?? "FlutterError"}) ');
       indent.addScoped('{', '}', () {
         indent.write('return ');
         indent.addScoped('listOf(', ')', () {
@@ -657,7 +657,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   void _writeErrorClass(KotlinOptions generatorOptions, Indent indent) {
     indent.newln();
-    indent.write('class ${generatorOptions.errorClassName ?? "Error"} ');
+    indent.write('class ${generatorOptions.errorClassName ?? "FlutterError"} ');
     indent.addScoped('(', ')', () {
       indent.writeln('val code: String,');
       indent.writeln('override val message: String? = null,');

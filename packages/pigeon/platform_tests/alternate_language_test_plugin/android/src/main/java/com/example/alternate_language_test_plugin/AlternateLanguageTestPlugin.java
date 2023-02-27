@@ -56,12 +56,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public @Nullable Object throwFlutterError() {
-    throw new CoreTests.ApiError("code", "message", "details");
+    throw new CoreTests.FlutterError("code", "message", "details");
   }
 
   @Override
   public void throwFlutterErrorFromVoid() {
-    throw new CoreTests.ApiError("code", "message", "details");
+    throw new CoreTests.FlutterError("code", "message", "details");
   }
 
   @Override
@@ -188,12 +188,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void throwAsyncFlutterError(Result<Object> result) {
-    result.error(new CoreTests.ApiError("code", "message", "details"));
+    result.error(new CoreTests.FlutterError("code", "message", "details"));
   }
 
   @Override
   public void throwAsyncFlutterErrorFromVoid(Result<Void> result) {
-    result.error(new CoreTests.ApiError("code", "message", "details"));
+    result.error(new CoreTests.FlutterError("code", "message", "details"));
   }
 
   @Override

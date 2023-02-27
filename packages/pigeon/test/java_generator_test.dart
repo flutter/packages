@@ -1350,9 +1350,9 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('class ApiError'));
-    expect(code, contains('if (exception instanceof ApiError)'));
-    expect(code, contains('ApiError error = (ApiError) exception;'));
+    expect(code, contains('class FlutterError'));
+    expect(code, contains('if (exception instanceof FlutterError)'));
+    expect(code, contains('FlutterError error = (FlutterError) exception;'));
     expect(code, contains('errorList.add(error.code);'));
     expect(code, contains('errorList.add(error.message);'));
     expect(code, contains('errorList.add(error.details);'));

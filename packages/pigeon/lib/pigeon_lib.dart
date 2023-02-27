@@ -368,10 +368,6 @@ IOSink? _openSink(String? output) {
   return sink;
 }
 
-String _basenameWithoutExtensions(String p) {
-  return path.basename(p).split('.')[0];
-}
-
 /// An adapter that will call a generator to write code to a sink
 /// based on the contents of [PigeonOptions].
 abstract class GeneratorAdapter {
@@ -541,7 +537,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
     JavaOptions javaOptions = options.javaOptions ?? const JavaOptions();
     javaOptions = javaOptions.merge(JavaOptions(
         className: javaOptions.className ??
-            _basenameWithoutExtensions(options.javaOut!),
+            path.basenameWithoutExtension(options.javaOut!),
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
@@ -637,8 +633,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     KotlinOptions kotlinOptions =
         options.kotlinOptions ?? const KotlinOptions();
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
-        errorClassName: kotlinOptions.errorClassName ??
-            '${_basenameWithoutExtensions(options.kotlinOut!)}Error',
+        errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
