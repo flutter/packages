@@ -882,6 +882,7 @@ void main() {
       expect(uninitialized.isInitialized, isFalse);
       expect(uninitialized.hasError, isFalse);
       expect(uninitialized.aspectRatio, 1.0);
+      expect(uninitialized.aspectRatioOrNull, null);
     });
 
     test('erroneous()', () {
@@ -903,6 +904,7 @@ void main() {
       expect(error.isInitialized, isFalse);
       expect(error.hasError, isTrue);
       expect(error.aspectRatio, 1.0);
+      expect(uninitialized.aspectRatioOrNull, null);
     });
 
     test('toString()', () {
@@ -1026,6 +1028,52 @@ void main() {
           duration: const Duration(seconds: 1),
         );
         expect(value.aspectRatio, 1.0);
+      });
+    });
+
+    group('aspectRatioOrNull', () {
+      test('640x480 -> 4:3', () {
+        final VideoPlayerValue value = VideoPlayerValue(
+          isInitialized: true,
+          size: const Size(640, 480),
+          duration: const Duration(seconds: 1),
+        );
+        expect(value.aspectRatio, 4 / 3);
+      });
+
+      test('no size -> null', () {
+        final VideoPlayerValue value = VideoPlayerValue(
+          isInitialized: true,
+          duration: const Duration(seconds: 1),
+        );
+        expect(value.aspectRatio, null);
+      });
+
+      test('height = 0 -> null', () {
+        final VideoPlayerValue value = VideoPlayerValue(
+          isInitialized: true,
+          size: const Size(640, 0),
+          duration: const Duration(seconds: 1),
+        );
+        expect(value.aspectRatio, null);
+      });
+
+      test('width = 0 -> null', () {
+        final VideoPlayerValue value = VideoPlayerValue(
+          isInitialized: true,
+          size: const Size(0, 480),
+          duration: const Duration(seconds: 1),
+        );
+        expect(value.aspectRatio, null);
+      });
+
+      test('negative aspect ratio -> null', () {
+        final VideoPlayerValue value = VideoPlayerValue(
+          isInitialized: true,
+          size: const Size(640, -480),
+          duration: const Duration(seconds: 1),
+        );
+        expect(value.aspectRatio, null);
       });
     });
   });
