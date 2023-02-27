@@ -1,3 +1,8 @@
+## 9.0.2
+
+* [kotlin] Fixes compiler warnings in generated output.
+* [swift] Fixes compiler warnings in generated output.
+
 ## 9.0.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
