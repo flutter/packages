@@ -1,8 +1,11 @@
+## 2.5.3
+
+* Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
+
 ## 2.5.2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
-* Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
 
 ## 2.5.1
 
