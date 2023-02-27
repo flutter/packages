@@ -139,7 +139,7 @@ class MyHomePage extends StatelessWidget {
       primaryNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.medium: SlotLayout.from(
-            inAnimation: AdaptiveScaffold.leftOutIn,
+            inAnimation: AdaptiveScaffold.slideOnFromLeft,
             key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               leading: const Icon(Icons.menu),
@@ -150,7 +150,7 @@ class MyHomePage extends StatelessWidget {
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('Primary Navigation Large'),
-            inAnimation: AdaptiveScaffold.leftOutIn,
+            inAnimation: AdaptiveScaffold.slideOnFromLeft,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               extended: true,
               leading: Row(

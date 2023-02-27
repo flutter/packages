@@ -126,7 +126,7 @@ displayed and the entrance animation and exit animation.
       primaryNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.medium: SlotLayout.from(
-            inAnimation: AdaptiveScaffold.leftOutIn,
+            inAnimation: AdaptiveScaffold.slideOnFromLeft,
             key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               leading: const Icon(Icons.menu),
@@ -137,7 +137,7 @@ displayed and the entrance animation and exit animation.
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('Primary Navigation Large'),
-            inAnimation: AdaptiveScaffold.leftOutIn,
+            inAnimation: AdaptiveScaffold.slideOnFromLeft,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               extended: true,
               leading: Row(
