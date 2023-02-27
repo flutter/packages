@@ -1,6 +1,7 @@
 ## 0.2.0+10
 
-* Update annotation and espresso dependencies.
+* Update espresso dependencies.
+* Fix example app to compile with multidex.
 * Update compileSdkVersion to 33.
 
 ## 0.2.0+9
