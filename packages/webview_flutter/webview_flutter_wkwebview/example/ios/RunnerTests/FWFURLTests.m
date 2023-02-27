@@ -15,14 +15,14 @@
 - (void)testAbsoluteString {
   NSURL *mockUrl = OCMClassMock([NSURL class]);
   OCMStub([mockUrl absoluteString]).andReturn(@"https://www.google.com");
-  
+
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
   [instanceManager addDartCreatedInstance:mockUrl withIdentifier:0];
-  
+
   FWFURLHostApiImpl *hostApi = [[FWFURLHostApiImpl alloc]
-                                initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
-                                instanceManager:instanceManager];
-  
+      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
+              instanceManager:instanceManager];
+
   FlutterError *error;
   XCTAssertEqualObjects([hostApi absoluteStringForNSURLWithIdentifier:@(0) error:&error],
                         @"https://www.google.com");
@@ -32,16 +32,16 @@
 - (void)testFlutterApiCreate {
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
   FWFURLFlutterApiImpl *flutterApi = [[FWFURLFlutterApiImpl alloc]
-                                      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
-                                      instanceManager:instanceManager];
-  
+      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
+              instanceManager:instanceManager];
+
   flutterApi.api = OCMClassMock([FWFNSUrlFlutterApi class]);
-  
+
   NSURL *url = [[NSURL alloc] initWithString:@"https://www.google.com"];
   [flutterApi create:url
           completion:^(NSError *error){
-  }];
-  
+          }];
+
   long identifier = [instanceManager identifierWithStrongReferenceForInstance:url];
   OCMVerify([flutterApi.api createWithIdentifier:@(identifier) completion:OCMOCK_ANY]);
 }

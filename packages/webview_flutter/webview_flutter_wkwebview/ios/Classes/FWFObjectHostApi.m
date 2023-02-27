@@ -42,23 +42,23 @@
     [changeKeys addObject:FWFNSKeyValueChangeKeyEnumDataFromNSKeyValueChangeKey(key)];
     BOOL isIdentifier = NO;
     if ([self.instanceManager containsInstance:value]) {
-          isIdentifier = YES;
-        } else if (object_getClass(value) == [NSURL class]) {
-          FWFURLFlutterApiImpl *flutterApi =
-              [[FWFURLFlutterApiImpl alloc] initWithBinaryMessenger:self.binaryMessenger
-                                                    instanceManager:self.instanceManager];
-          [flutterApi create:value
-                  completion:^(NSError *error) {
-                    NSAssert(!error, @"%@", error);
-                  }];
-          isIdentifier = YES;
-        }
+      isIdentifier = YES;
+    } else if (object_getClass(value) == [NSURL class]) {
+      FWFURLFlutterApiImpl *flutterApi =
+          [[FWFURLFlutterApiImpl alloc] initWithBinaryMessenger:self.binaryMessenger
+                                                instanceManager:self.instanceManager];
+      [flutterApi create:value
+              completion:^(NSError *error) {
+                NSAssert(!error, @"%@", error);
+              }];
+      isIdentifier = YES;
+    }
 
-        id returnValue = isIdentifier
-                             ? @([self.instanceManager identifierWithStrongReferenceForInstance:value])
-                             : value;
-        [changeValues addObject:[FWFObjectOrIdentifier makeWithValue:returnValue
-                                                        isIdentifier:@(isIdentifier)]];
+    id returnValue = isIdentifier
+                         ? @([self.instanceManager identifierWithStrongReferenceForInstance:value])
+                         : value;
+    [changeValues addObject:[FWFObjectOrIdentifier makeWithValue:returnValue
+                                                    isIdentifier:@(isIdentifier)]];
   }];
 
   NSNumber *objectIdentifier =

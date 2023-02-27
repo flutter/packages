@@ -235,7 +235,6 @@ class NSHttpCookie {
   final Map<NSHttpCookiePropertyKey, Object> properties;
 }
 
-
 /// An object that represents the location of a resource, such as an item on a
 /// remote server or the path to a local file.
 ///
@@ -249,9 +248,9 @@ class NSUrl extends NSObject {
   @protected
   NSUrl.detached({super.binaryMessenger, super.instanceManager})
       : _nsUrlHostApi = NSUrlHostApiImpl(
-    binaryMessenger: binaryMessenger,
-    instanceManager: instanceManager,
-  ),
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
         super.detached();
 
   final NSUrlHostApiImpl _nsUrlHostApi;

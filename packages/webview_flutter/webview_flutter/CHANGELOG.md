@@ -1,3 +1,7 @@
+## 4.1.0
+
+* Adds support to track URL changes. See `NavigationDelegate(onUrlChange)`.
+
 ## 4.0.5
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
