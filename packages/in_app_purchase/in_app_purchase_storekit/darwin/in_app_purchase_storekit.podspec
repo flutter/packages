@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
 A Flutter plugin for in-app purchases. Exposes APIs for making in-app purchases through the App Store.
 Downloaded by pub (not CocoaPods).
                        DESC
-  s.homepage         = 'https://github.com/flutter/plugins'
+  s.homepage         = 'https://github.com/flutter/packages'
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
-  s.source           = { :http => 'https://github.com/flutter/plugins/tree/main/packages/in_app_purchase/in_app_purchase_storekit' }
+  s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/in_app_purchase/in_app_purchase_storekit' }
   # TODO(mvanbeusekom): update URL when in_app_purchase_storekit package is published.
   # Updating it before the package is published will cause a lint error and block the tree.
   s.documentation_url = 'https://pub.dev/packages/in_app_purchase'

@@ -42,4 +42,4 @@ public class MyPlugin implements FlutterPlugin, ActivityAware {
 ```
 
 [Feedback welcome](https://github.com/flutter/flutter/issues) and
-[Pull Requests](https://github.com/flutter/plugins/pulls) are most welcome!
+[Pull Requests](https://github.com/flutter/packages/pulls) are most welcome!

@@ -1,3 +1,7 @@
+## 9.0.1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 9.0.0
 
 * **Breaking Change** Updates `DartOptions` to be immutable and adds const to the constructor.

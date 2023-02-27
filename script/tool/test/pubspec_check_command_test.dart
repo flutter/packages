@@ -12,9 +12,7 @@ import 'package:test/test.dart';
 import 'mocks.dart';
 import 'util.dart';
 
-/// Returns the top section of a pubspec.yaml for a package named [name],
-/// for either a flutter/packages or flutter/plugins package depending on
-/// the values of [isPlugin].
+/// Returns the top section of a pubspec.yaml for a package named [name].
 ///
 /// By default it will create a header that includes all of the expected
 /// values, elements can be changed via arguments to create incorrect
@@ -25,7 +23,7 @@ import 'util.dart';
 /// provided with [repositoryPackagesDirRelativePath].
 String _headerSection(
   String name, {
-  bool isPlugin = false,
+  String repository = 'flutter/packages',
   bool includeRepository = true,
   String repositoryBranch = 'main',
   String? repositoryPackagesDirRelativePath,
@@ -36,8 +34,7 @@ String _headerSection(
 }) {
   final String repositoryPath = repositoryPackagesDirRelativePath ?? name;
   final List<String> repoLinkPathComponents = <String>[
-    'flutter',
-    if (isPlugin) 'plugins' else 'packages',
+    repository,
     'tree',
     repositoryBranch,
     'packages',
@@ -154,7 +151,7 @@ void main() {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true)}
+${_headerSection('plugin')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -255,7 +252,7 @@ ${_dependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true, includeHomepage: true)}
+${_headerSection('plugin', includeHomepage: true)}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -283,7 +280,7 @@ ${_devDependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true, includeRepository: false)}
+${_headerSection('plugin', includeRepository: false)}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -310,7 +307,7 @@ ${_devDependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true, includeHomepage: true, includeRepository: false)}
+${_headerSection('plugin', includeHomepage: true, includeRepository: false)}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -338,7 +335,7 @@ ${_devDependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true, repositoryPackagesDirRelativePath: 'different_plugin')}
+${_headerSection('plugin', repositoryPackagesDirRelativePath: 'different_plugin')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -365,7 +362,7 @@ ${_devDependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true, repositoryBranch: 'master')}
+${_headerSection('plugin', repositoryBranch: 'master')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -382,7 +379,36 @@ ${_devDependenciesSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('The "repository" link should use "main", not "master".'),
+          contains('The "repository" link should start with the repository\'s '
+              'main tree: "https://github.com/flutter/packages/tree/main"'),
+        ]),
+      );
+    });
+
+    test('fails when repository is not flutter/packages', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin', repository: 'flutter/plugins')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The "repository" link should start with the repository\'s '
+              'main tree: "https://github.com/flutter/packages/tree/main"'),
         ]),
       );
     });
@@ -392,7 +418,7 @@ ${_devDependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true, includeIssueTracker: false)}
+${_headerSection('plugin', includeIssueTracker: false)}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -420,7 +446,7 @@ ${_devDependenciesSection()}
           examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true, description: 'Too short')}
+${_headerSection('plugin', description: 'Too short')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -450,7 +476,7 @@ ${_devDependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true, description: 'Too short')}
+${_headerSection('plugin', description: 'Too short')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -483,7 +509,7 @@ ${_devDependenciesSection()}
           'the core description so that search results are more useful and the '
           'package does not lose pub points.';
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true, description: description)}
+${_headerSection('plugin', description: description)}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -511,7 +537,7 @@ ${_devDependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true)}
+${_headerSection('plugin')}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
@@ -539,7 +565,7 @@ ${_environmentSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true)}
+${_headerSection('plugin')}
 ${_flutterSection(isPlugin: true)}
 ${_environmentSection()}
 ${_dependenciesSection()}
@@ -567,7 +593,7 @@ ${_devDependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true)}
+${_headerSection('plugin')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_devDependenciesSection()}
@@ -594,7 +620,7 @@ ${_dependenciesSection()}
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true)}
+${_headerSection('plugin')}
 ${_environmentSection()}
 ${_devDependenciesSection()}
 ${_flutterSection(isPlugin: true)}
@@ -622,7 +648,7 @@ ${_dependenciesSection()}
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin', isPlugin: true)}
+${_headerSection('plugin')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -653,7 +679,7 @@ ${_devDependenciesSection()}
           examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin_a_foo', isPlugin: true)}
+${_headerSection('plugin_a_foo')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
@@ -682,7 +708,7 @@ ${_devDependenciesSection()}
           examples: <String>[]);
 
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin_a_foo', isPlugin: true)}
+${_headerSection('plugin_a_foo')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true, implementedPackage: 'plugin_a_foo')}
 ${_dependenciesSection()}
@@ -713,7 +739,6 @@ ${_devDependenciesSection()}
       plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection(
         'plugin_a_foo',
-        isPlugin: true,
         repositoryPackagesDirRelativePath: 'plugin_a/plugin_a_foo',
       )}
 ${_environmentSection()}
@@ -742,7 +767,6 @@ ${_devDependenciesSection()}
       plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection(
         'plugin_a',
-        isPlugin: true,
         repositoryPackagesDirRelativePath: 'plugin_a/plugin_a',
       )}
 ${_environmentSection()}
@@ -782,7 +806,6 @@ ${_devDependenciesSection()}
       plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection(
         'plugin_a',
-        isPlugin: true,
         repositoryPackagesDirRelativePath: 'plugin_a/plugin_a',
       )}
 ${_environmentSection()}
@@ -820,7 +843,6 @@ ${_devDependenciesSection()}
       plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection(
         'plugin_a',
-        isPlugin: true,
         repositoryPackagesDirRelativePath: 'plugin_a/plugin_a',
       )}
 ${_environmentSection()}
@@ -850,7 +872,6 @@ ${_devDependenciesSection()}
       plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection(
         'plugin_a_platform_interface',
-        isPlugin: true,
         repositoryPackagesDirRelativePath:
             'plugin_a/plugin_a_platform_interface',
       )}
@@ -880,7 +901,7 @@ ${_devDependenciesSection()}
       // Environment section is in the wrong location.
       // Missing 'implements'.
       plugin.pubspecFile.writeAsStringSync('''
-${_headerSection('plugin_a_foo', isPlugin: true, publishable: false)}
+${_headerSection('plugin_a_foo', publishable: false)}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
@@ -913,7 +934,6 @@ ${_environmentSection()}
       plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection(
         'plugin',
-        isPlugin: true,
         publishable: false,
         includeRepository: false,
         includeIssueTracker: false,
