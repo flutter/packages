@@ -256,13 +256,20 @@ public class ImagePickerDelegate
   }
 
   private void launchPickVideoFromGalleryIntent() {
-    Intent pickVideoIntent =
-        new ActivityResultContracts.PickVisualMedia()
-            .createIntent(
-                activity,
-                new PickVisualMediaRequest.Builder()
-                    .setMediaType(ActivityResultContracts.PickVisualMedia.VideoOnly.INSTANCE)
-                    .build());
+    Intent pickVideoIntent;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      pickVideoIntent =
+          new ActivityResultContracts.PickVisualMedia()
+              .createIntent(
+                  activity,
+                  new PickVisualMediaRequest.Builder()
+                      .setMediaType(ActivityResultContracts.PickVisualMedia.VideoOnly.INSTANCE)
+                      .build());
+    } else {
+      pickVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+      pickVideoIntent.setType("video/*");
+    }
+
     activity.startActivityForResult(pickVideoIntent, REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY);
   }
 
@@ -332,25 +339,42 @@ public class ImagePickerDelegate
   }
 
   private void launchPickImageFromGalleryIntent() {
-    Intent pickImageIntent =
-        new ActivityResultContracts.PickVisualMedia()
-            .createIntent(
-                activity,
-                new PickVisualMediaRequest.Builder()
-                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                    .build());
+    Intent pickImageIntent;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      pickImageIntent =
+          new ActivityResultContracts.PickVisualMedia()
+              .createIntent(
+                  activity,
+                  new PickVisualMediaRequest.Builder()
+                      .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                      .build());
+    } else {
+      pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+      pickImageIntent.setType("image/*");
+    }
+
     activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY);
   }
 
   private void launchMultiPickImageFromGalleryIntent() {
-    Intent pickImageIntent =
-        new ActivityResultContracts.PickMultipleVisualMedia()
-            .createIntent(
-                activity,
-                new PickVisualMediaRequest.Builder()
-                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                    .build());
-    activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY);
+    Intent pickMultiImageIntent;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      pickMultiImageIntent =
+          new ActivityResultContracts.PickMultipleVisualMedia()
+              .createIntent(
+                  activity,
+                  new PickVisualMediaRequest.Builder()
+                      .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                      .build());
+    } else {
+      pickMultiImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+      pickMultiImageIntent.setType("image/*");
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        pickMultiImageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+      }
+    }
+    activity.startActivityForResult(
+        pickMultiImageIntent, REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY);
   }
 
   public void takeImageWithCamera(MethodCall methodCall, MethodChannel.Result result) {
