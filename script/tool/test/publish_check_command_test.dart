@@ -18,7 +18,7 @@ import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  group('$PublishCheckCommand tests', () {
+  group('PublishCheckCommand tests', () {
     FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
@@ -257,6 +257,109 @@ void main() {
     });
 
     test(
+        'runs validation even for packages that are already published and reports failure',
+        () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir, version: '0.1.0');
+
+      final MockClient mockClient = MockClient((http.Request request) async {
+        if (request.url.pathSegments.last == 'a_package.json') {
+          return http.Response(
+              json.encode(<String, dynamic>{
+                'name': 'a_package',
+                'versions': <String>[
+                  '0.0.1',
+                  '0.1.0',
+                ],
+              }),
+              200);
+        }
+        return http.Response('', 500);
+      });
+
+      runner = CommandRunner<void>(
+        'publish_check_command',
+        'Test for publish-check command.',
+      );
+      runner.addCommand(PublishCheckCommand(packagesDir,
+          processRunner: processRunner, httpClient: mockClient));
+
+      processRunner.mockProcessesForExecutable['flutter'] = <io.Process>[
+        MockProcess(exitCode: 1, stdout: 'Some error from pub')
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['publish-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Unable to publish a_package'),
+        ]),
+      );
+      expect(
+          processRunner.recordedCalls,
+          contains(
+            ProcessCall(
+                'flutter',
+                const <String>['pub', 'publish', '--', '--dry-run'],
+                package.path),
+          ));
+    });
+
+    test(
+        'runs validation even for packages that are already published and reports success',
+        () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir, version: '0.1.0');
+
+      final MockClient mockClient = MockClient((http.Request request) async {
+        if (request.url.pathSegments.last == 'a_package.json') {
+          return http.Response(
+              json.encode(<String, dynamic>{
+                'name': 'a_package',
+                'versions': <String>[
+                  '0.0.1',
+                  '0.1.0',
+                ],
+              }),
+              200);
+        }
+        return http.Response('', 500);
+      });
+
+      runner = CommandRunner<void>(
+        'publish_check_command',
+        'Test for publish-check command.',
+      );
+      runner.addCommand(PublishCheckCommand(packagesDir,
+          processRunner: processRunner, httpClient: mockClient));
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['publish-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Package a_package version: 0.1.0 has already been published on pub.'),
+        ]),
+      );
+      expect(
+          processRunner.recordedCalls,
+          contains(
+            ProcessCall(
+                'flutter',
+                const <String>['pub', 'publish', '--', '--dry-run'],
+                package.path),
+          ));
+    });
+
+    test(
         '--machine: Log JSON with status:no-publish and correct human message, if there are no packages need to be published. ',
         () async {
       const Map<String, dynamic> httpResponseA = <String, dynamic>{
@@ -304,9 +407,11 @@ void main() {
   "status": "no-publish",
   "humanMessage": [
     "\n============================================================\n|| Running for no_publish_a\n============================================================\n",
-    "Package no_publish_a version: 0.1.0 has already be published on pub.",
+    "Running pub publish --dry-run:",
+    "Package no_publish_a version: 0.1.0 has already been published on pub.",
     "\n============================================================\n|| Running for no_publish_b\n============================================================\n",
-    "Package no_publish_b version: 0.2.0 has already be published on pub.",
+    "Running pub publish --dry-run:",
+    "Package no_publish_b version: 0.2.0 has already been published on pub.",
     "\n",
     "------------------------------------------------------------",
     "Run overview:",
@@ -367,7 +472,8 @@ void main() {
   "status": "needs-publish",
   "humanMessage": [
     "\n============================================================\n|| Running for no_publish_a\n============================================================\n",
-    "Package no_publish_a version: 0.1.0 has already be published on pub.",
+    "Running pub publish --dry-run:",
+    "Package no_publish_a version: 0.1.0 has already been published on pub.",
     "\n============================================================\n|| Running for no_publish_b\n============================================================\n",
     "Running pub publish --dry-run:",
     "Package no_publish_b is able to be published.",
