@@ -158,7 +158,6 @@ NSString *const errorMethod = @"error";
   _capturePhotoOutput = [AVCapturePhotoOutput new];
   [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
   [_videoCaptureSession addOutput:_capturePhotoOutput];
-  
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
