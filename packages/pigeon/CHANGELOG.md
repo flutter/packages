@@ -1,7 +1,12 @@
-## 9.0.2
+## 9.0.3
 
 * [kotlin] Fixes compiler warnings in generated output.
 * [swift] Fixes compiler warnings in generated output.
+
+## 9.0.2
+
+* [swift] Removes safe casting from decode process.
+* [kotlin] Removes safe casting from decode process.
 
 ## 9.0.1
 

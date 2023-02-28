@@ -348,7 +348,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aNullableInt = list[9].let { if (it is Int) it.toLong() else it as? Long }'));
+            'val aNullableInt = list[9].let { if (it is Int) it.toLong() else it as Long? }'));
   });
 
   test('gen one flutter api', () {
@@ -617,7 +617,7 @@ void main() {
     expect(code, contains('val nested: Nested? = null'));
     expect(code, contains('fun fromList(list: List<Any?>): Outer'));
     expect(
-        code, contains('val nested: Nested? = (list[0] as? List<Any?>)?.let'));
+        code, contains('val nested: Nested? = (list[0] as List<Any?>?)?.let'));
     expect(code, contains('Nested.fromList(it)'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
