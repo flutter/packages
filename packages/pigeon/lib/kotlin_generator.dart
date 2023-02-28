@@ -180,12 +180,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           final HostDatatype hostDatatype = _getHostDatatype(root, field);
           String toWriteValue = '';
           final String fieldName = field.name;
+          final String safeCall = field.type.isNullable ? '?' : '';
           if (!hostDatatype.isBuiltin &&
               customClassNames.contains(field.type.baseName)) {
-            toWriteValue = '$fieldName?.toList()';
+            toWriteValue = '$fieldName$safeCall.toList()';
           } else if (!hostDatatype.isBuiltin &&
               customEnumNames.contains(field.type.baseName)) {
-            toWriteValue = '$fieldName?.raw';
+            toWriteValue = '$fieldName$safeCall.raw';
           } else {
             toWriteValue = fieldName;
           }
@@ -244,7 +245,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               indent.addln(
                   '.let { if (it is Int) it.toLong() else it as Long? }');
             } else {
-              indent.writeln('val ${field.name} = $listValue as $fieldType?');
+              indent.writeln(
+                  'val ${field.name} = ${_cast(listValue, kotlinType: '$fieldType?')}');
             }
           } else {
             if (!hostDatatype.isBuiltin &&
@@ -260,7 +262,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               indent
                   .addln('.let { if (it is Int) it.toLong() else it as Long }');
             } else {
-              indent.writeln('val ${field.name} = $listValue as $fieldType');
+              indent.writeln(
+                  'val ${field.name} = ${_cast(listValue, kotlinType: fieldType)}');
             }
           }
         });
@@ -380,13 +383,15 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               indent.writeln('callback()');
             });
           } else {
-            final String forceUnwrap = func.returnType.isNullable ? '?' : '';
             indent.addScoped('{', '}', () {
               if (func.returnType.baseName == 'int') {
+                final String forceUnwrap =
+                    func.returnType.isNullable ? '?' : '';
                 indent.writeln(
                     'val result = if (it is Int) it.toLong() else it as$forceUnwrap Long');
               } else {
-                indent.writeln('val result = it as$forceUnwrap $returnType');
+                indent.writeln(
+                    'val result = ${_cast('it', kotlinType: returnType, safeCast: func.returnType.isNullable)}');
               }
               indent.writeln('callback(result)');
             });
@@ -507,7 +512,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
                 indent.write('channel.setMessageHandler ');
                 indent.addScoped('{ $messageVarName, reply ->', '}', () {
-                  indent.writeln('var wrapped = listOf<Any?>()');
                   final List<String> methodArguments = <String>[];
                   if (method.arguments.isNotEmpty) {
                     indent.writeln('val args = message as List<Any?>');
@@ -543,6 +547,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                       });
                     });
                   } else {
+                    indent.writeln('var wrapped: List<Any?>');
                     indent.write('try ');
                     indent.addScoped('{', '}', () {
                       if (method.returnType.isVoid) {
@@ -669,15 +674,15 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
         type.isNullable ? '$value == null ? null : ' : '';
     return '$nullableConditionPrefix${_kotlinTypeForDartType(type)}.ofRaw($value as Int)$forceUnwrap';
   } else {
-    final String castUnwrap = type.isNullable ? '?' : '';
-
     // The StandardMessageCodec can give us [Integer, Long] for
     // a Dart 'int'.  To keep things simple we just use 64bit
     // longs in Pigeon with Kotlin.
     if (type.baseName == 'int') {
+      final String castUnwrap = type.isNullable ? '?' : '';
       return '$value.let { if (it is Int) it.toLong() else it as$castUnwrap Long }';
     } else {
-      return '$value as$castUnwrap ${_kotlinTypeForDartType(type)}';
+      return _cast(value,
+          kotlinType: _kotlinTypeForDartType(type), safeCast: type.isNullable);
     }
   }
 }
@@ -740,4 +745,14 @@ String _kotlinTypeForDartType(TypeDeclaration type) {
 String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
   return '${_kotlinTypeForDartType(type)}$nullSafe';
+}
+
+/// Returns an expression to cast [variable] to [kotlinType].
+String _cast(String variable,
+    {required String kotlinType, bool safeCast = false}) {
+  // Special-case Any, since no-op casts cause warnings.
+  if (kotlinType == 'Any?' || (safeCast && kotlinType == 'Any')) {
+    return variable;
+  }
+  return '$variable as${safeCast ? '?' : ''} $kotlinType';
 }
