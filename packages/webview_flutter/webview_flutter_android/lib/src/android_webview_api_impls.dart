@@ -137,16 +137,9 @@ class JavaObjectFlutterApiImpl implements JavaObjectFlutterApi {
 class WebViewHostApiImpl extends WebViewHostApi {
   /// Constructs a [WebViewHostApiImpl].
   WebViewHostApiImpl({
-    this.binaryMessenger,
+    super.binaryMessenger,
     InstanceManager? instanceManager,
-  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
-        super(binaryMessenger: binaryMessenger);
-
-  /// Sends binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -357,15 +350,9 @@ class WebViewHostApiImpl extends WebViewHostApi {
 class WebSettingsHostApiImpl extends WebSettingsHostApi {
   /// Constructs a [WebSettingsHostApiImpl].
   WebSettingsHostApiImpl({
-    this.binaryMessenger,
+    super.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-
-  /// Sends binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -504,15 +491,9 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
 class JavaScriptChannelHostApiImpl extends JavaScriptChannelHostApi {
   /// Constructs a [JavaScriptChannelHostApiImpl].
   JavaScriptChannelHostApiImpl({
-    this.binaryMessenger,
+    super.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-
-  /// Sends binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -554,15 +535,9 @@ class JavaScriptChannelFlutterApiImpl extends JavaScriptChannelFlutterApi {
 class WebViewClientHostApiImpl extends WebViewClientHostApi {
   /// Constructs a [WebViewClientHostApiImpl].
   WebViewClientHostApiImpl({
-    this.binaryMessenger,
+    super.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-
-  /// Sends binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -747,15 +722,9 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
 class DownloadListenerHostApiImpl extends DownloadListenerHostApi {
   /// Constructs a [DownloadListenerHostApiImpl].
   DownloadListenerHostApiImpl({
-    this.binaryMessenger,
+    super.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-
-  /// Sends binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -807,15 +776,9 @@ class DownloadListenerFlutterApiImpl extends DownloadListenerFlutterApi {
 class WebChromeClientHostApiImpl extends WebChromeClientHostApi {
   /// Constructs a [WebChromeClientHostApiImpl].
   WebChromeClientHostApiImpl({
-    this.binaryMessenger,
+    super.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-
-  /// Sends binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -893,16 +856,9 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
 class WebStorageHostApiImpl extends WebStorageHostApi {
   /// Constructs a [WebStorageHostApiImpl].
   WebStorageHostApiImpl({
-    this.binaryMessenger,
+    super.binaryMessenger,
     InstanceManager? instanceManager,
-  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
-        super(binaryMessenger: binaryMessenger);
-
-  /// Sends binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
