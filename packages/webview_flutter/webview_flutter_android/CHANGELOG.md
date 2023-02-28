@@ -1,3 +1,8 @@
+## 3.3.2
+
+* Fixes potential bug where a `WebView` was that was added to the `InstanceManager` could be 
+  returned by a `WebViewClient` or `WebChromeClient`. 
+
 ## 3.3.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

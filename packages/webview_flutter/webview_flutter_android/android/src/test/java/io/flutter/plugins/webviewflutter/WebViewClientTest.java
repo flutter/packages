@@ -43,8 +43,6 @@ public class WebViewClientTest {
   public void setUp() {
     instanceManager = InstanceManager.open(identifier -> {});
 
-    instanceManager.addDartCreatedInstance(mockWebView, 0L);
-
     final WebViewClientCreator webViewClientCreator =
         new WebViewClientCreator() {
           @Override

@@ -38,10 +38,11 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
   /** Passes arguments from {@link WebChromeClient#onProgressChanged} to Dart. */
   public void onProgressChanged(
       WebChromeClient webChromeClient, WebView webView, Long progress, Reply<Void> callback) {
+    final WebViewFlutterApiImpl webViewFlutterApi =
+        new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
+    webViewFlutterApi.create(webView, reply -> {});
+
     final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
     super.onProgressChanged(
         getIdentifierForClient(webChromeClient), webViewIdentifier, progress, callback);
   }
@@ -53,6 +54,10 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
       WebView webView,
       WebChromeClient.FileChooserParams fileChooserParams,
       Reply<List<String>> callback) {
+    final WebViewFlutterApiImpl webViewFlutterApi =
+        new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
+    webViewFlutterApi.create(webView, reply -> {});
+
     Long paramsInstanceId = instanceManager.getIdentifierForStrongReference(fileChooserParams);
     if (paramsInstanceId == null) {
       final FileChooserParamsFlutterApiImpl flutterApi =
