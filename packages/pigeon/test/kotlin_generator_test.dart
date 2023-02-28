@@ -185,9 +185,9 @@ void main() {
     expect(code, contains('''
         if (api != null) {
           channel.setMessageHandler { message, reply ->
-            var wrapped = listOf<Any?>()
             val args = message as List<Any?>
             val inputArg = args[0] as Input
+            var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.doSomething(inputArg))
             } catch (exception: Error) {
