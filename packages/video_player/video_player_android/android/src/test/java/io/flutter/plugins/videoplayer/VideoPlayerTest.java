@@ -5,7 +5,10 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,12 +17,14 @@ import com.google.android.exoplayer2.Format;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.view.TextureRegistry;
 import java.util.HashMap;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
@@ -153,5 +158,44 @@ public class VideoPlayerTest {
     assertEquals(event.get("width"), 100);
     assertEquals(event.get("height"), 200);
     assertEquals(event.get("rotationCorrection"), 180);
+  }
+
+  @Test
+  public void onIsPlayingChangedSendsExpectedEvent() {
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceTextureEntry,
+            fakeVideoPlayerOptions,
+            fakeEventSink);
+
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  Map<String, Object> event = new HashMap<>();
+                  event.put("event", "isPlayingStateUpdate");
+                  event.put("isPlaying", (Boolean) invocation.getArguments()[0]);
+                  fakeEventSink.success(event);
+                  return null;
+                })
+        .when(fakeExoPlayer)
+        .setPlayWhenReady(anyBoolean());
+
+    videoPlayer.play();
+
+    verify(fakeEventSink).success(eventCaptor.capture());
+    HashMap<String, Object> event1 = eventCaptor.getValue();
+
+    assertEquals(event1.get("event"), "isPlayingStateUpdate");
+    assertEquals(event1.get("isPlaying"), true);
+
+    videoPlayer.pause();
+
+    verify(fakeEventSink, times(2)).success(eventCaptor.capture());
+    HashMap<String, Object> event2 = eventCaptor.getValue();
+
+    assertEquals(event2.get("event"), "isPlayingStateUpdate");
+    assertEquals(event2.get("isPlaying"), false);
   }
 }
