@@ -595,14 +595,6 @@ class WebViewAndroidJavaScriptChannel
 
   /// Manages named JavaScript channels and forwarding incoming messages on the correct channel.
   final JavascriptChannelRegistry javascriptChannelRegistry;
-
-  @override
-  android_webview.JavaScriptChannel copy() {
-    return WebViewAndroidJavaScriptChannel(
-      channelName,
-      javascriptChannelRegistry,
-    );
-  }
 }
 
 /// Handles constructing [android_webview.WebView]s and calling static methods.
