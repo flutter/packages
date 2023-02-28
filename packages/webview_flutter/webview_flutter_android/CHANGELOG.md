@@ -1,7 +1,7 @@
 ## 3.3.2
 
-* Fixes potential bug where a `WebView` was that was added to the `InstanceManager` could be 
-  returned by a `WebViewClient` or `WebChromeClient`. 
+* Fixes a potential bug where a `WebView` that was not added to the `InstanceManager` could be
+  returned by a `WebViewClient` or `WebChromeClient`.
 
 ## 3.3.1
 
