@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Adds support to track url changes. See `PlatformNavigationDelegate.setOnUrlChange`.
+
 ## 2.0.2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
