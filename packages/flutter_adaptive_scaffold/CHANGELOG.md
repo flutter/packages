@@ -1,4 +1,4 @@
-## 0.1.1
+## 0.2.0
 
 * Adds three new Animations: `slideOnFromTop`, `slideOffToTop`, `slideOffToRight`.
 * Renames five existing Animations:
