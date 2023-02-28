@@ -228,7 +228,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             if (!hostDatatype.isBuiltin &&
                 customClassNames.contains(field.type.baseName)) {
               indent.write('val ${field.name}: $fieldType? = ');
-              indent.add('($listValue as List<Any?>)?.let ');
+              indent.add('($listValue as List<Any?>?)?.let ');
               indent.addScoped('{', '}', () {
                 indent.writeln('$fieldType.fromList(it)');
               });

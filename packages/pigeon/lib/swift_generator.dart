@@ -185,7 +185,7 @@ import FlutterMacOS
           if (!hostDatatype.isBuiltin &&
               customClassNames.contains(field.type.baseName)) {
             indent.writeln('var ${field.name}: $fieldType? = nil');
-            indent.write('if let ${field.name}List = $listValue as? [Any] ');
+            indent.write('if let ${field.name}List = $listValue as! [Any]? ');
             indent.addScoped('{', '}', () {
               indent.writeln(
                   '${field.name} = $fieldType.fromList(${field.name}List as [Any])');

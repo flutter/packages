@@ -617,7 +617,7 @@ void main() {
     expect(code, contains('val nested: Nested? = null'));
     expect(code, contains('fun fromList(list: List<Any?>): Outer'));
     expect(
-        code, contains('val nested: Nested? = (list[0] as List<Any?>)?.let'));
+        code, contains('val nested: Nested? = (list[0] as List<Any?>?)?.let'));
     expect(code, contains('Nested.fromList(it)'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
