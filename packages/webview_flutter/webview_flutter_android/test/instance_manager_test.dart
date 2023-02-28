@@ -13,20 +13,14 @@ import 'test_android_webview.g.dart';
 
 @GenerateMocks(<Type>[TestInstanceManagerHostApi])
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('InstanceManager', () {
     test('addHostCreatedInstance', () {
-      final Object object = Object();
+      final CopyableObject object = CopyableObject();
 
       final InstanceManager instanceManager =
           InstanceManager(onWeakReferenceRemoved: (_) {});
 
-      instanceManager.addHostCreatedInstance(
-        object,
-        0,
-        onCopy: (_) => Object(),
-      );
+      instanceManager.addHostCreatedInstance(object, 0);
 
       expect(instanceManager.getIdentifier(object), 0);
       expect(
@@ -36,46 +30,31 @@ void main() {
     });
 
     test('addHostCreatedInstance prevents already used objects and ids', () {
-      final Object object = Object();
+      final CopyableObject object = CopyableObject();
 
       final InstanceManager instanceManager =
           InstanceManager(onWeakReferenceRemoved: (_) {});
 
-      instanceManager.addHostCreatedInstance(
-        object,
-        0,
-        onCopy: (_) => Object(),
-      );
+      instanceManager.addHostCreatedInstance(object, 0);
 
       expect(
-        () => instanceManager.addHostCreatedInstance(
-          object,
-          0,
-          onCopy: (_) => Object(),
-        ),
+        () => instanceManager.addHostCreatedInstance(object, 0),
         throwsAssertionError,
       );
 
       expect(
-        () => instanceManager.addHostCreatedInstance(
-          Object(),
-          0,
-          onCopy: (_) => Object(),
-        ),
+        () => instanceManager.addHostCreatedInstance(CopyableObject(), 0),
         throwsAssertionError,
       );
     });
 
-    test('addDartCreatedInstance', () {
-      final Object object = Object();
+    test('addFlutterCreatedInstance', () {
+      final CopyableObject object = CopyableObject();
 
       final InstanceManager instanceManager =
           InstanceManager(onWeakReferenceRemoved: (_) {});
 
-      instanceManager.addDartCreatedInstance(
-        object,
-        onCopy: (_) => Object(),
-      );
+      instanceManager.addDartCreatedInstance(object);
 
       final int? instanceId = instanceManager.getIdentifier(object);
       expect(instanceId, isNotNull);
@@ -86,7 +65,7 @@ void main() {
     });
 
     test('removeWeakReference', () {
-      final Object object = Object();
+      final CopyableObject object = CopyableObject();
 
       int? weakInstanceId;
       final InstanceManager instanceManager =
@@ -94,67 +73,51 @@ void main() {
         weakInstanceId = instanceId;
       });
 
-      instanceManager.addHostCreatedInstance(
-        object,
-        0,
-        onCopy: (_) => Object(),
-      );
+      instanceManager.addHostCreatedInstance(object, 0);
 
       expect(instanceManager.removeWeakReference(object), 0);
       expect(
         instanceManager.getInstanceWithWeakReference(0),
-        isA<Object>(),
+        isA<CopyableObject>(),
       );
       expect(weakInstanceId, 0);
     });
 
     test('removeWeakReference removes only weak reference', () {
-      final Object object = Object();
+      final CopyableObject object = CopyableObject();
 
       final InstanceManager instanceManager =
           InstanceManager(onWeakReferenceRemoved: (_) {});
 
-      instanceManager.addHostCreatedInstance(
-        object,
-        0,
-        onCopy: (_) => Object(),
-      );
+      instanceManager.addHostCreatedInstance(object, 0);
 
       expect(instanceManager.removeWeakReference(object), 0);
-      final Object copy = instanceManager.getInstanceWithWeakReference(
+      final CopyableObject copy = instanceManager.getInstanceWithWeakReference(
         0,
       )!;
       expect(identical(object, copy), isFalse);
     });
 
     test('removeStrongReference', () {
-      final Object object = Object();
+      final CopyableObject object = CopyableObject();
 
       final InstanceManager instanceManager =
           InstanceManager(onWeakReferenceRemoved: (_) {});
 
-      instanceManager.addHostCreatedInstance(
-        object,
-        0,
-        onCopy: (_) => Object(),
-      );
+      instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);
-      expect(instanceManager.remove(0), isA<Object>());
+      expect(instanceManager.remove(0), isA<CopyableObject>());
       expect(instanceManager.containsIdentifier(0), isFalse);
     });
 
     test('removeStrongReference removes only strong reference', () {
-      final Object object = Object();
+      final CopyableObject object = CopyableObject();
 
       final InstanceManager instanceManager =
           InstanceManager(onWeakReferenceRemoved: (_) {});
 
-      instanceManager.addHostCreatedInstance(
-        object,
-        0,
-        onCopy: (_) => Object(),
-      );
-      expect(instanceManager.remove(0), isA<Object>());
+      instanceManager.addHostCreatedInstance(object, 0);
+      expect(instanceManager.remove(0), isA<CopyableObject>());
       expect(
         instanceManager.getInstanceWithWeakReference(0),
         object,
@@ -162,19 +125,16 @@ void main() {
     });
 
     test('getInstance can add a new weak reference', () {
-      final Object object = Object();
+      final CopyableObject object = CopyableObject();
 
       final InstanceManager instanceManager =
           InstanceManager(onWeakReferenceRemoved: (_) {});
 
-      instanceManager.addHostCreatedInstance(
-        object,
-        0,
-        onCopy: (_) => Object(),
-      );
+      instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);
 
-      final Object newWeakCopy = instanceManager.getInstanceWithWeakReference(
+      final CopyableObject newWeakCopy =
+          instanceManager.getInstanceWithWeakReference(
         0,
       )!;
       expect(identical(object, newWeakCopy), isFalse);
@@ -192,4 +152,11 @@ void main() {
       TestInstanceManagerHostApi.setup(null);
     });
   });
+}
+
+class CopyableObject with Copyable {
+  @override
+  Copyable copy() {
+    return CopyableObject();
+  }
 }

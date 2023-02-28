@@ -895,14 +895,7 @@ void main() {
     final InstanceManager instanceManager = InstanceManager(
       onWeakReferenceRemoved: (_) {},
     );
-    instanceManager.addHostCreatedInstance(
-      mockWebView,
-      0,
-      onCopy: (android_webview.WebView original) {
-        return android_webview.WebView.detached(
-            instanceManager: instanceManager);
-      },
-    );
+    instanceManager.addHostCreatedInstance(mockWebView, 0);
 
     android_webview.WebView.api = WebViewHostApiImpl(
       instanceManager: instanceManager,

@@ -105,9 +105,9 @@ class WebView extends JavaObject {
   /// create copies.
   @protected
   WebView.detached({
-    required this.useHybridComposition,
-    required super.binaryMessenger,
-    required super.instanceManager,
+    this.useHybridComposition = false,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebView].
@@ -493,8 +493,8 @@ class WebSettings extends JavaObject {
   /// create copies.
   @protected
   WebSettings.detached({
-    required super.binaryMessenger,
-    required super.instanceManager,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebSettings].
@@ -652,8 +652,8 @@ class JavaScriptChannel extends JavaObject {
   JavaScriptChannel.detached(
     this.channelName, {
     required this.postMessage,
-    required super.binaryMessenger,
-    required super.instanceManager,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [JavaScriptChannel].
@@ -700,15 +700,14 @@ class WebViewClient extends JavaObject {
   /// create copies.
   @protected
   WebViewClient.detached({
-    required this.onPageStarted,
-    required this.onPageFinished,
-    required this.onReceivedRequestError,
-    @Deprecated('Only called on Android version < 23.')
-        required this.onReceivedError,
-    required this.requestLoading,
-    required this.urlLoading,
-    required super.binaryMessenger,
-    required super.instanceManager,
+    this.onPageStarted,
+    this.onPageFinished,
+    this.onReceivedRequestError,
+    @Deprecated('Only called on Android version < 23.') this.onReceivedError,
+    this.requestLoading,
+    this.urlLoading,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// User authentication failed on server.
@@ -905,8 +904,8 @@ class DownloadListener extends JavaObject {
   @protected
   DownloadListener.detached({
     required this.onDownloadStart,
-    required super.binaryMessenger,
-    required super.instanceManager,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [DownloadListener].
@@ -952,10 +951,10 @@ class WebChromeClient extends JavaObject {
   /// create copies.
   @protected
   WebChromeClient.detached({
-    required this.onProgressChanged,
-    required this.onShowFileChooser,
-    required super.binaryMessenger,
-    required super.instanceManager,
+    this.onProgressChanged,
+    this.onShowFileChooser,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebChromeClient].
@@ -1033,8 +1032,8 @@ class FileChooserParams extends JavaObject {
     required this.acceptTypes,
     required this.filenameHint,
     required this.mode,
-    required super.binaryMessenger,
-    required super.instanceManager,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// Preference for a live media captured value (e.g. Camera, Microphone).
@@ -1155,8 +1154,8 @@ class WebStorage extends JavaObject {
   /// create copies.
   @protected
   WebStorage.detached({
-    required super.binaryMessenger,
-    required super.instanceManager,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebStorage].

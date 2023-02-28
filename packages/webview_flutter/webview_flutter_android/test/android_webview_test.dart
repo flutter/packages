@@ -61,13 +61,7 @@ void main() {
         final JavaObject object = JavaObject.detached(
           instanceManager: instanceManager,
         );
-        instanceManager.addHostCreatedInstance(
-          object,
-          0,
-          onCopy: (JavaObject original) {
-            return JavaObject.detached(instanceManager: instanceManager);
-          },
-        );
+        instanceManager.addHostCreatedInstance(object, 0);
 
         JavaObject.dispose(object);
 
@@ -82,13 +76,7 @@ void main() {
         final JavaObject object = JavaObject.detached(
           instanceManager: instanceManager,
         );
-        instanceManager.addHostCreatedInstance(
-          object,
-          0,
-          onCopy: (JavaObject original) {
-            return JavaObject.detached(instanceManager: instanceManager);
-          },
-        );
+        instanceManager.addHostCreatedInstance(object, 0);
         instanceManager.removeWeakReference(object);
 
         expect(instanceManager.containsIdentifier(0), isTrue);
@@ -284,12 +272,7 @@ void main() {
         );
 
         final WebViewClient mockWebViewClient = MockWebViewClient();
-        instanceManager.addDartCreatedInstance(
-          mockWebViewClient,
-          onCopy: (WebViewClient original) {
-            return WebViewClient.detached();
-          },
-        );
+        instanceManager.addDartCreatedInstance(mockWebViewClient);
         webView.setWebViewClient(mockWebViewClient);
 
         final int webViewClientInstanceId =
@@ -315,12 +298,6 @@ void main() {
         instanceManager.addHostCreatedInstance(
           javaScriptChannel,
           javaScriptChannelInstanceId,
-          onCopy: (JavaScriptChannel original) {
-            return JavaScriptChannel.detached(
-              original.channelName,
-              postMessage: original.postMessage,
-            );
-          },
         );
 
         webView.addJavaScriptChannel(javaScriptChannel);
@@ -346,12 +323,6 @@ void main() {
         instanceManager.addHostCreatedInstance(
           javaScriptChannel,
           javaScriptChannelInstanceId,
-          onCopy: (JavaScriptChannel original) {
-            return JavaScriptChannel.detached(
-              original.channelName,
-              postMessage: original.postMessage,
-            );
-          },
         );
 
         webView.addJavaScriptChannel(javaScriptChannel);
@@ -377,11 +348,6 @@ void main() {
         instanceManager.addHostCreatedInstance(
           downloadListener,
           downloadListenerInstanceId,
-          onCopy: (DownloadListener original) {
-            return DownloadListener.detached(
-              onDownloadStart: original.onDownloadStart,
-            );
-          },
         );
         webView.setDownloadListener(downloadListener);
 
@@ -400,9 +366,6 @@ void main() {
         final WebChromeClient mockWebChromeClient = MockWebChromeClient();
         instanceManager.addDartCreatedInstance(
           mockWebChromeClient,
-          onCopy: (WebChromeClient original) {
-            return WebChromeClient.detached();
-          },
         );
         webView.setWebChromeClient(mockWebChromeClient);
 
@@ -560,7 +523,6 @@ void main() {
         mockJavaScriptChannelInstanceId =
             instanceManager.addDartCreatedInstance(
           mockJavaScriptChannel,
-          onCopy: (_) => MockJavaScriptChannel(),
         );
       });
 
@@ -599,17 +561,11 @@ void main() {
         mockWebViewClient = MockWebViewClient();
         mockWebViewClientInstanceId = instanceManager.addDartCreatedInstance(
           mockWebViewClient,
-          onCopy: (WebViewClient original) {
-            return WebViewClient.detached();
-          },
         );
 
         mockWebView = MockWebView();
         mockWebViewInstanceId = instanceManager.addDartCreatedInstance(
           mockWebView,
-          onCopy: (WebView original) {
-            return WebView.detached();
-          },
         );
       });
 
@@ -770,7 +726,6 @@ void main() {
         mockDownloadListener = MockDownloadListener();
         mockDownloadListenerInstanceId = instanceManager.addDartCreatedInstance(
           mockDownloadListener,
-          onCopy: (_) => MockDownloadListener(),
         );
       });
 
@@ -837,17 +792,11 @@ void main() {
 
         mockWebChromeClientInstanceId = instanceManager.addDartCreatedInstance(
           mockWebChromeClient,
-          onCopy: (WebChromeClient original) {
-            return WebChromeClient.detached();
-          },
         );
 
         mockWebView = MockWebView();
         mockWebViewInstanceId = instanceManager.addDartCreatedInstance(
           mockWebView,
-          onCopy: (WebView original) {
-            return WebView.detached();
-          },
         );
       });
 
@@ -884,18 +833,7 @@ void main() {
           mode: FileChooserMode.open,
         );
 
-        instanceManager.addHostCreatedInstance(
-          params,
-          3,
-          onCopy: (FileChooserParams original) {
-            return FileChooserParams.detached(
-              acceptTypes: original.acceptTypes,
-              filenameHint: original.filenameHint,
-              isCaptureEnabled: original.isCaptureEnabled,
-              mode: original.mode,
-            );
-          },
-        );
+        instanceManager.addHostCreatedInstance(params, 3);
 
         await expectLater(
           flutterApi.onShowFileChooser(
@@ -920,10 +858,7 @@ void main() {
         final WebChromeClient webChromeClient = WebChromeClient.detached();
         instanceManager.addHostCreatedInstance(
           webChromeClient,
-          2,
-          onCopy: (WebChromeClient original) {
-            return WebChromeClient.detached();
-          },
+          2
         );
 
         webChromeClient.setSynchronousReturnValueForOnShowFileChooser(false);
@@ -945,13 +880,7 @@ void main() {
 
         final WebChromeClient clientWithNullCallback =
             WebChromeClient.detached();
-        instanceManager.addHostCreatedInstance(
-          clientWithNullCallback,
-          2,
-          onCopy: (WebChromeClient original) {
-            return WebChromeClient.detached();
-          },
-        );
+        instanceManager.addHostCreatedInstance(clientWithNullCallback, 2);
 
         expect(
           () => clientWithNullCallback
@@ -965,10 +894,7 @@ void main() {
         );
         instanceManager.addHostCreatedInstance(
           clientWithNonnullCallback,
-          3,
-          onCopy: (WebChromeClient original) {
-            return WebChromeClient.detached();
-          },
+          3
         );
 
         clientWithNonnullCallback

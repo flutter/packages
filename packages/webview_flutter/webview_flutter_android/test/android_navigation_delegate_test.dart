@@ -486,6 +486,11 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
       bool value) async {
     synchronousReturnValueForShouldOverrideUrlLoading = value;
   }
+
+  @override
+  CapturingWebViewClient copy() {
+    return CapturingWebViewClient();
+  }
 }
 
 // Records the last created instance of itself.
@@ -500,6 +505,11 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
   }
   static CapturingWebChromeClient lastCreatedDelegate =
       CapturingWebChromeClient();
+
+  @override
+  CapturingWebChromeClient copy() {
+    return CapturingWebChromeClient();
+  }
 }
 
 // Records the last created instance of itself.
@@ -513,4 +523,9 @@ class CapturingDownloadListener extends android_webview.DownloadListener {
   }
   static CapturingDownloadListener lastCreatedListener =
       CapturingDownloadListener(onDownloadStart: (_, __, ___, ____, _____) {});
+
+  @override
+  CapturingDownloadListener copy() {
+    return CapturingDownloadListener(onDownloadStart: onDownloadStart);
+  }
 }
