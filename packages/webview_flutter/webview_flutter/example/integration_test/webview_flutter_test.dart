@@ -732,6 +732,37 @@ Future<void> main() async {
 
       await expectLater(urlChangeCompleter.future, completion(primaryUrl));
     });
+
+    testWidgets('can receive updates to history state',
+        (WidgetTester tester) async {
+      final Completer<void> pageLoaded = Completer<void>();
+
+      final NavigationDelegate navigationDelegate = NavigationDelegate(
+        onPageFinished: (_) => pageLoaded.complete(),
+      );
+
+      final WebViewController controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setNavigationDelegate(navigationDelegate)
+        ..loadRequest(Uri.parse(primaryUrl));
+
+      await tester.pumpWidget(WebViewWidget(controller: controller));
+
+      await pageLoaded.future;
+
+      final Completer<String> urlChangeCompleter = Completer<String>();
+      await controller.setNavigationDelegate(NavigationDelegate(
+        onUrlChange: (UrlChange change) {
+          urlChangeCompleter.complete(change.url);
+        },
+      ));
+
+      await controller.runJavaScript(
+        'window.history.pushState({}, "", "secondary.txt");',
+      );
+
+      await expectLater(urlChangeCompleter.future, completion(secondaryUrl));
+    });
   });
 
   testWidgets('target _blank opens in same window',

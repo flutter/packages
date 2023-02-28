@@ -442,9 +442,12 @@ void main() {
     final AndroidNavigationDelegate androidNavigationDelegate =
         AndroidNavigationDelegate(_buildCreationParams());
 
-    late final UrlChange urlChange;
-    androidNavigationDelegate
-        .setOnUrlChange((UrlChange change) => urlChange = change);
+    late final AndroidUrlChange urlChange;
+    androidNavigationDelegate.setOnUrlChange(
+      (UrlChange change) {
+        urlChange = change as AndroidUrlChange;
+      },
+    );
 
     CapturingWebViewClient.lastCreatedDelegate.doUpdateVisitedHistory!(
       android_webview.WebView.detached(),
@@ -453,6 +456,7 @@ void main() {
     );
 
     expect(urlChange.url, 'https://www.google.com');
+    expect(urlChange.isReload, isFalse);
   });
 }
 
