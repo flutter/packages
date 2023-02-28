@@ -42,7 +42,8 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
     webViewFlutterApi.create(webView, reply -> {});
 
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     super.onProgressChanged(
         getIdentifierForClient(webChromeClient), webViewIdentifier, progress, callback);
   }

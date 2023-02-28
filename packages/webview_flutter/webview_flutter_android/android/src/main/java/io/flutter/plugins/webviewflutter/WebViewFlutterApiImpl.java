@@ -2,11 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.webviewflutter;
 
-// TODO(bparrishMines): Import native classes
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
