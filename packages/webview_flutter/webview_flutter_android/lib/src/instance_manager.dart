@@ -2,9 +2,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs
-
 import 'package:meta/meta.dart';
+
+/// An immutable object that can provide functional copies of itself.
+///
+/// All implementers are expected to be immutable as defined by the annotation.
+@immutable
+mixin Copyable {
+  /// Instantiates and returns a functionally identical object to oneself.
+  ///
+  /// Outside of tests, this method should only ever be called by
+  /// [InstanceManager].
+  ///
+  /// Subclasses should always override their parent's implementation of this
+  /// method.
+  @protected
+  @mustBeOverridden
+  Copyable copy();
+}
 
 /// Maintains instances used to communicate with the native objects they
 /// represent.
@@ -46,11 +61,9 @@ class InstanceManager {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<Object>> _weakInstances =
-      <int, WeakReference<Object>>{};
-  final Map<int, Object> _strongInstances = <int, Object>{};
-  // The function type is Object Function(Object), but
-  final Map<int, Function> _copyCallbacks = <int, Function>{};
+  final Map<int, WeakReference<Copyable>> _weakInstances =
+      <int, WeakReference<Copyable>>{};
+  final Map<int, Copyable> _strongInstances = <int, Copyable>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -66,12 +79,11 @@ class InstanceManager {
   /// Throws assertion error if the instance has already been added.
   ///
   /// Returns the randomly generated id of the [instance] added.
-  int addDartCreatedInstance<T extends Object>(
-    T instance, {
-    required T Function(T original) onCopy,
-  }) {
+  int addDartCreatedInstance(Copyable instance) {
+    assert(getIdentifier(instance) == null);
+
     final int identifier = _nextUniqueIdentifier();
-    _addInstanceWithIdentifier(instance, identifier, onCopy: onCopy);
+    _addInstanceWithIdentifier(instance, identifier);
     return identifier;
   }
 
@@ -83,7 +95,7 @@ class InstanceManager {
   ///
   /// This does not remove the the strong referenced instance associated with
   /// [instance]. This can be done with [remove].
-  int? removeWeakReference(Object instance) {
+  int? removeWeakReference(Copyable instance) {
     final int? identifier = getIdentifier(instance);
     if (identifier == null) {
       return null;
@@ -105,8 +117,7 @@ class InstanceManager {
   ///
   /// This does not remove the the weak referenced instance associtated with
   /// [identifier]. This can be done with [removeWeakReference].
-  T? remove<T extends Object>(int identifier) {
-    _copyCallbacks.remove(identifier);
+  T? remove<T extends Copyable>(int identifier) {
     return _strongInstances.remove(identifier) as T?;
   }
 
@@ -122,31 +133,26 @@ class InstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends Object>(int identifier) {
-    final T? weakInstance = _weakInstances[identifier]?.target as T?;
+  T? getInstanceWithWeakReference<T extends Copyable>(int identifier) {
+    final Copyable? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final T? strongInstance = _strongInstances[identifier] as T?;
+      final Copyable? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
-        final Function copyCallback = _copyCallbacks[identifier]!;
-        // A dynamic call is used because Function types don't work with
-        // inheritance. For example WebView Function(WebView) can't be casted to
-        // Object Function(Object).
-        // ignore: avoid_dynamic_calls
-        final T copy = copyCallback(strongInstance) as T;
+        final Copyable copy = strongInstance.copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] = WeakReference<Object>(copy);
+        _weakInstances[identifier] = WeakReference<Copyable>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
-        return copy;
+        return copy as T;
       }
-      return strongInstance;
+      return strongInstance as T?;
     }
 
-    return weakInstance;
+    return weakInstance as T;
   }
 
   /// Retrieves the identifier associated with instance.
-  int? getIdentifier(Object instance) {
+  int? getIdentifier(Copyable instance) {
     return _identifiers[instance];
   }
 
@@ -159,30 +165,21 @@ class InstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance<T extends Object>(
-    T instance,
-    int identifier, {
-    required T Function(T original) onCopy,
-  }) {
-    _addInstanceWithIdentifier(instance, identifier, onCopy: onCopy);
-  }
-
-  void _addInstanceWithIdentifier<T extends Object>(
-    T instance,
-    int identifier, {
-    required T Function(T original) onCopy,
-  }) {
+  void addHostCreatedInstance(Copyable instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
+    _addInstanceWithIdentifier(instance, identifier);
+  }
+
+  void _addInstanceWithIdentifier(Copyable instance, int identifier) {
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] = WeakReference<Object>(instance);
+    _weakInstances[identifier] = WeakReference<Copyable>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
-    final Object copy = onCopy(instance);
+    final Copyable copy = instance.copy();
     _identifiers[copy] = identifier;
     _strongInstances[identifier] = copy;
-    _copyCallbacks[identifier] = onCopy;
   }
 
   /// Whether this manager contains the given [identifier].
@@ -198,12 +195,5 @@ class InstanceManager {
       _nextIdentifier = (_nextIdentifier + 1) % _maxDartCreatedIdentifier;
     } while (containsIdentifier(identifier));
     return identifier;
-  }
-}
-
-class A {
-  @mustBeOverridden
-  void t() {
-
   }
 }

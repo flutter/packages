@@ -154,14 +154,7 @@ class WebViewHostApiImpl extends WebViewHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebView instance) {
     return create(
-      instanceManager.addDartCreatedInstance(
-        instance,
-        onCopy: (WebView original) => WebView.detached(
-          useHybridComposition: original.useHybridComposition,
-          binaryMessenger: binaryMessenger,
-          instanceManager: instanceManager,
-        ),
-      ),
+      instanceManager.addDartCreatedInstance(instance),
       instance.useHybridComposition,
     );
   }
@@ -380,15 +373,7 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebSettings instance, WebView webView) {
     return create(
-      instanceManager.addDartCreatedInstance(
-        instance,
-        onCopy: (WebSettings original) {
-          return WebSettings.detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager,
-          );
-        },
-      ),
+      instanceManager.addDartCreatedInstance(instance),
       instanceManager.getIdentifier(webView)!,
     );
   }
@@ -535,15 +520,7 @@ class JavaScriptChannelHostApiImpl extends JavaScriptChannelHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(JavaScriptChannel instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(
-        instance,
-        onCopy: (JavaScriptChannel original) => JavaScriptChannel.detached(
-          original.channelName,
-          postMessage: original.postMessage,
-          binaryMessenger: binaryMessenger,
-          instanceManager: instanceManager,
-        ),
-      );
+      final int identifier = instanceManager.addDartCreatedInstance(instance);
       await create(
         identifier,
         instance.channelName,
@@ -593,21 +570,7 @@ class WebViewClientHostApiImpl extends WebViewClientHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebViewClient instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(
-        instance,
-        onCopy: (WebViewClient original) {
-          return WebViewClient.detached(
-            onPageStarted: original.onPageStarted,
-            onPageFinished: original.onPageFinished,
-            onReceivedRequestError: original.onReceivedRequestError,
-            onReceivedError: original.onReceivedError,
-            requestLoading: original.requestLoading,
-            urlLoading: original.urlLoading,
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager,
-          );
-        },
-      );
+      final int identifier = instanceManager.addDartCreatedInstance(instance);
       return create(identifier);
     }
   }
@@ -800,14 +763,7 @@ class DownloadListenerHostApiImpl extends DownloadListenerHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(DownloadListener instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(
-        instance,
-        onCopy: (DownloadListener original) => DownloadListener.detached(
-          onDownloadStart: original.onDownloadStart,
-          binaryMessenger: binaryMessenger,
-          instanceManager: instanceManager,
-        ),
-      );
+      final int identifier = instanceManager.addDartCreatedInstance(instance);
       return create(identifier);
     }
   }
@@ -867,15 +823,7 @@ class WebChromeClientHostApiImpl extends WebChromeClientHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebChromeClient instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(
-        instance,
-        onCopy: (WebChromeClient original) => WebChromeClient.detached(
-          onProgressChanged: original.onProgressChanged,
-          onShowFileChooser: original.onShowFileChooser,
-          binaryMessenger: binaryMessenger,
-          instanceManager: instanceManager,
-        ),
-      );
+      final int identifier = instanceManager.addDartCreatedInstance(instance);
       return create(identifier);
     }
   }
@@ -962,13 +910,7 @@ class WebStorageHostApiImpl extends WebStorageHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebStorage instance) async {
     if (instanceManager.getIdentifier(instance) == null) {
-      final int identifier = instanceManager.addDartCreatedInstance(
-        instance,
-        onCopy: (WebStorage original) => WebStorage.detached(
-          binaryMessenger: binaryMessenger,
-          instanceManager: instanceManager,
-        ),
-      );
+      final int identifier = instanceManager.addDartCreatedInstance(instance);
       return create(identifier);
     }
   }
@@ -1014,14 +956,6 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
         instanceManager: instanceManager,
       ),
       instanceId,
-      onCopy: (FileChooserParams original) => FileChooserParams.detached(
-        isCaptureEnabled: isCaptureEnabled,
-        acceptTypes: acceptTypes.cast(),
-        mode: mode.value,
-        filenameHint: filenameHint,
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
-      ),
     );
   }
 }

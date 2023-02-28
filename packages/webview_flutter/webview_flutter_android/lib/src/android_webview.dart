@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Replace unused callback methods in constructors with
-// variables once automatic garbage collection is fully implemented. See
-// https://github.com/flutter/flutter/issues/107199.
-// ignore_for_file: avoid_unused_constructor_parameters
-
 // TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
 // ignore: unnecessary_import
 import 'dart:typed_data';
@@ -26,8 +21,7 @@ export 'android_webview_api_impls.dart' show FileChooserMode;
 /// Root of the Java class hierarchy.
 ///
 /// See https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html.
-@immutable
-class JavaObject {
+class JavaObject with Copyable {
   /// Constructs a [JavaObject] without creating the associated Java object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -65,6 +59,11 @@ class JavaObject {
   static void dispose(JavaObject instance) {
     instance._api.instanceManager.removeWeakReference(instance);
   }
+
+  @override
+  JavaObject copy() {
+    return JavaObject.detached();
+  }
 }
 
 /// An Android View that displays web pages.
@@ -86,7 +85,6 @@ class JavaObject {
 /// [Web-based content](https://developer.android.com/guide/webapps).
 ///
 /// When a [WebView] is no longer needed [release] must be called.
-@immutable
 class WebView extends JavaObject {
   /// Constructs a new WebView.
   ///
@@ -107,9 +105,9 @@ class WebView extends JavaObject {
   /// create copies.
   @protected
   WebView.detached({
-    this.useHybridComposition = false,
-    super.binaryMessenger,
-    super.instanceManager,
+    required this.useHybridComposition,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebView].
@@ -414,6 +412,15 @@ class WebView extends JavaObject {
   Future<void> setBackgroundColor(Color color) {
     return api.setBackgroundColorFromInstance(this, color.value);
   }
+
+  @override
+  WebView copy() {
+    return WebView.detached(
+      useHybridComposition: useHybridComposition,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
 }
 
 /// Manages cookies globally for all webviews.
@@ -466,7 +473,6 @@ class CookieManager {
 /// obtained from [WebView.settings] is tied to the life of the WebView. If a
 /// WebView has been destroyed, any method call on [WebSettings] will throw an
 /// Exception.
-@immutable
 class WebSettings extends JavaObject {
   /// Constructs a [WebSettings].
   ///
@@ -487,8 +493,8 @@ class WebSettings extends JavaObject {
   /// create copies.
   @protected
   WebSettings.detached({
-    super.binaryMessenger,
-    super.instanceManager,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebSettings].
@@ -612,12 +618,19 @@ class WebSettings extends JavaObject {
   Future<void> setAllowFileAccess(bool enabled) {
     return api.setAllowFileAccessFromInstance(this, enabled);
   }
+
+  @override
+  WebSettings copy() {
+    return WebSettings.detached(
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
 }
 
 /// Exposes a channel to receive calls from javaScript.
 ///
 /// See [WebView.addJavaScriptChannel].
-@immutable
 class JavaScriptChannel extends JavaObject {
   /// Constructs a [JavaScriptChannel].
   JavaScriptChannel(
@@ -639,8 +652,8 @@ class JavaScriptChannel extends JavaObject {
   JavaScriptChannel.detached(
     this.channelName, {
     required this.postMessage,
-    super.binaryMessenger,
-    super.instanceManager,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [JavaScriptChannel].
@@ -652,10 +665,19 @@ class JavaScriptChannel extends JavaObject {
 
   /// Callback method when javaScript calls `postMessage` on the object instance passed.
   final void Function(String message) postMessage;
+
+  @override
+  JavaScriptChannel copy() {
+    return JavaScriptChannel.detached(
+      channelName,
+      postMessage: postMessage,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
 }
 
 /// Receive various notifications and requests for [WebView].
-@immutable
 class WebViewClient extends JavaObject {
   /// Constructs a [WebViewClient].
   WebViewClient({
@@ -678,14 +700,15 @@ class WebViewClient extends JavaObject {
   /// create copies.
   @protected
   WebViewClient.detached({
-    this.onPageStarted,
-    this.onPageFinished,
-    this.onReceivedRequestError,
-    @Deprecated('Only called on Android version < 23.') this.onReceivedError,
-    this.requestLoading,
-    this.urlLoading,
-    super.binaryMessenger,
-    super.instanceManager,
+    required this.onPageStarted,
+    required this.onPageFinished,
+    required this.onReceivedRequestError,
+    @Deprecated('Only called on Android version < 23.')
+        required this.onReceivedError,
+    required this.requestLoading,
+    required this.urlLoading,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// User authentication failed on server.
@@ -845,11 +868,24 @@ class WebViewClient extends JavaObject {
   ) {
     return api.setShouldOverrideUrlLoadingReturnValueFromInstance(this, value);
   }
+
+  @override
+  WebViewClient copy() {
+    return WebViewClient.detached(
+      onPageStarted: onPageStarted,
+      onPageFinished: onPageFinished,
+      onReceivedRequestError: onReceivedRequestError,
+      onReceivedError: onReceivedError,
+      requestLoading: requestLoading,
+      urlLoading: urlLoading,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
 }
 
 /// The interface to be used when content can not be handled by the rendering
 /// engine for [WebView], and should be downloaded instead.
-@immutable
 class DownloadListener extends JavaObject {
   /// Constructs a [DownloadListener].
   DownloadListener({
@@ -869,8 +905,8 @@ class DownloadListener extends JavaObject {
   @protected
   DownloadListener.detached({
     required this.onDownloadStart,
-    super.binaryMessenger,
-    super.instanceManager,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [DownloadListener].
@@ -885,10 +921,18 @@ class DownloadListener extends JavaObject {
     String mimetype,
     int contentLength,
   ) onDownloadStart;
+
+  @override
+  DownloadListener copy() {
+    return DownloadListener.detached(
+      onDownloadStart: onDownloadStart,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
 }
 
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
-@immutable
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
   WebChromeClient({
@@ -908,10 +952,10 @@ class WebChromeClient extends JavaObject {
   /// create copies.
   @protected
   WebChromeClient.detached({
-    this.onProgressChanged,
-    this.onShowFileChooser,
-    super.binaryMessenger,
-    super.instanceManager,
+    required this.onProgressChanged,
+    required this.onShowFileChooser,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebChromeClient].
@@ -962,12 +1006,21 @@ class WebChromeClient extends JavaObject {
       value,
     );
   }
+
+  @override
+  WebChromeClient copy() {
+    return WebChromeClient.detached(
+      onProgressChanged: onProgressChanged,
+      onShowFileChooser: onShowFileChooser,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
 }
 
 /// Parameters received when a [WebChromeClient] should show a file chooser.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams.
-@immutable
 class FileChooserParams extends JavaObject {
   /// Constructs a [FileChooserParams] without creating the associated Java
   /// object.
@@ -980,8 +1033,8 @@ class FileChooserParams extends JavaObject {
     required this.acceptTypes,
     required this.filenameHint,
     required this.mode,
-    super.binaryMessenger,
-    super.instanceManager,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Preference for a live media captured value (e.g. Camera, Microphone).
@@ -995,6 +1048,18 @@ class FileChooserParams extends JavaObject {
 
   /// Mode of how to select files for a file chooser.
   final FileChooserMode mode;
+
+  @override
+  FileChooserParams copy() {
+    return FileChooserParams.detached(
+      isCaptureEnabled: isCaptureEnabled,
+      acceptTypes: acceptTypes,
+      filenameHint: filenameHint,
+      mode: mode,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
 }
 
 /// Encompasses parameters to the [WebViewClient.requestLoading] method.
@@ -1070,7 +1135,6 @@ class FlutterAssetManager {
 /// Manages the JavaScript storage APIs provided by the [WebView].
 ///
 /// Wraps [WebStorage](https://developer.android.com/reference/android/webkit/WebStorage).
-@immutable
 class WebStorage extends JavaObject {
   /// Constructs a [WebStorage].
   ///
@@ -1091,8 +1155,8 @@ class WebStorage extends JavaObject {
   /// create copies.
   @protected
   WebStorage.detached({
-    super.binaryMessenger,
-    super.instanceManager,
+    required super.binaryMessenger,
+    required super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebStorage].
@@ -1105,5 +1169,13 @@ class WebStorage extends JavaObject {
   /// Clears all storage currently being used by the JavaScript storage APIs.
   Future<void> deleteAllData() {
     return api.deleteAllDataFromInstance(this);
+  }
+
+  @override
+  WebStorage copy() {
+    return WebStorage.detached(
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
   }
 }
