@@ -8,7 +8,6 @@ import 'dart:ui';
 import 'package:camera_android/camera_android.dart';
 import 'package:camera_example/camera_controller.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -226,19 +225,27 @@ void main() {
     await controller.startVideoRecording();
     sleep(const Duration(milliseconds: 500));
 
-    // set description while recording requires android >= 26
-    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    final int sdk = androidInfo.version.sdkInt;
-    if (sdk < 26) {
-      await expectLater(() => controller.setDescription(cameras[1]),
-          throwsA(isA<PlatformException>()));
-      // old devices don't switch after throwing an error
+    // SDK < 26 will throw a platform error when trying to switch and keep the same camera
+    // we accept either outcome here, while the native integration tests check the outcome based on the current Android SDK
+    bool failed = false;
+    try {
+      await controller.setDescription(cameras[1]);
+    } catch (err) {
+      expect(err, isA<PlatformException>());
+      expect(
+          (err as PlatformException).message,
+          equals(
+              'Device does not support switching the camera while recording'));
+      failed = true;
+    }
+
+    sleep(const Duration(milliseconds: 500));
+
+    if (failed) {
+      // cameras did not switch
       expect(controller.description, cameras[0]);
     } else {
-      await controller.setDescription(cameras[1]);
-      sleep(const Duration(milliseconds: 500));
-
+      // cameras switched
       expect(controller.description, cameras[1]);
     }
   });
