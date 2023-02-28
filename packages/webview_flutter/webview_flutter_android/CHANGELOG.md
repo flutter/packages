@@ -2,7 +2,6 @@
 
 * Fixes a potential bug where a `WebView` that was not added to the `InstanceManager` could be
   returned by a `WebViewClient` or `WebChromeClient`.
-* Raises `pigeon` version to `9.0.0`.
 
 ## 3.3.1
 
