@@ -1,4 +1,8 @@
-## 0.8.6
+## 0.8.5+7
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
+## 0.8.5+6
 
 * Adds Android 13 photo picker functionality if SDK version is at least 33.
 * Bumps compileSdkVersion from 31 to 33

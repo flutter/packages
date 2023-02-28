@@ -250,6 +250,15 @@ dependency_overrides:
         print('  Skipping $packageName; no non-breaking version change.');
         continue;
       }
+      // TODO(stuartmorgan): Remove this special-casing once this tool checks
+      // for major version differences relative to the dependencies being
+      // updated rather than the version change in the PR:
+      // https://github.com/flutter/flutter/issues/121246
+      if (packageName == 'pigeon') {
+        print('  Skipping $packageName; see '
+            'https://github.com/flutter/flutter/issues/121246');
+        continue;
+      }
       changedPackages.add(packageName);
     }
     return changedPackages;

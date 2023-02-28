@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
 A Flutter plugin for picking images from the image library, and taking new pictures with the camera.
 Downloaded by pub (not CocoaPods).
                        DESC
-  s.homepage         = 'https://github.com/flutter/plugins'
+  s.homepage         = 'https://github.com/flutter/packages'
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
-  s.source           = { :http => 'https://github.com/flutter/plugins/tree/main/packages/image_picker_ios' }
+  s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/image_picker_ios' }
   s.documentation_url = 'https://pub.dev/packages/image_picker_ios'
   s.source_files = 'Classes/**/*.{h,m}'
   s.public_header_files = 'Classes/**/*.h'

@@ -1,3 +1,11 @@
+## 0.9.12
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
+
+## 0.9.11+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.9.11
 
 * Adds back use of Optional type.
