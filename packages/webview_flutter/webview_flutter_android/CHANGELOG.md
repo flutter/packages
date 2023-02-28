@@ -1,7 +1,7 @@
 ## 3.3.2
 
 * Updates internal Java InstanceManager to be cleared on hot restart.
-* Updates internal Copyable mixin to be immutable and require `copy` to be overridden by subclasses.
+* Updates internal Copyable mixin to be immutable.
 
 ## 3.3.1
 

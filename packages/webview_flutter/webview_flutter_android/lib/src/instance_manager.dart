@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 /// An immutable object that can provide functional copies of itself.
 ///
@@ -17,7 +17,6 @@ mixin Copyable {
   /// Subclasses should always override their parent's implementation of this
   /// method.
   @protected
-  @mustBeOverridden
   Copyable copy();
 }
 
