@@ -142,12 +142,14 @@ extension $_extensionName on $_className {
 
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) =>
+      context.go(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) =>
+      context.push(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';
 
@@ -188,14 +190,16 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
     }
   }
 
+  ParameterElement? get _extraParam => _ctor.parameters
+      .singleWhereOrNull((ParameterElement element) => element.isExtraField);
+
   String get _newFromState {
     final StringBuffer buffer = StringBuffer('=>');
     if (_ctor.isConst && _ctorParams.isEmpty && _ctorQueryParams.isEmpty) {
       buffer.writeln('const ');
     }
 
-    final ParameterElement? extraParam = _ctor.parameters
-        .singleWhereOrNull((ParameterElement element) => element.isExtraField);
+    final ParameterElement? extraParam = _extraParam;
 
     buffer.writeln('$_className(');
     for (final ParameterElement param in <ParameterElement>[

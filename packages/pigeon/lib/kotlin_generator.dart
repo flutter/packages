@@ -228,23 +228,23 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             if (!hostDatatype.isBuiltin &&
                 customClassNames.contains(field.type.baseName)) {
               indent.write('val ${field.name}: $fieldType? = ');
-              indent.add('($listValue as? List<Any?>)?.let ');
+              indent.add('($listValue as List<Any?>?)?.let ');
               indent.addScoped('{', '}', () {
                 indent.writeln('$fieldType.fromList(it)');
               });
             } else if (!hostDatatype.isBuiltin &&
                 customEnumNames.contains(field.type.baseName)) {
               indent.write('val ${field.name}: $fieldType? = ');
-              indent.add('($listValue as? Int)?.let ');
+              indent.add('($listValue as Int?)?.let ');
               indent.addScoped('{', '}', () {
                 indent.writeln('$fieldType.ofRaw(it)');
               });
             } else if (isInt) {
               indent.write('val ${field.name} = $listValue');
               indent.addln(
-                  '.let { if (it is Int) it.toLong() else it as? Long }');
+                  '.let { if (it is Int) it.toLong() else it as Long? }');
             } else {
-              indent.writeln('val ${field.name} = $listValue as? $fieldType');
+              indent.writeln('val ${field.name} = $listValue as $fieldType?');
             }
           } else {
             if (!hostDatatype.isBuiltin &&
