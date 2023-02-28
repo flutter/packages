@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:webview_flutter_android/src/android_webview.dart' as android;
+import 'package:webview_flutter_android/src/android_webview.g.dart';
 import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
 import 'package:webview_flutter_android/src/instance_manager.dart';
 import 'package:webview_flutter_android/src/weak_reference_utils.dart';
@@ -116,6 +117,11 @@ Future<void> main() async {
           webViewGCCompleter.complete();
         }
       });
+
+      // Since the InstanceManager of the apis are being changed, the native
+      // InstanceManager needs to be cleared otherwise an exception will be
+      // thrown that an identifier is being reused.
+      await InstanceManagerHostApi().clear();
 
       android.WebView.api = WebViewHostApiImpl(
         instanceManager: instanceManager,

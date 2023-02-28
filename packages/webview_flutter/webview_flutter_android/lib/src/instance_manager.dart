@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: public_member_api_docs
+
+import 'package:meta/meta.dart';
+
 /// Maintains instances used to communicate with the native objects they
 /// represent.
 ///
@@ -45,6 +49,7 @@ class InstanceManager {
   final Map<int, WeakReference<Object>> _weakInstances =
       <int, WeakReference<Object>>{};
   final Map<int, Object> _strongInstances = <int, Object>{};
+  // The function type is Object Function(Object), but
   final Map<int, Function> _copyCallbacks = <int, Function>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
@@ -123,12 +128,12 @@ class InstanceManager {
     if (weakInstance == null) {
       final T? strongInstance = _strongInstances[identifier] as T?;
       if (strongInstance != null) {
-        // This cast is safe since it matches the argument type for
-        // _addInstanceWithIdentifier, which is the only place _copyCallbacks
-        // is populated.
-        final T Function(T) copyCallback =
-            _copyCallbacks[identifier]! as T Function(T);
-        final T copy = copyCallback(strongInstance);
+        final Function copyCallback = _copyCallbacks[identifier]!;
+        // A dynamic call is used because Function types don't work with
+        // inheritance. For example WebView Function(WebView) can't be casted to
+        // Object Function(Object).
+        // ignore: avoid_dynamic_calls
+        final T copy = copyCallback(strongInstance) as T;
         _identifiers[copy] = identifier;
         _weakInstances[identifier] = WeakReference<Object>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
@@ -193,5 +198,12 @@ class InstanceManager {
       _nextIdentifier = (_nextIdentifier + 1) % _maxDartCreatedIdentifier;
     } while (containsIdentifier(identifier));
     return identifier;
+  }
+}
+
+class A {
+  @mustBeOverridden
+  void t() {
+
   }
 }
