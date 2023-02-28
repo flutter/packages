@@ -617,7 +617,8 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
       },
       decidePolicyForNavigationResponse:
           (WKWebView webView, WKNavigationResponse response) async {
-        if (weakThis.target?._onPageError != null) {
+        if (weakThis.target?._onPageError != null &&
+            response.response.statusCode >= 400) {
           weakThis.target!._onPageError!(response.response.statusCode);
         }
 
