@@ -1,3 +1,15 @@
+## 6.2.0
+
+- Export supertypes in route_data.dart library
+
+## 6.1.0
+
+- Adds `GoRouter.maybeOf` to get the closest `GoRouter` from the context, if there is any.
+
+## 6.0.10
+
+- Adds helpers for go_router_builder for ShellRoute support
+
 ## 6.0.9
 
 - Fixes deprecation message for `GoRouterState.namedLocation`

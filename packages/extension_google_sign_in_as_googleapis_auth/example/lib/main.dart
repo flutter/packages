@@ -19,7 +19,7 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
 void main() {
   runApp(
     const MaterialApp(
-      title: 'Google Sign In',
+      title: 'Google Sign In + googleapis',
       home: SignInDemo(),
     ),
   );
@@ -149,7 +149,7 @@ class SignInDemoState extends State<SignInDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Google Sign In'),
+          title: const Text('Google Sign In + googleapis'),
         ),
         body: ConstrainedBox(
           constraints: const BoxConstraints.expand(),

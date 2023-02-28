@@ -155,11 +155,11 @@ NSString *const errorMethod = @"error";
   [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
   [_videoCaptureSession addConnection:connection];
 
-  if (@available(iOS 10.0, *)) {
-    _capturePhotoOutput = [AVCapturePhotoOutput new];
-    [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
-    [_videoCaptureSession addOutput:_capturePhotoOutput];
-  }
+  _capturePhotoOutput = [AVCapturePhotoOutput new];
+  [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
+  [_videoCaptureSession addOutput:_capturePhotoOutput];
+  
+
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
@@ -245,7 +245,7 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result API_AVAILABLE(ios(10)) {
+- (void)captureToFile:(FLTThreadSafeFlutterResult *)result {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
   if (_resolutionPreset == FLTResolutionPresetMax) {
     [settings setHighResolutionPhotoEnabled:YES];
@@ -1074,19 +1074,11 @@ NSString *const errorMethod = @"error";
 }
 
 - (CGFloat)getMinAvailableZoomFactor {
-  if (@available(iOS 11.0, *)) {
-    return _captureDevice.minAvailableVideoZoomFactor;
-  } else {
-    return 1.0;
-  }
+  return _captureDevice.minAvailableVideoZoomFactor;
 }
 
 - (CGFloat)getMaxAvailableZoomFactor {
-  if (@available(iOS 11.0, *)) {
-    return _captureDevice.maxAvailableVideoZoomFactor;
-  } else {
-    return _captureDevice.activeFormat.videoMaxZoomFactor;
-  }
+  return _captureDevice.maxAvailableVideoZoomFactor;
 }
 
 - (BOOL)setupWriterForPath:(NSString *)path {
