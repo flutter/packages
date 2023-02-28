@@ -216,6 +216,16 @@ class _FakeWebSettings_16 extends _i1.SmartFake implements _i2.WebSettings {
         );
 }
 
+class _FakeWebStorage_17 extends _i1.SmartFake implements _i2.WebStorage {
+  _FakeWebStorage_17(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AndroidNavigationDelegate].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -1251,7 +1261,6 @@ class MockFlutterAssetManager extends _i1.Mock
 /// A class which mocks [JavaScriptChannel].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
   @override
   String get channelName => (super.noSuchMethod(
@@ -1265,6 +1274,27 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
         returnValue: (String message) {},
         returnValueForMissingStub: (String message) {},
       ) as void Function(String));
+  @override
+  _i2.JavaScriptChannel copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeJavaScriptChannel_9(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeJavaScriptChannel_9(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i2.JavaScriptChannel);
 }
 
 /// A class which mocks [PlatformViewsServiceProxy].
@@ -1557,7 +1587,6 @@ class MockSurfaceAndroidViewController extends _i1.Mock
 /// A class which mocks [WebChromeClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
   @override
   _i9.Future<void> setSynchronousReturnValueForOnShowFileChooser(bool? value) =>
@@ -1569,12 +1598,32 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i2.WebChromeClient copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeWebChromeClient_0(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeWebChromeClient_0(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i2.WebChromeClient);
 }
 
 /// A class which mocks [WebSettings].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
   @override
   _i9.Future<void> setDomStorageEnabled(bool? flag) => (super.noSuchMethod(
@@ -1689,12 +1738,32 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i2.WebSettings copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeWebSettings_16(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeWebSettings_16(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i2.WebSettings);
 }
 
 /// A class which mocks [WebView].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockWebView extends _i1.Mock implements _i2.WebView {
   @override
   bool get useHybridComposition => (super.noSuchMethod(
@@ -2002,12 +2071,32 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i2.WebView copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeWebView_7(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeWebView_7(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i2.WebView);
 }
 
 /// A class which mocks [WebViewClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
   @override
   _i9.Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
@@ -2020,12 +2109,32 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i2.WebViewClient copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeWebViewClient_1(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeWebViewClient_1(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i2.WebViewClient);
 }
 
 /// A class which mocks [WebStorage].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
   @override
   _i9.Future<void> deleteAllData() => (super.noSuchMethod(
@@ -2036,6 +2145,27 @@ class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i2.WebStorage copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeWebStorage_17(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeWebStorage_17(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i2.WebStorage);
 }
 
 /// A class which mocks [InstanceManager].
@@ -2058,21 +2188,16 @@ class MockInstanceManager extends _i1.Mock implements _i5.InstanceManager {
         returnValueForMissingStub: null,
       );
   @override
-  int addDartCreatedInstance<T extends Object>(
-    T? instance, {
-    required T Function(T)? onCopy,
-  }) =>
-      (super.noSuchMethod(
+  int addDartCreatedInstance(_i5.Copyable? instance) => (super.noSuchMethod(
         Invocation.method(
           #addDartCreatedInstance,
           [instance],
-          {#onCopy: onCopy},
         ),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
   @override
-  int? removeWeakReference(Object? instance) => (super.noSuchMethod(
+  int? removeWeakReference(_i5.Copyable? instance) => (super.noSuchMethod(
         Invocation.method(
           #removeWeakReference,
           [instance],
@@ -2080,7 +2205,7 @@ class MockInstanceManager extends _i1.Mock implements _i5.InstanceManager {
         returnValueForMissingStub: null,
       ) as int?);
   @override
-  T? remove<T extends Object>(int? identifier) => (super.noSuchMethod(
+  T? remove<T extends _i5.Copyable>(int? identifier) => (super.noSuchMethod(
         Invocation.method(
           #remove,
           [identifier],
@@ -2088,7 +2213,7 @@ class MockInstanceManager extends _i1.Mock implements _i5.InstanceManager {
         returnValueForMissingStub: null,
       ) as T?);
   @override
-  T? getInstanceWithWeakReference<T extends Object>(int? identifier) =>
+  T? getInstanceWithWeakReference<T extends _i5.Copyable>(int? identifier) =>
       (super.noSuchMethod(
         Invocation.method(
           #getInstanceWithWeakReference,
@@ -2097,7 +2222,7 @@ class MockInstanceManager extends _i1.Mock implements _i5.InstanceManager {
         returnValueForMissingStub: null,
       ) as T?);
   @override
-  int? getIdentifier(Object? instance) => (super.noSuchMethod(
+  int? getIdentifier(_i5.Copyable? instance) => (super.noSuchMethod(
         Invocation.method(
           #getIdentifier,
           [instance],
@@ -2105,11 +2230,10 @@ class MockInstanceManager extends _i1.Mock implements _i5.InstanceManager {
         returnValueForMissingStub: null,
       ) as int?);
   @override
-  void addHostCreatedInstance<T extends Object>(
-    T? instance,
-    int? identifier, {
-    required T Function(T)? onCopy,
-  }) =>
+  void addHostCreatedInstance(
+    _i5.Copyable? instance,
+    int? identifier,
+  ) =>
       super.noSuchMethod(
         Invocation.method(
           #addHostCreatedInstance,
@@ -2117,7 +2241,6 @@ class MockInstanceManager extends _i1.Mock implements _i5.InstanceManager {
             instance,
             identifier,
           ],
-          {#onCopy: onCopy},
         ),
         returnValueForMissingStub: null,
       );

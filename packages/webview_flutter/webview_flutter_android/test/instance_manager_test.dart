@@ -13,6 +13,8 @@ import 'test_android_webview.g.dart';
 
 @GenerateMocks(<Type>[TestInstanceManagerHostApi])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('InstanceManager', () {
     test('addHostCreatedInstance', () {
       final CopyableObject object = CopyableObject();

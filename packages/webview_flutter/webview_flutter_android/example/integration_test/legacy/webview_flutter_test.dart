@@ -113,13 +113,7 @@ Future<void> main() async {
     );
 
     ClassWithCallbackClass? instance = ClassWithCallbackClass();
-    instanceManager.addHostCreatedInstance(
-      instance.callbackClass,
-      0,
-      onCopy: (CopyableObjectWithCallback original) {
-        return CopyableObjectWithCallback(original.callback);
-      },
-    );
+    instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
     instance = null;
 
     // Force garbage collection.
@@ -1549,10 +1543,15 @@ class ResizableWebViewState extends State<ResizableWebView> {
   }
 }
 
-class CopyableObjectWithCallback {
+class CopyableObjectWithCallback with Copyable {
   CopyableObjectWithCallback(this.callback);
 
   final VoidCallback callback;
+
+  @override
+  CopyableObjectWithCallback copy() {
+    return CopyableObjectWithCallback(callback);
+  }
 }
 
 class ClassWithCallbackClass {
