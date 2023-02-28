@@ -199,7 +199,6 @@ void main() {
       });
 
       testWidgets('javascriptChannelNames', (WidgetTester tester) async {
-        print('here');
         await buildWidget(
           tester,
           creationParams: CreationParams(
