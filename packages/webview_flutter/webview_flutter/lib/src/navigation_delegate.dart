@@ -55,6 +55,7 @@ class NavigationDelegate {
           onPageFinished: onPageFinished,
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
+          onUrlChange: onUrlChange,
         );
 
   /// Constructs a [NavigationDelegate] from creation params for a specific
@@ -117,7 +118,7 @@ class NavigationDelegate {
     this.onPageFinished,
     this.onProgress,
     this.onWebResourceError,
-        void Function(UrlChange change)? onUrlChange,
+    void Function(UrlChange change)? onUrlChange,
   }) {
     if (onNavigationRequest != null) {
       platform.setOnNavigationRequest(onNavigationRequest!);
