@@ -1,7 +1,3 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ## 1.0.0
 
 * Updates version to 1.0 to reflect the level of API stability.

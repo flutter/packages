@@ -1,7 +1,3 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ## 0.2.0
 
 * Adds `renderButton` API to `id.dart`.

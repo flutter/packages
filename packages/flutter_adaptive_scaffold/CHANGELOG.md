@@ -1,7 +1,3 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ## 0.1.0
 
 * Change the `selectedIndex` parameter on `standardNavigationRail` to allow null values to indicate "no destination".

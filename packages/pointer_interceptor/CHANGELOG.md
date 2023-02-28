@@ -1,7 +1,3 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ##  0.9.3+4
 
 * Removes const keyword from PointerInterceptor's constructor.

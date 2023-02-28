@@ -1,7 +1,3 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ## 2.0.1
 
 * Updated readme to document suggestion process for new lints

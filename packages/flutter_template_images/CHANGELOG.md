@@ -1,6 +1,5 @@
 ## NEXT
 
-* Update compileSdkVersion to 33.
 * Updates minimum SDK version to Flutter 3.0.
 
 ## 4.2.0

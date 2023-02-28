@@ -1,7 +1,3 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ## 0.3.3+4
 
 * Reverts an accidental change in a constructor argument's nullability.
