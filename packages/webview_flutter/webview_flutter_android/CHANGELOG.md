@@ -2,6 +2,7 @@
 
 * Updates internal Java InstanceManager to be cleared on hot restart.
 * Updates internal Copyable mixin to be immutable.
+* Raises `pigeon` version to `9.0.0`.
 
 ## 3.3.1
 
