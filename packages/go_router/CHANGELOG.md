@@ -1,3 +1,11 @@
+## NEXT
+
+- Updates example app to iOS 11.
+
+## 6.2.0
+
+- Export supertypes in route_data.dart library
+
 ## 6.1.0
 
 - Adds `GoRouter.maybeOf` to get the closest `GoRouter` from the context, if there is any.

@@ -86,12 +86,12 @@ extension $EnumParamExtension on EnumParam {
         '/${Uri.encodeComponent(_$EnumTestEnumMap[y]!)}',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 const _$EnumTestEnumMap = {
@@ -138,12 +138,12 @@ extension $DefaultValueRouteExtension on DefaultValueRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 T? _$convertMapValue<T>(
@@ -159,6 +159,49 @@ T? _$convertMapValue<T>(
 class DefaultValueRoute extends GoRouteData {
   DefaultValueRoute({this.param = 0});
   final int param;
+}
+
+@ShouldGenerate(r'''
+GoRoute get $extraValueRoute => GoRouteData.$route(
+      path: '/default-value-route',
+      factory: $ExtraValueRouteExtension._fromState,
+    );
+
+extension $ExtraValueRouteExtension on ExtraValueRoute {
+  static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
+        param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+        $extra: state.extra as int?,
+      );
+
+  String get location => GoRouteData.$location(
+        '/default-value-route',
+        queryParams: {
+          if (param != 0) 'param': param.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  void push(BuildContext context) => context.push(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+''')
+@TypedGoRoute<ExtraValueRoute>(path: '/default-value-route')
+class ExtraValueRoute extends GoRouteData {
+  ExtraValueRoute({this.param = 0, this.$extra});
+  final int param;
+  final int? $extra;
 }
 
 @ShouldThrow(
