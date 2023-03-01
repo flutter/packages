@@ -4,6 +4,22 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('stroke-opacity', () {
+    const String strokeOpacitySvg = '''
+<svg viewBox="0 0 10 10">
+  <rect x="0" y="0" width="5" height="5" stroke="red" stroke-opacity=".5" />
+</svg>
+''';
+
+    final VectorInstructions instructions =
+        parseWithoutOptimizers(strokeOpacitySvg);
+
+    expect(
+      instructions.paints.single,
+      const Paint(stroke: Stroke(color: Color(0x7fff0000))),
+    );
+  });
+
   test('currentColor', () {
     const String currentColorSvg = '''
 <svg viewBox="0 0 10 10">

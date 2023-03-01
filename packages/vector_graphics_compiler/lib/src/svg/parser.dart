@@ -2168,7 +2168,7 @@ class SvgStrokeAttributes {
     }
 
     return Stroke(
-      color: color,
+      color: color!.withOpacity(opacity ?? 1.0),
       shader: shader,
       join: join,
       cap: cap,
