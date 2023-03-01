@@ -1,3 +1,7 @@
+## NEXT
+
+* * Updates example app Android compileSdkVersion to 33.
+
 ## 0.8.6+4
 
 * Updates iOS minimum version in README.
