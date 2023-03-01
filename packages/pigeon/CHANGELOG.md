@@ -1,3 +1,7 @@
+## 9.0.4
+
+* Adds parameter to generate Kotlin code in example README.
+
 ## 9.0.3
 
 * [kotlin] Fixes compiler warnings in generated output.
