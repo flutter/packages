@@ -1,6 +1,7 @@
 ## NEXT
 
-* Update compileSdkVersion to 33.
+- Update compileSdkVersion to 33.
+- Updates example app to iOS 11.
 
 ## 6.2.0
 
@@ -58,8 +59,8 @@
   - `GoRouteData`'s `redirect` now takes 2 parameters `BuildContext context, GoRouterState state`.
   - `GoRouteData`'s `build` now takes 2 parameters `BuildContext context, GoRouterState state`.
   - `GoRouteData`'s `buildPageWithState` has been removed and replaced by `buildPage` with now takes 2 parameters `BuildContext context, GoRouterState state`.
-  - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`. 
-  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`. 
+  - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`.
+  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`.
   - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
 
 ## 5.2.4
@@ -189,7 +190,7 @@
 
 ## 4.3.0
 
-- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`.
 
 ## 4.2.9
 

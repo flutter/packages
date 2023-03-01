@@ -50,3 +50,7 @@ android {
         testImplementation "org.mockito:mockito-core:5.+"
     }
 }
+
+project.getTasks().withType(JavaCompile){
+    options.compilerArgs.addAll(["-Xlint:all", "-Werror"])
+}
