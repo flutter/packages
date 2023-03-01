@@ -1,6 +1,15 @@
-## 6.1.0
+## 6.3.0
 
 - Adds `replace` method to that replaces the current route with a new one and keeps the same page key. This is useful for when you want to update the query params without changing the page key ([#115902]https://github.com/flutter/flutter/issues/115902).
+- Updates example app to iOS 11.
+
+## 6.2.0
+
+- Export supertypes in route_data.dart library
+
+## 6.1.0
+
+- Adds `GoRouter.maybeOf` to get the closest `GoRouter` from the context, if there is any.
 
 ## 6.0.10
 
