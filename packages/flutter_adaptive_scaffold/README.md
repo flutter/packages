@@ -43,7 +43,7 @@ animation should use AdaptiveLayout.
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-            color: const Color.fromARGB(255, 255, 29, 197),
+            color: const Color.fromARGB(255, 255, 201, 197),
             height: 400,
           ),
         )

@@ -1,6 +1,6 @@
 ## 0.1.1
 
-* 🐛 : FIX - [**121135**](https://github.com/flutter/flutter/issues/121135) : `selectedIcon` parameter not displayed even if it is provided from example.
+* Fixes flutter/flutter#121135) `selectedIcon` parameter not displayed even if it is provided.
 
 ## 0.1.0
 
