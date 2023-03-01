@@ -1,7 +1,7 @@
 ## 2.0.9
 
-* Update annotation and espresso dependencies.
-* Update compileSdkVersion to 33.
+* Updates annotation and espresso dependencies.
+* Updates compileSdkVersion to 33.
 
 ## 2.0.8
 

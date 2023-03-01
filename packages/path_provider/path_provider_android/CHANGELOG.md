@@ -1,6 +1,6 @@
 ## NEXT
 
-* Update compileSdkVersion to 33.
+* Updates compileSdkVersion to 33.
 
 ## 2.0.23
 

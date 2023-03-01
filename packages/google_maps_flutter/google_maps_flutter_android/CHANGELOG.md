@@ -1,7 +1,7 @@
 ## 2.4.7
 
-* Update annotation dependency.
-* Update compileSdkVersion to 33.
+* Updates annotation dependency.
+* Updates compileSdkVersion to 33.
 
 ## 2.4.6
 
