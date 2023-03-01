@@ -1,7 +1,3 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ## 2.0.7
 * Updates screenshots to use webp compressed animations
 

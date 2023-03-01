@@ -1,7 +1,3 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ## 1.0.8
 
 * Removes use of `runtimeType.toString()`.

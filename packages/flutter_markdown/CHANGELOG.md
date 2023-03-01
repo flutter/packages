@@ -1,7 +1,3 @@
-## NEXT
-
-* Update compileSdkVersion to 33.
-
 ## 0.6.14
 
 * Require `markdown: ^7.0.0`
