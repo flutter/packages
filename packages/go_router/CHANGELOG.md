@@ -1,6 +1,6 @@
 ## NEXT
 
-- Update compileSdkVersion to 33.
+- Updates compileSdkVersion to 33.
 - Updates example app to iOS 11.
 
 ## 6.2.0
