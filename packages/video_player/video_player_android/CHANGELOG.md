@@ -2,13 +2,10 @@
 
 * Adds option to configure the User-Agent in the HTTP headers.
 
-
 ## 2.3.11
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
-
-  
 
 ## 2.3.10
 
@@ -19,8 +16,6 @@
 * Updates minimum Flutter version to 2.10.
 * Fixes violations of new analysis option use_named_constants.
 * Removes an unnecessary override in example code.
-
-
 
 ## 2.3.9
 
