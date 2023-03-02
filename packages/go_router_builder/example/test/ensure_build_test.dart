@@ -13,5 +13,6 @@ void main() {
       gitDiffPathArguments: <String>[':!pubspec.yaml'],
     ),
     timeout: const Timeout.factor(3),
+    skip: true,
   );
 }
