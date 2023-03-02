@@ -1,3 +1,7 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.2.0
 
 * Adds `renderButton` API to `id.dart`.
