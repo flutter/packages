@@ -393,6 +393,9 @@ class MarkdownBody extends MarkdownWidget {
     required super.data,
     super.selectable,
     super.styleSheet,
+    // TODO(stuartmorgan): Remove this once 3.0 is no longer part of the
+    // legacy analysis matrix; it's a false positive there.
+    // ignore: avoid_init_to_null
     super.styleSheetTheme = null,
     super.syntaxHighlighter,
     super.onTapLink,
@@ -447,6 +450,9 @@ class Markdown extends MarkdownWidget {
     required super.data,
     super.selectable,
     super.styleSheet,
+    // TODO(stuartmorgan): Remove this once 3.0 is no longer part of the
+    // legacy analysis matrix; it's a false positive there.
+    // ignore: avoid_init_to_null
     super.styleSheetTheme = null,
     super.syntaxHighlighter,
     super.onTapLink,
