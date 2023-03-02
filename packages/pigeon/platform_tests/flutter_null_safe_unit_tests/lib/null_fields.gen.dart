@@ -106,12 +106,9 @@ class _NullFieldsHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return NullFieldsSearchReply.decode(readValue(buffer)!);
-      case 129:
-        return NullFieldsSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
+      case 128: return NullFieldsSearchReply.decode(readValue(buffer)!);
+      case 129: return NullFieldsSearchRequest.decode(readValue(buffer)!);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }
@@ -173,12 +170,9 @@ class _NullFieldsFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return NullFieldsSearchReply.decode(readValue(buffer)!);
-      case 129:
-        return NullFieldsSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
+      case 128: return NullFieldsSearchReply.decode(readValue(buffer)!);
+      case 129: return NullFieldsSearchRequest.decode(readValue(buffer)!);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

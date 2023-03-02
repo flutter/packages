@@ -696,12 +696,9 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 String _kotlinTypeForBuiltinGenericDartType(TypeDeclaration type) {
   if (type.typeArguments.isEmpty) {
     switch (type.baseName) {
-      case 'List':
-        return 'List<Any?>';
-      case 'Map':
-        return 'Map<Any, Any?>';
-      default:
-        return 'Any';
+      case 'List': return 'List<Any?>';
+      case 'Map': return 'Map<Any, Any?>';
+      default: return 'Any';
     }
   } else {
     switch (type.baseName) {

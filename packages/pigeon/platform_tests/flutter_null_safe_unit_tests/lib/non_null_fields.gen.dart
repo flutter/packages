@@ -126,14 +126,10 @@ class _NonNullFieldHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return ExtraData.decode(readValue(buffer)!);
-      case 129:
-        return NonNullFieldSearchReply.decode(readValue(buffer)!);
-      case 130:
-        return NonNullFieldSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
+      case 128: return ExtraData.decode(readValue(buffer)!);
+      case 129: return NonNullFieldSearchReply.decode(readValue(buffer)!);
+      case 130: return NonNullFieldSearchRequest.decode(readValue(buffer)!);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }
@@ -198,14 +194,10 @@ class _NonNullFieldFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return ExtraData.decode(readValue(buffer)!);
-      case 129:
-        return NonNullFieldSearchReply.decode(readValue(buffer)!);
-      case 130:
-        return NonNullFieldSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
+      case 128: return ExtraData.decode(readValue(buffer)!);
+      case 129: return NonNullFieldSearchReply.decode(readValue(buffer)!);
+      case 130: return NonNullFieldSearchRequest.decode(readValue(buffer)!);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

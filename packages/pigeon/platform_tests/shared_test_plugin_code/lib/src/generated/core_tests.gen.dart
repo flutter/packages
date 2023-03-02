@@ -245,16 +245,11 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return AllNullableTypes.decode(readValue(buffer)!);
-      case 129:
-        return AllNullableTypesWrapper.decode(readValue(buffer)!);
-      case 130:
-        return AllTypes.decode(readValue(buffer)!);
-      case 131:
-        return TestMessage.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
+      case 128: return AllNullableTypes.decode(readValue(buffer)!);
+      case 129: return AllNullableTypesWrapper.decode(readValue(buffer)!);
+      case 130: return AllTypes.decode(readValue(buffer)!);
+      case 131: return TestMessage.decode(readValue(buffer)!);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }
@@ -1935,16 +1930,11 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return AllNullableTypes.decode(readValue(buffer)!);
-      case 129:
-        return AllNullableTypesWrapper.decode(readValue(buffer)!);
-      case 130:
-        return AllTypes.decode(readValue(buffer)!);
-      case 131:
-        return TestMessage.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
+      case 128: return AllNullableTypes.decode(readValue(buffer)!);
+      case 129: return AllNullableTypesWrapper.decode(readValue(buffer)!);
+      case 130: return AllTypes.decode(readValue(buffer)!);
+      case 131: return TestMessage.decode(readValue(buffer)!);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }
@@ -2537,10 +2527,8 @@ class _FlutterSmallApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return TestMessage.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
+      case 128: return TestMessage.decode(readValue(buffer)!);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

@@ -1146,10 +1146,8 @@ bool _isReferenceType(String dataType) {
   switch (dataType) {
     case 'bool':
     case 'int64_t':
-    case 'double':
-      return false;
-    default:
-      return true;
+    case 'double': return false;
+    default: return true;
   }
 }
 
