@@ -1,9 +1,6 @@
-## NEXT
-
-* Updates compileSdkVersion to 33.
-
 ## 2.3.12
 
+* Updates compileSdkVersion to 33.
 * Synchronizes `VideoPlayerValue.isPlaying` with `ExoPlayer`.
 
 ## 2.3.11
