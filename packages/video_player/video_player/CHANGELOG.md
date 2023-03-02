@@ -1,6 +1,10 @@
-## 2.5.3
+## 2.5.4
 
 * Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.
+
+## 2.5.3
+
+* Updates iOS minimum version in README.
 
 ## 2.5.2
 

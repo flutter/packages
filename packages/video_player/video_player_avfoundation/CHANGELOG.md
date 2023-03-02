@@ -1,6 +1,10 @@
-## 2.3.10
+## 2.4.1
 
 * Synchronizes `VideoPlayerValue.isPlaying` with `AVPlayer`.
+
+## 2.4.0
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
 
 ## 2.3.9
 

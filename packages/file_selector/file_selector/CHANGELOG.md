@@ -1,3 +1,7 @@
+## 0.9.2+4
+
+* Updates iOS minimum version in README.
+
 ## 0.9.2+3
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

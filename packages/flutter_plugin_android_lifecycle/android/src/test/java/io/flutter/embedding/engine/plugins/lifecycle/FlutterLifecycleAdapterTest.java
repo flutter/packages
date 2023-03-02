@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.PluginRegistry;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -19,9 +20,16 @@ import org.mockito.MockitoAnnotations;
 public class FlutterLifecycleAdapterTest {
   @Mock Lifecycle lifecycle;
 
+  AutoCloseable mockCloseable;
+
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    mockCloseable = MockitoAnnotations.openMocks(this);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    mockCloseable.close();
   }
 
   @Test
