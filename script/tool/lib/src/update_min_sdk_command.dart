@@ -76,11 +76,13 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
                   includeMin: true,
                   max: _dartMinVersion.nextMajor)
               .toString());
+      print('${indentation}Updating Dart minimum to $_dartMinVersion');
     }
     if (flutterRange != null &&
         (flutterRange.min ?? Version.none) < _flutterMinVersion) {
       editablePubspec.update(<String>[environmentKey, flutterSdkKey],
           VersionRange(min: _flutterMinVersion, includeMin: true).toString());
+      print('${indentation}Updating Flutter minimum to $_flutterMinVersion');
     }
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());
 
