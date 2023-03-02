@@ -62,12 +62,6 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   static const String _expectedIssueLinkFormat =
       'https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A';
 
-  static final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
-    Version(3, 0, 0): Version(2, 17, 0),
-    Version(3, 3, 0): Version(2, 18, 0),
-    Version(3, 7, 0): Version(2, 19, 0),
-  };
-
   @override
   final String name = 'pubspec-check';
 
@@ -367,13 +361,13 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     String unknownDartVersionError(Version flutterVersion) {
       return 'Dart SDK version for Fluter SDK version '
           '$flutterVersion is unknown. '
-          'Please update the map in pubspec_check_comamnd.dart with the '
+          'Please update the map for getDartSdkForFlutterSdk with the '
           'corresponding Dart version.';
     }
 
     Version? minMinDartVersion;
     if (minMinFlutterVersion != null) {
-      minMinDartVersion = _dartSdkForFlutterSdk[minMinFlutterVersion];
+      minMinDartVersion = getDartSdkForFlutterSdk(minMinFlutterVersion);
       if (minMinDartVersion == null) {
         return unknownDartVersionError(minMinFlutterVersion);
       }
@@ -404,7 +398,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       // Ensure that if there is also a Flutter constraint, they are consistent.
       if (flutterConstraintMin != null) {
         final Version? dartVersionForFlutterMinimum =
-            _dartSdkForFlutterSdk[flutterConstraintMin];
+            getDartSdkForFlutterSdk(flutterConstraintMin);
         if (dartVersionForFlutterMinimum == null) {
           return unknownDartVersionError(flutterConstraintMin);
         }
