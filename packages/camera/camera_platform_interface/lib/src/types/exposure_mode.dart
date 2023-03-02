@@ -14,21 +14,16 @@ enum ExposureMode {
 /// Returns the exposure mode as a String.
 String serializeExposureMode(ExposureMode exposureMode) {
   switch (exposureMode) {
-    case ExposureMode.locked:
-      return 'locked';
-    case ExposureMode.auto:
-      return 'auto';
+    case ExposureMode.locked: return 'locked';
+    case ExposureMode.auto: return 'auto';
   }
 }
 
 /// Returns the exposure mode for a given String.
 ExposureMode deserializeExposureMode(String str) {
   switch (str) {
-    case 'locked':
-      return ExposureMode.locked;
-    case 'auto':
-      return ExposureMode.auto;
-    default:
-      throw ArgumentError('"$str" is not a valid ExposureMode value');
+    case 'locked': return ExposureMode.locked;
+    case 'auto': return ExposureMode.auto;
+    default: throw ArgumentError('"$str" is not a valid ExposureMode value');
   }
 }

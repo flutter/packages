@@ -18,10 +18,8 @@ extension WebViewRequestMethodExtensions on WebViewRequestMethod {
   /// Converts [WebViewRequestMethod] to [String] format.
   String serialize() {
     switch (this) {
-      case WebViewRequestMethod.get:
-        return 'get';
-      case WebViewRequestMethod.post:
-        return 'post';
+      case WebViewRequestMethod.get: return 'get';
+      case WebViewRequestMethod.post: return 'post';
     }
   }
 }

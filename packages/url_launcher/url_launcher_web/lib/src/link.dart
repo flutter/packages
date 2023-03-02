@@ -85,8 +85,8 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
                 (BuildContext context, PlatformViewController controller) {
               return PlatformViewSurface(
                 controller: controller,
-                gestureRecognizers: const <
-                    Factory<OneSequenceGestureRecognizer>>{},
+                gestureRecognizers: const <Factory<
+                    OneSequenceGestureRecognizer>>{},
                 hitTestBehavior: PlatformViewHitTestBehavior.transparent,
               );
             },
@@ -243,10 +243,8 @@ class LinkViewController extends PlatformViewController {
   String _getHtmlTarget(LinkTarget target) {
     switch (target) {
       case LinkTarget.defaultTarget:
-      case LinkTarget.self:
-        return '_self';
-      case LinkTarget.blank:
-        return '_blank';
+      case LinkTarget.self: return '_self';
+      case LinkTarget.blank: return '_blank';
     }
     // The enum comes from a different package, which could get a new value at
     // any time, so provide a fallback that ensures this won't break when used

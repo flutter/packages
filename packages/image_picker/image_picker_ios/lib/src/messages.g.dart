@@ -91,14 +91,11 @@ class _ImagePickerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return MaxSize.decode(readValue(buffer)!);
+      case 128: return MaxSize.decode(readValue(buffer)!);
 
-      case 129:
-        return SourceSpecification.decode(readValue(buffer)!);
+      case 129: return SourceSpecification.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

@@ -40,14 +40,10 @@ class CommandResult {
   @override
   String toString() {
     switch (exitStatus) {
-      case ExitStatus.success:
-        return 'success';
-      case ExitStatus.warning:
-        return 'warning';
-      case ExitStatus.fail:
-        return 'fail';
-      case ExitStatus.killed:
-        return 'killed';
+      case ExitStatus.success: return 'success';
+      case ExitStatus.warning: return 'warning';
+      case ExitStatus.fail: return 'fail';
+      case ExitStatus.killed: return 'killed';
     }
   }
 }

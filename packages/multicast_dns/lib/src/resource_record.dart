@@ -52,16 +52,11 @@ abstract class ResourceRecordType {
   /// Prints a debug-friendly version of the resource record type value.
   static String toDebugString(int resourceRecordType) {
     switch (resourceRecordType) {
-      case addressIPv4:
-        return 'A (IPv4 Address)';
-      case addressIPv6:
-        return 'AAAA (IPv6 Address)';
-      case serverPointer:
-        return 'PTR (Domain Name Pointer)';
-      case service:
-        return 'SRV (Service record)';
-      case text:
-        return 'TXT (Text)';
+      case addressIPv4: return 'A (IPv4 Address)';
+      case addressIPv6: return 'AAAA (IPv6 Address)';
+      case serverPointer: return 'PTR (Domain Name Pointer)';
+      case service: return 'SRV (Service record)';
+      case text: return 'TXT (Text)';
     }
     return 'Unknown ($resourceRecordType)';
   }

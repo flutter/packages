@@ -523,32 +523,22 @@ class MethodChannelCamera extends CameraPlatform {
   /// Returns the flash mode as a String.
   String _serializeFlashMode(FlashMode flashMode) {
     switch (flashMode) {
-      case FlashMode.off:
-        return 'off';
-      case FlashMode.auto:
-        return 'auto';
-      case FlashMode.always:
-        return 'always';
-      case FlashMode.torch:
-        return 'torch';
+      case FlashMode.off: return 'off';
+      case FlashMode.auto: return 'auto';
+      case FlashMode.always: return 'always';
+      case FlashMode.torch: return 'torch';
     }
   }
 
   /// Returns the resolution preset as a String.
   String _serializeResolutionPreset(ResolutionPreset resolutionPreset) {
     switch (resolutionPreset) {
-      case ResolutionPreset.max:
-        return 'max';
-      case ResolutionPreset.ultraHigh:
-        return 'ultraHigh';
-      case ResolutionPreset.veryHigh:
-        return 'veryHigh';
-      case ResolutionPreset.high:
-        return 'high';
-      case ResolutionPreset.medium:
-        return 'medium';
-      case ResolutionPreset.low:
-        return 'low';
+      case ResolutionPreset.max: return 'max';
+      case ResolutionPreset.ultraHigh: return 'ultraHigh';
+      case ResolutionPreset.veryHigh: return 'veryHigh';
+      case ResolutionPreset.high: return 'high';
+      case ResolutionPreset.medium: return 'medium';
+      case ResolutionPreset.low: return 'low';
     }
   }
 

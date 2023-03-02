@@ -29,12 +29,9 @@ class CameraExampleHome extends StatefulWidget {
 /// Returns a suitable camera icon for [direction].
 IconData getCameraLensIcon(CameraLensDirection direction) {
   switch (direction) {
-    case CameraLensDirection.back:
-      return Icons.camera_rear;
-    case CameraLensDirection.front:
-      return Icons.camera_front;
-    case CameraLensDirection.external:
-      return Icons.camera;
+    case CameraLensDirection.back: return Icons.camera_rear;
+    case CameraLensDirection.front: return Icons.camera_front;
+    case CameraLensDirection.external: return Icons.camera;
   }
   // This enum is from a different package, so a new value could be added at
   // any time. The example should keep working if that happens.

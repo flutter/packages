@@ -720,69 +720,43 @@ class MarkdownBuilder implements md.NodeVisitor {
   TextAlign _textAlignForBlockTag(String? blockTag) {
     final WrapAlignment wrapAlignment = _wrapAlignmentForBlockTag(blockTag);
     switch (wrapAlignment) {
-      case WrapAlignment.start:
-        return TextAlign.start;
-      case WrapAlignment.center:
-        return TextAlign.center;
-      case WrapAlignment.end:
-        return TextAlign.end;
-      case WrapAlignment.spaceAround:
-        return TextAlign.justify;
-      case WrapAlignment.spaceBetween:
-        return TextAlign.justify;
-      case WrapAlignment.spaceEvenly:
-        return TextAlign.justify;
+      case WrapAlignment.start: return TextAlign.start;
+      case WrapAlignment.center: return TextAlign.center;
+      case WrapAlignment.end: return TextAlign.end;
+      case WrapAlignment.spaceAround: return TextAlign.justify;
+      case WrapAlignment.spaceBetween: return TextAlign.justify;
+      case WrapAlignment.spaceEvenly: return TextAlign.justify;
     }
   }
 
   WrapAlignment _wrapAlignmentForBlockTag(String? blockTag) {
     switch (blockTag) {
-      case 'p':
-        return styleSheet.textAlign;
-      case 'h1':
-        return styleSheet.h1Align;
-      case 'h2':
-        return styleSheet.h2Align;
-      case 'h3':
-        return styleSheet.h3Align;
-      case 'h4':
-        return styleSheet.h4Align;
-      case 'h5':
-        return styleSheet.h5Align;
-      case 'h6':
-        return styleSheet.h6Align;
-      case 'ul':
-        return styleSheet.unorderedListAlign;
-      case 'ol':
-        return styleSheet.orderedListAlign;
-      case 'blockquote':
-        return styleSheet.blockquoteAlign;
-      case 'pre':
-        return styleSheet.codeblockAlign;
-      case 'hr':
-        break;
-      case 'li':
-        break;
+      case 'p': return styleSheet.textAlign;
+      case 'h1': return styleSheet.h1Align;
+      case 'h2': return styleSheet.h2Align;
+      case 'h3': return styleSheet.h3Align;
+      case 'h4': return styleSheet.h4Align;
+      case 'h5': return styleSheet.h5Align;
+      case 'h6': return styleSheet.h6Align;
+      case 'ul': return styleSheet.unorderedListAlign;
+      case 'ol': return styleSheet.orderedListAlign;
+      case 'blockquote': return styleSheet.blockquoteAlign;
+      case 'pre': return styleSheet.codeblockAlign;
+      case 'hr': break;
+      case 'li': break;
     }
     return WrapAlignment.start;
   }
 
   EdgeInsets _textPaddingForBlockTag(String? blockTag) {
     switch (blockTag) {
-      case 'p':
-        return styleSheet.pPadding!;
-      case 'h1':
-        return styleSheet.h1Padding!;
-      case 'h2':
-        return styleSheet.h2Padding!;
-      case 'h3':
-        return styleSheet.h3Padding!;
-      case 'h4':
-        return styleSheet.h4Padding!;
-      case 'h5':
-        return styleSheet.h5Padding!;
-      case 'h6':
-        return styleSheet.h6Padding!;
+      case 'p': return styleSheet.pPadding!;
+      case 'h1': return styleSheet.h1Padding!;
+      case 'h2': return styleSheet.h2Padding!;
+      case 'h3': return styleSheet.h3Padding!;
+      case 'h4': return styleSheet.h4Padding!;
+      case 'h5': return styleSheet.h5Padding!;
+      case 'h6': return styleSheet.h6Padding!;
     }
     return EdgeInsets.zero;
   }

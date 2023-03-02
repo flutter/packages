@@ -28,11 +28,9 @@ class _TestWKWebsiteDataStoreHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
+      case 128: return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

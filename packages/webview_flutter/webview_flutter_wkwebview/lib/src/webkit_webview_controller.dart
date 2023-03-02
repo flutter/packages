@@ -29,10 +29,8 @@ enum PlaybackMediaTypes {
 
   WKAudiovisualMediaType _toWKAudiovisualMediaType() {
     switch (this) {
-      case PlaybackMediaTypes.audio:
-        return WKAudiovisualMediaType.audio;
-      case PlaybackMediaTypes.video:
-        return WKAudiovisualMediaType.video;
+      case PlaybackMediaTypes.audio: return WKAudiovisualMediaType.audio;
+      case PlaybackMediaTypes.video: return WKAudiovisualMediaType.video;
     }
   }
 }

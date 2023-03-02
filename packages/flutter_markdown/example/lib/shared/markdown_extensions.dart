@@ -15,14 +15,10 @@ extension MarkdownExtensionSetExtension on MarkdownExtensionSet {
 
   String get displayTitle => () {
         switch (this) {
-          case MarkdownExtensionSet.none:
-            return 'None';
-          case MarkdownExtensionSet.commonMark:
-            return 'Common Mark';
-          case MarkdownExtensionSet.githubFlavored:
-            return 'GitHub Flavored';
-          case MarkdownExtensionSet.githubWeb:
-            return 'GitHub Web';
+          case MarkdownExtensionSet.none: return 'None';
+          case MarkdownExtensionSet.commonMark: return 'Common Mark';
+          case MarkdownExtensionSet.githubFlavored: return 'GitHub Flavored';
+          case MarkdownExtensionSet.githubWeb: return 'GitHub Web';
         }
       }();
 
@@ -45,18 +41,12 @@ extension WrapAlignmentExtension on WrapAlignment {
 
   String get displayTitle => () {
         switch (this) {
-          case WrapAlignment.center:
-            return 'Center';
-          case WrapAlignment.end:
-            return 'End';
-          case WrapAlignment.spaceAround:
-            return 'Space Around';
-          case WrapAlignment.spaceBetween:
-            return 'Space Between';
-          case WrapAlignment.spaceEvenly:
-            return 'Space Evenly';
-          case WrapAlignment.start:
-            return 'Start';
+          case WrapAlignment.center: return 'Center';
+          case WrapAlignment.end: return 'End';
+          case WrapAlignment.spaceAround: return 'Space Around';
+          case WrapAlignment.spaceBetween: return 'Space Between';
+          case WrapAlignment.spaceEvenly: return 'Space Evenly';
+          case WrapAlignment.start: return 'Start';
         }
       }();
 }

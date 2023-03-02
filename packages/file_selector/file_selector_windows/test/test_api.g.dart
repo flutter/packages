@@ -32,14 +32,11 @@ class _TestFileSelectorApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return SelectionOptions.decode(readValue(buffer)!);
+      case 128: return SelectionOptions.decode(readValue(buffer)!);
 
-      case 129:
-        return TypeGroup.decode(readValue(buffer)!);
+      case 129: return TypeGroup.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

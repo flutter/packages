@@ -224,29 +224,21 @@ class _AVFoundationVideoPlayerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return CreateMessage.decode(readValue(buffer)!);
+      case 128: return CreateMessage.decode(readValue(buffer)!);
 
-      case 129:
-        return LoopingMessage.decode(readValue(buffer)!);
+      case 129: return LoopingMessage.decode(readValue(buffer)!);
 
-      case 130:
-        return MixWithOthersMessage.decode(readValue(buffer)!);
+      case 130: return MixWithOthersMessage.decode(readValue(buffer)!);
 
-      case 131:
-        return PlaybackSpeedMessage.decode(readValue(buffer)!);
+      case 131: return PlaybackSpeedMessage.decode(readValue(buffer)!);
 
-      case 132:
-        return PositionMessage.decode(readValue(buffer)!);
+      case 132: return PositionMessage.decode(readValue(buffer)!);
 
-      case 133:
-        return TextureMessage.decode(readValue(buffer)!);
+      case 133: return TextureMessage.decode(readValue(buffer)!);
 
-      case 134:
-        return VolumeMessage.decode(readValue(buffer)!);
+      case 134: return VolumeMessage.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

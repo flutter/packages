@@ -40,14 +40,10 @@ extension ImageFormatGroupName on ImageFormatGroup {
   /// or if [ImageFormatGroup] is not supported for the platform
   String name() {
     switch (this) {
-      case ImageFormatGroup.bgra8888:
-        return 'bgra8888';
-      case ImageFormatGroup.yuv420:
-        return 'yuv420';
-      case ImageFormatGroup.jpeg:
-        return 'jpeg';
-      case ImageFormatGroup.unknown:
-        return 'unknown';
+      case ImageFormatGroup.bgra8888: return 'bgra8888';
+      case ImageFormatGroup.yuv420: return 'yuv420';
+      case ImageFormatGroup.jpeg: return 'jpeg';
+      case ImageFormatGroup.unknown: return 'unknown';
     }
   }
 }

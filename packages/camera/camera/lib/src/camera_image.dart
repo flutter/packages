@@ -85,22 +85,18 @@ ImageFormatGroup _asImageFormatGroup(dynamic rawFormat) {
   if (defaultTargetPlatform == TargetPlatform.android) {
     switch (rawFormat) {
       // android.graphics.ImageFormat.YUV_420_888
-      case 35:
-        return ImageFormatGroup.yuv420;
+      case 35: return ImageFormatGroup.yuv420;
       // android.graphics.ImageFormat.JPEG
-      case 256:
-        return ImageFormatGroup.jpeg;
+      case 256: return ImageFormatGroup.jpeg;
     }
   }
 
   if (defaultTargetPlatform == TargetPlatform.iOS) {
     switch (rawFormat) {
       // kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
-      case 875704438:
-        return ImageFormatGroup.yuv420;
+      case 875704438: return ImageFormatGroup.yuv420;
       // kCVPixelFormatType_32BGRA
-      case 1111970369:
-        return ImageFormatGroup.bgra8888;
+      case 1111970369: return ImageFormatGroup.bgra8888;
     }
   }
 

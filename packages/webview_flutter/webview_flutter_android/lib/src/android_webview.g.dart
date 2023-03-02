@@ -295,11 +295,9 @@ class _WebViewHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return WebViewPoint.decode(readValue(buffer)!);
+      case 128: return WebViewPoint.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }
@@ -1392,14 +1390,11 @@ class _WebViewClientFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return WebResourceErrorData.decode(readValue(buffer)!);
+      case 128: return WebResourceErrorData.decode(readValue(buffer)!);
 
-      case 129:
-        return WebResourceRequestData.decode(readValue(buffer)!);
+      case 129: return WebResourceRequestData.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }
@@ -1933,11 +1928,9 @@ class _FileChooserParamsFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return FileChooserModeEnumData.decode(readValue(buffer)!);
+      case 128: return FileChooserModeEnumData.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

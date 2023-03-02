@@ -24,10 +24,8 @@ extension LoadRequestMethodExtensions on LoadRequestMethod {
   /// Converts [LoadRequestMethod] to [String] format.
   String serialize() {
     switch (this) {
-      case LoadRequestMethod.get:
-        return 'get';
-      case LoadRequestMethod.post:
-        return 'post';
+      case LoadRequestMethod.get: return 'get';
+      case LoadRequestMethod.post: return 'post';
     }
   }
 }

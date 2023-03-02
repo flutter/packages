@@ -367,20 +367,13 @@ class CameraWindows extends CameraPlatform {
   /// Returns the resolution preset as a nullable String.
   String? _serializeResolutionPreset(ResolutionPreset? resolutionPreset) {
     switch (resolutionPreset) {
-      case null:
-        return null;
-      case ResolutionPreset.max:
-        return 'max';
-      case ResolutionPreset.ultraHigh:
-        return 'ultraHigh';
-      case ResolutionPreset.veryHigh:
-        return 'veryHigh';
-      case ResolutionPreset.high:
-        return 'high';
-      case ResolutionPreset.medium:
-        return 'medium';
-      case ResolutionPreset.low:
-        return 'low';
+      case null: return null;
+      case ResolutionPreset.max: return 'max';
+      case ResolutionPreset.ultraHigh: return 'ultraHigh';
+      case ResolutionPreset.veryHigh: return 'veryHigh';
+      case ResolutionPreset.high: return 'high';
+      case ResolutionPreset.medium: return 'medium';
+      case ResolutionPreset.low: return 'low';
     }
   }
 
@@ -430,12 +423,9 @@ class CameraWindows extends CameraPlatform {
   @visibleForTesting
   CameraLensDirection parseCameraLensDirection(String string) {
     switch (string) {
-      case 'front':
-        return CameraLensDirection.front;
-      case 'back':
-        return CameraLensDirection.back;
-      case 'external':
-        return CameraLensDirection.external;
+      case 'front': return CameraLensDirection.front;
+      case 'back': return CameraLensDirection.back;
+      case 'external': return CameraLensDirection.external;
     }
     throw ArgumentError('Unknown CameraLensDirection value');
   }

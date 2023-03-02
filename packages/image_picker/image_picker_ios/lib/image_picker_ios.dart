@@ -10,10 +10,8 @@ import 'src/messages.g.dart';
 // Converts an [ImageSource] to the corresponding Pigeon API enum value.
 SourceType _convertSource(ImageSource source) {
   switch (source) {
-    case ImageSource.camera:
-      return SourceType.camera;
-    case ImageSource.gallery:
-      return SourceType.gallery;
+    case ImageSource.camera: return SourceType.camera;
+    case ImageSource.gallery: return SourceType.gallery;
   }
   // The enum comes from a different package, which could get a new value at
   // any time, so a fallback case is necessary. Since there is no reasonable
@@ -27,10 +25,8 @@ SourceType _convertSource(ImageSource source) {
 // Converts a [CameraDevice] to the corresponding Pigeon API enum value.
 SourceCamera _convertCamera(CameraDevice camera) {
   switch (camera) {
-    case CameraDevice.front:
-      return SourceCamera.front;
-    case CameraDevice.rear:
-      return SourceCamera.rear;
+    case CameraDevice.front: return SourceCamera.front;
+    case CameraDevice.rear: return SourceCamera.rear;
   }
   // The enum comes from a different package, which could get a new value at
   // any time, so a fallback case is necessary. Since there is no reasonable

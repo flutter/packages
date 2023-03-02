@@ -471,12 +471,9 @@ T? _$convertMapValue<T>(
 
 bool _$boolConverter(String value) {
   switch (value) {
-    case 'true':
-      return true;
-    case 'false':
-      return false;
-    default:
-      throw UnsupportedError('Cannot convert "$value" into a bool.');
+    case 'true': return true;
+    case 'false': return false;
+    default: throw UnsupportedError('Cannot convert "$value" into a bool.');
   }
 }
 

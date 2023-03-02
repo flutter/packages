@@ -275,11 +275,9 @@ class _TestSystemServicesHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return CameraPermissionsErrorData.decode(readValue(buffer)!);
+      case 128: return CameraPermissionsErrorData.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }
@@ -375,14 +373,11 @@ class _TestPreviewHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return ResolutionInfo.decode(readValue(buffer)!);
+      case 128: return ResolutionInfo.decode(readValue(buffer)!);
 
-      case 129:
-        return ResolutionInfo.decode(readValue(buffer)!);
+      case 129: return ResolutionInfo.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

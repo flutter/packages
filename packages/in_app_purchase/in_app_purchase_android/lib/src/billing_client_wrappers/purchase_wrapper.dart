@@ -409,12 +409,9 @@ class PurchaseStateConverter
   /// [PurchaseStateWrapper.unspecified_state] is mapped to [PurchaseStatus.error].
   PurchaseStatus toPurchaseStatus(PurchaseStateWrapper object) {
     switch (object) {
-      case PurchaseStateWrapper.pending:
-        return PurchaseStatus.pending;
-      case PurchaseStateWrapper.purchased:
-        return PurchaseStatus.purchased;
-      case PurchaseStateWrapper.unspecified_state:
-        return PurchaseStatus.error;
+      case PurchaseStateWrapper.pending: return PurchaseStatus.pending;
+      case PurchaseStateWrapper.purchased: return PurchaseStatus.purchased;
+      case PurchaseStateWrapper.unspecified_state: return PurchaseStatus.error;
     }
   }
 }

@@ -390,11 +390,9 @@ class MockAndroidCameraCamerax extends AndroidCameraCameraX {
   @override
   CameraSelector createCameraSelector(int cameraSelectorLensDirection) {
     switch (cameraSelectorLensDirection) {
-      case CameraSelector.lensFacingFront:
-        return mockFrontCameraSelector;
+      case CameraSelector.lensFacingFront: return mockFrontCameraSelector;
       case CameraSelector.lensFacingBack:
-      default:
-        return mockBackCameraSelector;
+      default: return mockBackCameraSelector;
     }
   }
 

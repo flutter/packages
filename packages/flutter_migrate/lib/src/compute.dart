@@ -145,20 +145,13 @@ String getLocalPath(String path, String basePath, FileSystem fileSystem) {
 
 String platformToSubdirectoryPrefix(SupportedPlatform platform) {
   switch (platform) {
-    case SupportedPlatform.android:
-      return 'android';
-    case SupportedPlatform.ios:
-      return 'ios';
-    case SupportedPlatform.linux:
-      return 'linux';
-    case SupportedPlatform.macos:
-      return 'macos';
-    case SupportedPlatform.web:
-      return 'web';
-    case SupportedPlatform.windows:
-      return 'windows';
-    case SupportedPlatform.fuchsia:
-      return 'fuchsia';
+    case SupportedPlatform.android: return 'android';
+    case SupportedPlatform.ios: return 'ios';
+    case SupportedPlatform.linux: return 'linux';
+    case SupportedPlatform.macos: return 'macos';
+    case SupportedPlatform.web: return 'web';
+    case SupportedPlatform.windows: return 'windows';
+    case SupportedPlatform.fuchsia: return 'fuchsia';
   }
 }
 

@@ -552,11 +552,9 @@ class _SystemServicesHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return CameraPermissionsErrorData.decode(readValue(buffer)!);
+      case 128: return CameraPermissionsErrorData.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }
@@ -722,14 +720,11 @@ class _PreviewHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return ResolutionInfo.decode(readValue(buffer)!);
+      case 128: return ResolutionInfo.decode(readValue(buffer)!);
 
-      case 129:
-        return ResolutionInfo.decode(readValue(buffer)!);
+      case 129: return ResolutionInfo.decode(readValue(buffer)!);
 
-      default:
-        return super.readValueOfType(type, buffer);
+      default: return super.readValueOfType(type, buffer);
     }
   }
 }

@@ -9,12 +9,9 @@ import '../../camera_platform_interface.dart';
 /// Parses a string into a corresponding CameraLensDirection.
 CameraLensDirection parseCameraLensDirection(String string) {
   switch (string) {
-    case 'front':
-      return CameraLensDirection.front;
-    case 'back':
-      return CameraLensDirection.back;
-    case 'external':
-      return CameraLensDirection.external;
+    case 'front': return CameraLensDirection.front;
+    case 'back': return CameraLensDirection.back;
+    case 'external': return CameraLensDirection.external;
   }
   throw ArgumentError('Unknown CameraLensDirection value');
 }
@@ -22,14 +19,10 @@ CameraLensDirection parseCameraLensDirection(String string) {
 /// Returns the device orientation as a String.
 String serializeDeviceOrientation(DeviceOrientation orientation) {
   switch (orientation) {
-    case DeviceOrientation.portraitUp:
-      return 'portraitUp';
-    case DeviceOrientation.portraitDown:
-      return 'portraitDown';
-    case DeviceOrientation.landscapeRight:
-      return 'landscapeRight';
-    case DeviceOrientation.landscapeLeft:
-      return 'landscapeLeft';
+    case DeviceOrientation.portraitUp: return 'portraitUp';
+    case DeviceOrientation.portraitDown: return 'portraitDown';
+    case DeviceOrientation.landscapeRight: return 'landscapeRight';
+    case DeviceOrientation.landscapeLeft: return 'landscapeLeft';
   }
 }
 

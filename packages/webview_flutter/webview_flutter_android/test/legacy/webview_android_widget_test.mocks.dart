@@ -953,36 +953,30 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
     void Function(
       _i2.WebView,
       String,
-    )?
-        onPageStarted,
+    )? onPageStarted,
     void Function(
       _i2.WebView,
       String,
-    )?
-        onPageFinished,
+    )? onPageFinished,
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
       _i2.WebResourceError,
-    )?
-        onReceivedRequestError,
+    )? onReceivedRequestError,
     void Function(
       _i2.WebView,
       int,
       String,
       String,
-    )?
-        onReceivedError,
+    )? onReceivedError,
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
-    )?
-        requestLoading,
+    )? requestLoading,
     void Function(
       _i2.WebView,
       String,
-    )?
-        urlLoading,
+    )? urlLoading,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

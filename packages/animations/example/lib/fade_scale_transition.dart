@@ -45,11 +45,9 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
   bool get _isAnimationRunningForwardsOrComplete {
     switch (_controller.status) {
       case AnimationStatus.forward:
-      case AnimationStatus.completed:
-        return true;
+      case AnimationStatus.completed: return true;
       case AnimationStatus.reverse:
-      case AnimationStatus.dismissed:
-        return false;
+      case AnimationStatus.dismissed: return false;
     }
   }
 

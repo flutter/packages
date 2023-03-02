@@ -90,15 +90,11 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 
 gmaps.MapTypeId _gmapTypeIDForPluginType(MapType type) {
   switch (type) {
-    case MapType.satellite:
-      return gmaps.MapTypeId.SATELLITE;
-    case MapType.terrain:
-      return gmaps.MapTypeId.TERRAIN;
-    case MapType.hybrid:
-      return gmaps.MapTypeId.HYBRID;
+    case MapType.satellite: return gmaps.MapTypeId.SATELLITE;
+    case MapType.terrain: return gmaps.MapTypeId.TERRAIN;
+    case MapType.hybrid: return gmaps.MapTypeId.HYBRID;
     case MapType.normal:
-    case MapType.none:
-      return gmaps.MapTypeId.ROADMAP;
+    case MapType.none: return gmaps.MapTypeId.ROADMAP;
   }
   // The enum comes from a different package, which could get a new value at
   // any time, so provide a fallback that ensures this won't break when used

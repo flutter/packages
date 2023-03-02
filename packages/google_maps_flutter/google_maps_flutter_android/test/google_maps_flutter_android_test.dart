@@ -63,14 +63,10 @@ void main() {
     configureMockMap(maps, mapId: mapId,
         handler: (MethodCall methodCall) async {
       switch (methodCall.method) {
-        case 'map#getLatLng':
-          return <dynamic>[1.0, 2.0];
-        case 'markers#isInfoWindowShown':
-          return true;
-        case 'map#getZoomLevel':
-          return 2.5;
-        case 'map#takeSnapshot':
-          return null;
+        case 'map#getLatLng': return <dynamic>[1.0, 2.0];
+        case 'markers#isInfoWindowShown': return true;
+        case 'map#getZoomLevel': return 2.5;
+        case 'map#takeSnapshot': return null;
       }
     });
 

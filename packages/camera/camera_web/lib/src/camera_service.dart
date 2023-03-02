@@ -259,14 +259,11 @@ class CameraService {
   /// https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings/facingMode
   CameraLensDirection mapFacingModeToLensDirection(String facingMode) {
     switch (facingMode) {
-      case 'user':
-        return CameraLensDirection.front;
-      case 'environment':
-        return CameraLensDirection.back;
+      case 'user': return CameraLensDirection.front;
+      case 'environment': return CameraLensDirection.back;
       case 'left':
       case 'right':
-      default:
-        return CameraLensDirection.external;
+      default: return CameraLensDirection.external;
     }
   }
 
@@ -275,14 +272,11 @@ class CameraService {
   /// See [CameraMetadata.facingMode] for more details.
   CameraType mapFacingModeToCameraType(String facingMode) {
     switch (facingMode) {
-      case 'user':
-        return CameraType.user;
-      case 'environment':
-        return CameraType.environment;
+      case 'user': return CameraType.user;
+      case 'environment': return CameraType.environment;
       case 'left':
       case 'right':
-      default:
-        return CameraType.user;
+      default: return CameraType.user;
     }
   }
 
@@ -290,16 +284,11 @@ class CameraService {
   Size mapResolutionPresetToSize(ResolutionPreset resolutionPreset) {
     switch (resolutionPreset) {
       case ResolutionPreset.max:
-      case ResolutionPreset.ultraHigh:
-        return const Size(4096, 2160);
-      case ResolutionPreset.veryHigh:
-        return const Size(1920, 1080);
-      case ResolutionPreset.high:
-        return const Size(1280, 720);
-      case ResolutionPreset.medium:
-        return const Size(720, 480);
-      case ResolutionPreset.low:
-        return const Size(320, 240);
+      case ResolutionPreset.ultraHigh: return const Size(4096, 2160);
+      case ResolutionPreset.veryHigh: return const Size(1920, 1080);
+      case ResolutionPreset.high: return const Size(1280, 720);
+      case ResolutionPreset.medium: return const Size(720, 480);
+      case ResolutionPreset.low: return const Size(320, 240);
     }
     // The enum comes from a different package, which could get a new value at
     // any time, so provide a fallback that ensures this won't break when used

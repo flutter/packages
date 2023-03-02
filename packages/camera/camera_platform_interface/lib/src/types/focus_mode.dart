@@ -14,21 +14,16 @@ enum FocusMode {
 /// Returns the focus mode as a String.
 String serializeFocusMode(FocusMode focusMode) {
   switch (focusMode) {
-    case FocusMode.locked:
-      return 'locked';
-    case FocusMode.auto:
-      return 'auto';
+    case FocusMode.locked: return 'locked';
+    case FocusMode.auto: return 'auto';
   }
 }
 
 /// Returns the focus mode for a given String.
 FocusMode deserializeFocusMode(String str) {
   switch (str) {
-    case 'locked':
-      return FocusMode.locked;
-    case 'auto':
-      return FocusMode.auto;
-    default:
-      throw ArgumentError('"$str" is not a valid FocusMode value');
+    case 'locked': return FocusMode.locked;
+    case 'auto': return FocusMode.auto;
+    default: throw ArgumentError('"$str" is not a valid FocusMode value');
   }
 }
