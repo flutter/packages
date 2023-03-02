@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates androidx.annotation:annotation from 1.5.0 to 1.6.0
+
 ## 2.0.9
 
 * Updates annotation and espresso dependencies.
