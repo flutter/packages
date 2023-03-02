@@ -42,13 +42,13 @@ void main() {
     void writeFakeBuildGradle(RepositoryPackage example, String pluginName,
         {bool warningsConfigured = true}) {
       final String warningConfig = '''
-    gradle.projectsEvaluated {
-        project(":$pluginName") {
-            tasks.withType(JavaCompile) {
-                options.compilerArgs << "-Xlint:all" << "-Werror"
-            }
+gradle.projectsEvaluated {
+    project(":$pluginName") {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:all" << "-Werror"
         }
     }
+}
 ''';
       example
           .platformDirectory(FlutterPlatform.android)
@@ -60,7 +60,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.1'
+        classpath 'com.android.tools.build:gradle:8.0.1'
     }
 }
 allprojects {
@@ -68,8 +68,8 @@ allprojects {
         google()
         mavenCentral()
     }
-    ${warningsConfigured ? warningConfig : ''}
 }
+${warningsConfigured ? warningConfig : ''}
 ''');
     }
 
