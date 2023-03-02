@@ -127,13 +127,6 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
         'No ImageCapture has the identifer of that requested to get the resolution information for.');
 
     final String picturePath = await takePicture(identifier!);
-    if (picturePath == '') {
-      throw CameraException(
-        'TAKE_PICTURE_FAILED',
-        'Capturing the image failed or the picture failed to save.',
-      );
-    }
-
     return picturePath;
   }
 }

@@ -125,7 +125,12 @@ public class ImageCaptureTest {
     when(context.getCacheDir()).thenReturn(mockOutputDir);
     imageCaptureHostApiImpl.cameraXProxy = mockCameraXProxy;
     mockedStaticFile
-        .when(() -> File.createTempFile("CAP", ".jpg", mockOutputDir))
+        .when(
+            () ->
+                File.createTempFile(
+                    ImageCaptureHostApiImpl.TEMPORARY_FILE_NAME,
+                    ImageCaptureHostApiImpl.JPG_FILE_TYPE,
+                    mockOutputDir))
         .thenReturn(mockFile);
     when(mockCameraXProxy.createImageCaptureOutputFileOptions(mockFile))
         .thenReturn(mockOutputFileOptions);
@@ -156,7 +161,12 @@ public class ImageCaptureTest {
         .thenReturn(mockSystemServicesFlutterApiImpl);
     when(context.getCacheDir()).thenReturn(mockOutputDir);
     mockedStaticFile
-        .when(() -> File.createTempFile("CAP", ".jpg", mockOutputDir))
+        .when(
+            () ->
+                File.createTempFile(
+                    ImageCaptureHostApiImpl.TEMPORARY_FILE_NAME,
+                    ImageCaptureHostApiImpl.JPG_FILE_TYPE,
+                    mockOutputDir))
         .thenThrow(new IOException());
 
     imageCaptureHostApiImpl.takePicture(imageCaptureIdentifier, mockResult);

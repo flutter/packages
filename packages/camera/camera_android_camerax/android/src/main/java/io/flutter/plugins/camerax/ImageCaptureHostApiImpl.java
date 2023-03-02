@@ -25,6 +25,9 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   private Context context;
   private SystemServicesFlutterApiImpl systemServicesFlutterApiImpl;
 
+  public static final String TEMPORARY_FILE_NAME = "CAP";
+  public static final String JPG_FILE_TYPE = ".jpg";
+
   @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
 
   public ImageCaptureHostApiImpl(
@@ -84,9 +87,9 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
     final File outputDir = context.getCacheDir();
     File temporaryCaptureFile;
     try {
-      temporaryCaptureFile = File.createTempFile("CAP", ".jpg", outputDir);
+      temporaryCaptureFile = File.createTempFile(TEMPORARY_FILE_NAME, JPG_FILE_TYPE, outputDir);
     } catch (IOException | SecurityException e) {
-      handleTakePictureError(result, "Cannot create file to save captured image: " + e.getMessage());
+      result.error(e);
       return;
     }
 
@@ -111,27 +114,8 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
 
       @Override
       public void onError(@NonNull ImageCaptureException exception) {
-        handleTakePictureError(result, getOnImageSavedExceptionDescription(exception));
+        result.error(exception);
       }
     };
-  }
-
-  /** Handle errors with creating a file to save captured image or capturing an image. */
-  private void handleTakePictureError(
-      @NonNull GeneratedCameraXLibrary.Result<String> result, @NonNull String errorDescription) {
-    // Send empty path because image was not saved.
-    result.success("");
-
-    // Send error.
-    if (systemServicesFlutterApiImpl == null) {
-      systemServicesFlutterApiImpl =
-          cameraXProxy.createSystemServicesFlutterApiImpl(binaryMessenger);
-    }
-    systemServicesFlutterApiImpl.sendCameraError(errorDescription, reply -> {});
-  }
-
-  /** Gets exception description for a failure with saving a captured image. */
-  private String getOnImageSavedExceptionDescription(@NonNull ImageCaptureException exception) {
-    return exception.getImageCaptureError() + ": " + exception.getMessage();
   }
 }
