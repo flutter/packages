@@ -1,3 +1,9 @@
+## 0.2.0+10
+
+* Updates espresso dependencies.
+* Fixes example app to compile with multidex.
+* Updates compileSdkVersion to 33.
+
 ## 0.2.0+9
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
