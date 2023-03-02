@@ -1,6 +1,6 @@
-## 0.8.5+9
+## NEXT
 
-* Fixes compilation warnings.
+* Updates compileSdkVersion to 33.
 
 ## 0.8.5+8
 

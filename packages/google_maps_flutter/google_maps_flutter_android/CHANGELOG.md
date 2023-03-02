@@ -1,6 +1,7 @@
 ## 2.4.7
 
-* Fixes compilation warnings.
+* Updates annotation dependency.
+* Updates compileSdkVersion to 33.
 
 ## 2.4.6
 
