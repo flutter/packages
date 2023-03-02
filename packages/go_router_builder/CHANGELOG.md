@@ -1,3 +1,7 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 1.1.4
 
 * Fixes the example for the default values in the README.

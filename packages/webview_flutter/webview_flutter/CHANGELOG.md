@@ -1,3 +1,7 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 4.0.6
 
 * Updates iOS minimum version in README.

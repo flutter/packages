@@ -1,3 +1,7 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.3.3+4
 
 * Reverts an accidental change in a constructor argument's nullability.
