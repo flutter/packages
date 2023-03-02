@@ -1,4 +1,4 @@
-## 3.3.2
+## 3.4.0
 
 * Adds support to set text zoom of a page. See `AndroidWebViewController.setTextZoom`.
 
