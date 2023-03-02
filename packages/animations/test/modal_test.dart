@@ -593,7 +593,14 @@ class _FlutterLogoModalState extends State<_FlutterLogoModal> {
 }
 
 class _TestModalConfiguration extends ModalConfiguration {
-  _TestModalConfiguration();
+  _TestModalConfiguration()
+      : super(
+          barrierColor: Colors.green,
+          barrierDismissible: true,
+          barrierLabel: 'customLabel',
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 200),
+        );
 
   @override
   Widget transitionBuilder(
