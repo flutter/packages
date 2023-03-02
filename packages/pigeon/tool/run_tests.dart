@@ -167,7 +167,7 @@ Future<void> main(List<String> args) async {
     // Only run on master, since Dart format can change between versions.
     // TODO(stuartmorgan): Make a more generic way to run this check only on
     // master; this currently won't work for anything but Cirrus.
-    if (Platform.environment['CHANNEL'] != 'stable') {
+    if (Platform.environment['CHANNEL'] == 'stable') {
       print('Skipping generated file validation on stable.');
     } else {
       await _validateGeneratedTestFiles();
