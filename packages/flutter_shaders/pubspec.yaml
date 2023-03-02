@@ -2,10 +2,10 @@ name: flutter_shaders
 description: A collection of utilities for working with the FragmentProgram API in Flutter.
 repository: https://github.com/jonahwilliams/flutter_shaders
 issue_tracker: https://github.com/jonahwilliams/flutter_shaders/issues
-version: 0.0.6+1
+version: 0.1.0
 
 environment:
-  sdk: '>=2.19.0-0.dev <3.0.0'
+  sdk: '>=2.19.0 <4.0.0'
   flutter: ">=3.7.0-0.0"
 
 dependencies:
