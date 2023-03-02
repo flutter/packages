@@ -142,12 +142,14 @@ extension $_extensionName on $_className {
 
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) =>
+      context.go(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) =>
+      context.push(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';
 
@@ -188,14 +190,16 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
     }
   }
 
+  ParameterElement? get _extraParam => _ctor.parameters
+      .singleWhereOrNull((ParameterElement element) => element.isExtraField);
+
   String get _newFromState {
     final StringBuffer buffer = StringBuffer('=>');
     if (_ctor.isConst && _ctorParams.isEmpty && _ctorQueryParams.isEmpty) {
       buffer.writeln('const ');
     }
 
-    final ParameterElement? extraParam = _ctor.parameters
-        .singleWhereOrNull((ParameterElement element) => element.isExtraField);
+    final ParameterElement? extraParam = _extraParam;
 
     buffer.writeln('$_className(');
     for (final ParameterElement param in <ParameterElement>[
@@ -215,7 +219,10 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
   String get _locationArgs {
     final Iterable<String> pathItems = _parsedPath.map((Token e) {
       if (e is ParameterToken) {
-        return '\${Uri.encodeComponent(${_encodeFor(e.name)})}';
+        // Enum types are encoded using a map, so we need a nullability check
+        // here to ensure it matches Uri.encodeComponent nullability
+        final DartType? type = _field(e.name)?.returnType;
+        return '\${Uri.encodeComponent(${_encodeFor(e.name)}${type?.isEnum ?? false ? '!' : ''})}';
       }
       if (e is PathToken) {
         return e.value;
