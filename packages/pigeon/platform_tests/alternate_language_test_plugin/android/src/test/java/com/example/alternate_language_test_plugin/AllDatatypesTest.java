@@ -26,6 +26,7 @@ public class AllDatatypesTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
+              @SuppressWarnings("unchecked")
               ArrayList<Object> args =
                   (ArrayList<Object>) FlutterIntegrationCoreApi.getCodec().decodeMessage(message);
               ByteBuffer replyData =
@@ -101,6 +102,7 @@ public class AllDatatypesTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
+              @SuppressWarnings("unchecked")
               ArrayList<Object> args =
                   (ArrayList<Object>) FlutterIntegrationCoreApi.getCodec().decodeMessage(message);
               ByteBuffer replyData =
