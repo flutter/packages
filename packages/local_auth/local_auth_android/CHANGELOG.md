@@ -1,5 +1,6 @@
-## NEXT
+## 1.0.20
 
+* Fixes compilation warnings.
 * Updates compileSdkVersion to 33.
 
 ## 1.0.19
