@@ -14,7 +14,7 @@ class CookieManagerHostApiImpl implements GeneratedAndroidWebView.CookieManagerH
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       cookieManager.removeAllCookies(result::success);
     } else {
-      result.success(removeCookiesLegacy(cookieManager));
+      result.success(removeCookiesPreL(cookieManager));
     }
   }
 
@@ -31,7 +31,7 @@ class CookieManagerHostApiImpl implements GeneratedAndroidWebView.CookieManagerH
    * @return Whether any cookies were removed.
    */
   @SuppressWarnings("deprecation")
-  private boolean removeCookiesLegacy(CookieManager cookieManager) {
+  private boolean removeCookiesPreL(CookieManager cookieManager) {
     final boolean hasCookies = cookieManager.hasCookies();
     if (hasCookies) {
       cookieManager.removeAllCookie();
