@@ -450,6 +450,8 @@ public class ImagePickerDelegate
 
   private void grantUriPermissions(Intent intent, Uri imageUri) {
     PackageManager packageManager = activity.getPackageManager();
+    // TODO(stuartmorgan): Add new codepath: https://github.com/flutter/flutter/issues/121816
+    @SuppressWarnings("deprecation")
     List<ResolveInfo> compatibleActivities =
         packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
 
