@@ -142,6 +142,6 @@ class MockNavigationDelegate extends Mock
 
 class ExtendsPlatformNavigationDelegate extends PlatformNavigationDelegate {
   ExtendsPlatformNavigationDelegate(
-      PlatformNavigationDelegateCreationParams params)
-      : super.implementation(params);
+      super.params)
+      : super.implementation();
 }

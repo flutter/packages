@@ -11,9 +11,8 @@ import './base.dart';
 /// A PickedFile backed by a dart:io File.
 class PickedFile extends PickedFileBase {
   /// Construct a PickedFile object backed by a dart:io File.
-  PickedFile(String path)
-      : _file = File(path),
-        super(path);
+  PickedFile(super.path)
+      : _file = File(path);
 
   final File _file;
 

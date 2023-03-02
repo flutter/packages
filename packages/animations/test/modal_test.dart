@@ -565,9 +565,9 @@ double _getScale(GlobalKey key, WidgetTester tester) {
 
 class _FlutterLogoModal extends StatefulWidget {
   const _FlutterLogoModal({
-    Key? key,
+    super.key,
     this.name,
-  }) : super(key: key);
+  });
 
   final String? name;
 
@@ -593,19 +593,7 @@ class _FlutterLogoModalState extends State<_FlutterLogoModal> {
 }
 
 class _TestModalConfiguration extends ModalConfiguration {
-  _TestModalConfiguration({
-    Color barrierColor = Colors.green,
-    bool barrierDismissible = true,
-    String barrierLabel = 'customLabel',
-    Duration transitionDuration = const Duration(milliseconds: 300),
-    Duration reverseTransitionDuration = const Duration(milliseconds: 200),
-  }) : super(
-          barrierColor: barrierColor,
-          barrierDismissible: barrierDismissible,
-          barrierLabel: barrierLabel,
-          transitionDuration: transitionDuration,
-          reverseTransitionDuration: reverseTransitionDuration,
-        );
+  _TestModalConfiguration();
 
   @override
   Widget transitionBuilder(
