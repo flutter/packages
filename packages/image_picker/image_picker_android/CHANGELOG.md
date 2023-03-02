@@ -1,6 +1,11 @@
-## 0.8.5+8
+## 0.8.5+9
 
 * Fixes compilation warnings.
+
+## 0.8.5+8
+
+* Adds Android 13 photo picker functionality if SDK version is at least 33.
+* Bumps compileSdkVersion from 31 to 33
 
 ## 0.8.5+7
 
