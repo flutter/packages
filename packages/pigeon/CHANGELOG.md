@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 9.0.4
 
 * Adds parameter to generate Kotlin code in example README.

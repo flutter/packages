@@ -1,6 +1,5 @@
 ## NEXT
 
-- Aligns Dart and Flutter SDK constraints.
 - Updates minimum Flutter version to 3.0.
 - Updates package description.
 

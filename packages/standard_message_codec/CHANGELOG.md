@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 0.0.1+3
 
 * Minor README updates.

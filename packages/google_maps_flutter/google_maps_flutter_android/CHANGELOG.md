@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 2.4.7
 
 * Updates annotation dependency.

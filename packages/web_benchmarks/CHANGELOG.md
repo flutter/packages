@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 0.1.0+2
 
 * Updates code to fix strict-cast violations.
