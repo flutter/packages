@@ -197,7 +197,7 @@ class SampleMenu extends StatelessWidget {
     super.key,
     required this.webViewController,
     PlatformWebViewCookieManager? cookieManager,
-  })  : cookieManager = cookieManager ??
+  }) : cookieManager = cookieManager ??
             PlatformWebViewCookieManager(
               const PlatformWebViewCookieManagerCreationParams(),
             );

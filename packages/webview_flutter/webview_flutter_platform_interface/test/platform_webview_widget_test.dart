@@ -76,8 +76,7 @@ class MockWebViewWidgetDelegate extends Mock
         PlatformWebViewWidget {}
 
 class ExtendsWebViewWidgetDelegate extends PlatformWebViewWidget {
-  ExtendsWebViewWidgetDelegate(super.params)
-      : super.implementation();
+  ExtendsWebViewWidgetDelegate(super.params) : super.implementation();
 
   @override
   Widget build(BuildContext context) {

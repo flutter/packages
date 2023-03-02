@@ -123,7 +123,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-  })  : assert(initialCameraPosition != null);
+  }) : assert(initialCameraPosition != null);
 
   /// Callback method for when the map is ready to be used.
   ///

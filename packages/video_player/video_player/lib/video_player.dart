@@ -776,8 +776,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
 }
 
 class _VideoPlayerWithRotation extends StatelessWidget {
-  const _VideoPlayerWithRotation(
-      {required this.rotation, required this.child});
+  const _VideoPlayerWithRotation({required this.rotation, required this.child});
   final int rotation;
   final Widget child;
 

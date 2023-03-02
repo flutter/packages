@@ -10,8 +10,7 @@ import 'package:google_maps_flutter_platform_interface/src/types/utils/maps_obje
 import 'test_maps_object.dart';
 
 class TestMapsObjectUpdate extends MapsObjectUpdates<TestMapsObject> {
-  TestMapsObjectUpdate.from(
-      super.previous, super.current)
+  TestMapsObjectUpdate.from(super.previous, super.current)
       : super.from(objectName: 'testObject');
 }
 

@@ -430,9 +430,7 @@ class MockWebViewControllerDelegate extends Mock
         PlatformWebViewController {}
 
 class ExtendsPlatformWebViewController extends PlatformWebViewController {
-  ExtendsPlatformWebViewController(
-      super.params)
-      : super.implementation();
+  ExtendsPlatformWebViewController(super.params) : super.implementation();
 }
 
 // ignore: must_be_immutable
