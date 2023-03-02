@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates the version of com.google.truth:truth to 1.1.3
+
 ## 0.2.0+10
 
 * Updates espresso dependencies.
