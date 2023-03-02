@@ -458,7 +458,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                       '$returnType $output = channelReply == null ? null : ((Number) channelReply).longValue();');
                 } else {
                   indent.writeln(
-                      '$returnType $output = ($returnType) channelReply;');
+                      '$returnType $output = ${_cast('channelReply', javaType: returnType)};');
                 }
                 indent.writeln('callback.reply($output);');
               });
@@ -627,8 +627,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                   String accessor = 'args.get($index)';
                   if (isEnum(root, arg.type)) {
                     accessor = _intToEnum(accessor, arg.type.baseName);
-                  } else if (argType != 'Object') {
-                    accessor = '($argType) $accessor';
+                  } else {
+                    accessor = _cast(accessor, javaType: argType);
                   }
                   indent.writeln('$argType $argName = $accessor;');
                   if (!arg.type.isNullable) {
@@ -646,7 +646,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     method.returnType.isVoid ? 'null' : 'result';
                 const String resultName = 'resultCallback';
                 indent.format('''
-Result<$returnType> $resultName = 
+Result<$returnType> $resultName =
 \t\tnew Result<$returnType>() {
 \t\t\tpublic void success($returnType result) {
 \t\t\t\twrapped.add(0, $resultValue);
@@ -871,6 +871,13 @@ String _nullsafeJavaTypeForDartType(TypeDeclaration type) {
   return '$nullSafe${_javaTypeForDartType(type)}';
 }
 
+/// Returns an expression to cast [variable] to [javaType].
+String _cast(String variable, {required String javaType}) {
+  // Special-case Object, since casting to Object doesn't do anything, and
+  // causes a warning.
+  return javaType == 'Object' ? variable : '($javaType) $variable';
+}
+
 /// Casts variable named [varName] to the correct host datatype for [field].
 /// This is for use in codecs where we may have a map representation of an
 /// object.
@@ -884,6 +891,6 @@ String _castObject(
       classes.map((Class x) => x.name).contains(field.type.baseName)) {
     return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<Object>) $varName)';
   } else {
-    return '(${hostDatatype.datatype}) $varName';
+    return _cast(varName, javaType: hostDatatype.datatype);
   }
 }
