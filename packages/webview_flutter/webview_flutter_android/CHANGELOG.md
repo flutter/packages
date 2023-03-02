@@ -1,5 +1,6 @@
-## NEXT
+## 3.3.2
 
+* Resolves compilations warnings.
 * Updates compileSdkVersion to 33.
 
 ## 3.3.1
