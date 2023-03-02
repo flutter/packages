@@ -269,10 +269,10 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
-  _i5.Future<void> setTextZoom(int? texZoom) => (super.noSuchMethod(
+  _i5.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
         Invocation.method(
           #setTextZoom,
-          [texZoom],
+          [textZoom],
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),

@@ -592,8 +592,10 @@ class WebSettings extends JavaObject {
   }
 
   /// Sets the text zoom of the page in percent. The default is 100.
-  Future<void> setTextZoom(int texZoom) {
-    return api.setSetTextZoomFromInstance(this, texZoom);
+  ///
+  /// See https://developer.android.com/reference/android/webkit/WebSettings#setTextZoom(int)
+  Future<void> setTextZoom(int textZoom) {
+    return api.setSetTextZoomFromInstance(this, textZoom);
   }
 
   @override
