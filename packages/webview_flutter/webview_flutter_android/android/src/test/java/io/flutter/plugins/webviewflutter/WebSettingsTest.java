@@ -110,7 +110,7 @@ public class WebSettingsTest {
 
   @Test
   public void setTextZoom() {
-    testHostApiImpl.setTextZoom(0L, 100);
+    testHostApiImpl.setTextZoom(0L, 100L);
     verify(mockWebSettings).setTextZoom(100);
   }
 }
