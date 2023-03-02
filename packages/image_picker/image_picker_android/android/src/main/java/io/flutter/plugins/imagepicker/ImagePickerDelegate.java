@@ -15,6 +15,8 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
@@ -79,6 +81,7 @@ public class ImagePickerDelegate
   @VisibleForTesting static final int REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA = 2343;
   @VisibleForTesting static final int REQUEST_CAMERA_IMAGE_PERMISSION = 2345;
   @VisibleForTesting static final int REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY = 2346;
+
   @VisibleForTesting static final int REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY = 2352;
   @VisibleForTesting static final int REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA = 2353;
   @VisibleForTesting static final int REQUEST_CAMERA_VIDEO_PERMISSION = 2355;
@@ -253,8 +256,19 @@ public class ImagePickerDelegate
   }
 
   private void launchPickVideoFromGalleryIntent() {
-    Intent pickVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
-    pickVideoIntent.setType("video/*");
+    Intent pickVideoIntent;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      pickVideoIntent =
+          new ActivityResultContracts.PickVisualMedia()
+              .createIntent(
+                  activity,
+                  new PickVisualMediaRequest.Builder()
+                      .setMediaType(ActivityResultContracts.PickVisualMedia.VideoOnly.INSTANCE)
+                      .build());
+    } else {
+      pickVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+      pickVideoIntent.setType("video/*");
+    }
 
     activity.startActivityForResult(pickVideoIntent, REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY);
   }
@@ -325,20 +339,42 @@ public class ImagePickerDelegate
   }
 
   private void launchPickImageFromGalleryIntent() {
-    Intent pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
-    pickImageIntent.setType("image/*");
+    Intent pickImageIntent;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      pickImageIntent =
+          new ActivityResultContracts.PickVisualMedia()
+              .createIntent(
+                  activity,
+                  new PickVisualMediaRequest.Builder()
+                      .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                      .build());
+    } else {
+      pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+      pickImageIntent.setType("image/*");
+    }
 
     activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY);
   }
 
   private void launchMultiPickImageFromGalleryIntent() {
-    Intent pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-      pickImageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+    Intent pickMultiImageIntent;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      pickMultiImageIntent =
+          new ActivityResultContracts.PickMultipleVisualMedia()
+              .createIntent(
+                  activity,
+                  new PickVisualMediaRequest.Builder()
+                      .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                      .build());
+    } else {
+      pickMultiImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+      pickMultiImageIntent.setType("image/*");
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        pickMultiImageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+      }
     }
-    pickImageIntent.setType("image/*");
-
-    activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY);
+    activity.startActivityForResult(
+        pickMultiImageIntent, REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY);
   }
 
   public void takeImageWithCamera(MethodCall methodCall, MethodChannel.Result result) {
