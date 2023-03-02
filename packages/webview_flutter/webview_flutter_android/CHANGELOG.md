@@ -1,6 +1,6 @@
 ## 3.3.2
 
-* Add support for Android's `WebViewSettings.setTextZoom`
+* Adds support to set text zoom of a page. See `AndroidWebViewController.setTextZoom`.
 
 ## 3.3.1
 
