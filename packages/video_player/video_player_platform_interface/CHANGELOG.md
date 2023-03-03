@@ -1,3 +1,8 @@
+## 6.0.3
+
+* Add the `VideoEventType.isPlayingStateUpdate` event to track changes in play / pause state with
+  the underlying video player.
+
 ## 6.0.2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
