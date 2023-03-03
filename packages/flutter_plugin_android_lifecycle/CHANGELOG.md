@@ -1,4 +1,4 @@
-## NEXT
+## 2.1.0
 
 * Updates androidx.annotation:annotation from 1.5.0 to 1.6.0
 
