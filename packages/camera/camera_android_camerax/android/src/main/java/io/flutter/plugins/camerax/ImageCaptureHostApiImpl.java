@@ -48,7 +48,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   }
 
   /**
-   * Creates a {@link ImageCapture} with the requested flash mode and target resolution if
+   * Creates an {@link ImageCapture} with the requested flash mode and target resolution if
    * specified.
    */
   @Override
