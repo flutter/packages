@@ -1,5 +1,19 @@
 ## 2.5.0
+
 * Adds support for heatmap layers.
+
+## 2.4.8
+
+* Fixes compilation warnings.
+
+## 2.4.7
+
+* Updates annotation dependency.
+* Updates compileSdkVersion to 33.
+
+## 2.4.6
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 
 ## 2.4.5
 

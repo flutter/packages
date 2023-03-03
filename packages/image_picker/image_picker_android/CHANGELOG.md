@@ -1,3 +1,17 @@
+## 0.8.5+9
+
+* Fixes compilation warnings.
+* Updates compileSdkVersion to 33.
+
+## 0.8.5+8
+
+* Adds Android 13 photo picker functionality if SDK version is at least 33.
+* Bumps compileSdkVersion from 31 to 33
+
+## 0.8.5+7
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.8.5+6
 
 * Updates minimum Flutter version to 3.0.

@@ -28,7 +28,9 @@ public class PrimitiveTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList args = (ArrayList) PrimitiveFlutterApi.getCodec().decodeMessage(message);
+              @SuppressWarnings("unchecked")
+              ArrayList<Object> args =
+                  (ArrayList<Object>) PrimitiveFlutterApi.getCodec().decodeMessage(message);
               Object arg = args.get(0);
               if (arg instanceof Long) {
                 Long longArg = (Long) arg;
@@ -88,7 +90,7 @@ public class PrimitiveTest {
         .setMessageHandler(eq("dev.flutter.pigeon.PrimitiveHostApi.anInt"), handler.capture());
     MessageCodec<Object> codec = PrimitiveHostApi.getCodec();
     @SuppressWarnings("unchecked")
-    ByteBuffer message = codec.encodeMessage(new ArrayList(Arrays.asList((Integer) 1)));
+    ByteBuffer message = codec.encodeMessage(new ArrayList<Object>(Arrays.asList((Integer) 1)));
     message.rewind();
     handler
         .getValue()
@@ -97,7 +99,7 @@ public class PrimitiveTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
+              ArrayList<Object> wrapped = (ArrayList<Object>) codec.decodeMessage(bytes);
               assertTrue(wrapped.size() > 0);
               assertEquals(1L, ((Long) wrapped.get(0)).longValue());
             });

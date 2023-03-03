@@ -1,5 +1,11 @@
-## NEXT
+## 2.0.9
 
+* Updates annotation and espresso dependencies.
+* Updates compileSdkVersion to 33.
+
+## 2.0.8
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
 
 ## 2.0.7
