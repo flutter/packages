@@ -1,7 +1,7 @@
-## 3.4.0
+## 3.3.2
 
 * Updates compileSdkVersion to 33.
-* Adds support to set text zoom of a page. See `AndroidWebViewController.setTextZoom`.
+* Bumps androidx.webkit:webkit from 1.5.0 to 1.6.0.
 
 ## 3.3.1
 
