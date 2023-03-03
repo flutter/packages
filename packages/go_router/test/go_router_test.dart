@@ -2655,7 +2655,7 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [push] on closest GoRouter with a promise',
+    testWidgets('calls [push] on closest GoRouter and waits for result',
         (WidgetTester tester) async {
       final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
       await tester.pumpWidget(
@@ -2696,7 +2696,7 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [pushNamed] on closest GoRouter with a promise',
+    testWidgets('calls [pushNamed] on closest GoRouter and waits for result',
         (WidgetTester tester) async {
       final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
       await tester.pumpWidget(
