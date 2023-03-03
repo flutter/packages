@@ -388,7 +388,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 final String forceUnwrap =
                     func.returnType.isNullable ? '?' : '';
                 indent.writeln(
-                    'val result = if (it is Int) it.toLong() else it as$forceUnwrap Long');
+                    'val result = if (it is Int) it.toLong() else it as Long$forceUnwrap');
               } else {
                 indent.writeln(
                     'val result = ${_cast('it', kotlinType: returnType, safeCast: func.returnType.isNullable)}');
@@ -679,7 +679,7 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // longs in Pigeon with Kotlin.
     if (type.baseName == 'int') {
       final String castUnwrap = type.isNullable ? '?' : '';
-      return '$value.let { if (it is Int) it.toLong() else it as$castUnwrap Long }';
+      return '$value.let { if (it is Int) it.toLong() else it as Long$castUnwrap }';
     } else {
       return _cast(value,
           kotlinType: _kotlinTypeForDartType(type), safeCast: type.isNullable);
@@ -754,5 +754,5 @@ String _cast(String variable,
   if (kotlinType == 'Any?' || (safeCast && kotlinType == 'Any')) {
     return variable;
   }
-  return '$variable as${safeCast ? '?' : ''} $kotlinType';
+  return '$variable as $kotlinType${safeCast ? '?' : ''}'.replaceAll('??', '?');
 }

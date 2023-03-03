@@ -1,3 +1,7 @@
+## 9.0.5
+
+* [kotlin] Removes safe casting from decode process.
+
 ## 9.0.4
 
 * Adds parameter to generate Kotlin code in example README.
