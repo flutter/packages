@@ -253,7 +253,7 @@ class Camera
     }
 
     final PlatformChannel.DeviceOrientation lockedOrientation =
-        ((SensorOrientationFeature) cameraFeatures.getSensorOrientation())
+        cameraFeatures.getSensorOrientation()
             .getLockedCaptureOrientation();
 
     MediaRecorderBuilder mediaRecorderBuilder;
@@ -637,7 +637,7 @@ class Camera
 
     // Orientation.
     final PlatformChannel.DeviceOrientation lockedOrientation =
-        ((SensorOrientationFeature) cameraFeatures.getSensorOrientation())
+        cameraFeatures.getSensorOrientation()
             .getLockedCaptureOrientation();
     stillBuilder.set(
         CaptureRequest.JPEG_ORIENTATION,
