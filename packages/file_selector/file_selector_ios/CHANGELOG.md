@@ -1,3 +1,7 @@
+## 0.5.1
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
+
 ## 0.5.0+3
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
