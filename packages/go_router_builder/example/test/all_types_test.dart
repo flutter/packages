@@ -125,5 +125,15 @@ void main() {
     expect(find.text('UriRoute'), findsOneWidget);
     expect(find.text('Param: https://dart.dev'), findsOneWidget);
     expect(find.text('Query param: https://dart.dev'), findsOneWidget);
+
+    IterableRoute(
+      intListField: <int>[1, 2, 3],
+    ).go(scaffoldState.context);
+    await tester.pumpAndSettle();
+    expect(find.text('IterableRoute'), findsOneWidget);
+    expect(
+        find.text(
+            '/iterable-route?int-list-field=1&int-list-field=2&int-list-field=3'),
+        findsOneWidget);
   });
 }

@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.imagepicker;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,10 +31,9 @@ import io.flutter.plugin.common.MethodChannel;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -42,8 +43,6 @@ public class ImagePickerPluginTest {
   private static final String PICK_IMAGE = "pickImage";
   private static final String PICK_MULTI_IMAGE = "pickMultiImage";
   private static final String PICK_VIDEO = "pickVideo";
-
-  @Rule public ExpectedException exception = ExpectedException.none();
 
   @SuppressWarnings("deprecation")
   @Mock
@@ -59,13 +58,20 @@ public class ImagePickerPluginTest {
 
   ImagePickerPlugin plugin;
 
+  AutoCloseable mockCloseable;
+
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    mockCloseable = MockitoAnnotations.openMocks(this);
     when(mockRegistrar.context()).thenReturn(mockApplication);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     when(mockPluginBinding.getApplicationContext()).thenReturn(mockApplication);
     plugin = new ImagePickerPlugin(mockImagePickerDelegate, mockActivity);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    mockCloseable.close();
   }
 
   @Test
@@ -81,18 +87,22 @@ public class ImagePickerPluginTest {
 
   @Test
   public void onMethodCall_WhenCalledWithUnknownMethod_ThrowsException() {
-    exception.expect(IllegalArgumentException.class);
-    exception.expectMessage("Unknown method test");
-    plugin.onMethodCall(new MethodCall("test", null), mockResult);
+    IllegalArgumentException e =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> plugin.onMethodCall(new MethodCall("test", null), mockResult));
+    assertEquals(e.getMessage(), "Unknown method test");
     verifyNoInteractions(mockImagePickerDelegate);
     verifyNoInteractions(mockResult);
   }
 
   @Test
   public void onMethodCall_WhenCalledWithUnknownImageSource_ThrowsException() {
-    exception.expect(IllegalArgumentException.class);
-    exception.expectMessage("Invalid image source: -1");
-    plugin.onMethodCall(buildMethodCall(PICK_IMAGE, -1), mockResult);
+    IllegalArgumentException e =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> plugin.onMethodCall(buildMethodCall(PICK_IMAGE, -1), mockResult));
+    assertEquals(e.getMessage(), "Invalid image source: -1");
     verifyNoInteractions(mockImagePickerDelegate);
     verifyNoInteractions(mockResult);
   }
@@ -124,39 +134,39 @@ public class ImagePickerPluginTest {
   @Test
   public void onMethodCall_PickingImage_WhenSourceIsCamera_InvokesTakeImageWithCamera_RearCamera() {
     MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
-    HashMap<String, Object> arguments = (HashMap<String, Object>) call.arguments;
+    HashMap<String, Object> arguments = getArgumentMap(call);
     arguments.put("cameraDevice", 0);
     plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).setCameraDevice(eq(CameraDevice.REAR));
+    verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.REAR));
   }
 
   @Test
   public void
       onMethodCall_PickingImage_WhenSourceIsCamera_InvokesTakeImageWithCamera_FrontCamera() {
     MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
-    HashMap<String, Object> arguments = (HashMap<String, Object>) call.arguments;
+    HashMap<String, Object> arguments = getArgumentMap(call);
     arguments.put("cameraDevice", 1);
     plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).setCameraDevice(eq(CameraDevice.FRONT));
+    verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.FRONT));
   }
 
   @Test
   public void onMethodCall_PickingVideo_WhenSourceIsCamera_InvokesTakeImageWithCamera_RearCamera() {
     MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
-    HashMap<String, Object> arguments = (HashMap<String, Object>) call.arguments;
+    HashMap<String, Object> arguments = getArgumentMap(call);
     arguments.put("cameraDevice", 0);
     plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).setCameraDevice(eq(CameraDevice.REAR));
+    verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.REAR));
   }
 
   @Test
   public void
       onMethodCall_PickingVideo_WhenSourceIsCamera_InvokesTakeImageWithCamera_FrontCamera() {
     MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
-    HashMap<String, Object> arguments = (HashMap<String, Object>) call.arguments;
+    HashMap<String, Object> arguments = getArgumentMap(call);
     arguments.put("cameraDevice", 1);
     plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).setCameraDevice(eq(CameraDevice.FRONT));
+    verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.FRONT));
   }
 
   @Test
@@ -216,5 +226,10 @@ public class ImagePickerPluginTest {
 
   private MethodCall buildMethodCall(String method) {
     return new MethodCall(method, null);
+  }
+
+  @SuppressWarnings("unchecked")
+  private HashMap<String, Object> getArgumentMap(MethodCall call) {
+    return (HashMap<String, Object>) call.arguments;
   }
 }

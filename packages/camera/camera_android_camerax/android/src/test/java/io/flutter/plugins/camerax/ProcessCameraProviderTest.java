@@ -66,6 +66,7 @@ public class ProcessCameraProviderTest {
         new ProcessCameraProviderHostApiImpl(mockBinaryMessenger, testInstanceManager, context);
     final ListenableFuture<ProcessCameraProvider> processCameraProviderFuture =
         spy(Futures.immediateFuture(processCameraProvider));
+    @SuppressWarnings("unchecked")
     final GeneratedCameraXLibrary.Result<Long> mockResult =
         mock(GeneratedCameraXLibrary.Result.class);
 

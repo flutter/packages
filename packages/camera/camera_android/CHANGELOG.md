@@ -1,7 +1,12 @@
 ## 0.10.5
 
+* Updates compileSdkVersion to 33.
 * Fixes false positive for CamcorderProfile deprecation warning
   that was already fixed.
+
+## 0.10.4+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 
 ## 0.10.4
 
