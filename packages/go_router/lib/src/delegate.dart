@@ -287,15 +287,10 @@ class ImperativeRouteMatch<T> extends RouteMatch {
   /// The completer for the promise returned by [GoRouter.push].
   final Completer<T?> _completer;
 
-  /// Completes the promise returned by [GoRouter.push].
   @override
   void complete([dynamic value]) {
     _completer.complete(value as T?);
   }
-
-  /// Returns `true` if the promise returned by [GoRouter.push] has been completed.
-  @override
-  bool didComplete() => _completer.isCompleted;
 
   /// The future of the [RouteMatch] completer. When the future completes, this
   /// will return the value passed to [complete].

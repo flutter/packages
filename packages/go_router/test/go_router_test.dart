@@ -2396,8 +2396,8 @@ void main() {
       expect(router.location, loc);
       expect(matches.matches, hasLength(2));
       expect(find.byType(PersonScreen), findsOneWidget);
-      final ImperativeRouteMatch<dynamic> imperativeRouteMatch =
-          matches.matches.last as ImperativeRouteMatch<dynamic>;
+      final ImperativeRouteMatch<Object?> imperativeRouteMatch =
+          matches.matches.last as ImperativeRouteMatch<Object?>;
       expect(imperativeRouteMatch.matches.pathParameters['fid'], fid);
       expect(imperativeRouteMatch.matches.pathParameters['pid'], pid);
     });

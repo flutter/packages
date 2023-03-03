@@ -151,7 +151,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
         routerDelegate.currentConfiguration.matches.last
             is ImperativeRouteMatch) {
       newLocation = (routerDelegate.currentConfiguration.matches.last
-              as ImperativeRouteMatch<dynamic>)
+              as ImperativeRouteMatch<Object?>)
           .matches
           .uri
           .toString();

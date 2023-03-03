@@ -61,28 +61,8 @@ class RouteMatch {
     throw MatcherError('Unexpected route type: $route', restLoc);
   }
 
-  /// Completes the promise returned by [GoRouter.push], allowing comunication
-  /// between pages.
-  ///
-  /// If the promise has already been completed, this method does nothing.
-  ///
-  /// E.g.:
-  /// ```dart
-  /// final bool? result = await context.push<bool>('/page2');
-  /// if(result ?? false){
-  ///   // do something
-  /// }
-  /// ```
-  /// When the page is popped, the promise is completed with the value passed,
-  /// and the push method returns.
-  /// to [Navigator.pop].
-  /// ```dart
-  /// context.pop(true);
-  /// ```
-  void complete([dynamic value]) {}
-
-  /// Returns `true` if the promise returned by [GoRouter.push] has been completed.
-  bool? didComplete() => null;
+  /// Called when the corresponding [Route] associated with this route match is completed.
+  void complete([Object? value]) {}
 
   /// The matched route.
   final RouteBase route;
