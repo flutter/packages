@@ -57,7 +57,6 @@ import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
-import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
 import io.flutter.plugins.camera.media.MediaRecorderBuilder;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
@@ -253,8 +252,7 @@ class Camera
     }
 
     final PlatformChannel.DeviceOrientation lockedOrientation =
-        cameraFeatures.getSensorOrientation()
-            .getLockedCaptureOrientation();
+        cameraFeatures.getSensorOrientation().getLockedCaptureOrientation();
 
     MediaRecorderBuilder mediaRecorderBuilder;
 
@@ -637,8 +635,7 @@ class Camera
 
     // Orientation.
     final PlatformChannel.DeviceOrientation lockedOrientation =
-        cameraFeatures.getSensorOrientation()
-            .getLockedCaptureOrientation();
+        cameraFeatures.getSensorOrientation().getLockedCaptureOrientation();
     stillBuilder.set(
         CaptureRequest.JPEG_ORIENTATION,
         lockedOrientation == null
