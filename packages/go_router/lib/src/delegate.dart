@@ -284,7 +284,7 @@ class ImperativeRouteMatch<T> extends RouteMatch {
   /// The matches that produces this route match.
   final RouteMatchList matches;
 
-  /// The completer for the promise returned by [GoRouter.push].
+  /// The completer for the future returned by [GoRouter.push].
   final Completer<T?> _completer;
 
   @override
