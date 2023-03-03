@@ -74,9 +74,7 @@ Waiting for a value to be returned:
 ```dart
 onTap: () {
   final bool? result = await context.push<bool>('/page2');
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if(result ?? false)...
-  });
+  if(result ?? false)...
 }
 ```
 
