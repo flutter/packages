@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdkVersion to 33.
+
 ## 2.0.23
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

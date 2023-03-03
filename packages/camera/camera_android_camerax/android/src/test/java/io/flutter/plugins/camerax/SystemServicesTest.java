@@ -24,6 +24,7 @@ import io.flutter.plugins.camerax.GeneratedCameraXLibrary.SystemServicesFlutterA
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -43,6 +44,7 @@ public class SystemServicesTest {
         mock(CameraPermissionsManager.class);
     final Activity mockActivity = mock(Activity.class);
     final PermissionsRegistry mockPermissionsRegistry = mock(PermissionsRegistry.class);
+    @SuppressWarnings("unchecked")
     final Result<CameraPermissionsErrorData> mockResult = mock(Result.class);
     final Boolean enableAudio = false;
 
@@ -65,7 +67,7 @@ public class SystemServicesTest {
             eq(enableAudio),
             resultCallbackCaptor.capture());
 
-    ResultCallback resultCallback = (ResultCallback) resultCallbackCaptor.getValue();
+    ResultCallback resultCallback = resultCallbackCaptor.getValue();
 
     // Test no error data is sent upon permissions request success.
     resultCallback.onResult(null, null);
@@ -130,7 +132,7 @@ public class SystemServicesTest {
     deviceOrientationChangeCallback.onChange(DeviceOrientation.PORTRAIT_DOWN);
     verify(systemServicesFlutterApi)
         .sendDeviceOrientationChangedEvent(
-            eq(DeviceOrientation.PORTRAIT_DOWN.toString()), any(Reply.class));
+            eq(DeviceOrientation.PORTRAIT_DOWN.toString()), ArgumentMatchers.<Reply<Void>>any());
 
     // Test that the DeviceOrientationManager starts listening for device orientation changes.
     verify(mockDeviceOrientationManager).start();

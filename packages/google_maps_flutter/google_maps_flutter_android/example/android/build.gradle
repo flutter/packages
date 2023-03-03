@@ -27,3 +27,17 @@ subprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+// Build the plugin project with warnings enabled. This is here rather than
+// in the plugin itself to avoid breaking clients that have different
+// warnings (e.g., deprecation warnings from a newer SDK than this project
+// builds with).
+gradle.projectsEvaluated {
+    project(":google_maps_flutter_android") {
+        tasks.withType(JavaCompile) {
+            // TODO(stuartmorgan): Enable this. See
+            // https://github.com/flutter/flutter/issues/91868
+            //options.compilerArgs << "-Xlint:all" << "-Werror"
+        }
+    }
+}
