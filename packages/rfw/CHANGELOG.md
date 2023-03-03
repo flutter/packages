@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 1.0.8
 
 * Removes use of `runtimeType.toString()`.

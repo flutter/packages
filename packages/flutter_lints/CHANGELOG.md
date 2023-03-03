@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 2.0.1
 
 * Updated readme to document suggestion process for new lints

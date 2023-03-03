@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 0.2.0+10
 
 * Updates espresso dependencies.

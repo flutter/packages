@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ##  0.9.3+4
 
 * Removes const keyword from PointerInterceptor's constructor.

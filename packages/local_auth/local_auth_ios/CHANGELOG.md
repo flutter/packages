@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 1.1.0
 
 * Updates minimum Flutter version to 3.3 and iOS 11.

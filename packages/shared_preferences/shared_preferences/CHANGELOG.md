@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 2.0.18
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

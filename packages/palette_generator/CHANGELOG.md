@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 0.3.3+2
 
 * Ignores lint warnings from new changes in Flutter master.

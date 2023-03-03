@@ -1,7 +1,3 @@
-## NEXT
-
-* Aligns Dart and Flutter SDK constraints.
-
 ## 1.0.0
 
 * Updates version to 1.0 to reflect the level of API stability.
