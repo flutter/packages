@@ -95,7 +95,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     _matchList.push(newPageKeyMatch);
     notifyListeners();
-    return newPageKeyMatch.future;
+    return newPageKeyMatch._future;
   }
 
   /// Returns `true` if the active Navigator can pop.
@@ -292,7 +292,7 @@ class ImperativeRouteMatch<T> extends RouteMatch {
     _completer.complete(value as T?);
   }
 
-  /// The future of the [RouteMatch] completer. When the future completes, this
-  /// will return the value passed to [complete].
-  Future<T?> get future => _completer.future;
+  /// The future of the [RouteMatch] completer.
+  /// When the future completes, this will return the value passed to [complete].
+  Future<T?> get _future => _completer.future;
 }
