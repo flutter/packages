@@ -13,7 +13,7 @@ import 'use_case.dart';
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture.
 class ImageCapture extends UseCase {
-  /// Creates a [ImageCapture].
+  /// Creates an [ImageCapture].
   ImageCapture(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
