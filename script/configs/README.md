@@ -6,3 +6,11 @@ tests, but can also useful when running multi-package tests locally.
 Skipping tests or checks for packages is usually not something we want to do,
 so the comment should either include an issue link to the issue tracking
 removing it or (much more rarely) explaining why it is a permanent exclusion.
+
+Expected format:
+```
+# Reason for exclusion
+- name_of_package
+```
+
+If there are no exclusions there should be an file with [].
