@@ -104,7 +104,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     }
     if (configuration.matches.last is ImperativeRouteMatch) {
       configuration =
-          (configuration.matches.last as ImperativeRouteMatch).matches;
+          (configuration.matches.last as ImperativeRouteMatch<dynamic>).matches;
     }
     return RouteInformation(
       location: configuration.uri.toString(),

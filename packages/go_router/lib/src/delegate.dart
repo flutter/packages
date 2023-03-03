@@ -270,7 +270,7 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
 }
 
 /// The route match that represent route pushed through [GoRouter.push].
-class ImperativeRouteMatch<T> extends RouteMatch<T> {
+class ImperativeRouteMatch<T> extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
   ImperativeRouteMatch({
     required super.route,
@@ -279,8 +279,25 @@ class ImperativeRouteMatch<T> extends RouteMatch<T> {
     required super.error,
     required super.pageKey,
     required this.matches,
-  });
+  }) : _completer = Completer<T?>();
 
   /// The matches that produces this route match.
   final RouteMatchList matches;
+
+  /// The completer for the promise returned by [GoRouter.push].
+  final Completer<T?> _completer;
+
+  /// Completes the promise returned by [GoRouter.push].
+  @override
+  void complete([dynamic value]) {
+    _completer.complete(value as T?);
+  }
+
+  /// Returns `true` if the promise returned by [GoRouter.push] has been completed.
+  @override
+  bool didComplete() => _completer.isCompleted;
+
+  /// The future of the [RouteMatch] completer. When the future completes, this
+  /// will return the value passed to [complete].
+  Future<T?> get future => _completer.future;
 }
