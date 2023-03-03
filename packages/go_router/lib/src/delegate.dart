@@ -78,26 +78,24 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Pushes the given location onto the page stack
   Future<T?> push<T extends Object?>(RouteMatchList matches) async {
     assert(matches.last.route is! ShellRoute);
-    final Completer<T?> completer = Completer<T?>();
 
     // Remap the pageKey to allow any number of the same page on the stack
     final int count = (_pushCounts[matches.fullpath] ?? 0) + 1;
     _pushCounts[matches.fullpath] = count;
     final ValueKey<String> pageKey =
         ValueKey<String>('${matches.fullpath}-p$count');
-    final ImperativeRouteMatch newPageKeyMatch = ImperativeRouteMatch(
+    final ImperativeRouteMatch<T> newPageKeyMatch = ImperativeRouteMatch<T>(
       route: matches.last.route,
       subloc: matches.last.subloc,
       extra: matches.last.extra,
       error: matches.last.error,
       pageKey: pageKey,
       matches: matches,
-      completer: completer,
     );
 
     _matchList.push(newPageKeyMatch);
     notifyListeners();
-    return completer.future;
+    return newPageKeyMatch.future;
   }
 
   /// Returns `true` if the active Navigator can pop.
@@ -116,7 +114,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     final _NavigatorStateIterator iterator = _createNavigatorStateIterator();
     while (iterator.moveNext()) {
       if (iterator.current.canPop()) {
-        iterator.matchList.last.completer?.complete(result);
+        iterator.matchList.last.complete(result);
         iterator.current.pop<T>(result);
         return;
       }
@@ -272,8 +270,7 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
 }
 
 /// The route match that represent route pushed through [GoRouter.push].
-// TODO(chunhtai): Removes this once imperative API no longer insert route match.
-class ImperativeRouteMatch extends RouteMatch {
+class ImperativeRouteMatch<T> extends RouteMatch<T> {
   /// Constructor for [ImperativeRouteMatch].
   ImperativeRouteMatch({
     required super.route,
@@ -282,7 +279,6 @@ class ImperativeRouteMatch extends RouteMatch {
     required super.error,
     required super.pageKey,
     required this.matches,
-    super.completer,
   });
 
   /// The matches that produces this route match.

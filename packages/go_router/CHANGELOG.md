@@ -1,11 +1,11 @@
+## 6.3.0
+
+- Supports for returning values on pop.
+
 ## NEXT
 
 - Updates compileSdkVersion to 33.
 - Updates example app to iOS 11.
-
-## 6.3.0
-
-- Support for returning values on pop.
 
 ## 6.2.0
 
