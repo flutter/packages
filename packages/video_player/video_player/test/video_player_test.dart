@@ -788,6 +788,30 @@ void main() {
         expect(controller.value.position, nonzeroDuration);
       });
 
+      testWidgets('playback status', (WidgetTester tester) async {
+        final VideoPlayerController controller = VideoPlayerController.network(
+          'https://127.0.0.1',
+        );
+        await controller.initialize();
+        expect(controller.value.isPlaying, isFalse);
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.textureId]!;
+
+        fakeVideoEventStream.add(VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: true,
+        ));
+        await tester.pumpAndSettle();
+        expect(controller.value.isPlaying, isTrue);
+
+        fakeVideoEventStream.add(VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: false,
+        ));
+        await tester.pumpAndSettle();
+        expect(controller.value.isPlaying, isFalse);
+      });
+
       testWidgets('buffering status', (WidgetTester tester) async {
         final VideoPlayerController controller = VideoPlayerController.network(
           'https://127.0.0.1',
