@@ -3,6 +3,10 @@
 - Updates compileSdkVersion to 33.
 - Updates example app to iOS 11.
 
+## 6.3.0
+
+- Support for returning values on pop.
+
 ## 6.2.0
 
 - Export supertypes in route_data.dart library

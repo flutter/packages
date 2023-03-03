@@ -2655,6 +2655,26 @@ void main() {
       expect(router.extra, extra);
     });
 
+    testWidgets('calls [push] on closest GoRouter with a promise',
+        (WidgetTester tester) async {
+      final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationProvider: router.routeInformationProvider,
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      final String? result = await router.push<String>(
+        location,
+        extra: extra,
+      );
+      expect(result, extra);
+      expect(router.myLocation, location);
+      expect(router.extra, extra);
+    });
+
     testWidgets('calls [pushNamed] on closest GoRouter',
         (WidgetTester tester) async {
       final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
@@ -2674,6 +2694,30 @@ void main() {
       expect(router.params, params);
       expect(router.queryParams, queryParams);
       expect(router.extra, extra);
+    });
+
+    testWidgets('calls [pushNamed] on closest GoRouter with a promise',
+        (WidgetTester tester) async {
+      final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationProvider: router.routeInformationProvider,
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      final String? result = await router.pushNamed<String>(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
+      expect(result, extra);
+      expect(router.extra, extra);
+      expect(router.name, name);
+      expect(router.params, params);
+      expect(router.queryParams, queryParams);
     });
 
     testWidgets('calls [pop] on closest GoRouter', (WidgetTester tester) async {

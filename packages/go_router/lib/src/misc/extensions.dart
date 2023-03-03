@@ -37,17 +37,17 @@ extension GoRouterHelper on BuildContext {
       );
 
   /// Push a location onto the page stack.
-  void push(String location, {Object? extra}) =>
+  Future<T?> push<T extends Object?>(String location, {Object? extra}) =>
       GoRouter.of(this).push(location, extra: extra);
 
   /// Navigate to a named route onto the page stack.
-  void pushNamed(
+  Future<T?> pushNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
-      GoRouter.of(this).pushNamed(
+      GoRouter.of(this).pushNamed<T>(
         name,
         params: params,
         queryParams: queryParams,

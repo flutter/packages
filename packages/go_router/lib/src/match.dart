@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -18,6 +20,7 @@ class RouteMatch {
     required this.extra,
     required this.error,
     required this.pageKey,
+    this.completer,
   });
 
   // ignore: public_member_api_docs
@@ -27,6 +30,7 @@ class RouteMatch {
     required String parentSubloc, // e.g. /family/f2
     required Map<String, String> pathParameters,
     required Object? extra,
+    Completer<dynamic>? completer,
   }) {
     if (route is ShellRoute) {
       return RouteMatch(
@@ -35,6 +39,7 @@ class RouteMatch {
         extra: extra,
         error: null,
         pageKey: ValueKey<String>(route.hashCode.toString()),
+        completer: completer,
       );
     } else if (route is GoRoute) {
       assert(!route.path.contains('//'));
@@ -56,6 +61,7 @@ class RouteMatch {
         extra: extra,
         error: null,
         pageKey: ValueKey<String>(route.hashCode.toString()),
+        completer: completer,
       );
     }
     throw MatcherError('Unexpected route type: $route', restLoc);
@@ -75,4 +81,7 @@ class RouteMatch {
 
   /// Value key of type string, to hold a unique reference to a page.
   final ValueKey<String> pageKey;
+
+  /// The completer for the promise returned by [GoRouter.push].
+  final Completer<dynamic>? completer;
 }

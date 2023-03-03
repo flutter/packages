@@ -76,8 +76,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   /// Pushes the given location onto the page stack
-  void push(RouteMatchList matches) {
+  Future<T?> push<T extends Object?>(RouteMatchList matches) async {
     assert(matches.last.route is! ShellRoute);
+    final Completer<T?> completer = Completer<T?>();
 
     // Remap the pageKey to allow any number of the same page on the stack
     final int count = (_pushCounts[matches.fullpath] ?? 0) + 1;
@@ -91,10 +92,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       error: matches.last.error,
       pageKey: pageKey,
       matches: matches,
+      completer: completer,
     );
 
     _matchList.push(newPageKeyMatch);
     notifyListeners();
+    return completer.future;
   }
 
   /// Returns `true` if the active Navigator can pop.
@@ -113,6 +116,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     final _NavigatorStateIterator iterator = _createNavigatorStateIterator();
     while (iterator.moveNext()) {
       if (iterator.current.canPop()) {
+        iterator.matchList.last.completer?.complete(result);
         iterator.current.pop<T>(result);
         return;
       }
@@ -278,6 +282,7 @@ class ImperativeRouteMatch extends RouteMatch {
     required super.error,
     required super.pageKey,
     required this.matches,
+    super.completer,
   });
 
   /// The matches that produces this route match.
