@@ -1,3 +1,7 @@
+## 2.5.3
+
+* Updates iOS minimum version in README.
+
 ## 2.5.2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

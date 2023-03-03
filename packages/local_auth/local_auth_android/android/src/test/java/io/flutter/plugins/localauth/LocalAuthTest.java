@@ -238,7 +238,7 @@ public class LocalAuthTest {
 
     final FlutterPluginBinding mockPluginBinding = mock(FlutterPluginBinding.class);
     final FlutterEngine mockFlutterEngine = mock(FlutterEngine.class);
-    when(mockPluginBinding.getFlutterEngine()).thenReturn(mockFlutterEngine);
+    mockDeprecatedFlutterEngineGetter(mockPluginBinding, mockFlutterEngine);
 
     DartExecutor mockDartExecutor = mock(DartExecutor.class);
     when(mockFlutterEngine.getDartExecutor()).thenReturn(mockDartExecutor);
@@ -399,11 +399,17 @@ public class LocalAuthTest {
     final ActivityPluginBinding mockActivityBinding = mock(ActivityPluginBinding.class);
     final FlutterEngine mockFlutterEngine = mock(FlutterEngine.class);
     final DartExecutor mockDartExecutor = mock(DartExecutor.class);
-    when(mockPluginBinding.getFlutterEngine()).thenReturn(mockFlutterEngine);
+    mockDeprecatedFlutterEngineGetter(mockPluginBinding, mockFlutterEngine);
     when(mockFlutterEngine.getDartExecutor()).thenReturn(mockDartExecutor);
     when(mockActivityBinding.getActivity()).thenReturn(activity);
     when(mockActivityBinding.getLifecycle()).thenReturn(mockLifecycleReference);
     plugin.onAttachedToEngine(mockPluginBinding);
     plugin.onAttachedToActivity(mockActivityBinding);
+  }
+
+  @SuppressWarnings("deprecation")
+  private void mockDeprecatedFlutterEngineGetter(
+      FlutterPluginBinding binding, FlutterEngine engine) {
+    when(binding.getFlutterEngine()).thenReturn(engine);
   }
 }
