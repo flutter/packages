@@ -1,6 +1,7 @@
 ## 9.0.5
 
 * [kotlin] Removes safe casting from decode process.
+* [swift] Removes safe casting from decode process.
 
 ## 9.0.4
 
