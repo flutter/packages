@@ -75,4 +75,10 @@ class Tessellator extends Visitor<Node, void>
   Node visitResolvedPatternNode(ResolvedPatternNode patternNode, void data) {
     return patternNode;
   }
+
+  @override
+  Node visitResolvedTextPositionNode(
+      ResolvedTextPositionNode textPositionNode, void data) {
+    return textPositionNode;
+  }
 }

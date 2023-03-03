@@ -128,6 +128,24 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   }
 
   @override
+  Node visitTextPositionNode(
+    TextPositionNode textPositionNode,
+    AffineMatrix data,
+  ) {
+    final AffineMatrix nextTransform = textPositionNode.concatTransform(data);
+
+    return ResolvedTextPositionNode(
+      textPositionNode.computeTextPosition(_bounds, data),
+      <Node>[
+        for (Node child in textPositionNode.children)
+          child
+              .applyAttributes(textPositionNode.attributes)
+              .accept(this, nextTransform),
+      ],
+    );
+  }
+
+  @override
   Node visitTextNode(TextNode textNode, AffineMatrix data) {
     final Paint? paint = textNode.computePaint(_bounds, data);
     final TextConfig textConfig = textNode.computeTextConfig(_bounds, data);
@@ -180,6 +198,13 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   Node visitResolvedText(ResolvedTextNode textNode, AffineMatrix data) {
     assert(false);
     return textNode;
+  }
+
+  @override
+  Node visitResolvedTextPositionNode(
+      ResolvedTextPositionNode textPositionNode, AffineMatrix data) {
+    assert(false);
+    return textPositionNode;
   }
 
   @override
@@ -269,8 +294,8 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     return ResolvedPatternNode(
       child: child,
       pattern: pattern,
-      x: resolvedPattern.attributes.x ?? 0,
-      y: resolvedPattern.attributes.y ?? 0,
+      x: resolvedPattern.attributes.x?.calculate(0) ?? 0,
+      y: resolvedPattern.attributes.y?.calculate(0) ?? 0,
       width: resolvedPattern.attributes.width!,
       height: resolvedPattern.attributes.height!,
       transform: data,
@@ -283,6 +308,30 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       ResolvedPatternNode patternNode, AffineMatrix data) {
     assert(false);
     return patternNode;
+  }
+}
+
+/// A text position update that is final and has a fully known transform.
+///
+/// Constructed from a [TextPositionNode] by a [ResolvingVisitor].
+class ResolvedTextPositionNode extends Node {
+  /// Create a new [ResolvedTextPositionNode].
+  ResolvedTextPositionNode(this.textPosition, this.children);
+
+  /// The resolved [TextPosition].
+  final TextPosition textPosition;
+
+  /// The children of this node.
+  final List<Node> children;
+
+  @override
+  void visitChildren(NodeCallback visitor) {
+    children.forEach(visitor);
+  }
+
+  @override
+  S accept<S, V>(Visitor<S, V> visitor, V data) {
+    return visitor.visitResolvedTextPositionNode(this, data);
   }
 }
 

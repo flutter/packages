@@ -237,6 +237,64 @@ class ParentNode extends AttributedNode {
   }
 }
 
+/// A node describing an update to the [TextPosition], including any applicable
+/// transformation matrix.
+class TextPositionNode extends ParentNode {
+  /// See [TextPositionNode].
+  TextPositionNode(super.attributes, {required this.reset});
+
+  /// Whether this node represents a reset of the current text position or not.
+  final bool reset;
+
+  /// Computes a [TextPosition] to encode for this node.
+  TextPosition computeTextPosition(Rect bounds, AffineMatrix transform) {
+    final AffineMatrix computedTransform = concatTransform(transform);
+    final bool consumeTransform = computedTransform.encodableInRect;
+    double? x = attributes.x?.calculate(bounds.width);
+    double? y = attributes.y?.calculate(bounds.height);
+    double? dx = attributes.dx?.calculate(bounds.width);
+    double? dy = attributes.dy?.calculate(bounds.height);
+    if (x != null && y != null) {
+      final Point baseline = consumeTransform
+          ? transform.transformPoint(Point(x, y))
+          : Point(x, y);
+      x = baseline.x;
+      y = baseline.y;
+    }
+
+    if (dx != null && dy != null) {
+      final Point baseline = consumeTransform
+          ? transform.transformPoint(Point(dx, dy))
+          : Point(dx, dy);
+      dx = baseline.x;
+      dy = baseline.y;
+    }
+
+    return TextPosition(
+      x: x,
+      y: y,
+      dx: dx,
+      dy: dy,
+      reset: reset,
+      transform: consumeTransform ? null : computedTransform,
+    );
+  }
+
+  @override
+  S accept<S, V>(Visitor<S, V> visitor, V data) {
+    return visitor.visitTextPositionNode(this, data);
+  }
+
+  @override
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
+    return TextPositionNode(attributes.applyParent(newAttributes), reset: reset)
+      .._children.addAll(_children);
+  }
+}
+
 /// A parent node that applies a save layer to its children.
 class SaveLayerNode extends ParentNode {
   /// Create a new [SaveLayerNode]
@@ -425,27 +483,11 @@ class TextNode extends AttributedNode {
   /// Create a new [TextNode] with the given [text].
   TextNode(
     this.text,
-    this.baseline,
-    this.absolute,
-    this.fontSize,
-    this.fontWeight,
     super.attributes,
   );
 
   /// The text this node contains.
   final String text;
-
-  /// The x, y coordinate of the starting point of the text baseline.
-  final Point baseline;
-
-  /// Whether the [baseline] is in absolute or relative units.
-  final bool absolute;
-
-  /// The font weight to use.
-  final FontWeight fontWeight;
-
-  /// The text node's font size.
-  final double fontSize;
 
   /// Compute the [Paint] that this text node uses.
   Paint? computePaint(Rect bounds, AffineMatrix transform) {
@@ -464,20 +506,17 @@ class TextNode extends AttributedNode {
 
   /// Compute the [TextConfig] that this text node uses.
   TextConfig computeTextConfig(Rect bounds, AffineMatrix transform) {
-    final Point newBaseline = absolute
-        ? baseline
-        : Point(baseline.x * bounds.width, baseline.y * bounds.height);
+    // Don't concat the transform since it's repeated by the parent group
+    // the way the parser is set up.
     return TextConfig(
       text,
-      transform.transformPoint(newBaseline),
       attributes.textAnchorMultiplier ?? 0,
       attributes.fontFamily,
-      fontWeight,
-      fontSize,
+      attributes.fontWeight ?? normalFontWeight,
+      attributes.fontSize ?? 16, // default in many browsers
       attributes.textDecoration ?? TextDecoration.none,
       attributes.textDecorationStyle ?? TextDecorationStyle.solid,
       attributes.textDecorationColor ?? Color.opaqueBlack,
-      attributes.transform,
     );
   }
 
@@ -486,15 +525,12 @@ class TextNode extends AttributedNode {
     SvgAttributes newAttributes, {
     bool replace = false,
   }) {
+    final SvgAttributes resolvedAttributes = replace
+        ? newAttributes.applyParent(attributes, transformOverride: transform)
+        : attributes.applyParent(newAttributes);
     return TextNode(
       text,
-      baseline,
-      absolute,
-      fontSize,
-      fontWeight,
-      replace
-          ? newAttributes.applyParent(attributes, transformOverride: transform)
-          : attributes.applyParent(newAttributes),
+      resolvedAttributes,
     );
   }
 

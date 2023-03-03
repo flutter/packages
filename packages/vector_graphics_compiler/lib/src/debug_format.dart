@@ -49,8 +49,9 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onDrawText(int textId, int paintId, int? patternId) {
-    buffer.writeln('DrawText: id:$textId ($paintId, $patternId)');
+  void onDrawText(int textId, int? fillId, int? strokeId, int? patternId) {
+    buffer.writeln(
+        'DrawText: id:$textId (fill: $fillId, stroke: $strokeId, pattern: $patternId)');
   }
 
   @override
@@ -188,18 +189,34 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
   void onTextConfig(
     String text,
     String? fontFamily,
-    double x,
     double xAnchorMultiplier,
-    double y,
     int fontWeight,
     double fontSize,
     int decoration,
     int decorationStyle,
     int decorationColor,
-    Float64List? transform,
     int id,
   ) {
     buffer.writeln(
-        'RecordText: id:$id ($text, ($x, $y) ($xAnchorMultiplier x-anchoring), weight: $fontWeight, size: $fontSize, decoration: $decoration, decorationStyle: $decorationStyle, decorationColor: 0x${decorationColor.toRadixString(16)}, family: $fontFamily, transform: $transform)');
+        'RecordText: id:$id ($text, ($xAnchorMultiplier x-anchoring), weight: $fontWeight, size: $fontSize, decoration: $decoration, decorationStyle: $decorationStyle, decorationColor: 0x${decorationColor.toRadixString(16)}, family: $fontFamily)');
+  }
+
+  @override
+  void onTextPosition(
+    int id,
+    double? x,
+    double? y,
+    double? dx,
+    double? dy,
+    bool reset,
+    Float64List? transform,
+  ) {
+    buffer.writeln(
+        'StoreTextPosition: id:$id (($x, $y) d($dx, $dy), reset: $reset, transform: $transform)');
+  }
+
+  @override
+  void onUpdateTextPosition(int id) {
+    buffer.writeln('UpdateTextPosition: id:$id');
   }
 }

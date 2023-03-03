@@ -138,7 +138,7 @@ double parsePercentage(String val, {double multiplier = 1.0}) {
 }
 
 /// Whether a string should be treated as a percentage (i.e. if it ends with a `'%'`).
-bool isPercentage(String val) => val.endsWith('%');
+bool isPercentage(String? val) => val?.endsWith('%') ?? false;
 
 /// Parses value from the form '25%', 0.25 or 25.0 as a double.
 /// Note: Percentage or decimals will be multiplied by the total

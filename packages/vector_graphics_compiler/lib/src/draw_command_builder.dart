@@ -22,6 +22,7 @@ class DrawCommandBuilder {
   final List<DrawCommand> _commands = <DrawCommand>[];
   final Map<Object, int> _patterns = <Object, int>{};
   final Map<PatternData, int> _patternData = <PatternData, int>{};
+  final Map<TextPosition, int> _textPositions = <TextPosition, int>{};
 
   int _getOrGenerateId<T>(T object, Map<T, int> map) =>
       map.putIfAbsent(object, () => map.length);
@@ -80,6 +81,15 @@ class DrawCommandBuilder {
       DrawCommandType.pattern,
       objectId: patternId,
       patternDataId: patternDataId,
+    ));
+  }
+
+  /// Updates the current text position to [position].
+  void updateTextPosition(TextPosition position) {
+    final int positionId = _getOrGenerateId(position, _textPositions);
+    _commands.add(DrawCommand(
+      DrawCommandType.textPosition,
+      objectId: positionId,
     ));
   }
 
@@ -148,6 +158,7 @@ class DrawCommandBuilder {
       drawImages: _drawImages.keys.toList(),
       commands: _commands,
       patternData: _patternData.keys.toList(),
+      textPositions: _textPositions.keys.toList(),
     );
   }
 }

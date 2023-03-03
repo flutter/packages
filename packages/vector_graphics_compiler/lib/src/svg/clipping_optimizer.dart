@@ -237,4 +237,18 @@ class ClippingOptimizer extends Visitor<_Result, Node>
   _Result visitResolvedPatternNode(ResolvedPatternNode patternNode, Node data) {
     return _Result(patternNode);
   }
+
+  @override
+  _Result visitResolvedTextPositionNode(
+      ResolvedTextPositionNode textPositionNode, void data) {
+    return _Result(
+      ResolvedTextPositionNode(
+        textPositionNode.textPosition,
+        <Node>[
+          for (Node child in textPositionNode.children)
+            child.accept(this, data).node
+        ],
+      ),
+    );
+  }
 }

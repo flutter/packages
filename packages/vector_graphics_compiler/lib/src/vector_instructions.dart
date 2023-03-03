@@ -4,7 +4,7 @@
 
 import 'package:meta/meta.dart';
 import 'geometry/pattern.dart';
-import '../src/geometry/image.dart';
+import 'geometry/image.dart';
 import 'package:vector_graphics_compiler/src/util.dart';
 
 import 'geometry/path.dart';
@@ -28,6 +28,7 @@ class VectorInstructions {
     this.images = const <ImageData>[],
     this.drawImages = const <DrawImageData>[],
     this.patternData = const <PatternData>[],
+    this.textPositions = const <TextPosition>[],
     required this.commands,
   });
 
@@ -58,6 +59,9 @@ class VectorInstructions {
   /// The pattern data objects, if any used in [commands].
   final List<PatternData> patternData;
 
+  /// A list of text position advances, if any, used in [commands].
+  final List<TextPosition> textPositions;
+
   /// The painting order list of drawing commands.
   ///
   /// If the command type is [DrawCommandType.path], this command specifies
@@ -78,7 +82,8 @@ class VectorInstructions {
       Object.hashAll(text),
       Object.hashAll(commands),
       Object.hashAll(images),
-      Object.hashAll(drawImages));
+      Object.hashAll(drawImages),
+      Object.hashAll(textPositions));
 
   @override
   bool operator ==(Object other) {
@@ -92,7 +97,8 @@ class VectorInstructions {
         listEquals(other.text, text) &&
         listEquals(other.commands, commands) &&
         listEquals(other.images, images) &&
-        listEquals(other.drawImages, drawImages);
+        listEquals(other.drawImages, drawImages) &&
+        listEquals(other.textPositions, textPositions);
   }
 
   @override
@@ -140,6 +146,9 @@ enum DrawCommandType {
 
   /// Specifies that this command draws a pattern.
   pattern,
+
+  /// Specifies an adjustment to the current text position.
+  textPosition,
 }
 
 /// A drawing command combining the index of a [Path] or an [IndexedVertices]

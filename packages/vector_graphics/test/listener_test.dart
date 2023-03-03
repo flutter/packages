@@ -109,6 +109,41 @@ void main() {
       const ui.Rect.fromLTRB(0, 0, 100, 100),
     );
   });
+
+  test('Text position is respected', () async {
+    final TestPictureFactory factory = TestPictureFactory();
+    final FlutterVectorGraphicsListener listener =
+        FlutterVectorGraphicsListener(
+      pictureFactory: factory,
+    );
+    listener.onPaintObject(
+      color: const ui.Color(0xff000000).value,
+      strokeCap: null,
+      strokeJoin: null,
+      blendMode: BlendMode.srcIn.index,
+      strokeMiterLimit: null,
+      strokeWidth: null,
+      paintStyle: ui.PaintingStyle.fill.index,
+      id: 0,
+      shaderId: null,
+    );
+    listener.onTextPosition(0, 10, 10, null, null, true, null);
+    listener.onUpdateTextPosition(0);
+    listener.onTextConfig('foo', null, 0, 0, 16, 0, 0, 0, 0);
+    listener.onDrawText(0, 0, null, null);
+    listener.onDrawText(0, 0, null, null);
+
+    final Invocation drawParagraph0 = factory.fakeCanvases.last.invocations[0];
+    final Invocation drawParagraph1 = factory.fakeCanvases.last.invocations[1];
+
+    expect(drawParagraph0.memberName, #drawParagraph);
+    // Only checking the X because Y seems to vary a bit by platform within
+    // acceptable range. X is what gets managed by the listener anyway.
+    expect((drawParagraph0.positionalArguments[1] as Offset).dx, 10);
+
+    expect(drawParagraph1.memberName, #drawParagraph);
+    expect((drawParagraph1.positionalArguments[1] as Offset).dx, 58);
+  });
 }
 
 class TestPictureFactory implements PictureFactory {

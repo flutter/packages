@@ -23,6 +23,9 @@ abstract class Visitor<S, V> {
   /// Visit a [ClipNode].
   S visitClipNode(ClipNode clipNode, V data);
 
+  /// Visit a [TextPositionNode].
+  S visitTextPositionNode(TextPositionNode textPositionNode, V data);
+
   /// Visit a [TextNode].
   S visitTextNode(TextNode textNode, V data);
 
@@ -43,6 +46,10 @@ abstract class Visitor<S, V> {
 
   /// Visit a [PatternNode].
   S visitPatternNode(PatternNode node, V data);
+
+  /// Visit a [ResolvedTextPositionNode].
+  S visitResolvedTextPositionNode(
+      ResolvedTextPositionNode textPositionNode, V data);
 
   /// Visit a [ResolvedTextNode].
   S visitResolvedText(ResolvedTextNode textNode, V data);
@@ -86,6 +93,11 @@ mixin ErrorOnUnResolvedNode<S, V> on Visitor<S, V> {
 
   @override
   S visitClipNode(ClipNode clipNode, V data) {
+    throw UnsupportedError(_message);
+  }
+
+  @override
+  S visitTextPositionNode(TextPositionNode textPositionNode, V data) {
     throw UnsupportedError(_message);
   }
 
@@ -166,6 +178,15 @@ class CommandBuilderVisitor extends Visitor<void, void>
   @override
   void visitResolvedPath(ResolvedPathNode pathNode, void data) {
     _builder.addPath(pathNode.path, pathNode.paint, null, currentPatternId);
+  }
+
+  @override
+  void visitResolvedTextPositionNode(
+      ResolvedTextPositionNode textPositionNode, void data) {
+    _builder.updateTextPosition(textPositionNode.textPosition);
+    textPositionNode.visitChildren((Node child) {
+      child.accept(this, data);
+    });
   }
 
   @override

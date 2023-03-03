@@ -92,6 +92,8 @@ class VectorGraphicsCodec {
   static const int _drawImageTag = 47;
   static const int _beginCommandsTag = 48;
   static const int _patternTag = 49;
+  static const int _textPositionTag = 50;
+  static const int _updateTextPositionTag = 51;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -186,6 +188,12 @@ class VectorGraphicsCodec {
           continue;
         case _patternTag:
           _readPattern(buffer, listener);
+          continue;
+        case _textPositionTag:
+          _readTextPosition(buffer, listener);
+          continue;
+        case _updateTextPositionTag:
+          _readUpdateTextPosition(buffer, listener);
           continue;
         default:
           throw StateError('Unknown type tag $type');
@@ -534,21 +542,16 @@ class VectorGraphicsCodec {
   }
 
   /// Write the [text] contents given starting at [x], [y].
-  ///
-  /// [x], [y] are the coordinates of the starting point of the text baseline.
   int writeTextConfig({
     required VectorGraphicsBuffer buffer,
     required String text,
     required String? fontFamily,
-    required double x,
     required double xAnchorMultiplier,
-    required double y,
     required int fontWeight,
     required double fontSize,
     required int decoration,
     required int decorationStyle,
     required int decorationColor,
-    required Float64List? transform,
   }) {
     buffer._checkPhase(_CurrentSection.text);
 
@@ -557,9 +560,7 @@ class VectorGraphicsCodec {
 
     buffer._putUint8(_textConfigTag);
     buffer._putUint16(textId);
-    buffer._putFloat32(x);
     buffer._putFloat32(xAnchorMultiplier);
-    buffer._putFloat32(y);
     buffer._putFloat32(fontSize);
     buffer._putUint8(fontWeight);
     buffer._putUint8(decoration);
@@ -575,8 +576,6 @@ class VectorGraphicsCodec {
       buffer._putUint16(0);
     }
 
-    buffer._writeTransform(transform);
-
     // text-value
     final Uint8List encoded = utf8.encode(text) as Uint8List;
     buffer._putUint16(encoded.length);
@@ -588,15 +587,50 @@ class VectorGraphicsCodec {
   void writeDrawText(
     VectorGraphicsBuffer buffer,
     int textId,
-    int paintId,
+    int? fillId,
+    int? strokeId,
     int? patternId,
   ) {
+    assert(fillId != null || strokeId != null);
     buffer._checkPhase(_CurrentSection.commands);
     buffer._addCommandsTag();
     buffer._putUint8(_drawTextTag);
     buffer._putUint16(textId);
-    buffer._putUint16(paintId);
+    buffer._putUint16(fillId ?? kMaxId);
+    buffer._putUint16(strokeId ?? kMaxId);
     buffer._putUint16(patternId ?? kMaxId);
+  }
+
+  void writeTextPosition(
+    VectorGraphicsBuffer buffer,
+    double? x,
+    double? y,
+    double? dx,
+    double? dy,
+    bool reset,
+    Float64List? transform,
+  ) {
+    buffer._checkPhase(_CurrentSection.textPositions);
+    final int id = buffer._nextTextPositionId++;
+    assert(id < kMaxId);
+
+    buffer._putUint8(_textPositionTag);
+    buffer._putUint16(id);
+
+    buffer._putFloat32(x ?? double.nan);
+    buffer._putFloat32(y ?? double.nan);
+    buffer._putFloat32(dx ?? double.nan);
+    buffer._putFloat32(dy ?? double.nan);
+    buffer._putUint8(reset ? 1 : 0);
+    buffer._writeTransform(transform);
+  }
+
+  void writeUpdateTextPosition(
+      VectorGraphicsBuffer buffer, int textPositionId) {
+    buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
+    buffer._putUint8(_updateTextPositionTag);
+    buffer._putUint16(textPositionId);
   }
 
   void writeClipPath(VectorGraphicsBuffer buffer, int path) {
@@ -803,14 +837,42 @@ class VectorGraphicsCodec {
     listener?.onSize(width, height);
   }
 
+  void _readTextPosition(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    final int id = buffer.getUint16();
+    final double x = buffer.getFloat32();
+    final double y = buffer.getFloat32();
+    final double dx = buffer.getFloat32();
+    final double dy = buffer.getFloat32();
+
+    final bool reset = buffer.getUint8() == 0 ? false : true;
+    final Float64List? transform = buffer.getTransform();
+
+    listener?.onTextPosition(
+      id,
+      x.isNaN ? null : x,
+      y.isNaN ? null : y,
+      dx.isNaN ? null : dx,
+      dy.isNaN ? null : dy,
+      reset,
+      transform,
+    );
+  }
+
+  void _readUpdateTextPosition(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
+    final int textPositionId = buffer.getUint16();
+    listener?.onUpdateTextPosition(textPositionId);
+  }
+
   void _readTextConfig(
     _ReadBuffer buffer,
     VectorGraphicsCodecListener? listener,
   ) {
     final int id = buffer.getUint16();
-    final double dx = buffer.getFloat32();
     final double xAnchorMultiplier = buffer.getFloat32();
-    final double dy = buffer.getFloat32();
     final double fontSize = buffer.getFloat32();
     final int fontWeight = buffer.getUint8();
     final int decoration = buffer.getUint8();
@@ -821,35 +883,41 @@ class VectorGraphicsCodec {
     if (fontFamilyLength > 0) {
       fontFamily = utf8.decode(buffer.getUint8List(fontFamilyLength));
     }
-    Float64List? transform = buffer.getTransform();
     final int textLength = buffer.getUint16();
     final String text = utf8.decode(buffer.getUint8List(textLength));
 
     listener?.onTextConfig(
       text,
       fontFamily,
-      dx,
       xAnchorMultiplier,
-      dy,
       fontWeight,
       fontSize,
       decoration,
       decorationStyle,
       decorationColor,
-      transform,
       id,
     );
   }
 
   void _readDrawText(
-      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int textId = buffer.getUint16();
-    final int paintId = buffer.getUint16();
+    int? fillId = buffer.getUint16();
+    if (fillId == kMaxId) {
+      fillId = null;
+    }
+    int? strokeId = buffer.getUint16();
+    if (strokeId == kMaxId) {
+      strokeId = null;
+    }
+    assert(fillId != null || strokeId != null);
     int? patternId = buffer.getUint16();
     if (patternId == kMaxId) {
       patternId = null;
     }
-    listener?.onDrawText(textId, paintId, patternId);
+    listener?.onDrawText(textId, fillId, strokeId, patternId);
   }
 
   void _readImageConfig(
@@ -991,22 +1059,20 @@ abstract class VectorGraphicsCodecListener {
   void onTextConfig(
     String text,
     String? fontFamily,
-    double x,
     double xAnchorMultiplier,
-    double y,
     int fontWeight,
     double fontSize,
     int decoration,
     int decorationStyle,
     int decorationColor,
-    Float64List? transform,
     int id,
   );
 
   /// A text block has been decoded.
   void onDrawText(
     int textId,
-    int paintId,
+    int? fillId,
+    int? strokeId,
     int? patternId,
   );
 
@@ -1033,6 +1099,20 @@ abstract class VectorGraphicsCodecListener {
   /// [onPatternFinished] is invoked.
   void onPatternStart(int patternId, double x, double y, double width,
       double height, Float64List transform);
+
+  /// Record a new text position.
+  void onTextPosition(
+    int textPositionId,
+    double? x,
+    double? y,
+    double? dx,
+    double? dy,
+    bool reset,
+    Float64List? transform,
+  );
+
+  /// An instruction to update the current text position.
+  void onUpdateTextPosition(int textPositionId);
 }
 
 enum _CurrentSection {
@@ -1041,6 +1121,7 @@ enum _CurrentSection {
   shaders,
   paints,
   paths,
+  textPositions,
   text,
   commands,
 }
@@ -1080,6 +1161,9 @@ class VectorGraphicsBuffer {
 
   /// The next text id to be used.
   int _nextTextId = 0;
+
+  /// The next text position id to be used.
+  int _nextTextPositionId = 0;
 
   /// The next image id to be used.
   int _nextImageId = 0;

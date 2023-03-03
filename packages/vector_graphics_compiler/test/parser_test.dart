@@ -4,6 +4,60 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('text spacing', () {
+    const String svg = '''
+<svg width="185" height="43" viewBox="0 0 185 43" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" fill-rule="evenodd">
+        <text x="35.081" y="15" font-family="OpenSans-Italic, Open Sans" font-size="14" font-style="italic" fill="#333">
+            π( D² - d² )( N - N
+            <tspan y="15" font-size="10">u</tspan>
+            )
+        </text>
+    </g>
+</svg>
+''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(reset: true, x: 35.081, y: 15.0),
+      TextPosition(y: 15.0),
+    ]);
+
+    expect(instructions.text, const <TextConfig>[
+      TextConfig(
+        'π( D² - d² )( N - N',
+        0.0,
+        'OpenSans-Italic, Open Sans',
+        FontWeight.w400,
+        14.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+      ),
+      TextConfig(
+        ' u',
+        0.0,
+        'OpenSans-Italic, Open Sans',
+        FontWeight.w400,
+        10.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+      ),
+      TextConfig(
+        ' )',
+        0.0,
+        'OpenSans-Italic, Open Sans',
+        FontWeight.w400,
+        14.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+      ),
+    ]);
+  });
+
   test('stroke-opacity', () {
     const String strokeOpacitySvg = '''
 <svg viewBox="0 0 10 10">
@@ -17,6 +71,65 @@ void main() {
     expect(
       instructions.paints.single,
       const Paint(stroke: Stroke(color: Color(0x7fff0000))),
+    );
+  });
+
+  test('text attributes are preserved', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(textTspan);
+    expect(
+      instructions.text,
+      const <TextConfig>[
+        TextConfig(
+          ' Some text',
+          0.0,
+          'Roboto-Regular, Roboto',
+          FontWeight.w400,
+          16.0,
+          TextDecoration.none,
+          TextDecorationStyle.solid,
+          Color(0xff000000),
+        ),
+        TextConfig(
+          ' more text.',
+          0.0,
+          'Roboto-Regular, Roboto',
+          FontWeight.w400,
+          16.0,
+          TextDecoration.none,
+          TextDecorationStyle.solid,
+          Color(0xff000000),
+        ),
+        TextConfig(
+          ' Even more text',
+          0.0,
+          'Roboto-Regular, Roboto',
+          FontWeight.w400,
+          16.0,
+          TextDecoration.none,
+          TextDecorationStyle.solid,
+          Color(0xff000000),
+        ),
+        TextConfig(
+          ' text everywhere',
+          0.0,
+          'Roboto-Regular, Roboto',
+          FontWeight.w400,
+          16.0,
+          TextDecoration.none,
+          TextDecorationStyle.solid,
+          Color(0xff000000),
+        ),
+        TextConfig(
+          ' so many lines',
+          0.0,
+          'Roboto-Regular, Roboto',
+          FontWeight.w400,
+          16.0,
+          TextDecoration.none,
+          TextDecorationStyle.solid,
+          Color(0xff000000),
+        ),
+      ],
     );
   });
 
@@ -274,7 +387,6 @@ void main() {
     expect(instructions.text, const <TextConfig>[
       TextConfig(
         'Text anchor start',
-        Point(100.0, 50.0),
         0.0,
         'Roboto',
         FontWeight.w400,
@@ -282,11 +394,9 @@ void main() {
         TextDecoration.none,
         TextDecorationStyle.solid,
         Color(0xff000000),
-        AffineMatrix.identity,
       ),
       TextConfig(
         'Text anchor middle',
-        Point(100.0, 100.0),
         0.5,
         'Roboto',
         FontWeight.w400,
@@ -294,11 +404,9 @@ void main() {
         TextDecoration.none,
         TextDecorationStyle.solid,
         Color(0xff000000),
-        AffineMatrix.identity,
       ),
       TextConfig(
         'Text anchor end',
-        Point(100.0, 150.0),
         1.0,
         'Roboto',
         FontWeight.w400,
@@ -306,7 +414,6 @@ void main() {
         TextDecoration.none,
         TextDecorationStyle.solid,
         Color(0xff000000),
-        AffineMatrix.identity,
       )
     ]);
   });
@@ -319,7 +426,6 @@ void main() {
     expect(instructions.text, const <TextConfig>[
       TextConfig(
         'Overline text',
-        Point(100.0, 60.0),
         0,
         'Roboto',
         FontWeight.w400,
@@ -327,11 +433,9 @@ void main() {
         TextDecoration.overline,
         TextDecorationStyle.solid,
         Color(0xffff0000),
-        AffineMatrix.identity,
       ),
       TextConfig(
         'Strike text',
-        Point(100.0, 120.0),
         0,
         'Roboto',
         FontWeight.w400,
@@ -339,11 +443,9 @@ void main() {
         TextDecoration.lineThrough,
         TextDecorationStyle.solid,
         Color(0xff008000),
-        AffineMatrix.identity,
       ),
       TextConfig(
         'Underline text',
-        Point(100.0, 180.0),
         0,
         'Roboto',
         FontWeight.w400,
@@ -351,7 +453,6 @@ void main() {
         TextDecoration.underline,
         TextDecorationStyle.double,
         Color(0xff008000),
-        AffineMatrix.identity,
       )
     ]);
   });
@@ -476,10 +577,19 @@ void main() {
     );
     expect(instructions.paints.single, const Paint(fill: Fill()));
     expect(
+      instructions.textPositions.single,
+      TextPosition(
+        reset: true,
+        transform: AffineMatrix.identity
+            .translated(-100, 50)
+            .rotated(radians(10))
+            .translated(100, -50),
+      ),
+    );
+    expect(
       instructions.text.single,
-      TextConfig(
+      const TextConfig(
         'a',
-        Point.zero,
         0,
         null,
         normalFontWeight,
@@ -487,10 +597,6 @@ void main() {
         TextDecoration.none,
         TextDecorationStyle.solid,
         Color.opaqueBlack,
-        AffineMatrix.identity
-            .translated(-100, 50)
-            .rotated(radians(10))
-            .translated(100, -50),
       ),
     );
   });
@@ -1041,7 +1147,7 @@ void main() {
   });
 
   test('Parses text with pattern as fill', () {
-    const String textWithPattern = ''' <svg width="600" height="400">
+    const String textWithPattern = '''<svg width="600" height="400">
     <defs>
           <pattern id="textPattern" x="7" y="7" width="10" height="10" patternUnits="userSpaceOnUse">
                   <rect x="5" y="5" width="5" height="5" fill= "#876fc1" />
@@ -1059,8 +1165,25 @@ void main() {
       DrawCommand(DrawCommandType.pattern, objectId: 0),
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
       DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.textPosition, objectId: 0),
       DrawCommand(DrawCommandType.text, objectId: 0, paintId: 1, patternId: 0)
     ]);
+
+    expect(
+      instructions.text,
+      const <TextConfig>[
+        TextConfig(
+          'Text',
+          0.0,
+          null,
+          FontWeight.w400,
+          200.0,
+          TextDecoration.none,
+          TextDecorationStyle.solid,
+          Color(0xff000000),
+        )
+      ],
+    );
   });
 
   test('Defaults image height/width when not specified', () {

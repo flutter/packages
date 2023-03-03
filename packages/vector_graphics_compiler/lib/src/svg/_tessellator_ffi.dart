@@ -68,6 +68,17 @@ class Tessellator extends Visitor<Node, void>
   }
 
   @override
+  Node visitResolvedTextPositionNode(
+      ResolvedTextPositionNode textPositionNode, void data) {
+    return ResolvedTextPositionNode(
+      textPositionNode.textPosition,
+      <Node>[
+        for (Node child in textPositionNode.children) child.accept(this, data)
+      ],
+    );
+  }
+
+  @override
   Node visitResolvedPath(ResolvedPathNode pathNode, void data) {
     final Fill? fill = pathNode.paint.fill;
     final Stroke? stroke = pathNode.paint.stroke;

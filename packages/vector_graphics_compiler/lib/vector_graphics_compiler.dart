@@ -246,20 +246,29 @@ Uint8List _encodeInstructions(VectorInstructions instructions) {
     nextPathId += 1;
   }
 
+  for (final TextPosition position in instructions.textPositions) {
+    codec.writeTextPosition(
+      buffer,
+      position.x,
+      position.y,
+      position.dx,
+      position.dy,
+      position.reset,
+      position.transform?.toMatrix4(),
+    );
+  }
+
   for (final TextConfig textConfig in instructions.text) {
     codec.writeTextConfig(
       buffer: buffer,
       text: textConfig.text,
       fontFamily: textConfig.fontFamily,
-      x: textConfig.baselineStart.x,
       xAnchorMultiplier: textConfig.xAnchorMultiplier,
-      y: textConfig.baselineStart.y,
       fontWeight: textConfig.fontWeight.index,
       fontSize: textConfig.fontSize,
       decoration: textConfig.decoration.mask,
       decorationStyle: textConfig.decorationStyle.index,
       decorationColor: textConfig.decorationColor.value,
-      transform: _encodeMatrix(textConfig.transform),
     );
   }
 
@@ -316,24 +325,20 @@ Uint8List _encodeInstructions(VectorInstructions instructions) {
         );
         break;
 
-      case DrawCommandType.text:
-        if (fillIds.containsKey(command.paintId)) {
-          codec.writeDrawText(
-            buffer,
-            command.objectId!,
-            fillIds[command.paintId]!,
-            command.patternId,
-          );
-        }
-        if (strokeIds.containsKey(command.paintId)) {
-          codec.writeDrawText(
-            buffer,
-            command.objectId!,
-            strokeIds[command.paintId]!,
-            command.patternId,
-          );
-        }
+      case DrawCommandType.textPosition:
+        codec.writeUpdateTextPosition(buffer, command.objectId!);
         break;
+
+      case DrawCommandType.text:
+        codec.writeDrawText(
+          buffer,
+          command.objectId!,
+          fillIds[command.paintId],
+          strokeIds[command.paintId],
+          command.patternId,
+        );
+        break;
+
       case DrawCommandType.image:
         final DrawImageData drawImageData =
             instructions.drawImages[command.objectId!];

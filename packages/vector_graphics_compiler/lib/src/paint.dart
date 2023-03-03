@@ -1230,12 +1230,97 @@ enum TileMode {
   decal,
 }
 
+/// A description of how to update the current text position.
+///
+/// If [reset] is true, this update discards the previous current text position.
+/// Otherwise, it appends to the previous text position.
+@immutable
+class TextPosition {
+  /// See [TextPosition].
+  const TextPosition({
+    this.x,
+    this.y,
+    this.dx,
+    this.dy,
+    this.reset = false,
+    this.transform,
+  });
+
+  /// The horizontal axis coordinate for the current text position.
+  ///
+  /// If null, use the current text position accumulated since the last [reset],
+  /// or 0 if this represents a reset.
+  final double? x;
+
+  /// The horizontal axis coordinate to add to the current text position.
+  ///
+  /// If null, use the current text position accumulated since the last [reset],
+  /// or 0 if this represents a reset.
+  final double? dx;
+
+  /// The vertical axis coordinate for the current text position.
+  ///
+  /// If null, use the current text position accumulated since the last [reset],
+  /// or 0 if this represents a reset.
+  final double? y;
+
+  /// The vertical axis coordinate to add to the current text position.
+  ///
+  /// If null, use the current text position accumulated since the last [reset],
+  /// or 0 if this represents a reset.
+  final double? dy;
+
+  /// If true, reset the current text position using [x] and [y].
+  final bool reset;
+
+  /// A transform applied to the rendered font.
+  ///
+  /// If `null` this implies no transform.
+  final AffineMatrix? transform;
+
+  @override
+  int get hashCode => Object.hash(x, y, dx, dy, reset, transform);
+
+  @override
+  bool operator ==(Object other) {
+    return other is TextPosition &&
+        other.x == x &&
+        other.y == y &&
+        other.dx == dx &&
+        other.dy == dy &&
+        other.reset == reset &&
+        other.transform == transform;
+  }
+
+  @override
+  String toString() {
+    final StringBuffer buffer = StringBuffer();
+    buffer.write('TextPosition(reset: $reset');
+    if (x != null) {
+      buffer.write(', x: $x');
+    }
+    if (y != null) {
+      buffer.write(', y: $y');
+    }
+    if (dx != null) {
+      buffer.write(', dx: $dx');
+    }
+    if (dy != null) {
+      buffer.write(', dy: $dy');
+    }
+    if (transform != null) {
+      buffer.write(', transform: $transform');
+    }
+    buffer.write(')');
+    return buffer.toString();
+  }
+}
+
 /// Additional text specific configuration that is added to the encoding.
 class TextConfig {
   /// Create a new [TextStyle] object.
   const TextConfig(
     this.text,
-    this.baselineStart,
     this.xAnchorMultiplier,
     this.fontFamily,
     this.fontWeight,
@@ -1243,19 +1328,15 @@ class TextConfig {
     this.decoration,
     this.decorationStyle,
     this.decorationColor,
-    this.transform,
   );
 
   /// The text to be rendered.
   final String text;
 
-  /// The coordinate of the starting point of the text baseline.
-  final Point baselineStart;
-
   /// A multiplier for text anchoring.
   ///
   /// This value should be multiplied by the length of the longest line in the
-  /// text and subtracted from [baselineStart]'s x coordinate.
+  /// text and subtracted from x coordinate of the current [TextPosition].
   final double xAnchorMultiplier;
 
   /// The size of the font, only supported as absolute size.
@@ -1276,15 +1357,9 @@ class TextConfig {
   /// The color to use for the decoration, if any.
   final Color decorationColor;
 
-  /// A transform applied to the rendered font.
-  ///
-  /// If `null` this implies no transform.
-  final AffineMatrix? transform;
-
   @override
   int get hashCode => Object.hash(
         text,
-        baselineStart,
         xAnchorMultiplier,
         fontSize,
         fontFamily,
@@ -1292,37 +1367,32 @@ class TextConfig {
         decoration,
         decorationStyle,
         decorationColor,
-        transform,
       );
 
   @override
   bool operator ==(Object other) {
     return other is TextConfig &&
         other.text == text &&
-        other.baselineStart == baselineStart &&
         other.xAnchorMultiplier == xAnchorMultiplier &&
         other.fontSize == fontSize &&
         other.fontFamily == fontFamily &&
         other.fontWeight == fontWeight &&
         other.decoration == decoration &&
         other.decorationStyle == decorationStyle &&
-        other.decorationColor == decorationColor &&
-        other.transform == transform;
+        other.decorationColor == decorationColor;
   }
 
   @override
   String toString() {
     return 'TextConfig('
         "'$text', "
-        '$baselineStart, '
         '$xAnchorMultiplier, '
         "'$fontFamily', "
         '$fontWeight, '
         '$fontSize, '
         '$decoration, '
         '$decorationStyle, '
-        '$decorationColor, '
-        '$transform,)';
+        '$decorationColor,)';
   }
 }
 

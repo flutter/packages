@@ -242,12 +242,17 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   final List<Path> _paths = <Path>[];
   final List<Shader> _shaders = <Shader>[];
   final List<_TextConfig> _textConfig = <_TextConfig>[];
+  final List<_TextPosition> _textPositions = <_TextPosition>[];
   final List<Future<void>> _pendingImages = <Future<void>>[];
   final Map<int, Image> _images = <int, Image>{};
   final Map<int, _PatternState> _patterns = <int, _PatternState>{};
   Path? _currentPath;
   Size _size = Size.zero;
   bool _done = false;
+
+  double? _accumulatedTextPositionX;
+  double _textPositionY = 0;
+  Float64List? _textTransform;
 
   _PatternConfig? _currentPattern;
 
@@ -555,15 +560,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   void onTextConfig(
     String text,
     String? fontFamily,
-    double x,
     double xAnchorMultiplier,
-    double y,
     int fontWeight,
     double fontSize,
     int decoration,
     int decorationStyle,
     int decorationColor,
-    Float64List? transform,
     int id,
   ) {
     final List<TextDecoration> decorations = <TextDecoration>[];
@@ -580,60 +582,117 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     _textConfig.add(_TextConfig(
       text,
       fontFamily,
-      x,
       xAnchorMultiplier,
-      y,
       FontWeight.values[fontWeight],
       fontSize,
       TextDecoration.combine(decorations),
       TextDecorationStyle.values[decorationStyle],
       Color(decorationColor),
-      transform,
     ));
   }
 
   @override
-  void onDrawText(int textId, int paintId, int? patternId) async {
-    final Paint paint = _paints[paintId];
-    if (patternId != null) {
-      paint.shader = _patterns[patternId]!.shader;
+  void onTextPosition(
+    int textPositionId,
+    double? x,
+    double? y,
+    double? dx,
+    double? dy,
+    bool reset,
+    Float64List? transform,
+  ) {
+    _textPositions.add(_TextPosition(x, y, dx, dy, reset, transform));
+  }
+
+  @override
+  void onUpdateTextPosition(int textPositionId) {
+    final _TextPosition position = _textPositions[textPositionId];
+    if (position.reset) {
+      _accumulatedTextPositionX = 0;
+      _textPositionY = 0;
     }
+
+    if (position.x != null) {
+      _accumulatedTextPositionX = position.x;
+    }
+    if (position.y != null) {
+      _textPositionY = position.y ?? _textPositionY;
+    }
+
+    if (position.dx != null) {
+      _accumulatedTextPositionX =
+          (_accumulatedTextPositionX ?? 0) + position.dx!;
+    }
+    if (position.dy != null) {
+      _textPositionY = _textPositionY + position.dy!;
+    }
+
+    _textTransform = position.transform;
+  }
+
+  @override
+  void onDrawText(
+    int textId,
+    int? fillId,
+    int? strokeId,
+    int? patternId,
+  ) async {
     final _TextConfig textConfig = _textConfig[textId];
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-      textDirection: _textDirection,
-    ));
-    builder.pushStyle(TextStyle(
-      locale: _locale,
-      foreground: paint,
-      fontWeight: textConfig.fontWeight,
-      fontSize: textConfig.fontSize,
-      fontFamily: textConfig.fontFamily,
-      decoration: textConfig.decoration,
-      decorationStyle: textConfig.decorationStyle,
-      decorationColor: textConfig.decorationColor,
-    ));
-    builder.addText(textConfig.text);
+    final double dx = _accumulatedTextPositionX ?? 0;
+    final double dy = _textPositionY;
+    double paragraphWidth = 0;
 
-    final Paragraph paragraph = builder.build();
-    paragraph.layout(const ParagraphConstraints(
-      width: double.infinity,
-    ));
+    void _draw(int paintId) {
+      final Paint paint = _paints[paintId];
+      if (patternId != null) {
+        paint.shader = _patterns[patternId]!.shader;
+      }
+      final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
+        textDirection: _textDirection,
+      ));
+      builder.pushStyle(TextStyle(
+        locale: _locale,
+        foreground: paint,
+        fontWeight: textConfig.fontWeight,
+        fontSize: textConfig.fontSize,
+        fontFamily: textConfig.fontFamily,
+        decoration: textConfig.decoration,
+        decorationStyle: textConfig.decorationStyle,
+        decorationColor: textConfig.decorationColor,
+      ));
 
-    if (textConfig.transform != null) {
-      _canvas.save();
-      _canvas.transform(textConfig.transform!);
+      builder.addText(textConfig.text);
+
+      final Paragraph paragraph = builder.build();
+      paragraph.layout(const ParagraphConstraints(
+        width: double.infinity,
+      ));
+      paragraphWidth = paragraph.maxIntrinsicWidth;
+
+      if (_textTransform != null) {
+        _canvas.save();
+        _canvas.transform(_textTransform!);
+      }
+      _canvas.drawParagraph(
+        paragraph,
+        Offset(
+          dx - paragraph.maxIntrinsicWidth * textConfig.xAnchorMultiplier,
+          dy - paragraph.alphabeticBaseline,
+        ),
+      );
+      paragraph.dispose();
+      if (_textTransform != null) {
+        _canvas.restore();
+      }
     }
-    _canvas.drawParagraph(
-      paragraph,
-      Offset(
-        textConfig.dx - paragraph.longestLine * textConfig.xAnchorMultiplier,
-        textConfig.dy - paragraph.alphabeticBaseline,
-      ),
-    );
-    paragraph.dispose();
-    if (textConfig.transform != null) {
-      _canvas.restore();
+
+    if (fillId != null) {
+      _draw(fillId);
     }
+    if (strokeId != null) {
+      _draw(strokeId);
+    }
+    _accumulatedTextPositionX = dx + paragraphWidth;
   }
 
   int _createImageKey(int imageId, int format) {
@@ -697,32 +756,44 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 }
 
+class _TextPosition {
+  const _TextPosition(
+    this.x,
+    this.y,
+    this.dx,
+    this.dy,
+    this.reset,
+    this.transform,
+  );
+
+  final double? x;
+  final double? y;
+  final double? dx;
+  final double? dy;
+  final bool reset;
+  final Float64List? transform;
+}
+
 class _TextConfig {
   const _TextConfig(
     this.text,
     this.fontFamily,
-    this.dx,
     this.xAnchorMultiplier,
-    this.dy,
     this.fontWeight,
     this.fontSize,
     this.decoration,
     this.decorationStyle,
     this.decorationColor,
-    this.transform,
   );
 
   final String text;
   final String? fontFamily;
   final double fontSize;
-  final double dx;
   final double xAnchorMultiplier;
-  final double dy;
   final FontWeight fontWeight;
   final TextDecoration decoration;
   final TextDecorationStyle decorationStyle;
   final Color decorationColor;
-  final Float64List? transform;
 }
 
 /// An exception thrown if decoding fails.

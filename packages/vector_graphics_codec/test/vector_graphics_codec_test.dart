@@ -465,17 +465,14 @@ void main() {
       buffer: buffer,
       text: 'Hello',
       fontFamily: 'Roboto',
-      x: 10,
       xAnchorMultiplier: 0,
-      y: 12,
       fontWeight: 0,
       fontSize: 16,
       decoration: 0,
       decorationStyle: 0,
       decorationColor: 0,
-      transform: null,
     );
-    codec.writeDrawText(buffer, textId, paintId, null);
+    codec.writeDrawText(buffer, textId, paintId, null, null);
     codec.decode(buffer.done(), listener);
 
     expect(listener.commands, [
@@ -490,75 +487,8 @@ void main() {
         id: paintId,
         shaderId: null,
       ),
-      OnTextConfig(
-        'Hello',
-        10,
-        0,
-        12,
-        16,
-        'Roboto',
-        0,
-        0,
-        0,
-        0,
-        null,
-        textId,
-      ),
-      OnDrawText(textId, paintId, null),
-    ]);
-  });
-
-  test('Encodes text with transform', () {
-    final buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
-
-    final Float64List transform = Float64List(16);
-    transform[15] = 10;
-    final int paintId = codec.writeFill(buffer, 0xFFAABBAA, 0);
-    final int textId = codec.writeTextConfig(
-      buffer: buffer,
-      text: 'Hello',
-      fontFamily: 'Roboto',
-      x: 10,
-      xAnchorMultiplier: 0,
-      y: 12,
-      fontWeight: 0,
-      fontSize: 16,
-      decoration: 0,
-      decorationStyle: 0,
-      decorationColor: 0,
-      transform: transform,
-    );
-    codec.writeDrawText(buffer, textId, paintId, null);
-    codec.decode(buffer.done(), listener);
-
-    expect(listener.commands, [
-      OnPaintObject(
-        color: 0xFFAABBAA,
-        strokeCap: null,
-        strokeJoin: null,
-        blendMode: 0,
-        strokeMiterLimit: null,
-        strokeWidth: null,
-        paintStyle: 0,
-        id: paintId,
-        shaderId: null,
-      ),
-      OnTextConfig(
-        'Hello',
-        10,
-        0,
-        12,
-        16,
-        'Roboto',
-        0,
-        0,
-        0,
-        0,
-        transform,
-        textId,
-      ),
-      OnDrawText(textId, paintId, null),
+      OnTextConfig('Hello', 0, 16, 'Roboto', 0, 0, 0, 0, textId),
+      OnDrawText(textId, paintId, null, null),
     ]);
   });
 
@@ -571,17 +501,14 @@ void main() {
       buffer: buffer,
       text: 'Hello',
       fontFamily: null,
-      x: 10,
       xAnchorMultiplier: 0,
-      y: 12,
       fontWeight: 0,
       fontSize: 16,
       decoration: 0,
       decorationStyle: 0,
       decorationColor: 0,
-      transform: null,
     );
-    codec.writeDrawText(buffer, textId, paintId, null);
+    codec.writeDrawText(buffer, textId, paintId, null, null);
     codec.decode(buffer.done(), listener);
 
     expect(listener.commands, [
@@ -596,21 +523,8 @@ void main() {
         id: paintId,
         shaderId: null,
       ),
-      OnTextConfig(
-        'Hello',
-        10,
-        0,
-        12,
-        16,
-        null,
-        0,
-        0,
-        0,
-        0,
-        null,
-        textId,
-      ),
-      OnDrawText(textId, paintId, null),
+      OnTextConfig('Hello', 0, 16, null, 0, 0, 0, 0, textId),
+      OnDrawText(textId, paintId, null, null),
     ]);
   });
 
@@ -623,17 +537,14 @@ void main() {
       buffer: buffer,
       text: '',
       fontFamily: null,
-      x: 10,
       xAnchorMultiplier: 0,
-      y: 12,
       fontWeight: 0,
       fontSize: 16,
       decoration: 0,
       decorationStyle: 0,
       decorationColor: 0,
-      transform: null,
     );
-    codec.writeDrawText(buffer, textId, paintId, null);
+    codec.writeDrawText(buffer, textId, paintId, null, null);
     codec.decode(buffer.done(), listener);
 
     expect(listener.commands, [
@@ -648,21 +559,8 @@ void main() {
         id: paintId,
         shaderId: null,
       ),
-      OnTextConfig(
-        '',
-        10,
-        0,
-        12,
-        16,
-        null,
-        0,
-        0,
-        0,
-        0,
-        null,
-        textId,
-      ),
-      OnDrawText(textId, paintId, null),
+      OnTextConfig('', 0, 16, null, 0, 0, 0, 0, textId),
+      OnDrawText(textId, paintId, null, null),
     ]);
   });
 
@@ -866,6 +764,25 @@ class TestListener extends VectorGraphicsCodecListener {
   }
 
   @override
+  void onTextPosition(int textPositionId, double? x, double? y, double? dx,
+      double? dy, bool reset, Float64List? transform) {
+    commands.add(OnTextPosition(
+      id: textPositionId,
+      x: x,
+      y: y,
+      dx: dx,
+      dy: dy,
+      reset: reset,
+      transform: transform,
+    ));
+  }
+
+  @override
+  void onUpdateTextPosition(int textPositionId) {
+    commands.add(OnUpdateTextPosition(textPositionId));
+  }
+
+  @override
   void onPaintObject({
     required int color,
     required int? strokeCap,
@@ -1004,36 +921,30 @@ class TestListener extends VectorGraphicsCodecListener {
   void onTextConfig(
     String text,
     String? fontFamily,
-    double dx,
     double xAnchorMultiplier,
-    double dy,
     int fontWeight,
     double fontSize,
     int decoration,
     int decorationStyle,
     int decorationColor,
-    Float64List? transform,
     int id,
   ) {
     commands.add(OnTextConfig(
       text,
-      dx,
       xAnchorMultiplier,
-      dy,
       fontSize,
       fontFamily,
       fontWeight,
       decoration,
       decorationStyle,
       decorationColor,
-      transform,
       id,
     ));
   }
 
   @override
-  void onDrawText(int textId, int paintId, int? patternId) {
-    commands.add(OnDrawText(textId, paintId, patternId));
+  void onDrawText(int textId, int? fillId, int? strokeId, int? patternId) {
+    commands.add(OnDrawText(textId, fillId, strokeId, patternId));
   }
 
   @override
@@ -1066,6 +977,26 @@ class TestListener extends VectorGraphicsCodecListener {
   void onPatternFinished() {
     commands.add(const OnPatternFinished());
   }
+}
+
+class OnTextPosition {
+  const OnTextPosition({
+    required this.id,
+    this.x,
+    this.y,
+    this.dx,
+    this.dy,
+    required this.reset,
+    required this.transform,
+  });
+
+  final int id;
+  final double? x;
+  final double? y;
+  final double? dx;
+  final double? dy;
+  final bool reset;
+  final Float64List? transform;
 }
 
 class OnMask {
@@ -1429,23 +1360,18 @@ class OnSize {
 class OnTextConfig {
   const OnTextConfig(
     this.text,
-    this.x,
     this.xAnchorMultiplier,
-    this.y,
     this.fontSize,
     this.fontFamily,
     this.fontWeight,
     this.decoration,
     this.decorationStyle,
     this.decorationColor,
-    this.transform,
     this.id,
   );
 
   final String text;
-  final double x;
   final double xAnchorMultiplier;
-  final double y;
   final double fontSize;
   final String? fontFamily;
   final int fontWeight;
@@ -1453,21 +1379,17 @@ class OnTextConfig {
   final int decorationStyle;
   final int decorationColor;
   final int id;
-  final Float64List? transform;
 
   @override
   int get hashCode => Object.hash(
         text,
-        x,
         xAnchorMultiplier,
-        y,
         fontSize,
         fontFamily,
         fontWeight,
         decoration,
         decorationStyle,
         decorationColor,
-        Object.hashAll(transform ?? Float64List(0)),
         id,
       );
 
@@ -1475,42 +1397,41 @@ class OnTextConfig {
   bool operator ==(Object other) =>
       other is OnTextConfig &&
       other.text == text &&
-      other.x == x &&
       other.xAnchorMultiplier == xAnchorMultiplier &&
-      other.y == y &&
       other.fontSize == fontSize &&
       other.fontFamily == fontFamily &&
       other.fontWeight == fontWeight &&
       other.decoration == decoration &&
       other.decorationStyle == decorationStyle &&
       other.decorationColor == decorationColor &&
-      _listEquals(other.transform, transform) &&
       other.id == id;
 
   @override
   String toString() =>
-      'OnTextConfig($text, $x, $y, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $transform, $id)';
+      'OnTextConfig($text, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $id)';
 }
 
 class OnDrawText {
-  const OnDrawText(this.textId, this.paintId, this.patternId);
+  const OnDrawText(this.textId, this.fillId, this.strokeId, this.patternId);
 
   final int textId;
-  final int paintId;
+  final int? fillId;
+  final int? strokeId;
   final int? patternId;
 
   @override
-  int get hashCode => Object.hash(textId, paintId, patternId);
+  int get hashCode => Object.hash(textId, fillId, strokeId, patternId);
 
   @override
   bool operator ==(Object other) =>
       other is OnDrawText &&
       other.textId == textId &&
-      other.paintId == paintId &&
+      other.fillId == fillId &&
+      other.strokeId == strokeId &&
       other.patternId == patternId;
 
   @override
-  String toString() => 'OnDrawText($textId, $paintId, $patternId)';
+  String toString() => 'OnDrawText($textId, $fillId, $strokeId, $patternId)';
 }
 
 class OnImage {
@@ -1622,4 +1543,17 @@ bool _listEquals<E>(List<E>? left, List<E>? right) {
     }
   }
   return true;
+}
+
+class OnUpdateTextPosition {
+  const OnUpdateTextPosition(this.id);
+
+  final int id;
+
+  @override
+  int get hashCode => id;
+
+  @override
+  bool operator ==(Object other) =>
+      other is OnUpdateTextPosition && other.id == id;
 }

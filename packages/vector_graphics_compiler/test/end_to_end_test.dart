@@ -209,22 +209,20 @@ void main() {
         id: 3,
         shaderId: null,
       ),
-      const OnTextConfig('Plain text Roboto', 100, 0, 50, 55, 'Roboto', 3, 0, 0,
-          4278190080, null, 0),
-      const OnTextConfig('Plain text Verdana', 100, 0, 100, 55, 'Verdana', 3, 0,
-          0, 4278190080, null, 1),
-      const OnTextConfig('Bold text Verdana', 100, 0, 150, 55, 'Verdana', 6, 0,
-          0, 4278190080, null, 2),
-      const OnTextConfig('Stroked bold line', 150, 0, 215, 55, 'Roboto', 8, 0,
-          0, 4278190080, null, 3),
       const OnTextConfig(
-          'Line 3', 150, 0, 50, 55, 'Roboto', 3, 0, 0, 4278190080, null, 4),
-      const OnDrawText(0, 0, null),
-      const OnDrawText(1, 0, null),
-      const OnDrawText(2, 0, null),
-      const OnDrawText(3, 1, null),
-      const OnDrawText(3, 2, null),
-      const OnDrawText(4, 3, null),
+          'Plain text Roboto', 0, 55, 'Roboto', 3, 0, 0, 4278190080, 0),
+      const OnTextConfig(
+          'Plain text Verdana', 0, 55, 'Verdana', 3, 0, 0, 4278190080, 1),
+      const OnTextConfig(
+          'Bold text Verdana', 0, 55, 'Verdana', 6, 0, 0, 4278190080, 2),
+      const OnTextConfig(
+          ' Stroked bold line', 0, 55, 'Roboto', 8, 0, 0, 4278190080, 3),
+      const OnTextConfig(' Line 3', 0, 55, 'Roboto', 3, 0, 0, 4278190080, 4),
+      const OnDrawText(0, 0, null, null),
+      const OnDrawText(1, 0, null, null),
+      const OnDrawText(2, 0, null, null),
+      const OnDrawText(3, 1, 2, null),
+      const OnDrawText(4, 3, null, null),
     ]);
   });
 
@@ -335,6 +333,17 @@ void main() {
 
 class TestListener extends VectorGraphicsCodecListener {
   final List<Object> commands = <Object>[];
+
+  @override
+  void onTextPosition(int textPositionId, double? x, double? y, double? dx,
+      double? dy, bool reset, Float64List? transform) {
+    // TODO: implement onTextPosition
+  }
+
+  @override
+  void onUpdateTextPosition(int textPositionId) {
+    // TODO: implement onUpdateTextPosition
+  }
 
   @override
   void onDrawPath(int pathId, int? paintId, int? patternId) {
@@ -485,36 +494,30 @@ class TestListener extends VectorGraphicsCodecListener {
   void onTextConfig(
     String text,
     String? fontFamily,
-    double dx,
     double xAnchorMultiplier,
-    double dy,
     int fontWeight,
     double fontSize,
     int decoration,
     int decorationStyle,
     int decorationColor,
-    Float64List? transform,
     int id,
   ) {
     commands.add(OnTextConfig(
       text,
-      dx,
       xAnchorMultiplier,
-      dy,
       fontSize,
       fontFamily,
       fontWeight,
       decoration,
       decorationStyle,
       decorationColor,
-      transform,
       id,
     ));
   }
 
   @override
-  void onDrawText(int textId, int paintId, int? patternId) {
-    commands.add(OnDrawText(textId, paintId, patternId));
+  void onDrawText(int textId, int? fillId, int? strokeId, int? patternId) {
+    commands.add(OnDrawText(textId, fillId, strokeId, patternId));
   }
 
   @override
@@ -906,28 +909,22 @@ class OnSize {
 class OnTextConfig {
   const OnTextConfig(
     this.text,
-    this.x,
     this.xAnchorMultiplier,
-    this.y,
     this.fontSize,
     this.fontFamily,
     this.fontWeight,
     this.decoration,
     this.decorationStyle,
     this.decorationColor,
-    this.transform,
     this.id,
   );
 
   final String text;
-  final double x;
   final double xAnchorMultiplier;
-  final double y;
   final double fontSize;
   final String? fontFamily;
   final int fontWeight;
   final int id;
-  final Float64List? transform;
   final int decoration;
   final int decorationStyle;
   final int decorationColor;
@@ -935,16 +932,13 @@ class OnTextConfig {
   @override
   int get hashCode => Object.hash(
         text,
-        x,
         xAnchorMultiplier,
-        y,
         fontSize,
         fontFamily,
         fontWeight,
         decoration,
         decorationStyle,
         decorationColor,
-        Object.hashAll(transform ?? <double>[]),
         id,
       );
 
@@ -952,42 +946,41 @@ class OnTextConfig {
   bool operator ==(Object other) =>
       other is OnTextConfig &&
       other.text == text &&
-      other.x == x &&
       other.xAnchorMultiplier == xAnchorMultiplier &&
-      other.y == y &&
       other.fontSize == fontSize &&
       other.fontFamily == fontFamily &&
       other.fontWeight == fontWeight &&
       other.decoration == decoration &&
       other.decorationStyle == decorationStyle &&
       other.decorationColor == decorationColor &&
-      _listEquals(other.transform, transform) &&
       other.id == id;
 
   @override
   String toString() =>
-      'OnTextConfig($text, $x (anchor: $xAnchorMultiplier), $y, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $transform, $id)';
+      'OnTextConfig($text, (anchor: $xAnchorMultiplier), $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $id)';
 }
 
 class OnDrawText {
-  const OnDrawText(this.textId, this.paintId, this.patternId);
+  const OnDrawText(this.textId, this.fillId, this.strokeId, this.patternId);
 
   final int textId;
-  final int paintId;
+  final int? fillId;
+  final int? strokeId;
   final int? patternId;
 
   @override
-  int get hashCode => Object.hash(textId, paintId, patternId);
+  int get hashCode => Object.hash(textId, fillId, strokeId, patternId);
 
   @override
   bool operator ==(Object other) =>
       other is OnDrawText &&
       other.textId == textId &&
-      other.paintId == paintId &&
+      other.fillId == fillId &&
+      other.strokeId == strokeId &&
       other.patternId == patternId;
 
   @override
-  String toString() => 'OnDrawText($textId, $paintId, $patternId)';
+  String toString() => 'OnDrawText($textId, $fillId, $strokeId, $patternId)';
 }
 
 class OnImage {

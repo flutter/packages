@@ -31,6 +31,8 @@ typedef _ParseFunc = void Function(
     SvgParser parserState, bool warningsAsErrors);
 typedef _PathFunc = Path? Function(SvgParser parserState);
 
+final RegExp _whitespacePattern = RegExp(r'\s');
+
 const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'svg': _Elements.svg,
   'g': _Elements.g,
@@ -43,7 +45,8 @@ const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'linearGradient': _Elements.linearGradient,
   'clipPath': _Elements.clipPath,
   'image': _Elements.image,
-  'text': _Elements.text,
+  'text': _Elements.textOrTspan,
+  'tspan': _Elements.textOrTspan,
 };
 
 const Map<String, _PathFunc> _svgPathFuncs = <String, _PathFunc>{
@@ -111,6 +114,31 @@ class _Elements {
     return;
   }
 
+  static void textOrTspan(SvgParser parserState, bool warningsAsErrors) {
+    if (parserState._currentStartElement?.isSelfClosing == true) {
+      return;
+    }
+    final ParentNode parent = parserState.currentGroup!;
+    final XmlStartElementEvent element = parserState._currentStartElement!;
+
+    final TextPositionNode group = TextPositionNode(
+      parserState._currentAttributes,
+      reset: element.localName == 'text',
+    );
+
+    parent.addChild(
+      group,
+      clipId: parserState._currentAttributes.clipPathId,
+      clipResolver: parserState._definitions.getClipPath,
+      maskId: parserState.attribute('mask'),
+      maskResolver: parserState._definitions.getDrawable,
+      patternId: parserState._definitions.getPattern(parserState),
+      patternResolver: parserState._definitions.getDrawable,
+    );
+    parserState.addGroup(element, group);
+    return;
+  }
+
   static void symbol(SvgParser parserState, bool warningsAsErrors) {
     final ParentNode group = ParentNode(parserState._currentAttributes);
     parserState.addGroup(parserState._currentStartElement!, group);
@@ -133,10 +161,8 @@ class _Elements {
       patternHeight = viewBox.height;
     }
 
-    final String rawX = attributes.raw['x'] ?? '0';
-    final String rawY = attributes.raw['y'] ?? '0';
-    final double x = parseDecimalOrPercentage(rawX);
-    final double y = parseDecimalOrPercentage(rawY);
+    final String? rawX = attributes.raw['x'];
+    final String? rawY = attributes.raw['y'];
     final String id = parserState.buildUrlIri();
     parserState.patternIds.add(id);
     final SvgAttributes newAttributes = SvgAttributes._(
@@ -154,8 +180,8 @@ class _Elements {
         fontFamily: attributes.fontFamily,
         fontWeight: attributes.fontWeight,
         fontSize: attributes.fontSize,
-        x: x,
-        y: y,
+        x: DoubleOrPercentage.fromString(rawX),
+        y: DoubleOrPercentage.fromString(rawY),
         width: patternWidth,
         height: patternHeight);
 
@@ -393,8 +419,6 @@ class _Elements {
     return;
   }
 
-  static final RegExp _whitespacePattern = RegExp(r'\s');
-
   static void image(
     SvgParser parserState,
     bool warningsAsErrors,
@@ -435,65 +459,6 @@ class _Elements {
       throw UnimplementedError('Image data format not supported: $xlinkHref');
     }
     return;
-  }
-
-  static Future<void> text(
-    SvgParser parserState,
-    bool warningsAsErrors,
-  ) async {
-    assert(parserState.currentGroup != null);
-    if (parserState._currentStartElement!.isSelfClosing) {
-      return;
-    }
-    final List<SvgAttributes> currentAttributes = <SvgAttributes>[
-      parserState._currentAttributes
-    ];
-
-    SvgAttributes computeCurrentAttributes() {
-      final SvgAttributes current = currentAttributes.last;
-      final SvgAttributes newAttributes = parserState._currentAttributes
-          .applyParent(current, includePosition: true);
-      currentAttributes.add(newAttributes);
-      return newAttributes;
-    }
-
-    void appendText(String text) {
-      if (text.isEmpty) {
-        return;
-      }
-      final SvgAttributes attributes = computeCurrentAttributes();
-      final String rawX = attributes.raw['x'] ?? '0';
-      final String rawY = attributes.raw['y'] ?? '0';
-      final bool absolute =
-          !isPercentage(rawX); // TODO: do we need to handle mixed case.
-      final double x = parseDecimalOrPercentage(rawX);
-      final double y = parseDecimalOrPercentage(rawY);
-      parserState.currentGroup!.addChild(
-        TextNode(
-          text,
-          Point(x, y),
-          absolute,
-          parserState.parseFontSize(attributes.raw['font-size']),
-          FontWeight.values[
-              parserState.parseFontWeight(attributes.raw['font-weight'])],
-          attributes,
-        ),
-        patternId: parserState._definitions.getPattern(parserState),
-        clipResolver: parserState._definitions.getClipPath,
-        maskResolver: parserState._definitions.getDrawable,
-        patternResolver: parserState._definitions.getDrawable,
-      );
-    }
-
-    for (XmlEvent event in parserState._readSubtree()) {
-      if (event is XmlCDATAEvent) {
-        appendText(event.text.trim());
-      } else if (event is XmlTextEvent) {
-        appendText(event.text.trim());
-      } else if (event is XmlEndElementEvent) {
-        currentAttributes.removeLast();
-      }
-    }
   }
 }
 
@@ -684,6 +649,8 @@ class SvgParser {
     }
   }
 
+  XmlEndElementEvent? _lastEndElementEvent;
+
   Iterable<XmlEvent> _readSubtree() sync* {
     final int subtreeStartDepth = depth;
     while (_eventIterator.moveNext()) {
@@ -721,6 +688,53 @@ class SvgParser {
     }
   }
 
+  static final RegExp _contiguousSpaceMatcher = RegExp(r' +');
+  bool _lastTextEndedWithSpace = false;
+  void _appendText(String text) {
+    assert(_inTextOrTSpan);
+
+    assert(_whitespacePattern.pattern == r'\s');
+    // Not from the spec, but seems like how Chrome behaves:
+    final bool prependSpace = (text.startsWith(_whitespacePattern) &&
+            _lastEndElementEvent?.localName == 'tspan') ||
+        _lastTextEndedWithSpace;
+
+    _lastTextEndedWithSpace =
+        text.startsWith(_whitespacePattern, text.length - 1);
+
+    // From the spec:
+    //   First, it will remove all newline characters.
+    //   Then it will convert all tab characters into space characters.
+    //   Then, it will strip off all leading and trailing space characters.
+    //   Then, all contiguous space characters will be consolidated.
+    text = text
+        .replaceAll('\n', '')
+        .replaceAll('\t', ' ')
+        .trim()
+        .replaceAll(_contiguousSpaceMatcher, ' ');
+
+    if (text.isEmpty) {
+      return;
+    }
+
+    currentGroup?.addChild(
+      TextNode(
+        prependSpace ? ' $text' : text,
+        _currentAttributes,
+      ),
+      // Do not supply pattern/clip/mask IDs, those are handled by the group
+      // text or tspan this text is part of.
+      clipResolver: _definitions.getClipPath,
+      maskResolver: _definitions.getDrawable,
+      patternResolver: _definitions.getDrawable,
+    );
+  }
+
+  bool get _inTextOrTSpan =>
+      _parentDrawables.isNotEmpty &&
+      (_parentDrawables.last.name == 'text' ||
+          _parentDrawables.last.name == 'tspan');
+
   void _parseTree() {
     for (XmlEvent event in _readSubtree()) {
       if (event is XmlStartElementEvent) {
@@ -728,7 +742,6 @@ class SvgParser {
           continue;
         }
         final _ParseFunc? parseFunc = _svgElementParsers[event.name];
-        parseFunc?.call(this, _warningsAsErrors);
         if (parseFunc == null) {
           if (!event.isSelfClosing) {
             _discardSubtree();
@@ -737,9 +750,17 @@ class SvgParser {
             unhandledElement(event);
             return true;
           }());
+        } else {
+          parseFunc(this, _warningsAsErrors);
         }
       } else if (event is XmlEndElementEvent) {
         endElement(event);
+      } else if (_inTextOrTSpan) {
+        if (event is XmlCDATAEvent) {
+          _appendText(event.text);
+        } else if (event is XmlTextEvent) {
+          _appendText(event.text);
+        }
       }
     }
     if (_root == null) {
@@ -879,6 +900,11 @@ class SvgParser {
     if (event.name == _parentDrawables.last.name) {
       _parentDrawables.removeLast();
     }
+    _lastEndElementEvent = event;
+    if (event.name == 'text') {
+      // reset state.
+      _lastTextEndedWithSpace = false;
+    }
   }
 
   /// Prints an error for unhandled elements.
@@ -935,15 +961,9 @@ class SvgParser {
   };
 
   /// Parses a `font-size` attribute.
-  double parseFontSize(
-    String? raw, {
-    double? parentValue,
-  }) {
-    // Not specified in spec, but the default in many browsers.
-    const double kDefaultFontSize = 16;
-
+  double? parseFontSize(String? raw) {
     if (raw == null || raw == '') {
-      return kDefaultFontSize;
+      return null;
     }
 
     double? ret = parseDoubleWithUnits(
@@ -960,19 +980,15 @@ class SvgParser {
       return ret;
     }
 
-    if (raw == 'larger') {
-      if (parentValue == null) {
-        return _kTextSizeMap['large']!;
-      }
-      return parentValue * 1.2;
-    }
-
-    if (raw == 'smaller') {
-      if (parentValue == null) {
-        return _kTextSizeMap['small']!;
-      }
-      return parentValue / 1.2;
-    }
+    // TODO(dnfield): support 'larger' and 'smaller'.
+    // Rough idea for how to do this: this method returns a struct that contains
+    // either a double? fontSize or a double? multiplier.
+    // Larger multiplier: 1.2
+    // Smaller multiplier: .8
+    // When resolving the font size later, multiple the incoming size by the
+    // multiplier if specified.
+    // There was once an implementation of this which was definitely not
+    // correct but probably not used much either.
 
     throw StateError('Could not parse font-size: $raw');
   }
@@ -1190,16 +1206,6 @@ class SvgParser {
     return parseDoubleWithUnits(rawDashOffset);
   }
 
-  Color? _determineFillColor(
-    String rawFill,
-    Color? currentColor,
-    String? id,
-  ) {
-    final Color? color = parseColor(rawFill, attributeName: 'fill', id: id);
-
-    return color;
-  }
-
   /// Applies a transform to a path if the [attributes] contain a `transform`.
   Path applyTransformIfNeeded(Path path, AffineMatrix? parentTransform) {
     final AffineMatrix? transform = parseTransform(attribute('transform'));
@@ -1259,33 +1265,36 @@ class SvgParser {
   }
 
   /// Parse the raw font weight string.
-  int parseFontWeight(String? fontWeight) {
-    if (fontWeight == null || fontWeight == 'normal') {
-      return normalFontWeight.index;
+  FontWeight? parseFontWeight(String? fontWeight) {
+    if (fontWeight == null) {
+      return null;
     }
-    if (fontWeight == 'bold') {
-      return boldFontWeight.index;
-    }
+
     switch (fontWeight) {
+      case 'normal':
+        return normalFontWeight;
+      case 'bold':
+        return boldFontWeight;
       case '100':
-        return FontWeight.w100.index;
+        return FontWeight.w100;
       case '200':
-        return FontWeight.w200.index;
+        return FontWeight.w200;
       case '300':
-        return FontWeight.w300.index;
+        return FontWeight.w300;
       case '400':
-        return FontWeight.w400.index;
+        return FontWeight.w400;
       case '500':
-        return FontWeight.w500.index;
+        return FontWeight.w500;
       case '600':
-        return FontWeight.w600.index;
+        return FontWeight.w600;
       case '700':
-        return FontWeight.w700.index;
+        return FontWeight.w700;
       case '800':
-        return FontWeight.w800.index;
+        return FontWeight.w800;
       case '900':
-        return FontWeight.w900.index;
+        return FontWeight.w900;
     }
+
     throw StateError('Invalid "font-weight": $fontWeight');
   }
 
@@ -1587,11 +1596,12 @@ class SvgParser {
       );
     }
 
-    final Color? fillColor = _determineFillColor(
-      rawFill,
-      currentColor,
-      id,
-    );
+    Color? fillColor = parseColor(rawFill, attributeName: 'fill', id: id);
+
+    if ((fillColor?.a ?? 255) != 255) {
+      opacity = fillColor!.a / 255;
+      fillColor = fillColor.withOpacity(1);
+    }
 
     return SvgFillAttributes._(
       _definitions,
@@ -1615,9 +1625,20 @@ class SvgParser {
     final Color? color =
         parseColor(attributeMap['color'], attributeName: 'color', id: id) ??
             currentColor;
+
+    final String? rawX = attributeMap['x'];
+    final String? rawY = attributeMap['y'];
+
+    final String? rawDx = attributeMap['dx'];
+    final String? rawDy = attributeMap['dy'];
+
     return SvgAttributes._(
         raw: attributeMap,
         id: id,
+        x: DoubleOrPercentage.fromString(rawX),
+        y: DoubleOrPercentage.fromString(rawY),
+        dx: DoubleOrPercentage.fromString(rawDx),
+        dy: DoubleOrPercentage.fromString(rawDy),
         href: attributeMap['href'],
         color: color,
         stroke: _parseStrokeAttributes(
@@ -1815,8 +1836,10 @@ class SvgAttributes {
     this.textDecorationStyle,
     this.textDecorationColor,
     this.x,
+    this.dx,
     this.textAnchorMultiplier,
     this.y,
+    this.dy,
     this.width,
     this.height,
   });
@@ -1939,7 +1962,7 @@ class SvgAttributes {
   final String? fontFamily;
 
   /// The font weight attribute.
-  final int? fontWeight;
+  final FontWeight? fontWeight;
 
   /// The `font-size` attribute.
   final double? fontSize;
@@ -1960,13 +1983,19 @@ class SvgAttributes {
   final double? height;
 
   /// The x translation.
-  final double? x;
+  final DoubleOrPercentage? x;
 
   /// A multiplier for text-anchoring.
   final double? textAnchorMultiplier;
 
   /// The y translation.
-  final double? y;
+  final DoubleOrPercentage? y;
+
+  /// The relative x translation.
+  final DoubleOrPercentage? dx;
+
+  /// The relative y translation.
+  final DoubleOrPercentage? dy;
 
   /// A copy of these attributes after absorbing a saveLayer.
   ///
@@ -2037,11 +2066,56 @@ class SvgAttributes {
       textDecorationStyle: textDecorationStyle ?? parent.textDecorationStyle,
       textDecorationColor: textDecorationColor ?? parent.textDecorationColor,
       textAnchorMultiplier: textAnchorMultiplier ?? parent.textAnchorMultiplier,
-      x: x ?? parent.x,
-      y: y ?? parent.y,
       height: height ?? parent.height,
       width: width ?? parent.width,
+      x: x,
+      y: y,
+      dx: dx,
+      dy: dy,
     );
+  }
+}
+
+/// A value that represents either an absolute pixel coordinate or a percentage
+/// of a bounding dimension.
+@immutable
+class DoubleOrPercentage {
+  const DoubleOrPercentage._(this._value, this._isPercentage);
+
+  /// Constructs a [DoubleOrPercentage] from a raw SVG attribute string.
+  static DoubleOrPercentage? fromString(String? raw) {
+    if (raw == null || raw == '') {
+      return null;
+    }
+
+    if (isPercentage(raw)) {
+      return DoubleOrPercentage._(parsePercentage(raw), true);
+    }
+    return DoubleOrPercentage._(parseDouble(raw)!, false);
+  }
+
+  final double _value;
+  final bool _isPercentage;
+
+  /// Calculates the result of applying this dimension within [bound].
+  ///
+  /// If this is a percentage, it will return a percentage of bound. Otherwise,
+  /// it returns the value of this.
+  double calculate(double bound) {
+    if (_isPercentage) {
+      return _value * bound;
+    }
+    return _value;
+  }
+
+  @override
+  int get hashCode => Object.hash(_value, _isPercentage);
+
+  @override
+  bool operator ==(Object other) {
+    return other is DoubleOrPercentage &&
+        other._isPercentage == _isPercentage &&
+        other._value == _value;
   }
 }
 

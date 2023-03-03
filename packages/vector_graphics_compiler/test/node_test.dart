@@ -11,10 +11,6 @@ void main() {
   test('TextNode returns null for Paint if stroke and fill are missing', () {
     final TextNode node = TextNode(
       'text',
-      Point.zero,
-      true,
-      1,
-      FontWeight.w500,
       SvgAttributes.empty,
     );
     expect(node.computePaint(Rect.largest, AffineMatrix.identity), null);

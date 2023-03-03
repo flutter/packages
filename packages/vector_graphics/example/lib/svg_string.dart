@@ -72,8 +72,9 @@ class _MyAppState extends State<MyApp> {
           _gzVgLength = gzip.encode(data.buffer.asUint8List()).length;
           _data = data;
         });
-      }, onError: (Object error) {
+      }, onError: (Object error, StackTrace stack) {
         debugPrint(error.toString());
+        debugPrint(stack.toString());
       });
     });
   }
