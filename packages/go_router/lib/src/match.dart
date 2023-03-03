@@ -29,7 +29,6 @@ class RouteMatch<T extends Object?> {
     required String parentSubloc, // e.g. /family/f2
     required Map<String, String> pathParameters,
     required Object? extra,
-    Completer<dynamic>? completer,
   }) {
     if (route is ShellRoute) {
       return RouteMatch<dynamic>(
