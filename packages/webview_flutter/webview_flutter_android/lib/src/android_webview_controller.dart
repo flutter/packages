@@ -355,7 +355,9 @@ class AndroidWebViewController extends PlatformWebViewController {
     return _webView.settings.setMediaPlaybackRequiresUserGesture(require);
   }
 
-  /// Sets the text zoom of the page in percent. The default is 100.
+  /// Sets the text zoom of the page in percent.
+  ///
+  /// The default is 100.
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
 
