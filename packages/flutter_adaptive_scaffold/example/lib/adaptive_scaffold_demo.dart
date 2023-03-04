@@ -32,6 +32,9 @@ class MyApp extends StatelessWidget {
             color: Colors.black,
           ),
         ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          type: BottomNavigationBarType.fixed,
+        ),
       ),
       home: const MyHomePage(),
     );
@@ -60,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-            color: Colors.grey,
+            color: const Color.fromARGB(255, 255, 201, 197),
             height: 400,
           ),
         )

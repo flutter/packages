@@ -40,6 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final NavigationRailThemeData navRailTheme =
+        Theme.of(context).navigationRailTheme;
+
     // Define the children to display within the body.
     final List<Widget> children = List<Widget>.generate(10, (int index) {
       return Padding(
@@ -153,7 +156,6 @@ class _MyHomePageState extends State<MyHomePage> {
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
-              context: context,
               selectedIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
                 setState(() => selectedNavigation = newIndex);
@@ -162,13 +164,17 @@ class _MyHomePageState extends State<MyHomePage> {
               destinations: destinations
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('Primary Navigation Large'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
-              context: context,
               selectedIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
                 setState(() => selectedNavigation = newIndex);
@@ -188,6 +194,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
               trailing: trailingNavRail,
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
         },

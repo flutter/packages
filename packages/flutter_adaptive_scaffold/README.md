@@ -43,7 +43,7 @@ animation should use AdaptiveLayout.
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-            color: Colors.grey,
+            color: const Color.fromARGB(255, 255, 201, 197),
             height: 400,
           ),
         )
@@ -132,7 +132,6 @@ displayed and the entrance animation and exit animation.
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
-              context: context,
               selectedIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
                 setState(() => selectedNavigation = newIndex);
@@ -141,13 +140,17 @@ displayed and the entrance animation and exit animation.
               destinations: destinations
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('Primary Navigation Large'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
-              context: context,
               selectedIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
                 setState(() => selectedNavigation = newIndex);
@@ -167,6 +170,11 @@ displayed and the entrance animation and exit animation.
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
               trailing: trailingNavRail,
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
         },

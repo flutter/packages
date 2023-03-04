@@ -219,7 +219,6 @@ class _MyHomePageState extends State<MyHomePage>
               key: const Key('primaryNavigation'),
               builder: (_) {
                 return AdaptiveScaffold.standardNavigationRail(
-                  context: context,
                   // Usually it would be easier to use a builder from
                   // AdaptiveScaffold for these types of navigation but this
                   // navigation has custom staggered item animations.
@@ -268,7 +267,6 @@ class _MyHomePageState extends State<MyHomePage>
               // The AdaptiveScaffold builder here greatly simplifies
               // navigational elements.
               builder: (_) => AdaptiveScaffold.standardNavigationRail(
-                context: context,
                 leading: const _LargeComposeIcon(),
                 onDestinationSelected: (int index) {
                   setState(() {

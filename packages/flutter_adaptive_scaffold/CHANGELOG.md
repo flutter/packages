@@ -1,7 +1,7 @@
 ## 0.1.1
 
-* 🐛 : FIX - Navigation Rail items not considering `NavigationRailTheme` values - [121135](https://github.com/flutter/flutter/issues/121135)
-* When `NavigationRailTheme` is provided, it shall that consider that if user has not given theme related data explicitly.
+* Fixes `NavigationRail` items not considering `NavigationRailTheme` values - [flutter/flutter#121135](https://github.com/flutter/flutter/issues/121135)
+* When `NavigationRailTheme` is provided, it will use the theme for values that the user has not given explicit theme-related values for.
 
 ## 0.1.0
 
