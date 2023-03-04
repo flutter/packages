@@ -922,6 +922,7 @@ class VideoProgressIndicator extends StatefulWidget {
     this.colors = const VideoProgressColors(),
     required this.allowScrubbing,
     this.padding = const EdgeInsets.only(top: 5.0),
+    this.height,
   }) : super(key: key);
 
   /// The [VideoPlayerController] that actually associates a video with this
@@ -944,6 +945,10 @@ class VideoProgressIndicator extends StatefulWidget {
   ///
   /// Defaults to `top: 5.0`.
   final EdgeInsets padding;
+  
+  /// The minHeight of indicator
+  /// Defaults to null.
+  final double? height;
 
   @override
   State<VideoProgressIndicator> createState() => _VideoProgressIndicatorState();
@@ -999,11 +1004,13 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
             value: maxBuffering / duration,
             valueColor: AlwaysStoppedAnimation<Color>(colors.bufferedColor),
             backgroundColor: colors.backgroundColor,
+            minHeight: widget.height,
           ),
           LinearProgressIndicator(
             value: position / duration,
             valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
             backgroundColor: Colors.transparent,
+            minHeight: widget.height,
           ),
         ],
       );
@@ -1011,6 +1018,7 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       progressIndicator = LinearProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
         backgroundColor: colors.backgroundColor,
+        minHeight: widget.height,
       );
     }
     final Widget paddedProgressIndicator = Padding(
