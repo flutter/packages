@@ -258,10 +258,6 @@ class AdaptiveScaffold extends StatefulWidget {
     Widget? leading,
     Widget? trailing,
     Function(int)? onDestinationSelected,
-    IconThemeData selectedIconTheme = const IconThemeData(color: Colors.black),
-    IconThemeData unselectedIconTheme =
-        const IconThemeData(color: Colors.black),
-    TextStyle selectedLabelTextStyle = const TextStyle(color: Colors.black),
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
     if (extended && width == 72) {
@@ -287,9 +283,6 @@ class AdaptiveScaffold extends StatefulWidget {
                     backgroundColor: backgroundColor,
                     extended: extended,
                     selectedIndex: selectedIndex,
-                    selectedIconTheme: selectedIconTheme,
-                    unselectedIconTheme: unselectedIconTheme,
-                    selectedLabelTextStyle: selectedLabelTextStyle,
                     destinations: destinations,
                   ),
                 ),
