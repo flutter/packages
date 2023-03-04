@@ -144,6 +144,7 @@ public class FocusPointFeatureTest {
   }
 
   @Test(expected = AssertionError.class)
+  @SuppressWarnings("try")
   public void setValue_shouldThrowAssertionErrorWhenNoValidBoundariesAreSet() {
     CameraProperties mockCameraProperties = mock(CameraProperties.class);
     when(mockCameraProperties.getControlMaxRegionsAutoFocus()).thenReturn(1);

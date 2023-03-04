@@ -143,6 +143,7 @@ public class ExposurePointFeatureTest {
   }
 
   @Test(expected = AssertionError.class)
+  @SuppressWarnings("try")
   public void setValue_shouldThrowAssertionErrorWhenNoValidBoundariesAreSet() {
     CameraProperties mockCameraProperties = mock(CameraProperties.class);
     when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(1);
