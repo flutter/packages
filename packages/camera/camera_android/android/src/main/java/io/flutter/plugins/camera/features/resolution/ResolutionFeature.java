@@ -144,7 +144,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
    *     {@link ResolutionPreset}.
    */
   @TargetApi(Build.VERSION_CODES.R)
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings({"fallthrough", "deprecation"})
   public static CamcorderProfile getBestAvailableCamcorderProfileForResolutionPresetLegacy(
       int cameraId, ResolutionPreset preset) {
     if (cameraId < 0) {
