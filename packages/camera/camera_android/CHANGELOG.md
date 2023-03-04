@@ -1,4 +1,4 @@
-## 0.10.5
+## 0.10.4+2
 
 * Updates compileSdkVersion to 33.
 * Fixes false positive for CamcorderProfile deprecation warning
