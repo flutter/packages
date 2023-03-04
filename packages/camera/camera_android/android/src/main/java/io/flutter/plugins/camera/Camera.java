@@ -78,24 +78,6 @@ interface ErrorCallback {
   void onError(String errorCode, String errorMessage);
 }
 
-/** A mockable wrapper for CameraDevice calls. */
-interface CameraDeviceWrapper {
-  @NonNull
-  CaptureRequest.Builder createCaptureRequest(int templateType) throws CameraAccessException;
-
-  @TargetApi(VERSION_CODES.P)
-  void createCaptureSession(SessionConfiguration config) throws CameraAccessException;
-
-  @TargetApi(VERSION_CODES.LOLLIPOP)
-  void createCaptureSession(
-      @NonNull List<Surface> outputs,
-      @NonNull CameraCaptureSession.StateCallback callback,
-      @Nullable Handler handler)
-      throws CameraAccessException;
-
-  void close();
-}
-
 class Camera
     implements CameraCaptureCallback.CameraCaptureStateListener,
         ImageReader.OnImageAvailableListener {
