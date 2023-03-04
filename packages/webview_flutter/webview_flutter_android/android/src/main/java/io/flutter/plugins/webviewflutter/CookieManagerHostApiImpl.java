@@ -14,16 +14,28 @@ class CookieManagerHostApiImpl implements GeneratedAndroidWebView.CookieManagerH
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       cookieManager.removeAllCookies(result::success);
     } else {
-      final boolean hasCookies = cookieManager.hasCookies();
-      if (hasCookies) {
-        cookieManager.removeAllCookie();
-      }
-      result.success(hasCookies);
+      result.success(removeCookiesPreL(cookieManager));
     }
   }
 
   @Override
   public void setCookie(String url, String value) {
     CookieManager.getInstance().setCookie(url, value);
+  }
+
+  /**
+   * Removes all cookies from the given cookie manager, using the deprecated (pre-Lollipop)
+   * implementation.
+   *
+   * @param cookieManager The cookie manager to clear all cookies from.
+   * @return Whether any cookies were removed.
+   */
+  @SuppressWarnings("deprecation")
+  private boolean removeCookiesPreL(CookieManager cookieManager) {
+    final boolean hasCookies = cookieManager.hasCookies();
+    if (hasCookies) {
+      cookieManager.removeAllCookie();
+    }
+    return hasCookies;
   }
 }
