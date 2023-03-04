@@ -1,3 +1,7 @@
+## 2.4.9
+
+* Bump RoboElectric dependency to 4.4.1 to support AndroidX.
+
 ## 2.4.8
 
 * Fixes compilation warnings.

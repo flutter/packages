@@ -1,3 +1,7 @@
+## 6.0.25
+
+* Bump RoboElectric dependency to 4.4.1 to support AndroidX.
+
 ## 6.0.24
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
