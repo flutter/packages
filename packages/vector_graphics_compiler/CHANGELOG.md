@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.1.1
+
+- Multiple text positioning bug fixes.
+- Preserve stroke-opacity when specified.
+
 ## 1.1.0
 
 - Fix a number of inheritence related bugs:
