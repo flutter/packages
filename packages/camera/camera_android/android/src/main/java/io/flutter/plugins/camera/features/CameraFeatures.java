@@ -74,14 +74,14 @@ public class CameraFeatures {
     return cameraFeatures;
   }
 
-  private Map<String, CameraFeature<Object>> featureMap = new HashMap<>();
+  private Map<String, CameraFeature<?>> featureMap = new HashMap<>();
 
   /**
    * Gets a collection of all features that have been set.
    *
    * @return A collection of all features that have been set.
    */
-  public Collection<CameraFeature<Object>> getAllFeatures() {
+  public Collection<CameraFeature<?>> getAllFeatures() {
     return this.featureMap.values();
   }
 

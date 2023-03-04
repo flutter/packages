@@ -238,7 +238,7 @@ class Camera
    * @param requestBuilder request builder to update.
    */
   private void updateBuilderSettings(CaptureRequest.Builder requestBuilder) {
-    for (CameraFeature<Object> feature : cameraFeatures.getAllFeatures()) {
+    for (CameraFeature<?> feature : cameraFeatures.getAllFeatures()) {
       Log.d(TAG, "Updating builder with feature: " + feature.getDebugName());
       feature.updateBuilder(requestBuilder);
     }
