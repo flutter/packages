@@ -349,6 +349,12 @@ class MockAndroidNavigationDelegate extends _i1.Mock
 class MockAndroidWebViewController extends _i1.Mock
     implements _i8.AndroidWebViewController {
   @override
+  int get webViewIdentifier => (super.noSuchMethod(
+        Invocation.getter(#webViewIdentifier),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+  @override
   _i3.PlatformWebViewControllerCreationParams get params => (super.noSuchMethod(
         Invocation.getter(#params),
         returnValue: _FakePlatformWebViewControllerCreationParams_4(
@@ -650,11 +656,11 @@ class MockAndroidWebViewController extends _i1.Mock
   @override
   _i9.Future<void> setOnShowFileSelector(
           _i9.Future<List<String>> Function(_i8.FileSelectorParams)?
-              onShowFileSelectorCallback) =>
+              onShowFileSelector) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnShowFileSelector,
-          [onShowFileSelectorCallback],
+          [onShowFileSelector],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
