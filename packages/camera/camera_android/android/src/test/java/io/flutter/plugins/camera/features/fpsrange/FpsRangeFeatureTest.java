@@ -97,7 +97,7 @@ public class FpsRangeFeatureTest {
     when(rangeThree.getUpper()).thenReturn(13);
 
     @SuppressWarnings("unchecked")
-    Range<Integer>[] ranges = new Range[] {rangeOne, rangeTwo, rangeThree};
+    Range<Integer>[] ranges = (Range<Integer>[]) new Range<?>[] {rangeOne, rangeTwo, rangeThree};
 
     CameraProperties cameraProperties = mock(CameraProperties.class);
 
