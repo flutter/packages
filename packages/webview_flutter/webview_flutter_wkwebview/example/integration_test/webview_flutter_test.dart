@@ -1098,10 +1098,10 @@ Future<String> _getUserAgent(PlatformWebViewController controller) async {
 
 class ResizableWebView extends StatefulWidget {
   const ResizableWebView({
-    Key? key,
+    super.key,
     required this.onResize,
     required this.onPageFinished,
-  }) : super(key: key);
+  });
 
   final VoidCallback onResize;
   final VoidCallback onPageFinished;
