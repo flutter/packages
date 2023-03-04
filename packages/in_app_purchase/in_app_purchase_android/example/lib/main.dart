@@ -458,7 +458,7 @@ class _MyAppState extends State<_MyApp> {
 }
 
 class _FeatureCard extends StatelessWidget {
-  _FeatureCard({Key? key}) : super(key: key);
+  _FeatureCard();
 
   final InAppPurchaseAndroidPlatformAddition addition =
       InAppPurchasePlatformAddition.instance!

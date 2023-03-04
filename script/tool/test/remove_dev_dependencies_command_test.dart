@@ -5,7 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
-import 'package:flutter_plugin_tools/src/remove_dev_dependencies.dart';
+import 'package:flutter_plugin_tools/src/remove_dev_dependencies_command.dart';
 import 'package:test/test.dart';
 
 import 'util.dart';
