@@ -189,6 +189,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   }
 
   @TargetApi(Build.VERSION_CODES.S)
+  @SuppressWarnings("fallthrough")
   public static EncoderProfiles getBestAvailableCamcorderProfileForResolutionPreset(
       int cameraId, ResolutionPreset preset) {
     if (cameraId < 0) {
