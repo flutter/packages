@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// The demo page for [FadeThroughTransition].
 class FadeThroughTransitionDemo extends StatefulWidget {
   /// Creates the demo page for [FadeThroughTransition].
-  const FadeThroughTransitionDemo({Key? key}) : super(key: key);
+  const FadeThroughTransitionDemo({super.key});
 
   @override
   State<FadeThroughTransitionDemo> createState() =>

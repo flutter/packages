@@ -29,9 +29,10 @@ import 'publish_check_command.dart';
 import 'publish_command.dart';
 import 'pubspec_check_command.dart';
 import 'readme_check_command.dart';
-import 'remove_dev_dependencies.dart';
+import 'remove_dev_dependencies_command.dart';
 import 'test_command.dart';
 import 'update_excerpts_command.dart';
+import 'update_min_sdk_command.dart';
 import 'update_release_info_command.dart';
 import 'version_check_command.dart';
 import 'xcode_analyze_command.dart';
@@ -77,6 +78,7 @@ void main(List<String> args) {
     ..addCommand(RemoveDevDependenciesCommand(packagesDir))
     ..addCommand(TestCommand(packagesDir))
     ..addCommand(UpdateExcerptsCommand(packagesDir))
+    ..addCommand(UpdateMinSdkCommand(packagesDir))
     ..addCommand(UpdateReleaseInfoCommand(packagesDir))
     ..addCommand(VersionCheckCommand(packagesDir))
     ..addCommand(XcodeAnalyzeCommand(packagesDir));

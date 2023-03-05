@@ -6,7 +6,7 @@ repository: https://github.com/flutter/packages/tree/main/packages/flutter_adapt
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
-  flutter: ">=3.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:
