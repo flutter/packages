@@ -3,6 +3,10 @@
 * Fixes `NavigationRail` items not considering `NavigationRailTheme` values - [flutter/flutter#121135](https://github.com/flutter/flutter/issues/121135)
 * When `NavigationRailTheme` is provided, it will use the theme for values that the user has not given explicit theme-related values for.
 
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.1.0
 
 * Change the `selectedIndex` parameter on `standardNavigationRail` to allow null values to indicate "no destination".

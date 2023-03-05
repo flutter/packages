@@ -110,7 +110,7 @@ the `GoogleMap`'s `onMapCreated` callback.
 <?code-excerpt "readme_sample.dart (MapSample)"?>
 ```dart
 class MapSample extends StatefulWidget {
-  const MapSample({Key? key}) : super(key: key);
+  const MapSample({super.key});
 
   @override
   State<MapSample> createState() => MapSampleState();
