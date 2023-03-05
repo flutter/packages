@@ -625,6 +625,32 @@ void main() {
       });
     });
 
+    testWidgets('set the minHeigth of process indicator',
+        (WidgetTester tester) async {
+      final VideoPlayerController controller = VideoPlayerController.network(
+        'https://127.0.0.1',
+      );
+
+      const double minHeight = 10.0;
+
+      final VideoProgressIndicator progressWidget = VideoProgressIndicator(
+        controller,
+        allowScrubbing: false,
+        padding: EdgeInsets.zero,
+        minHeight: minHeight,
+      );
+
+      await tester.pumpWidget(Center(
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: progressWidget,
+        ),
+      ));
+
+      final Size progressSize = tester.getSize(find.byWidget(progressWidget));
+      expect(progressSize.height, minHeight);
+    });
+
     group('caption', () {
       test('works when seeking', () async {
         final VideoPlayerController controller = VideoPlayerController.network(
