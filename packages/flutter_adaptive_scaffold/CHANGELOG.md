@@ -1,9 +1,9 @@
-## 0.1.1
+## 0.1.2
 
 * Fixes `NavigationRail` items not considering `NavigationRailTheme` values - [flutter/flutter#121135](https://github.com/flutter/flutter/issues/121135)
 * When `NavigationRailTheme` is provided, it will use the theme for values that the user has not given explicit theme-related values for.
 
-## NEXT
+## 0.1.1
 
 * Aligns Dart and Flutter SDK constraints.
 
