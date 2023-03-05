@@ -1,8 +1,8 @@
-## 0.1.1
+## 0.1.2
 
 * Fixes flutter/flutter#121135) `selectedIcon` parameter not displayed even if it is provided.
 
-## NEXT
+## 0.1.1
 
 * Aligns Dart and Flutter SDK constraints.
 
