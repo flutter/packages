@@ -160,8 +160,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return true;
   }
 
-  /// Replaces the top-most page of the page stack with the given one. The page
-  /// key of the new page will always be different from the old one.
+  /// Replaces the top-most page of the page stack with the given one.
+  ///
+  /// The page key of the new page will always be different from the old one.
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
@@ -174,8 +175,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     push(matches); // [push] will notify the listeners.
   }
 
-  /// Replaces the top-most page of the page stack with the given one and reuse
-  /// the page key when the path didn't change.
+  /// Replaces the top-most page of the page stack with the given one but treats
+  /// it as the same page.
+  ///
+  /// The page key will be reused. This will preserve the state and not run any
+  /// page animation.
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.

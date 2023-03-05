@@ -283,8 +283,10 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Replaces the top-most page of the page stack with the given one but treats
-  /// it as the same page. The page key will be reused. This will preserve the
-  /// state and not run any page animation.
+  /// it as the same page.
+  ///
+  /// The page key will be reused. This will preserve the state and not run any
+  /// page animation.
   ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
@@ -303,10 +305,12 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     });
   }
 
-  /// Replaces the top-most page of the page stack with the named route w/
-  /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
-  /// 'p1'}`. But it treats it as the same page. The page key will be reused.
-  /// This will preserve the state and not run any page animation.
+  /// Replaces the top-most page with the named route and optional parameters,
+  /// preserving the page key.
+  ///
+  /// This will preserve the state and not run any page animation. Optional
+  /// parameters can be providded to the named route, e.g. `name='person',
+  /// params={'fid': 'f2', 'pid': 'p1'}`.
   ///
   /// See also:
   /// * [pushNamed] which pushes the given location onto the page stack.
