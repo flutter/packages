@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 /// then displays the selected directories in a dialog.
 class GetMultipleDirectoriesPage extends StatelessWidget {
   /// Default Constructor
-  const GetMultipleDirectoriesPage({Key? key}) : super(key: key);
+  const GetMultipleDirectoriesPage({super.key});
 
   Future<void> _getDirectoryPaths(BuildContext context) async {
     const String confirmButtonText = 'Choose';
@@ -62,7 +62,7 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
 /// Widget that displays a text file in a dialog.
 class TextDisplay extends StatelessWidget {
   /// Creates a `TextDisplay`.
-  const TextDisplay(this.directoriesPaths, {Key? key}) : super(key: key);
+  const TextDisplay(this.directoriesPaths, {super.key});
 
   /// The path selected in the dialog.
   final String directoriesPaths;
