@@ -2059,7 +2059,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
