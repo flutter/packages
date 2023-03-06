@@ -105,14 +105,13 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
   test('includes explanatory comment', () async {
     final RepositoryPackage packageA =
         createFakePackage('package_a', packagesDir, isFlutter: true);
-    final RepositoryPackage packageB =
-        createFakePackage('package_b', packagesDir, isFlutter: true);
+    createFakePackage('package_b', packagesDir, isFlutter: true);
 
     addDependencies(packageA, <String>[
       'package_b',
     ]);
 
-    final List<String> output = await runCapturingPrint(runner,
+    await runCapturingPrint(runner,
         <String>['make-deps-path-based', '--target-dependencies=package_b']);
 
     expect(
