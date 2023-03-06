@@ -21,7 +21,7 @@ class PlacePolylinePage extends GoogleMapExampleAppPage {
 }
 
 class PlacePolylineBody extends StatefulWidget {
-  const PlacePolylineBody({Key? key}) : super(key: key);
+  const PlacePolylineBody({super.key});
 
   @override
   State<StatefulWidget> createState() => PlacePolylineBodyState();

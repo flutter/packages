@@ -89,7 +89,7 @@ class GoogleMap extends StatefulWidget {
   ///
   /// [AssertionError] will be thrown if [initialCameraPosition] is null;
   const GoogleMap({
-    Key? key,
+    super.key,
     required this.initialCameraPosition,
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
@@ -123,8 +123,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-  })  : assert(initialCameraPosition != null),
-        super(key: key);
+  }) : assert(initialCameraPosition != null);
 
   /// Callback method for when the map is ready to be used.
   ///

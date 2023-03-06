@@ -11,7 +11,7 @@ import '../auth.dart';
 /// The settings screen.
 class SettingsScreen extends StatefulWidget {
   /// Creates a [SettingsScreen].
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -43,8 +43,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 class SettingsContent extends StatelessWidget {
   /// Creates a [SettingsContent].
   const SettingsContent({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) => Column(
