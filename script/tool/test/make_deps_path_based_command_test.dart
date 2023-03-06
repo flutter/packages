@@ -9,6 +9,7 @@ import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/make_deps_path_based_command.dart';
 import 'package:mockito/mockito.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
 
 import 'common/package_command_test.mocks.dart';
@@ -73,6 +74,13 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
 ''');
   }
 
+  Map<String, String> getDependencyOverrides(RepositoryPackage package) {
+    final Pubspec pubspec = package.parsePubspec();
+    return pubspec.dependencyOverrides.map((String name, Dependency dep) =>
+        MapEntry<String, String>(
+            name, (dep is PathDependency) ? dep.path : dep.toString()));
+  }
+
   test('no-ops for no plugins', () async {
     createFakePackage('foo', packagesDir, isFlutter: true);
     final RepositoryPackage packageBar =
@@ -92,6 +100,28 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
     );
     // The 'foo' reference should not have been modified.
     expect(packageBar.pubspecFile.readAsStringSync(), originalPubspecContents);
+  });
+
+  test('includes explanatory comment', () async {
+    final RepositoryPackage packageA =
+        createFakePackage('package_a', packagesDir, isFlutter: true);
+    final RepositoryPackage packageB =
+        createFakePackage('package_b', packagesDir, isFlutter: true);
+
+    addDependencies(packageA, <String>[
+      'package_b',
+    ]);
+
+    final List<String> output = await runCapturingPrint(runner,
+        <String>['make-deps-path-based', '--target-dependencies=package_b']);
+
+    expect(
+        packageA.pubspecFile.readAsLinesSync(),
+        containsAllInOrder(<String>[
+          '# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.',
+          '# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins',
+          'dependency_overrides:',
+        ]));
   });
 
   test('rewrites "dependencies" references', () async {
@@ -136,23 +166,18 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
         isNot(contains(
             '  Modified packages/bar/bar_platform_interface/pubspec.yaml')));
 
-    expect(
-        simplePackage.pubspecFile.readAsLinesSync(),
-        containsAllInOrder(<String>[
-          '# FOR TESTING ONLY. DO NOT MERGE.',
-          'dependency_overrides:',
-          '  bar:',
-          '    path: ../bar/bar',
-          '  bar_platform_interface:',
-          '    path: ../bar/bar_platform_interface',
-        ]));
-    expect(
-        pluginAppFacing.pubspecFile.readAsLinesSync(),
-        containsAllInOrder(<String>[
-          'dependency_overrides:',
-          '  bar_platform_interface:',
-          '    path: ../../bar/bar_platform_interface',
-        ]));
+    final Map<String, String?> simplePackageOverrides =
+        getDependencyOverrides(simplePackage);
+    expect(simplePackageOverrides.length, 2);
+    expect(simplePackageOverrides['bar'], '../bar/bar');
+    expect(simplePackageOverrides['bar_platform_interface'],
+        '../bar/bar_platform_interface');
+
+    final Map<String, String?> appFacingPackageOverrides =
+        getDependencyOverrides(pluginAppFacing);
+    expect(appFacingPackageOverrides.length, 1);
+    expect(appFacingPackageOverrides['bar_platform_interface'],
+        '../../bar/bar_platform_interface');
   });
 
   test('rewrites "dev_dependencies" references', () async {
@@ -174,14 +199,10 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
           '  Modified packages/foo_builder/pubspec.yaml',
         ]));
 
-    expect(
-        builderPackage.pubspecFile.readAsLinesSync(),
-        containsAllInOrder(<String>[
-          '# FOR TESTING ONLY. DO NOT MERGE.',
-          'dependency_overrides:',
-          '  foo:',
-          '    path: ../foo',
-        ]));
+    final Map<String, String?> overrides =
+        getDependencyOverrides(builderPackage);
+    expect(overrides.length, 1);
+    expect(overrides['foo'], '../foo');
   });
 
   test('rewrites examples when rewriting the main package', () async {
@@ -230,7 +251,7 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
   });
 
   test(
-      'alphabetizes overrides from different sectinos to avoid lint warnings in analysis',
+      'alphabetizes overrides from different sections to avoid lint warnings in analysis',
       () async {
     createFakePackage('a', packagesDir);
     createFakePackage('b', packagesDir);
@@ -251,18 +272,12 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
           '  Modified packages/target/pubspec.yaml',
         ]));
 
+    // This matches with a regex in order to all for either flow style or
+    // expanded style output.
     expect(
-        targetPackage.pubspecFile.readAsLinesSync(),
-        containsAllInOrder(<String>[
-          '# FOR TESTING ONLY. DO NOT MERGE.',
-          'dependency_overrides:',
-          '  a:',
-          '    path: ../a',
-          '  b:',
-          '    path: ../b',
-          '  c:',
-          '    path: ../c',
-        ]));
+        targetPackage.pubspecFile.readAsStringSync(),
+        matches(RegExp(r'dependency_overrides:.*a:.*b:.*c:.*',
+            multiLine: true, dotAll: true)));
   });
 
   // This test case ensures that running CI using this command on an interim
