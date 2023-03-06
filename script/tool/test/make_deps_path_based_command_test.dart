@@ -184,6 +184,51 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
         ]));
   });
 
+  test('rewrites examples when rewriting the main package', () async {
+    final Directory pluginGroup = packagesDir.childDirectory('bar');
+    createFakePackage('bar_platform_interface', pluginGroup, isFlutter: true);
+    final RepositoryPackage pluginImplementation =
+        createFakePlugin('bar_android', pluginGroup);
+    final RepositoryPackage pluginAppFacing =
+        createFakePlugin('bar', pluginGroup);
+
+    addDependencies(pluginAppFacing, <String>[
+      'bar_platform_interface',
+      'bar_android',
+    ]);
+    addDependencies(pluginImplementation, <String>[
+      'bar_platform_interface',
+    ]);
+
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'make-deps-path-based',
+      '--target-dependencies=bar,bar_platform_interface'
+    ]);
+
+    expect(
+        output,
+        containsAll(<String>[
+          'Rewriting references to: bar, bar_platform_interface...',
+          '  Modified packages/bar/bar/pubspec.yaml',
+          '  Modified packages/bar/bar/example/pubspec.yaml',
+          '  Modified packages/bar/bar_android/pubspec.yaml',
+        ]));
+    expect(
+        output,
+        isNot(contains(
+            '  Modified packages/bar/bar_platform_interface/pubspec.yaml')));
+
+    expect(
+        pluginAppFacing.getExamples().first.pubspecFile.readAsLinesSync(),
+        containsAllInOrder(<String>[
+          'dependency_overrides:',
+          '  bar_android:',
+          '    path: ../../bar/bar_android',
+          '  bar_platform_interface:',
+          '    path: ../../bar/bar_platform_interface',
+        ]));
+  });
+
   test(
       'alphabetizes overrides from different sectinos to avoid lint warnings in analysis',
       () async {
