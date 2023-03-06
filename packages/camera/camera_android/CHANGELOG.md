@@ -1,6 +1,7 @@
 ## 0.10.5
 
 * Allows camera to be switched while video recording.
+* Aligns Dart and Flutter SDK constraints.
 * Updates compileSdkVersion to 33.
 
 ## 0.10.4+1

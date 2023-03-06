@@ -84,16 +84,9 @@
                 handler:^(UIAlertAction *action) {
                   if (UIApplicationOpenSettingsURLString != NULL) {
                     NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                    if (@available(iOS 10, *)) {
-                      [[UIApplication sharedApplication] openURL:url
-                                                         options:@{}
-                                               completionHandler:NULL];
-                    } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-                      [[UIApplication sharedApplication] openURL:url];
-#pragma clang diagnostic pop
-                    }
+                    [[UIApplication sharedApplication] openURL:url
+                                                       options:@{}
+                                             completionHandler:NULL];
                     result(@NO);
                   }
                 }];
@@ -117,17 +110,9 @@
   }
   // If not, check if it is because no biometrics are enrolled (but still present).
   if (authError != nil) {
-    if (@available(iOS 11, *)) {
-      if (authError.code == LAErrorBiometryNotEnrolled) {
-        result(@YES);
-        return;
-      }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    } else if (authError.code == LAErrorTouchIDNotEnrolled) {
+    if (authError.code == LAErrorBiometryNotEnrolled) {
       result(@YES);
       return;
-#pragma clang diagnostic pop
     }
   }
 
@@ -141,13 +126,9 @@
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
                            error:&authError]) {
     if (authError == nil) {
-      if (@available(iOS 11, *)) {
-        if (context.biometryType == LABiometryTypeFaceID) {
-          [biometrics addObject:@"face"];
-        } else if (context.biometryType == LABiometryTypeTouchID) {
-          [biometrics addObject:@"fingerprint"];
-        }
-      } else {
+      if (context.biometryType == LABiometryTypeFaceID) {
+        [biometrics addObject:@"face"];
+      } else if (context.biometryType == LABiometryTypeTouchID) {
         [biometrics addObject:@"fingerprint"];
       }
     }
@@ -216,14 +197,9 @@
     result(@YES);
   } else {
     switch (error.code) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        // TODO(stuartmorgan): Remove the pragma and s/TouchID/Biometry/ in these constants when
-        // iOS 10 support is dropped. The values are the same, only the names have changed.
-      case LAErrorTouchIDNotAvailable:
-      case LAErrorTouchIDNotEnrolled:
-      case LAErrorTouchIDLockout:
-#pragma clang diagnostic pop
+      case LAErrorBiometryNotAvailable:
+      case LAErrorBiometryNotEnrolled:
+      case LAErrorBiometryLockout:
       case LAErrorUserFallback:
       case LAErrorPasscodeNotSet:
       case LAErrorAuthenticationFailed:
@@ -248,12 +224,7 @@
   NSString *errorCode = @"NotAvailable";
   switch (authError.code) {
     case LAErrorPasscodeNotSet:
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-      // TODO(stuartmorgan): Remove the pragma and s/TouchID/Biometry/ in this constant when
-      // iOS 10 support is dropped. The values are the same, only the names have changed.
-    case LAErrorTouchIDNotEnrolled:
-#pragma clang diagnostic pop
+    case LAErrorBiometryNotEnrolled:
       if ([arguments[@"useErrorDialogs"] boolValue]) {
         [self alertMessage:arguments[@"goToSettingDescriptionIOS"]
                  firstButton:arguments[@"okButton"]
@@ -263,12 +234,7 @@
       }
       errorCode = authError.code == LAErrorPasscodeNotSet ? @"PasscodeNotSet" : @"NotEnrolled";
       break;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-      // TODO(stuartmorgan): Remove the pragma and s/TouchID/Biometry/ in this constant when
-      // iOS 10 support is dropped. The values are the same, only the names have changed.
-    case LAErrorTouchIDLockout:
-#pragma clang diagnostic pop
+    case LAErrorBiometryLockout:
       [self alertMessage:arguments[@"lockOut"]
                firstButton:arguments[@"okButton"]
              flutterResult:result

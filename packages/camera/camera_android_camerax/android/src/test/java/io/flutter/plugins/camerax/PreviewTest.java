@@ -30,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -107,7 +108,6 @@ public class PreviewTest {
     final ArgumentCaptor<Preview.SurfaceProvider> surfaceProviderCaptor =
         ArgumentCaptor.forClass(Preview.SurfaceProvider.class);
     final ArgumentCaptor<Surface> surfaceCaptor = ArgumentCaptor.forClass(Surface.class);
-    final ArgumentCaptor<Consumer> consumerCaptor = ArgumentCaptor.forClass(Consumer.class);
 
     // Test that surface provider was set and the surface texture ID was returned.
     assertEquals(previewHostApi.setSurfaceProvider(previewIdentifier), surfaceTextureEntryId);
@@ -136,7 +136,9 @@ public class PreviewTest {
         .thenReturn(mockSystemServicesFlutterApi);
 
     final ArgumentCaptor<Surface> surfaceCaptor = ArgumentCaptor.forClass(Surface.class);
-    final ArgumentCaptor<Consumer> consumerCaptor = ArgumentCaptor.forClass(Consumer.class);
+    @SuppressWarnings("unchecked")
+    final ArgumentCaptor<Consumer<SurfaceRequest.Result>> consumerCaptor =
+        ArgumentCaptor.forClass(Consumer.class);
 
     Preview.SurfaceProvider previewSurfaceProvider =
         previewHostApi.createSurfaceProvider(mockSurfaceTexture);
@@ -183,7 +185,8 @@ public class PreviewTest {
         .thenReturn(SurfaceRequest.Result.RESULT_INVALID_SURFACE);
     capturedConsumer.accept(mockSurfaceRequestResult);
     verify(mockSurface).release();
-    verify(mockSystemServicesFlutterApi).sendCameraError(anyString(), any(Reply.class));
+    verify(mockSystemServicesFlutterApi)
+        .sendCameraError(anyString(), ArgumentMatchers.<Reply<Void>>any());
   }
 
   @Test
