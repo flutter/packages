@@ -21,6 +21,7 @@ import java.util.Objects;
 public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
+  private final WebViewFlutterApiImpl webViewFlutterApi;
 
   /**
    * Creates a Flutter api that sends messages to Dart.
@@ -33,13 +34,12 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     super(binaryMessenger);
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
+    webViewFlutterApi = new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
   }
 
   /** Passes arguments from {@link WebChromeClient#onProgressChanged} to Dart. */
   public void onProgressChanged(
       WebChromeClient webChromeClient, WebView webView, Long progress, Reply<Void> callback) {
-    final WebViewFlutterApiImpl webViewFlutterApi =
-        new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
     webViewFlutterApi.create(webView, reply -> {});
 
     final Long webViewIdentifier =
@@ -55,21 +55,14 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
       WebView webView,
       WebChromeClient.FileChooserParams fileChooserParams,
       Reply<List<String>> callback) {
-    final WebViewFlutterApiImpl webViewFlutterApi =
-        new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
     webViewFlutterApi.create(webView, reply -> {});
 
-    Long paramsInstanceId = instanceManager.getIdentifierForStrongReference(fileChooserParams);
-    if (paramsInstanceId == null) {
-      final FileChooserParamsFlutterApiImpl flutterApi =
-          new FileChooserParamsFlutterApiImpl(binaryMessenger, instanceManager);
-      paramsInstanceId = flutterApi.create(fileChooserParams, reply -> {});
-    }
+    new FileChooserParamsFlutterApiImpl(binaryMessenger, instanceManager).create(fileChooserParams, reply -> {});
 
     onShowFileChooser(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView)),
-        paramsInstanceId,
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(fileChooserParams)),
         callback);
   }
 
