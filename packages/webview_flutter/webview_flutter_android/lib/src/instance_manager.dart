@@ -79,8 +79,6 @@ class InstanceManager {
   ///
   /// Returns the randomly generated id of the [instance] added.
   int addDartCreatedInstance(Copyable instance) {
-    assert(getIdentifier(instance) == null);
-
     final int identifier = _nextUniqueIdentifier();
     _addInstanceWithIdentifier(instance, identifier);
     return identifier;
@@ -165,13 +163,14 @@ class InstanceManager {
   ///
   /// Returns unique identifier of the [instance] added.
   void addHostCreatedInstance(Copyable instance, int identifier) {
-    assert(!containsIdentifier(identifier));
-    assert(getIdentifier(instance) == null);
-    assert(identifier >= 0);
     _addInstanceWithIdentifier(instance, identifier);
   }
 
   void _addInstanceWithIdentifier(Copyable instance, int identifier) {
+    assert(!containsIdentifier(identifier));
+    assert(getIdentifier(instance) == null);
+    assert(identifier >= 0);
+
     _identifiers[instance] = identifier;
     _weakInstances[identifier] = WeakReference<Copyable>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
