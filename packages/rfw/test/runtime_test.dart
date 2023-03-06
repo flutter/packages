@@ -394,7 +394,7 @@ void main() {
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000000));
 
-    data.update('color', json.decode('{"value":1}'));
+    data.update('color', json.decode('{"value":1}') as Object);
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000001));
 

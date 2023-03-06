@@ -9,54 +9,142 @@
 // * non_constant_identifier_names required to be able to use the same parameter
 //   names as the underlying library.
 
-@JS('google.accounts.id')
-library id;
+@JS()
+library google_accounts_id;
 
 import 'package:js/js.dart';
 
+import 'dom.dart';
 import 'shared.dart';
 
-/// An undocumented method. Try with 'debug'.
+/// Binding to the `google.accounts.id` JS global.
+///
+/// See: https://developers.google.com/identity/gsi/web/reference/js-reference
+@JS('google.accounts.id')
+external GoogleAccountsId get id;
+
+/// The Dart definition of the `google.accounts.id` global.
 @JS()
-external SetLogLevelFn get setLogLevel;
+@staticInterop
+abstract class GoogleAccountsId {}
 
-///
-typedef SetLogLevelFn = void Function(String level);
+/// The `google.accounts.id` methods
+extension GoogleAccountsIdExtension on GoogleAccountsId {
+  /// An undocumented method.
+  ///
+  /// Try it with 'debug'.
+  external void setLogLevel(String level);
 
-/*
-// Method: google.accounts.id.initialize
-// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.initialize
-*/
+  /// Initializes the Sign In With Google client based on [IdConfiguration].
+  ///
+  /// The `initialize` method creates a Sign In With Google client instance that
+  /// can be implicitly used by all modules in the same web page.
+  ///
+  /// * You only need to call the `initialize` method once even if you use
+  ///   multiple modules (like One Tap, Personalized button, revocation, etc.) in
+  ///   the same web page.
+  /// * If you do call the google.accounts.id.initialize method multiple times,
+  ///   only the configurations in the last call will be remembered and used.
+  ///
+  /// You actually reset the configurations whenever you call the `initialize`
+  /// method, and all subsequent methods in the same web page will use the new
+  /// configurations immediately.
+  ///
+  /// WARNING: The `initialize` method should be called only once, even if you
+  /// use both One Tap and button in the same web page.
+  ///
+  /// Method: google.accounts.id.initialize
+  /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.initialize
+  external void initialize(IdConfiguration idConfiguration);
 
-/// Initializes the Sign In With Google client based on [IdConfiguration].
-///
-/// The `initialize` method creates a Sign In With Google client instance that
-/// can be implicitly used by all modules in the same web page.
-///
-/// * You only need to call the `initialize` method once even if you use
-///   multiple modules (like One Tap, Personalized button, revocation, etc.) in
-///   the same web page.
-/// * If you do call the google.accounts.id.initialize method multiple times,
-///   only the configurations in the last call will be remembered and used.
-///
-/// You actually reset the configurations whenever you call the `initialize`
-/// method, and all subsequent methods in the same web page will use the new
-/// configurations immediately.
-///
-/// WARNING: The `initialize` method should be called only once, even if you
-/// use both One Tap and button in the same web page.
-@JS()
-external InitializeFn get initialize;
+  /// The `prompt` method displays the One Tap prompt or the browser native
+  /// credential manager after the [initialize] method is invoked.
+  ///
+  /// Normally, the `prompt` method is called on page load. Due to the session
+  /// status and user settings on the Google side, the One Tap prompt UI might
+  /// not be displayed. To get notified on the UI status for different moments,
+  /// pass a [PromptMomentListenerFn] to receive UI status notifications.
+  ///
+  /// Notifications are fired on the following moments:
+  ///
+  /// * Display moment: This occurs after the `prompt` method is called. The
+  ///   notification contains a boolean value to indicate whether the UI is
+  ///   displayed or not.
+  /// * Skipped moment: This occurs when the One Tap prompt is closed by an auto
+  ///   cancel, a manual cancel, or when Google fails to issue a credential, such
+  ///   as when the selected session has signed out of Google.
+  ///   In these cases, we recommend that you continue on to the next identity
+  ///   providers, if there are any.
+  /// * Dismissed moment: This occurs when Google successfully retrieves a
+  ///   credential or a user wants to stop the credential retrieval flow. For
+  ///   example, when the user begins to input their username and password in
+  ///   your login dialog, you can call the [cancel] method to close the One Tap
+  ///   prompt and trigger a dismissed moment.
+  ///
+  ///   WARNING: When on a dismissed moment, do not try any of the next identity
+  ///   providers.
+  ///
+  /// Method: google.accounts.id.prompt
+  /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.prompt
+  external void prompt([PromptMomentListenerFn momentListener]);
 
-/// The type of the [initialize] function.
-typedef InitializeFn = void Function(IdConfiguration idConfiguration);
+  /// Renders a Sign In With Google button in your web page.
+  ///
+  /// Method: google.accounts.id.renderButton
+  /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.renderButton
+  external void renderButton(
+    DomHtmlElement parent, [
+    GsiButtonConfiguration options,
+  ]);
 
-/*
-// Data type: IdConfiguration
-// https://developers.google.com/identity/gsi/web/reference/js-reference#IdConfiguration
-*/
+  /// Record when the user signs out of your website in cookies.
+  ///
+  /// This prevents a UX dead loop.
+  ///
+  /// Method: google.accounts.id.disableAutoselect
+  /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.disableAutoSelect
+  external void disableAutoSelect();
+
+  /// A wrapper for the `store` method of the browser's native credential manager API.
+  ///
+  /// It can only be used to store a Password [Credential].
+  ///
+  /// See: https://developer.mozilla.org/en-US/docs/Web/API/CredentialsContainer/store
+  ///
+  /// Method: google.accounts.id.storeCredential
+  /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.storeCredential
+  external void storeCredential(Credential credential, [VoidFn fallback]);
+
+  /// Cancels the One Tap flow.
+  ///
+  /// You can cancel the One Tap flow if you remove the prompt from the relying
+  /// party DOM. The cancel operation is ignored if a credential is already
+  /// selected.
+  ///
+  /// Method: google.accounts.id.cancel
+  /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.cancel
+  external void cancel();
+
+  /// Revokes the OAuth grant used to share the ID token for the specified user.
+  ///
+  /// [hint] is the email address or unique ID of the user's Google Account. The
+  /// ID is the `sub` property of the [CredentialResponse.credential] payload.
+  ///
+  /// The optional [callback] is a function that gets called to report on the
+  /// success of the revocation call.
+  ///
+  /// The [callback] parameter must be manually wrapped in [allowInterop]
+  /// before being passed to the [revoke] function.
+  ///
+  /// Method: google.accounts.id.revoke
+  /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.revoke
+  external void revoke(String hint, [RevocationResponseHandlerFn callback]);
+}
 
 /// The configuration object for the [initialize] method.
+///
+/// Data type: IdConfiguration
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#IdConfiguration
 @JS()
 @anonymous
 @staticInterop
@@ -152,55 +240,13 @@ abstract class IdConfiguration {
   });
 }
 
-/*
-// Method: google.accounts.id.prompt
-// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.prompt
-*/
-
-/// The `prompt` method displays the One Tap prompt or the browser native
-/// credential manager after the [initialize] method is invoked.
-///
-/// Normally, the `prompt` method is called on page load. Due to the session
-/// status and user settings on the Google side, the One Tap prompt UI might
-/// not be displayed. To get notified on the UI status for different moments,
-/// pass a [PromptMomentListenerFn] to receive UI status notifications.
-///
-/// Notifications are fired on the following moments:
-///
-/// * Display moment: This occurs after the `prompt` method is called. The
-///   notification contains a boolean value to indicate whether the UI is
-///   displayed or not.
-/// * Skipped moment: This occurs when the One Tap prompt is closed by an auto
-///   cancel, a manual cancel, or when Google fails to issue a credential, such
-///   as when the selected session has signed out of Google.
-///   In these cases, we recommend that you continue on to the next identity
-///   providers, if there are any.
-/// * Dismissed moment: This occurs when Google successfully retrieves a
-///   credential or a user wants to stop the credential retrieval flow. For
-///   example, when the user begins to input their username and password in
-///   your login dialog, you can call the [cancel] method to close the One Tap
-///   prompt and trigger a dismissed moment.
-///
-///   WARNING: When on a dismissed moment, do not try any of the next identity
-///   providers.
-@JS()
-external PromptFn get prompt;
-
-/// The type of the [prompt] function.
-///
-/// The [momentListener] parameter must be manually wrapped in [allowInterop]
-/// before being passed to the [prompt] function.
-typedef PromptFn = void Function([PromptMomentListenerFn momentListener]);
-
 /// The type of the function that can be passed to [prompt] to listen for [PromptMomentNotification]s.
 typedef PromptMomentListenerFn = void Function(PromptMomentNotification moment);
 
-/*
-// Data type: PromptMomentNotification
-// https://developers.google.com/identity/gsi/web/reference/js-reference#PromptMomentNotification
-*/
-
 /// A moment (status) notification from the [prompt] method.
+///
+/// Data type: PromptMomentNotification
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#PromptMomentNotification
 @JS()
 @staticInterop
 abstract class PromptMomentNotification {}
@@ -246,25 +292,32 @@ extension PromptMomentNotificationExtension on PromptMomentNotification {
       maybeEnum(_getDismissedReason(), MomentDismissedReason.values);
 }
 
-/*
-// Data type: CredentialResponse
-// https://developers.google.com/identity/gsi/web/reference/js-reference#CredentialResponse
-*/
-
 /// The object passed as the parameter of your [CallbackFn].
+///
+/// Data type: CredentialResponse
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#CredentialResponse
 @JS()
 @staticInterop
 abstract class CredentialResponse {}
 
 /// The fields that are contained in the credential response object.
 extension CredentialResponseExtension on CredentialResponse {
+  /// The ClientID for this Credential.
+  external String? get client_id;
+
+  /// Error while signing in.
+  external String? get error;
+
+  /// Details of the error while signing in.
+  external String? get error_detail;
+
   /// This field is the ID token as a base64-encoded JSON Web Token (JWT)
   /// string.
   ///
   /// See more: https://developers.google.com/identity/gsi/web/reference/js-reference#credential
-  external String get credential;
+  external String? get credential;
   @JS('select_by')
-  external String get _select_by;
+  external String? get _select_by;
 
   /// This field sets how the credential was selected.
   ///
@@ -272,8 +325,8 @@ extension CredentialResponseExtension on CredentialResponse {
   /// to set the value.
   ///
   /// See more: https://developers.google.com/identity/gsi/web/reference/js-reference#select_by
-  CredentialSelectBy get select_by =>
-      CredentialSelectBy.values.byName(_select_by);
+  CredentialSelectBy? get select_by =>
+      maybeEnum(_select_by, CredentialSelectBy.values);
 }
 
 /// The type of the `callback` used to create an [IdConfiguration].
@@ -285,20 +338,69 @@ extension CredentialResponseExtension on CredentialResponse {
 /// attribute.
 typedef CallbackFn = void Function(CredentialResponse credentialResponse);
 
-/*
-// Method: google.accounts.id.renderButton
-// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.renderButton
-//
-// Data type: GsiButtonConfiguration
-// https://developers.google.com/identity/gsi/web/reference/js-reference#GsiButtonConfiguration
-//
-// Question: Do we need to implement renderButton and its options?
-*/
+/// The configuration object for the [renderButton] method.
+///
+/// Data type: GsiButtonConfiguration
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#GsiButtonConfiguration
+@JS()
+@anonymous
+@staticInterop
+abstract class GsiButtonConfiguration {
+  /// Constructs an options object for the [renderButton] method.
+  ///
+  /// The following properties need to be manually wrapped in [allowInterop]
+  /// before being passed to this constructor:
+  external factory GsiButtonConfiguration({
+    /// The button type.
+    ButtonType type,
 
-/*
-// Data type: Credential
-// https://developers.google.com/identity/gsi/web/reference/js-reference#type-Credential
-*/
+    /// The button theme.
+    ButtonTheme theme,
+
+    /// The button size.
+    ButtonSize size,
+
+    /// The button text.
+    ButtonText text,
+
+    /// The button shape.
+    ButtonShape shape,
+
+    /// The Google logo alignment in the button.
+    ButtonLogoAlignment logo_alignment,
+
+    /// The minimum button width, in pixels.
+    ///
+    /// The maximum width is 400 pixels.
+    double width,
+
+    /// The pre-set locale of the button text.
+    ///
+    /// If not set, the browser's default locale or the Google session user's
+    /// preference is used.
+    String locale,
+
+    /// A function to be called when the button is clicked.
+    GsiButtonClickListenerFn click_listener,
+  });
+}
+
+/// The object passed as an optional parameter to `click_listener` function.
+@JS()
+@staticInterop
+abstract class GsiButtonData {}
+
+/// The fields that are contained in the button data.
+extension GsiButtonDataExtension on GsiButtonData {
+  /// Nonce
+  external String? get nonce;
+
+  /// State
+  external String? get state;
+}
+
+/// The type of the [GsiButtonConfiguration] `click_listener` function.
+typedef GsiButtonClickListenerFn = void Function(GsiButtonData? gsiButtonData);
 
 /// The object passed to the [NativeCallbackFn]. Represents a PasswordCredential
 /// that was returned by the Browser.
@@ -307,6 +409,9 @@ typedef CallbackFn = void Function(CredentialResponse credentialResponse);
 /// in the browser through the [storeCredential] method.
 ///
 /// See also: https://developer.mozilla.org/en-US/docs/Web/API/PasswordCredential/PasswordCredential
+///
+/// Data type: Credential
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#type-Credential
 @JS()
 @anonymous
 @staticInterop
@@ -334,80 +439,10 @@ extension CredentialExtension on Credential {
 typedef NativeCallbackFn = void Function(Credential credential);
 
 /*
-// Method: google.accounts.id.disableAutoselect
-// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.disableAutoSelect
-*/
-
-/// When the user signs out of your website, you need to call this method to
-/// record the status in cookies.
-///
-/// This prevents a UX dead loop.
-@JS()
-external VoidFn get disableAutoSelect;
-
-/*
-// Method: google.accounts.id.storeCredential
-// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.storeCredential
-*/
-
-/// This method is a simple wrapper for the `store` method of the browser's
-/// native credential manager API.
-///
-/// It can only be used to store a Password [Credential].
-///
-/// See: https://developer.mozilla.org/en-US/docs/Web/API/CredentialsContainer/store
-@JS()
-external StoreCredentialFn get storeCredential;
-
-/// The type of the [storeCredential] function.
-///
-/// The [callback] parameter must be manually wrapped in [allowInterop]
-/// before being passed to the [storeCredential] function.
-// Question: What's the type of the callback function??? VoidFn?
-typedef StoreCredentialFn = void Function(
-  Credential credential,
-  Function? callback,
-);
-
-/*
-// Method: google.accounts.id.cancel
-// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.cancel
-*/
-
-/// You can cancel the One Tap flow if you remove the prompt from the relying
-/// party DOM. The cancel operation is ignored if a credential is already
-/// selected.
-@JS()
-external VoidFn get cancel;
-
-/*
 // Library load callback: onGoogleLibraryLoad
 // https://developers.google.com/identity/gsi/web/reference/js-reference#onGoogleLibraryLoad
 // See: `load_callback.dart` and `loader.dart`
 */
-
-/*
-// Method: google.accounts.id.revoke
-// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.revoke
-*/
-
-/// The `revoke` method revokes the OAuth grant used to share the ID token for
-/// the specified user.
-@JS()
-external RevokeFn get revoke;
-
-/// The type of the [revoke] function.
-///
-/// [hint] is the email address or unique ID of the user's Google Account. The
-/// ID is the `sub` property of the [CredentialResponse.credential] payload.
-///
-/// The optional [callback] is a function that gets called to report on the
-/// success of the revocation call.
-///
-/// The [callback] parameter must be manually wrapped in [allowInterop]
-/// before being passed to the [revoke] function.
-typedef RevokeFn = void Function(String hint,
-    [RevocationResponseHandlerFn callback]);
 
 /// The type of the `callback` function passed to [revoke], to be notified of
 /// the success of the revocation operation.
@@ -415,13 +450,10 @@ typedef RevocationResponseHandlerFn = void Function(
   RevocationResponse revocationResponse,
 );
 
-/*
-// Data type: RevocationResponse
-// https://developers.google.com/identity/gsi/web/reference/js-reference#RevocationResponse
-*/
-
-/// The parameter passed to the optional [RevocationResponseHandlerFn]
-/// `callback` of the [revoke] function.
+/// The parameter passed to the `callback` of the [revoke] function.
+///
+/// Data type: RevocationResponse
+/// https://developers.google.com/identity/gsi/web/reference/js-reference#RevocationResponse
 @JS()
 @staticInterop
 abstract class RevocationResponse {}

@@ -25,6 +25,7 @@ const Set<String> _expectedAnnotatedTests = <String>{
   'AppliedToWrongClassType',
   'BadPathParam',
   'ExtraMustBeOptional',
+  'ExtraValueRoute',
   'MissingPathParam',
   'MissingPathValue',
   'MissingTypeAnnotation',
@@ -32,4 +33,6 @@ const Set<String> _expectedAnnotatedTests = <String>{
   'UnsupportedType',
   'theAnswer',
   'EnumParam',
+  'DefaultValueRoute',
+  'NullableDefaultValueRoute',
 };

@@ -4,7 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_unit_tests/primitive.dart';
+import 'package:flutter_unit_tests/primitive.gen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 

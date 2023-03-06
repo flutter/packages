@@ -23,7 +23,7 @@
   return self;
 }
 
-- (void)cleanupConnection:(FlutterBinaryMessengerConnection)connection {
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
 }
 
 - (void)sendOnChannel:(nonnull NSString *)channel message:(NSData *_Nullable)message {

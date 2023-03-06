@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -47,6 +47,10 @@ android {
 
     dependencies {
         testImplementation 'junit:junit:4.+'
-        testImplementation "org.mockito:mockito-core:4.+"
+        testImplementation "org.mockito:mockito-core:5.+"
     }
+}
+
+project.getTasks().withType(JavaCompile){
+    options.compilerArgs.addAll(["-Xlint:all", "-Werror"])
 }

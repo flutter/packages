@@ -39,7 +39,10 @@ class TestPlugin : public flutter::Plugin,
       std::optional<core_tests_pigeontest::AllNullableTypes>>
   EchoAllNullableTypes(
       const core_tests_pigeontest::AllNullableTypes* everything) override;
-  std::optional<core_tests_pigeontest::FlutterError> ThrowError() override;
+  core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+  ThrowError() override;
+  std::optional<core_tests_pigeontest::FlutterError> ThrowErrorFromVoid()
+      override;
   core_tests_pigeontest::ErrorOr<int64_t> EchoInt(int64_t an_int) override;
   core_tests_pigeontest::ErrorOr<double> EchoDouble(double a_double) override;
   core_tests_pigeontest::ErrorOr<bool> EchoBool(bool a_bool) override;
@@ -49,6 +52,10 @@ class TestPlugin : public flutter::Plugin,
       const std::vector<uint8_t>& a_uint8_list) override;
   core_tests_pigeontest::ErrorOr<flutter::EncodableValue> EchoObject(
       const flutter::EncodableValue& an_object) override;
+  core_tests_pigeontest::ErrorOr<flutter::EncodableList> EchoList(
+      const flutter::EncodableList& a_list) override;
+  core_tests_pigeontest::ErrorOr<flutter::EncodableMap> EchoMap(
+      const flutter::EncodableMap& a_map) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>>
   ExtractNestedNullableString(
       const core_tests_pigeontest::AllNullableTypesWrapper& wrapper) override;
@@ -71,20 +78,208 @@ class TestPlugin : public flutter::Plugin,
       const std::vector<uint8_t>* a_nullable_uint8_list) override;
   core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
   EchoNullableObject(const flutter::EncodableValue* a_nullable_object) override;
+  core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableList>>
+  EchoNullableList(const flutter::EncodableList* a_nullable_list) override;
+  core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableMap>>
+  EchoNullableMap(const flutter::EncodableMap* a_nullable_map) override;
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;
+  void ThrowAsyncError(
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+              reply)>
+          result) override;
+  void ThrowAsyncErrorFromVoid(
+      std::function<
+          void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+          result) override;
+  void EchoAsyncAllTypes(
+      const core_tests_pigeontest::AllTypes& everything,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
+                   reply)>
+          result) override;
+  void EchoAsyncNullableAllNullableTypes(
+      const core_tests_pigeontest::AllNullableTypes* everything,
+      std::function<void(core_tests_pigeontest::ErrorOr<
+                         std::optional<core_tests_pigeontest::AllNullableTypes>>
+                             reply)>
+          result) override;
+  void EchoAsyncInt(
+      int64_t an_int,
+      std::function<void(core_tests_pigeontest::ErrorOr<int64_t> reply)> result)
+      override;
+  void EchoAsyncDouble(
+      double a_double,
+      std::function<void(core_tests_pigeontest::ErrorOr<double> reply)> result)
+      override;
+  void EchoAsyncBool(
+      bool a_bool,
+      std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result)
+      override;
   void EchoAsyncString(
       const std::string& a_string,
       std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+          result) override;
+  void EchoAsyncUint8List(
+      const std::vector<uint8_t>& a_uint8_list,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::vector<uint8_t>> reply)>
+          result) override;
+  void EchoAsyncObject(
+      const flutter::EncodableValue& an_object,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<flutter::EncodableValue> reply)>
+          result) override;
+  void EchoAsyncList(
+      const flutter::EncodableList& a_list,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<flutter::EncodableList> reply)>
+          result) override;
+  void EchoAsyncMap(
+      const flutter::EncodableMap& a_map,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<flutter::EncodableMap> reply)>
+          result) override;
+  void EchoAsyncNullableInt(
+      const int64_t* an_int,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::optional<int64_t>> reply)>
+          result) override;
+  void EchoAsyncNullableDouble(
+      const double* a_double,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::optional<double>> reply)>
+          result) override;
+  void EchoAsyncNullableBool(
+      const bool* a_bool,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::optional<bool>> reply)>
+          result) override;
+  void EchoAsyncNullableString(
+      const std::string* a_string,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<std::string>> reply)>
+          result) override;
+  void EchoAsyncNullableUint8List(
+      const std::vector<uint8_t>* a_uint8_list,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<std::vector<uint8_t>>>
+              reply)>
+          result) override;
+  void EchoAsyncNullableObject(
+      const flutter::EncodableValue* an_object,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+              reply)>
+          result) override;
+  void EchoAsyncNullableList(
+      const flutter::EncodableList* a_list,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableList>>
+              reply)>
+          result) override;
+  void EchoAsyncNullableMap(
+      const flutter::EncodableMap* a_map,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableMap>>
+              reply)>
           result) override;
   void CallFlutterNoop(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
           result) override;
+  void CallFlutterThrowError(
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+              reply)>
+          result) override;
+  void CallFlutterThrowErrorFromVoid(
+      std::function<
+          void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+          result) override;
+  void CallFlutterEchoAllTypes(
+      const core_tests_pigeontest::AllTypes& everything,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
+                   reply)>
+          result) override;
+  void CallFlutterSendMultipleNullableTypes(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string,
+      std::function<void(core_tests_pigeontest::ErrorOr<
+                         core_tests_pigeontest::AllNullableTypes>
+                             reply)>
+          result) override;
+  void CallFlutterEchoBool(
+      bool a_bool,
+      std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result)
+      override;
+  void CallFlutterEchoInt(
+      int64_t an_int,
+      std::function<void(core_tests_pigeontest::ErrorOr<int64_t> reply)> result)
+      override;
+  void CallFlutterEchoDouble(
+      double a_double,
+      std::function<void(core_tests_pigeontest::ErrorOr<double> reply)> result)
+      override;
   void CallFlutterEchoString(
       const std::string& a_string,
       std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+          result) override;
+  void CallFlutterEchoUint8List(
+      const std::vector<uint8_t>& a_list,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::vector<uint8_t>> reply)>
+          result) override;
+  void CallFlutterEchoList(
+      const flutter::EncodableList& a_list,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<flutter::EncodableList> reply)>
+          result) override;
+  void CallFlutterEchoMap(
+      const flutter::EncodableMap& a_map,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<flutter::EncodableMap> reply)>
+          result) override;
+  void CallFlutterEchoNullableBool(
+      const bool* a_bool,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::optional<bool>> reply)>
+          result) override;
+  void CallFlutterEchoNullableInt(
+      const int64_t* an_int,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::optional<int64_t>> reply)>
+          result) override;
+  void CallFlutterEchoNullableDouble(
+      const double* a_double,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::optional<double>> reply)>
+          result) override;
+  void CallFlutterEchoNullableString(
+      const std::string* a_string,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<std::string>> reply)>
+          result) override;
+  void CallFlutterEchoNullableUint8List(
+      const std::vector<uint8_t>* a_list,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<std::vector<uint8_t>>>
+              reply)>
+          result) override;
+  void CallFlutterEchoNullableList(
+      const flutter::EncodableList* a_list,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableList>>
+              reply)>
+          result) override;
+  void CallFlutterEchoNullableMap(
+      const flutter::EncodableMap* a_map,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableMap>>
+              reply)>
           result) override;
 
  private:

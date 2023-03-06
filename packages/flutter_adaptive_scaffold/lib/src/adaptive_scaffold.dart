@@ -110,7 +110,7 @@ class AdaptiveScaffold extends StatefulWidget {
   final List<NavigationDestination> destinations;
 
   /// The index to be used by the [NavigationRail].
-  final int selectedIndex;
+  final int? selectedIndex;
 
   /// Option to display a leading widget at the top of the navigation rail
   /// at the middle breakpoint.
@@ -251,7 +251,7 @@ class AdaptiveScaffold extends StatefulWidget {
   static Builder standardNavigationRail({
     required List<NavigationRailDestination> destinations,
     double width = 72,
-    int selectedIndex = 0,
+    int? selectedIndex,
     bool extended = false,
     Color backgroundColor = Colors.transparent,
     EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
@@ -305,14 +305,15 @@ class AdaptiveScaffold extends StatefulWidget {
   /// a list of [NavigationDestination]s.
   static Builder standardBottomNavigationBar({
     required List<NavigationDestination> destinations,
-    int currentIndex = 0,
+    int? currentIndex,
     double iconSize = 24,
     ValueChanged<int>? onDestinationSelected,
   }) {
+    currentIndex ??= 0;
     return Builder(
       builder: (_) {
         return BottomNavigationBar(
-          currentIndex: currentIndex,
+          currentIndex: currentIndex ?? 0,
           iconSize: iconSize,
           items: destinations
               .map((NavigationDestination e) => _toBottomNavItem(e))
@@ -487,6 +488,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                       child: IntrinsicHeight(
                         child: NavigationRail(
                           extended: true,
+                          leading: widget.leadingExtendedNavRail,
+                          trailing: widget.trailingNavRail,
                           selectedIndex: widget.selectedIndex,
                           destinations: widget.destinations
                               .map((_) => AdaptiveScaffold.toRailDestination(_))
@@ -509,6 +512,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 key: const Key('primaryNavigation'),
                 builder: (_) => AdaptiveScaffold.standardNavigationRail(
                   width: widget.navigationRailWidth,
+                  leading: widget.leadingUnextendedNavRail,
+                  trailing: widget.trailingNavRail,
                   selectedIndex: widget.selectedIndex,
                   destinations: widget.destinations
                       .map((_) => AdaptiveScaffold.toRailDestination(_))
@@ -521,6 +526,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 builder: (_) => AdaptiveScaffold.standardNavigationRail(
                   width: widget.extendedNavigationRailWidth,
                   extended: true,
+                  leading: widget.leadingExtendedNavRail,
+                  trailing: widget.trailingNavRail,
                   selectedIndex: widget.selectedIndex,
                   destinations: widget.destinations
                       .map((_) => AdaptiveScaffold.toRailDestination(_))

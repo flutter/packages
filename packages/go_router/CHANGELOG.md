@@ -1,3 +1,54 @@
+## NEXT
+
+- Aligns Dart and Flutter SDK constraints.
+- Updates compileSdkVersion to 33.
+- Updates example app to iOS 11.
+
+## 6.2.0
+
+- Export supertypes in route_data.dart library
+
+## 6.1.0
+
+- Adds `GoRouter.maybeOf` to get the closest `GoRouter` from the context, if there is any.
+
+## 6.0.10
+
+- Adds helpers for go_router_builder for ShellRoute support
+
+## 6.0.9
+
+- Fixes deprecation message for `GoRouterState.namedLocation`
+
+## 6.0.8
+
+* Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
+
+## 6.0.7
+
+- Add observers parameter to the ShellRoute that will be passed to the nested Navigator.
+- Use `HeroControllerScope` for nested Navigator that fixes Hero Widgets not animating in Nested Navigator.
+
+## 6.0.6
+
+- Adds `reverseTransitionDuration` to `CustomTransitionPage`
+
+## 6.0.5
+
+- Fixes [unnecessary_null_comparison](https://dart-lang.github.io/linter/lints/unnecessary_null_checks.html) lint warnings.
+
+## 6.0.4
+
+- Fixes redirection info log.
+
+## 6.0.3
+
+- Makes `CustomTransitionPage.barrierDismissible` work
+
+## 6.0.2
+
+- Fixes missing result on pop in go_router extension.
+
 ## 6.0.1
 
 - Fixes crashes when popping navigators manually.
@@ -9,8 +60,8 @@
   - `GoRouteData`'s `redirect` now takes 2 parameters `BuildContext context, GoRouterState state`.
   - `GoRouteData`'s `build` now takes 2 parameters `BuildContext context, GoRouterState state`.
   - `GoRouteData`'s `buildPageWithState` has been removed and replaced by `buildPage` with now takes 2 parameters `BuildContext context, GoRouterState state`.
-  - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`. 
-  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`. 
+  - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`.
+  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`.
   - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
 
 ## 5.2.4
@@ -140,7 +191,7 @@
 
 ## 4.3.0
 
-- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`.
 
 ## 4.2.9
 
