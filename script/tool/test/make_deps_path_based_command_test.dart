@@ -310,6 +310,12 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
       'make-deps-path-based',
       '--target-dependencies=bar,bar_platform_interface'
     ]);
+    final String simplePackageUpdatedContent =
+        simplePackage.pubspecFile.readAsStringSync();
+    final String appFacingPackageUpdatedContent =
+        pluginAppFacing.pubspecFile.readAsStringSync();
+    final String implementationPackageUpdatedContent =
+        pluginImplementation.pubspecFile.readAsStringSync();
     final List<String> output = await runCapturingPrint(runner, <String>[
       'make-deps-path-based',
       '--target-dependencies=bar,bar_platform_interface'
@@ -319,10 +325,16 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
         output,
         containsAll(<String>[
           'Rewriting references to: bar, bar_platform_interface...',
-          '  Skipped packages/bar/bar/pubspec.yaml - Already rewritten',
-          '  Skipped packages/bar/bar_android/pubspec.yaml - Already rewritten',
-          '  Skipped packages/foo/pubspec.yaml - Already rewritten',
+          '  Modified packages/bar/bar/pubspec.yaml',
+          '  Modified packages/bar/bar_android/pubspec.yaml',
+          '  Modified packages/foo/pubspec.yaml',
         ]));
+    expect(simplePackageUpdatedContent,
+        simplePackage.pubspecFile.readAsStringSync());
+    expect(appFacingPackageUpdatedContent,
+        pluginAppFacing.pubspecFile.readAsStringSync());
+    expect(implementationPackageUpdatedContent,
+        pluginImplementation.pubspecFile.readAsStringSync());
   });
 
   group('target-dependencies-with-non-breaking-updates', () {

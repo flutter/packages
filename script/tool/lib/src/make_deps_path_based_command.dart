@@ -6,6 +6,8 @@ import 'package:file/file.dart';
 import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
+import 'package:yaml/yaml.dart';
+import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/git_version_finder.dart';
@@ -13,9 +15,8 @@ import 'common/package_command.dart';
 import 'common/repository_package.dart';
 
 const int _exitPackageNotFound = 3;
-const int _exitCannotUpdatePubspec = 4;
 
-enum _RewriteOutcome { changed, noChangesNeeded, alreadyChanged }
+enum _RewriteOutcome { changed, noChangesNeeded }
 
 /// Converts all dependencies on target packages to path-based dependencies.
 ///
@@ -90,9 +91,6 @@ class MakeDepsPathBasedCommand extends PackageCommand {
         case _RewriteOutcome.changed:
           print('  Modified $displayPath');
           break;
-        case _RewriteOutcome.alreadyChanged:
-          print('  Skipped $displayPath - Already rewritten');
-          break;
         case _RewriteOutcome.noChangesNeeded:
           break;
       }
@@ -144,20 +142,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   Future<_RewriteOutcome> _addDependencyOverridesIfNecessary(File pubspecFile,
       Map<String, RepositoryPackage> localDependencies) async {
     final String pubspecContents = pubspecFile.readAsStringSync();
-    final Pubspec pubspec = Pubspec.parse(pubspecContents);
-    // Fail if there are any dependency overrides already, other than ones
-    // created by this script. If support for that is needed at some point, it
-    // can be added, but currently it's not and relying on that makes the logic
-    // here much simpler.
-    if (pubspec.dependencyOverrides.isNotEmpty) {
-      if (pubspecContents.contains(_dependencyOverrideWarningComment)) {
-        return _RewriteOutcome.alreadyChanged;
-      }
-      printError(
-          'Packages with dependency overrides are not currently supported.');
-      throw ToolExit(_exitCannotUpdatePubspec);
-    }
 
+    // Determine the dependencies to be overridden.
+    final Pubspec pubspec = Pubspec.parse(pubspecContents);
     final Iterable<String> combinedDependencies = <String>[
       ...pubspec.dependencies.keys,
       ...pubspec.devDependencies.keys,
@@ -168,42 +155,60 @@ class MakeDepsPathBasedCommand extends PackageCommand {
         .toList();
     // Sort the combined list to avoid sort_pub_dependencies lint violations.
     packagesToOverride.sort();
-    if (packagesToOverride.isNotEmpty) {
-      final String commonBasePath = packagesDir.path;
-      // Find the relative path to the common base.
-      final int packageDepth = path
-          .split(path.relative(pubspecFile.parent.absolute.path,
-              from: commonBasePath))
-          .length;
-      final List<String> relativeBasePathComponents =
-          List<String>.filled(packageDepth, '..');
-      // This is done via strings rather than by manipulating the Pubspec and
-      // then re-serialiazing so that it's a localized change, rather than
-      // rewriting the whole file (e.g., destroying comments), which could be
-      // more disruptive for local use.
-      String newPubspecContents = '''
-$pubspecContents
 
-$_dependencyOverrideWarningComment
-dependency_overrides:
-''';
-      for (final String packageName in packagesToOverride) {
-        // Find the relative path from the common base to the local package.
-        final List<String> repoRelativePathComponents = path.split(
-            path.relative(localDependencies[packageName]!.path,
-                from: commonBasePath));
-        newPubspecContents += '''
-  $packageName:
-    path: ${p.posix.joinAll(<String>[
-              ...relativeBasePathComponents,
-              ...repoRelativePathComponents,
-            ])}
-''';
-      }
-      pubspecFile.writeAsStringSync(newPubspecContents);
-      return _RewriteOutcome.changed;
+    if (packagesToOverride.isEmpty) {
+      return _RewriteOutcome.noChangesNeeded;
     }
-    return _RewriteOutcome.noChangesNeeded;
+
+    // Find the relative path to the common base.
+    // XXX
+    //final String relativeRootPath =
+    //    getRelativePosixPath(repoRoot, from: package.directory);
+    final String commonBasePath = packagesDir.path;
+    final int packageDepth = path
+        .split(path.relative(pubspecFile.parent.absolute.path,
+            from: commonBasePath))
+        .length;
+    final List<String> relativeBasePathComponents =
+        List<String>.filled(packageDepth, '..');
+
+    // Add the overrides.
+    final YamlEditor editablePubspec = YamlEditor(pubspecContents);
+    final YamlNode root = editablePubspec.parseAt(<String>[]);
+    const String dependencyOverridesKey = 'dependency_overrides';
+    // Ensure that there's a `dependencyOverridesKey` entry to update.
+    if ((root as YamlMap)[dependencyOverridesKey] == null) {
+      editablePubspec.update(<String>[dependencyOverridesKey], YamlMap());
+    }
+    for (final String packageName in packagesToOverride) {
+      // Find the relative path from the common base to the local package.
+      // XXX
+      final List<String> repoRelativePathComponents = path.split(path.relative(
+          localDependencies[packageName]!.path,
+          from: commonBasePath));
+      editablePubspec.update(<String>[
+        dependencyOverridesKey,
+        packageName
+      ], <String, String>{
+        'path': p.posix.joinAll(<String>[
+          ...relativeBasePathComponents,
+          ...repoRelativePathComponents,
+        ])
+      });
+    }
+
+    // Add the warning if it's not already there.
+    String newContent = editablePubspec.toString();
+    if (!newContent.contains(_dependencyOverrideWarningComment)) {
+      newContent = newContent.replaceFirst('$dependencyOverridesKey:', '''
+$_dependencyOverrideWarningComment
+$dependencyOverridesKey:
+''');
+    }
+
+    // Write the new pubspec.
+    pubspecFile.writeAsStringSync(newContent);
+    return _RewriteOutcome.changed;
   }
 
   /// Returns all pubspecs anywhere under the packages directory.
