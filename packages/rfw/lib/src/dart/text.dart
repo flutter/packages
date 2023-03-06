@@ -659,7 +659,7 @@ class _StringToken extends _Token {
 }
 
 class _EofToken extends _Token {
-  _EofToken(int line, int column): super(line, column);
+  _EofToken(super.line, super.column);
 
   @override
   String toString() => '<EOF>';

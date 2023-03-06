@@ -1,3 +1,7 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.4.8
 
 * Fixes compilation warnings.

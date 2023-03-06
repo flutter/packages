@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 /// Screen that shows an example of getDirectoryPath
 class GetDirectoryPage extends StatelessWidget {
   /// Default Constructor
-  GetDirectoryPage({Key? key}) : super(key: key);
+  GetDirectoryPage({super.key});
 
   final bool _isIOS = !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
@@ -63,7 +63,7 @@ class GetDirectoryPage extends StatelessWidget {
 /// Widget that displays a text file in a dialog
 class TextDisplay extends StatelessWidget {
   /// Default Constructor
-  const TextDisplay(this.directoryPath, {Key? key}) : super(key: key);
+  const TextDisplay(this.directoryPath, {super.key});
 
   /// Directory path
   final String directoryPath;
