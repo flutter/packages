@@ -4,13 +4,14 @@
 
 package io.flutter.plugins.imagepicker;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import java.io.File;
 import java.io.IOException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -28,15 +29,22 @@ public class ImageResizerTest {
   File externalDirectory;
   Bitmap originalImageBitmap;
 
+  AutoCloseable mockCloseable;
+
   @Before
   public void setUp() throws IOException {
-    MockitoAnnotations.initMocks(this);
+    mockCloseable = MockitoAnnotations.openMocks(this);
     imageFile = new File(getClass().getClassLoader().getResource("pngImage.png").getFile());
     originalImageBitmap = BitmapFactory.decodeFile(imageFile.getPath());
     TemporaryFolder temporaryFolder = new TemporaryFolder();
     temporaryFolder.create();
     externalDirectory = temporaryFolder.newFolder("image_picker_testing_path");
     resizer = new ImageResizer(externalDirectory, new ExifDataCopier());
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    mockCloseable.close();
   }
 
   @Test

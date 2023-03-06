@@ -342,12 +342,12 @@ public class ImagePickerPlugin
     int imageSource;
     ImagePickerDelegate delegate = activityState.getDelegate();
     if (call.argument("cameraDevice") != null) {
-      CameraDevice device;
+      ImagePickerDelegate.CameraDevice device;
       int deviceIntValue = call.argument("cameraDevice");
       if (deviceIntValue == CAMERA_DEVICE_FRONT) {
-        device = CameraDevice.FRONT;
+        device = ImagePickerDelegate.CameraDevice.FRONT;
       } else {
-        device = CameraDevice.REAR;
+        device = ImagePickerDelegate.CameraDevice.REAR;
       }
       delegate.setCameraDevice(device);
     }

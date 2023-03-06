@@ -32,20 +32,12 @@ class PubspecCheckCommand extends PackageLoopingCommand {
           gitDir: gitDir,
         ) {
     argParser.addOption(
-      _minMinDartVersionFlag,
-      help:
-          'The minimum Dart version to allow as the minimum SDK constraint.\n\n'
-          'This is only enforced for non-Flutter packages; Flutter packages '
-          'use --$_minMinFlutterVersionFlag',
-    );
-    argParser.addOption(
       _minMinFlutterVersionFlag,
       help:
           'The minimum Flutter version to allow as the minimum SDK constraint.',
     );
   }
 
-  static const String _minMinDartVersionFlag = 'min-min-dart-version';
   static const String _minMinFlutterVersionFlag = 'min-min-flutter-version';
 
   // Section order for plugins. Because the 'flutter' section is critical
@@ -117,15 +109,11 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       printError('$listIndentation${sectionOrder.join('\n$listIndentation')}');
     }
 
-    final String minMinDartVersionString = getStringArg(_minMinDartVersionFlag);
     final String minMinFlutterVersionString =
         getStringArg(_minMinFlutterVersionFlag);
     final String? minVersionError = _checkForMinimumVersionError(
       pubspec,
       package,
-      minMinDartVersion: minMinDartVersionString.isEmpty
-          ? null
-          : Version.parse(minMinDartVersionString),
       minMinFlutterVersion: minMinFlutterVersionString.isEmpty
           ? null
           : Version.parse(minMinFlutterVersionString),
@@ -368,33 +356,74 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   String? _checkForMinimumVersionError(
     Pubspec pubspec,
     RepositoryPackage package, {
-    Version? minMinDartVersion,
     Version? minMinFlutterVersion,
   }) {
-    final VersionConstraint? dartConstraint = pubspec.environment?['sdk'];
-    final VersionConstraint? flutterConstraint =
-        pubspec.environment?['flutter'];
+    String unknownDartVersionError(Version flutterVersion) {
+      return 'Dart SDK version for Fluter SDK version '
+          '$flutterVersion is unknown. '
+          'Please update the map for getDartSdkForFlutterSdk with the '
+          'corresponding Dart version.';
+    }
 
-    if (flutterConstraint != null) {
-      // Validate Flutter packages against the Flutter requirement.
-      if (minMinFlutterVersion != null) {
-        final Version? constraintMin =
-            flutterConstraint is VersionRange ? flutterConstraint.min : null;
-        if ((constraintMin ?? Version(0, 0, 0)) < minMinFlutterVersion) {
-          return 'Minimum allowed Flutter version $constraintMin is less than $minMinFlutterVersion';
+    Version? minMinDartVersion;
+    if (minMinFlutterVersion != null) {
+      minMinDartVersion = getDartSdkForFlutterSdk(minMinFlutterVersion);
+      if (minMinDartVersion == null) {
+        return unknownDartVersionError(minMinFlutterVersion);
+      }
+    }
+
+    final Version? dartConstraintMin =
+        _minimumForConstraint(pubspec.environment?['sdk']);
+    final Version? flutterConstraintMin =
+        _minimumForConstraint(pubspec.environment?['flutter']);
+
+    // Validate the Flutter constraint, if any.
+    if (flutterConstraintMin != null && minMinFlutterVersion != null) {
+      if (flutterConstraintMin < minMinFlutterVersion) {
+        return 'Minimum allowed Flutter version $flutterConstraintMin is less '
+            'than $minMinFlutterVersion';
+      }
+    }
+
+    // Validate the Dart constraint, if any.
+    if (dartConstraintMin != null) {
+      // Ensure that it satisfies the minimum.
+      if (minMinDartVersion != null) {
+        if (dartConstraintMin < minMinDartVersion) {
+          return 'Minimum allowed Dart version $dartConstraintMin is less than $minMinDartVersion';
         }
       }
-    } else {
-      // Validate non-Flutter packages against the Dart requirement.
-      if (minMinDartVersion != null) {
-        final Version? constraintMin =
-            dartConstraint is VersionRange ? dartConstraint.min : null;
-        if ((constraintMin ?? Version(0, 0, 0)) < minMinDartVersion) {
-          return 'Minimum allowed Dart version $constraintMin is less than $minMinDartVersion';
+
+      // Ensure that if there is also a Flutter constraint, they are consistent.
+      if (flutterConstraintMin != null) {
+        final Version? dartVersionForFlutterMinimum =
+            getDartSdkForFlutterSdk(flutterConstraintMin);
+        if (dartVersionForFlutterMinimum == null) {
+          return unknownDartVersionError(flutterConstraintMin);
+        }
+        if (dartVersionForFlutterMinimum != dartConstraintMin) {
+          return 'The minimum Dart version is $dartConstraintMin, but the '
+              'minimum Flutter version of $flutterConstraintMin shipped with '
+              'Dart $dartVersionForFlutterMinimum. Please use consistent lower '
+              'SDK bounds';
         }
       }
     }
 
     return null;
+  }
+
+  /// Returns the minumum version allowed by [constraint], or null if the
+  /// constraint is null.
+  Version? _minimumForConstraint(VersionConstraint? constraint) {
+    if (constraint == null) {
+      return null;
+    }
+    Version? result;
+    if (constraint is VersionRange) {
+      result = constraint.min;
+    }
+    return result ?? Version.none;
   }
 }

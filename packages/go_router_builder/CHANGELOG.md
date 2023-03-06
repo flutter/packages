@@ -1,3 +1,11 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
+## 1.1.4
+
+* Fixes the example for the default values in the README.
+
 ## 1.1.3
 
 * Updates router_config to not passing itself as `extra`.
