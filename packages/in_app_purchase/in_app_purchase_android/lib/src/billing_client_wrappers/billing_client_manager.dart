@@ -24,7 +24,8 @@ abstract class HasBillingResponse {
 /// re-initialized.
 ///
 /// [BillingClient] instance is not exposed directly. It can be accessed via
-/// [run] and [runRaw] methods that handle the connection management.
+/// [withClient] and [withClientNonRetryable] methods that handle the
+/// connection management.
 ///
 /// Consider calling [dispose] after the [BillingClient] is no longer needed.
 class BillingClientManager {
@@ -44,13 +45,14 @@ class BillingClientManager {
 
   /// [BillingClient] instance managed by this [BillingClientManager].
   ///
-  /// In order to access the [BillingClient], consider using [run] and [runRaw]
+  /// In order to access the [BillingClient], consider using [withClient]
+  /// and [withClientNonRetryable]
   /// methods.
   @visibleForTesting
   late final BillingClient client = BillingClient(_onPurchasesUpdated);
 
   final StreamController<PurchasesResultWrapper> _purchasesUpdatedController =
-      StreamController<PurchasesResultWrapper>.broadcast();
+  StreamController<PurchasesResultWrapper>.broadcast();
 
   bool _isConnecting = false;
   bool _isDisposed = false;
@@ -58,46 +60,48 @@ class BillingClientManager {
   // Initialized immediately in the constructor, so it's always safe to access.
   late Future<void> _readyFuture;
 
-  /// Executes the given [block] with access to the underlying [BillingClient].
+  /// Executes the given [action] with access to the underlying [BillingClient].
   ///
   /// If necessary, waits for the underlying [BillingClient] to connect.
-  /// If given [block] returns [BillingResponse.serviceDisconnected], it will
+  /// If given [action] returns [BillingResponse.serviceDisconnected], it will
   /// be transparently retried after the connection is restored. Because
-  /// of this, [block] may be called multiple times.
+  /// of this, [action] may be called multiple times.
   ///
   /// A response with [BillingResponse.serviceDisconnected] may be returned
   /// in case of [dispose] being called during the operation.
   ///
-  /// See [runRaw] for operations that do not return a subclass
+  /// See [withClientNonRetryable] for operations that do not return a subclass
   /// of [HasBillingResponse].
-  Future<R> run<R extends HasBillingResponse>(
-    Future<R> Function(BillingClient client) block,
-  ) async {
-    assert(_debugAssertNotDisposed());
+  Future<R> withClient<R extends HasBillingResponse>(
+      Future<R> Function(BillingClient client) action,
+      ) async {
+    _debugAssertNotDisposed();
     await _readyFuture;
-    final R result = await block(client);
+    final R result = await action(client);
     if (result.responseCode == BillingResponse.serviceDisconnected &&
         !_isDisposed) {
       await _connect();
-      return run(block);
+      return withClient(action);
     } else {
       return result;
     }
   }
 
-  /// Executes the given [block] with access to the underlying [BillingClient].
+  /// Executes the given [action] with access to the underlying [BillingClient].
   ///
   /// If necessary, waits for the underlying [BillingClient] to connect.
   /// Designed only for operations that do not return a subclass
   /// of [HasBillingResponse] (e.g. [BillingClient.isReady],
   /// [BillingClient.isFeatureSupported]).
   ///
-  /// See [runRaw] for operations that return a subclass
+  /// See [withClient] for operations that return a subclass
   /// of [HasBillingResponse].
-  Future<R> runRaw<R>(Future<R> Function(BillingClient client) block) async {
-    assert(_debugAssertNotDisposed());
+  Future<R> withClientNonRetryable<R>(
+      Future<R> Function(BillingClient client) action,
+      ) async {
+    _debugAssertNotDisposed();
     await _readyFuture;
-    return block(client);
+    return action(client);
   }
 
   /// Ends connection to the [BillingClient].
@@ -108,9 +112,9 @@ class BillingClientManager {
   /// After calling [dispose] :
   /// - Further connection attempts will not be made;
   /// - [purchasesUpdatedStream] will be closed;
-  /// - Calls to [run] and [runRaw] will throw.
+  /// - Calls to [withClient] and [withClientNonRetryable] will throw.
   void dispose() {
-    assert(_debugAssertNotDisposed());
+    _debugAssertNotDisposed();
     _isDisposed = true;
     client.endConnection();
     _purchasesUpdatedController.close();
@@ -141,16 +145,11 @@ class BillingClientManager {
     _purchasesUpdatedController.add(event);
   }
 
-  bool _debugAssertNotDisposed() {
-    assert(() {
-      if (_isDisposed) {
-        throw FlutterError(
-          'A BillingClientManager was used after being disposed.\n'
-          'Once you have called dispose() on a BillingClientManager, it can no longer be used.',
-        );
-      }
-      return true;
-    }());
-    return true;
+  void _debugAssertNotDisposed() {
+    assert(
+    !_isDisposed,
+    'A BillingClientManager was used after being disposed. Once you have '
+        'called dispose() on a BillingClientManager, it can no longer be used.',
+    );
   }
 }

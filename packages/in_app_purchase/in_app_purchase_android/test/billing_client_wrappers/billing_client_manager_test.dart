@@ -51,18 +51,20 @@ void main() {
     });
 
     test('waits for connection before executing the operations', () {
-      bool runCalled = false;
-      bool runRawCalled = false;
-      manager.run((BillingClient _) async {
-        runCalled = true;
+      bool called1 = false;
+      bool called2 = false;
+      manager.withClient((BillingClient _) async {
+        called1 = true;
         return const BillingResultWrapper(responseCode: BillingResponse.ok);
       });
-      manager.runRaw((BillingClient _) async => runRawCalled = true);
-      expect(runCalled, equals(false));
-      expect(runRawCalled, equals(false));
+      manager.withClientNonRetryable(
+            (BillingClient _) async => called2 = true,
+      );
+      expect(called1, equals(false));
+      expect(called2, equals(false));
       connectedCompleter.complete();
-      expect(runCalled, equals(true));
-      expect(runRawCalled, equals(true));
+      expect(called1, equals(true));
+      expect(called2, equals(true));
     });
 
     test('re-connects when client sends onBillingServiceDisconnected', () {
@@ -76,11 +78,11 @@ void main() {
 
     test(
       're-connects when operation returns BillingResponse.serviceDisconnected',
-      () async {
+          () async {
         connectedCompleter.complete();
         int timesCalled = 0;
-        final BillingResultWrapper result = await manager.run(
-          (BillingClient _) async {
+        final BillingResultWrapper result = await manager.withClient(
+              (BillingClient _) async {
             timesCalled++;
             return BillingResultWrapper(
               responseCode: timesCalled == 1

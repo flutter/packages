@@ -26,8 +26,8 @@ class InAppPurchaseAndroidPlatformAddition
   /// See also [enablePendingPurchases] for more on pending purchases.
   @Deprecated(
       'The requirement to call `enablePendingPurchases()` has become obsolete '
-      "since Google Play no longer accepts app submissions that don't support "
-      'pending purchases.')
+          "since Google Play no longer accepts app submissions that don't support "
+          'pending purchases.')
   static bool get enablePendingPurchase => true;
 
   /// Enable the [InAppPurchaseConnection] to handle pending purchases.
@@ -36,8 +36,8 @@ class InAppPurchaseAndroidPlatformAddition
   /// [enablePendingPurchases] when initializing your application.
   @Deprecated(
       'The requirement to call `enablePendingPurchases()` has become obsolete '
-      "since Google Play no longer accepts app submissions that don't support "
-      'pending purchases.')
+          "since Google Play no longer accepts app submissions that don't support "
+          'pending purchases.')
   static void enablePendingPurchases() {
     // No-op, until it is time to completely remove this method from the API.
   }
@@ -54,7 +54,7 @@ class InAppPurchaseAndroidPlatformAddition
       throw ArgumentError(
           'consumePurchase unsuccessful. The `purchase.verificationData` is not valid');
     }
-    return _billingClientManager.run(
+    return _billingClientManager.withClient(
       (BillingClient client) =>
           client.consumeAsync(purchase.verificationData.serverVerificationData),
     );
@@ -80,11 +80,11 @@ class InAppPurchaseAndroidPlatformAddition
     PlatformException? exception;
     try {
       responses = await Future.wait(<Future<PurchasesResultWrapper>>[
-        _billingClientManager.run(
-          (BillingClient client) => client.queryPurchases(SkuType.inapp),
+        _billingClientManager.withClient(
+              (BillingClient client) => client.queryPurchases(SkuType.inapp),
         ),
-        _billingClientManager.run(
-          (BillingClient client) => client.queryPurchases(SkuType.subs),
+        _billingClientManager.withClient(
+              (BillingClient client) => client.queryPurchases(SkuType.subs),
         ),
       ]);
     } on PlatformException catch (e) {
@@ -111,16 +111,16 @@ class InAppPurchaseAndroidPlatformAddition
 
     final Set<String> errorCodeSet = responses
         .where((PurchasesResultWrapper response) =>
-            response.responseCode != BillingResponse.ok)
+    response.responseCode != BillingResponse.ok)
         .map((PurchasesResultWrapper response) =>
-            response.responseCode.toString())
+        response.responseCode.toString())
         .toSet();
 
     final String errorMessage =
-        errorCodeSet.isNotEmpty ? errorCodeSet.join(', ') : '';
+    errorCodeSet.isNotEmpty ? errorCodeSet.join(', ') : '';
 
     final List<GooglePlayPurchaseDetails> pastPurchases =
-        responses.expand((PurchasesResultWrapper response) {
+    responses.expand((PurchasesResultWrapper response) {
       return response.purchasesList;
     }).map((PurchaseWrapper purchaseWrapper) {
       return GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper);
@@ -147,8 +147,9 @@ class InAppPurchaseAndroidPlatformAddition
   /// Checks if the specified feature or capability is supported by the Play Store.
   /// Call this to check if a [BillingClientFeature] is supported by the device.
   Future<bool> isFeatureSupported(BillingClientFeature feature) async {
-    return _billingClientManager
-        .runRaw((BillingClient client) => client.isFeatureSupported(feature));
+    return _billingClientManager.withClientNonRetryable(
+      (BillingClient client) => client.isFeatureSupported(feature),
+    );
   }
 
   /// Initiates a flow to confirm the change of price for an item subscribed by the user.
@@ -160,7 +161,7 @@ class InAppPurchaseAndroidPlatformAddition
   /// [InAppPurchaseAndroidPlatform.queryProductDetails] call.
   Future<BillingResultWrapper> launchPriceChangeConfirmationFlow(
       {required String sku}) {
-    return _billingClientManager.run(
+    return _billingClientManager.withClient(
       (BillingClient client) =>
           client.launchPriceChangeConfirmationFlow(sku: sku),
     );
