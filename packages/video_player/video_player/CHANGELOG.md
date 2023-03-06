@@ -1,5 +1,6 @@
 ## 2.5.4
 
+* Aligns Dart and Flutter SDK constraints.
 * Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.
 
 ## 2.5.3

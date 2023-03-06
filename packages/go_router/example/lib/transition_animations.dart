@@ -89,7 +89,7 @@ final GoRouter _router = GoRouter(
 /// The main app.
 class MyApp extends StatelessWidget {
   /// Constructs a [MyApp]
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,7 @@ class MyApp extends StatelessWidget {
 /// The home screen
 class HomeScreen extends StatelessWidget {
   /// Constructs a [HomeScreen]
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +139,7 @@ class HomeScreen extends StatelessWidget {
 /// The details screen
 class DetailsScreen extends StatelessWidget {
   /// Constructs a [DetailsScreen]
-  const DetailsScreen({Key? key}) : super(key: key);
+  const DetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +163,7 @@ class DetailsScreen extends StatelessWidget {
 /// The dismissible details screen
 class DismissibleDetails extends StatelessWidget {
   /// Constructs a [DismissibleDetails]
-  const DismissibleDetails({Key? key}) : super(key: key);
+  const DismissibleDetails({super.key});
 
   @override
   Widget build(BuildContext context) {

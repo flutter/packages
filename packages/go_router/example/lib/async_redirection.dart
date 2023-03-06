@@ -22,7 +22,7 @@ void main() => runApp(StreamAuthScope(child: App()));
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Redirection';
@@ -75,7 +75,7 @@ class App extends StatelessWidget {
 /// The login screen.
 class LoginScreen extends StatefulWidget {
   /// Creates a [LoginScreen].
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen>
 /// The home screen.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -159,12 +159,10 @@ class HomeScreen extends StatelessWidget {
 class StreamAuthScope extends InheritedNotifier<StreamAuthNotifier> {
   /// Creates a [StreamAuthScope] sign in scope.
   StreamAuthScope({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
   }) : super(
-          key: key,
           notifier: StreamAuthNotifier(),
-          child: child,
         );
 
   /// Gets the [StreamAuth].

@@ -18,7 +18,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
     implements VideoPlayerController {
   FakeController() : super(const VideoPlayerValue(duration: Duration.zero));
 
-  FakeController.value(VideoPlayerValue value) : super(value);
+  FakeController.value(super.value);
 
   @override
   Future<void> dispose() async {

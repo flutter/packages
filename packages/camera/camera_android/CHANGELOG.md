@@ -1,5 +1,6 @@
 ## NEXT
 
+* Aligns Dart and Flutter SDK constraints.
 * Updates compileSdkVersion to 33.
 
 ## 0.10.4+1

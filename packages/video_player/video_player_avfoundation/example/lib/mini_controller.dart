@@ -379,7 +379,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 /// Widget that displays the video controlled by [controller].
 class VideoPlayer extends StatefulWidget {
   /// Uses the given [controller] for all video rendered in this widget.
-  const VideoPlayer(this.controller, {Key? key}) : super(key: key);
+  const VideoPlayer(this.controller, {super.key});
 
   /// The [MiniController] responsible for the video being rendered in
   /// this widget.
@@ -478,7 +478,7 @@ class _VideoScrubberState extends State<_VideoScrubber> {
 class VideoProgressIndicator extends StatefulWidget {
   /// Construct an instance that displays the play/buffering status of the video
   /// controlled by [controller].
-  const VideoProgressIndicator(this.controller, {Key? key}) : super(key: key);
+  const VideoProgressIndicator(this.controller, {super.key});
 
   /// The [MiniController] that actually associates a video with this
   /// widget.
