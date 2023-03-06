@@ -205,6 +205,7 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     String newContent = editablePubspec.toString();
     if (!newContent.contains(_dependencyOverrideWarningComment)) {
       newContent = newContent.replaceFirst('$dependencyOverridesKey:', '''
+
 $_dependencyOverrideWarningComment
 $dependencyOverridesKey:
 ''');
