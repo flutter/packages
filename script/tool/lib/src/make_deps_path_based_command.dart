@@ -86,7 +86,7 @@ class MakeDepsPathBasedCommand extends PackageCommand {
       final String displayPath = p.posix.joinAll(
           path.split(path.relative(pubspec.absolute.path, from: repoRootPath)));
       final _RewriteOutcome outcome = await _addDependencyOverridesIfNecessary(
-          pubspec, localDependencyPackages);
+          RepositoryPackage(pubspec.parent), localDependencyPackages);
       switch (outcome) {
         case _RewriteOutcome.changed:
           print('  Modified $displayPath');
@@ -139,15 +139,23 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   /// If [pubspecFile] has any dependencies on packages in [localDependencies],
   /// adds dependency_overrides entries to redirect them to the local version
   /// using path-based dependencies.
-  Future<_RewriteOutcome> _addDependencyOverridesIfNecessary(File pubspecFile,
-      Map<String, RepositoryPackage> localDependencies) async {
-    final String pubspecContents = pubspecFile.readAsStringSync();
+  ///
+  /// If [additionalPackagesToOverride] are provided, they will get
+  /// dependency_overrides even if there is no direct dependency. This is
+  /// useful for overriding transitive dependencies.
+  Future<_RewriteOutcome> _addDependencyOverridesIfNecessary(
+    RepositoryPackage package,
+    Map<String, RepositoryPackage> localDependencies, {
+    Iterable<String> additionalPackagesToOverride = const <String>{},
+  }) async {
+    final String pubspecContents = package.pubspecFile.readAsStringSync();
 
     // Determine the dependencies to be overridden.
     final Pubspec pubspec = Pubspec.parse(pubspecContents);
     final Iterable<String> combinedDependencies = <String>[
       ...pubspec.dependencies.keys,
       ...pubspec.devDependencies.keys,
+      ...additionalPackagesToOverride,
     ];
     final List<String> packagesToOverride = combinedDependencies
         .where(
@@ -161,12 +169,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     }
 
     // Find the relative path to the common base.
-    // XXX
-    //final String relativeRootPath =
-    //    getRelativePosixPath(repoRoot, from: package.directory);
     final String commonBasePath = packagesDir.path;
     final int packageDepth = path
-        .split(path.relative(pubspecFile.parent.absolute.path,
+        .split(path.relative(package.directory.absolute.path,
             from: commonBasePath))
         .length;
     final List<String> relativeBasePathComponents =
@@ -182,7 +187,6 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     }
     for (final String packageName in packagesToOverride) {
       // Find the relative path from the common base to the local package.
-      // XXX
       final List<String> repoRelativePathComponents = path.split(path.relative(
           localDependencies[packageName]!.path,
           from: commonBasePath));
@@ -207,7 +211,18 @@ $dependencyOverridesKey:
     }
 
     // Write the new pubspec.
-    pubspecFile.writeAsStringSync(newContent);
+    package.pubspecFile.writeAsStringSync(newContent);
+
+    // Update any examples. This is important for cases like integration tests
+    // of app-facing packages in federated plugins, where the app-facing
+    // package depends directly on the implementation packages, but the
+    // example app doesn't. Since integration tests are run in the example app,
+    // it needs the overrides in order for tests to pass.
+    for (final RepositoryPackage example in package.getExamples()) {
+      _addDependencyOverridesIfNecessary(example, localDependencies,
+          additionalPackagesToOverride: packagesToOverride);
+    }
+
     return _RewriteOutcome.changed;
   }
 

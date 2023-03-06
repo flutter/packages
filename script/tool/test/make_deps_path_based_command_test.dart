@@ -221,33 +221,42 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
       'bar_platform_interface',
     ]);
 
-    final List<String> output = await runCapturingPrint(runner, <String>[
-      'make-deps-path-based',
-      '--target-dependencies=bar,bar_platform_interface'
+    await runCapturingPrint(runner,
+        <String>['make-deps-path-based', '--target-dependencies=bar_android']);
+
+    final Map<String, String?> exampleOverrides =
+        getDependencyOverrides(pluginAppFacing.getExamples().first);
+    expect(exampleOverrides.length, 1);
+    expect(exampleOverrides['bar_android'], '../../../bar/bar_android');
+  });
+
+  test('example overrides include both local and main-package dependencies',
+      () async {
+    final Directory pluginGroup = packagesDir.childDirectory('bar');
+    createFakePackage('bar_platform_interface', pluginGroup, isFlutter: true);
+    createFakePlugin('bar_android', pluginGroup);
+    final RepositoryPackage pluginAppFacing =
+        createFakePlugin('bar', pluginGroup);
+    createFakePackage('another_package', packagesDir);
+
+    addDependencies(pluginAppFacing, <String>[
+      'bar_platform_interface',
+      'bar_android',
+    ]);
+    addDependencies(pluginAppFacing.getExamples().first, <String>[
+      'another_package',
     ]);
 
-    expect(
-        output,
-        containsAll(<String>[
-          'Rewriting references to: bar, bar_platform_interface...',
-          '  Modified packages/bar/bar/pubspec.yaml',
-          '  Modified packages/bar/bar/example/pubspec.yaml',
-          '  Modified packages/bar/bar_android/pubspec.yaml',
-        ]));
-    expect(
-        output,
-        isNot(contains(
-            '  Modified packages/bar/bar_platform_interface/pubspec.yaml')));
+    await runCapturingPrint(runner, <String>[
+      'make-deps-path-based',
+      '--target-dependencies=bar_android,another_package'
+    ]);
 
-    expect(
-        pluginAppFacing.getExamples().first.pubspecFile.readAsLinesSync(),
-        containsAllInOrder(<String>[
-          'dependency_overrides:',
-          '  bar_android:',
-          '    path: ../../bar/bar_android',
-          '  bar_platform_interface:',
-          '    path: ../../bar/bar_platform_interface',
-        ]));
+    final Map<String, String?> exampleOverrides =
+        getDependencyOverrides(pluginAppFacing.getExamples().first);
+    expect(exampleOverrides.length, 2);
+    expect(exampleOverrides['another_package'], '../../../another_package');
+    expect(exampleOverrides['bar_android'], '../../../bar/bar_android');
   });
 
   test(
