@@ -144,17 +144,13 @@ public class FocusPointFeatureTest {
   }
 
   @Test(expected = AssertionError.class)
-  @SuppressWarnings("try")
   public void setValue_shouldThrowAssertionErrorWhenNoValidBoundariesAreSet() {
     CameraProperties mockCameraProperties = mock(CameraProperties.class);
     when(mockCameraProperties.getControlMaxRegionsAutoFocus()).thenReturn(1);
     FocusPointFeature focusPointFeature =
         new FocusPointFeature(mockCameraProperties, mockSensorOrientationFeature);
 
-    try (MockedStatic<CameraRegionUtils> mockedCameraRegionUtils =
-        Mockito.mockStatic(CameraRegionUtils.class)) {
-      focusPointFeature.setValue(new Point(0.5, 0.5));
-    }
+    focusPointFeature.setValue(new Point(0.5, 0.5));
   }
 
   @Test

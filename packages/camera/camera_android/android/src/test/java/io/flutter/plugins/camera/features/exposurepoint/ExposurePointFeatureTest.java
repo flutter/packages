@@ -143,17 +143,13 @@ public class ExposurePointFeatureTest {
   }
 
   @Test(expected = AssertionError.class)
-  @SuppressWarnings("try")
   public void setValue_shouldThrowAssertionErrorWhenNoValidBoundariesAreSet() {
     CameraProperties mockCameraProperties = mock(CameraProperties.class);
     when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(1);
     ExposurePointFeature exposurePointFeature =
         new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
 
-    try (MockedStatic<CameraRegionUtils> mockedCameraRegionUtils =
-        Mockito.mockStatic(CameraRegionUtils.class)) {
-      exposurePointFeature.setValue(new Point(0.5, 0.5));
-    }
+    exposurePointFeature.setValue(new Point(0.5, 0.5));
   }
 
   @Test

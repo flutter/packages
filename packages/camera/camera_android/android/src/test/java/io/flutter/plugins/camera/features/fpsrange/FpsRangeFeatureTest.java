@@ -96,6 +96,8 @@ public class FpsRangeFeatureTest {
     when(rangeTwo.getUpper()).thenReturn(12);
     when(rangeThree.getUpper()).thenReturn(13);
 
+    // Use a wildcard, since `new Range<Integer>[] {rangeOne, rangeTwo, rangeThree}`
+    // results in a 'Generic array creation' error.
     @SuppressWarnings("unchecked")
     Range<Integer>[] ranges = (Range<Integer>[]) new Range<?>[] {rangeOne, rangeTwo, rangeThree};
 

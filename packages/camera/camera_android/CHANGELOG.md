@@ -3,6 +3,7 @@
 * Updates compileSdkVersion to 33.
 * Fixes false positive for CamcorderProfile deprecation warning
   that was already fixed.
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
 
 ## 0.10.4+1
 

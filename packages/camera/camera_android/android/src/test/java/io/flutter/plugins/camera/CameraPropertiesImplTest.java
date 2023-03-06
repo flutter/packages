@@ -50,6 +50,8 @@ public class CameraPropertiesImplTest {
   @SuppressWarnings("unchecked")
   public void getControlAutoExposureAvailableTargetFpsRangesTest() {
     Range<Integer> mockRange = mock(Range.class);
+    // Use a wildcard, since `new Range<Integer>[] {mockRange}`
+    // results in a 'Generic array creation' error.
     Range<Integer>[] mockRanges = (Range<Integer>[]) new Range<?>[] {mockRange};
     when(mockCharacteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES))
         .thenReturn(mockRanges);
