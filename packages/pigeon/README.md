@@ -228,4 +228,4 @@ abstract class Api2Host {
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with the
-'pigeon' tag.
+word "pigeon" in the title.
