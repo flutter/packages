@@ -35,21 +35,18 @@ class JavaObject with Copyable {
           instanceManager: instanceManager,
         );
 
-  static InstanceManager? _globalInstanceManager;
-
   /// Global instance of [InstanceManager].
-  static InstanceManager get globalInstanceManager {
-    if (_globalInstanceManager == null) {
-      WidgetsFlutterBinding.ensureInitialized();
-      // Clears the native `InstanceManager` on initial use of the Dart one.
-      InstanceManagerHostApi().clear();
-      _globalInstanceManager = InstanceManager(
-        onWeakReferenceRemoved: (int identifier) {
-          JavaObjectHostApiImpl().dispose(identifier);
-        },
-      );
-    }
-    return _globalInstanceManager!;
+  static final InstanceManager globalInstanceManager = _initInstanceManager();
+
+  static InstanceManager _initInstanceManager() {
+    WidgetsFlutterBinding.ensureInitialized();
+    // Clears the native `InstanceManager` on initial use of the Dart one.
+    InstanceManagerHostApi().clear();
+    return InstanceManager(
+      onWeakReferenceRemoved: (int identifier) {
+        JavaObjectHostApiImpl().dispose(identifier);
+      },
+    );
   }
 
   /// Pigeon Host Api implementation for [JavaObject].
