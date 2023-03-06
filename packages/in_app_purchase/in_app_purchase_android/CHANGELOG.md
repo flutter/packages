@@ -2,6 +2,8 @@
 
 * Fixes the management of `BillingClient` connection.
 * Introduces `BillingClientManager`.
+* Aligns Dart and Flutter SDK constraints.
+* Updates compileSdkVersion to 33.
 
 ## 0.2.4+2
 
