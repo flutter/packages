@@ -18,10 +18,12 @@ class ImageCapture extends UseCase {
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       this.targetFlashMode,
-      this.targetResolution})
+      this.targetResolution,
+      })
       : super.detached(
             binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager) {
+            instanceManager: instanceManager,
+            ) {
     _api = ImageCaptureHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     _api.createFromInstance(this, targetFlashMode, targetResolution);
@@ -32,10 +34,12 @@ class ImageCapture extends UseCase {
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       this.targetFlashMode,
-      this.targetResolution})
+      this.targetResolution,
+      })
       : super.detached(
             binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager) {
+            instanceManager: instanceManager,
+            ) {
     _api = ImageCaptureHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
   }
@@ -64,15 +68,29 @@ class ImageCapture extends UseCase {
   static const int flashModeOff = 2;
 
   /// Sets the flash mode to use for image capture.
-  void setFlashMode(int newFlashMode) {
-    _api.setFlashModeFromInstance(this, newFlashMode);
+  Future<void> setFlashMode(int newFlashMode) async {
+    return _api.setFlashModeFromInstance(this, newFlashMode);
   }
 
   /// Takes a picture and returns the absolute path of where the capture image
   /// was saved.
+  ///
+  /// This method is not a direct mapping of the takePicture method in the CameraX,
+  /// as it also:
+  ///
+  ///  * Configures an instance of the ImageCapture.OutputFileOptions to specify
+  ///    how to handle the captured image.
+  ///  * Configures an instance of ImageCapture.OnImageSavedCallback to receive
+  ///    the results of the image capture as an instance of
+  ///    ImageCapture.OutputFileResults.
+  ///  * Converts the ImageCapture.OutputFileResults output instance to a String
+  ///    that represents the full path where the captured image was saved in
+  ///    memory to return.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture
+  /// for more information.
   Future<String> takePicture() async {
-    final String pictureFile = await _api.takePictureFromInstance(this);
-    return pictureFile;
+    return await _api.takePictureFromInstance(this);
   }
 }
 

@@ -146,19 +146,30 @@ class AndroidCameraCameraX extends CameraPlatform {
     startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, cameraDescription.sensorOrientation);
 
-    // Retrieve a ProcessCameraProvider instance.
+    // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
+    processCameraProvider.unbindAll();
 
-    // Configure Preview instance and bind to ProcessCameraProvider.
+    // Configure Preview instance.
     _resolutionPreset = resolutionPreset;
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
-    final ResolutionInfo? targetResolution =
+    final ResolutionInfo? previewTargetResolution =
         _getTargetResolutionForPreview(resolutionPreset);
-    preview = createPreview(targetRotation, targetResolution);
-    previewIsBound = false;
-    _previewIsPaused = false;
+    preview = createPreview(targetRotation, previewTargetResolution);
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
+
+    // Configure ImageCapture instance.
+    final ResolutionInfo? imageCaptureTargetResolution =
+        _getTargetResolutionForImageCapture(_resolutionPreset);
+    imageCapture = createImageCapture(null, imageCaptureTargetResolution);
+
+    // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
+    // instance as bound but not paused.
+    camera = await processCameraProvider!
+        .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
+    _previewIsPaused = false;
+    previewIsBound = true;
 
     return flutterSurfaceTextureId;
   }
@@ -188,10 +199,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       preview != null,
       'Preview instance not found. Please call the "createCamera" method before calling "initializeCamera"',
     );
-    await _bindPreviewToLifecycle();
     final ResolutionInfo previewResolutionInfo =
         await preview!.getResolutionInfo();
-    _unbindPreviewFromLifecycle();
 
     // Retrieve exposure and focus mode configurations:
     // TODO(camsim99): Implement support for retrieving exposure mode configuration.
@@ -287,16 +296,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<XFile> takePicture(int cameraId) async {
     assert(processCameraProvider != null);
     assert(cameraSelector != null);
+    assert(imageCapture != null);
 
-    final ResolutionInfo? targetResolution =
-        _getTargetResolutionForImageCapture(_resolutionPreset);
     // TODO(camsim99): Add support for flash mode configuration.
     // https://github.com/flutter/flutter/issues/120715
-    imageCapture ??= ImageCapture(targetResolution: targetResolution);
-    camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[imageCapture!]);
-    final String picturePath = await imageCapture!.takePicture();
-    processCameraProvider!.unbind(<UseCase>[imageCapture!]);
+    String picturePath = await imageCapture!.takePicture();
 
     return XFile(picturePath);
   }

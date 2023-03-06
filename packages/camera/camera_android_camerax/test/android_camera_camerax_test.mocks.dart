@@ -141,13 +141,14 @@ class MockCameraSelector extends _i1.Mock implements _i9.CameraSelector {
 /// See the documentation for Mockito's code generation for more information.
 class MockImageCapture extends _i1.Mock implements _i10.ImageCapture {
   @override
-  void setFlashMode(int? newFlashMode) => super.noSuchMethod(
+  _i8.Future<void> setFlashMode(int? newFlashMode) => (super.noSuchMethod(
         Invocation.method(
           #setFlashMode,
           [newFlashMode],
         ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
   @override
   _i8.Future<String> takePicture() => (super.noSuchMethod(
         Invocation.method(

@@ -129,8 +129,31 @@ void main() {
     // Verify the camera's Preview instance is instantiated properly.
     expect(camera.preview, equals(camera.testPreview));
 
+    // Verify the camera's ImageCapture instance is instantiated properly.
+    expect(camera.imageCapture, equals(camera.testImageCapture));
+
     // Verify the camera's Preview instance has its surface provider set.
     verify(camera.preview!.setSurfaceProvider());
+  });
+
+  test('createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance', () async {
+    final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
+    camera.processCameraProvider = MockProcessCameraProvider();
+    const CameraLensDirection testLensDirection = CameraLensDirection.back;
+    const int testSensorOrientation = 90;
+    const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation);
+    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
+    const bool enableAudio = true;
+    const int testSurfaceTextureId = 6;
+
+     await camera.createCamera(testCameraDescription, testResolutionPreset,
+            enableAudio: enableAudio);
+
+    verify(camera.processCameraProvider!.bindToLifecycle(
+            camera.cameraSelector!, <UseCase>[camera.testPreview, camera.testImageCapture]));
   });
 
   test(
@@ -179,7 +202,7 @@ void main() {
         enableAudio: enableAudio);
 
     when(camera.processCameraProvider!.bindToLifecycle(
-            camera.cameraSelector!, <UseCase>[camera.testPreview]))
+            camera.cameraSelector!, <UseCase>[camera.testPreview, camera.testImageCapture]))
         .thenAnswer((_) async => mockCamera);
     when(camera.testPreview.getResolutionInfo())
         .thenAnswer((_) async => testResolutionInfo);
@@ -192,14 +215,8 @@ void main() {
 
     await camera.initializeCamera(cameraId);
 
-    // Verify preview was bound and unbound to get preview resolution information.
-    verify(camera.processCameraProvider!.bindToLifecycle(
-        camera.cameraSelector!, <UseCase>[camera.testPreview]));
-    verify(camera.processCameraProvider!.unbind(<UseCase>[camera.testPreview]));
-
-    // Check camera instance was received, but preview is no longer bound.
-    expect(camera.camera, equals(mockCamera));
-    expect(camera.previewIsBound, isFalse);
+    // Check camera instance was received.
+    expect(camera.camera, isNotNull);
   });
 
   test('dispose releases Flutter surface texture and unbinds all use cases',
@@ -382,10 +399,6 @@ void main() {
 
     final XFile imageFile = await camera.takePicture(3);
 
-    verify(camera.processCameraProvider!.bindToLifecycle(
-        camera.cameraSelector!, <UseCase>[camera.imageCapture!]));
-    verify(
-        camera.processCameraProvider!.unbind(<UseCase>[camera.imageCapture!]));
     expect(imageFile.path, equals(testPicturePath));
   });
 }
@@ -396,6 +409,7 @@ class MockAndroidCameraCamerax extends AndroidCameraCameraX {
   bool cameraPermissionsRequested = false;
   bool startedListeningForDeviceOrientationChanges = false;
   final MockPreview testPreview = MockPreview();
+  final MockImageCapture testImageCapture = MockImageCapture();
   final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
   final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
 
@@ -425,5 +439,11 @@ class MockAndroidCameraCamerax extends AndroidCameraCameraX {
   @override
   Preview createPreview(int targetRotation, ResolutionInfo? targetResolution) {
     return testPreview;
+  }
+
+  @override
+  ImageCapture createImageCapture(
+      int? flashMode, ResolutionInfo? targetResolution) {
+      return testImageCapture;
   }
 }
