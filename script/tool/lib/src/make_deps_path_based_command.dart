@@ -16,8 +16,6 @@ import 'common/repository_package.dart';
 
 const int _exitPackageNotFound = 3;
 
-enum _RewriteOutcome { changed, noChangesNeeded }
-
 /// Converts all dependencies on target packages to path-based dependencies.
 ///
 /// This is to allow for pre-publish testing of changes that could affect other
@@ -85,14 +83,10 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     for (final File pubspec in await _getAllPubspecs()) {
       final String displayPath = p.posix.joinAll(
           path.split(path.relative(pubspec.absolute.path, from: repoRootPath)));
-      final _RewriteOutcome outcome = await _addDependencyOverridesIfNecessary(
+      final bool changed = await _addDependencyOverridesIfNecessary(
           RepositoryPackage(pubspec.parent), localDependencyPackages);
-      switch (outcome) {
-        case _RewriteOutcome.changed:
-          print('  Modified $displayPath');
-          break;
-        case _RewriteOutcome.noChangesNeeded:
-          break;
+      if (changed) {
+        print('  Modified $displayPath');
       }
     }
   }
@@ -140,10 +134,12 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   /// adds dependency_overrides entries to redirect them to the local version
   /// using path-based dependencies.
   ///
+  /// Returns true if any overrides were added.
+  ///
   /// If [additionalPackagesToOverride] are provided, they will get
   /// dependency_overrides even if there is no direct dependency. This is
   /// useful for overriding transitive dependencies.
-  Future<_RewriteOutcome> _addDependencyOverridesIfNecessary(
+  Future<bool> _addDependencyOverridesIfNecessary(
     RepositoryPackage package,
     Map<String, RepositoryPackage> localDependencies, {
     Iterable<String> additionalPackagesToOverride = const <String>{},
@@ -165,7 +161,7 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     packagesToOverride.sort();
 
     if (packagesToOverride.isEmpty) {
-      return _RewriteOutcome.noChangesNeeded;
+      return false;
     }
 
     // Find the relative path to the common base.
@@ -224,7 +220,7 @@ $dependencyOverridesKey:
           additionalPackagesToOverride: packagesToOverride);
     }
 
-    return _RewriteOutcome.changed;
+    return true;
   }
 
   /// Returns all pubspecs anywhere under the packages directory.
