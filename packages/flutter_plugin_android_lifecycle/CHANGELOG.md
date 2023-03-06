@@ -1,4 +1,4 @@
-## 2.1.0
+## 2.0.10
 
 * Revert annotations change.
 * Aligns Dart and Flutter SDK constraints.
