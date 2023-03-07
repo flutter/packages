@@ -294,7 +294,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // TODO(camsim99): Add support for flash mode configuration.
     // https://github.com/flutter/flutter/issues/120715
-    String picturePath = await imageCapture!.takePicture();
+    final String picturePath = await imageCapture!.takePicture();
 
     return XFile(picturePath);
   }
@@ -309,7 +309,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(cameraSelector != null);
     assert(preview != null);
 
-    bool previewIsBound = await processCameraProvider!.isBound(preview!);
+    final bool previewIsBound = await processCameraProvider!.isBound(preview!);
     if (previewIsBound || _previewIsPaused) {
       // Only bind if preview is not already bound or intentionally paused.
       return;
@@ -322,7 +322,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Unbinds [preview] instance to camera lifecycle controlled by the
   /// [processCameraProvider].
   Future<void> _unbindPreviewFromLifecycle() async {
-    bool previewIsBound = await processCameraProvider!.isBound(preview!);
+    final bool previewIsBound = await processCameraProvider!.isBound(preview!);
     if (preview == null || !previewIsBound) {
       return;
     }

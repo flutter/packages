@@ -154,7 +154,7 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
     assert(useCaseId != null,
         'UseCase must have been created in order for this check to be valid.');
 
-    bool useCaseIsBound = await isBound(identifier, useCaseId!);
+    final bool useCaseIsBound = await isBound(identifier, useCaseId!);
     return useCaseIsBound;
   }
 

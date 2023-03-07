@@ -88,7 +88,7 @@ class ImageCapture extends UseCase {
   /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture
   /// for more information.
   Future<String> takePicture() async {
-    return await _api.takePictureFromInstance(this);
+    return _api.takePictureFromInstance(this);
   }
 }
 
