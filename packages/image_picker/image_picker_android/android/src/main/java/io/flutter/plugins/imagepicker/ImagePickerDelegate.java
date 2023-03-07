@@ -252,7 +252,7 @@ public class ImagePickerDelegate
       return;
     }
 
-    launchPickVideoFromGalleryIntent(methodCall.useAndroidPhotoPicker);
+    launchPickVideoFromGalleryIntent(methodCall.argument("useAndroidPhotoPicker"));
   }
 
   private void launchPickVideoFromGalleryIntent(Boolean useAndroidPhotoPicker) {
@@ -326,7 +326,7 @@ public class ImagePickerDelegate
       return;
     }
 
-    launchPickImageFromGalleryIntent(methodCall.useAndroidPhotoPicker);
+    launchPickImageFromGalleryIntent(methodCall.argument("useAndroidPhotoPicker"));
   }
 
   public void chooseMultiImageFromGallery(MethodCall methodCall, MethodChannel.Result result) {
@@ -335,7 +335,7 @@ public class ImagePickerDelegate
       return;
     }
 
-    launchMultiPickImageFromGalleryIntent(methodCall.useAndroidPhotoPicker);
+    launchMultiPickImageFromGalleryIntent(methodCall.argument("useAndroidPhotoPicker"));
   }
 
   private void launchPickImageFromGalleryIntent(Boolean useAndroidPhotoPicker) {
