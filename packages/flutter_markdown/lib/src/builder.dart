@@ -458,7 +458,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       }
 
       if (builders.containsKey(tag)) {
-        final Widget? child = builders[tag]!.visitElementAfter(
+        final Widget? child = builders[tag]!.visitElementAfterWithContext(
           delegate.context,
           element,
           styleSheet.styles[tag],

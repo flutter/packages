@@ -80,12 +80,24 @@ abstract class MarkdownElementBuilder {
   /// [parentStyle].
   ///
   /// If you needn't build a widget, return null.
-  Widget? visitElementAfter(
+  Widget? visitElementAfterWithContext(
     BuildContext context,
     md.Element element,
     TextStyle? preferredStyle,
     TextStyle? parentStyle,
-  ) =>
+  ) {
+    return visitElementAfter(element, preferredStyle);
+  }
+
+  /// Called when an Element has been reached, after its children have been
+  /// visited.
+  ///
+  /// If [MarkdownWidget.styleSheet] has a style of this tag, will passing
+  /// to [preferredStyle].
+  ///
+  /// If you needn't build a widget, return null.
+  @Deprecated('Use visitElementAfterWithContext() instead.')
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) =>
       null;
 }
 

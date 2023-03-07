@@ -147,12 +147,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
   ];
 
   @override
-  Widget visitElementAfter(
-    BuildContext context,
-    md.Element element,
-    TextStyle? preferredStyle,
-    TextStyle? parentStyle,
-  ) {
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     // We don't currently have a way to control the vertical alignment of text spans.
     // See https://github.com/flutter/flutter/issues/10906#issuecomment-385723664
     final String textContent = element.textContent;
