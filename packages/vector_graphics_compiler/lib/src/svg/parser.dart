@@ -1492,9 +1492,6 @@ class SvgParser {
     String? id,
   ) {
     final String? rawStroke = attributeMap['stroke'];
-    if (rawStroke == 'none') {
-      return SvgStrokeAttributes.none;
-    }
 
     final String? rawStrokeOpacity = attributeMap['stroke-opacity'];
     double? opacity;
@@ -1546,7 +1543,9 @@ class SvgParser {
     return SvgStrokeAttributes._(
       _definitions,
       shaderId: shaderId,
-      color: color,
+      color: rawStroke == 'none'
+          ? const ColorOrNone.none()
+          : ColorOrNone.color(color),
       cap: _parseCap(rawStrokeCap, null),
       join: _parseJoin(rawLineJoin, null),
       miterLimit: parseDouble(rawMiterLimit),
@@ -1565,10 +1564,6 @@ class SvgParser {
     String? id,
   ) {
     final String rawFill = attributeMap['fill'] ?? '';
-
-    if (rawFill == 'none') {
-      return SvgFillAttributes.none;
-    }
 
     final String? rawFillOpacity = attributeMap['fill-opacity'];
     double? opacity;
@@ -1589,7 +1584,7 @@ class SvgParser {
       }
       return SvgFillAttributes._(
         _definitions,
-        color: const Color(0xFFFFFFFF),
+        color: const ColorOrNone.color(Color(0xFFFFFFFF)),
         shaderId: rawFill,
         hasPattern: hasPattern,
         opacity: opacity,
@@ -1605,7 +1600,9 @@ class SvgParser {
 
     return SvgFillAttributes._(
       _definitions,
-      color: fillColor,
+      color: rawFill == 'none'
+          ? const ColorOrNone.none()
+          : ColorOrNone.color(fillColor),
       opacity: opacity,
     );
   }
@@ -1640,7 +1637,9 @@ class SvgParser {
         dx: DoubleOrPercentage.fromString(rawDx),
         dy: DoubleOrPercentage.fromString(rawDy),
         href: attributeMap['href'],
-        color: color,
+        color: attributeMap['color']?.toLowerCase() == 'none'
+            ? const ColorOrNone.none()
+            : ColorOrNone.color(color),
         stroke: _parseStrokeAttributes(
           attributeMap,
           opacity,
@@ -1822,7 +1821,7 @@ class SvgAttributes {
     this.id,
     this.href,
     this.transform = AffineMatrix.identity,
-    this.color,
+    this.color = const ColorOrNone.color(),
     this.stroke,
     this.fill,
     this.fillRule = PathFillType.nonZero,
@@ -1935,7 +1934,7 @@ class SvgAttributes {
   /// [stroke].
   ///
   /// https://www.w3.org/TR/SVG11/color.html#ColorProperty
-  final Color? color;
+  final ColorOrNone color;
 
   /// The stroking properties of this element.
   final SvgStrokeAttributes? stroke;
@@ -2052,7 +2051,7 @@ class SvgAttributes {
       id: newRaw['id'],
       href: newRaw['href'],
       transform: transformOverride ?? transform,
-      color: color ?? parent.color,
+      color: color._applyParent(parent.color),
       stroke: stroke?.applyParent(parent.stroke) ?? parent.stroke,
       fill: fill?.applyParent(parent.fill) ?? parent.fill,
       fillRule: fillRule,
@@ -2123,7 +2122,7 @@ class DoubleOrPercentage {
 class SvgStrokeAttributes {
   const SvgStrokeAttributes._(
     this._definitions, {
-    this.color,
+    this.color = const ColorOrNone.color(),
     this.shaderId,
     this.join,
     this.cap,
@@ -2135,15 +2134,11 @@ class SvgStrokeAttributes {
     this.opacity,
   });
 
-  /// Specifies that strokes should not be drawn, even if they otherwise would
-  /// be.
-  static const SvgStrokeAttributes none = SvgStrokeAttributes._(null);
-
   final _Resolver? _definitions;
 
   /// The color to use for stroking. Does _not_ include the [opacity] value. Only
   /// opacity is used if the [shaderId] is not null.
-  final Color? color;
+  final ColorOrNone color;
 
   /// The literal reference to a shader defined elsewhere.
   final String? shaderId;
@@ -2195,7 +2190,7 @@ class SvgStrokeAttributes {
   SvgStrokeAttributes applyParent(SvgStrokeAttributes? parent) {
     return SvgStrokeAttributes._(
       _definitions,
-      color: color ?? parent?.color,
+      color: color._applyParent(parent?.color),
       shaderId: shaderId ?? parent?.shaderId,
       join: join ?? parent?.join,
       cap: cap ?? parent?.cap,
@@ -2214,7 +2209,9 @@ class SvgStrokeAttributes {
   /// Returns null if this is [none].
   Stroke? toStroke(Rect shaderBounds, AffineMatrix transform) {
     // A zero width stroke is a hairline in Flutter, but a nop in SVG.
-    if (color == null && hasPattern == null && shaderId == null || width == 0) {
+    if (color.isNone ||
+        (color.color == null && hasPattern == null && shaderId == null ||
+            width == 0)) {
       return null;
     }
 
@@ -2242,7 +2239,7 @@ class SvgStrokeAttributes {
     }
 
     return Stroke(
-      color: color!.withOpacity(opacity ?? 1.0),
+      color: color.color!.withOpacity(opacity ?? 1.0),
       shader: shader,
       join: join,
       cap: cap,
@@ -2257,20 +2254,17 @@ class SvgFillAttributes {
   /// Create a new [SvgFillAttributes];
   const SvgFillAttributes._(
     this._definitions, {
-    this.color,
+    this.color = const ColorOrNone.color(),
     this.shaderId,
     this.hasPattern,
     this.opacity,
   });
 
-  /// Specifies that fills should not be drawn, even if they otherwise would be.
-  static const SvgFillAttributes none = SvgFillAttributes._(null);
-
   final _Resolver? _definitions;
 
   /// The color to use for filling. Does _not_ include the [opacity] value. Only
   /// opacity is used if the [shaderId] is not null.
-  final Color? color;
+  final ColorOrNone color;
 
   /// The opacity to apply to a default color, if [color] is null.
   final double? opacity;
@@ -2298,7 +2292,7 @@ class SvgFillAttributes {
   SvgFillAttributes applyParent(SvgFillAttributes? parent) {
     return SvgFillAttributes._(
       _definitions,
-      color: color ?? parent?.color,
+      color: color._applyParent(parent?.color),
       shaderId: shaderId ?? parent?.shaderId,
       hasPattern: hasPattern ?? parent?.hasPattern,
       opacity: opacity ?? parent?.opacity,
@@ -2314,7 +2308,10 @@ class SvgFillAttributes {
     AffineMatrix transform, {
     Color? defaultColor,
   }) {
-    final Color? resolvedColor = color?.withOpacity(opacity ?? 1.0) ??
+    if (color.isNone) {
+      return null;
+    }
+    final Color? resolvedColor = color.color?.withOpacity(opacity ?? 1.0) ??
         defaultColor?.withOpacity(opacity ?? 1.0);
     if (resolvedColor == null) {
       return null;
@@ -2338,4 +2335,55 @@ class SvgFillAttributes {
 
     return Fill(color: resolvedColor, shader: shader);
   }
+
+  @override
+  String toString() {
+    return 'SvgFillAttributes('
+        'definitions: $_definitions, '
+        'color: $color, '
+        'shaderId: $shaderId, '
+        'hasPattern: $hasPattern, '
+        'oapctiy: $opacity)';
+  }
+}
+
+/// Represents a color for filling or stroking.
+///
+/// If the [color] is not null, [isNone] is false.
+///
+/// If the [color] is null and [isNone] is false, color should be inherited from
+/// the parent or defaulted as per the SVG specification.
+///
+/// If the [color] is null and [isNone] is true, inheritence should be cleared
+/// and no painting should happen.
+class ColorOrNone {
+  /// See [ColorOrNone].
+  const ColorOrNone.none()
+      : isNone = true,
+        color = null;
+
+  /// See [ColorOrNone].
+  const ColorOrNone.color([this.color]) : isNone = false;
+
+  /// Whether to paint anything.
+  final bool isNone;
+
+  /// The color to use when painting. If null and [isNone] is false, inherit
+  /// from parent.
+  final Color? color;
+
+  ColorOrNone _applyParent(ColorOrNone? parent) {
+    if (parent == null || isNone) {
+      return this;
+    }
+
+    if (parent.isNone && color == null) {
+      return const ColorOrNone.none();
+    }
+
+    return ColorOrNone.color(color ?? parent.color);
+  }
+
+  @override
+  String toString() => isNone ? '"none"' : (color?.toString() ?? 'null');
 }

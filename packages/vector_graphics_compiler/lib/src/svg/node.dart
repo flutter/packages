@@ -321,7 +321,6 @@ class ClipNode extends TransformableNode {
     required this.child,
     required this.clipId,
     required AffineMatrix transform,
-    String? id,
   }) : super(transform);
 
   /// Called by visitors to resolve [clipId] to a list of paths.
@@ -345,6 +344,16 @@ class ClipNode extends TransformableNode {
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {
     return visitor.visitClipNode(this, data);
+  }
+
+  @override
+  Node applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
+    return ClipNode(
+      resolver: resolver,
+      clipId: clipId,
+      transform: transform,
+      child: child.applyAttributes(newAttributes, replace: replace),
+    );
   }
 }
 
@@ -379,6 +388,17 @@ class MaskNode extends TransformableNode {
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {
     return visitor.visitMaskNode(this, data);
+  }
+
+  @override
+  Node applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
+    return MaskNode(
+      resolver: resolver,
+      maskId: maskId,
+      blendMode: blendMode,
+      transform: transform,
+      child: child.applyAttributes(newAttributes, replace: replace),
+    );
   }
 }
 
@@ -606,5 +626,15 @@ class PatternNode extends TransformableNode {
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {
     return visitor.visitPatternNode(this, data);
+  }
+
+  @override
+  Node applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
+    return PatternNode(
+      resolver: resolver,
+      patternId: patternId,
+      transform: transform,
+      child: child.applyAttributes(newAttributes, replace: replace),
+    );
   }
 }

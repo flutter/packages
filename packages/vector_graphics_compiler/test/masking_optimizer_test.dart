@@ -93,9 +93,9 @@ void main() {
 
   test("Don't resolve MaskNode if intersection of Mask and Path is empty", () {
     final Node node = parseAndResolve(
-        '''<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        '''<svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <mask id="a">
-        <path  d="M58.645 16.232L46.953 28.72l2.024 1.895 11.691-12.486"/>
+        <path d="M58.645 16.232L46.953 28.72l2.024 1.895 11.691-12.486"/>
     </mask>
   <path mask="url(#a)" d="M0 0 z"/>
 </svg>

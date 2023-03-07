@@ -4,6 +4,37 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('None on fill', () {
+    const String svg = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" fill="none"
+  style="-webkit-print-color-adjust:exact">
+  <defs>
+    <clipPath id="a" class="frame-clip">
+      <rect width="384" height="384" rx="40" ry="40" style="opacity:1" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#a)">
+    <rect width="384" height="384" class="frame-background" rx="40" ry="40" style="opacity:1" />
+    <g class="frame-children">
+      <rect width="290" height="70" x="31" y="32" rx="30" ry="30"
+        style="fill:#22c55e;fill-opacity:1" />
+      <rect width="290" height="70" x="31" y="282" rx="30" ry="30"
+        style="fill:#22c55e;fill-opacity:1" />
+      <rect width="290" height="70" x="95" y="157" rx="30" ry="30"
+        style="fill:#f59e0b;fill-opacity:1" />
+    </g>
+  </g>
+</svg>
+''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    // Should _not_ contain a paint with an opaque black fill for the rect with class "frame-background".
+    expect(instructions.paints, const <Paint>[
+      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff22c55e))),
+      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xfff59e0b))),
+    ]);
+  });
+
   test('text spacing', () {
     const String svg = '''
 <svg width="185" height="43" viewBox="0 0 185 43" xmlns="http://www.w3.org/2000/svg">

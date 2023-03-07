@@ -57,6 +57,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     final AffineMatrix nextTransform = parentNode.concatTransform(data);
 
     final Paint? saveLayerPaint = parentNode.createLayerPaint();
+
     final Node result;
     if (saveLayerPaint == null) {
       result = ParentNode(
