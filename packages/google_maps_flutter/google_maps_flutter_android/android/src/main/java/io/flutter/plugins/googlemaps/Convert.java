@@ -657,15 +657,13 @@ class Convert {
     opacityField.setAccessible(true);
     radiusField.setAccessible(true);
 
+    @SuppressWarnings("unchecked")
     final List<WeightedLatLng> data = (List<WeightedLatLng>) dataField.get(heatmap);
     final Gradient gradient = (Gradient) gradientField.get(heatmap);
-    final double maxIntensity = (double) maxIntensityField.get(heatmap);
-    final double opacity = (double) opacityField.get(heatmap);
-    final int radius = (int) radiusField.get(heatmap);
 
     Map<String, Object> heatmapInfo = new HashMap<>();
     heatmapInfo.put("data", Convert.weightedDataToJson(Objects.requireNonNull(data)));
-    heatmapInfo.put("gradient", gradientToJson(gradient));
+    heatmapInfo.put("gradient", gradientToJson(Objects.requireNonNull(gradient)));
     heatmapInfo.put("maxIntensity", maxIntensityField.get(heatmap));
     heatmapInfo.put("opacity", opacityField.get(heatmap));
     heatmapInfo.put("radius", radiusField.get(heatmap));
