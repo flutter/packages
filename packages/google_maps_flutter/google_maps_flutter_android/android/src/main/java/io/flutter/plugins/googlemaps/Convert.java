@@ -29,7 +29,6 @@ import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import com.google.maps.android.projection.SphericalMercatorProjection;
-import io.flutter.view.FlutterMain;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
