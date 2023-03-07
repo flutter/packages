@@ -67,6 +67,40 @@ void main() {
       expect(find.text('1 /a', skipOffstage: false), findsOneWidget);
     });
 
+    testWidgets('path parameter persists after page is popped',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) {
+              return Builder(builder: (BuildContext context) {
+                return Text('1 ${GoRouterState.of(context).location}');
+              });
+            },
+            routes: <GoRoute>[
+              GoRoute(
+                  path: ':id',
+                  builder: (_, __) {
+                    return Builder(builder: (BuildContext context) {
+                      return Text(
+                          '2 ${GoRouterState.of(context).params['id']}');
+                    });
+                  }),
+            ]),
+      ];
+      final GoRouter router = await createRouter(routes, tester);
+      await tester.pumpAndSettle();
+      expect(find.text('1 /'), findsOneWidget);
+
+      router.go('/123');
+      await tester.pumpAndSettle();
+      expect(find.text('2 123'), findsOneWidget);
+      // The query parameter is removed, so is the location in first page.
+      router.pop();
+      await tester.pump();
+      expect(find.text('2 123'), findsOneWidget);
+    });
+
     testWidgets('registry retains GoRouterState for exiting route',
         (WidgetTester tester) async {
       final UniqueKey key = UniqueKey();
