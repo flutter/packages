@@ -1,5 +1,6 @@
-## NEXT
+## 0.9.13
 
+* Allows camera to be switched while video recording.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.9.12
