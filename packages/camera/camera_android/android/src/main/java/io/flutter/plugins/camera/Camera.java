@@ -1099,8 +1099,7 @@ class Camera
 
     // get rotation for rendered video
     final PlatformChannel.DeviceOrientation lockedOrientation =
-        cameraFeatures.getSensorOrientation()
-            .getLockedCaptureOrientation();
+        cameraFeatures.getSensorOrientation().getLockedCaptureOrientation();
     DeviceOrientationManager orientationManager =
         cameraFeatures.getSensorOrientation().getDeviceOrientationManager();
 
