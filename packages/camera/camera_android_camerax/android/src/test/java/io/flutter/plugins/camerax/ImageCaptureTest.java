@@ -7,7 +7,6 @@ package io.flutter.plugins.camerax;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
@@ -20,7 +19,6 @@ import android.util.Size;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.SystemServicesFlutterApi.Reply;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executor;
@@ -144,7 +142,7 @@ public class ImageCaptureTest {
   }
 
   @Test
-  public void takePicture_sendsEmptyPathAndSendsCameraErrorWhenTemporaryFileCannotBeCreated() {
+  public void takePicture_sendsErrorWhenTemporaryFileCannotBeCreated() {
     final ImageCaptureHostApiImpl imageCaptureHostApiImpl =
         new ImageCaptureHostApiImpl(mockBinaryMessenger, testInstanceManager, context);
     final Long imageCaptureIdentifier = 6L;
@@ -152,13 +150,10 @@ public class ImageCaptureTest {
     final File mockTemporaryCaptureFile = mock(File.class);
     final GeneratedCameraXLibrary.Result<String> mockResult =
         mock(GeneratedCameraXLibrary.Result.class);
-    final SystemServicesFlutterApiImpl mockSystemServicesFlutterApiImpl =
-        mock(SystemServicesFlutterApiImpl.class);
+    final IOException fileCreationException = new IOException();
 
     testInstanceManager.addDartCreatedInstance(mockImageCapture, imageCaptureIdentifier);
     imageCaptureHostApiImpl.cameraXProxy = mockCameraXProxy;
-    when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger))
-        .thenReturn(mockSystemServicesFlutterApiImpl);
     when(context.getCacheDir()).thenReturn(mockOutputDir);
     mockedStaticFile
         .when(
@@ -167,12 +162,11 @@ public class ImageCaptureTest {
                     ImageCaptureHostApiImpl.TEMPORARY_FILE_NAME,
                     ImageCaptureHostApiImpl.JPG_FILE_TYPE,
                     mockOutputDir))
-        .thenThrow(new IOException());
+        .thenThrow(fileCreationException);
 
     imageCaptureHostApiImpl.takePicture(imageCaptureIdentifier, mockResult);
 
-    verify(mockResult).success("");
-    verify(mockSystemServicesFlutterApiImpl).sendCameraError(anyString(), any(Reply.class));
+    verify(mockResult).error(fileCreationException);
     verify(mockImageCapture, times(0))
         .takePicture(
             any(ImageCapture.OutputFileOptions.class),
@@ -200,8 +194,6 @@ public class ImageCaptureTest {
     when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger))
         .thenReturn(mockSystemServicesFlutterApiImpl);
     when(mockFile.getAbsolutePath()).thenReturn(mockFileAbsolutePath);
-    when(mockException.getImageCaptureError()).thenReturn(testImageCaptureError);
-    when(mockException.getMessage()).thenReturn(testExceptionMessage);
 
     ImageCapture.OnImageSavedCallback onImageSavedCallback =
         imageCaptureHostApiImpl.createOnImageSavedCallback(mockFile, mockResult);
@@ -214,8 +206,6 @@ public class ImageCaptureTest {
     // Test error case.
     onImageSavedCallback.onError(mockException);
 
-    verify(mockResult).success("");
-    verify(mockSystemServicesFlutterApiImpl)
-        .sendCameraError(eq(testImageCaptureError + ": " + testExceptionMessage), any(Reply.class));
+    verify(mockResult).error(mockException);
   }
 }
