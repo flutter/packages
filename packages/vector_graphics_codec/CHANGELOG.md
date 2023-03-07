@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.2
+
+- Fix handling and inheritence of `none`.
+
 ## 1.1.1
 
 - Multiple text positioning bug fixes.

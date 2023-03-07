@@ -1,6 +1,6 @@
 name: vector_graphics_codec
 description: An encoding library for `package:vector_graphics`
-version: 1.1.1
+version: 1.1.2
 homepage: https://github.com/dnfield/vector_graphics
 
 environment:
