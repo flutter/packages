@@ -223,7 +223,6 @@ void main() {
     await controller.prepareForVideoRecording();
 
     await controller.startVideoRecording();
-    sleep(const Duration(milliseconds: 500));
 
     // SDK < 26 will throw a platform error when trying to switch and keep the same camera
     // we accept either outcome here, while the native integration tests check the outcome based on the current Android SDK
@@ -239,7 +238,6 @@ void main() {
       failed = true;
     }
 
-    sleep(const Duration(milliseconds: 500));
 
     if (failed) {
       // cameras did not switch
@@ -264,9 +262,7 @@ void main() {
     );
 
     await controller.initialize();
-    sleep(const Duration(milliseconds: 500));
     await controller.setDescription(cameras[1]);
-    sleep(const Duration(milliseconds: 500));
 
     expect(controller.description, cameras[1]);
   });
