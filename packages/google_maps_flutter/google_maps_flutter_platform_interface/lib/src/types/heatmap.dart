@@ -14,7 +14,7 @@ import 'types.dart';
 @immutable
 class HeatmapId extends MapsObjectId<Heatmap> {
   /// Creates an immutable identifier for a [Heatmap].
-  const HeatmapId(String value) : super(value);
+  const HeatmapId(super.value);
 }
 
 /// Draws a heatmap on the map.

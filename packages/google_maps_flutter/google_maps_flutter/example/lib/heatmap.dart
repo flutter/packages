@@ -20,7 +20,7 @@ class HeatmapPage extends GoogleMapExampleAppPage {
 }
 
 class HeatmapBody extends StatefulWidget {
-  const HeatmapBody({Key? key}) : super(key: key);
+  const HeatmapBody({super.key});
 
   @override
   State<StatefulWidget> createState() => HeatmapBodyState();

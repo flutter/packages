@@ -11,9 +11,9 @@ import 'types.dart';
 class HeatmapUpdates extends MapsObjectUpdates<Heatmap> {
   /// Computes [HeatmapUpdates] given previous and current [Heatmap]s.
   HeatmapUpdates.from(
-    Set<Heatmap> previous,
-    Set<Heatmap> current,
-  ) : super.from(previous, current, objectName: 'heatmap');
+    super.previous,
+    super.current,
+  ) : super.from(objectName: 'heatmap');
 
   /// Set of Heatmaps to be added in this update.
   Set<Heatmap> get heatmapsToAdd => objectsToAdd;
