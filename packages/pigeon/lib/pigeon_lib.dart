@@ -1068,6 +1068,15 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final TaskQueueType taskQueueType =
         _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
             TaskQueueType.serial;
+    PlatformApiSkip platformApiSkip = PlatformApiSkip.None;
+    final bool iosApiSkip = _hasMetadata(node.metadata, 'iosApiSkip');
+    final bool androidApiSkip = _hasMetadata(node.metadata, 'androidApiSkip');
+    if (iosApiSkip == true) {
+      platformApiSkip = PlatformApiSkip.IOS;
+    }
+    else if (androidApiSkip == true) {
+      platformApiSkip = PlatformApiSkip.Android;
+    }
 
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
@@ -1084,6 +1093,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               isNullable: returnType.question != null),
           arguments: arguments,
           isAsynchronous: isAsynchronous,
+          platformApiSkip: platformApiSkip,
           objcSelector: objcSelector,
           swiftFunction: swiftFunction,
           offset: node.offset,
