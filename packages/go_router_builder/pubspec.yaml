@@ -8,7 +8,6 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 
 environment:
   sdk: ">=2.18.0 <3.0.0"
-  flutter: ">=3.3.0"
 
 dependencies:
   analyzer: '>=4.4.0 <6.0.0'
