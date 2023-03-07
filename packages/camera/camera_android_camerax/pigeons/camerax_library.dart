@@ -88,6 +88,8 @@ abstract class ProcessCameraProviderHostApi {
   int bindToLifecycle(
       int identifier, int cameraSelectorIdentifier, List<int> useCaseIds);
 
+  bool isBound(int identifier, int useCaseIdentifier);
+
   void unbind(int identifier, List<int> useCaseIds);
 
   void unbindAll(int identifier);

@@ -134,6 +134,15 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
   }
 
   @Override
+  public Boolean isBound(@NonNull Long identifier, @NonNull Long useCaseIdentifier) {
+    ProcessCameraProvider processCameraProvider =
+        (ProcessCameraProvider) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    UseCase useCase =
+        (UseCase) Objects.requireNonNull(instanceManager.getInstance(useCaseIdentifier));
+    return processCameraProvider.isBound(useCase);
+  }
+
+  @Override
   public void unbind(@NonNull Long identifier, @NonNull List<Long> useCaseIds) {
     ProcessCameraProvider processCameraProvider =
         (ProcessCameraProvider) Objects.requireNonNull(instanceManager.getInstance(identifier));

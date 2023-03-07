@@ -39,11 +39,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   Preview? preview;
 
-  /// Whether or not the [preview] is currently bound to the lifecycle that the
-  /// [processCameraProvider] tracks.
-  @visibleForTesting
-  bool previewIsBound = false;
-
   bool _previewIsPaused = false;
 
   /// The [ImageCapture] instance that can be configured to capture a still image.
@@ -148,7 +143,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
-    processCameraProvider.unbindAll();
+    processCameraProvider!.unbindAll();
 
     // Configure Preview instance.
     _resolutionPreset = resolutionPreset;
@@ -169,7 +164,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
     _previewIsPaused = false;
-    previewIsBound = true;
 
     return flutterSurfaceTextureId;
   }
@@ -313,7 +307,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> _bindPreviewToLifecycle() async {
     assert(processCameraProvider != null);
     assert(cameraSelector != null);
+    assert(preview != null);
 
+    bool previewIsBound = await processCameraProvider!.isBound(preview!);
     if (previewIsBound || _previewIsPaused) {
       // Only bind if preview is not already bound or intentionally paused.
       return;
@@ -321,12 +317,12 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
-    previewIsBound = true;
   }
 
   /// Unbinds [preview] instance to camera lifecycle controlled by the
   /// [processCameraProvider].
-  void _unbindPreviewFromLifecycle() {
+  Future<void> _unbindPreviewFromLifecycle() async {
+    bool previewIsBound = await processCameraProvider!.isBound(preview!);
     if (preview == null || !previewIsBound) {
       return;
     }
@@ -334,7 +330,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(processCameraProvider != null);
 
     processCameraProvider!.unbind(<UseCase>[preview!]);
-    previewIsBound = false;
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:

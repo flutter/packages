@@ -256,6 +256,15 @@ class MockProcessCameraProvider extends _i1.Mock
         )),
       ) as _i8.Future<_i3.Camera>);
   @override
+  _i8.Future<bool> isBound(_i13.UseCase? useCase) => (super.noSuchMethod(
+        Invocation.method(
+          #isBound,
+          [useCase],
+        ),
+        returnValue: _i8.Future<bool>.value(false),
+        returnValueForMissingStub: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+  @override
   void unbind(List<_i13.UseCase>? useCases) => super.noSuchMethod(
         Invocation.method(
           #unbind,
@@ -320,7 +329,7 @@ class MockBuildContext extends _i1.Mock implements _i4.BuildContext {
         ),
       ) as _i4.InheritedWidget);
   @override
-  void visitAncestorElements(bool Function(_i4.Element)? visitor) =>
+  void visitAncestorElements(_i4.ConditionalElementVisitor? visitor) =>
       super.noSuchMethod(
         Invocation.method(
           #visitAncestorElements,

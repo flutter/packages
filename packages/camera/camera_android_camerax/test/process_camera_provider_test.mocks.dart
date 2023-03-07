@@ -63,6 +63,21 @@ class MockTestProcessCameraProviderHostApi extends _i1.Mock
         returnValue: 0,
       ) as int);
   @override
+  bool isBound(
+    int? identifier,
+    int? useCaseIdentifier,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isBound,
+          [
+            identifier,
+            useCaseIdentifier,
+          ],
+        ),
+        returnValue: false,
+      ) as bool);
+  @override
   void unbind(
     int? identifier,
     List<int?>? useCaseIds,

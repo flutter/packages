@@ -148,6 +148,7 @@ abstract class TestProcessCameraProviderHostApi {
   List<int?> getAvailableCameraInfos(int identifier);
   int bindToLifecycle(
       int identifier, int cameraSelectorIdentifier, List<int?> useCaseIds);
+  bool isBound(int identifier, int useCaseIdentifier);
   void unbind(int identifier, List<int?> useCaseIds);
   void unbindAll(int identifier);
   static void setup(TestProcessCameraProviderHostApi? api,
@@ -211,6 +212,29 @@ abstract class TestProcessCameraProviderHostApi {
               'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.bindToLifecycle was null, expected non-null List<int?>.');
           final int output = api.bindToLifecycle(
               arg_identifier!, arg_cameraSelectorIdentifier!, arg_useCaseIds!);
+          return <Object?, Object?>{'result': output};
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ProcessCameraProviderHostApi.isBound', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.isBound was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.isBound was null, expected non-null int.');
+          final int? arg_useCaseIdentifier = (args[1] as int?);
+          assert(arg_useCaseIdentifier != null,
+              'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.isBound was null, expected non-null int.');
+          final bool output =
+              api.isBound(arg_identifier!, arg_useCaseIdentifier!);
           return <Object?, Object?>{'result': output};
         });
       }

@@ -14,32 +14,30 @@ import 'use_case.dart';
 /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture.
 class ImageCapture extends UseCase {
   /// Creates an [ImageCapture].
-  ImageCapture(
-      {BinaryMessenger? binaryMessenger,
-      InstanceManager? instanceManager,
-      this.targetFlashMode,
-      this.targetResolution,
-      })
-      : super.detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager,
-            ) {
+  ImageCapture({
+    BinaryMessenger? binaryMessenger,
+    InstanceManager? instanceManager,
+    this.targetFlashMode,
+    this.targetResolution,
+  }) : super.detached(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ) {
     _api = ImageCaptureHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     _api.createFromInstance(this, targetFlashMode, targetResolution);
   }
 
   /// Constructs a [ImageCapture] that is not automatically attached to a native object.
-  ImageCapture.detached(
-      {BinaryMessenger? binaryMessenger,
-      InstanceManager? instanceManager,
-      this.targetFlashMode,
-      this.targetResolution,
-      })
-      : super.detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager,
-            ) {
+  ImageCapture.detached({
+    BinaryMessenger? binaryMessenger,
+    InstanceManager? instanceManager,
+    this.targetFlashMode,
+    this.targetResolution,
+  }) : super.detached(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ) {
     _api = ImageCaptureHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
   }

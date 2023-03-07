@@ -488,6 +488,9 @@ public class GeneratedCameraXLibrary {
         @NonNull Long cameraSelectorIdentifier,
         @NonNull List<Long> useCaseIds);
 
+    @NonNull
+    Boolean isBound(@NonNull Long identifier, @NonNull Long useCaseIdentifier);
+
     void unbind(@NonNull Long identifier, @NonNull List<Long> useCaseIds);
 
     void unbindAll(@NonNull Long identifier);
@@ -597,6 +600,40 @@ public class GeneratedCameraXLibrary {
                               ? null
                               : cameraSelectorIdentifierArg.longValue(),
                           useCaseIdsArg);
+                  wrapped.put("result", output);
+                } catch (Error | RuntimeException exception) {
+                  wrapped.put("error", wrapError(exception));
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.ProcessCameraProviderHostApi.isBound",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                Map<String, Object> wrapped = new HashMap<>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  Number identifierArg = (Number) args.get(0);
+                  if (identifierArg == null) {
+                    throw new NullPointerException("identifierArg unexpectedly null.");
+                  }
+                  Number useCaseIdentifierArg = (Number) args.get(1);
+                  if (useCaseIdentifierArg == null) {
+                    throw new NullPointerException("useCaseIdentifierArg unexpectedly null.");
+                  }
+                  Boolean output =
+                      api.isBound(
+                          (identifierArg == null) ? null : identifierArg.longValue(),
+                          (useCaseIdentifierArg == null) ? null : useCaseIdentifierArg.longValue());
                   wrapped.put("result", output);
                 } catch (Error | RuntimeException exception) {
                   wrapped.put("error", wrapError(exception));

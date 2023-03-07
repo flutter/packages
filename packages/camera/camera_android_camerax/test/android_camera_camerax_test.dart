@@ -136,7 +136,9 @@ void main() {
     verify(camera.preview!.setSurfaceProvider());
   });
 
-  test('createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance', () async {
+  test(
+      'createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance',
+      () async {
     final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
     camera.processCameraProvider = MockProcessCameraProvider();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -149,11 +151,11 @@ void main() {
     const bool enableAudio = true;
     const int testSurfaceTextureId = 6;
 
-     await camera.createCamera(testCameraDescription, testResolutionPreset,
-            enableAudio: enableAudio);
+    await camera.createCamera(testCameraDescription, testResolutionPreset,
+        enableAudio: enableAudio);
 
-    verify(camera.processCameraProvider!.bindToLifecycle(
-            camera.cameraSelector!, <UseCase>[camera.testPreview, camera.testImageCapture]));
+    verify(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
+        <UseCase>[camera.testPreview, camera.testImageCapture]));
   });
 
   test(
@@ -201,8 +203,8 @@ void main() {
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
 
-    when(camera.processCameraProvider!.bindToLifecycle(
-            camera.cameraSelector!, <UseCase>[camera.testPreview, camera.testImageCapture]))
+    when(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
+            <UseCase>[camera.testPreview, camera.testImageCapture]))
         .thenAnswer((_) async => mockCamera);
     when(camera.testPreview.getResolutionInfo())
         .thenAnswer((_) async => testResolutionInfo);
@@ -287,12 +289,13 @@ void main() {
 
     camera.processCameraProvider = MockProcessCameraProvider();
     camera.preview = MockPreview();
-    camera.previewIsBound = true;
+
+    when(camera.processCameraProvider!.isBound(camera.preview!))
+        .thenAnswer((_) async => true);
 
     await camera.pausePreview(579);
 
     verify(camera.processCameraProvider!.unbind(<UseCase>[camera.preview!]));
-    expect(camera.previewIsBound, isFalse);
   });
 
   test(
@@ -316,7 +319,9 @@ void main() {
     camera.processCameraProvider = MockProcessCameraProvider();
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
-    camera.previewIsBound = true;
+
+    when(camera.processCameraProvider!.isBound(camera.preview!))
+        .thenAnswer((_) async => true);
 
     await camera.resumePreview(78);
 
@@ -444,6 +449,6 @@ class MockAndroidCameraCamerax extends AndroidCameraCameraX {
   @override
   ImageCapture createImageCapture(
       int? flashMode, ResolutionInfo? targetResolution) {
-      return testImageCapture;
+    return testImageCapture;
   }
 }
