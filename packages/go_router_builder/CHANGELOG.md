@@ -1,4 +1,4 @@
-## NEXT
+## 1.1.5
 
 * Replaces unnecessary Flutter SDK constraint with corresponding Dart
   SDK constraint.
