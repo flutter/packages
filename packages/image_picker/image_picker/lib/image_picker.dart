@@ -358,7 +358,7 @@ class ImagePicker {
 class AndroidImagePicker {
   AndroidImagePicker._();
 
-  /// Whether to select images with the Android 13 Photo Picker.
+  /// Whether to select media with the Android 13 Photo Picker.
   ///
   /// The Android 13 Photo Picker does not support cloud file selection.
   static bool get useAndroidPhotoPicker {
@@ -369,7 +369,7 @@ class AndroidImagePicker {
     return false;
   }
 
-  /// Set whether to select images with the Android 13 Photo Picker.
+  /// Set whether to select media with the Android 13 Photo Picker.
   static set useAndroidPhotoPicker(bool useAndroidPhotoPicker) {
     final ImagePickerPlatform platform = ImagePickerPlatform.instance;
     if (platform is ImagePickerAndroid) {
