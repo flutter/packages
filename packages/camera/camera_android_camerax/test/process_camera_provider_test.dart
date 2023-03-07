@@ -129,6 +129,38 @@ void main() {
       verify(mockApi.bindToLifecycle(0, 1, <int>[2]));
     });
 
+    test('isBoundTest', () async {
+      final MockTestProcessCameraProviderHostApi mockApi =
+          MockTestProcessCameraProviderHostApi();
+      TestProcessCameraProviderHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      final ProcessCameraProvider processCameraProvider =
+          ProcessCameraProvider.detached(
+        instanceManager: instanceManager,
+      );
+      final UseCase fakeUseCase =
+          UseCase.detached(instanceManager: instanceManager);
+
+      instanceManager.addHostCreatedInstance(
+        processCameraProvider,
+        0,
+        onCopy: (_) => ProcessCameraProvider.detached(),
+      );
+      instanceManager.addHostCreatedInstance(
+        fakeUseCase,
+        27,
+        onCopy: (_) => UseCase.detached(),
+      );
+
+      when(mockApi.isBound(0, 27)).thenReturn(true);
+
+      expect(await processCameraProvider.isBound(fakeUseCase), isTrue);
+      verify(mockApi.isBound(0, 27));
+    });
+
     test('unbindTest', () async {
       final MockTestProcessCameraProviderHostApi mockApi =
           MockTestProcessCameraProviderHostApi();
