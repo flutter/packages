@@ -225,7 +225,7 @@ void main() {
     await controller.startVideoRecording();
 
     // SDK < 26 will throw a platform error when trying to switch and keep the same camera
-    // we accept either outcome here, while the native integration tests check the outcome based on the current Android SDK
+    // we accept either outcome here, while the native unit tests check the outcome based on the current Android SDK
     bool failed = false;
     try {
       await controller.setDescription(cameras[1]);
