@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -9,7 +11,7 @@ void main() => runApp(const MyApp());
 /// Example app for Espresso plugin.
 class MyApp extends StatelessWidget {
   /// Default Constructor
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -28,13 +30,13 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const _MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class _MyHomePage extends StatefulWidget {
-  const _MyHomePage({Key? key, required this.title}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -48,10 +50,10 @@ class _MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<_MyHomePage> createState() => _MyHomePageState();
+  State<MyHomePage> createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<_MyHomePage> {
+class MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {

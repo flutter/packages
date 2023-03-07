@@ -1,3 +1,8 @@
+## 1.1.5
+
+* Replaces unnecessary Flutter SDK constraint with corresponding Dart
+  SDK constraint.
+
 ## 1.1.4
 
 * Fixes the example for the default values in the README.
@@ -46,7 +51,7 @@
 
 ## 1.0.10
 
-* Adds a lint ignore for deprecated member in the example. 
+* Adds a lint ignore for deprecated member in the example.
 
 ## 1.0.9
 

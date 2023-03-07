@@ -1,6 +1,7 @@
 ## 2.3.0
 
 * Adds support for heatmap layers.
+* Aligns Dart and Flutter SDK constraints.
 
 ## 2.2.5
 

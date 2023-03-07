@@ -1,6 +1,7 @@
 ## 0.4.1
 
 * Adds support for heatmap layers.
+* Aligns Dart and Flutter SDK constraints.
 
 ## 0.4.0+6
 
