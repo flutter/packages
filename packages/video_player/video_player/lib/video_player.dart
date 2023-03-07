@@ -369,6 +369,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         return;
       }
 
+      // ignore: missing_enum_constant_in_switch
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(
