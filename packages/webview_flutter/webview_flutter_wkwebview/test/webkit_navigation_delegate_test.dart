@@ -85,9 +85,12 @@ void main() {
         ),
       );
 
-      late final int callbackStatusCode;
-      webKitDelgate
-          .setOnPageError((int statusCode) => callbackStatusCode = statusCode);
+      late final HttpResponseError callbackError;
+      void onHttpError(HttpResponseError error) {
+        callbackError = error;
+      }
+
+      webKitDelgate.setOnHttpError(onHttpError);
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.decidePolicyForNavigationResponse!(
@@ -96,7 +99,7 @@ void main() {
             response: NSHttpUrlResponse(statusCode: 401), forMainFrame: true),
       );
 
-      expect(callbackStatusCode, 401);
+      expect(callbackError.statusCode, 401);
     });
 
     test('onWebResourceError from didFailNavigation', () {

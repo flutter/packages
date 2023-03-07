@@ -617,9 +617,10 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
       },
       decidePolicyForNavigationResponse:
           (WKWebView webView, WKNavigationResponse response) async {
-        if (weakThis.target?._onPageError != null &&
+        if (weakThis.target?._onHttpError != null &&
             response.response.statusCode >= 400) {
-          weakThis.target!._onPageError!(response.response.statusCode);
+          weakThis.target!._onHttpError!(
+              HttpResponseError(statusCode: response.response.statusCode));
         }
 
         return WKNavigationResponsePolicy.allow;
@@ -697,7 +698,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 
   PageEventCallback? _onPageFinished;
   PageEventCallback? _onPageStarted;
-  PageErrorCallback? _onPageError;
+  HttpResponseErrorCallback? _onHttpError;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
@@ -713,8 +714,8 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   }
 
   @override
-  Future<void> setOnPageError(PageErrorCallback onPageError) async {
-    _onPageError = onPageError;
+  Future<void> setOnHttpError(HttpResponseErrorCallback onHttpError) async {
+    _onHttpError = onHttpError;
   }
 
   @override

@@ -41,7 +41,12 @@ class AndroidWebViewProxy {
   final android_webview.WebViewClient Function({
     void Function(android_webview.WebView webView, String url)? onPageStarted,
     void Function(android_webview.WebView webView, String url)? onPageFinished,
-    void Function(android_webview.WebView webView, int statusCode)? onPageError,
+    void Function(
+      android_webview.WebView webView,
+      android_webview.WebResourceRequest request,
+      android_webview.WebResourceResponse response,
+    )?
+        onReceivedHttpError,
     void Function(
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,

@@ -182,6 +182,12 @@ FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNavigationResponse(
           forMainFrame:@(response.forMainFrame)];
 }
 
+/// Cast the NSURLResponse object to NSHTTPURLResponse.
+///
+/// NSURLResponse doesn't contain the status code so it must be cast to NSHTTPURLResponse.
+/// This cast will always succeed because the NSURLResponse object actually is an instance of
+/// NSHTTPURLResponse. See:
+/// https://developer.apple.com/documentation/foundation/nsurlresponse#overview
 FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNSURLResponse(NSURLResponse *response) {
   NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
   return [FWFNSHttpUrlResponseData makeWithStatusCode:@(httpResponse.statusCode)];

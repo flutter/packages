@@ -57,8 +57,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
 
     @Override
     public void onReceivedHttpError(
-        WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-      flutterApi.onPageError(this, view, errorResponse.getStatusCode(), reply -> {});
+        WebView view, WebResourceRequest request, WebResourceResponse response) {
+      flutterApi.onReceivedHttpError(this, view, request, response, reply -> {});
     }
 
     @Override
@@ -124,12 +124,11 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
       flutterApi.onPageFinished(this, view, url, reply -> {});
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onReceivedHttpError(
-        WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        flutterApi.onPageError(this, view, errorResponse.getStatusCode(), reply -> {});
-      }
+        @NonNull WebView view, @NonNull WebResourceRequest request, WebResourceResponse response) {
+      flutterApi.onReceivedHttpError(this, view, request, response, reply -> {});
     }
 
     // This method is only called when the WebViewFeature.RECEIVE_WEB_RESOURCE_ERROR feature is

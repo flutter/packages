@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.os.Build;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.RequiresApi;
@@ -65,6 +66,16 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
     return requestData.build();
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  static GeneratedAndroidWebView.WebResourceResponseData createWebResourceResponseData(
+      WebResourceResponse response) {
+    final GeneratedAndroidWebView.WebResourceResponseData.Builder responseData =
+        new GeneratedAndroidWebView.WebResourceResponseData.Builder()
+            .setStatusCode((long) response.getStatusCode());
+
+    return responseData.build();
+  }
+
   /**
    * Creates a Flutter api that sends messages to Dart.
    *
@@ -100,13 +111,23 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   /** Passes arguments from {@link WebViewClient#onReceivedHttpError} to Dart. */
-  public void onPageError(
-      WebViewClient webViewClient, WebView webView, long statusCodeArg, Reply<Void> callback) {
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  public void onReceivedHttpError(
+      WebViewClient webViewClient,
+      WebView webView,
+      WebResourceRequest request,
+      WebResourceResponse response,
+      Reply<Void> callback) {
     final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
     if (webViewIdentifier == null) {
       throw new IllegalStateException("Could not find identifier for WebView.");
     }
-    onPageError(getIdentifierForClient(webViewClient), webViewIdentifier, statusCodeArg, callback);
+    onReceivedHttpError(
+        getIdentifierForClient(webViewClient),
+        webViewIdentifier,
+        createWebResourceRequestData(request),
+        createWebResourceResponseData(response),
+        callback);
   }
 
   /**

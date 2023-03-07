@@ -16,9 +16,6 @@ typedef NavigationRequestCallback = FutureOr<NavigationDecision> Function(
 /// Signature for callbacks that report page events triggered by the native web view.
 typedef PageEventCallback = void Function(String url);
 
-/// Signature for callbacks that report errors during loading a page.
-typedef PageErrorCallback = void Function(int statusCode);
-
 /// Signature for callbacks that report loading progress of a page.
 typedef ProgressCallback = void Function(int progress);
 

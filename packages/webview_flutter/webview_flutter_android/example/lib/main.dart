@@ -107,8 +107,8 @@ class _WebViewExampleState extends State<WebViewExample> {
           ..setOnPageFinished((String url) {
             debugPrint('Page finished loading: $url');
           })
-          ..setOnPageError((int statusCode) {
-            debugPrint('Error occured on page: $statusCode');
+          ..setOnHttpError((HttpResponseError error) {
+            debugPrint('Http error occured on page: ${error.statusCode}');
           })
           ..setOnWebResourceError((WebResourceError error) {
             debugPrint('''

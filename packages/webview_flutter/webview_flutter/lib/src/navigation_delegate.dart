@@ -41,15 +41,15 @@ class NavigationDelegate {
         onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
-    void Function(int statusCode)? onPageError,
     void Function(int progress)? onProgress,
+    void Function(HttpResponseError error)? onHttpError,
     void Function(WebResourceError error)? onWebResourceError,
   }) : this.fromPlatformCreationParams(
           const PlatformNavigationDelegateCreationParams(),
           onNavigationRequest: onNavigationRequest,
           onPageStarted: onPageStarted,
           onPageFinished: onPageFinished,
-          onPageError: onPageError,
+          onHttpError: onHttpError,
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
         );
@@ -89,15 +89,15 @@ class NavigationDelegate {
         onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
-    void Function(int statusCode)? onPageError,
     void Function(int progress)? onProgress,
+    void Function(HttpResponseError error)? onHttpError,
     void Function(WebResourceError error)? onWebResourceError,
   }) : this.fromPlatform(
           PlatformNavigationDelegate(params),
           onNavigationRequest: onNavigationRequest,
           onPageStarted: onPageStarted,
           onPageFinished: onPageFinished,
-          onPageError: onPageError,
+          onHttpError: onHttpError,
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
         );
@@ -108,8 +108,8 @@ class NavigationDelegate {
     this.onNavigationRequest,
     this.onPageStarted,
     this.onPageFinished,
-    this.onPageError,
     this.onProgress,
+    void Function(HttpResponseError error)? onHttpError,
     this.onWebResourceError,
   }) {
     if (onNavigationRequest != null) {
@@ -121,8 +121,8 @@ class NavigationDelegate {
     if (onPageFinished != null) {
       platform.setOnPageFinished(onPageFinished!);
     }
-    if (onPageError != null) {
-      platform.setOnPageError(onPageError!);
+    if (onHttpError != null) {
+      platform.setOnHttpError(onHttpError);
     }
     if (onProgress != null) {
       platform.setOnProgress(onProgress!);
@@ -152,9 +152,6 @@ class NavigationDelegate {
 
   /// Invoked when a page has finished loading.
   final PageEventCallback? onPageFinished;
-
-  /// Invoked when a page failed loading
-  final PageErrorCallback? onPageError;
 
   /// Invoked when a page is loading to report the progress.
   final ProgressCallback? onProgress;

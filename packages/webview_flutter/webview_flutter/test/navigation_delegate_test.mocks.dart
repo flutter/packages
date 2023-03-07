@@ -208,11 +208,11 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
   @override
-  _i8.Future<void> setOnPageError(_i3.PageErrorCallback? onPageError) =>
+  _i8.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
       (super.noSuchMethod(
         Invocation.method(
-          #setOnPageError,
-          [onPageError],
+          #setOnHttpError,
+          [onHttpError],
         ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
