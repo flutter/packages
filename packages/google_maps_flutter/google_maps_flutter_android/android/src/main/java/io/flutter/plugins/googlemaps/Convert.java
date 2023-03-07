@@ -672,7 +672,7 @@ class Convert {
   }
 
   @VisibleForTesting
-  private static List<LatLng> toPoints(Object o) {
+  public static List<LatLng> toPoints(Object o) {
     final List<?> data = toList(o);
     final List<LatLng> points = new ArrayList<>(data.size());
 
