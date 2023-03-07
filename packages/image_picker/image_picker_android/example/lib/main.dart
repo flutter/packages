@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_driver/driver_extension.dart';
+import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:video_player/video_player.dart';
 
@@ -19,6 +20,9 @@ void appMain() {
 }
 
 void main() {
+  final ImagePickerPlatform platform = ImagePickerPlatform.instance;
+  // Set to use Android Photo Picker.
+  (platform as ImagePickerAndroid).useAndroidPhotoPicker = true;
   runApp(const MyApp());
 }
 
