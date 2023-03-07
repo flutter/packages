@@ -9,9 +9,9 @@ A Flutter plugin that provides a WebView widget.
 On iOS the WebView widget is backed by a [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview).
 On Android the WebView widget is backed by a [WebView](https://developer.android.com/reference/android/webkit/WebView).
 
-|             | Android        | iOS  |
-|-------------|----------------|------|
-| **Support** | SDK 19+ or 20+ | 9.0+ |
+|             | Android        | iOS   |
+|-------------|----------------|-------|
+| **Support** | SDK 19+ or 20+ | 11.0+ |
 
 ## Usage
 Add `webview_flutter` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/webview_flutter/install).

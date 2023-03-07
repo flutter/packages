@@ -4,6 +4,7 @@
   the parent texts' `TextStyle`.  
   This should allow custom syntax implementations to get data from the current context, as well as properly style any
   text, e.g. a color syntax can make parts of a headline colored, while still keeping the font size of the headline.
+* Aligns Dart and Flutter SDK constraints.
 
 ## 0.6.14
 
