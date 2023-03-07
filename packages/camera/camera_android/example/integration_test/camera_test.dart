@@ -238,7 +238,6 @@ void main() {
       failed = true;
     }
 
-
     if (failed) {
       // cameras did not switch
       expect(controller.description, cameras[0]);
