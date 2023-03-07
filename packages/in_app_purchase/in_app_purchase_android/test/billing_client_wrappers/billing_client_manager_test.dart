@@ -53,11 +53,11 @@ void main() {
     test('waits for connection before executing the operations', () {
       bool called1 = false;
       bool called2 = false;
-      manager.withClient((BillingClient _) async {
+      manager.runWithClient((BillingClient _) async {
         called1 = true;
         return const BillingResultWrapper(responseCode: BillingResponse.ok);
       });
-      manager.withClientNonRetryable(
+      manager.runWithClientNonRetryable(
             (BillingClient _) async => called2 = true,
       );
       expect(called1, equals(false));
@@ -81,7 +81,7 @@ void main() {
           () async {
         connectedCompleter.complete();
         int timesCalled = 0;
-        final BillingResultWrapper result = await manager.withClient(
+        final BillingResultWrapper result = await manager.runWithClient(
               (BillingClient _) async {
             timesCalled++;
             return BillingResultWrapper(

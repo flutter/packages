@@ -24,7 +24,7 @@ abstract class HasBillingResponse {
 /// re-initialized.
 ///
 /// [BillingClient] instance is not exposed directly. It can be accessed via
-/// [withClient] and [withClientNonRetryable] methods that handle the
+/// [runWithClient] and [runWithClientNonRetryable] methods that handle the
 /// connection management.
 ///
 /// Consider calling [dispose] after the [BillingClient] is no longer needed.
@@ -45,8 +45,8 @@ class BillingClientManager {
 
   /// [BillingClient] instance managed by this [BillingClientManager].
   ///
-  /// In order to access the [BillingClient], consider using [withClient]
-  /// and [withClientNonRetryable]
+  /// In order to access the [BillingClient], consider using [runWithClient]
+  /// and [runWithClientNonRetryable]
   /// methods.
   @visibleForTesting
   late final BillingClient client = BillingClient(_onPurchasesUpdated);
@@ -70,9 +70,9 @@ class BillingClientManager {
   /// A response with [BillingResponse.serviceDisconnected] may be returned
   /// in case of [dispose] being called during the operation.
   ///
-  /// See [withClientNonRetryable] for operations that do not return a subclass
-  /// of [HasBillingResponse].
-  Future<R> withClient<R extends HasBillingResponse>(
+  /// See [runWithClientNonRetryable] for operations that do not return
+  /// a subclass of [HasBillingResponse].
+  Future<R> runWithClient<R extends HasBillingResponse>(
       Future<R> Function(BillingClient client) action,
       ) async {
     _debugAssertNotDisposed();
@@ -81,7 +81,7 @@ class BillingClientManager {
     if (result.responseCode == BillingResponse.serviceDisconnected &&
         !_isDisposed) {
       await _connect();
-      return withClient(action);
+      return runWithClient(action);
     } else {
       return result;
     }
@@ -94,9 +94,9 @@ class BillingClientManager {
   /// of [HasBillingResponse] (e.g. [BillingClient.isReady],
   /// [BillingClient.isFeatureSupported]).
   ///
-  /// See [withClient] for operations that return a subclass
+  /// See [runWithClient] for operations that return a subclass
   /// of [HasBillingResponse].
-  Future<R> withClientNonRetryable<R>(
+  Future<R> runWithClientNonRetryable<R>(
       Future<R> Function(BillingClient client) action,
       ) async {
     _debugAssertNotDisposed();
@@ -112,7 +112,7 @@ class BillingClientManager {
   /// After calling [dispose] :
   /// - Further connection attempts will not be made;
   /// - [purchasesUpdatedStream] will be closed;
-  /// - Calls to [withClient] and [withClientNonRetryable] will throw.
+  /// - Calls to [runWithClient] and [runWithClientNonRetryable] will throw.
   void dispose() {
     _debugAssertNotDisposed();
     _isDisposed = true;

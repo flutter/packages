@@ -54,7 +54,7 @@ class InAppPurchaseAndroidPlatformAddition
       throw ArgumentError(
           'consumePurchase unsuccessful. The `purchase.verificationData` is not valid');
     }
-    return _billingClientManager.withClient(
+    return _billingClientManager.runWithClient(
       (BillingClient client) =>
           client.consumeAsync(purchase.verificationData.serverVerificationData),
     );
@@ -80,10 +80,10 @@ class InAppPurchaseAndroidPlatformAddition
     PlatformException? exception;
     try {
       responses = await Future.wait(<Future<PurchasesResultWrapper>>[
-        _billingClientManager.withClient(
+        _billingClientManager.runWithClient(
               (BillingClient client) => client.queryPurchases(SkuType.inapp),
         ),
-        _billingClientManager.withClient(
+        _billingClientManager.runWithClient(
               (BillingClient client) => client.queryPurchases(SkuType.subs),
         ),
       ]);
@@ -147,7 +147,7 @@ class InAppPurchaseAndroidPlatformAddition
   /// Checks if the specified feature or capability is supported by the Play Store.
   /// Call this to check if a [BillingClientFeature] is supported by the device.
   Future<bool> isFeatureSupported(BillingClientFeature feature) async {
-    return _billingClientManager.withClientNonRetryable(
+    return _billingClientManager.runWithClientNonRetryable(
       (BillingClient client) => client.isFeatureSupported(feature),
     );
   }
@@ -161,7 +161,7 @@ class InAppPurchaseAndroidPlatformAddition
   /// [InAppPurchaseAndroidPlatform.queryProductDetails] call.
   Future<BillingResultWrapper> launchPriceChangeConfirmationFlow(
       {required String sku}) {
-    return _billingClientManager.withClient(
+    return _billingClientManager.runWithClient(
       (BillingClient client) =>
           client.launchPriceChangeConfirmationFlow(sku: sku),
     );
