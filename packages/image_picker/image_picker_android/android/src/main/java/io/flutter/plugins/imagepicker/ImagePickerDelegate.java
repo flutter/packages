@@ -252,12 +252,12 @@ public class ImagePickerDelegate
       return;
     }
 
-    launchPickVideoFromGalleryIntent();
+    launchPickVideoFromGalleryIntent(methodCall.useAndroidPhotoPicker);
   }
 
-  private void launchPickVideoFromGalleryIntent() {
+  private void launchPickVideoFromGalleryIntent(Boolean useAndroidPhotoPicker) {
     Intent pickVideoIntent;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (useAndroidPhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       pickVideoIntent =
           new ActivityResultContracts.PickVisualMedia()
               .createIntent(
@@ -326,7 +326,7 @@ public class ImagePickerDelegate
       return;
     }
 
-    launchPickImageFromGalleryIntent();
+    launchPickImageFromGalleryIntent(methodCall.useAndroidPhotoPicker);
   }
 
   public void chooseMultiImageFromGallery(MethodCall methodCall, MethodChannel.Result result) {
@@ -335,12 +335,12 @@ public class ImagePickerDelegate
       return;
     }
 
-    launchMultiPickImageFromGalleryIntent();
+    launchMultiPickImageFromGalleryIntent(methodCall.useAndroidPhotoPicker);
   }
 
-  private void launchPickImageFromGalleryIntent() {
+  private void launchPickImageFromGalleryIntent(Boolean useAndroidPhotoPicker) {
     Intent pickImageIntent;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (useAndroidPhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       pickImageIntent =
           new ActivityResultContracts.PickVisualMedia()
               .createIntent(
@@ -356,9 +356,9 @@ public class ImagePickerDelegate
     activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY);
   }
 
-  private void launchMultiPickImageFromGalleryIntent() {
+  private void launchMultiPickImageFromGalleryIntent(Boolean useAndroidPhotoPicker) {
     Intent pickMultiImageIntent;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (useAndroidPhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       pickMultiImageIntent =
           new ActivityResultContracts.PickMultipleVisualMedia()
               .createIntent(

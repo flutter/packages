@@ -83,6 +83,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
         'maxWidth': maxWidth,
         'maxHeight': maxHeight,
         'imageQuality': imageQuality,
+        'useAndroidPhotoPicker': useAndroidPhotoPicker,
       },
     );
   }
@@ -117,6 +118,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
         'imageQuality': imageQuality,
         'cameraDevice': preferredCameraDevice.index,
         'requestFullMetadata': requestFullMetadata,
+        'useAndroidPhotoPicker': useAndroidPhotoPicker,
       },
     );
   }
@@ -145,7 +147,8 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       <String, dynamic>{
         'source': source.index,
         'maxDuration': maxDuration?.inSeconds,
-        'cameraDevice': preferredCameraDevice.index
+        'cameraDevice': preferredCameraDevice.index,
+        'useAndroidPhotoPicker': useAndroidPhotoPicker,
       },
     );
   }
@@ -279,4 +282,9 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       files: pickedFileList,
     );
   }
+
+  /// Set [ImagePickerPlatform] to use [AndroidPhotoPicker]
+  ///
+  /// Currently defaults to false, but the default is subject to change.
+  bool useAndroidPhotoPicker = false;
 }

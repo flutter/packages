@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
 export 'package:image_picker_platform_interface/image_picker_platform_interface.dart'
@@ -350,5 +351,29 @@ class ImagePicker {
   /// * [Android Activity Lifecycle](https://developer.android.com/reference/android/app/Activity.html), for more information on MainActivity destruction.
   Future<LostDataResponse> retrieveLostData() {
     return platform.getLostData();
+  }
+}
+
+/// Android specific settings for [ImagePicker].
+class AndroidImagePicker {
+  AndroidImagePicker._();
+
+  /// Whether to select images with the Android 13 Photo Picker.
+  ///
+  /// The Android 13 Photo Picker does not support cloud file selection.
+  static bool get useAndroidPhotoPicker {
+    final ImagePickerPlatform platform = ImagePickerPlatform.instance;
+    if (platform is ImagePickerAndroid) {
+      return platform.useAndroidPhotoPicker;
+    }
+    return false;
+  }
+
+  /// Set whether to select images with the Android 13 Photo Picker.
+  static set useAndroidPhotoPicker(bool useAndroidPhotoPicker) {
+    final ImagePickerPlatform platform = ImagePickerPlatform.instance;
+    if (platform is ImagePickerAndroid) {
+      platform.useAndroidPhotoPicker = useAndroidPhotoPicker;
+    }
   }
 }
