@@ -1,3 +1,8 @@
+## 0.2.0+1
+
+* Makes `parent` on `renderButton` an `Object`, so we don't need to export the
+  DOM definition from this package.
+
 ## 0.2.0
 
 * Adds `renderButton` API to `id.dart`.
