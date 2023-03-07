@@ -93,7 +93,7 @@ public class FileUtilTest {
     Uri uri = MockContentProvider.WEBP_URI;
     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
     shadowContentResolver.registerInputStream(
-            uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
+        uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
     String path = fileUtils.getPathFromUri(context, uri);
     assertTrue(path.endsWith("webp.webp"));
   }

@@ -45,8 +45,8 @@ class FileUtils {
    * <p>Each file is placed in its own directory to avoid conflicts according to the following
    * scheme: {cacheDir}/{randomUuid}/{fileName}
    *
-   * <p>File extension is changed to match MIME type of the file, if known. Otherwise, the extension is left
-   * unchanged.
+   * <p>File extension is changed to match MIME type of the file, if known. Otherwise, the extension
+   * is left unchanged.
    *
    * <p>If the original file name is unknown, a predefined "image_picker" filename is used and the
    * file extension is deduced from the mime type (with fallback to ".jpg" in case of failure).
@@ -64,9 +64,9 @@ class FileUtils {
 
       if (fileName == null) {
         Log.w("FileUtils", "Cannot get file name for " + uri);
-        if(extension == null) extension = ".jpg";
+        if (extension == null) extension = ".jpg";
         fileName = "image_picker" + extension;
-      } else if (extension != null){
+      } else if (extension != null) {
         fileName = getBaseName(fileName) + extension;
       }
       File file = new File(targetDirectory, fileName);
