@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.test.core.app.ApplicationProvider;
@@ -29,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowContentResolver;
+import org.robolectric.shadows.ShadowMimeTypeMap;
 
 @RunWith(RobolectricTestRunner.class)
 public class FileUtilTest {
@@ -42,6 +44,10 @@ public class FileUtilTest {
     context = ApplicationProvider.getApplicationContext();
     shadowContentResolver = shadowOf(context.getContentResolver());
     fileUtils = new FileUtils();
+    ShadowMimeTypeMap mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
+    mimeTypeMap.addExtensionMimeTypMapping("jpg", "image/jpeg");
+    mimeTypeMap.addExtensionMimeTypMapping("png", "image/png");
+    mimeTypeMap.addExtensionMimeTypMapping("webp", "image/webp");
   }
 
   @Test
@@ -74,15 +80,27 @@ public class FileUtilTest {
 
   @Test
   public void FileUtil_getImageName() throws IOException {
-    Uri uri = Uri.parse("content://dummy/dummy.png");
+    Uri uri = MockContentProvider.PNG_URI;
     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
     shadowContentResolver.registerInputStream(
         uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
     String path = fileUtils.getPathFromUri(context, uri);
-    assertTrue(path.endsWith("dummy.png"));
+    assertTrue(path.endsWith("png.png"));
+  }
+
+  @Test
+  public void FileUtil_getImageName_mismatchedType() throws IOException {
+    Uri uri = MockContentProvider.WEBP_URI;
+    Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+            uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
+    String path = fileUtils.getPathFromUri(context, uri);
+    assertTrue(path.endsWith("webp.webp"));
   }
 
   private static class MockContentProvider extends ContentProvider {
+    public static final Uri PNG_URI = Uri.parse("content://dummy/png.png");
+    public static final Uri WEBP_URI = Uri.parse("content://dummy/webp.png");
 
     @Override
     public boolean onCreate() {
@@ -98,14 +116,14 @@ public class FileUtilTest {
         @Nullable String[] selectionArgs,
         @Nullable String sortOrder) {
       MatrixCursor cursor = new MatrixCursor(new String[] {MediaStore.MediaColumns.DISPLAY_NAME});
-      cursor.addRow(new Object[] {"dummy.png"});
+      cursor.addRow(new Object[] {uri.equals(PNG_URI) ? "png.png" : "webp.png"});
       return cursor;
     }
 
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-      return "image/png";
+      return uri.equals(PNG_URI) ? "image/png" : "image/webp";
     }
 
     @Nullable
