@@ -1,6 +1,7 @@
 ## 2.3.0
 
 * Adds options for gesture handling and tilt controls on web.
+* Aligns Dart and Flutter SDK constraints.
 
 ## 2.2.6
 

@@ -262,8 +262,8 @@ class CenteredMap extends StatelessWidget {
     required this.initialCamera,
     required this.size,
     required this.onMapCreated,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// A function that receives the [GoogleMapController] of the Map widget once initialized.
   final void Function(GoogleMapController)? onMapCreated;

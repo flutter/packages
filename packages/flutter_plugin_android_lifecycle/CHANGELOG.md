@@ -1,3 +1,7 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.0.9
 
 * Updates annotation and espresso dependencies.
