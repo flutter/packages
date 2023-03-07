@@ -1,3 +1,10 @@
+## 0.6.15
+
+* Introduce a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
+  the parent texts' `TextStyle`.  
+  This should allow custom syntax implementations to get data from the current context, as well as properly style any
+  text, e.g. a color syntax can make parts of a headline colored, while still keeping the font size of the headline.
+
 ## 0.6.14
 
 * Require `markdown: ^7.0.0`
