@@ -22,6 +22,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import java.util.HashMap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,17 +42,30 @@ public class GoogleMapControllerTest {
   private ComponentActivity activity;
   private GoogleMapController googleMapController;
 
+  AutoCloseable mockCloseable;
   @Mock BinaryMessenger mockMessenger;
   @Mock GoogleMap mockGoogleMap;
 
   @Before
   public void before() {
-    MockitoAnnotations.initMocks(this);
+    mockCloseable = MockitoAnnotations.openMocks(this);
     context = ApplicationProvider.getApplicationContext();
-    activity = Robolectric.setupActivity(ComponentActivity.class);
+    setUpActivityLegacy();
     googleMapController =
         new GoogleMapController(0, context, mockMessenger, activity::getLifecycle, null);
     googleMapController.init();
+  }
+
+  // TODO(stuartmorgan): Update this to a non-deprecated test API.
+  // See https://github.com/flutter/flutter/issues/122102
+  @SuppressWarnings("deprecation")
+  private void setUpActivityLegacy() {
+    activity = Robolectric.setupActivity(ComponentActivity.class);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    mockCloseable.close();
   }
 
   @Test
