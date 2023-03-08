@@ -1,4 +1,4 @@
-## 0.8.6+10
+## 0.8.6
 
 * Adds `usePhotoPickerAndroid` options.
 * Aligns Dart and Flutter SDK constraints.

@@ -31,11 +31,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-
-# FOR TESTING ONLY. DO NOT MERGE.
-dependency_overrides:
-  image_picker_android:
-    path: ../../../image_picker/image_picker_android
-  image_picker_platform_interface:
-    path: ../../../image_picker/image_picker_platform_interface
