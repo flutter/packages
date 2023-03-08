@@ -104,8 +104,11 @@ public final class FlutterViewAction<T> implements ViewAction {
     loopUntilFlutterViewRendered(flutterView, uiController);
     // The url {@code FlutterNativeView} returns is the http url that the Dart VM Observatory http
     // server serves at. Need to convert to the one that the WebSocket uses.
+
+    // TODO(stuartmorgan): migrate to getVMServiceUri() once that is available on stable.
+    @SuppressWarnings("deprecation")
     URI dartVmServiceProtocolUrl =
-        DartVmServiceUtil.getServiceProtocolUri(FlutterJNI.getVMServiceUri());
+        DartVmServiceUtil.getServiceProtocolUri(FlutterJNI.getObservatoryUri());
     String isolateId = DartVmServiceUtil.getDartIsolateId(flutterView);
     final FlutterTestingProtocol flutterTestingProtocol =
         new DartVmService(
