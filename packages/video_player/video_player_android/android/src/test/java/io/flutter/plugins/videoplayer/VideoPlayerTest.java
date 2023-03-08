@@ -51,7 +51,7 @@ public class VideoPlayerTest {
   }
 
   @Test
-  public void videoPlayer_BuildsHttpDataSourceFactoryProperlyWhenHttpHeadersNull() {
+  public void videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNull() {
     VideoPlayer videoPlayer =
         new VideoPlayer(
             fakeExoPlayer,
@@ -70,7 +70,7 @@ public class VideoPlayerTest {
 
   @Test
   public void
-      videoPlayer_BuildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentSpecified() {
+      videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentSpecified() {
     VideoPlayer videoPlayer =
         new VideoPlayer(
             fakeExoPlayer,
@@ -96,7 +96,7 @@ public class VideoPlayerTest {
 
   @Test
   public void
-      videoPlayer_BuildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentNotSpecified() {
+      videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentNotSpecified() {
     VideoPlayer videoPlayer =
         new VideoPlayer(
             fakeExoPlayer,

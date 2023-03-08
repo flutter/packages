@@ -1,6 +1,7 @@
-## 2.5.3
+## 2.6.0
 
 * Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
+* Adds option to configure the User-Agent in the HTTP headers.
 
 ## 2.5.2
 

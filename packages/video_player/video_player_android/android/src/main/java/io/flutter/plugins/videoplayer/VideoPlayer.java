@@ -56,7 +56,7 @@ final class VideoPlayer {
 
   private final EventChannel eventChannel;
 
-  private final String USER_AGENT = "User-Agent";
+  private static final String USER_AGENT = "User-Agent";
 
   @VisibleForTesting boolean isInitialized = false;
 
