@@ -1,6 +1,10 @@
 ## 0.8.6
 
 * Adds `usePhotoPickerAndroid` options.
+
+## 0.8.5+10
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.8.5+9
