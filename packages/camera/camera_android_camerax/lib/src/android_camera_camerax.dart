@@ -232,6 +232,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     return _cameraEvents(cameraId).whereType<CameraInitializedEvent>();
   }
 
+    /// The camera started to close.
+  Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
+    throw UnimplementedError('onCameraClosing() is not implemented.');
+  }
+
   /// The camera experienced an error.
   @override
   Stream<CameraErrorEvent> onCameraError(int cameraId) {
@@ -299,8 +304,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     return XFile(picturePath);
   }
 
-  // Methods for binding UseCases to the lifecycle of the camera controlled
-  // by a ProcessCameraProvider instance:
+  // Methods for binding/unbinding UseCases to the lifecycle of the camera
+  // controlled by a ProcessCameraProvider instance:
 
   /// Binds [preview] instance to the camera lifecycle controlled by the
   /// [processCameraProvider].
