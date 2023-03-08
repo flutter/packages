@@ -1,3 +1,12 @@
+## 5.6.1
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 5.6.0
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
+
 ## 5.5.2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

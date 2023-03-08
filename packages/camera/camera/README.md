@@ -6,9 +6,9 @@
 
 A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
-|                | Android | iOS      | Web                    |
-|----------------|---------|----------|------------------------|
-| **Support**    | SDK 21+ | iOS 10+* | [See `camera_web `][1] |
+|                | Android | iOS       | Web                    |
+|----------------|---------|-----------|------------------------|
+| **Support**    | SDK 21+ | iOS 11.0+ | [See `camera_web `][1] |
 
 ## Features
 
@@ -22,11 +22,6 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 First, add `camera` as a [dependency in your pubspec.yaml file](https://flutter.dev/using-packages/).
 
 ### iOS
-
-\* The camera plugin compiles for any version of iOS, but its functionality
-requires iOS 10 or higher. If compiling for iOS 9, make sure to programmatically
-check the version of iOS running on the device before using any camera plugin features.
-The [device_info_plus](https://pub.dev/packages/device_info_plus) plugin, for example, can be used to check the iOS version.
 
 Add two rows to the `ios/Runner/Info.plist`:
 
@@ -119,7 +114,7 @@ Future<void> main() async {
 /// CameraApp is the Main Application.
 class CameraApp extends StatefulWidget {
   /// Default Constructor
-  const CameraApp({Key? key}) : super(key: key);
+  const CameraApp({super.key});
 
   @override
   State<CameraApp> createState() => _CameraAppState();

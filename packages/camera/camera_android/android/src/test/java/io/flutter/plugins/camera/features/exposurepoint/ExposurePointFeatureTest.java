@@ -149,10 +149,7 @@ public class ExposurePointFeatureTest {
     ExposurePointFeature exposurePointFeature =
         new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
 
-    try (MockedStatic<CameraRegionUtils> mockedCameraRegionUtils =
-        Mockito.mockStatic(CameraRegionUtils.class)) {
-      exposurePointFeature.setValue(new Point(0.5, 0.5));
-    }
+    exposurePointFeature.setValue(new Point(0.5, 0.5));
   }
 
   @Test

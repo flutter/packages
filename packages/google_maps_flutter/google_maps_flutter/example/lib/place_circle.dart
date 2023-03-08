@@ -20,7 +20,7 @@ class PlaceCirclePage extends GoogleMapExampleAppPage {
 }
 
 class PlaceCircleBody extends StatefulWidget {
-  const PlaceCircleBody({Key? key}) : super(key: key);
+  const PlaceCircleBody({super.key});
 
   @override
   State<StatefulWidget> createState() => PlaceCircleBodyState();

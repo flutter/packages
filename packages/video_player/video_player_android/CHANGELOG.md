@@ -3,6 +3,12 @@
 * Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
 * Adds option to configure the User-Agent in the HTTP headers.
 
+## 2.3.12
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+* Updates compileSdkVersion to 33.
+
 ## 2.3.11
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
