@@ -137,7 +137,7 @@ public final class EspressoFlutter {
           "The action cannot be null. You must specify an action to perform on the matched"
               + " Flutter widget.");
       FlutterViewAction<T> flutterViewAction =
-          new FlutterViewAction(
+          new FlutterViewAction<>(
               widgetMatcher, flutterAction, okHttpClient, idGenerator, taskExecutor);
       onView(flutterViewMatcher).perform(flutterViewAction);
       T result;
