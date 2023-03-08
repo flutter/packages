@@ -47,8 +47,6 @@ public class WebChromeClientTest {
   public void setUp() {
     instanceManager = InstanceManager.open(identifier -> {});
 
-    instanceManager.addDartCreatedInstance(mockWebView, 0L);
-
     final WebChromeClientCreator webChromeClientCreator =
         new WebChromeClientCreator() {
           @Override
