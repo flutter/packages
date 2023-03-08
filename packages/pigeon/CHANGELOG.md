@@ -1,3 +1,9 @@
+## 9.0.5
+
+* Removes the unnecessary Flutter constraint.
+* Removes an unnecessary null check.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 9.0.4
 
 * Adds parameter to generate Kotlin code in example README.

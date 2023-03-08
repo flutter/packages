@@ -4,9 +4,9 @@
 
 package io.flutter.plugins.imagepicker;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -63,6 +63,8 @@ public class ImagePickerDelegateTest {
   ImagePickerDelegate.FileUriResolver mockFileUriResolver;
   MockedStatic<File> mockStaticFile;
 
+  AutoCloseable mockCloseable;
+
   private static class MockFileUriResolver implements ImagePickerDelegate.FileUriResolver {
     @Override
     public Uri resolveFileProviderUriForFile(String fileProviderName, File imageFile) {
@@ -77,7 +79,7 @@ public class ImagePickerDelegateTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    mockCloseable = MockitoAnnotations.openMocks(this);
 
     mockStaticFile = Mockito.mockStatic(File.class);
     mockStaticFile
@@ -108,8 +110,9 @@ public class ImagePickerDelegateTest {
   }
 
   @After
-  public void tearDown() {
+  public void tearDown() throws Exception {
     mockStaticFile.close();
+    mockCloseable.close();
   }
 
   @Test
@@ -388,6 +391,7 @@ public class ImagePickerDelegateTest {
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
+    @SuppressWarnings("unchecked")
     ArgumentCaptor<ArrayList<String>> pathListCapture = ArgumentCaptor.forClass(ArrayList.class);
     verify(cache, times(1)).saveResult(pathListCapture.capture(), any(), any());
     assertEquals("pathFromUri", pathListCapture.getValue().get(0));
@@ -503,6 +507,7 @@ public class ImagePickerDelegateTest {
 
     ImagePickerDelegate mockDelegate = createDelegate();
 
+    @SuppressWarnings("unchecked")
     ArgumentCaptor<Map<String, Object>> valueCapture = ArgumentCaptor.forClass(Map.class);
 
     doNothing().when(mockResult).success(valueCapture.capture());

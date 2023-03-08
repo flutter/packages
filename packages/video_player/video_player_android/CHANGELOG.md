@@ -1,3 +1,8 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+* Updates compileSdkVersion to 33.
+
 ## 2.3.11
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
