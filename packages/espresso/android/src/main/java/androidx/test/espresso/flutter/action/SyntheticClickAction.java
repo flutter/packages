@@ -5,7 +5,6 @@
 package androidx.test.espresso.flutter.action;
 
 import android.view.View;
-
 import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.flutter.api.FlutterTestingProtocol;
