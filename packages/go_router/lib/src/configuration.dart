@@ -96,8 +96,15 @@ class RouteConfiguration {
               !allowedKeys.contains(branch.navigatorKey),
               'StatefulShellBranch must not reuse an ancestor navigatorKey '
               '(${branch.navigatorKey})');
+
+          _debugCheckParentNavigatorKeys(
+            branch.routes,
+            <GlobalKey<NavigatorState>>[
+              ...allowedKeys,
+              branch.navigatorKey,
+            ],
+          );
         }
-        _debugCheckParentNavigatorKeys(route.routes, allowedKeys);
       }
     }
     return true;
