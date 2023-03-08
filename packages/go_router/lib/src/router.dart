@@ -200,14 +200,6 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
         extra: extra,
       );
 
-  /// Restore the location represented by the provided state.
-  Future<void> goState(GoRouterState state, BuildContext context) {
-    final RouteMatchList matchList = state.routeMatchList.modifiableMatchList;
-    return routeInformationParser
-        .processRedirection(matchList, context)
-        .then(routerDelegate.setNewRoutePath);
-  }
-
   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
   void push(String location, {Object? extra}) {

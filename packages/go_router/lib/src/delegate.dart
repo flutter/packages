@@ -27,15 +27,17 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
-  })  : _configuration = configuration,
-        builder = RouteBuilder(
-          configuration: configuration,
-          builderWithNav: builderWithNav,
-          errorPageBuilder: errorPageBuilder,
-          errorBuilder: errorBuilder,
-          restorationScopeId: restorationScopeId,
-          observers: observers,
-        );
+  }) : _configuration = configuration {
+    builder = RouteBuilder(
+      configuration: configuration,
+      builderWithNav: builderWithNav,
+      errorPageBuilder: errorPageBuilder,
+      errorBuilder: errorBuilder,
+      restorationScopeId: restorationScopeId,
+      observers: observers,
+      onPopPage: _onPopPage,
+    );
+  }
 
   /// Builds the top-level Navigator given a configuration and location.
   @visibleForTesting
@@ -170,7 +172,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return builder.build(
       context,
       _matchList,
-      _onPopPage,
       routerNeglect,
     );
   }

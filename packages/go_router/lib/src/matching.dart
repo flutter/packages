@@ -148,64 +148,26 @@ class RouteMatchList {
   }
 }
 
-/// Unmodifiable version of [RouteMatchList].
+/// Unmodifiable version of [RouteMatchList] that also supports equality
+/// checking based on data.
 @immutable
-class UnmodifiableRouteMatchList implements RouteMatchList {
+class UnmodifiableRouteMatchList {
   /// UnmodifiableRouteMatchList constructor.
   UnmodifiableRouteMatchList.from(RouteMatchList routeMatchList)
       : _matches = List<RouteMatch>.unmodifiable(routeMatchList.matches),
-        __uri = routeMatchList.uri,
-        fullpath = routeMatchList.fullpath,
-        pathParameters =
-            Map<String, String>.unmodifiable(routeMatchList.pathParameters),
-        error = routeMatchList.error,
-        extra = routeMatchList.extra,
-        isEmpty = routeMatchList.isEmpty,
-        isError = routeMatchList.isError,
-        isNotEmpty = routeMatchList.isNotEmpty;
+        _uri = routeMatchList.uri,
+        _pathParameters =
+            Map<String, String>.unmodifiable(routeMatchList.pathParameters);
+
+  final List<RouteMatch> _matches;
+  final Uri _uri;
+  final Map<String, String> _pathParameters;
 
   /// Creates a new [RouteMatchList] from this UnmodifiableRouteMatchList.
   RouteMatchList get modifiableMatchList => RouteMatchList(
       List<RouteMatch>.from(_matches),
       _uri,
-      Map<String, String>.from(pathParameters));
-
-  final Uri __uri;
-  @override
-  Uri get uri => __uri;
-  @override
-  Uri get _uri => __uri;
-  @override
-  set _uri(Uri uri) => throw UnimplementedError();
-
-  @override
-  final List<RouteMatch> _matches;
-  @override
-  List<RouteMatch> get matches => _matches;
-
-  @override
-  final String fullpath;
-
-  @override
-  final Map<String, String> pathParameters;
-
-  @override
-  final Exception? error;
-
-  @override
-  final Object? extra;
-
-  @override
-  final bool isEmpty;
-
-  @override
-  final bool isError;
-
-  @override
-  final bool isNotEmpty;
-
-  @override
-  RouteMatch get last => _matches.last;
+      Map<String, String>.from(_pathParameters));
 
   @override
   bool operator ==(Object other) {
@@ -217,20 +179,11 @@ class UnmodifiableRouteMatchList implements RouteMatchList {
     }
     return listEquals<RouteMatch>(other._matches, _matches) &&
         other._uri == _uri &&
-        mapEquals(other.pathParameters, pathParameters);
+        mapEquals<String, String>(other._pathParameters, _pathParameters);
   }
 
   @override
-  int get hashCode => Object.hash(_matches, _uri, pathParameters);
-
-  @override
-  void push(RouteMatch match) => throw UnimplementedError();
-
-  @override
-  void remove(RouteMatch match) => throw UnimplementedError();
-
-  @override
-  UnmodifiableRouteMatchList unmodifiableMatchList() => this;
+  int get hashCode => Object.hash(_matches, _uri, _pathParameters);
 }
 
 /// An error that occurred during matching.

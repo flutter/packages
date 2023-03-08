@@ -36,22 +36,15 @@ typedef ShellRoutePageBuilder = Page<dynamic> Function(
 
 /// The widget builder for [StatefulShellRoute].
 typedef StatefulShellRouteBuilder = Widget Function(
-  StatefulShellBuilder navigatorBuilder,
+  BuildContext context,
+  StatefulShellRouteState state,
+  Widget child,
 );
 
 /// The page builder for [StatefulShellRoute].
 typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
-  StatefulShellBuilder navigatorBuilder,
-);
-
-/// The shell body widget builder for [StatefulShellRoute].
-typedef ShellBodyWidgetBuilder = Widget Function(
-    BuildContext context, GoRouterState state, ShellNavigatorContainer child);
-
-/// The signature of the navigatorBuilder callback.
-typedef GoRouterNavigatorBuilder = Widget Function(
   BuildContext context,
-  GoRouterState state,
+  StatefulShellRouteState state,
   Widget child,
 );
 

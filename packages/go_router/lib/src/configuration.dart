@@ -12,7 +12,6 @@ import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
 export 'route.dart';
-export 'shell_state.dart';
 export 'state.dart';
 
 /// The route configuration for GoRouter configured by the app.

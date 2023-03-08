@@ -92,7 +92,6 @@ FutureOr<RouteMatchList> redirect(
       context,
       GoRouterState(
         configuration,
-        prevMatchList.unmodifiableMatchList(),
         location: prevLocation,
         name: null,
         // No name available at the top level trim the query params off the
@@ -138,7 +137,6 @@ FutureOr<String?> _getRouteLevelRedirect(
       context,
       GoRouterState(
         configuration,
-        matchList.unmodifiableMatchList(),
         location: matchList.uri.toString(),
         subloc: match.subloc,
         name: route.name,

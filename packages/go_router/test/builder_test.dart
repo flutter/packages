@@ -435,11 +435,9 @@ void main() {
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           StatefulShellRoute(
-            builder: (StatefulShellBuilder shellBuilder) {
-              return shellBuilder.buildShell(
-                  (BuildContext context, GoRouterState state, Widget child) =>
-                      _HomeScreen(child: child));
-            },
+            builder: (BuildContext context, StatefulShellRouteState state,
+                    Widget child) =>
+                _HomeScreen(child: child),
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 navigatorKey: shellNavigatorKey,
@@ -536,13 +534,14 @@ class _BuilderTestWidget extends StatelessWidget {
       },
       restorationScopeId: null,
       observers: <NavigatorObserver>[],
+      onPopPage: (_, __, ___) => false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: builder.tryBuild(context, matches, (_, __, ___) => false, false,
+      home: builder.tryBuild(context, matches, false,
           routeConfiguration.navigatorKey, <Page<Object?>, GoRouterState>{}),
       // builder: (context, child) => ,
     );
