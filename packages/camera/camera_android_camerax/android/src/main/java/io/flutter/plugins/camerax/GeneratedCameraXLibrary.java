@@ -179,6 +179,49 @@ public class GeneratedCameraXLibrary {
     void error(Throwable error);
   }
 
+  private static class InstanceManagerHostApiCodec extends StandardMessageCodec {
+    public static final InstanceManagerHostApiCodec INSTANCE = new InstanceManagerHostApiCodec();
+
+    private InstanceManagerHostApiCodec() {}
+  }
+
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface InstanceManagerHostApi {
+    void clear();
+
+    /** The codec used by InstanceManagerHostApi. */
+    static MessageCodec<Object> getCodec() {
+      return InstanceManagerHostApiCodec.INSTANCE;
+    }
+
+    /**
+     * Sets up an instance of `InstanceManagerHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(BinaryMessenger binaryMessenger, InstanceManagerHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.InstanceManagerHostApi.clear", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                Map<String, Object> wrapped = new HashMap<>();
+                try {
+                  api.clear();
+                  wrapped.put("result", null);
+                } catch (Error | RuntimeException exception) {
+                  wrapped.put("error", wrapError(exception));
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+
   private static class JavaObjectHostApiCodec extends StandardMessageCodec {
     public static final JavaObjectHostApiCodec INSTANCE = new JavaObjectHostApiCodec();
 

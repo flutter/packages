@@ -46,6 +46,7 @@ class CameraPermissionsErrorData {
   String description;
 }
 
+@HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
   ///

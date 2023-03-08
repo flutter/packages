@@ -15,9 +15,13 @@ import 'package:mockito/mockito.dart';
 import 'process_camera_provider_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestProcessCameraProviderHostApi])
+@GenerateMocks(
+    <Type>[TestInstanceManagerHostApi, TestProcessCameraProviderHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ProcessCameraProvider', () {
     tearDown(() => TestProcessCameraProviderHostApi.setup(null));

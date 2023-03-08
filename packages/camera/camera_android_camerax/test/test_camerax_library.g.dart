@@ -13,6 +13,33 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 
+class _TestInstanceManagerHostApiCodec extends StandardMessageCodec {
+  const _TestInstanceManagerHostApiCodec();
+}
+
+abstract class TestInstanceManagerHostApi {
+  static const MessageCodec<Object?> codec = _TestInstanceManagerHostApiCodec();
+
+  void clear();
+  static void setup(TestInstanceManagerHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.InstanceManagerHostApi.clear', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          // ignore message
+          api.clear();
+          return <Object?, Object?>{};
+        });
+      }
+    }
+  }
+}
+
 class _TestJavaObjectHostApiCodec extends StandardMessageCodec {
   const _TestJavaObjectHostApiCodec();
 }

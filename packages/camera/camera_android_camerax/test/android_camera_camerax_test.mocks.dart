@@ -15,8 +15,7 @@ import 'package:camera_android_camerax/src/process_camera_provider.dart'
 import 'package:camera_android_camerax/src/use_case.dart' as _i12;
 import 'package:flutter/foundation.dart' as _i6;
 import 'package:flutter/services.dart' as _i5;
-import 'package:flutter/src/widgets/framework.dart' as _i4;
-import 'package:flutter/src/widgets/notification_listener.dart' as _i13;
+import 'package:flutter/widgets.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -295,7 +294,7 @@ class MockBuildContext extends _i1.Mock implements _i4.BuildContext {
         ),
       ) as _i4.InheritedWidget);
   @override
-  void visitAncestorElements(bool Function(_i4.Element)? visitor) =>
+  void visitAncestorElements(_i4.ConditionalElementVisitor? visitor) =>
       super.noSuchMethod(
         Invocation.method(
           #visitAncestorElements,
@@ -312,7 +311,7 @@ class MockBuildContext extends _i1.Mock implements _i4.BuildContext {
         returnValueForMissingStub: null,
       );
   @override
-  void dispatchNotification(_i13.Notification? notification) =>
+  void dispatchNotification(_i4.Notification? notification) =>
       super.noSuchMethod(
         Invocation.method(
           #dispatchNotification,
