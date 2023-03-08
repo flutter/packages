@@ -13,7 +13,7 @@ import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
 import android.os.Looper;
 import android.view.View;
-import androidx.test.annotation.Beta;
+import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.UiController;
@@ -47,7 +47,7 @@ import org.hamcrest.Matcher;
  * <p>This class acts as a bridge to perform {@code WidgetAction} on a Flutter widget on the given
  * {@code FlutterView}.
  */
-@Beta
+@ExperimentalTestApi
 public final class FlutterViewAction<T> implements ViewAction {
 
   private static final String FLUTTER_IDLE_TASK_NAME = "flutterIdlingResource";
@@ -105,7 +105,7 @@ public final class FlutterViewAction<T> implements ViewAction {
     // The url {@code FlutterNativeView} returns is the http url that the Dart VM Observatory http
     // server serves at. Need to convert to the one that the WebSocket uses.
     URI dartVmServiceProtocolUrl =
-        DartVmServiceUtil.getServiceProtocolUri(FlutterJNI.getObservatoryUri());
+        DartVmServiceUtil.getServiceProtocolUri(FlutterJNI.getVMServiceUri());
     String isolateId = DartVmServiceUtil.getDartIsolateId(flutterView);
     final FlutterTestingProtocol flutterTestingProtocol =
         new DartVmService(
