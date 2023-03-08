@@ -24,6 +24,15 @@ import java.util.Map;
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})
 public class GeneratedAndroidWebView {
+  @NonNull
+  private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
+    ArrayList<Object> errorList = new ArrayList<Object>(3);
+    errorList.add(exception.toString());
+    errorList.add(exception.getClass().getSimpleName());
+    errorList.add(
+        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+    return errorList;
+  }
 
   /**
    * Mode of how to select files for a file chooser.
@@ -62,7 +71,7 @@ public class GeneratedAndroidWebView {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static class FileChooserModeEnumData {
+  public static final class FileChooserModeEnumData {
     private @NonNull FileChooserMode value;
 
     public @NonNull FileChooserMode getValue() {
@@ -80,6 +89,7 @@ public class GeneratedAndroidWebView {
     private FileChooserModeEnumData() {}
 
     public static final class Builder {
+
       private @Nullable FileChooserMode value;
 
       public @NonNull Builder setValue(@NonNull FileChooserMode setterArg) {
@@ -110,7 +120,7 @@ public class GeneratedAndroidWebView {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static class WebResourceRequestData {
+  public static final class WebResourceRequestData {
     private @NonNull String url;
 
     public @NonNull String getUrl() {
@@ -190,6 +200,7 @@ public class GeneratedAndroidWebView {
     private WebResourceRequestData() {}
 
     public static final class Builder {
+
       private @Nullable String url;
 
       public @NonNull Builder setUrl(@NonNull String setterArg) {
@@ -275,7 +286,7 @@ public class GeneratedAndroidWebView {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static class WebResourceResponseData {
+  public static final class WebResourceResponseData {
     private @NonNull Long statusCode;
 
     public @NonNull Long getStatusCode() {
@@ -293,6 +304,7 @@ public class GeneratedAndroidWebView {
     private WebResourceResponseData() {}
 
     public static final class Builder {
+
       private @Nullable Long statusCode;
 
       public @NonNull Builder setStatusCode(@NonNull Long setterArg) {
@@ -326,7 +338,7 @@ public class GeneratedAndroidWebView {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static class WebResourceErrorData {
+  public static final class WebResourceErrorData {
     private @NonNull Long errorCode;
 
     public @NonNull Long getErrorCode() {
@@ -357,6 +369,7 @@ public class GeneratedAndroidWebView {
     private WebResourceErrorData() {}
 
     public static final class Builder {
+
       private @Nullable Long errorCode;
 
       public @NonNull Builder setErrorCode(@NonNull Long setterArg) {
@@ -401,7 +414,7 @@ public class GeneratedAndroidWebView {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static class WebViewPoint {
+  public static final class WebViewPoint {
     private @NonNull Long x;
 
     public @NonNull Long getX() {
@@ -432,6 +445,7 @@ public class GeneratedAndroidWebView {
     private WebViewPoint() {}
 
     public static final class Builder {
+
       private @Nullable Long x;
 
       public @NonNull Builder setX(@NonNull Long setterArg) {
@@ -532,6 +546,7 @@ public class GeneratedAndroidWebView {
    * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface JavaObjectHostApi {
+
     void dispose(@NonNull Long identifier);
 
     /** The codec used by JavaObjectHostApi. */
@@ -549,7 +564,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -585,6 +600,7 @@ public class GeneratedAndroidWebView {
       this.binaryMessenger = argBinaryMessenger;
     }
 
+    /** Public interface for sending reply. */
     public interface Reply<T> {
       void reply(T reply);
     }
@@ -599,13 +615,12 @@ public class GeneratedAndroidWebView {
               binaryMessenger, "dev.flutter.pigeon.JavaObjectFlutterApi.dispose", getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(identifierArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface CookieManagerHostApi {
+
     void clearCookies(Result<Boolean> result);
 
     void setCookie(@NonNull String url, @NonNull String value);
@@ -628,7 +643,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   Result<Boolean> resultCallback =
                       new Result<Boolean>() {
@@ -660,7 +675,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -697,7 +712,6 @@ public class GeneratedAndroidWebView {
       switch (type) {
         case (byte) 128:
           return WebViewPoint.fromList((ArrayList<Object>) readValue(buffer));
-
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -802,7 +816,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -829,7 +843,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -868,7 +882,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -909,7 +923,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -947,7 +961,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -983,7 +997,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1011,7 +1025,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1039,7 +1053,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1067,7 +1081,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1094,7 +1108,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1121,7 +1135,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1148,7 +1162,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1183,7 +1197,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1228,7 +1242,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1256,7 +1270,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1294,7 +1308,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1332,7 +1346,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1360,7 +1374,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1388,7 +1402,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1419,7 +1433,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1446,7 +1460,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1483,7 +1497,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1521,7 +1535,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1559,7 +1573,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1591,7 +1605,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1623,7 +1637,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1688,6 +1702,7 @@ public class GeneratedAndroidWebView {
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebSettingsHostApi {
+
     void create(@NonNull Long instanceId, @NonNull Long webViewInstanceId);
 
     void setDomStorageEnabled(@NonNull Long instanceId, @NonNull Boolean flag);
@@ -1731,7 +1746,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1766,7 +1781,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1800,7 +1815,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1834,7 +1849,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1868,7 +1883,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1902,7 +1917,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1934,7 +1949,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -1968,7 +1983,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2002,7 +2017,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2036,7 +2051,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2070,7 +2085,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2104,7 +2119,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2138,7 +2153,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2200,6 +2215,7 @@ public class GeneratedAndroidWebView {
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface JavaScriptChannelHostApi {
+
     void create(@NonNull Long instanceId, @NonNull String channelName);
 
     /** The codec used by JavaScriptChannelHostApi. */
@@ -2218,7 +2234,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2253,6 +2269,7 @@ public class GeneratedAndroidWebView {
       this.binaryMessenger = argBinaryMessenger;
     }
 
+    /** Public interface for sending reply. */
     public interface Reply<T> {
       void reply(T reply);
     }
@@ -2270,13 +2287,12 @@ public class GeneratedAndroidWebView {
               getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, messageArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebViewClientHostApi {
+
     void create(@NonNull Long instanceId);
 
     void setSynchronousReturnValueForShouldOverrideUrlLoading(
@@ -2298,7 +2314,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2327,7 +2343,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2365,13 +2381,10 @@ public class GeneratedAndroidWebView {
       switch (type) {
         case (byte) 128:
           return WebResourceErrorData.fromList((ArrayList<Object>) readValue(buffer));
-
         case (byte) 129:
           return WebResourceRequestData.fromList((ArrayList<Object>) readValue(buffer));
-
         case (byte) 130:
           return WebResourceResponseData.fromList((ArrayList<Object>) readValue(buffer));
-
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -2402,6 +2415,7 @@ public class GeneratedAndroidWebView {
       this.binaryMessenger = argBinaryMessenger;
     }
 
+    /** Public interface for sending reply. */
     public interface Reply<T> {
       void reply(T reply);
     }
@@ -2422,9 +2436,7 @@ public class GeneratedAndroidWebView {
               getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, urlArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
 
     public void onPageFinished(
@@ -2439,9 +2451,7 @@ public class GeneratedAndroidWebView {
               getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, urlArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
 
     public void onReceivedHttpError(
@@ -2458,9 +2468,7 @@ public class GeneratedAndroidWebView {
       channel.send(
           new ArrayList<Object>(
               Arrays.asList(instanceIdArg, webViewInstanceIdArg, requestArg, responseArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
 
     public void onReceivedRequestError(
@@ -2477,9 +2485,7 @@ public class GeneratedAndroidWebView {
       channel.send(
           new ArrayList<Object>(
               Arrays.asList(instanceIdArg, webViewInstanceIdArg, requestArg, errorArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
 
     public void onReceivedError(
@@ -2502,9 +2508,7 @@ public class GeneratedAndroidWebView {
                   errorCodeArg,
                   descriptionArg,
                   failingUrlArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
 
     public void requestLoading(
@@ -2519,9 +2523,7 @@ public class GeneratedAndroidWebView {
               getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, requestArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
 
     public void urlLoading(
@@ -2534,13 +2536,12 @@ public class GeneratedAndroidWebView {
               binaryMessenger, "dev.flutter.pigeon.WebViewClientFlutterApi.urlLoading", getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, urlArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface DownloadListenerHostApi {
+
     void create(@NonNull Long instanceId);
 
     /** The codec used by DownloadListenerHostApi. */
@@ -2559,7 +2560,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2589,6 +2590,7 @@ public class GeneratedAndroidWebView {
       this.binaryMessenger = argBinaryMessenger;
     }
 
+    /** Public interface for sending reply. */
     public interface Reply<T> {
       void reply(T reply);
     }
@@ -2619,13 +2621,12 @@ public class GeneratedAndroidWebView {
                   contentDispositionArg,
                   mimetypeArg,
                   contentLengthArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebChromeClientHostApi {
+
     void create(@NonNull Long instanceId);
 
     void setSynchronousReturnValueForOnShowFileChooser(
@@ -2647,7 +2648,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2676,7 +2677,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2705,6 +2706,7 @@ public class GeneratedAndroidWebView {
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface FlutterAssetManagerHostApi {
+
     @NonNull
     List<String> list(@NonNull String path);
 
@@ -2727,7 +2729,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2756,7 +2758,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2786,6 +2788,7 @@ public class GeneratedAndroidWebView {
       this.binaryMessenger = argBinaryMessenger;
     }
 
+    /** Public interface for sending reply. */
     public interface Reply<T> {
       void reply(T reply);
     }
@@ -2806,9 +2809,7 @@ public class GeneratedAndroidWebView {
               getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, progressArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
 
     public void onShowFileChooser(
@@ -2833,6 +2834,7 @@ public class GeneratedAndroidWebView {
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebStorageHostApi {
+
     void create(@NonNull Long instanceId);
 
     void deleteAllData(@NonNull Long instanceId);
@@ -2852,7 +2854,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2879,7 +2881,7 @@ public class GeneratedAndroidWebView {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList wrapped = new ArrayList<>();
+                ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   ArrayList<Object> args = (ArrayList<Object>) message;
                   assert args != null;
@@ -2913,7 +2915,6 @@ public class GeneratedAndroidWebView {
       switch (type) {
         case (byte) 128:
           return FileChooserModeEnumData.fromList((ArrayList<Object>) readValue(buffer));
-
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -2945,6 +2946,7 @@ public class GeneratedAndroidWebView {
       this.binaryMessenger = argBinaryMessenger;
     }
 
+    /** Public interface for sending reply. */
     public interface Reply<T> {
       void reply(T reply);
     }
@@ -2967,19 +2969,7 @@ public class GeneratedAndroidWebView {
           new ArrayList<Object>(
               Arrays.asList(
                   instanceIdArg, isCaptureEnabledArg, acceptTypesArg, modeArg, filenameHintArg)),
-          channelReply -> {
-            callback.reply(null);
-          });
+          channelReply -> callback.reply(null));
     }
-  }
-
-  @NonNull
-  private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-    ArrayList<Object> errorList = new ArrayList<>(3);
-    errorList.add(exception.toString());
-    errorList.add(exception.getClass().getSimpleName());
-    errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
-    return errorList;
   }
 }

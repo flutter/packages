@@ -92,7 +92,6 @@ class _TestWebViewHostApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return WebViewPoint.decode(readValue(buffer)!);
-
       default:
         return super.readValueOfType(type, buffer);
     }
