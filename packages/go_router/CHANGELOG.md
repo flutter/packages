@@ -1,4 +1,4 @@
-## 6.1.0
+## 6.3.0
 
 - Introduces `StatefulShellRoute` to support using separate
   navigators for child routes as well as preserving state in each navigation tree
@@ -6,6 +6,21 @@
 - Updates documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
   describe the meaning of the child argument in the builder functions.
 - Adds support for restorationId to ShellRoute (and StatefulShellRoute).
+- Aligns Dart and Flutter SDK constraints.
+- Updates compileSdkVersion to 33.
+- Updates example app to iOS 11.
+
+## 6.2.0
+
+- Export supertypes in route_data.dart library
+
+## 6.1.0
+
+- Adds `GoRouter.maybeOf` to get the closest `GoRouter` from the context, if there is any.
+
+## 6.0.10
+
+- Adds helpers for go_router_builder for ShellRoute support
 
 ## 6.0.9
 
@@ -51,8 +66,8 @@
   - `GoRouteData`'s `redirect` now takes 2 parameters `BuildContext context, GoRouterState state`.
   - `GoRouteData`'s `build` now takes 2 parameters `BuildContext context, GoRouterState state`.
   - `GoRouteData`'s `buildPageWithState` has been removed and replaced by `buildPage` with now takes 2 parameters `BuildContext context, GoRouterState state`.
-  - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`. 
-  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`. 
+  - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`.
+  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`.
   - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
 
 ## 5.2.4
@@ -182,7 +197,7 @@
 
 ## 4.3.0
 
-- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`.
 
 ## 4.2.9
 

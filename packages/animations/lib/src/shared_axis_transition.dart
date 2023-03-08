@@ -184,13 +184,13 @@ class SharedAxisTransition extends StatelessWidget {
   /// The [animation] and [secondaryAnimation] argument are required and must
   /// not be null.
   const SharedAxisTransition({
-    Key? key,
+    super.key,
     required this.animation,
     required this.secondaryAnimation,
     required this.transitionType,
     this.fillColor,
     this.child,
-  }) : super(key: key);
+  });
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -472,8 +472,8 @@ class _ExitTransition extends StatelessWidget {
 class _FlippedCurveTween extends CurveTween {
   /// Creates a vertically flipped [CurveTween].
   _FlippedCurveTween({
-    required Curve curve,
-  }) : super(curve: curve);
+    required super.curve,
+  });
 
   @override
   double transform(double t) => 1.0 - super.transform(t);
