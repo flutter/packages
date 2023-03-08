@@ -188,10 +188,7 @@ class TestAssetBundle extends CachingAssetBundle {
       return Future<ByteData>.value(asset);
     } else if (key == 'AssetManifest.bin') {
       final ByteData manifest = const StandardMessageCodec().encodeMessage(
-        <String, List<Object>>{
-          'assets/logo.png': <Object>[]
-        }
-      )!;
+          <String, List<Object>>{'assets/logo.png': <Object>[]})!;
       return Future<ByteData>.value(manifest);
     } else if (key == 'assets/logo.png') {
       // The root directory tests are run from is different for 'flutter test'
