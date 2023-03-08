@@ -13,12 +13,18 @@ normally. This package will be automatically included in your app when you do.
 
 This package has optional Android Photo Picker functionality.
 
-To use this feature, add these lines to your Flutter app:
+To use this feature, add the following code to your app before calling any `image_picker` APIs:
 
 <?code-excerpt "main.dart (photo-picker-example)"?>
 ```dart
-final ImagePickerPlatform platform = ImagePickerPlatform.instance;
-(platform as ImagePickerAndroid).useAndroidPhotoPicker = true;
+import 'package:image_picker_android/image_picker_android.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+// ···
+  final ImagePickerPlatform imagePickerImplementation =
+      ImagePickerPlatform.instance;
+  if (imagePickerImplementation is ImagePickerAndroid) {
+    imagePickerImplementation.useAndroidPhotoPicker = true;
+  }
 ```
 
 [1]: https://pub.dev/packages/image_picker

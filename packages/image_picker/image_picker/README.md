@@ -95,7 +95,7 @@ complete example of handling this flow.
 
 ### Android Photo Picker
 
-This package has optional Android Photo Picker functionality. 
+This package has optional [Android Photo Picker](https://developer.android.com/training/data-storage/shared/photopicker) functionality. 
 [Learn how to use it](https://pub.dev/packages/image_picker_android).
 
 ## Migrating to 0.8.2+
