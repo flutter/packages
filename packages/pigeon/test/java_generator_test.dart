@@ -164,7 +164,7 @@ void main() {
                 name: '')
           ],
           returnType:
-          const TypeDeclaration(baseName: 'Output', isNullable: false),
+              const TypeDeclaration(baseName: 'Output', isNullable: false),
         ),
         Method(
           name: 'skipDoSomething',
@@ -177,7 +177,7 @@ void main() {
                 name: '')
           ],
           returnType:
-          const TypeDeclaration(baseName: 'Output', isNullable: false),
+              const TypeDeclaration(baseName: 'Output', isNullable: false),
         )
       ])
     ], classes: <Class>[
