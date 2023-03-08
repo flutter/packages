@@ -1,6 +1,11 @@
-## 3.4.1
+## 3.4.2
 
 * Clarifies explanation of endorsement in README.
+
+## 3.4.1
+
+* Fixes a potential bug where a `WebView` that was not added to the `InstanceManager` could be
+  returned by a `WebViewClient` or `WebChromeClient`.
 
 ## 3.4.0
 
