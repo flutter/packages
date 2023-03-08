@@ -885,6 +885,22 @@ void main() {
     verify(mockSettings.setMediaPlaybackRequiresUserGesture(true)).called(1);
   });
 
+  test('setTextZoom', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setTextZoom(100);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setTextZoom(100)).called(1);
+  });
+
   test('webViewIdentifier', () {
     final MockWebView mockWebView = MockWebView();
     final InstanceManager instanceManager = InstanceManager(
