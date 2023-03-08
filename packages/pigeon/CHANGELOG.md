@@ -1,12 +1,12 @@
+## 9.0.6
+
+* Add platformApiSkip property in Method, decide whether current api is skip in the generate hostApi.
+
 ## 9.0.5
 
 * Removes the unnecessary Flutter constraint.
 * Removes an unnecessary null check.
 * Aligns Dart and Flutter SDK constraints.
-
-## 9.0.5
-
-* Add platformApiSkip property in Method, decide whether current api is skip in the generate hostApi.
 
 ## 9.0.4
 

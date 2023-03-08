@@ -361,7 +361,7 @@ void main() {
                   name: '')
             ],
             returnType:
-            const TypeDeclaration(baseName: 'Output', isNullable: false)),
+                const TypeDeclaration(baseName: 'Output', isNullable: false)),
         Method(
             name: 'skipDoSomething',
             arguments: <NamedType>[
@@ -371,7 +371,7 @@ void main() {
                   name: '')
             ],
             returnType:
-            const TypeDeclaration(baseName: 'Output', isNullable: false))
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -388,7 +388,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
-    OutputFileOptions<ObjcOptions>(
+        OutputFileOptions<ObjcOptions>(
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
@@ -416,7 +416,7 @@ void main() {
                   name: '')
             ],
             returnType:
-            const TypeDeclaration(baseName: 'Output', isNullable: false)),
+                const TypeDeclaration(baseName: 'Output', isNullable: false)),
         Method(
             name: 'skipDoSomething',
             arguments: <NamedType>[
@@ -428,7 +428,7 @@ void main() {
                   name: '')
             ],
             returnType:
-            const TypeDeclaration(baseName: 'Output', isNullable: false))
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -445,7 +445,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
     final OutputFileOptions<ObjcOptions> generatorOptions =
-    OutputFileOptions<ObjcOptions>(
+        OutputFileOptions<ObjcOptions>(
       fileType: FileType.source,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
