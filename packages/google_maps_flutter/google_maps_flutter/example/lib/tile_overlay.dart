@@ -23,7 +23,7 @@ class TileOverlayPage extends GoogleMapExampleAppPage {
 }
 
 class TileOverlayBody extends StatefulWidget {
-  const TileOverlayBody({Key? key}) : super(key: key);
+  const TileOverlayBody({super.key});
 
   @override
   State<StatefulWidget> createState() => TileOverlayBodyState();
