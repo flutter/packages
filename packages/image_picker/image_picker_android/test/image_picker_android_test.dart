@@ -386,11 +386,13 @@ void main() {
             'source': 0,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 1,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -417,21 +419,25 @@ void main() {
             'source': 0,
             'maxDuration': null,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 10,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 60,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 3600,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -457,6 +463,7 @@ void main() {
             'source': 0,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -475,6 +482,7 @@ void main() {
             'source': 0,
             'maxDuration': null,
             'cameraDevice': 1,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -894,11 +902,13 @@ void main() {
             'source': 0,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 1,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -925,21 +935,25 @@ void main() {
             'source': 0,
             'maxDuration': null,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 10,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 60,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 3600,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -965,6 +979,7 @@ void main() {
             'source': 0,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -983,6 +998,7 @@ void main() {
             'source': 0,
             'maxDuration': null,
             'cameraDevice': 1,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
