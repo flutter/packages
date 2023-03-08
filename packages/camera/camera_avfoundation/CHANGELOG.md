@@ -1,3 +1,12 @@
+## 0.9.13
+
+* Allows camera to be switched while video recording.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.9.12
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
+
 ## 0.9.11+1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

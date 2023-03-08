@@ -16,7 +16,7 @@ void main() {
 }
 
 class _WebViewExample extends StatefulWidget {
-  const _WebViewExample({Key? key}) : super(key: key);
+  const _WebViewExample();
 
   @override
   _WebViewExampleState createState() => _WebViewExampleState();

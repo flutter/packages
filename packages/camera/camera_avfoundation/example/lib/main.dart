@@ -18,7 +18,7 @@ import 'camera_preview.dart';
 /// Camera example home widget.
 class CameraExampleHome extends StatefulWidget {
   /// Default Constructor
-  const CameraExampleHome({Key? key}) : super(key: key);
+  const CameraExampleHome({super.key});
 
   @override
   State<CameraExampleHome> createState() {
@@ -123,7 +123,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     if (state == AppLifecycleState.inactive) {
       cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      onNewCameraSelected(cameraController.description);
+      _initializeCameraController(cameraController.description);
     }
   }
 
@@ -603,10 +603,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
               value: cameraDescription,
-              onChanged:
-                  controller != null && controller!.value.isRecordingVideo
-                      ? null
-                      : onChanged,
+              onChanged: onChanged,
             ),
           ),
         );
@@ -639,17 +636,15 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
-    final CameraController? oldController = controller;
-    if (oldController != null) {
-      // `controller` needs to be set to null before getting disposed,
-      // to avoid a race condition when we use the controller that is being
-      // disposed. This happens when camera permission dialog shows up,
-      // which triggers `didChangeAppLifecycleState`, which disposes and
-      // re-creates the controller.
-      controller = null;
-      await oldController.dispose();
+    if (controller != null) {
+      return controller!.setDescription(cameraDescription);
+    } else {
+      return _initializeCameraController(cameraDescription);
     }
+  }
 
+  Future<void> _initializeCameraController(
+      CameraDescription cameraDescription) async {
     final CameraController cameraController = CameraController(
       cameraDescription,
       kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
@@ -1064,7 +1059,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 /// CameraApp is the Main Application.
 class CameraApp extends StatelessWidget {
   /// Default Constructor
-  const CameraApp({Key? key}) : super(key: key);
+  const CameraApp({super.key});
 
   @override
   Widget build(BuildContext context) {

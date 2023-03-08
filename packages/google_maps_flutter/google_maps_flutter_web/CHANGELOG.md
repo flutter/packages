@@ -1,6 +1,7 @@
 ## 0.4.1
 
 * Add "My Location" Widget. Issue [#64073](https://github.com/flutter/flutter/issues/64073)
+* Aligns Dart and Flutter SDK constraints.
 
 ## 0.4.0+6
 
