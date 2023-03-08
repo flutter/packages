@@ -1,6 +1,7 @@
-## NEXT
+## 0.2.1+1
 
 * Aligns Dart and Flutter SDK constraints.
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
 
 ## 0.2.1
 
