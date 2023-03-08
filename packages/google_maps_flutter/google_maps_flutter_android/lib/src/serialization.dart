@@ -21,12 +21,12 @@ Object serializeMapsObjectUpdates<T extends MapsObject<T>>(
   _addIfNonNull(
     json,
     '${updates.objectName}sToAdd',
-    updates.objectsToAdd.map(serialize),
+    updates.objectsToAdd.map(serialize).toList(),
   );
   _addIfNonNull(
     json,
     '${updates.objectName}sToChange',
-    updates.objectsToChange.map(serialize),
+    updates.objectsToChange.map(serialize).toList(),
   );
   _addIfNonNull(
     json,
