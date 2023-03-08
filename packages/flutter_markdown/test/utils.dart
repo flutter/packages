@@ -179,14 +179,20 @@ Widget boilerplate(Widget child) {
 }
 
 class TestAssetBundle extends CachingAssetBundle {
-  static const String manifest = r'{"assets/logo.png":["assets/logo.png"]}';
-
   @override
   Future<ByteData> load(String key) async {
     if (key == 'AssetManifest.json') {
+      const String manifest = r'{"assets/logo.png":["assets/logo.png"]}';
       final ByteData asset =
           ByteData.view(utf8.encoder.convert(manifest).buffer);
       return Future<ByteData>.value(asset);
+    } else if (key == 'AssetManifest.bin') {
+      final ByteData manifest = const StandardMessageCodec().encodeMessage(
+        <String, List<Object>>{
+          'assets/logo.png': <Object>[]
+        }
+      )!;
+      return Future<ByteData>.value(manifest);
     } else if (key == 'assets/logo.png') {
       // The root directory tests are run from is different for 'flutter test'
       // verses 'flutter test test/*_test.dart'. Adjust the root directory
