@@ -109,7 +109,7 @@ final class VideoPlayer {
   }
 
   @VisibleForTesting
-  public void buildHttpDataSourceFactory(@NonNull Map<String, String> httpHeaders) {
+  public void buildHttpDataSourceFactory(Map<String, String> httpHeaders) {
     final boolean httpHeadersNotEmpty = httpHeaders != null && !httpHeaders.isEmpty();
     final String userAgent =
         httpHeadersNotEmpty && httpHeaders.containsKey(USER_AGENT)
