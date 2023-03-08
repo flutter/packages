@@ -93,6 +93,11 @@ case. Please refer to the
 [example app](https://pub.dev/packages/image_picker/example) for a more
 complete example of handling this flow.
 
+### Android Photo Picker
+
+This package has optional Android Photo Picker functionality. 
+[Learn how to use it](https://pub.dev/packages/image_picker_android).
+
 ## Migrating to 0.8.2+
 
 Starting with version **0.8.2** of the image_picker plugin, new methods have been added for picking files that return `XFile` instances (from the [cross_file](https://pub.dev/packages/cross_file) package) rather than the plugin's own `PickedFile` instances. While the previous methods still exist, it is already recommended to start migrating over to their new equivalents. Eventually, `PickedFile` and the methods that return instances of it will be deprecated and removed.
