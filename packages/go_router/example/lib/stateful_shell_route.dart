@@ -28,7 +28,7 @@ void main() {
 /// An example demonstrating how to use nested navigators
 class NestedTabNavigationExampleApp extends StatelessWidget {
   /// Creates a NestedTabNavigationExampleApp
-  NestedTabNavigationExampleApp({Key? key}) : super(key: key);
+  NestedTabNavigationExampleApp({super.key});
 
   final GoRouter _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
@@ -248,8 +248,7 @@ class RootScreen extends StatelessWidget {
       {required this.label,
       required this.detailsPath,
       this.secondDetailsPath,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   /// The label
   final String label;
@@ -349,8 +348,8 @@ class DetailsScreen extends StatefulWidget {
     this.param,
     this.extra,
     this.withScaffold = true,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The label to display in the center of the screen.
   final String label;
@@ -432,7 +431,7 @@ class DetailsScreenState extends State<DetailsScreen> {
 /// Widget for a modal screen.
 class ModalScreen extends StatelessWidget {
   /// Creates a ModalScreen
-  const ModalScreen({Key? key}) : super(key: key);
+  const ModalScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -463,8 +462,7 @@ class ModalScreen extends StatelessWidget {
 class TabbedRootScreen extends StatelessWidget {
   /// Constructs a TabbedRootScreen
   const TabbedRootScreen(
-      {required this.shellState, required this.children, Key? key})
-      : super(key: key);
+      {required this.shellState, required this.children, super.key});
 
   /// The current state of the parent StatefulShellRoute.
   final StatefulShellRouteState shellState;
@@ -502,8 +500,7 @@ class TabbedRootScreen extends StatelessWidget {
 /// Widget for the pages in the top tab bar.
 class TabScreen extends StatelessWidget {
   /// Creates a RootScreen
-  const TabScreen({required this.label, this.detailsPath, Key? key})
-      : super(key: key);
+  const TabScreen({required this.label, this.detailsPath, super.key});
 
   /// The label
   final String label;
