@@ -1286,6 +1286,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
