@@ -1,6 +1,9 @@
-## 0.8.5+10
+## NEXT
 
 * Improved Bitmap resizing.
+
+## 0.8.5+10
+
 * Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
