@@ -122,6 +122,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.
+  // TODO(camsim99): Merge changes for image capture implementation, and ensure
+  // onCameraClosing is not called when the processCameraProvider has its
+  // UseCases cleared here if it was not previously null.
   @override
   Future<int> createCamera(
     CameraDescription cameraDescription,
@@ -232,9 +235,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     return _cameraEvents(cameraId).whereType<CameraInitializedEvent>();
   }
 
-    /// The camera started to close.
+  /// The camera started to close.
+  @override
   Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
-    throw UnimplementedError('onCameraClosing() is not implemented.');
+    return ProcessCameraProvider.cameraClosingStreamController.stream
+      .map<CameraClosingEvent>((bool isCameraClosing) {
+        assert(isCameraClosing);
+        return CameraClosingEvent(cameraId);
+      });
   }
 
   /// The camera experienced an error.
