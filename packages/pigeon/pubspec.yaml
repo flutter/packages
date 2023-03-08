@@ -6,7 +6,6 @@ version: 9.0.5 # This must match the version in lib/generator_tools.dart
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
 
 dependencies:
   analyzer: "^5.2.0"
