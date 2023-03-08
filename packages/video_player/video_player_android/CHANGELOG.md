@@ -1,7 +1,8 @@
-## NEXT
+## 2.3.11+1
 
 * Aligns Dart and Flutter SDK constraints.
 * Updates compileSdkVersion to 33.
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
 
 ## 2.3.11
 
