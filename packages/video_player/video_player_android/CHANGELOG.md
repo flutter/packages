@@ -1,4 +1,4 @@
-## 2.3.11+1
+## 2.3.12
 
 * Aligns Dart and Flutter SDK constraints.
 * Updates compileSdkVersion to 33.
