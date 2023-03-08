@@ -21,9 +21,9 @@ import javax.annotation.Nullable;
  * <p>Note, this is not a real click gesture event issued from Android system. Espresso delegates to
  * Flutter engine to perform the {@link SyntheticClick} action.
  */
-@ExperimentalTestApi
 public final class SyntheticClickAction implements WidgetAction {
 
+  @ExperimentalTestApi
   @Override
   public Future<Void> perform(
       @Nullable WidgetMatcher targetWidget,

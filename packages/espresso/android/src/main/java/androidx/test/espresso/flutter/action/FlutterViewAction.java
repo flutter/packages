@@ -47,7 +47,6 @@ import org.hamcrest.Matcher;
  * <p>This class acts as a bridge to perform {@code WidgetAction} on a Flutter widget on the given
  * {@code FlutterView}.
  */
-@ExperimentalTestApi
 public final class FlutterViewAction<T> implements ViewAction {
 
   private static final String FLUTTER_IDLE_TASK_NAME = "flutterIdlingResource";
@@ -96,6 +95,7 @@ public final class FlutterViewAction<T> implements ViewAction {
         "Perform a %s action on the Flutter widget matched %s.", widgetAction, widgetMatcher);
   }
 
+  @ExperimentalTestApi
   @Override
   public void perform(UiController uiController, View flutterView) {
     // There could be a gap between when the Flutter view is available in the view hierarchy and the
@@ -139,6 +139,7 @@ public final class FlutterViewAction<T> implements ViewAction {
     }
   }
 
+  @ExperimentalTestApi
   @VisibleForTesting
   void perform(
       View flutterView, FlutterTestingProtocol flutterTestingProtocol, UiController uiController) {
