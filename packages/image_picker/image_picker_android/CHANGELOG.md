@@ -1,4 +1,4 @@
-## NEXT
+## 0.8.5+11
 
 * Improved Bitmap resizing.
 
