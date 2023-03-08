@@ -1073,8 +1073,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final bool androidApiSkip = _hasMetadata(node.metadata, 'androidApiSkip');
     if (iosApiSkip == true) {
       platformApiSkip = PlatformApiSkip.IOS;
-    }
-    else if (androidApiSkip == true) {
+    } else if (androidApiSkip == true) {
       platformApiSkip = PlatformApiSkip.Android;
     }
 

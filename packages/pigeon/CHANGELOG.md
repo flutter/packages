@@ -2,6 +2,10 @@
 
 * Aligns Dart and Flutter SDK constraints.
 
+## 9.0.5
+
+* Add platformApiSkip property in Method, decide whether current api is skip in the generate hostApi.
+
 ## 9.0.4
 
 * Adds parameter to generate Kotlin code in example README.

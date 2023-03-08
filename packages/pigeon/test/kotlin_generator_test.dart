@@ -201,6 +201,85 @@ void main() {
     '''));
   });
 
+  test('gen one skip host api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Input',
+                isNullable: false,
+              ),
+              name: 'input',
+            )
+          ],
+          returnType:
+          const TypeDeclaration(baseName: 'Output', isNullable: false),
+        ),
+        Method(
+          name: 'skipDoSomething',
+          arguments: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Input',
+                isNullable: false,
+              ),
+              name: 'input',
+            )
+          ],
+          returnType:
+          const TypeDeclaration(baseName: 'Output', isNullable: false),
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: true,
+          ),
+          name: 'input',
+        )
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: true,
+          ),
+          name: 'output',
+        )
+      ])
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('interface Api'));
+    expect(code, contains('fun doSomething(input: Input): Output'));
+    expect(code, contains('channel.setMessageHandler'));
+    expect(code, contains('''
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val inputArg = args[0] as Input
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.doSomething(inputArg))
+            } catch (exception: Error) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+    '''));
+  });
+
   test('all the simple datatypes header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[

@@ -349,6 +349,118 @@ void main() {
             'NSCAssert([api respondsToSelector:@selector(doSomething:error:)'));
   });
 
+  test('gen one skip api header', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'doSomething',
+            arguments: <NamedType>[
+              NamedType(
+                  type: const TypeDeclaration(
+                      baseName: 'Input', isNullable: false),
+                  name: '')
+            ],
+            returnType:
+            const TypeDeclaration(baseName: 'Output', isNullable: false)),
+        Method(
+            name: 'skipDoSomething',
+            arguments: <NamedType>[
+              NamedType(
+                  type: const TypeDeclaration(
+                      baseName: 'Input', isNullable: false),
+                  name: '')
+            ],
+            returnType:
+            const TypeDeclaration(baseName: 'Output', isNullable: false))
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
+            name: 'input')
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
+            name: 'output')
+      ])
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const ObjcGenerator generator = ObjcGenerator();
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+    OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(generatorOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@interface Input'));
+    expect(code, contains('@interface Output'));
+    expect(code, contains('@protocol Api'));
+    expect(code, contains('/// @return `nil` only when `error != nil`.'));
+    expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
+    expect(code, matches('ApiSetup.*<Api>.*_Nullable'));
+  });
+
+  test('gen one skip api source', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'doSomething',
+            arguments: <NamedType>[
+              NamedType(
+                  type: const TypeDeclaration(
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
+                  name: '')
+            ],
+            returnType:
+            const TypeDeclaration(baseName: 'Output', isNullable: false)),
+        Method(
+            name: 'skipDoSomething',
+            arguments: <NamedType>[
+              NamedType(
+                  type: const TypeDeclaration(
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
+                  name: '')
+            ],
+            returnType:
+            const TypeDeclaration(baseName: 'Output', isNullable: false))
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
+            name: 'input')
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
+            name: 'output')
+      ])
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const ObjcGenerator generator = ObjcGenerator();
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+    OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+    );
+    generator.generate(generatorOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('#import "foo.h"'));
+    expect(code, contains('@implementation Input'));
+    expect(code, contains('@implementation Output'));
+    expect(code, contains('ApiSetup('));
+    expect(
+        code,
+        contains(
+            'NSCAssert([api respondsToSelector:@selector(doSomething:error:)'));
+  });
+
   test('all the simple datatypes header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
