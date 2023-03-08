@@ -348,11 +348,11 @@ public class ImagePickerDelegate
     }
 
     Boolean usePhotoPicker = methodCall.argument("useAndroidPhotoPicker");
-    
+
     if (usePhotoPicker == null) {
       usePhotoPicker = false;
     }
-    
+
     launchMultiPickImageFromGalleryIntent(usePhotoPicker);
   }
 
