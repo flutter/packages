@@ -1,3 +1,5 @@
+<?code-excerpt path-base="excerpts/packages/image_picker_example"?>
+
 # image\_picker\_android
 
 The Android implementation of [`image_picker`][1].
@@ -13,9 +15,10 @@ This package has optional Android Photo Picker functionality.
 
 To use this feature, add these lines to your Flutter app:
 
+<?code-excerpt "main.dart (photo-picker-example)"?>
 ```dart
-  final ImagePickerPlatform platform = ImagePickerPlatform.instance;
-  (platform as ImagePickerAndroid).useAndroidPhotoPicker = true;
+final ImagePickerPlatform platform = ImagePickerPlatform.instance;
+(platform as ImagePickerAndroid).useAndroidPhotoPicker = true;
 ```
 
 [1]: https://pub.dev/packages/image_picker

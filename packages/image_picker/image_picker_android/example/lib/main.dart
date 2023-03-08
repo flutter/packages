@@ -20,9 +20,11 @@ void appMain() {
 }
 
 void main() {
-  final ImagePickerPlatform platform = ImagePickerPlatform.instance;
   // Set to use Android Photo Picker.
+  // #docregion photo-picker-example
+  final ImagePickerPlatform platform = ImagePickerPlatform.instance;
   (platform as ImagePickerAndroid).useAndroidPhotoPicker = true;
+  // #enddocregion photo-picker-example
   runApp(const MyApp());
 }
 
