@@ -263,6 +263,7 @@ void main() {
             'maxWidth': null,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -302,36 +303,43 @@ void main() {
             'maxWidth': null,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -779,6 +787,7 @@ void main() {
             'maxWidth': null,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -818,36 +827,43 @@ void main() {
             'maxWidth': null,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
