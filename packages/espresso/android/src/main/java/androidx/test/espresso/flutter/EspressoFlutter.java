@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.any;
 
 import android.util.Log;
 import android.view.View;
-
 import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
