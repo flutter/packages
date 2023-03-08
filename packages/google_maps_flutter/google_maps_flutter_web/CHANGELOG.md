@@ -1,6 +1,10 @@
 ## 0.4.1
 
 * Add "My Location" Widget. Issue [#64073](https://github.com/flutter/flutter/issues/64073)
+
+## 0.4.0+7
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.4.0+6

@@ -1,3 +1,7 @@
+## 0.9.13+1
+
+* Clarifies explanation of endorsement in README.
+
 ## 0.9.13
 
 * Allows camera to be switched while video recording.
