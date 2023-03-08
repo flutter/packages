@@ -1,5 +1,6 @@
-## NEXT
+## 3.4.0
 
+* Adds support to set text zoom of a page. See `AndroidWebViewController.setTextZoom`.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 3.3.2

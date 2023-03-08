@@ -218,6 +218,8 @@ abstract class WebSettingsHostApi {
   void setBuiltInZoomControls(int instanceId, bool enabled);
 
   void setAllowFileAccess(int instanceId, bool enabled);
+
+  void setTextZoom(int instanceId, int textZoom);
 }
 
 @HostApi(dartHostTestHandler: 'TestJavaScriptChannelHostApi')

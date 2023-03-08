@@ -435,6 +435,14 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
   }
 
   /// Helper method to convert instances ids to objects.
+  Future<void> setSetTextZoomFromInstance(
+    WebSettings instance,
+    int textZoom,
+  ) {
+    return setTextZoom(instanceManager.getIdentifier(instance)!, textZoom);
+  }
+
+  /// Helper method to convert instances ids to objects.
   Future<void> setLoadWithOverviewModeFromInstance(
     WebSettings instance,
     bool overview,

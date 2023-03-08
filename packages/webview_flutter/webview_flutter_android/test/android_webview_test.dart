@@ -497,6 +497,14 @@ void main() {
       test('copy', () {
         expect(webSettings.copy(), isA<WebSettings>());
       });
+
+      test('setTextZoom', () {
+        webSettings.setTextZoom(100);
+        verify(mockPlatformHostApi.setTextZoom(
+          webSettingsInstanceId,
+          100,
+        ));
+      });
     });
 
     group('JavaScriptChannel', () {

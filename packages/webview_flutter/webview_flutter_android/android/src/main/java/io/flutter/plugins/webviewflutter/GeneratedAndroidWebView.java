@@ -1603,6 +1603,8 @@ public class GeneratedAndroidWebView {
 
     void setAllowFileAccess(@NonNull Long instanceId, @NonNull Boolean enabled);
 
+    void setTextZoom(@NonNull Long instanceId, @NonNull Long textZoom);
+
     /** The codec used by WebSettingsHostApi. */
     static MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -2039,6 +2041,39 @@ public class GeneratedAndroidWebView {
                   }
                   api.setAllowFileAccess(
                       (instanceIdArg == null) ? null : instanceIdArg.longValue(), enabledArg);
+                  wrapped.add(0, null);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.WebSettingsHostApi.setTextZoom", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Number instanceIdArg = (Number) args.get(0);
+                  if (instanceIdArg == null) {
+                    throw new NullPointerException("instanceIdArg unexpectedly null.");
+                  }
+                  Number textZoomArg = (Number) args.get(1);
+                  if (textZoomArg == null) {
+                    throw new NullPointerException("textZoomArg unexpectedly null.");
+                  }
+                  api.setTextZoom(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(),
+                      (textZoomArg == null) ? null : textZoomArg.longValue());
                   wrapped.add(0, null);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

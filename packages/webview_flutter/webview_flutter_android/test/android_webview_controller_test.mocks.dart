@@ -654,6 +654,15 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
+  _i9.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
+        Invocation.method(
+          #setTextZoom,
+          [textZoom],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
   _i9.Future<void> setOnShowFileSelector(
           _i9.Future<List<String>> Function(_i8.FileSelectorParams)?
               onShowFileSelector) =>
@@ -1732,6 +1741,15 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         Invocation.method(
           #setAllowFileAccess,
           [enabled],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
+        Invocation.method(
+          #setTextZoom,
+          [textZoom],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
