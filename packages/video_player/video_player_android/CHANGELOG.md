@@ -1,7 +1,6 @@
 ## 2.4.0
 
-* Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
-* Adds option to configure the User-Agent in the HTTP headers.
+* Allows setting the ExoPlayer user agent by passing a User-Agent HTTP header.
 
 ## 2.3.12
 
