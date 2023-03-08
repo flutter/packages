@@ -252,7 +252,13 @@ public class ImagePickerDelegate
       return;
     }
 
-    launchPickVideoFromGalleryIntent(methodCall.argument("useAndroidPhotoPicker"));
+    Boolean usePhotoPicker = methodCall.argument("useAndroidPhotoPicker");
+
+    if (usePhotoPicker == null) {
+      usePhotoPicker = false;
+    }
+
+    launchPickVideoFromGalleryIntent(usePhotoPicker);
   }
 
   private void launchPickVideoFromGalleryIntent(Boolean useAndroidPhotoPicker) {
@@ -326,7 +332,13 @@ public class ImagePickerDelegate
       return;
     }
 
-    launchPickImageFromGalleryIntent(methodCall.argument("useAndroidPhotoPicker"));
+    Boolean usePhotoPicker = methodCall.argument("useAndroidPhotoPicker");
+
+    if (usePhotoPicker == null) {
+      usePhotoPicker = false;
+    }
+
+    launchPickImageFromGalleryIntent(usePhotoPicker);
   }
 
   public void chooseMultiImageFromGallery(MethodCall methodCall, MethodChannel.Result result) {
@@ -335,7 +347,13 @@ public class ImagePickerDelegate
       return;
     }
 
-    launchMultiPickImageFromGalleryIntent(methodCall.argument("useAndroidPhotoPicker"));
+    Boolean usePhotoPicker = methodCall.argument("useAndroidPhotoPicker");
+    
+    if (usePhotoPicker == null) {
+      usePhotoPicker = false;
+    }
+    
+    launchMultiPickImageFromGalleryIntent(usePhotoPicker);
   }
 
   private void launchPickImageFromGalleryIntent(Boolean useAndroidPhotoPicker) {
