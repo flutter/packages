@@ -57,7 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
       useDrawer: false,
       selectedIndex: _selectedTab,
       onSelectedIndexChange: (int index) {
-        setState(() => _selectedTab = index);
+        setState(() {
+          _selectedTab = index;
+        });
       },
       destinations: const <NavigationDestination>[
         NavigationDestination(

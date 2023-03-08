@@ -155,7 +155,9 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               selectedIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
-                setState(() => selectedNavigation = newIndex);
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
               },
               leading: const Icon(Icons.menu),
               destinations: destinations
@@ -169,7 +171,9 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               selectedIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
-                setState(() => selectedNavigation = newIndex);
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
               },
               extended: true,
               leading: Row(
@@ -220,7 +224,9 @@ class _MyHomePageState extends State<MyHomePage> {
               destinations: destinations,
               currentIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
-                setState(() => selectedNavigation = newIndex);
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
               },
             ),
           )

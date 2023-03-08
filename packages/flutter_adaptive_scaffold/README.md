@@ -58,7 +58,9 @@ animation should use AdaptiveLayout.
       useDrawer: false,
       selectedIndex: _selectedTab,
       onSelectedIndexChange: (int index) {
-        setState(() => _selectedTab = index);
+        setState(() {
+          _selectedTab = index;
+        });
       },
       destinations: const <NavigationDestination>[
         NavigationDestination(
@@ -149,7 +151,9 @@ displayed and the entrance animation and exit animation.
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               selectedIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
-                setState(() => selectedNavigation = newIndex);
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
               },
               leading: const Icon(Icons.menu),
               destinations: destinations
@@ -163,7 +167,9 @@ displayed and the entrance animation and exit animation.
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               selectedIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
-                setState(() => selectedNavigation = newIndex);
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
               },
               extended: true,
               leading: Row(
@@ -214,7 +220,9 @@ displayed and the entrance animation and exit animation.
               destinations: destinations,
               currentIndex: selectedNavigation,
               onDestinationSelected: (int newIndex) {
-                setState(() => selectedNavigation = newIndex);
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
               },
             ),
           )
