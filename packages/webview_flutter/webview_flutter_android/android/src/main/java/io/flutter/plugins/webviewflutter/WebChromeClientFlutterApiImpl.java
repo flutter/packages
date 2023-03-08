@@ -57,7 +57,8 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
       Reply<List<String>> callback) {
     webViewFlutterApi.create(webView, reply -> {});
 
-    new FileChooserParamsFlutterApiImpl(binaryMessenger, instanceManager).create(fileChooserParams, reply -> {});
+    new FileChooserParamsFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(fileChooserParams, reply -> {});
 
     onShowFileChooser(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
