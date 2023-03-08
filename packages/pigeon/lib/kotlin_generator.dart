@@ -242,7 +242,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               });
             } else if (isInt) {
               indent.write('val ${field.name} = $listValue');
-              indent.addln('.let { ${_castInt(true)} }');
+              indent.addln('.let { ${_cast(listValue, type: field.type)} }');
             } else {
               indent.writeln(
                   'val ${field.name} = ${_cast(listValue, type: field.type)}');
@@ -258,7 +258,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
             } else if (isInt) {
               indent.write('val ${field.name} = $listValue');
-              indent.addln('.let { ${_castInt(false)} }');
+              indent.addln('.let { ${_cast(listValue, type: field.type)} }');
             } else {
               indent.writeln(
                   'val ${field.name} = ${_cast(listValue, type: field.type)}');
@@ -669,7 +669,7 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // a Dart 'int'.  To keep things simple we just use 64bit
     // longs in Pigeon with Kotlin.
     if (type.baseName == 'int') {
-      return '$value.let { ${_castInt(type.isNullable)} }';
+      return '$value.let { ${_cast(value, type: type, safeCast: type.isNullable)} }';
     } else {
       return _cast(value, type: type, safeCast: type.isNullable);
     }
@@ -748,7 +748,7 @@ String _cast(String variable,
       typeString == 'Int?' ||
       typeString == 'Long' ||
       typeString == 'Long?') {
-    return _castInt(safeCast);
+    return _castInt(type.isNullable);
   }
   return '$variable as ${_nullsafeKotlinTypeForDartType(type)}';
 }
