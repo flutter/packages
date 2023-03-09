@@ -1,6 +1,11 @@
-## 6.0.25
+## 6.0.26
 
 * Bump RoboElectric dependency to 4.4.1 to support AndroidX.
+
+## 6.0.25
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
 
 ## 6.0.24
 

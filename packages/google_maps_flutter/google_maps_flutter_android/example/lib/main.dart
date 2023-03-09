@@ -44,7 +44,7 @@ final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
 /// MapsDemo is the Main Application.
 class MapsDemo extends StatelessWidget {
   /// Default Constructor
-  const MapsDemo({Key? key}) : super(key: key);
+  const MapsDemo({super.key});
 
   void _pushPage(BuildContext context, GoogleMapExampleAppPage page) {
     Navigator.of(context).push(MaterialPageRoute<void>(

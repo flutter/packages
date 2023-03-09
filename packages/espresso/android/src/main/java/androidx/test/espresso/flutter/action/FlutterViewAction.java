@@ -13,7 +13,7 @@ import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
 import android.os.Looper;
 import android.view.View;
-import androidx.test.annotation.Beta;
+import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.UiController;
@@ -47,7 +47,6 @@ import org.hamcrest.Matcher;
  * <p>This class acts as a bridge to perform {@code WidgetAction} on a Flutter widget on the given
  * {@code FlutterView}.
  */
-@Beta
 public final class FlutterViewAction<T> implements ViewAction {
 
   private static final String FLUTTER_IDLE_TASK_NAME = "flutterIdlingResource";
@@ -96,6 +95,7 @@ public final class FlutterViewAction<T> implements ViewAction {
         "Perform a %s action on the Flutter widget matched %s.", widgetAction, widgetMatcher);
   }
 
+  @ExperimentalTestApi
   @Override
   public void perform(UiController uiController, View flutterView) {
     // There could be a gap between when the Flutter view is available in the view hierarchy and the
@@ -104,6 +104,9 @@ public final class FlutterViewAction<T> implements ViewAction {
     loopUntilFlutterViewRendered(flutterView, uiController);
     // The url {@code FlutterNativeView} returns is the http url that the Dart VM Observatory http
     // server serves at. Need to convert to the one that the WebSocket uses.
+
+    // TODO(stuartmorgan): migrate to getVMServiceUri() once that is available on stable.
+    @SuppressWarnings("deprecation")
     URI dartVmServiceProtocolUrl =
         DartVmServiceUtil.getServiceProtocolUri(FlutterJNI.getObservatoryUri());
     String isolateId = DartVmServiceUtil.getDartIsolateId(flutterView);
@@ -136,6 +139,7 @@ public final class FlutterViewAction<T> implements ViewAction {
     }
   }
 
+  @ExperimentalTestApi
   @VisibleForTesting
   void perform(
       View flutterView, FlutterTestingProtocol flutterTestingProtocol, UiController uiController) {
