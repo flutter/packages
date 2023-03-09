@@ -3,21 +3,22 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i8;
-import 'dart:typed_data' as _i13;
+import 'dart:async' as _i9;
+import 'dart:typed_data' as _i14;
+import 'dart:ui' as _i4;
 
-import 'package:flutter/foundation.dart' as _i10;
-import 'package:flutter/gestures.dart' as _i11;
-import 'package:flutter/material.dart' as _i12;
-import 'package:flutter/services.dart' as _i6;
+import 'package:flutter/foundation.dart' as _i11;
+import 'package:flutter/gestures.dart' as _i12;
+import 'package:flutter/material.dart' as _i13;
+import 'package:flutter/services.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_android/src/android_proxy.dart' as _i9;
+import 'package:webview_flutter_android/src/android_proxy.dart' as _i10;
 import 'package:webview_flutter_android/src/android_webview.dart' as _i2;
 import 'package:webview_flutter_android/src/android_webview_controller.dart'
-    as _i7;
-import 'package:webview_flutter_android/src/instance_manager.dart' as _i4;
+    as _i8;
+import 'package:webview_flutter_android/src/instance_manager.dart' as _i5;
 import 'package:webview_flutter_android/src/platform_views_service_proxy.dart'
-    as _i5;
+    as _i6;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
     as _i3;
 
@@ -96,8 +97,8 @@ class _FakeObject_5 extends _i1.SmartFake implements Object {
         );
 }
 
-class _FakeWebView_6 extends _i1.SmartFake implements _i2.WebView {
-  _FakeWebView_6(
+class _FakeOffset_6 extends _i1.SmartFake implements _i4.Offset {
+  _FakeOffset_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -106,9 +107,19 @@ class _FakeWebView_6 extends _i1.SmartFake implements _i2.WebView {
         );
 }
 
-class _FakeFlutterAssetManager_7 extends _i1.SmartFake
+class _FakeWebView_7 extends _i1.SmartFake implements _i2.WebView {
+  _FakeWebView_7(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeFlutterAssetManager_8 extends _i1.SmartFake
     implements _i2.FlutterAssetManager {
-  _FakeFlutterAssetManager_7(
+  _FakeFlutterAssetManager_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -117,9 +128,9 @@ class _FakeFlutterAssetManager_7 extends _i1.SmartFake
         );
 }
 
-class _FakeJavaScriptChannel_8 extends _i1.SmartFake
+class _FakeJavaScriptChannel_9 extends _i1.SmartFake
     implements _i2.JavaScriptChannel {
-  _FakeJavaScriptChannel_8(
+  _FakeJavaScriptChannel_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -128,9 +139,9 @@ class _FakeJavaScriptChannel_8 extends _i1.SmartFake
         );
 }
 
-class _FakeInstanceManager_9 extends _i1.SmartFake
-    implements _i4.InstanceManager {
-  _FakeInstanceManager_9(
+class _FakeInstanceManager_10 extends _i1.SmartFake
+    implements _i5.InstanceManager {
+  _FakeInstanceManager_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -139,9 +150,9 @@ class _FakeInstanceManager_9 extends _i1.SmartFake
         );
 }
 
-class _FakePlatformViewsServiceProxy_10 extends _i1.SmartFake
-    implements _i5.PlatformViewsServiceProxy {
-  _FakePlatformViewsServiceProxy_10(
+class _FakePlatformViewsServiceProxy_11 extends _i1.SmartFake
+    implements _i6.PlatformViewsServiceProxy {
+  _FakePlatformViewsServiceProxy_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -150,9 +161,9 @@ class _FakePlatformViewsServiceProxy_10 extends _i1.SmartFake
         );
 }
 
-class _FakePlatformWebViewController_11 extends _i1.SmartFake
+class _FakePlatformWebViewController_12 extends _i1.SmartFake
     implements _i3.PlatformWebViewController {
-  _FakePlatformWebViewController_11(
+  _FakePlatformWebViewController_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -161,9 +172,8 @@ class _FakePlatformWebViewController_11 extends _i1.SmartFake
         );
 }
 
-class _FakeExpensiveAndroidViewController_12 extends _i1.SmartFake
-    implements _i6.ExpensiveAndroidViewController {
-  _FakeExpensiveAndroidViewController_12(
+class _FakeSize_13 extends _i1.SmartFake implements _i4.Size {
+  _FakeSize_13(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -172,9 +182,9 @@ class _FakeExpensiveAndroidViewController_12 extends _i1.SmartFake
         );
 }
 
-class _FakeSurfaceAndroidViewController_13 extends _i1.SmartFake
-    implements _i6.SurfaceAndroidViewController {
-  _FakeSurfaceAndroidViewController_13(
+class _FakeExpensiveAndroidViewController_14 extends _i1.SmartFake
+    implements _i7.ExpensiveAndroidViewController {
+  _FakeExpensiveAndroidViewController_14(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -183,8 +193,9 @@ class _FakeSurfaceAndroidViewController_13 extends _i1.SmartFake
         );
 }
 
-class _FakeWebSettings_14 extends _i1.SmartFake implements _i2.WebSettings {
-  _FakeWebSettings_14(
+class _FakeSurfaceAndroidViewController_15 extends _i1.SmartFake
+    implements _i7.SurfaceAndroidViewController {
+  _FakeSurfaceAndroidViewController_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -193,8 +204,18 @@ class _FakeWebSettings_14 extends _i1.SmartFake implements _i2.WebSettings {
         );
 }
 
-class _FakeWebStorage_15 extends _i1.SmartFake implements _i2.WebStorage {
-  _FakeWebStorage_15(
+class _FakeWebSettings_16 extends _i1.SmartFake implements _i2.WebSettings {
+  _FakeWebSettings_16(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeWebStorage_17 extends _i1.SmartFake implements _i2.WebStorage {
+  _FakeWebStorage_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -207,7 +228,7 @@ class _FakeWebStorage_15 extends _i1.SmartFake implements _i2.WebStorage {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAndroidNavigationDelegate extends _i1.Mock
-    implements _i7.AndroidNavigationDelegate {
+    implements _i8.AndroidNavigationDelegate {
   @override
   _i2.WebChromeClient get androidWebChromeClient => (super.noSuchMethod(
         Invocation.getter(#androidWebChromeClient),
@@ -259,74 +280,74 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         ),
       ) as _i3.PlatformNavigationDelegateCreationParams);
   @override
-  _i8.Future<void> setOnLoadRequest(_i7.LoadRequestCallback? onLoadRequest) =>
+  _i9.Future<void> setOnLoadRequest(_i8.LoadRequestCallback? onLoadRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnLoadRequest,
           [onLoadRequest],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setOnNavigationRequest(
+  _i9.Future<void> setOnNavigationRequest(
           _i3.NavigationRequestCallback? onNavigationRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnNavigationRequest,
           [onNavigationRequest],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setOnPageStarted(_i3.PageEventCallback? onPageStarted) =>
+  _i9.Future<void> setOnPageStarted(_i3.PageEventCallback? onPageStarted) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnPageStarted,
           [onPageStarted],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setOnPageFinished(_i3.PageEventCallback? onPageFinished) =>
+  _i9.Future<void> setOnPageFinished(_i3.PageEventCallback? onPageFinished) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnPageFinished,
           [onPageFinished],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setOnProgress(_i3.ProgressCallback? onProgress) =>
+  _i9.Future<void> setOnProgress(_i3.ProgressCallback? onProgress) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnProgress,
           [onProgress],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setOnWebResourceError(
+  _i9.Future<void> setOnWebResourceError(
           _i3.WebResourceErrorCallback? onWebResourceError) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnWebResourceError,
           [onWebResourceError],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewController].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAndroidWebViewController extends _i1.Mock
-    implements _i7.AndroidWebViewController {
+    implements _i8.AndroidWebViewController {
   @override
   int get webViewIdentifier => (super.noSuchMethod(
         Invocation.getter(#webViewIdentifier),
@@ -347,25 +368,25 @@ class MockAndroidWebViewController extends _i1.Mock
         ),
       ) as _i3.PlatformWebViewControllerCreationParams);
   @override
-  _i8.Future<void> loadFile(String? absoluteFilePath) => (super.noSuchMethod(
+  _i9.Future<void> loadFile(String? absoluteFilePath) => (super.noSuchMethod(
         Invocation.method(
           #loadFile,
           [absoluteFilePath],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> loadFlutterAsset(String? key) => (super.noSuchMethod(
+  _i9.Future<void> loadFlutterAsset(String? key) => (super.noSuchMethod(
         Invocation.method(
           #loadFlutterAsset,
           [key],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> loadHtmlString(
+  _i9.Future<void> loadHtmlString(
     String? html, {
     String? baseUrl,
   }) =>
@@ -375,165 +396,165 @@ class MockAndroidWebViewController extends _i1.Mock
           [html],
           {#baseUrl: baseUrl},
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> loadRequest(_i3.LoadRequestParams? params) =>
+  _i9.Future<void> loadRequest(_i3.LoadRequestParams? params) =>
       (super.noSuchMethod(
         Invocation.method(
           #loadRequest,
           [params],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<String?> currentUrl() => (super.noSuchMethod(
+  _i9.Future<String?> currentUrl() => (super.noSuchMethod(
         Invocation.method(
           #currentUrl,
           [],
         ),
-        returnValue: _i8.Future<String?>.value(),
-        returnValueForMissingStub: _i8.Future<String?>.value(),
-      ) as _i8.Future<String?>);
+        returnValue: _i9.Future<String?>.value(),
+        returnValueForMissingStub: _i9.Future<String?>.value(),
+      ) as _i9.Future<String?>);
   @override
-  _i8.Future<bool> canGoBack() => (super.noSuchMethod(
+  _i9.Future<bool> canGoBack() => (super.noSuchMethod(
         Invocation.method(
           #canGoBack,
           [],
         ),
-        returnValue: _i8.Future<bool>.value(false),
-        returnValueForMissingStub: _i8.Future<bool>.value(false),
-      ) as _i8.Future<bool>);
+        returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
   @override
-  _i8.Future<bool> canGoForward() => (super.noSuchMethod(
+  _i9.Future<bool> canGoForward() => (super.noSuchMethod(
         Invocation.method(
           #canGoForward,
           [],
         ),
-        returnValue: _i8.Future<bool>.value(false),
-        returnValueForMissingStub: _i8.Future<bool>.value(false),
-      ) as _i8.Future<bool>);
+        returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
   @override
-  _i8.Future<void> goBack() => (super.noSuchMethod(
+  _i9.Future<void> goBack() => (super.noSuchMethod(
         Invocation.method(
           #goBack,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> goForward() => (super.noSuchMethod(
+  _i9.Future<void> goForward() => (super.noSuchMethod(
         Invocation.method(
           #goForward,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> reload() => (super.noSuchMethod(
+  _i9.Future<void> reload() => (super.noSuchMethod(
         Invocation.method(
           #reload,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> clearCache() => (super.noSuchMethod(
+  _i9.Future<void> clearCache() => (super.noSuchMethod(
         Invocation.method(
           #clearCache,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> clearLocalStorage() => (super.noSuchMethod(
+  _i9.Future<void> clearLocalStorage() => (super.noSuchMethod(
         Invocation.method(
           #clearLocalStorage,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setPlatformNavigationDelegate(
+  _i9.Future<void> setPlatformNavigationDelegate(
           _i3.PlatformNavigationDelegate? handler) =>
       (super.noSuchMethod(
         Invocation.method(
           #setPlatformNavigationDelegate,
           [handler],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> runJavaScript(String? javaScript) => (super.noSuchMethod(
+  _i9.Future<void> runJavaScript(String? javaScript) => (super.noSuchMethod(
         Invocation.method(
           #runJavaScript,
           [javaScript],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<Object> runJavaScriptReturningResult(String? javaScript) =>
+  _i9.Future<Object> runJavaScriptReturningResult(String? javaScript) =>
       (super.noSuchMethod(
         Invocation.method(
           #runJavaScriptReturningResult,
           [javaScript],
         ),
-        returnValue: _i8.Future<Object>.value(_FakeObject_5(
+        returnValue: _i9.Future<Object>.value(_FakeObject_5(
           this,
           Invocation.method(
             #runJavaScriptReturningResult,
             [javaScript],
           ),
         )),
-        returnValueForMissingStub: _i8.Future<Object>.value(_FakeObject_5(
+        returnValueForMissingStub: _i9.Future<Object>.value(_FakeObject_5(
           this,
           Invocation.method(
             #runJavaScriptReturningResult,
             [javaScript],
           ),
         )),
-      ) as _i8.Future<Object>);
+      ) as _i9.Future<Object>);
   @override
-  _i8.Future<void> addJavaScriptChannel(
+  _i9.Future<void> addJavaScriptChannel(
           _i3.JavaScriptChannelParams? javaScriptChannelParams) =>
       (super.noSuchMethod(
         Invocation.method(
           #addJavaScriptChannel,
           [javaScriptChannelParams],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> removeJavaScriptChannel(String? javaScriptChannelName) =>
+  _i9.Future<void> removeJavaScriptChannel(String? javaScriptChannelName) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeJavaScriptChannel,
           [javaScriptChannelName],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<String?> getTitle() => (super.noSuchMethod(
+  _i9.Future<String?> getTitle() => (super.noSuchMethod(
         Invocation.method(
           #getTitle,
           [],
         ),
-        returnValue: _i8.Future<String?>.value(),
-        returnValueForMissingStub: _i8.Future<String?>.value(),
-      ) as _i8.Future<String?>);
+        returnValue: _i9.Future<String?>.value(),
+        returnValueForMissingStub: _i9.Future<String?>.value(),
+      ) as _i9.Future<String?>);
   @override
-  _i8.Future<void> scrollTo(
+  _i9.Future<void> scrollTo(
     int? x,
     int? y,
   ) =>
@@ -545,11 +566,11 @@ class MockAndroidWebViewController extends _i1.Mock
             y,
           ],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> scrollBy(
+  _i9.Future<void> scrollBy(
     int? x,
     int? y,
   ) =>
@@ -561,101 +582,113 @@ class MockAndroidWebViewController extends _i1.Mock
             y,
           ],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<dynamic> getScrollPosition() => (super.noSuchMethod(
+  _i9.Future<_i4.Offset> getScrollPosition() => (super.noSuchMethod(
         Invocation.method(
           #getScrollPosition,
           [],
         ),
-        returnValue: _i8.Future<dynamic>.value(),
-        returnValueForMissingStub: _i8.Future<dynamic>.value(),
-      ) as _i8.Future<dynamic>);
+        returnValue: _i9.Future<_i4.Offset>.value(_FakeOffset_6(
+          this,
+          Invocation.method(
+            #getScrollPosition,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i9.Future<_i4.Offset>.value(_FakeOffset_6(
+          this,
+          Invocation.method(
+            #getScrollPosition,
+            [],
+          ),
+        )),
+      ) as _i9.Future<_i4.Offset>);
   @override
-  _i8.Future<void> enableZoom(bool? enabled) => (super.noSuchMethod(
+  _i9.Future<void> enableZoom(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
           #enableZoom,
           [enabled],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setBackgroundColor(dynamic color) => (super.noSuchMethod(
+  _i9.Future<void> setBackgroundColor(_i4.Color? color) => (super.noSuchMethod(
         Invocation.method(
           #setBackgroundColor,
           [color],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setJavaScriptMode(_i3.JavaScriptMode? javaScriptMode) =>
+  _i9.Future<void> setJavaScriptMode(_i3.JavaScriptMode? javaScriptMode) =>
       (super.noSuchMethod(
         Invocation.method(
           #setJavaScriptMode,
           [javaScriptMode],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setUserAgent(String? userAgent) => (super.noSuchMethod(
+  _i9.Future<void> setUserAgent(String? userAgent) => (super.noSuchMethod(
         Invocation.method(
           #setUserAgent,
           [userAgent],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
+  _i9.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
       (super.noSuchMethod(
         Invocation.method(
           #setMediaPlaybackRequiresUserGesture,
           [require],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
+  _i9.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
         Invocation.method(
           #setTextZoom,
           [textZoom],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setOnShowFileSelector(
-          _i8.Future<List<String>> Function(_i7.FileSelectorParams)?
+  _i9.Future<void> setOnShowFileSelector(
+          _i9.Future<List<String>> Function(_i8.FileSelectorParams)?
               onShowFileSelector) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnShowFileSelector,
           [onShowFileSelector],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewProxy].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAndroidWebViewProxy extends _i1.Mock
-    implements _i9.AndroidWebViewProxy {
+    implements _i10.AndroidWebViewProxy {
   @override
   _i2.WebView Function() get createAndroidWebView => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebView),
-        returnValue: () => _FakeWebView_6(
+        returnValue: () => _FakeWebView_7(
           this,
           Invocation.getter(#createAndroidWebView),
         ),
-        returnValueForMissingStub: () => _FakeWebView_6(
+        returnValueForMissingStub: () => _FakeWebView_7(
           this,
           Invocation.getter(#createAndroidWebView),
         ),
@@ -666,7 +699,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
       _i2.WebView,
       int,
     )? onProgressChanged,
-    _i8.Future<List<String>> Function(
+    _i9.Future<List<String>> Function(
       _i2.WebView,
       _i2.FileChooserParams,
     )? onShowFileChooser,
@@ -677,7 +710,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebView,
             int,
           )? onProgressChanged,
-          _i8.Future<List<String>> Function(
+          _i9.Future<List<String>> Function(
             _i2.WebView,
             _i2.FileChooserParams,
           )? onShowFileChooser,
@@ -691,7 +724,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebView,
             int,
           )? onProgressChanged,
-          _i8.Future<List<String>> Function(
+          _i9.Future<List<String>> Function(
             _i2.WebView,
             _i2.FileChooserParams,
           )? onShowFileChooser,
@@ -705,7 +738,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           _i2.WebView,
           int,
         )? onProgressChanged,
-        _i8.Future<List<String>> Function(
+        _i9.Future<List<String>> Function(
           _i2.WebView,
           _i2.FileChooserParams,
         )? onShowFileChooser,
@@ -840,11 +873,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
   _i2.FlutterAssetManager Function() get createFlutterAssetManager =>
       (super.noSuchMethod(
         Invocation.getter(#createFlutterAssetManager),
-        returnValue: () => _FakeFlutterAssetManager_7(
+        returnValue: () => _FakeFlutterAssetManager_8(
           this,
           Invocation.getter(#createFlutterAssetManager),
         ),
-        returnValueForMissingStub: () => _FakeFlutterAssetManager_7(
+        returnValueForMissingStub: () => _FakeFlutterAssetManager_8(
           this,
           Invocation.getter(#createFlutterAssetManager),
         ),
@@ -859,7 +892,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           String channelName, {
           required void Function(String) postMessage,
         }) =>
-            _FakeJavaScriptChannel_8(
+            _FakeJavaScriptChannel_9(
           this,
           Invocation.getter(#createJavaScriptChannel),
         ),
@@ -867,7 +900,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           String channelName, {
           required void Function(String) postMessage,
         }) =>
-            _FakeJavaScriptChannel_8(
+            _FakeJavaScriptChannel_9(
           this,
           Invocation.getter(#createJavaScriptChannel),
         ),
@@ -918,15 +951,15 @@ class MockAndroidWebViewProxy extends _i1.Mock
             int,
           ) onDownloadStart}));
   @override
-  _i8.Future<void> setWebContentsDebuggingEnabled(bool? enabled) =>
+  _i9.Future<void> setWebContentsDebuggingEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(
           #setWebContentsDebuggingEnabled,
           [enabled],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewWidgetCreationParams].
@@ -934,32 +967,32 @@ class MockAndroidWebViewProxy extends _i1.Mock
 /// See the documentation for Mockito's code generation for more information.
 // ignore: must_be_immutable
 class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
-    implements _i7.AndroidWebViewWidgetCreationParams {
+    implements _i8.AndroidWebViewWidgetCreationParams {
   @override
-  _i4.InstanceManager get instanceManager => (super.noSuchMethod(
+  _i5.InstanceManager get instanceManager => (super.noSuchMethod(
         Invocation.getter(#instanceManager),
-        returnValue: _FakeInstanceManager_9(
+        returnValue: _FakeInstanceManager_10(
           this,
           Invocation.getter(#instanceManager),
         ),
-        returnValueForMissingStub: _FakeInstanceManager_9(
+        returnValueForMissingStub: _FakeInstanceManager_10(
           this,
           Invocation.getter(#instanceManager),
         ),
-      ) as _i4.InstanceManager);
+      ) as _i5.InstanceManager);
   @override
-  _i5.PlatformViewsServiceProxy get platformViewsServiceProxy =>
+  _i6.PlatformViewsServiceProxy get platformViewsServiceProxy =>
       (super.noSuchMethod(
         Invocation.getter(#platformViewsServiceProxy),
-        returnValue: _FakePlatformViewsServiceProxy_10(
+        returnValue: _FakePlatformViewsServiceProxy_11(
           this,
           Invocation.getter(#platformViewsServiceProxy),
         ),
-        returnValueForMissingStub: _FakePlatformViewsServiceProxy_10(
+        returnValueForMissingStub: _FakePlatformViewsServiceProxy_11(
           this,
           Invocation.getter(#platformViewsServiceProxy),
         ),
-      ) as _i5.PlatformViewsServiceProxy);
+      ) as _i6.PlatformViewsServiceProxy);
   @override
   bool get displayWithHybridComposition => (super.noSuchMethod(
         Invocation.getter(#displayWithHybridComposition),
@@ -969,30 +1002,36 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
   @override
   _i3.PlatformWebViewController get controller => (super.noSuchMethod(
         Invocation.getter(#controller),
-        returnValue: _FakePlatformWebViewController_11(
+        returnValue: _FakePlatformWebViewController_12(
           this,
           Invocation.getter(#controller),
         ),
-        returnValueForMissingStub: _FakePlatformWebViewController_11(
+        returnValueForMissingStub: _FakePlatformWebViewController_12(
           this,
           Invocation.getter(#controller),
         ),
       ) as _i3.PlatformWebViewController);
   @override
-  Set<_i10.Factory<_i11.OneSequenceGestureRecognizer>> get gestureRecognizers =>
+  _i4.TextDirection get layoutDirection => (super.noSuchMethod(
+        Invocation.getter(#layoutDirection),
+        returnValue: _i4.TextDirection.rtl,
+        returnValueForMissingStub: _i4.TextDirection.rtl,
+      ) as _i4.TextDirection);
+  @override
+  Set<_i11.Factory<_i12.OneSequenceGestureRecognizer>> get gestureRecognizers =>
       (super.noSuchMethod(
         Invocation.getter(#gestureRecognizers),
-        returnValue: <_i10.Factory<_i11.OneSequenceGestureRecognizer>>{},
-        returnValueForMissingStub: <_i10
-            .Factory<_i11.OneSequenceGestureRecognizer>>{},
-      ) as Set<_i10.Factory<_i11.OneSequenceGestureRecognizer>>);
+        returnValue: <_i11.Factory<_i12.OneSequenceGestureRecognizer>>{},
+        returnValueForMissingStub: <_i11
+            .Factory<_i12.OneSequenceGestureRecognizer>>{},
+      ) as Set<_i11.Factory<_i12.OneSequenceGestureRecognizer>>);
 }
 
 /// A class which mocks [ExpensiveAndroidViewController].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockExpensiveAndroidViewController extends _i1.Mock
-    implements _i6.ExpensiveAndroidViewController {
+    implements _i7.ExpensiveAndroidViewController {
   @override
   bool get requiresViewComposition => (super.noSuchMethod(
         Invocation.getter(#requiresViewComposition),
@@ -1012,13 +1051,19 @@ class MockExpensiveAndroidViewController extends _i1.Mock
         returnValueForMissingStub: false,
       ) as bool);
   @override
-  _i6.PointTransformer get pointTransformer => (super.noSuchMethod(
+  _i7.PointTransformer get pointTransformer => (super.noSuchMethod(
         Invocation.getter(#pointTransformer),
-        returnValue: (dynamic position) => null,
-        returnValueForMissingStub: (dynamic position) => null,
-      ) as _i6.PointTransformer);
+        returnValue: (_i4.Offset position) => _FakeOffset_6(
+          this,
+          Invocation.getter(#pointTransformer),
+        ),
+        returnValueForMissingStub: (_i4.Offset position) => _FakeOffset_6(
+          this,
+          Invocation.getter(#pointTransformer),
+        ),
+      ) as _i7.PointTransformer);
   @override
-  set pointTransformer(_i6.PointTransformer? transformer) => super.noSuchMethod(
+  set pointTransformer(_i7.PointTransformer? transformer) => super.noSuchMethod(
         Invocation.setter(
           #pointTransformer,
           transformer,
@@ -1032,25 +1077,25 @@ class MockExpensiveAndroidViewController extends _i1.Mock
         returnValueForMissingStub: false,
       ) as bool);
   @override
-  List<_i6.PlatformViewCreatedCallback> get createdCallbacks =>
+  List<_i7.PlatformViewCreatedCallback> get createdCallbacks =>
       (super.noSuchMethod(
         Invocation.getter(#createdCallbacks),
-        returnValue: <_i6.PlatformViewCreatedCallback>[],
-        returnValueForMissingStub: <_i6.PlatformViewCreatedCallback>[],
-      ) as List<_i6.PlatformViewCreatedCallback>);
+        returnValue: <_i7.PlatformViewCreatedCallback>[],
+        returnValueForMissingStub: <_i7.PlatformViewCreatedCallback>[],
+      ) as List<_i7.PlatformViewCreatedCallback>);
   @override
-  _i8.Future<void> setOffset(dynamic off) => (super.noSuchMethod(
+  _i9.Future<void> setOffset(_i4.Offset? off) => (super.noSuchMethod(
         Invocation.method(
           #setOffset,
           [off],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> create({
-    dynamic size,
-    dynamic position,
+  _i9.Future<void> create({
+    _i4.Size? size,
+    _i4.Offset? position,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1061,31 +1106,43 @@ class MockExpensiveAndroidViewController extends _i1.Mock
             #position: position,
           },
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<dynamic> setSize(dynamic size) => (super.noSuchMethod(
+  _i9.Future<_i4.Size> setSize(_i4.Size? size) => (super.noSuchMethod(
         Invocation.method(
           #setSize,
           [size],
         ),
-        returnValue: _i8.Future<dynamic>.value(),
-        returnValueForMissingStub: _i8.Future<dynamic>.value(),
-      ) as _i8.Future<dynamic>);
+        returnValue: _i9.Future<_i4.Size>.value(_FakeSize_13(
+          this,
+          Invocation.method(
+            #setSize,
+            [size],
+          ),
+        )),
+        returnValueForMissingStub: _i9.Future<_i4.Size>.value(_FakeSize_13(
+          this,
+          Invocation.method(
+            #setSize,
+            [size],
+          ),
+        )),
+      ) as _i9.Future<_i4.Size>);
   @override
-  _i8.Future<void> sendMotionEvent(_i6.AndroidMotionEvent? event) =>
+  _i9.Future<void> sendMotionEvent(_i7.AndroidMotionEvent? event) =>
       (super.noSuchMethod(
         Invocation.method(
           #sendMotionEvent,
           [event],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
   void addOnPlatformViewCreatedListener(
-          _i6.PlatformViewCreatedCallback? listener) =>
+          _i7.PlatformViewCreatedCallback? listener) =>
       super.noSuchMethod(
         Invocation.method(
           #addOnPlatformViewCreatedListener,
@@ -1095,7 +1152,7 @@ class MockExpensiveAndroidViewController extends _i1.Mock
       );
   @override
   void removeOnPlatformViewCreatedListener(
-          _i6.PlatformViewCreatedCallback? listener) =>
+          _i7.PlatformViewCreatedCallback? listener) =>
       super.noSuchMethod(
         Invocation.method(
           #removeOnPlatformViewCreatedListener,
@@ -1104,43 +1161,43 @@ class MockExpensiveAndroidViewController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  _i8.Future<void> setLayoutDirection(dynamic layoutDirection) =>
+  _i9.Future<void> setLayoutDirection(_i4.TextDirection? layoutDirection) =>
       (super.noSuchMethod(
         Invocation.method(
           #setLayoutDirection,
           [layoutDirection],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> dispatchPointerEvent(_i12.PointerEvent? event) =>
+  _i9.Future<void> dispatchPointerEvent(_i13.PointerEvent? event) =>
       (super.noSuchMethod(
         Invocation.method(
           #dispatchPointerEvent,
           [event],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> clearFocus() => (super.noSuchMethod(
+  _i9.Future<void> clearFocus() => (super.noSuchMethod(
         Invocation.method(
           #clearFocus,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> dispose() => (super.noSuchMethod(
+  _i9.Future<void> dispose() => (super.noSuchMethod(
         Invocation.method(
           #dispose,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [FlutterAssetManager].
@@ -1149,24 +1206,24 @@ class MockExpensiveAndroidViewController extends _i1.Mock
 class MockFlutterAssetManager extends _i1.Mock
     implements _i2.FlutterAssetManager {
   @override
-  _i8.Future<List<String?>> list(String? path) => (super.noSuchMethod(
+  _i9.Future<List<String?>> list(String? path) => (super.noSuchMethod(
         Invocation.method(
           #list,
           [path],
         ),
-        returnValue: _i8.Future<List<String?>>.value(<String?>[]),
-        returnValueForMissingStub: _i8.Future<List<String?>>.value(<String?>[]),
-      ) as _i8.Future<List<String?>>);
+        returnValue: _i9.Future<List<String?>>.value(<String?>[]),
+        returnValueForMissingStub: _i9.Future<List<String?>>.value(<String?>[]),
+      ) as _i9.Future<List<String?>>);
   @override
-  _i8.Future<String> getAssetFilePathByName(String? name) =>
+  _i9.Future<String> getAssetFilePathByName(String? name) =>
       (super.noSuchMethod(
         Invocation.method(
           #getAssetFilePathByName,
           [name],
         ),
-        returnValue: _i8.Future<String>.value(''),
-        returnValueForMissingStub: _i8.Future<String>.value(''),
-      ) as _i8.Future<String>);
+        returnValue: _i9.Future<String>.value(''),
+        returnValueForMissingStub: _i9.Future<String>.value(''),
+      ) as _i9.Future<String>);
 }
 
 /// A class which mocks [JavaScriptChannel].
@@ -1191,14 +1248,14 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
           #copy,
           [],
         ),
-        returnValue: _FakeJavaScriptChannel_8(
+        returnValue: _FakeJavaScriptChannel_9(
           this,
           Invocation.method(
             #copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeJavaScriptChannel_8(
+        returnValueForMissingStub: _FakeJavaScriptChannel_9(
           this,
           Invocation.method(
             #copy,
@@ -1213,15 +1270,15 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
 /// See the documentation for Mockito's code generation for more information.
 // ignore: must_be_immutable
 class MockPlatformViewsServiceProxy extends _i1.Mock
-    implements _i5.PlatformViewsServiceProxy {
+    implements _i6.PlatformViewsServiceProxy {
   @override
-  _i6.ExpensiveAndroidViewController initExpensiveAndroidView({
+  _i7.ExpensiveAndroidViewController initExpensiveAndroidView({
     required int? id,
     required String? viewType,
-    required dynamic layoutDirection,
+    required _i4.TextDirection? layoutDirection,
     dynamic creationParams,
-    _i6.MessageCodec<dynamic>? creationParamsCodec,
-    dynamic onFocus,
+    _i7.MessageCodec<dynamic>? creationParamsCodec,
+    _i4.VoidCallback? onFocus,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1236,7 +1293,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             #onFocus: onFocus,
           },
         ),
-        returnValue: _FakeExpensiveAndroidViewController_12(
+        returnValue: _FakeExpensiveAndroidViewController_14(
           this,
           Invocation.method(
             #initExpensiveAndroidView,
@@ -1251,7 +1308,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-        returnValueForMissingStub: _FakeExpensiveAndroidViewController_12(
+        returnValueForMissingStub: _FakeExpensiveAndroidViewController_14(
           this,
           Invocation.method(
             #initExpensiveAndroidView,
@@ -1266,15 +1323,15 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-      ) as _i6.ExpensiveAndroidViewController);
+      ) as _i7.ExpensiveAndroidViewController);
   @override
-  _i6.SurfaceAndroidViewController initSurfaceAndroidView({
+  _i7.SurfaceAndroidViewController initSurfaceAndroidView({
     required int? id,
     required String? viewType,
-    required dynamic layoutDirection,
+    required _i4.TextDirection? layoutDirection,
     dynamic creationParams,
-    _i6.MessageCodec<dynamic>? creationParamsCodec,
-    dynamic onFocus,
+    _i7.MessageCodec<dynamic>? creationParamsCodec,
+    _i4.VoidCallback? onFocus,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1289,7 +1346,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             #onFocus: onFocus,
           },
         ),
-        returnValue: _FakeSurfaceAndroidViewController_13(
+        returnValue: _FakeSurfaceAndroidViewController_15(
           this,
           Invocation.method(
             #initSurfaceAndroidView,
@@ -1304,7 +1361,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-        returnValueForMissingStub: _FakeSurfaceAndroidViewController_13(
+        returnValueForMissingStub: _FakeSurfaceAndroidViewController_15(
           this,
           Invocation.method(
             #initSurfaceAndroidView,
@@ -1319,14 +1376,14 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-      ) as _i6.SurfaceAndroidViewController);
+      ) as _i7.SurfaceAndroidViewController);
 }
 
 /// A class which mocks [SurfaceAndroidViewController].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockSurfaceAndroidViewController extends _i1.Mock
-    implements _i6.SurfaceAndroidViewController {
+    implements _i7.SurfaceAndroidViewController {
   @override
   bool get requiresViewComposition => (super.noSuchMethod(
         Invocation.getter(#requiresViewComposition),
@@ -1346,13 +1403,19 @@ class MockSurfaceAndroidViewController extends _i1.Mock
         returnValueForMissingStub: false,
       ) as bool);
   @override
-  _i6.PointTransformer get pointTransformer => (super.noSuchMethod(
+  _i7.PointTransformer get pointTransformer => (super.noSuchMethod(
         Invocation.getter(#pointTransformer),
-        returnValue: (dynamic position) => null,
-        returnValueForMissingStub: (dynamic position) => null,
-      ) as _i6.PointTransformer);
+        returnValue: (_i4.Offset position) => _FakeOffset_6(
+          this,
+          Invocation.getter(#pointTransformer),
+        ),
+        returnValueForMissingStub: (_i4.Offset position) => _FakeOffset_6(
+          this,
+          Invocation.getter(#pointTransformer),
+        ),
+      ) as _i7.PointTransformer);
   @override
-  set pointTransformer(_i6.PointTransformer? transformer) => super.noSuchMethod(
+  set pointTransformer(_i7.PointTransformer? transformer) => super.noSuchMethod(
         Invocation.setter(
           #pointTransformer,
           transformer,
@@ -1366,25 +1429,25 @@ class MockSurfaceAndroidViewController extends _i1.Mock
         returnValueForMissingStub: false,
       ) as bool);
   @override
-  List<_i6.PlatformViewCreatedCallback> get createdCallbacks =>
+  List<_i7.PlatformViewCreatedCallback> get createdCallbacks =>
       (super.noSuchMethod(
         Invocation.getter(#createdCallbacks),
-        returnValue: <_i6.PlatformViewCreatedCallback>[],
-        returnValueForMissingStub: <_i6.PlatformViewCreatedCallback>[],
-      ) as List<_i6.PlatformViewCreatedCallback>);
+        returnValue: <_i7.PlatformViewCreatedCallback>[],
+        returnValueForMissingStub: <_i7.PlatformViewCreatedCallback>[],
+      ) as List<_i7.PlatformViewCreatedCallback>);
   @override
-  _i8.Future<void> setOffset(dynamic off) => (super.noSuchMethod(
+  _i9.Future<void> setOffset(_i4.Offset? off) => (super.noSuchMethod(
         Invocation.method(
           #setOffset,
           [off],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> create({
-    dynamic size,
-    dynamic position,
+  _i9.Future<void> create({
+    _i4.Size? size,
+    _i4.Offset? position,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1395,31 +1458,43 @@ class MockSurfaceAndroidViewController extends _i1.Mock
             #position: position,
           },
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<dynamic> setSize(dynamic size) => (super.noSuchMethod(
+  _i9.Future<_i4.Size> setSize(_i4.Size? size) => (super.noSuchMethod(
         Invocation.method(
           #setSize,
           [size],
         ),
-        returnValue: _i8.Future<dynamic>.value(),
-        returnValueForMissingStub: _i8.Future<dynamic>.value(),
-      ) as _i8.Future<dynamic>);
+        returnValue: _i9.Future<_i4.Size>.value(_FakeSize_13(
+          this,
+          Invocation.method(
+            #setSize,
+            [size],
+          ),
+        )),
+        returnValueForMissingStub: _i9.Future<_i4.Size>.value(_FakeSize_13(
+          this,
+          Invocation.method(
+            #setSize,
+            [size],
+          ),
+        )),
+      ) as _i9.Future<_i4.Size>);
   @override
-  _i8.Future<void> sendMotionEvent(_i6.AndroidMotionEvent? event) =>
+  _i9.Future<void> sendMotionEvent(_i7.AndroidMotionEvent? event) =>
       (super.noSuchMethod(
         Invocation.method(
           #sendMotionEvent,
           [event],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
   void addOnPlatformViewCreatedListener(
-          _i6.PlatformViewCreatedCallback? listener) =>
+          _i7.PlatformViewCreatedCallback? listener) =>
       super.noSuchMethod(
         Invocation.method(
           #addOnPlatformViewCreatedListener,
@@ -1429,7 +1504,7 @@ class MockSurfaceAndroidViewController extends _i1.Mock
       );
   @override
   void removeOnPlatformViewCreatedListener(
-          _i6.PlatformViewCreatedCallback? listener) =>
+          _i7.PlatformViewCreatedCallback? listener) =>
       super.noSuchMethod(
         Invocation.method(
           #removeOnPlatformViewCreatedListener,
@@ -1438,43 +1513,43 @@ class MockSurfaceAndroidViewController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  _i8.Future<void> setLayoutDirection(dynamic layoutDirection) =>
+  _i9.Future<void> setLayoutDirection(_i4.TextDirection? layoutDirection) =>
       (super.noSuchMethod(
         Invocation.method(
           #setLayoutDirection,
           [layoutDirection],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> dispatchPointerEvent(_i12.PointerEvent? event) =>
+  _i9.Future<void> dispatchPointerEvent(_i13.PointerEvent? event) =>
       (super.noSuchMethod(
         Invocation.method(
           #dispatchPointerEvent,
           [event],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> clearFocus() => (super.noSuchMethod(
+  _i9.Future<void> clearFocus() => (super.noSuchMethod(
         Invocation.method(
           #clearFocus,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> dispose() => (super.noSuchMethod(
+  _i9.Future<void> dispose() => (super.noSuchMethod(
         Invocation.method(
           #dispose,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [WebChromeClient].
@@ -1482,15 +1557,15 @@ class MockSurfaceAndroidViewController extends _i1.Mock
 /// See the documentation for Mockito's code generation for more information.
 class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
   @override
-  _i8.Future<void> setSynchronousReturnValueForOnShowFileChooser(bool? value) =>
+  _i9.Future<void> setSynchronousReturnValueForOnShowFileChooser(bool? value) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForOnShowFileChooser,
           [value],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
   _i2.WebChromeClient copy() => (super.noSuchMethod(
         Invocation.method(
@@ -1519,141 +1594,141 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
 /// See the documentation for Mockito's code generation for more information.
 class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
   @override
-  _i8.Future<void> setDomStorageEnabled(bool? flag) => (super.noSuchMethod(
+  _i9.Future<void> setDomStorageEnabled(bool? flag) => (super.noSuchMethod(
         Invocation.method(
           #setDomStorageEnabled,
           [flag],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setJavaScriptCanOpenWindowsAutomatically(bool? flag) =>
+  _i9.Future<void> setJavaScriptCanOpenWindowsAutomatically(bool? flag) =>
       (super.noSuchMethod(
         Invocation.method(
           #setJavaScriptCanOpenWindowsAutomatically,
           [flag],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setSupportMultipleWindows(bool? support) =>
+  _i9.Future<void> setSupportMultipleWindows(bool? support) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSupportMultipleWindows,
           [support],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setJavaScriptEnabled(bool? flag) => (super.noSuchMethod(
+  _i9.Future<void> setJavaScriptEnabled(bool? flag) => (super.noSuchMethod(
         Invocation.method(
           #setJavaScriptEnabled,
           [flag],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setUserAgentString(String? userAgentString) =>
+  _i9.Future<void> setUserAgentString(String? userAgentString) =>
       (super.noSuchMethod(
         Invocation.method(
           #setUserAgentString,
           [userAgentString],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
+  _i9.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
       (super.noSuchMethod(
         Invocation.method(
           #setMediaPlaybackRequiresUserGesture,
           [require],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setSupportZoom(bool? support) => (super.noSuchMethod(
+  _i9.Future<void> setSupportZoom(bool? support) => (super.noSuchMethod(
         Invocation.method(
           #setSupportZoom,
           [support],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setLoadWithOverviewMode(bool? overview) =>
+  _i9.Future<void> setLoadWithOverviewMode(bool? overview) =>
       (super.noSuchMethod(
         Invocation.method(
           #setLoadWithOverviewMode,
           [overview],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setUseWideViewPort(bool? use) => (super.noSuchMethod(
+  _i9.Future<void> setUseWideViewPort(bool? use) => (super.noSuchMethod(
         Invocation.method(
           #setUseWideViewPort,
           [use],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setDisplayZoomControls(bool? enabled) => (super.noSuchMethod(
+  _i9.Future<void> setDisplayZoomControls(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
           #setDisplayZoomControls,
           [enabled],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setBuiltInZoomControls(bool? enabled) => (super.noSuchMethod(
+  _i9.Future<void> setBuiltInZoomControls(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
           #setBuiltInZoomControls,
           [enabled],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setAllowFileAccess(bool? enabled) => (super.noSuchMethod(
+  _i9.Future<void> setAllowFileAccess(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
           #setAllowFileAccess,
           [enabled],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
+  _i9.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
         Invocation.method(
           #setTextZoom,
           [textZoom],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
   _i2.WebSettings copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,
           [],
         ),
-        returnValue: _FakeWebSettings_14(
+        returnValue: _FakeWebSettings_16(
           this,
           Invocation.method(
             #copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWebSettings_14(
+        returnValueForMissingStub: _FakeWebSettings_16(
           this,
           Invocation.method(
             #copy,
@@ -1670,17 +1745,17 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   @override
   _i2.WebSettings get settings => (super.noSuchMethod(
         Invocation.getter(#settings),
-        returnValue: _FakeWebSettings_14(
+        returnValue: _FakeWebSettings_16(
           this,
           Invocation.getter(#settings),
         ),
-        returnValueForMissingStub: _FakeWebSettings_14(
+        returnValueForMissingStub: _FakeWebSettings_16(
           this,
           Invocation.getter(#settings),
         ),
       ) as _i2.WebSettings);
   @override
-  _i8.Future<void> loadData({
+  _i9.Future<void> loadData({
     required String? data,
     String? mimeType,
     String? encoding,
@@ -1695,11 +1770,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             #encoding: encoding,
           },
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> loadDataWithBaseUrl({
+  _i9.Future<void> loadDataWithBaseUrl({
     String? baseUrl,
     required String? data,
     String? mimeType,
@@ -1718,11 +1793,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             #historyUrl: historyUrl,
           },
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> loadUrl(
+  _i9.Future<void> loadUrl(
     String? url,
     Map<String, String>? headers,
   ) =>
@@ -1734,13 +1809,13 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             headers,
           ],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> postUrl(
+  _i9.Future<void> postUrl(
     String? url,
-    _i13.Uint8List? data,
+    _i14.Uint8List? data,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1750,93 +1825,93 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             data,
           ],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<String?> getUrl() => (super.noSuchMethod(
+  _i9.Future<String?> getUrl() => (super.noSuchMethod(
         Invocation.method(
           #getUrl,
           [],
         ),
-        returnValue: _i8.Future<String?>.value(),
-        returnValueForMissingStub: _i8.Future<String?>.value(),
-      ) as _i8.Future<String?>);
+        returnValue: _i9.Future<String?>.value(),
+        returnValueForMissingStub: _i9.Future<String?>.value(),
+      ) as _i9.Future<String?>);
   @override
-  _i8.Future<bool> canGoBack() => (super.noSuchMethod(
+  _i9.Future<bool> canGoBack() => (super.noSuchMethod(
         Invocation.method(
           #canGoBack,
           [],
         ),
-        returnValue: _i8.Future<bool>.value(false),
-        returnValueForMissingStub: _i8.Future<bool>.value(false),
-      ) as _i8.Future<bool>);
+        returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
   @override
-  _i8.Future<bool> canGoForward() => (super.noSuchMethod(
+  _i9.Future<bool> canGoForward() => (super.noSuchMethod(
         Invocation.method(
           #canGoForward,
           [],
         ),
-        returnValue: _i8.Future<bool>.value(false),
-        returnValueForMissingStub: _i8.Future<bool>.value(false),
-      ) as _i8.Future<bool>);
+        returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
   @override
-  _i8.Future<void> goBack() => (super.noSuchMethod(
+  _i9.Future<void> goBack() => (super.noSuchMethod(
         Invocation.method(
           #goBack,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> goForward() => (super.noSuchMethod(
+  _i9.Future<void> goForward() => (super.noSuchMethod(
         Invocation.method(
           #goForward,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> reload() => (super.noSuchMethod(
+  _i9.Future<void> reload() => (super.noSuchMethod(
         Invocation.method(
           #reload,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> clearCache(bool? includeDiskFiles) => (super.noSuchMethod(
+  _i9.Future<void> clearCache(bool? includeDiskFiles) => (super.noSuchMethod(
         Invocation.method(
           #clearCache,
           [includeDiskFiles],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<String?> evaluateJavascript(String? javascriptString) =>
+  _i9.Future<String?> evaluateJavascript(String? javascriptString) =>
       (super.noSuchMethod(
         Invocation.method(
           #evaluateJavascript,
           [javascriptString],
         ),
-        returnValue: _i8.Future<String?>.value(),
-        returnValueForMissingStub: _i8.Future<String?>.value(),
-      ) as _i8.Future<String?>);
+        returnValue: _i9.Future<String?>.value(),
+        returnValueForMissingStub: _i9.Future<String?>.value(),
+      ) as _i9.Future<String?>);
   @override
-  _i8.Future<String?> getTitle() => (super.noSuchMethod(
+  _i9.Future<String?> getTitle() => (super.noSuchMethod(
         Invocation.method(
           #getTitle,
           [],
         ),
-        returnValue: _i8.Future<String?>.value(),
-        returnValueForMissingStub: _i8.Future<String?>.value(),
-      ) as _i8.Future<String?>);
+        returnValue: _i9.Future<String?>.value(),
+        returnValueForMissingStub: _i9.Future<String?>.value(),
+      ) as _i9.Future<String?>);
   @override
-  _i8.Future<void> scrollTo(
+  _i9.Future<void> scrollTo(
     int? x,
     int? y,
   ) =>
@@ -1848,11 +1923,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             y,
           ],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> scrollBy(
+  _i9.Future<void> scrollBy(
     int? x,
     int? y,
   ) =>
@@ -1864,111 +1939,123 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             y,
           ],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<int> getScrollX() => (super.noSuchMethod(
+  _i9.Future<int> getScrollX() => (super.noSuchMethod(
         Invocation.method(
           #getScrollX,
           [],
         ),
-        returnValue: _i8.Future<int>.value(0),
-        returnValueForMissingStub: _i8.Future<int>.value(0),
-      ) as _i8.Future<int>);
+        returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
+      ) as _i9.Future<int>);
   @override
-  _i8.Future<int> getScrollY() => (super.noSuchMethod(
+  _i9.Future<int> getScrollY() => (super.noSuchMethod(
         Invocation.method(
           #getScrollY,
           [],
         ),
-        returnValue: _i8.Future<int>.value(0),
-        returnValueForMissingStub: _i8.Future<int>.value(0),
-      ) as _i8.Future<int>);
+        returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
+      ) as _i9.Future<int>);
   @override
-  _i8.Future<dynamic> getScrollPosition() => (super.noSuchMethod(
+  _i9.Future<_i4.Offset> getScrollPosition() => (super.noSuchMethod(
         Invocation.method(
           #getScrollPosition,
           [],
         ),
-        returnValue: _i8.Future<dynamic>.value(),
-        returnValueForMissingStub: _i8.Future<dynamic>.value(),
-      ) as _i8.Future<dynamic>);
+        returnValue: _i9.Future<_i4.Offset>.value(_FakeOffset_6(
+          this,
+          Invocation.method(
+            #getScrollPosition,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i9.Future<_i4.Offset>.value(_FakeOffset_6(
+          this,
+          Invocation.method(
+            #getScrollPosition,
+            [],
+          ),
+        )),
+      ) as _i9.Future<_i4.Offset>);
   @override
-  _i8.Future<void> setWebViewClient(_i2.WebViewClient? webViewClient) =>
+  _i9.Future<void> setWebViewClient(_i2.WebViewClient? webViewClient) =>
       (super.noSuchMethod(
         Invocation.method(
           #setWebViewClient,
           [webViewClient],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> addJavaScriptChannel(
+  _i9.Future<void> addJavaScriptChannel(
           _i2.JavaScriptChannel? javaScriptChannel) =>
       (super.noSuchMethod(
         Invocation.method(
           #addJavaScriptChannel,
           [javaScriptChannel],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> removeJavaScriptChannel(
+  _i9.Future<void> removeJavaScriptChannel(
           _i2.JavaScriptChannel? javaScriptChannel) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeJavaScriptChannel,
           [javaScriptChannel],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setDownloadListener(_i2.DownloadListener? listener) =>
+  _i9.Future<void> setDownloadListener(_i2.DownloadListener? listener) =>
       (super.noSuchMethod(
         Invocation.method(
           #setDownloadListener,
           [listener],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setWebChromeClient(_i2.WebChromeClient? client) =>
+  _i9.Future<void> setWebChromeClient(_i2.WebChromeClient? client) =>
       (super.noSuchMethod(
         Invocation.method(
           #setWebChromeClient,
           [client],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
-  _i8.Future<void> setBackgroundColor(dynamic color) => (super.noSuchMethod(
+  _i9.Future<void> setBackgroundColor(_i4.Color? color) => (super.noSuchMethod(
         Invocation.method(
           #setBackgroundColor,
           [color],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
   _i2.WebView copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,
           [],
         ),
-        returnValue: _FakeWebView_6(
+        returnValue: _FakeWebView_7(
           this,
           Invocation.method(
             #copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWebView_6(
+        returnValueForMissingStub: _FakeWebView_7(
           this,
           Invocation.method(
             #copy,
@@ -1983,16 +2070,16 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
 /// See the documentation for Mockito's code generation for more information.
 class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
   @override
-  _i8.Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
+  _i9.Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
           bool? value) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForShouldOverrideUrlLoading,
           [value],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
   _i2.WebViewClient copy() => (super.noSuchMethod(
         Invocation.method(
@@ -2021,28 +2108,28 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
 /// See the documentation for Mockito's code generation for more information.
 class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
   @override
-  _i8.Future<void> deleteAllData() => (super.noSuchMethod(
+  _i9.Future<void> deleteAllData() => (super.noSuchMethod(
         Invocation.method(
           #deleteAllData,
           [],
         ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
   _i2.WebStorage copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,
           [],
         ),
-        returnValue: _FakeWebStorage_15(
+        returnValue: _FakeWebStorage_17(
           this,
           Invocation.method(
             #copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWebStorage_15(
+        returnValueForMissingStub: _FakeWebStorage_17(
           this,
           Invocation.method(
             #copy,
@@ -2055,7 +2142,7 @@ class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
 /// A class which mocks [InstanceManager].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockInstanceManager extends _i1.Mock implements _i4.InstanceManager {
+class MockInstanceManager extends _i1.Mock implements _i5.InstanceManager {
   @override
   void Function(int) get onWeakReferenceRemoved => (super.noSuchMethod(
         Invocation.getter(#onWeakReferenceRemoved),
@@ -2072,7 +2159,7 @@ class MockInstanceManager extends _i1.Mock implements _i4.InstanceManager {
         returnValueForMissingStub: null,
       );
   @override
-  int addDartCreatedInstance(_i4.Copyable? instance) => (super.noSuchMethod(
+  int addDartCreatedInstance(_i5.Copyable? instance) => (super.noSuchMethod(
         Invocation.method(
           #addDartCreatedInstance,
           [instance],
@@ -2081,7 +2168,7 @@ class MockInstanceManager extends _i1.Mock implements _i4.InstanceManager {
         returnValueForMissingStub: 0,
       ) as int);
   @override
-  int? removeWeakReference(_i4.Copyable? instance) => (super.noSuchMethod(
+  int? removeWeakReference(_i5.Copyable? instance) => (super.noSuchMethod(
         Invocation.method(
           #removeWeakReference,
           [instance],
@@ -2089,7 +2176,7 @@ class MockInstanceManager extends _i1.Mock implements _i4.InstanceManager {
         returnValueForMissingStub: null,
       ) as int?);
   @override
-  T? remove<T extends _i4.Copyable>(int? identifier) => (super.noSuchMethod(
+  T? remove<T extends _i5.Copyable>(int? identifier) => (super.noSuchMethod(
         Invocation.method(
           #remove,
           [identifier],
@@ -2097,7 +2184,7 @@ class MockInstanceManager extends _i1.Mock implements _i4.InstanceManager {
         returnValueForMissingStub: null,
       ) as T?);
   @override
-  T? getInstanceWithWeakReference<T extends _i4.Copyable>(int? identifier) =>
+  T? getInstanceWithWeakReference<T extends _i5.Copyable>(int? identifier) =>
       (super.noSuchMethod(
         Invocation.method(
           #getInstanceWithWeakReference,
@@ -2106,7 +2193,7 @@ class MockInstanceManager extends _i1.Mock implements _i4.InstanceManager {
         returnValueForMissingStub: null,
       ) as T?);
   @override
-  int? getIdentifier(_i4.Copyable? instance) => (super.noSuchMethod(
+  int? getIdentifier(_i5.Copyable? instance) => (super.noSuchMethod(
         Invocation.method(
           #getIdentifier,
           [instance],
@@ -2115,7 +2202,7 @@ class MockInstanceManager extends _i1.Mock implements _i4.InstanceManager {
       ) as int?);
   @override
   void addHostCreatedInstance(
-    _i4.Copyable? instance,
+    _i5.Copyable? instance,
     int? identifier,
   ) =>
       super.noSuchMethod(
