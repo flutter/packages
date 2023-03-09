@@ -1,4 +1,5 @@
 ## 2.5.0
+
 * Adds NV21 as an image stream format (suitable for Android).
 
 ## 2.4.0
