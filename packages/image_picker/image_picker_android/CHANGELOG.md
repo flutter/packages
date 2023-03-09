@@ -1,6 +1,10 @@
-## 0.8.5+11
+## 0.8.6+1
 
 * Improved Bitmap resizing.
+
+## 0.8.6
+
+* Adds `usePhotoPickerAndroid` options.
 
 ## 0.8.5+10
 
