@@ -133,7 +133,7 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   /// [ProductDetail] is a consumable at runtime.
   ///
   /// `autoConsume` is provided as a utility and will instruct the plugin to
-  /// automatically consume the product after a succesful purchase.
+  /// automatically consume the product after a successful purchase.
   /// `autoConsume` is `true` by default.
   ///
   /// This method does not return the result of the purchase. Instead, after
@@ -146,7 +146,7 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   /// error, then call [completePurchase] to finish the purchasing process.
   ///
   /// This method does return whether or not the purchase request was initially
-  /// sent succesfully.
+  /// sent successfully.
   ///
   /// See also:
   ///

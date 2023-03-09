@@ -32,7 +32,7 @@ class CMakeProject {
 
   /// The build mode (e.g., Debug, Release).
   ///
-  /// This is a constructor paramater because on Linux many properties depend
+  /// This is a constructor parameter because on Linux many properties depend
   /// on the build mode since it uses a single-configuration generator.
   final String buildMode;
 

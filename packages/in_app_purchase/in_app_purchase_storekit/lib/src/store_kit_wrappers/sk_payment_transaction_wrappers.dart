@@ -59,7 +59,7 @@ enum SKPaymentTransactionStateWrapper {
   @JsonValue(0)
   purchasing,
 
-  /// The user's payment has been succesfully processed.
+  /// The user's payment has been successfully processed.
   ///
   /// You should provide the user the content that they purchased.
   @JsonValue(1)

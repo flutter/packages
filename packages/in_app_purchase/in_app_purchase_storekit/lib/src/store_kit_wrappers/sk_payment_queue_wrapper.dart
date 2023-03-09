@@ -136,7 +136,7 @@ class SKPaymentQueueWrapper {
   /// Finishes a transaction and removes it from the queue.
   ///
   /// This method should be called after the given [transaction] has been
-  /// succesfully processed and its content has been delivered to the user.
+  /// successfully processed and its content has been delivered to the user.
   /// Transaction status updates are propagated to [SkTransactionObserver].
   ///
   /// This will throw a Platform exception if [transaction.transactionState] is
