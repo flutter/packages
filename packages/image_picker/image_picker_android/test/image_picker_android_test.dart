@@ -49,6 +49,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 1,
@@ -57,6 +58,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -104,6 +106,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -112,6 +115,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -120,6 +124,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -128,6 +133,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -136,6 +142,7 @@ void main() {
             'imageQuality': 70,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -144,6 +151,7 @@ void main() {
             'imageQuality': 70,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -152,6 +160,7 @@ void main() {
             'imageQuality': 70,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -214,6 +223,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -234,6 +244,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 1,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -252,6 +263,7 @@ void main() {
             'maxWidth': null,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -291,36 +303,43 @@ void main() {
             'maxWidth': null,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -375,11 +394,13 @@ void main() {
             'source': 0,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 1,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -406,21 +427,25 @@ void main() {
             'source': 0,
             'maxDuration': null,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 10,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 60,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 3600,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -446,6 +471,7 @@ void main() {
             'source': 0,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -464,6 +490,7 @@ void main() {
             'source': 0,
             'maxDuration': null,
             'cameraDevice': 1,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -546,6 +573,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 1,
@@ -554,6 +582,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -601,6 +630,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -609,6 +639,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -617,6 +648,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -625,6 +657,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -633,6 +666,7 @@ void main() {
             'imageQuality': 70,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -641,6 +675,7 @@ void main() {
             'imageQuality': 70,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -649,6 +684,7 @@ void main() {
             'imageQuality': 70,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -711,6 +747,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -731,6 +768,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 1,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -749,6 +787,7 @@ void main() {
             'maxWidth': null,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -788,36 +827,43 @@ void main() {
             'maxWidth': null,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickMultiImage', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': 70,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -872,11 +918,13 @@ void main() {
             'source': 0,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 1,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -903,21 +951,25 @@ void main() {
             'source': 0,
             'maxDuration': null,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 10,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 60,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickVideo', arguments: <String, dynamic>{
             'source': 0,
             'maxDuration': 3600,
             'cameraDevice': 0,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -943,6 +995,7 @@ void main() {
             'source': 0,
             'cameraDevice': 0,
             'maxDuration': null,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -961,6 +1014,7 @@ void main() {
             'source': 0,
             'maxDuration': null,
             'cameraDevice': 1,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -1062,6 +1116,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 1,
@@ -1070,6 +1125,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -1125,6 +1181,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -1133,6 +1190,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -1141,6 +1199,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -1149,6 +1208,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -1157,6 +1217,7 @@ void main() {
             'imageQuality': 70,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -1165,6 +1226,7 @@ void main() {
             'imageQuality': 70,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
           isMethodCall('pickImage', arguments: <String, dynamic>{
             'source': 0,
@@ -1173,6 +1235,7 @@ void main() {
             'imageQuality': 70,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -1255,6 +1318,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -1278,6 +1342,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 1,
             'requestFullMetadata': true,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
@@ -1299,6 +1364,7 @@ void main() {
             'imageQuality': null,
             'cameraDevice': 0,
             'requestFullMetadata': false,
+            'useAndroidPhotoPicker': false,
           }),
         ],
       );
