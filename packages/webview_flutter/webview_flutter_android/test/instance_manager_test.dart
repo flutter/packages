@@ -147,6 +147,8 @@ void main() {
           MockTestInstanceManagerHostApi();
       TestInstanceManagerHostApi.setup(mockApi);
 
+      // Calls method to clear the native InstanceManager.
+      // ignore: unnecessary_statements
       JavaObject.globalInstanceManager;
 
       verify(mockApi.clear());
