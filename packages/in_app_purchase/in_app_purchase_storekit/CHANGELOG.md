@@ -1,6 +1,11 @@
-## 0.3.6+2
+## 0.3.6+3
 
 * Adds a null check, to prevent a new diagnostic.
+
+## 0.3.6+2
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
 
 ## 0.3.6+1
 

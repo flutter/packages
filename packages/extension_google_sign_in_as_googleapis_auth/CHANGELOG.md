@@ -1,3 +1,7 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.0.9
 
 * Makes the extension compatible with `google_sign_in` version `^5.0.0` and `^6.0.0`.
