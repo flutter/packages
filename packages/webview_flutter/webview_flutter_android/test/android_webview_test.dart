@@ -364,6 +364,24 @@ void main() {
         ));
       });
 
+      test('FlutterAPI create', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final WebViewFlutterApiImpl api = WebViewFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        const int instanceIdentifier = 0;
+        api.create(instanceIdentifier);
+
+        expect(
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+          isA<WebView>(),
+        );
+      });
+
       test('copy', () {
         expect(webView.copy(), isA<WebView>());
       });
