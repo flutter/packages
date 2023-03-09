@@ -1,5 +1,6 @@
-## NEXT
+## 1.3.4
 
+* Fixes common typos.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 1.3.3

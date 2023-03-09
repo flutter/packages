@@ -1,3 +1,7 @@
+## 9.0.6
+
+* Fixes common typos.
+
 ## 9.0.5
 
 * Removes the unnecessary Flutter constraint.

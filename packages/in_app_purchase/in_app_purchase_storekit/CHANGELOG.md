@@ -1,3 +1,7 @@
+## 0.3.6+3
+
+* Fixes common typos.
+
 ## 0.3.6+2
 
 * Clarifies explanation of endorsement in README.
