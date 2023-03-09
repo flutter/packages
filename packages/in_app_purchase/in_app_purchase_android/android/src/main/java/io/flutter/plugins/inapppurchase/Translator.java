@@ -9,7 +9,6 @@ import com.android.billingclient.api.AccountIdentifiers;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
-import com.android.billingclient.api.SkuDetails;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -19,7 +18,9 @@ import java.util.Locale;
 
 /** Handles serialization of {@link com.android.billingclient.api.BillingClient} related objects. */
 /*package*/ class Translator {
-  static HashMap<String, Object> fromSkuDetail(SkuDetails detail) {
+  // TODO(stuartmorgan): Migrate this code. See TODO on MethodCallHandlerImpl.querySkuDetailsAsync.
+  @SuppressWarnings("deprecation")
+  static HashMap<String, Object> fromSkuDetail(com.android.billingclient.api.SkuDetails detail) {
     HashMap<String, Object> info = new HashMap<>();
     info.put("title", detail.getTitle());
     info.put("description", detail.getDescription());
@@ -40,14 +41,16 @@ import java.util.Locale;
     return info;
   }
 
+  // TODO(stuartmorgan): Migrate this code. See TODO on MethodCallHandlerImpl.querySkuDetailsAsync.
+  @SuppressWarnings("deprecation")
   static List<HashMap<String, Object>> fromSkuDetailsList(
-      @Nullable List<SkuDetails> skuDetailsList) {
+      @Nullable List<com.android.billingclient.api.SkuDetails> skuDetailsList) {
     if (skuDetailsList == null) {
       return Collections.emptyList();
     }
 
     ArrayList<HashMap<String, Object>> output = new ArrayList<>();
-    for (SkuDetails detail : skuDetailsList) {
+    for (com.android.billingclient.api.SkuDetails detail : skuDetailsList) {
       output.add(fromSkuDetail(detail));
     }
     return output;
@@ -55,6 +58,8 @@ import java.util.Locale;
 
   static HashMap<String, Object> fromPurchase(Purchase purchase) {
     HashMap<String, Object> info = new HashMap<>();
+    // TODO(stuartmorgan): Migrate this code. See TODO on MethodCallHandlerImpl.querySkuDetailsAsync.
+    @SuppressWarnings("deprecation")
     List<String> skus = purchase.getSkus();
     info.put("orderId", purchase.getOrderId());
     info.put("packageName", purchase.getPackageName());
@@ -79,6 +84,8 @@ import java.util.Locale;
   static HashMap<String, Object> fromPurchaseHistoryRecord(
       PurchaseHistoryRecord purchaseHistoryRecord) {
     HashMap<String, Object> info = new HashMap<>();
+    // TODO(stuartmorgan): Migrate this code. See TODO on MethodCallHandlerImpl.querySkuDetailsAsync.
+    @SuppressWarnings("deprecation")
     List<String> skus = purchaseHistoryRecord.getSkus();
     info.put("purchaseTime", purchaseHistoryRecord.getPurchaseTime());
     info.put("purchaseToken", purchaseHistoryRecord.getPurchaseToken());
