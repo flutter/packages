@@ -740,13 +740,10 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
 String _cast(String variable, {required TypeDeclaration type}) {
   // Special-case Any, since no-op casts cause warnings.
   final String typeString = _kotlinTypeForDartType(type);
-  if (typeString == 'Any?' || (type.isNullable && typeString == 'Any')) {
+  if (type.isNullable && typeString == 'Any') {
     return variable;
   }
-  if (typeString == 'Int' ||
-      typeString == 'Int?' ||
-      typeString == 'Long' ||
-      typeString == 'Long?') {
+  if (typeString == 'Int' || typeString == 'Long') {
     return _castInt(type.isNullable);
   }
   return '$variable as ${_nullsafeKotlinTypeForDartType(type)}';
