@@ -211,8 +211,14 @@ public class ImagePickerDelegate
       return;
     }
 
+    ImageOutputOptions outputOptions =
+        new ImageOutputOptions(
+            methodCall.argument("maxWidth"),
+            methodCall.argument("maxHeight"),
+            methodCall.argument("imageQuality"));
+
     cache.saveTypeWithMethodCallName(methodCall.method);
-    cache.saveDimensionWithMethodCall(methodCall);
+    cache.saveDimensionWithOutputOptions(outputOptions);
     if (pendingCameraMediaUri != null) {
       cache.savePendingCameraMediaUriPath(pendingCameraMediaUri);
     }
