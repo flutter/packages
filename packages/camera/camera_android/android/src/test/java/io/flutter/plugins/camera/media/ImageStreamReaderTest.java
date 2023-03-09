@@ -101,7 +101,7 @@ public class ImageStreamReaderTest {
     imageStreamReader.onImageAvailable(mockImage, mockCaptureProps, mockEventSink);
 
     // Make sure we processed the frame with parsePlanesForNv21
-    verify(mockImageStreamReaderUtils).yuv420ThreePlanesToNV21(any(), anyInt(), anyInt());
+    verify(mockImageStreamReaderUtils).yuv420ThreePlanesToNV21(planes, mockImage.getWidth(), mockImage.getHeight());
   }
 
   /** If we are requesting YUV420, then we should send the 3-plane image as it is. */
