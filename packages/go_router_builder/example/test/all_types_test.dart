@@ -136,4 +136,24 @@ void main() {
             '/iterable-route?int-list-field=1&int-list-field=2&int-list-field=3'),
         findsOneWidget);
   });
+
+  testWidgets(
+      'It should navigate to the iterable route with the its default values',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(AllTypesApp());
+
+    final ScaffoldState scaffoldState =
+        tester.firstState(find.byType(Scaffold));
+
+    const IterableRouteWithDefaultValues().go(scaffoldState.context);
+    await tester.pumpAndSettle();
+    expect(find.text('IterableRouteWithDefaultValues'), findsOneWidget);
+    expect(
+      find.text(
+        'Query param with default value: {intIterableField: [0], intListField: [0], intSetField: {0, 1}, doubleIterableField: [0.0, 1.0, 2.0], doubleListField: [1.0, 2.0, 3.0], doubleSetField: {}, stringIterableField: [defaultValue], stringListField: [defaultValue0, defaultValue1], stringSetField: {defaultValue}, boolIterableField: [false], boolListField: [true], boolSetField: {true, false}, enumIterableField: [SportDetails.tennis, SportDetails.hockey], enumListField: [SportDetails.football], enumSetField: {SportDetails.hockey}}',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('/iterable-route-with-default-values'), findsOneWidget);
+  });
 }

@@ -345,7 +345,7 @@ class IterableRoute extends GoRouteData {
 }
 
 class IterableRouteWithDefaultValues extends GoRouteData {
-  IterableRouteWithDefaultValues({
+  const IterableRouteWithDefaultValues({
     this.intIterableField = const <int>[0],
     this.doubleIterableField = const <double>[0, 1, 2],
     this.stringIterableField = const <String>['defaultValue'],
@@ -387,9 +387,25 @@ class IterableRouteWithDefaultValues extends GoRouteData {
   final Set<SportDetails> enumSetField;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const BasePage<String>(
+  Widget build(BuildContext context, GoRouterState state) => BasePage<String>(
         dataTitle: 'IterableRouteWithDefaultValues',
+        queryParamWithDefaultValue: <String, Iterable<dynamic>>{
+          'intIterableField': intIterableField,
+          'intListField': intListField,
+          'intSetField': intSetField,
+          'doubleIterableField': doubleIterableField,
+          'doubleListField': doubleListField,
+          'doubleSetField': doubleSetField,
+          'stringIterableField': stringIterableField,
+          'stringListField': stringListField,
+          'stringSetField': stringSetField,
+          'boolIterableField': boolIterableField,
+          'boolListField': boolListField,
+          'boolSetField': boolSetField,
+          'enumIterableField': enumIterableField,
+          'enumListField': enumListField,
+          'enumSetField': enumSetField,
+        }.toString(),
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
