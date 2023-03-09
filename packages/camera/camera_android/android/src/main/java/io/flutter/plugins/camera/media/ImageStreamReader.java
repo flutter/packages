@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 // Wraps an ImageReader to allow for testing of the image handler.
-public class ImageStreamReader {
+public class  ImageStreamReader {
 
   /**
    * The image format we are going to send back to dart. Usually it's the same as streamImageFormat
