@@ -383,7 +383,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           } else {
             indent.addScoped('{', '}', () {
               indent.writeln(
-                  'val result = ${_cast('it', type: func.returnType, safeCast: func.returnType.isNullable)}');
+                  'val result = ${_cast('it', type: func.returnType)}');
               indent.writeln('callback(result)');
             });
           }
@@ -669,9 +669,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // a Dart 'int'.  To keep things simple we just use 64bit
     // longs in Pigeon with Kotlin.
     if (type.baseName == 'int') {
-      return '$value.let { ${_cast(value, type: type, safeCast: type.isNullable)} }';
+      return '$value.let { ${_cast(value, type: type)} }';
     } else {
-      return _cast(value, type: type, safeCast: type.isNullable);
+      return _cast(value, type: type);
     }
   }
 }
@@ -737,11 +737,10 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
 }
 
 /// Returns an expression to cast [variable] to [kotlinType].
-String _cast(String variable,
-    {required TypeDeclaration type, bool safeCast = false}) {
+String _cast(String variable, {required TypeDeclaration type}) {
   // Special-case Any, since no-op casts cause warnings.
   final String typeString = _kotlinTypeForDartType(type);
-  if (typeString == 'Any?' || (safeCast && typeString == 'Any')) {
+  if (typeString == 'Any?' || (type.isNullable && typeString == 'Any')) {
     return variable;
   }
   if (typeString == 'Int' ||
