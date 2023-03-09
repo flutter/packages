@@ -1,7 +1,11 @@
+## 1.1.6
+
+* Supports default values for `Set`, `List` and `Iterable` route parameters.
+
 ## 1.1.5
 
-* Aligns Dart and Flutter SDK constraints.
-* Supports default values for `Set`, `List` and `Iterable` route parameters.
+* Replaces unnecessary Flutter SDK constraint with corresponding Dart
+  SDK constraint.
 
 ## 1.1.4
 
@@ -51,7 +55,7 @@
 
 ## 1.0.10
 
-* Adds a lint ignore for deprecated member in the example. 
+* Adds a lint ignore for deprecated member in the example.
 
 ## 1.0.9
 
