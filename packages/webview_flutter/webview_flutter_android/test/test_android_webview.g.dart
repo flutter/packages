@@ -748,6 +748,8 @@ abstract class TestWebSettingsHostApi {
 
   void setAllowFileAccess(int instanceId, bool enabled);
 
+  void setTextZoom(int instanceId, int textZoom);
+
   static void setup(TestWebSettingsHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1036,6 +1038,28 @@ abstract class TestWebSettingsHostApi {
           assert(arg_enabled != null,
               'Argument for dev.flutter.pigeon.WebSettingsHostApi.setAllowFileAccess was null, expected non-null bool.');
           api.setAllowFileAccess(arg_instanceId!, arg_enabled!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebSettingsHostApi.setTextZoom', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WebSettingsHostApi.setTextZoom was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.WebSettingsHostApi.setTextZoom was null, expected non-null int.');
+          final int? arg_textZoom = (args[1] as int?);
+          assert(arg_textZoom != null,
+              'Argument for dev.flutter.pigeon.WebSettingsHostApi.setTextZoom was null, expected non-null int.');
+          api.setTextZoom(arg_instanceId!, arg_textZoom!);
           return <Object?>[];
         });
       }

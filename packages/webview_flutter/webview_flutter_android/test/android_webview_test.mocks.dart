@@ -544,6 +544,21 @@ class MockTestWebSettingsHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  void setTextZoom(
+    int? instanceId,
+    int? textZoom,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setTextZoom,
+          [
+            instanceId,
+            textZoom,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestWebStorageHostApi].

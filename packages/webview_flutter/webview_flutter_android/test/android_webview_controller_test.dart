@@ -57,10 +57,8 @@ void main() {
       Future<List<String>> Function(
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
-      )?
-          onShowFileChooser,
-    })?
-        createWebChromeClient,
+      )? onShowFileChooser,
+    })? createWebChromeClient,
     android_webview.WebView? mockWebView,
     android_webview.WebViewClient? mockWebViewClient,
     android_webview.WebStorage? mockWebStorage,
@@ -80,8 +78,7 @@ void main() {
                     Future<List<String>> Function(
                       android_webview.WebView webView,
                       android_webview.FileChooserParams params,
-                    )?
-                        onShowFileChooser,
+                    )? onShowFileChooser,
                   }) =>
                       MockWebChromeClient(),
               createAndroidWebView: ({required bool useHybridComposition}) =>
@@ -97,19 +94,16 @@ void main() {
                   int errorCode,
                   String description,
                   String failingUrl,
-                )?
-                        onReceivedError,
+                )? onReceivedError,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
                   android_webview.WebResourceError error,
-                )?
-                    onReceivedRequestError,
+                )? onReceivedRequestError,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
-                )?
-                    requestLoading,
+                )? requestLoading,
                 void Function(android_webview.WebView webView, String url)?
                     urlLoading,
               }) =>
@@ -570,8 +564,7 @@ void main() {
           Future<List<String>> Function(
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
-          )?
-              onShowFileChooser,
+          )? onShowFileChooser,
         }) {
           onShowFileChooserCallback = onShowFileChooser!;
           return mockWebChromeClient;
@@ -888,6 +881,22 @@ void main() {
     await controller.setMediaPlaybackRequiresUserGesture(true);
 
     verify(mockSettings.setMediaPlaybackRequiresUserGesture(true)).called(1);
+  });
+
+  test('setTextZoom', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setTextZoom(100);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setTextZoom(100)).called(1);
   });
 
   test('webViewIdentifier', () {

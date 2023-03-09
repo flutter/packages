@@ -1619,6 +1619,42 @@ public class GeneratedAndroidWebView {
       }
     }
   }
+  /**
+   * Flutter API for `WebView`.
+   *
+   * <p>This class may handle instantiating and adding Dart instances that are attached to a native
+   * instance or receiving callback methods from an overridden native class.
+   *
+   * <p>See https://developer.android.com/reference/android/webkit/WebView.
+   *
+   * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
+   */
+  public static class WebViewFlutterApi {
+    private final BinaryMessenger binaryMessenger;
+
+    public WebViewFlutterApi(BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by WebViewFlutterApi. */
+    static MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /** Create a new Dart instance and add it to the `InstanceManager`. */
+    public void create(@NonNull Long identifierArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.WebViewFlutterApi.create", getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(identifierArg)),
+          channelReply -> {
+            callback.reply(null);
+          });
+    }
+  }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebSettingsHostApi {
 
@@ -1647,6 +1683,8 @@ public class GeneratedAndroidWebView {
     void setBuiltInZoomControls(@NonNull Long instanceId, @NonNull Boolean enabled);
 
     void setAllowFileAccess(@NonNull Long instanceId, @NonNull Boolean enabled);
+
+    void setTextZoom(@NonNull Long instanceId, @NonNull Long textZoom);
 
     /** The codec used by WebSettingsHostApi. */
     static MessageCodec<Object> getCodec() {
@@ -2084,6 +2122,39 @@ public class GeneratedAndroidWebView {
                   }
                   api.setAllowFileAccess(
                       (instanceIdArg == null) ? null : instanceIdArg.longValue(), enabledArg);
+                  wrapped.add(0, null);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.WebSettingsHostApi.setTextZoom", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Number instanceIdArg = (Number) args.get(0);
+                  if (instanceIdArg == null) {
+                    throw new NullPointerException("instanceIdArg unexpectedly null.");
+                  }
+                  Number textZoomArg = (Number) args.get(1);
+                  if (textZoomArg == null) {
+                    throw new NullPointerException("textZoomArg unexpectedly null.");
+                  }
+                  api.setTextZoom(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(),
+                      (textZoomArg == null) ? null : textZoomArg.longValue());
                   wrapped.add(0, null);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
