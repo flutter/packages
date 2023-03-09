@@ -1,3 +1,7 @@
+## 3.4.3
+
+* Removes unused internal `WebView` field and Java class.
+
 ## 3.4.2
 
 * Clarifies explanation of endorsement in README.
