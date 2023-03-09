@@ -1,6 +1,5 @@
-## 2.6.0
+## NEXT
 
-* Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.5.3
