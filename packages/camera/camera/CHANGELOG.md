@@ -1,3 +1,4 @@
+
 ## 0.10.4
 * Adds NV21 as an image streaming option for Android.
 
