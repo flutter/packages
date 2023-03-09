@@ -1,3 +1,7 @@
+## 0.10.4+3
+
+* Clarifies explanation of endorsement in README.
+
 ## 0.10.4+2
 
 * Aligns Dart and Flutter SDK constraints.
