@@ -611,7 +611,7 @@ class WebViewProxy {
 
   /// Constructs a [android_webview.WebView].
   android_webview.WebView createWebView({required bool useHybridComposition}) {
-    return android_webview.WebView(useHybridComposition: useHybridComposition);
+    return android_webview.WebView();
   }
 
   /// Constructs a [android_webview.WebViewClient].

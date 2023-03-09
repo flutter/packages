@@ -6,7 +6,6 @@ package io.flutter.plugins.webviewflutter;
 
 import android.content.Context;
 import android.os.Handler;
-import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -67,7 +66,6 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             registrar.messenger(),
             registrar.platformViewRegistry(),
             registrar.activity(),
-            registrar.view(),
             new FlutterAssetManager.RegistrarFlutterAssetManager(
                 registrar.context().getAssets(), registrar));
   }
@@ -76,7 +74,6 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
       BinaryMessenger binaryMessenger,
       PlatformViewRegistry viewRegistry,
       Context context,
-      View containerView,
       FlutterAssetManager flutterAssetManager) {
     instanceManager =
         InstanceManager.open(
@@ -89,11 +86,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
 
     webViewHostApi =
         new WebViewHostApiImpl(
-            instanceManager,
-            binaryMessenger,
-            new WebViewHostApiImpl.WebViewProxy(),
-            context,
-            containerView);
+            instanceManager, binaryMessenger, new WebViewHostApiImpl.WebViewProxy(), context);
     javaScriptChannelHostApi =
         new JavaScriptChannelHostApiImpl(
             instanceManager,
@@ -141,7 +134,6 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
         binding.getBinaryMessenger(),
         binding.getPlatformViewRegistry(),
         binding.getApplicationContext(),
-        null,
         new FlutterAssetManager.PluginBindingFlutterAssetManager(
             binding.getApplicationContext().getAssets(), binding.getFlutterAssets()));
   }

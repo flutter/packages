@@ -14,7 +14,6 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
-import 'package:flutter/widgets.dart' show AndroidViewSurface;
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
@@ -80,11 +79,7 @@ class JavaObject with Copyable {
 /// When a [WebView] is no longer needed [release] must be called.
 class WebView extends JavaObject {
   /// Constructs a new WebView.
-  ///
-  /// Due to changes in Flutter 3.0 the [useHybridComposition] doesn't have
-  /// any effect and should not be exposed publicly. More info here:
-  /// https://github.com/flutter/flutter/issues/108106
-  WebView({this.useHybridComposition = false}) : super.detached() {
+  WebView() : super.detached() {
     api.createFromInstance(this);
   }
 
@@ -92,22 +87,11 @@ class WebView extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  WebView.detached({this.useHybridComposition = false}) : super.detached();
+  WebView.detached() : super.detached();
 
   /// Pigeon Host Api implementation for [WebView].
   @visibleForTesting
   static WebViewHostApiImpl api = WebViewHostApiImpl();
-
-  /// Whether the [WebView] will be rendered with an [AndroidViewSurface].
-  ///
-  /// This implementation uses hybrid composition to render the WebView Widget.
-  /// This comes at the cost of some performance on Android versions below 10.
-  /// See
-  /// https://flutter.dev/docs/development/platform-integration/platform-views#performance
-  /// for more information.
-  ///
-  /// Defaults to false.
-  final bool useHybridComposition;
 
   /// The [WebSettings] object used to control the settings for this WebView.
   late final WebSettings settings = WebSettings(this);
@@ -399,7 +383,7 @@ class WebView extends JavaObject {
 
   @override
   WebView copy() {
-    return WebView.detached(useHybridComposition: useHybridComposition);
+    return WebView.detached();
   }
 }
 

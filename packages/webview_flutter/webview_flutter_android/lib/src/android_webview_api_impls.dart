@@ -146,10 +146,7 @@ class WebViewHostApiImpl extends WebViewHostApi {
 
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebView instance) {
-    return create(
-      instanceManager.addDartCreatedInstance(instance),
-      instance.useHybridComposition,
-    );
+    return create(instanceManager.addDartCreatedInstance(instance));
   }
 
   /// Helper method to convert the instances ids to objects.
