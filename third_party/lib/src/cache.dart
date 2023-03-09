@@ -87,7 +87,6 @@ class Cache {
       pendingResult.then((ByteData data) {
         _pending.remove(key);
         _add(key, data);
-
         result = data; // in case it was a synchronous future.
       });
     }
@@ -101,7 +100,7 @@ class Cache {
 
   void _add(Object key, ByteData result) {
     if (maximumSize > 0) {
-      assert(_cache.length < maximumSize);
+      assert(_cache.containsKey(key) || _cache.length < maximumSize);
       _cache[key] = result;
     }
     assert(_cache.length <= maximumSize);

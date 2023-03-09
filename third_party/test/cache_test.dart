@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/src/cache.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -76,5 +76,33 @@ void main() {
     expect(cache.evict(1), true);
     expect(cache.evict(2), false);
     expect(cache.evict(3), true);
+  });
+
+  test('Adding beyond max with synchronous futures', () async {
+    final Cache cache = Cache();
+    cache.maximumSize = 2;
+    final Future<ByteData> completerA =
+        SynchronousFuture<ByteData>(ByteData(1));
+    final Future<ByteData> completerB =
+        SynchronousFuture<ByteData>(ByteData(2));
+    final Future<ByteData> completerC =
+        SynchronousFuture<ByteData>(ByteData(3));
+
+    expect(cache.count, 0);
+
+    cache.putIfAbsent(1, () => completerA);
+    expect(cache.count, 1);
+
+    cache.putIfAbsent(2, () => completerB);
+    expect(cache.count, 2);
+
+    cache.putIfAbsent(2, () => completerB);
+    expect(cache.count, 2);
+
+    cache.putIfAbsent(3, () => completerC);
+    expect(cache.count, 2);
+
+    cache.putIfAbsent(2, () => completerB);
+    expect(cache.count, 2);
   });
 }

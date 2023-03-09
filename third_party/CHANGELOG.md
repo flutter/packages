@@ -1,8 +1,13 @@
 # CHANGES
 
+## 2.0.3
+
+- Require newer version of vector_graphics.
+- Fix bug in cache that incorrectly fired assert.
+
 ## 2.0.2
 
-- Consume newer version of vector_graphics with multiple fixes around
+- Require newer version of vector_graphics with multiple fixes around
   inheritence, patterns, and currentColor handling.
 
 ## 2.0.1
