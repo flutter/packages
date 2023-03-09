@@ -1,3 +1,7 @@
+## 0.2.0+1
+
+* Relaxes the `renderButton` API so any JS-Interop Object can be its `target`.
+
 ## 0.2.0
 
 * Adds `renderButton` API to `id.dart`.
