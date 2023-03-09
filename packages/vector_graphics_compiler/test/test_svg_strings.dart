@@ -1437,3 +1437,23 @@ const String textTspan = '''
   </g>
 </svg>
 ''';
+
+const String numberBubbles = '''
+<svg width="64" height="16" viewBox="0 0 64 16" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" fill-rule="evenodd">
+        <circle fill="#878D91" cx="56" cy="8" r="8"/>
+        <circle stroke="#878D91" cx="8" cy="8" r="7.5"/>
+        <path fill="#878D91" d="M15 7.5h10v1H15zM39 7.5h10v1H39z"/>
+        <circle stroke="#878D91" cx="32" cy="8" r="7.5"/>
+        <text font-family="AvenirNext-Medium, Avenir Next" font-size="11" font-weight="400" fill="#878D91">
+                    <tspan x="28.727" y="12">2</tspan>
+                </text>
+        <text font-family="AvenirNext-Medium, Avenir Next" font-size="11" font-weight="400" fill="#FFF">
+                    <tspan x="52.727" y="12">3</tspan>
+                </text>
+        <text font-family="AvenirNext-Medium, Avenir Next" font-size="11" font-weight="400" fill="#878D91">
+                    <tspan x="4.728" y="12">1</tspan>
+                </text>
+    </g>
+</svg>
+''';

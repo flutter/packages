@@ -216,7 +216,7 @@ void main() {
       const OnTextConfig(
           'Bold text Verdana', 0, 55, 'Verdana', 6, 0, 0, 4278190080, 2),
       const OnTextConfig(
-          ' Stroked bold line', 0, 55, 'Roboto', 8, 0, 0, 4278190080, 3),
+          'Stroked bold line', 0, 55, 'Roboto', 8, 0, 0, 4278190080, 3),
       const OnTextConfig(' Line 3', 0, 55, 'Roboto', 3, 0, 0, 4278190080, 4),
       const OnDrawText(0, 0, null, null),
       const OnDrawText(1, 0, null, null),

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.3
+
+- Further improvements to whitespace handling for text.
+
 ## 1.1.2
 
 - Fix handling and inheritence of `none`.

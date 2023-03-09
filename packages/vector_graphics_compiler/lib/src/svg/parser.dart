@@ -694,12 +694,20 @@ class SvgParser {
     assert(_inTextOrTSpan);
 
     assert(_whitespacePattern.pattern == r'\s');
-    // Not from the spec, but seems like how Chrome behaves:
-    final bool prependSpace = (text.startsWith(_whitespacePattern) &&
-            _lastEndElementEvent?.localName == 'tspan') ||
+    final bool textHasNonWhitespace = text.trim() != '';
+
+    // Not from the spec, but seems like how Chrome behaves.
+    // - If `x` is specified, don't prepend whitespace.
+    // - If the last element was a tspan and we're dealing with some
+    //   non-whitespace data, prepend a space.
+    // - If the last text wasn't whitespace and ended with whitespace, prepend
+    //   a space.
+    final bool prependSpace = _currentAttributes.x == null &&
+            (_lastEndElementEvent?.localName == 'tspan' &&
+                textHasNonWhitespace) ||
         _lastTextEndedWithSpace;
 
-    _lastTextEndedWithSpace =
+    _lastTextEndedWithSpace = textHasNonWhitespace &&
         text.startsWith(_whitespacePattern, text.length - 1);
 
     // From the spec:

@@ -4,6 +4,54 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Text whitespace handling (number bubbles)', () {
+    final VectorInstructions instructions =
+        parseWithoutOptimizers(numberBubbles);
+
+    expect(
+      instructions.textPositions,
+      const <TextPosition>[
+        TextPosition(reset: true),
+        TextPosition(x: 28.727, y: 12.0),
+        TextPosition(x: 52.727, y: 12.0),
+        TextPosition(x: 4.728, y: 12.0),
+      ],
+    );
+
+    expect(instructions.text, const <TextConfig>[
+      TextConfig(
+        '2',
+        0.0,
+        'AvenirNext-Medium, Avenir Next',
+        FontWeight.w400,
+        11.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+      ),
+      TextConfig(
+        '3',
+        0.0,
+        'AvenirNext-Medium, Avenir Next',
+        FontWeight.w400,
+        11.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+      ),
+      TextConfig(
+        '1',
+        0.0,
+        'AvenirNext-Medium, Avenir Next',
+        FontWeight.w400,
+        11.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+      ),
+    ]);
+  });
+
   test('None on fill', () {
     const String svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" fill="none"
@@ -111,7 +159,7 @@ void main() {
       instructions.text,
       const <TextConfig>[
         TextConfig(
-          ' Some text',
+          'Some text',
           0.0,
           'Roboto-Regular, Roboto',
           FontWeight.w400,
@@ -121,7 +169,7 @@ void main() {
           Color(0xff000000),
         ),
         TextConfig(
-          ' more text.',
+          'more text.',
           0.0,
           'Roboto-Regular, Roboto',
           FontWeight.w400,
@@ -131,7 +179,7 @@ void main() {
           Color(0xff000000),
         ),
         TextConfig(
-          ' Even more text',
+          'Even more text',
           0.0,
           'Roboto-Regular, Roboto',
           FontWeight.w400,
@@ -141,7 +189,7 @@ void main() {
           Color(0xff000000),
         ),
         TextConfig(
-          ' text everywhere',
+          'text everywhere',
           0.0,
           'Roboto-Regular, Roboto',
           FontWeight.w400,
@@ -151,7 +199,7 @@ void main() {
           Color(0xff000000),
         ),
         TextConfig(
-          ' so many lines',
+          'so many lines',
           0.0,
           'Roboto-Regular, Roboto',
           FontWeight.w400,
