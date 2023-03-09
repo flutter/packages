@@ -1,3 +1,8 @@
+## 1.0.21
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 1.0.20
 
 * Fixes compilation warnings.

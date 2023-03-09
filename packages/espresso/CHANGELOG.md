@@ -1,3 +1,7 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.2.1
 
 * Updates the version of com.google.truth:truth to 1.1.3.

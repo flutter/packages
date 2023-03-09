@@ -1,6 +1,7 @@
 ## 6.3.0
 
 - Supports returning values on pop.
+- Aligns Dart and Flutter SDK constraints.
 - Updates compileSdkVersion to 33.
 - Updates example app to iOS 11.
 

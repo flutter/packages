@@ -1,3 +1,8 @@
+## 2.4.9
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.4.8
 
 * Fixes compilation warnings.

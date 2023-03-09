@@ -1,3 +1,8 @@
+## 2.4.1
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.4.0
 
 * Updates minimum Flutter version to 3.3 and iOS 11.

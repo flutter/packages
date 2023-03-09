@@ -28,7 +28,7 @@ This example demonstrates how to implement a centered headline using a custom bu
 // TODO(goderbauer): Restructure the examples to avoid this ignore, https://github.com/flutter/flutter/issues/110208.
 // ignore: avoid_implementing_value_types
 class CenteredHeaderDemo extends StatelessWidget implements MarkdownDemoWidget {
-  const CenteredHeaderDemo({Key? key}) : super(key: key);
+  const CenteredHeaderDemo({super.key});
 
   static const String _title = 'Centered Header Demo';
 
