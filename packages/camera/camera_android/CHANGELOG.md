@@ -1,6 +1,6 @@
-## 0.10.5
+## 0.10.4+3
 
-* Allows camera to be switched while video recording.
+* Clarifies explanation of endorsement in README.
 
 ## 0.10.4+2
 
