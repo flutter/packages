@@ -16,12 +16,16 @@ import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'src/go_router_generator.dart';
+import 'src/go_router_shell_generator.dart';
 
 /// Supports `package:build_runner` creation and configuration of
 /// `go_router`.
 ///
 /// Not meant to be invoked by hand-authored code.
 Builder goRouterBuilder(BuilderOptions options) => SharedPartBuilder(
-      const <Generator>[GoRouterGenerator()],
+      const <Generator>[
+        GoRouterGenerator(),
+        GoRouterShellGenerator(),
+      ],
       'go_router',
     );
